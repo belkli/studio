@@ -14,13 +14,13 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-background">
-        <Sidebar side="left" collapsible="icon">
+        <Sidebar side="right" collapsible="icon">
           <SidebarNav />
         </Sidebar>
         <SidebarInset>
           <Header />
           <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-            <div className="w-full">{children}</div>
+            <div className="w-full max-w-7xl mx-auto">{children}</div>
           </main>
         </SidebarInset>
       </div>
