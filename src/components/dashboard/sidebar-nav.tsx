@@ -17,7 +17,7 @@ import { mockUser } from '@/lib/data';
 const links = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
     { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText },
-    { href: '/dashboard/approvals', label: 'אישורים ממתינים', icon: BadgeCheck, role: 'teacher' },
+    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, role: 'teacher' },
     { href: '/dashboard/library', label: 'ספרייה', icon: Book, role: 'site_admin' },
     { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
 ];
@@ -38,16 +38,11 @@ export function SidebarNav() {
       <SidebarContent>
         <SidebarMenu>
           {links.map((link) => {
-            if (link.role && link.role !== userRole && userRole !== 'site_admin') {
+            const userCanView = !link.role || userRole === 'site_admin' || userRole === link.role;
+            if (!userCanView) {
                 return null;
             }
-            // Site admin can see everything
-            if (link.role === 'teacher' && userRole !== 'teacher' && userRole !== 'site_admin') {
-                return null;
-            }
-            if (link.role === 'conservatorium_admin' && userRole !== 'conservatorium_admin' && userRole !== 'site_admin') {
-                return null;
-            }
+            
             return (
                 <SidebarMenuItem key={link.href}>
                   <Link href={link.href} passHref>

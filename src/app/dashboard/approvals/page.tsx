@@ -49,37 +49,46 @@ const FormCard = ({ form }: { form: (typeof mockFormSubmissions)[0] }) => {
 
 export default function ApprovalsPage() {
     const pendingForms = mockFormSubmissions.filter(f => f.status === 'ממתין לאישור מורה');
+    const approvedForms = mockFormSubmissions.filter(f => f.status === 'מאושר');
 
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">אישורים ממתינים</h1>
+                <h1 className="text-2xl font-bold">אישורים</h1>
                 <p className="text-muted-foreground">כאן תוכל לצפות ולאשר טפסים של תלמידים.</p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="bg-muted/30">
                     <CardHeader>
                         <CardTitle>ממתין לאישור ({pendingForms.length})</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        {pendingForms.map(form => <FormCard key={form.id} form={form} />)}
-                        {pendingForms.length === 0 && <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים ממתינים.</p>}
+                    <CardContent className="max-h-[60vh] overflow-y-auto p-4">
+                        {pendingForms.length > 0 ? (
+                            pendingForms.map(form => <FormCard key={form.id} form={form} />)
+                        ) : (
+                            <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים ממתינים לאישור.</p>
+                        )}
                     </CardContent>
                 </Card>
+                
                 <Card className="bg-muted/30">
                     <CardHeader>
-                        <CardTitle>בבדיקה (0)</CardTitle>
+                        <CardTitle>מאושר ({approvedForms.length})</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                         <p className="text-sm text-muted-foreground p-4 text-center">גרור טפסים לכאן כדי לסמן אותם כ"בבדיקה".</p>
-                    </CardContent>
-                </Card>
-                <Card className="bg-muted/30">
-                    <CardHeader>
-                        <CardTitle>מאושר (0)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground p-4 text-center">גרור טפסים לכאן כדי לאשר אותם.</p>
+                     <CardContent className="max-h-[60vh] overflow-y-auto p-4">
+                        {approvedForms.length > 0 ? (
+                            approvedForms.map(form => (
+                                <Card key={form.id} className="mb-4 p-4">
+                                    <p className="font-semibold">{form.studentName}</p>
+                                    <p className="text-sm text-muted-foreground">{form.formType}</p>
+                                     <Link href={`/dashboard/forms/${form.id}`} className="text-sm text-primary hover:underline mt-2 inline-block">
+                                        צפה בפרטים
+                                    </Link>
+                                </Card>
+                            ))
+                        ) : (
+                             <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים שאושרו.</p>
+                        )}
                     </CardContent>
                 </Card>
             </div>
