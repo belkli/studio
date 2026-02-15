@@ -1,5 +1,6 @@
-import { RecentForms } from "@/components/dashboard/recent-forms";
+import { FormsList } from "@/components/dashboard/forms-list";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
@@ -14,33 +15,38 @@ export default function FormsPage() {
                 </div>
                 <Button asChild>
                     <Link href="/dashboard/forms/new">
-                        <PlusCircle className="ml-2 h-4 w-4" />
+                        <PlusCircle className="me-2 h-4 w-4" />
                         טופס חדש
                     </Link>
                 </Button>
             </div>
             
-            <Tabs defaultValue="all">
-                <TabsList>
-                    <TabsTrigger value="all">הכל</TabsTrigger>
-                    <TabsTrigger value="pending">ממתינים</TabsTrigger>
-                    <TabsTrigger value="approved">מאושרים</TabsTrigger>
-                    <TabsTrigger value="drafts">טיוטות</TabsTrigger>
-                </TabsList>
-                <TabsContent value="all" className="pt-4">
-                    {/* The RecentForms component is reused here, in a real app it would be a more complex, paginated table */}
-                    <RecentForms />
-                </TabsContent>
-                <TabsContent value="pending">
-                     <p className="p-4 text-muted-foreground">כאן יוצגו טפסים הממתינים לאישור.</p>
-                </TabsContent>
-                 <TabsContent value="approved">
-                     <p className="p-4 text-muted-foreground">כאן יוצגו טפסים שאושרו.</p>
-                </TabsContent>
-                 <TabsContent value="drafts">
-                     <p className="p-4 text-muted-foreground">כאן יוצגו טפסים במצב טיוטה.</p>
-                </TabsContent>
-            </Tabs>
+            <Card>
+                <CardContent className="p-0">
+                    <Tabs defaultValue="all">
+                        <div className="p-4 border-b">
+                            <TabsList>
+                                <TabsTrigger value="all">הכל</TabsTrigger>
+                                <TabsTrigger value="pending">ממתינים</TabsTrigger>
+                                <TabsTrigger value="approved">מאושרים</TabsTrigger>
+                                <TabsTrigger value="drafts">טיוטות</TabsTrigger>
+                            </TabsList>
+                        </div>
+                        <TabsContent value="all" className="pt-0">
+                            <FormsList />
+                        </TabsContent>
+                        <TabsContent value="pending" className="pt-0">
+                            <FormsList statusFilter={['ממתין לאישור מורה', 'ממתין לאישור מנהל']} />
+                        </TabsContent>
+                        <TabsContent value="approved" className="pt-0">
+                            <FormsList statusFilter={['מאושר']} />
+                        </TabsContent>
+                        <TabsContent value="drafts" className="pt-0">
+                            <FormsList statusFilter={['טיוטה']} />
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
+            </Card>
         </div>
     )
 }

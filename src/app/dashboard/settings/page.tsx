@@ -1,13 +1,25 @@
+'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import { mockUser } from "@/lib/data";
 
 export default function SettingsPage() {
+    const { toast } = useToast();
+
+    const handleSaveProfile = () => {
+        toast({ title: 'הפרופיל עודכן', description: 'הפרטים האישיים שלך נשמרו.' });
+    }
+
+    const handleUpdatePassword = () => {
+        toast({ title: 'הסיסמה עודכנה', description: 'הסיסמה החדשה שלך נשמרה.' });
+    }
+
     return (
-        <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold">הגדרות</h1>
                 <p className="text-muted-foreground">נהל את הגדרות החשבון וההתראות שלך.</p>
@@ -27,7 +39,7 @@ export default function SettingsPage() {
                         <Label htmlFor="email">כתובת אימייל</Label>
                         <Input id="email" type="email" defaultValue={mockUser.email} />
                     </div>
-                    <Button>שמור שינויים</Button>
+                    <Button onClick={handleSaveProfile}>שמור שינויים</Button>
                 </CardContent>
             </Card>
 
@@ -45,7 +57,7 @@ export default function SettingsPage() {
                         <Label htmlFor="new-password">סיסמה חדשה</Label>
                         <Input id="new-password" type="password" />
                     </div>
-                    <Button>עדכן סיסמה</Button>
+                    <Button onClick={handleUpdatePassword}>עדכן סיסמה</Button>
                 </CardContent>
             </Card>
 

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockFormSubmissions } from "@/lib/data";
 import type { FormStatus } from "@/lib/types";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 const statusColors: Record<FormStatus, string> = {
@@ -28,10 +28,10 @@ export function RecentForms() {
                         אלו הטפסים האחרונים שהוגשו על ידי התלמידים שלך.
                     </CardDescription>
                 </div>
-                <Button asChild size="sm" className="ms-auto gap-1">
+                <Button asChild size="sm" className="me-auto gap-1">
                     <Link href="/dashboard/forms">
                         כל הטפסים
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>
             </CardHeader>
@@ -55,8 +55,10 @@ export function RecentForms() {
                                     <Badge variant="outline" className={statusColors[form.status]}>{form.status}</Badge>
                                 </TableCell>
                                 <TableCell>{form.submissionDate}</TableCell>
-                                <TableCell>
-                                    <Button variant="outline" size="sm">צפה</Button>
+                                <TableCell className="text-left">
+                                    <Button variant="outline" size="sm" asChild>
+                                        <Link href={`/dashboard/forms/${form.id}`}>צפה</Link>
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
