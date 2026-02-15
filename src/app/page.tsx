@@ -8,7 +8,7 @@ export default function Home() {
       <header className="px-4 lg:px-6 h-14 flex items-center bg-background/80 backdrop-blur-sm fixed top-0 w-full z-50 border-b">
         <Link href="/" className="flex items-center justify-center" prefetch={false}>
           <Icons.logo className="h-6 w-6 text-primary" />
-          <span className="mr-2 text-xl font-bold">הַרמוֹנְיָה</span>
+          <span className="ms-2 text-xl font-bold">הַרמוֹנְיָה</span>
         </Link>
         <div className="flex-grow" />
         <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export default function Home() {
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-muted-foreground">&copy; 2024 הַרמוֹנְיָה. כל הזכויות שמורות.</p>
-        <nav className="sm:mr-auto flex gap-4 sm:gap-6">
+        <nav className="sm:ms-auto flex gap-4 sm:gap-6">
           <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
             מדיניות פרטיות
           </Link>

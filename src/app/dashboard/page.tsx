@@ -17,7 +17,7 @@ export default function DashboardPage() {
                 </div>
                 <Button asChild>
                     <Link href="/dashboard/forms/new">
-                        <PlusCircle className="ml-2 h-4 w-4" />
+                        <PlusCircle className="me-2 h-4 w-4" />
                         טופס חדש
                     </Link>
                 </Button>

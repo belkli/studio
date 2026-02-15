@@ -28,7 +28,7 @@ export function RecentForms() {
                         אלו הטפסים האחרונים שהוגשו על ידי התלמידים שלך.
                     </CardDescription>
                 </div>
-                <Button asChild size="sm" className="mr-auto gap-1">
+                <Button asChild size="sm" className="ms-auto gap-1">
                     <Link href="/dashboard/forms">
                         כל הטפסים
                         <ArrowRight className="h-4 w-4" />

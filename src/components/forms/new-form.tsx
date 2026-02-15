@@ -201,7 +201,7 @@ export function NewForm() {
                     className="mt-4"
                     onClick={() => append({ composer: '', title: '', genre: 'קלאסי', duration: '00:00' })}
                 >
-                    <PlusCircle className="ml-2 h-4 w-4" />
+                    <PlusCircle className="me-2 h-4 w-4" />
                     הוסף יצירה
                 </Button>
                  <FormMessage>{form.formState.errors.repertoire?.root?.message}</FormMessage>
@@ -218,11 +218,11 @@ export function NewForm() {
 
         <div className="flex justify-end gap-4">
             <Button type="button" variant="ghost" onClick={saveDraft}>
-                <Save className="ml-2 h-4 w-4" />
+                <Save className="me-2 h-4 w-4" />
                 שמור כטיוטה
             </Button>
             <Button type="submit">
-                <Send className="ml-2 h-4 w-4" />
+                <Send className="me-2 h-4 w-4" />
                 הגש לאישור
             </Button>
         </div>

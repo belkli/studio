@@ -59,16 +59,16 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right" defaultValue={mockUser.email} />
+                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-end" defaultValue={mockUser.email} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">סיסמה</Label>
-                  <Link href="#" className="mr-auto inline-block text-sm underline">
+                  <Link href="#" className="ms-auto inline-block text-sm underline">
                     שכחת סיסמה?
                   </Link>
                 </div>
-                <Input id="password" type="password" required dir="ltr" className="text-right" />
+                <Input id="password" type="password" required dir="ltr" className="text-end" />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "מתחבר..." : "התחבר"}
@@ -79,7 +79,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">אימייל</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right" defaultValue={mockUser.email} />
+                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-end" defaultValue={mockUser.email} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "שולח..." : "שלח קישור קסום"}
@@ -99,11 +99,11 @@ export function LoginForm() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <Button variant="outline" disabled={loading}>
-            <Icons.google className="mr-2 h-4 w-4" />
+            <Icons.google className="me-2 h-4 w-4" />
             Google
           </Button>
           <Button variant="outline" disabled={loading}>
-            <Icons.microsoft className="mr-2 h-4 w-4" />
+            <Icons.microsoft className="me-2 h-4 w-4" />
             Microsoft
           </Button>
         </div>
