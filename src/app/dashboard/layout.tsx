@@ -14,7 +14,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-background">
-        <Sidebar side="right" collapsible="icon">
+        <Sidebar side="left" collapsible="icon">
           <SidebarNav />
         </Sidebar>
         <SidebarInset>

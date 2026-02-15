@@ -41,6 +41,13 @@ export function SidebarNav() {
             if (link.role && link.role !== userRole && userRole !== 'site_admin') {
                 return null;
             }
+            // Site admin can see everything
+            if (link.role === 'teacher' && userRole !== 'teacher' && userRole !== 'site_admin') {
+                return null;
+            }
+            if (link.role === 'conservatorium_admin' && userRole !== 'conservatorium_admin' && userRole !== 'site_admin') {
+                return null;
+            }
             return (
                 <SidebarMenuItem key={link.href}>
                   <Link href={link.href} passHref>
@@ -61,7 +68,7 @@ export function SidebarNav() {
       <SidebarMenu>
         <SidebarMenuItem>
             <Link href="/dashboard/settings" passHref>
-                <SidebarMenuButton isActive={pathname === '/dashboard/settings'} tooltip="הגדרות">
+                <SidebarMenuButton isActive={pathname.startsWith('/dashboard/settings')} tooltip="הגדרות">
                     <Settings />
                     <span>הגדרות</span>
                 </SidebarMenuButton>

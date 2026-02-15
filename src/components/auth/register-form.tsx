@@ -114,9 +114,9 @@ export function RegisterForm() {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={step}
-                                initial={{ opacity: 0, x: -50 }}
+                                initial={{ opacity: 0, x: 50 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 50 }}
+                                exit={{ opacity: 0, x: -50 }}
                                 transition={{ duration: 0.3 }}
                             >
                                 {step === 0 && (
@@ -125,9 +125,9 @@ export function RegisterForm() {
                                             <FormField name="firstName" render={({ field }) => ( <FormItem> <FormLabel>שם פרטי</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                                             <FormField name="lastName" render={({ field }) => ( <FormItem> <FormLabel>שם משפחה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                                         </div>
-                                        <FormField name="email" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-end" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                                        <FormField name="idNumber" render={({ field }) => ( <FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-end" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                                        <FormField name="password" render={({ field }) => ( <FormItem> <FormLabel>סיסמה</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-end" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                        <FormField name="email" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                        <FormField name="idNumber" render={({ field }) => ( <FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                        <FormField name="password" render={({ field }) => ( <FormItem> <FormLabel>סיסמה</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                                     </div>
                                 )}
                                 {step === 1 && (
@@ -185,7 +185,7 @@ export function RegisterForm() {
                                                 <FormField name="studyYears" render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>שנות לימוד בקונסרבטוריון: {field.value?.[0] || 1}</FormLabel>
-                                                        <FormControl><Slider dir="ltr" defaultValue={[1]} min={1} max={10} step={1} onValueChange={field.onChange} /></FormControl>
+                                                        <FormControl><Slider dir="rtl" defaultValue={[1]} min={1} max={10} step={1} onValueChange={field.onChange} /></FormControl>
                                                         <FormMessage />
                                                     </FormItem>
                                                 )} />

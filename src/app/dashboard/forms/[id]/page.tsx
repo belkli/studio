@@ -9,8 +9,10 @@ import type { FormStatus } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
+
 
 const statusColors: Record<FormStatus, string> = {
     'טיוטה': "bg-gray-200 text-gray-800 hover:bg-gray-200/80 dark:bg-gray-700 dark:text-gray-200",
@@ -24,6 +26,7 @@ const statusColors: Record<FormStatus, string> = {
 export default function FormDetailsPage() {
     const params = useParams();
     const formId = params.id;
+    const { toast } = useToast();
     const form = mockFormSubmissions.find(f => f.id === formId);
     const user = mockUser;
 
@@ -33,11 +36,20 @@ export default function FormDetailsPage() {
 
     const canApprove = user.role === 'teacher' || user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
+    const handleApprove = () => {
+        toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר בהצלחה.` });
+    }
+    
+    const handleReject = () => {
+        toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/forms">
+                        <ArrowLeft className="ms-2 h-4 w-4" />
                         חזרה לכל הטפסים
                     </Link>
                 </Button>
@@ -58,7 +70,7 @@ export default function FormDetailsPage() {
                                         <TableHead>מלחין</TableHead>
                                         <TableHead>שם היצירה</TableHead>
                                         <TableHead>ז'אנר</TableHead>
-                                        <TableHead className="text-left">משך</TableHead>
+                                        <TableHead className="text-right">משך</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -67,7 +79,7 @@ export default function FormDetailsPage() {
                                             <TableCell>{piece.composer}</TableCell>
                                             <TableCell>{piece.title}</TableCell>
                                             <TableCell>{piece.genre}</TableCell>
-                                            <TableCell className="text-left">{piece.duration}</TableCell>
+                                            <TableCell className="text-right">{piece.duration}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -86,8 +98,8 @@ export default function FormDetailsPage() {
                             <CardContent className="space-y-4">
                                 <Textarea placeholder="הוסף הערה (אופציונלי)..." />
                                 <div className="flex gap-4">
-                                    <Button className="flex-1 bg-green-600 hover:bg-green-700"><Check className="me-2 h-4 w-4" /> אישור</Button>
-                                    <Button variant="destructive" className="flex-1"><ThumbsDown className="me-2 h-4 w-4" /> דחייה</Button>
+                                    <Button onClick={handleApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור</Button>
+                                    <Button onClick={handleReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
                                 </div>
                             </CardContent>
                         </Card>

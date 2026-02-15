@@ -30,16 +30,16 @@ const FormCard = ({ form }: { form: (typeof mockFormSubmissions)[0] }) => {
             <CardFooter className="p-2 pt-0 grid grid-cols-3 gap-2">
                 <Button asChild variant="outline" size="sm" className="col-span-1">
                     <Link href={`/dashboard/forms/${form.id}`}>
-                        <Eye className="me-1 h-4 w-4" />
+                        <Eye className="ms-1 h-4 w-4" />
                         צפייה
                     </Link>
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleApprove} className="col-span-1 bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800">
-                    <Check className="me-1 h-4 w-4" />
+                    <Check className="ms-1 h-4 w-4" />
                     אישור
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleReject} className="col-span-1 bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-800">
-                    <ThumbsDown className="me-1 h-4 w-4" />
+                    <ThumbsDown className="ms-1 h-4 w-4" />
                     דחייה
                 </Button>
             </CardFooter>

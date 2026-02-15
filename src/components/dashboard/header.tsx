@@ -14,6 +14,7 @@ import { Bell, LogOut, Search, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { mockUser } from '@/lib/data';
+import Link from 'next/link';
 
 export function Header() {
   const user = mockUser; // In a real app, this would come from the session
@@ -45,17 +46,21 @@ export function Header() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <User className="me-2 h-4 w-4" />
-            <span>פרופיל</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="me-2 h-4 w-4" />
-            <span>הגדרות</span>
-          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings">
+                <User className="ms-2 h-4 w-4" />
+                <span>פרופיל</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings">
+                <Settings className="ms-2 h-4 w-4" />
+                <span>הגדרות</span>
+              </Link>
+            </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <LogOut className="me-2 h-4 w-4" />
+            <LogOut className="ms-2 h-4 w-4" />
             <span>התנתק</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

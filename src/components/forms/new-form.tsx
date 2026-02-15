@@ -88,6 +88,7 @@ export function NewForm() {
   const repertoire = form.watch('repertoire');
   const totalDuration = repertoire.reduce((total, item) => {
     const [minutes, seconds] = item.duration.split(':').map(Number);
+    if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
   }, 0);
   const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
@@ -168,7 +169,7 @@ export function NewForm() {
                                 <FormLabel>מלחין</FormLabel>
                                 <FormControl>
                                     <div className="relative">
-                                        <Input {...field} onFocus={() => setActiveSuggestionIndex(index)} />
+                                        <Input {...field} onFocus={() => setActiveSuggestionIndex(index)} onBlur={() => setTimeout(() => setActiveSuggestionIndex(null), 150)} />
                                         {activeSuggestionIndex === index && <CompositionSuggestions composer={field.value} onSelect={(s) => {
                                             form.setValue(`repertoire.${index}.composer`, s.composer);
                                             form.setValue(`repertoire.${index}.title`, s.title);

@@ -10,11 +10,13 @@ import { mockUser } from "@/lib/data";
 export default function SettingsPage() {
     const { toast } = useToast();
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = (e: React.FormEvent) => {
+        e.preventDefault();
         toast({ title: 'הפרופיל עודכן', description: 'הפרטים האישיים שלך נשמרו.' });
     }
 
-    const handleUpdatePassword = () => {
+    const handleUpdatePassword = (e: React.FormEvent) => {
+        e.preventDefault();
         toast({ title: 'הסיסמה עודכנה', description: 'הסיסמה החדשה שלך נשמרה.' });
     }
 
@@ -30,16 +32,18 @@ export default function SettingsPage() {
                     <CardTitle>פרופיל</CardTitle>
                     <CardDescription>עדכן את הפרטים האישיים שלך.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">שם מלא</Label>
-                        <Input id="name" defaultValue={mockUser.name} />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="email">כתובת אימייל</Label>
-                        <Input id="email" type="email" defaultValue={mockUser.email} />
-                    </div>
-                    <Button onClick={handleSaveProfile}>שמור שינויים</Button>
+                <CardContent>
+                    <form onSubmit={handleSaveProfile} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">שם מלא</Label>
+                            <Input id="name" defaultValue={mockUser.name} />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="email">כתובת אימייל</Label>
+                            <Input id="email" type="email" defaultValue={mockUser.email} />
+                        </div>
+                        <Button type="submit">שמור שינויים</Button>
+                    </form>
                 </CardContent>
             </Card>
 
@@ -48,16 +52,18 @@ export default function SettingsPage() {
                     <CardTitle>סיסמה</CardTitle>
                     <CardDescription>שנה את הסיסמה שלך.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="current-password">סיסמה נוכחית</Label>
-                        <Input id="current-password" type="password" />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="new-password">סיסמה חדשה</Label>
-                        <Input id="new-password" type="password" />
-                    </div>
-                    <Button onClick={handleUpdatePassword}>עדכן סיסמה</Button>
+                <CardContent>
+                     <form onSubmit={handleUpdatePassword} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="current-password">סיסמה נוכחית</Label>
+                            <Input id="current-password" type="password" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="new-password">סיסמה חדשה</Label>
+                            <Input id="new-password" type="password" />
+                        </div>
+                        <Button type="submit">עדכן סיסמה</Button>
+                    </form>
                 </CardContent>
             </Card>
 

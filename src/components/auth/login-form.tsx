@@ -59,7 +59,7 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-end" defaultValue={mockUser.email} />
+                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" defaultValue={mockUser.email} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -68,7 +68,7 @@ export function LoginForm() {
                     שכחת סיסמה?
                   </Link>
                 </div>
-                <Input id="password" type="password" required dir="ltr" className="text-end" />
+                <Input id="password" type="password" required dir="ltr" className="text-left" defaultValue="password" />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "מתחבר..." : "התחבר"}
@@ -79,7 +79,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">אימייל</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-end" defaultValue={mockUser.email} />
+                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" defaultValue={mockUser.email} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "שולח..." : "שלח קישור קסום"}
