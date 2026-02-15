@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { Icons } from "@/components/icons"
+import { mockUser } from "@/lib/data"
 
 export function LoginForm() {
   const { toast } = useToast()
@@ -58,7 +59,7 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right" />
+                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right" defaultValue={mockUser.email} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -78,7 +79,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">אימייל</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right"/>
+                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-right" defaultValue={mockUser.email} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "שולח..." : "שלח קישור קסום"}
