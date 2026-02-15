@@ -4,7 +4,7 @@ export const mockUser: User = {
   id: 'user-2',
   name: 'אבי כהן',
   email: 'avi@example.com',
-  role: 'teacher',
+  role: 'site_admin',
   conservatoriumId: 'cons-1',
   avatarUrl: 'https://i.pravatar.cc/150?u=avi',
 };
