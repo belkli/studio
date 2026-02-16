@@ -44,6 +44,14 @@ export function RegisterForm() {
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            firstName: "",
+            lastName: "",
+            email: "",
+            idNumber: "",
+            password: "",
+            conservatorium: "",
+            instrument: "",
+            school: "",
             studyYears: [1],
         },
     });
