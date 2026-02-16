@@ -23,21 +23,21 @@ export function FormsList({ statusFilter }: { statusFilter?: FormStatus[] }) {
     }
 
     return (
-        <Table>
+        <Table className="table-fixed w-full">
             <TableHeader>
                 <TableRow>
-                    <TableHead>שם התלמיד/ה</TableHead>
-                    <TableHead>סוג הטופס</TableHead>
-                    <TableHead>סטטוס</TableHead>
-                    <TableHead>תאריך הגשה</TableHead>
-                    <TableHead><span className="sr-only">פעולות</span></TableHead>
+                    <TableHead className="w-[25%]">שם התלמיד/ה</TableHead>
+                    <TableHead className="w-[25%]">סוג הטופס</TableHead>
+                    <TableHead className="w-[15%]">סטטוס</TableHead>
+                    <TableHead className="w-[20%]">תאריך הגשה</TableHead>
+                    <TableHead className="w-[15%]"><span className="sr-only">פעולות</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {forms.map((form) => (
                     <TableRow key={form.id}>
-                        <TableCell className="font-medium">{form.studentName}</TableCell>
-                        <TableCell>{form.formType}</TableCell>
+                        <TableCell className="font-medium truncate">{form.studentName}</TableCell>
+                        <TableCell className="truncate">{form.formType}{form.grade && ` - כיתה ${form.grade}`}</TableCell>
                         <TableCell>
                             <Badge variant="outline" className={statusColors[form.status]}>{form.status}</Badge>
                         </TableCell>
