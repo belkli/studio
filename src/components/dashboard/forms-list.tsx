@@ -23,14 +23,14 @@ export function FormsList({ statusFilter }: { statusFilter?: FormStatus[] }) {
     }
 
     return (
-        <Table className="table-fixed w-full">
+        <Table className="w-full">
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[25%]">שם התלמיד/ה</TableHead>
-                    <TableHead className="w-[25%]">סוג הטופס</TableHead>
-                    <TableHead className="w-[15%]">סטטוס</TableHead>
-                    <TableHead className="w-[20%]">תאריך הגשה</TableHead>
-                    <TableHead className="w-[15%]"><span className="sr-only">פעולות</span></TableHead>
+                    <TableHead>שם התלמיד/ה</TableHead>
+                    <TableHead>סוג הטופס</TableHead>
+                    <TableHead>סטטוס</TableHead>
+                    <TableHead>תאריך הגשה</TableHead>
+                    <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
