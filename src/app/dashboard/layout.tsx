@@ -19,9 +19,9 @@ export default function DashboardLayout({
         </Sidebar>
         <SidebarInset>
           <Header />
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-            <div className="container mx-auto w-full">{children}</div>
-          </main>
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto w-full">{children}</div>
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

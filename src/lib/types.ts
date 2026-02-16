@@ -6,8 +6,22 @@ export type User = {
   email: string;
   role: UserRole;
   conservatoriumId: string;
+  conservatoriumName: string;
   instrument?: string;
   avatarUrl?: string;
+  // Detailed properties for form pre-filling
+  idNumber?: string;
+  schoolName?: string;
+  schoolSymbol?: string;
+  birthDate?: string;
+  gender?: 'זכר' | 'נקבה';
+  city?: string;
+  phone?: string;
+  students?: string[]; // For teachers/admins to list their students by ID
+  grade?: 'י' | 'יא' | 'יב';
+  yearsOfStudy?: number;
+  teacherName?: string;
+  yearsWithTeacher?: number;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';

@@ -8,7 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockUser, instruments, conservatoriums, schools } from '@/lib/data';
+import { mockUser, mockUsers, instruments, schools } from '@/lib/data';
+import type { User } from '@/lib/types';
 import { PlusCircle, Save, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { getCompositionSuggestions } from '@/app/actions';
@@ -102,17 +103,58 @@ function CompositionSuggestions({ composer, onSelect }: { composer: string; onSe
 
 export function NewForm() {
   const { toast } = useToast();
+  const [user, setUser] = useState(mockUser); // The logged-in user
+  const [selectedStudent, setSelectedStudent] = useState<User | null>(null);
+  const [studentList, setStudentList] = useState<User[]>([]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       formType: 'רסיטל בגרות',
       repertoire: [{ composer: '', title: '', genre: 'קלאסי', duration: '00:00' }],
-      studentName: mockUser.name,
-      email: mockUser.email,
-      instrument: mockUser.instrument,
-      academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`, // Auto-calculate year
+      academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
     },
   });
+
+  // Effect to set initial state based on user role
+  useEffect(() => {
+    if (user.role === 'student') {
+        setSelectedStudent(user);
+    } else if (user.role === 'teacher' || user.role === 'conservatorium_admin') {
+        const studentsOfUser = mockUsers.filter(u => user.students?.includes(u.id));
+        setStudentList(studentsOfUser);
+    } else if (user.role === 'site_admin') {
+        const allStudents = mockUsers.filter(u => u.role === 'student');
+        setStudentList(allStudents);
+    }
+
+    form.setValue('conservatoriumName', user.conservatoriumName);
+
+  }, [user, form]);
+  
+  // Effect to pre-fill form when a student is selected
+  useEffect(() => {
+    if (selectedStudent) {
+        form.reset({
+            ...form.getValues(),
+            studentName: selectedStudent.name || '',
+            idNumber: selectedStudent.idNumber || '',
+            birthDate: selectedStudent.birthDate || '',
+            gender: selectedStudent.gender || '',
+            city: selectedStudent.city || '',
+            phone: selectedStudent.phone || '',
+            email: selectedStudent.email || '',
+            schoolName: selectedStudent.schoolName || '',
+            instrument: selectedStudent.instrument || '',
+            yearsOfStudy: selectedStudent.yearsOfStudy || 0,
+            teacherName: selectedStudent.teacherName || '',
+            yearsWithTeacher: selectedStudent.yearsWithTeacher || 0,
+            grade: selectedStudent.grade || 'י',
+            conservatoriumName: selectedStudent.conservatoriumName || user.conservatoriumName,
+        });
+    }
+  }, [selectedStudent, form, user.conservatoriumName]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -143,6 +185,14 @@ export function NewForm() {
     });
   }
 
+  const handleStudentSelect = (studentId: string) => {
+      const student = mockUsers.find(u => u.id === studentId);
+      setSelectedStudent(student || null);
+  }
+  
+  const canEditStudentDetails = user.role !== 'student';
+  const areDetailsLocked = !!selectedStudent;
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -152,11 +202,28 @@ export function NewForm() {
             <CardTitle>טופס מועמד/ת לקראת בגרות במוזיקה - רסיטל</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="grid md:grid-cols-4 gap-4">
-                <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר קונסרבטוריון" /></SelectTrigger></FormControl> <SelectContent> {conservatoriums.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+            {canEditStudentDetails && (
+                <div className="max-w-sm">
+                    <FormItem>
+                        <FormLabel>בחר תלמיד/ה</FormLabel>
+                        <Select onValueChange={handleStudentSelect}>
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="בחר תלמיד/ה להגשת טופס" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {studentList.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                    </FormItem>
+                </div>
+            )}
+             <div className="grid md:grid-cols-4 gap-4 pt-4">
+                <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="formType" render={({ field }) => ( <FormItem><FormLabel>סוג הטופס</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="רסיטל בגרות">רסיטל בגרות</SelectItem><SelectItem value="מבחן שלב">מבחן שלב</SelectItem><SelectItem value="קונצרט כיתתי">קונצרט כיתתי</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
                 <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                <FormField name="grade" render={({ field }) => ( <FormItem><FormLabel>כיתה</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger></FormControl><SelectContent><SelectItem value="י">י'</SelectItem><SelectItem value="יא">י"א</SelectItem><SelectItem value="יב">י"ב</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
+                <FormField name="grade" render={({ field }) => ( <FormItem><FormLabel>כיתה</FormLabel><Select onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}><FormControl><SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger></FormControl><SelectContent><SelectItem value="י">י'</SelectItem><SelectItem value="יא">י"א</SelectItem><SelectItem value="יב">י"ב</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
              </div>
           </CardContent>
         </Card>
@@ -166,13 +233,13 @@ export function NewForm() {
                 <CardTitle>1. פרטים אישיים למועמד/ת</CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-4 gap-4">
-                <FormField name="studentName" render={({ field }) => ( <FormItem><FormLabel>שם מלא</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="idNumber" render={({ field }) => ( <FormItem><FormLabel>מס' תעודת זהות</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="birthDate" render={({ field }) => ( <FormItem><FormLabel>תאריך לידה</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="gender" render={({ field }) => ( <FormItem><FormLabel>מין</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="בחר מין"/></SelectTrigger></FormControl><SelectContent><SelectItem value="זכר">זכר</SelectItem><SelectItem value="נקבה">נקבה</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
-                <FormField name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="studentName" render={({ field }) => ( <FormItem><FormLabel>שם מלא</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="idNumber" render={({ field }) => ( <FormItem><FormLabel>מס' תעודת זהות</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="birthDate" render={({ field }) => ( <FormItem><FormLabel>תאריך לידה</FormLabel><FormControl><Input type="date" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="gender" render={({ field }) => ( <FormItem><FormLabel>מין</FormLabel><Select onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}><FormControl><SelectTrigger><SelectValue placeholder="בחר מין"/></SelectTrigger></FormControl><SelectContent><SelectItem value="זכר">זכר</SelectItem><SelectItem value="נקבה">נקבה</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
+                <FormField name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
         
@@ -181,10 +248,10 @@ export function NewForm() {
                 <CardTitle>2. פרטי בית ספר תיכון למועמד/ת</CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
-                <FormField name="schoolName" render={({ field }) => ( <FormItem> <FormLabel>בית ספר</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
-                 <FormField name="hasMusicMajor" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם קיימת מגמת מוזיקה בביה"ס?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
-                 <FormField name="isMajorParticipant" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם המועמד/ת משתתף/ת במגמה זו?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
-                 <FormField name="plansTheoryExam" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>מתוכנן/ת לבחינת בגרות עיונית במוזיקה?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="schoolName" render={({ field }) => ( <FormItem> <FormLabel>בית ספר</FormLabel> <Select onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                 <FormField name="hasMusicMajor" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם קיימת מגמת מוזיקה בביה"ס?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
+                 <FormField name="isMajorParticipant" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם המועמד/ת משתתף/ת במגמה זו?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
+                 <FormField name="plansTheoryExam" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>מתוכנן/ת לבחינת בגרות עיונית במוזיקה?</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex space-x-4 space-x-reverse pt-2"><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center space-x-2 space-x-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
 
@@ -195,13 +262,13 @@ export function NewForm() {
              <CardContent className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                     <h3 className="font-medium text-muted-foreground">פרטי לימוד נגינה / שירה</h3>
-                    <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה / שירה</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
-                    <FormField name="yearsOfStudy" render={({ field }) => ( <FormItem><FormLabel>סך שנות לימוד בכלי הנגינה</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )} />
+                    <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה / שירה</FormLabel> <Select onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                    <FormField name="yearsOfStudy" render={({ field }) => ( <FormItem><FormLabel>סך שנות לימוד בכלי הנגינה</FormLabel><FormControl><Input type="number" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 </div>
                  <div className="space-y-4">
                     <h3 className="font-medium text-muted-foreground">פרטי המורה</h3>
-                    <FormField name="teacherName" render={({ field }) => ( <FormItem><FormLabel>שם פרטי ומשפחה</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                    <FormField name="yearsWithTeacher" render={({ field }) => ( <FormItem><FormLabel>סך שנות לימוד עם המורה הנוכחי</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )} />
+                    <FormField name="teacherName" render={({ field }) => ( <FormItem><FormLabel>שם פרטי ומשפחה</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                    <FormField name="yearsWithTeacher" render={({ field }) => ( <FormItem><FormLabel>סך שנות לימוד עם המורה הנוכחי</FormLabel><FormControl><Input type="number" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 </div>
              </CardContent>
         </Card>
