@@ -15,120 +15,130 @@ export const schools = [
   { symbol: '87654321', name: 'תיכון הראשונים, הרצליה' },
   { symbol: '11223344', name: 'בית ספר לאמנויות, ירושלים' },
   { symbol: '22334455', name: 'תיכון אלון, רמת השרון' },
+  { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
-const student1: User = {
-  id: 'user-1',
-  name: 'משה לוי',
-  email: 'moshe@example.com',
+// --- Mock Users ---
+
+// 1. Student User
+const studentUser: User = {
+  id: 'student-user-1',
+  name: 'אריאל לוי',
+  email: 'student@example.com',
   role: 'student',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   instrument: 'פסנתר',
-  avatarUrl: 'https://i.pravatar.cc/150?u=moshe',
-  idNumber: '123456789',
+  avatarUrl: 'https://i.pravatar.cc/150?u=student',
+  idNumber: '111111111',
   schoolName: 'תיכון הדרים, הוד השרון',
   schoolSymbol: '44570001',
-  birthDate: '2006-01-15',
+  birthDate: '2006-05-10',
   city: 'הוד השרון',
   gender: 'זכר',
-  phone: '050-1234567',
+  phone: '050-1111111',
   grade: 'יב',
   yearsOfStudy: 10,
-  teacherName: 'אבי כהן',
+  teacherName: 'מרים כהן',
   yearsWithTeacher: 3,
 };
 
-const student2: User = {
-  id: 'user-5',
-  name: 'שרה כהן',
-  email: 'sara@example.com',
+// Another student for the teacher
+const studentUser2: User = {
+  id: 'student-user-2',
+  name: 'תמר ישראלי',
+  email: 'student2@example.com',
   role: 'student',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   instrument: 'כינור',
-  avatarUrl: 'https://i.pravatar.cc/150?u=sara',
-  idNumber: '987654321',
+  avatarUrl: 'https://i.pravatar.cc/150?u=student2',
+  idNumber: '222222222',
   schoolName: 'תיכון הדרים, הוד השרון',
   schoolSymbol: '44570001',
-  birthDate: '2007-03-20',
-  city: 'הוד השרון',
+  birthDate: '2007-02-15',
+  city: 'כפר סבא',
   gender: 'נקבה',
-  phone: '052-7654321',
+  phone: '052-2222222',
   grade: 'יא',
   yearsOfStudy: 8,
-  teacherName: 'אבי כהן',
+  teacherName: 'מרים כהן',
   yearsWithTeacher: 2,
 };
 
-const student3: User = {
-  id: 'user-6',
-  name: 'דוד ביטון',
-  email: 'david@example.com',
-  role: 'student',
-  conservatoriumId: 'cons-3',
-  conservatoriumName: 'קונסרבטוריון גבעתיים',
-  instrument: 'גיטרה',
-  avatarUrl: 'https://i.pravatar.cc/150?u=david',
-  idNumber: '112233445',
-  schoolName: 'תיכון קלעי, גבעתיים',
-  schoolSymbol: '99887766',
-  birthDate: '2006-08-10',
-  city: 'גבעתיים',
-  gender: 'זכר',
-  phone: '054-1122334',
-  grade: 'יב',
-  yearsOfStudy: 6,
-  teacherName: 'גלית שפירא',
-  yearsWithTeacher: 4,
+// A student from another conservatorium for site admin testing
+const otherStudent: User = {
+    id: 'other-student-1',
+    name: 'יונתן כץ',
+    email: 'other.student@example.com',
+    role: 'student',
+    conservatoriumId: 'cons-3',
+    conservatoriumName: 'קונסרבטוריון גבעתיים',
+    instrument: 'גיטרה',
+    avatarUrl: 'https://i.pravatar.cc/150?u=other-student',
+    idNumber: '333333333',
+    schoolName: 'תיכון קלעי, גבעתיים',
+    schoolSymbol: '99887766',
+    birthDate: '2006-08-10',
+    city: 'גבעתיים',
+    gender: 'זכר',
+    phone: '054-3333333',
+    grade: 'יב',
+    yearsOfStudy: 6,
+    teacherName: 'גלית שפירא',
+    yearsWithTeacher: 4,
 };
 
 
-const teacher1: User = {
-  id: 'user-2',
-  name: 'אבי כהן',
-  email: 'avi@example.com',
+// 2. Teacher User
+const teacherUser: User = {
+  id: 'teacher-user-1',
+  name: 'מרים כהן',
+  email: 'teacher@example.com',
   role: 'teacher',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
-  avatarUrl: 'https://i.pravatar.cc/150?u=avi',
-  students: [student1.id, student2.id]
+  avatarUrl: 'https://i.pravatar.cc/150?u=teacher',
+  students: [studentUser.id, studentUser2.id]
 };
 
-const conservatoriumAdmin: User = {
-  id: 'user-3',
-  name: 'יעל ישראלי',
-  email: 'yael@example.com',
+
+// 3. Conservatorium Admin User
+const conservatoriumAdminUser: User = {
+  id: 'conservatorium-admin-user-1',
+  name: 'משה שפירא',
+  email: 'conservatorium.admin@example.com',
   role: 'conservatorium_admin',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
-  avatarUrl: 'https://i.pravatar.cc/150?u=yael',
-  students: [student1.id, student2.id] // An admin can also see all students
+  avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
+  students: [studentUser.id, studentUser2.id] // An admin can see all students in their conservatorium
 };
 
-const siteAdmin: User = {
-  id: 'user-4',
-  name: 'דנה שחר',
-  email: 'dana@system.com',
+// 4. Site Admin User
+const siteAdminUser: User = {
+  id: 'site-admin-user-1',
+  name: 'דנה המנהלת',
+  email: 'site.admin@example.com',
   role: 'site_admin',
   conservatoriumId: 'global',
   conservatoriumName: 'מנהל מערכת',
-  avatarUrl: 'https://i.pravatar.cc/150?u=dana',
-  instrument: 'ניהול',
+  avatarUrl: 'https://i.pravatar.cc/150?u=site-admin',
 };
 
 // The full list of users in the system
 export const mockUsers: User[] = [
-  student1,
-  student2,
-  student3,
-  teacher1,
-  conservatoriumAdmin,
-  siteAdmin
+  studentUser,
+  studentUser2,
+  teacherUser,
+  conservatoriumAdminUser,
+  siteAdminUser,
+  otherStudent
 ];
 
 // The currently "logged in" user. Change this to test different roles.
-export const mockUser: User = teacher1;
+// To test, change this to one of: studentUser, teacherUser, conservatoriumAdminUser, siteAdminUser
+export const mockUser: User = siteAdminUser;
 
 
 export const mockFormSubmissions: FormSubmission[] = [
@@ -137,8 +147,8 @@ export const mockFormSubmissions: FormSubmission[] = [
     formType: 'רסיטל בגרות',
     academicYear: 'תשפ"ד',
     grade: 'יב',
-    studentId: student1.id,
-    studentName: student1.name,
+    studentId: studentUser.id,
+    studentName: studentUser.name,
     status: 'ממתין לאישור מורה',
     submissionDate: '2024-05-20',
     totalDuration: '12:30',
@@ -147,49 +157,49 @@ export const mockFormSubmissions: FormSubmission[] = [
       { composer: 'שופן', title: 'נוקטורן אופ. 9 מס\' 2', duration: '05:00', genre: 'קלאסי' },
       { composer: 'בטהובן', title: 'לאליזה', duration: '05:00', genre: 'קלאסי' },
     ],
-    conservatoriumName: student1.conservatoriumName,
+    conservatoriumName: studentUser.conservatoriumName,
     applicantDetails: {
-      birthDate: student1.birthDate,
-      city: student1.city,
-      gender: student1.gender,
-      phone: student1.phone
+      birthDate: studentUser.birthDate,
+      city: studentUser.city,
+      gender: studentUser.gender,
+      phone: studentUser.phone
     },
     schoolDetails: {
-      schoolName: student1.schoolName,
+      schoolName: studentUser.schoolName,
       hasMusicMajor: true,
       isMajorParticipant: true,
       plansTheoryExam: true
     },
     teacherDetails: {
-      name: student1.teacherName,
-      yearsWithTeacher: student1.yearsWithTeacher,
+      name: studentUser.teacherName,
+      yearsWithTeacher: studentUser.yearsWithTeacher,
     }
   },
   {
     id: 'form-102',
     formType: 'קונצרט כיתתי',
-    studentId: student2.id,
-    studentName: student2.name,
+    studentId: studentUser2.id,
+    studentName: studentUser2.name,
     status: 'מאושר',
     submissionDate: '2024-05-18',
     totalDuration: '08:15',
     repertoire: [
       { composer: 'מוצרט', title: 'סונטה ק. 545', duration: '08:15', genre: 'קלאסי' },
     ],
-    conservatoriumName: student2.conservatoriumName,
+    conservatoriumName: studentUser2.conservatoriumName,
   },
   {
     id: 'form-103',
     formType: 'מבחן שלב',
-    studentId: student3.id,
-    studentName: student3.name,
+    studentId: otherStudent.id,
+    studentName: otherStudent.name,
     status: 'טיוטה',
     submissionDate: '2024-05-21',
     totalDuration: '04:00',
     repertoire: [
        { composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' },
     ],
-    conservatoriumName: student3.conservatoriumName,
+    conservatoriumName: otherStudent.conservatoriumName,
   },
   {
     id: 'form-104',
