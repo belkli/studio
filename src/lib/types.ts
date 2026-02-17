@@ -49,10 +49,13 @@ export type Conservatorium = {
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';
 
 export type Composition = {
+  id: string;
   composer: string;
   title: string;
   duration: string; // MM:SS
   genre: string;
+  approved?: boolean;
+  source?: 'seed' | 'user_submitted' | 'api';
 };
 
 // New detailed types based on the image

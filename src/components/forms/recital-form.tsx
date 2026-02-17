@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -9,8 +9,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { schools, instruments, compositions as compositionsDB } from '@/lib/data';
-import type { User } from '@/lib/types';
+import { schools, instruments, compositions as compositionsDB, genres } from '@/lib/data';
+import type { User, Composition } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
@@ -19,12 +19,15 @@ import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { Combobox } from '../ui/combobox';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 const compositionSchema = z.object({
+  id: z.string().optional(),
   composer: z.string().min(1, 'חובה להזין מלחין'),
   title: z.string().min(1, 'חובה להזין שם יצירה'),
   genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
+  approved: z.boolean().optional(),
 });
 
 const MIN_REPERTOIRE_ITEMS = 3;
@@ -79,9 +82,16 @@ const durationGuidelines = {
   'יב': { min: 25, max: 35, label: "25-35 דקות" },
 };
 
+const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true };
+
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
+    const { toast } = useToast();
     const firstInstrument = student.instruments?.[0];
+    
+    const [userCompositions, setUserCompositions] = useState<Composition[]>([]);
+    const [customEntryOpen, setCustomEntryOpen] = useState(false);
+    const [customEntryData, setCustomEntryData] = useState({ composer: '', title: '', genre: '', duration: '00:00' });
     
     const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -105,7 +115,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
       yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
       teacherName: firstInstrument?.teacherName || '',
       yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
-      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ composer: '', title: '', genre: '', duration: '00:00' })),
+      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
       managerNotes: '',
     },
   });
@@ -115,7 +125,6 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     name: 'repertoire',
   });
 
-  const { toast } = useToast();
   const { isDirty } = form.formState;
   const [saveState, setSaveState] = React.useState<SaveState>('idle');
   const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
@@ -124,18 +133,31 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     setSaveState('saving');
     // In a real app, you would make an API call here.
     setTimeout(() => {
-        // Simulate success
         setSaveState('success');
         setLastSaved(new Date());
         toast({ title: "טיוטה נשמרה!" });
-
-        // Reset the dirty state of the form after saving
         form.reset(form.getValues());
-
-        // Briefly show success message, then return to idle to show last saved time
         setTimeout(() => setSaveState('idle'), 3000);
     }, 1500);
   };
+  
+  const handleCustomEntrySave = () => {
+    if (!customEntryData.composer || !customEntryData.title || !customEntryData.genre || !customEntryData.duration.match(/^\d{2}:\d{2}$/)) {
+        toast({ variant: "destructive", title: "שדות חסרים", description: "יש למלא את כל פרטי היצירה." });
+        return;
+    }
+    const newComposition: Composition = {
+        id: `user-${Date.now()}`,
+        ...customEntryData,
+        approved: false,
+        source: 'user_submitted',
+    };
+    setUserCompositions(prev => [...prev, newComposition]);
+    toast({ title: "יצירה חדשה נוספה", description: `"${newComposition.title}" נוספה וממתינה לאישור מנהל.` });
+    setCustomEntryOpen(false);
+    setCustomEntryData({ composer: '', title: '', genre: '', duration: '00:00' });
+  };
+
 
   const repertoire = form.watch('repertoire');
   const grade = form.watch('grade');
@@ -152,11 +174,13 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const totalDurationInMinutes = totalDuration / 60;
   const isDurationOutsideGuidelines = guideline && (totalDurationInMinutes < guideline.min || totalDurationInMinutes > guideline.max) && totalDuration > 0;
 
-  const areDetailsLocked = true; // Always locked once a student is selected
+  const areDetailsLocked = true;
+
+  const allCompositions = useMemo(() => [...compositionsDB, ...userCompositions], [userCompositions]);
 
   const composerOptions = useMemo(() => 
-    Array.from(new Set(compositionsDB.map(c => c.composer))).map(c => ({ value: c, label: c }))
-  , []);
+    Array.from(new Set(allCompositions.map(c => c.composer))).map(c => ({ value: c, label: c }))
+  , [allCompositions]);
 
   return (
     <FormProvider {...form}>
@@ -236,10 +260,11 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                 {fields.map((field, index) => {
                     const selectedComposer = repertoire[index]?.composer;
                     const titleOptions = selectedComposer
-                        ? compositionsDB
+                        ? allCompositions
                             .filter(c => c.composer === selectedComposer)
                             .map(c => ({ value: c.id, label: c.title }))
                         : [];
+                    const currentRepertoireItem = repertoire[index];
 
                     return (
                         <div key={field.id} className="border rounded-lg relative">
@@ -280,16 +305,23 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                                     name={`repertoire.${index}.title`}
                                     render={({ field: titleField }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>שם היצירה</FormLabel>
+                                            <FormLabel>
+                                                שם היצירה
+                                                {currentRepertoireItem && currentRepertoireItem.approved === false && (
+                                                    <span className="text-xs text-yellow-600 ms-2">(ממתין לאישור)</span>
+                                                )}
+                                            </FormLabel>
                                             <Combobox
                                                 options={titleOptions}
-                                                selectedValue={compositionsDB.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
+                                                selectedValue={allCompositions.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
                                                 onSelectedValueChange={(id) => {
-                                                    const composition = compositionsDB.find(c => c.id === id);
+                                                    const composition = allCompositions.find(c => c.id === id);
                                                     if (composition) {
+                                                        form.setValue(`repertoire.${index}.id`, composition.id);
                                                         form.setValue(`repertoire.${index}.title`, composition.title);
                                                         form.setValue(`repertoire.${index}.duration`, composition.duration);
                                                         form.setValue(`repertoire.${index}.genre`, composition.genre);
+                                                        form.setValue(`repertoire.${index}.approved`, composition.approved);
                                                     }
                                                 }}
                                                 placeholder="בחר יצירה..."
@@ -334,16 +366,65 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     );
                 })}
                 </div>
-                 <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => append({ composer: '', title: '', genre: '', duration: '00:00' })}
-                    disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
-                >
-                    <PlusCircle className="me-2 h-4 w-4" />
-                    הוסף יצירה
-                </Button>
+                <div className="flex items-center gap-4 mt-4">
+                     <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => append({ ...emptyComposition })}
+                        disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
+                    >
+                        <PlusCircle className="me-2 h-4 w-4" />
+                        הוסף יצירה
+                    </Button>
+                    <Dialog open={customEntryOpen} onOpenChange={setCustomEntryOpen}>
+                        <DialogTrigger asChild>
+                            <Button type="button" variant="secondary">הוסף יצירה מותאמת אישית</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>הוספת יצירה חדשה</DialogTitle>
+                                <DialogDescription>
+                                    היצירה תתווסף לספרייה ותמתין לאישור מנהל.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                    <Label>שם המלחין</Label>
+                                    <Input value={customEntryData.composer} onChange={(e) => setCustomEntryData(d => ({...d, composer: e.target.value}))} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>שם היצירה</Label>
+                                    <Input value={customEntryData.title} onChange={(e) => setCustomEntryData(d => ({...d, title: e.target.value}))} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>ז'אנר</Label>
+                                        <Select dir="rtl" onValueChange={(value) => setCustomEntryData(d => ({...d, genre: value}))}>
+                                            <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
+                                            <SelectContent>
+                                                {genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>זמן ביצוע</Label>
+                                        <Input 
+                                            dir="ltr" 
+                                            placeholder="MM:SS" 
+                                            maxLength={5}
+                                            value={customEntryData.duration} 
+                                            onChange={(e) => setCustomEntryData(d => ({...d, duration: e.target.value}))}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button type="button" variant="ghost" onClick={() => setCustomEntryOpen(false)}>ביטול</Button>
+                                <Button type="button" onClick={handleCustomEntrySave}>שמור יצירה</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 {fields.length >= MAX_REPERTOIRE_ITEMS && (
                     <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
                 )}

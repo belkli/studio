@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Composition } from './types';
 
 export const conservatoriums: Conservatorium[] = [
   { id: 'cons-1', name: 'קונסרבטוריון הוד השרון', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp1/200/200' },
@@ -37,6 +37,8 @@ export const priceMatrix: Record<string, Record<string, Record<number, number>>>
 };
 
 export const instruments = ['פסנתר', 'כינור', 'צ\'לו', 'גיטרה', 'חליל צד', 'קלרינט', 'סקסופון', 'תופים', 'שירה'];
+export const genres = ['קלאסי', 'ג\'אז', 'קל', 'ישראלי', 'פופ', 'רוק', 'עממי', 'בארוק', 'רומנטי', 'אימפרסיוניסטי', 'מודרני'];
+
 
 export const schools = [
   { symbol: '44570001', name: 'תיכון הדרים, הוד השרון' },
@@ -47,17 +49,17 @@ export const schools = [
   { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
-export const compositions = [
-  { id: 'comp1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30' },
-  { id: 'comp2', composer: 'יוהאן סבסטיאן באך', title: 'טוקטה ופוגה ברה מינור, רי"ב 565', genre: 'בארוק', duration: '09:00' },
-  { id: 'comp3', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '02:15' },
-  { id: 'comp4', composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', genre: 'קלאסי', duration: '15:00' },
-  { id: 'comp5', composer: 'לודוויג ואן בטהובן', title: 'לאליזה', genre: 'קלאסי', duration: '03:00' },
-  { id: 'comp6', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331 (רון-דו אלה טורקה)', genre: 'קלאסי', duration: '03:30' },
-  { id: 'comp7', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', genre: 'קלאסי', duration: '05:45' },
-  { id: 'comp8', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', genre: 'רומנטי', duration: '04:30' },
-  { id: 'comp9', composer: 'פרדריק שופן', title: 'אטיוד המהפכה, אופ. 10 מס\' 12', genre: 'רומנטי', duration: '02:45' },
-  { id: 'comp10', composer: 'קלוד דביסי', title: 'אור ירח (Clair de lune)', genre: 'אימפרסיוניסטי', duration: '05:00' },
+export const compositions: Composition[] = [
+  { id: 'comp1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30', approved: true, source: 'seed' },
+  { id: 'comp2', composer: 'יוהאן סבסטיאן באך', title: 'טוקטה ופוגה ברה מינור, רי"ב 565', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed' },
+  { id: 'comp3', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '02:15', approved: true, source: 'seed' },
+  { id: 'comp4', composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', genre: 'קלאסי', duration: '15:00', approved: true, source: 'seed' },
+  { id: 'comp5', composer: 'לודוויג ואן בטהובן', title: 'לאליזה', genre: 'קלאסי', duration: '03:00', approved: true, source: 'seed' },
+  { id: 'comp6', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331 (רון-דו אלה טורקה)', genre: 'קלאסי', duration: '03:30', approved: true, source: 'seed' },
+  { id: 'comp7', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', genre: 'קלאסי', duration: '05:45', approved: true, source: 'seed' },
+  { id: 'comp8', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', genre: 'רומנטי', duration: '04:30', approved: true, source: 'seed' },
+  { id: 'comp9', composer: 'פרדריק שופן', title: 'אטיוד המהפכה, אופ. 10 מס\' 12', genre: 'רומנטי', duration: '02:45', approved: true, source: 'seed' },
+  { id: 'comp10', composer: 'קלוד דביסי', title: 'אור ירח (Clair de lune)', genre: 'אימפרסיוניסטי', duration: '05:00', approved: true, source: 'seed' },
 ];
 
 // --- Mock Notifications ---
@@ -268,9 +270,9 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-20',
     totalDuration: '12:30',
     repertoire: [
-      { composer: 'באך', title: 'פרלוד בדו מז\'ור', duration: '02:30', genre: 'קלאסי' },
-      { composer: 'שופן', title: 'נוקטורן אופ. 9 מס\' 2', duration: '05:00', genre: 'קלאסי' },
-      { composer: 'בטהובן', title: 'לאליזה', duration: '05:00', genre: 'קלאסי' },
+      { id: 'comp-bach', composer: 'באך', title: 'פרלוד בדו מז\'ור', duration: '02:30', genre: 'קלאסי' },
+      { id: 'comp-chopin', composer: 'שופן', title: 'נוקטורן אופ. 9 מס\' 2', duration: '05:00', genre: 'קלאסי' },
+      { id: 'comp-beethoven', composer: 'בטהובן', title: 'לאליזה', duration: '05:00', genre: 'קלאסי' },
     ],
     conservatoriumName: studentUser.conservatoriumName,
     applicantDetails: {
@@ -299,7 +301,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-18',
     totalDuration: '08:15',
     repertoire: [
-      { composer: 'מוצרט', title: 'סונאטה ק. 545', duration: '08:15', genre: 'קלאסי' },
+      { id: 'comp-mozart', composer: 'מוצרט', title: 'סונאטה ק. 545', duration: '08:15', genre: 'קלאסי' },
     ],
     conservatoriumName: studentUser2.conservatoriumName,
     conservatoriumManagerName: conservatoriumAdminUser.name,
@@ -317,7 +319,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-21',
     totalDuration: '04:00',
     repertoire: [
-       { composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' },
+       { id: 'comp-clementi', composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' },
     ],
     conservatoriumName: otherStudent.conservatoriumName,
   },
@@ -333,7 +335,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-15',
     totalDuration: '09:00',
     repertoire: [
-       { composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },
+       { id: 'comp-haydn', composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },
     ],
      conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה',
   },
@@ -348,10 +350,10 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-23',
     totalDuration: '21:00',
     repertoire: [
-      { composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', duration: '02:15', genre: 'בארוק' },
-      { composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', duration: '05:45', genre: 'קלאסי' },
-      { composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' },
-      { composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', duration: '15:00', genre: 'קלאסי' }
+      { id: 'comp3', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', duration: '02:15', genre: 'בארוק' },
+      { id: 'comp7', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', duration: '05:45', genre: 'קלאסי' },
+      { id: 'comp8', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' },
+      { id: 'comp4', composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', duration: '15:00', genre: 'קלאסי' }
     ],
     conservatoriumName: studentUser2.conservatoriumName,
     teacherDetails: {
