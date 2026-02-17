@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockUser, mockUsers } from '@/lib/data';
@@ -103,48 +103,48 @@ export function NewForm() {
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-4">
                {canSelectFormType && (
-                 <Form.Field
+                 <FormField
                     control={formTypeForm.control}
                     name="formType"
                     render={({ field }) => (
-                      <Form.Item>
-                        <Form.Label>סוג טופס</Form.Label>
+                      <FormItem>
+                        <FormLabel>סוג טופס</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <Form.Control>
+                          <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="בחר את סוג הטופס..." />
                             </SelectTrigger>
-                          </Form.Control>
+                          </FormControl>
                           <SelectContent>
                             <SelectItem value="recital">רסיטל בגרות</SelectItem>
                             <SelectItem value="kenes">כנס / אירוע</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Form.Message />
-                      </Form.Item>
+                        <FormMessage />
+                      </FormItem>
                     )}
                   />
                )}
               
               {canSelectStudent && selectedFormType === 'recital' && (
-                 <Form.Field
+                 <FormField
                     control={formTypeForm.control}
                     name="studentId"
                     render={({ field }) => (
-                      <Form.Item>
-                        <Form.Label>בחר תלמיד/ה</Form.Label>
+                      <FormItem>
+                        <FormLabel>בחר תלמיד/ה</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <Form.Control>
+                            <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder="בחר תלמיד/ה להגשת טופס" />
                                 </SelectTrigger>
-                            </Form.Control>
+                            </FormControl>
                             <SelectContent>
                                 {studentList.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                             </SelectContent>
                         </Select>
-                        <Form.Message />
-                      </Form.Item>
+                        <FormMessage />
+                      </FormItem>
                     )}
                   />
               )}
