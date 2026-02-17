@@ -15,6 +15,7 @@ import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { conservatoriums, priceMatrix } from '@/lib/data';
+import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -270,23 +271,31 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
                 <CardTitle>5. חישוב עלות</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-                    <div className="flex justify-between">
-                        <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
-                        <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-muted-foreground">גודל הרכב:</span>
-                        <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)`: '-'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-muted-foreground">משך זמן:</span>
-                        <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between text-lg font-bold">
-                        <span>סה"כ לתשלום:</span>
-                        <span>{calculatedPrice} ₪</span>
+                <div className="space-y-4">
+                    <Notice variant="info">
+                        <NoticeTitle>כיצד העלות מחושבת?</NoticeTitle>
+                        <NoticeDescription>
+                            המחיר נקבע על פי שלושה גורמים: <strong>סיווג הקונסרבטוריון</strong> (שלב א', ב', או ג'), <strong>גודל ההרכב</strong> (קטן, בינוני, או גדול), ו<strong>משך זמן ההופעה</strong>.
+                        </NoticeDescription>
+                    </Notice>
+                    <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
+                        <div className="flex justify-between">
+                            <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
+                            <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-muted-foreground">גודל הרכב:</span>
+                            <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)`: '-'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-muted-foreground">משך זמן:</span>
+                            <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between text-lg font-bold">
+                            <span>סה"כ לתשלום:</span>
+                            <span>{calculatedPrice} ₪</span>
+                        </div>
                     </div>
                 </div>
             </CardContent>
