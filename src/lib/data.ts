@@ -1,4 +1,4 @@
-import type { User, FormSubmission, UserRole } from './types';
+import type { User, FormSubmission, UserRole, InstrumentInfo } from './types';
 
 export const conservatoriums = [
   { id: 'cons-1', name: 'קונסרבטוריון הוד השרון' },
@@ -32,7 +32,6 @@ const studentUser: User = {
   role: 'student',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
-  instrument: 'פסנתר',
   avatarUrl: 'https://i.pravatar.cc/150?u=student',
   idNumber: '111111111',
   schoolName: 'תיכון הדרים, הוד השרון',
@@ -42,9 +41,9 @@ const studentUser: User = {
   gender: 'זכר',
   phone: '050-1111111',
   grade: 'יב',
-  yearsOfStudy: 10,
-  teacherName: 'מרים כהן',
-  yearsWithTeacher: 3,
+  instruments: [
+    { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },
+  ],
 };
 
 // Another student for the teacher
@@ -55,7 +54,6 @@ const studentUser2: User = {
   role: 'student',
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
-  instrument: 'כינור',
   avatarUrl: 'https://i.pravatar.cc/150?u=student2',
   idNumber: '222222222',
   schoolName: 'תיכון הדרים, הוד השרון',
@@ -65,9 +63,10 @@ const studentUser2: User = {
   gender: 'נקבה',
   phone: '052-2222222',
   grade: 'יא',
-  yearsOfStudy: 8,
-  teacherName: 'מרים כהן',
-  yearsWithTeacher: 2,
+  instruments: [
+    { instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 },
+    { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },
+  ],
 };
 
 // A student from another conservatorium for site admin testing
@@ -78,7 +77,6 @@ const otherStudent: User = {
     role: 'student',
     conservatoriumId: 'cons-3',
     conservatoriumName: 'קונסרבטוריון גבעתיים',
-    instrument: 'גיטרה',
     avatarUrl: 'https://i.pravatar.cc/150?u=other-student',
     idNumber: '333333333',
     schoolName: 'תיכון קלעי, גבעתיים',
@@ -88,9 +86,9 @@ const otherStudent: User = {
     gender: 'זכר',
     phone: '054-3333333',
     grade: 'יב',
-    yearsOfStudy: 6,
-    teacherName: 'גלית שפירא',
-    yearsWithTeacher: 4,
+    instruments: [
+        { instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },
+    ],
 };
 
 
@@ -106,6 +104,28 @@ const teacherUser: User = {
   students: [studentUser.id, studentUser2.id]
 };
 
+const teacherUser2: User = {
+  id: 'teacher-user-2',
+  name: 'דוד המלך',
+  email: 'teacher2@example.com',
+  role: 'teacher',
+  conservatoriumId: 'cons-1',
+  conservatoriumName: 'קונסרבטוריון הוד השרון',
+  avatarUrl: 'https://i.pravatar.cc/150?u=teacher2',
+  students: [studentUser2.id]
+};
+
+const teacherUser3: User = {
+  id: 'teacher-user-3',
+  name: 'גלית שפירא',
+  email: 'teacher3@example.com',
+  role: 'teacher',
+  conservatoriumId: 'cons-3',
+  conservatoriumName: 'קונסרבטוריון גבעתיים',
+  avatarUrl: 'https://i.pravatar.cc/150?u=teacher3',
+  students: [otherStudent.id]
+};
+
 
 // 3. Conservatorium Admin User
 const conservatoriumAdminUser: User = {
@@ -117,6 +137,17 @@ const conservatoriumAdminUser: User = {
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
   students: [studentUser.id, studentUser2.id] // An admin can see all students in their conservatorium
+};
+
+const conservatoriumAdminUser2: User = {
+  id: 'conservatorium-admin-user-2',
+  name: 'רוני מאיר',
+  email: 'conservatorium.admin2@example.com',
+  role: 'conservatorium_admin',
+  conservatoriumId: 'cons-3',
+  conservatoriumName: 'קונסרבטוריון גבעתיים',
+  avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin2',
+  students: [otherStudent.id]
 };
 
 // 4. Site Admin User
@@ -135,7 +166,10 @@ export const mockUsers: User[] = [
   studentUser,
   studentUser2,
   teacherUser,
+  teacherUser2,
+  teacherUser3,
   conservatoriumAdminUser,
+  conservatoriumAdminUser2,
   siteAdminUser,
   otherStudent
 ];
@@ -175,8 +209,8 @@ export const mockFormSubmissions: FormSubmission[] = [
       plansTheoryExam: true
     },
     teacherDetails: {
-      name: studentUser.teacherName,
-      yearsWithTeacher: studentUser.yearsWithTeacher,
+      name: studentUser.instruments?.[0]?.teacherName,
+      yearsWithTeacher: studentUser.instruments?.[0]?.yearsOfStudy,
     }
   },
   {

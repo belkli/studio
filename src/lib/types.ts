@@ -1,5 +1,11 @@
 export type UserRole = 'student' | 'teacher' | 'conservatorium_admin' | 'site_admin';
 
+export type InstrumentInfo = {
+  instrument: string;
+  teacherName: string;
+  yearsOfStudy: number;
+};
+
 export type User = {
   id: string;
   name: string;
@@ -7,7 +13,7 @@ export type User = {
   role: UserRole;
   conservatoriumId: string;
   conservatoriumName: string;
-  instrument?: string;
+  instruments?: InstrumentInfo[];
   avatarUrl?: string;
   // Detailed properties for form pre-filling
   idNumber?: string;
@@ -19,9 +25,6 @@ export type User = {
   phone?: string;
   students?: string[]; // For teachers/admins to list their students by ID
   grade?: 'י' | 'יא' | 'יב';
-  yearsOfStudy?: number;
-  teacherName?: string;
-  yearsWithTeacher?: number;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';

@@ -81,7 +81,22 @@ export function RegisterForm() {
     };
     
     const onSubmit = (data: FormData) => {
-        console.log(data);
+        // Format the data to match the new User type
+        const instrumentInfo = data.instrument ? [{
+            instrument: data.instrument,
+            teacherName: '', // Teacher is not selected during registration
+            yearsOfStudy: data.studyYears?.[0] || 0,
+        }] : undefined;
+
+        const submittedData = {
+            ...data,
+            instruments: instrumentInfo,
+        };
+        // Remove old fields from submitted data to avoid confusion
+        delete (submittedData as any).instrument;
+        delete (submittedData as any).studyYears;
+
+        console.log(submittedData);
         setIsSubmitted(true);
         toast({
             title: "ההרשמה נשלחה בהצלחה!",
@@ -150,7 +165,7 @@ export function RegisterForm() {
                                             <FormItem className="space-y-3">
                                                 <FormLabel>אני...</FormLabel>
                                                 <FormControl>
-                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col items-end space-y-1">
+                                                    <RadioGroup dir="rtl" onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col items-end space-y-1">
                                                         <FormItem className="flex items-center space-x-3 space-x-reverse">
                                                             <FormControl><RadioGroupItem value="student" /></FormControl>
                                                             <FormLabel className="font-normal">תלמיד/ה</FormLabel>
@@ -185,7 +200,7 @@ export function RegisterForm() {
                                                 <FormField name="instrument" render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>כלי נגינה</FormLabel>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
                                                             <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי נגינה" /></SelectTrigger></FormControl>
                                                             <SelectContent>
                                                                 {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
