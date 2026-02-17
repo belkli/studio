@@ -136,4 +136,9 @@ export type FormSubmission = {
   managerNotes?: string;
   calculatedPrice?: number;
   paymentStatus?: 'pending' | 'paid' | 'waived';
+  
+  // For signature feature
+  signatureUrl?: string;
+  signedBy?: string;
+  signedAt?: string;
 };

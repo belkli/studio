@@ -8,12 +8,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown, ArrowLeft } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { StatusBadge } from '@/components/ui/status-badge';
-
+import { useRef, useState } from 'react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import SignatureCanvas from 'react-signature-canvas';
 
 export default function FormDetailsPage() {
     const params = useParams();
@@ -22,6 +24,9 @@ export default function FormDetailsPage() {
     const { user } = useAuth();
     const form = mockFormSubmissions.find(f => f.id === formId);
     
+    const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
+    const sigPadRef = useRef<SignatureCanvas>(null);
+
     if (!form) {
         notFound();
     }
@@ -31,16 +36,107 @@ export default function FormDetailsPage() {
     }
     
     const formUser = mockUsers.find(u => u.id === form.studentId);
+    
+    const isTeacherApproval = user.role === 'teacher' && form.status === 'ממתין לאישור מורה';
+    const isAdminFinalApproval = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל';
 
-    const canApprove = user.role === 'teacher' || user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
-    const handleApprove = () => {
-        toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר בהצלחה.` });
+    const handleTeacherApprove = () => {
+        toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
     }
     
-    const handleReject = () => {
+    const handleTeacherReject = () => {
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
+    
+    const handleAdminReject = () => {
+        toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
+    }
+
+    const handleConfirmApproval = () => {
+        if (sigPadRef.current?.isEmpty()) {
+            toast({
+                variant: 'destructive',
+                title: 'חתימה חסרה',
+                description: 'יש לחתום על הטופס כדי לאשר אותו.',
+            });
+            return;
+        }
+        const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
+        console.log('Signature Data URL:', signatureDataUrl); // Simulate saving the signature
+        
+        toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
+        setSignatureDialogOpen(false);
+    }
+    
+    const clearSignature = () => {
+        sigPadRef.current?.clear();
+    }
+
+    const renderApprovalHistory = () => {
+        const history = [
+            <li key="submission" className="flex items-start gap-3">
+                <div className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center"><Send size={14} /></div>
+                <div>
+                    <p>הטופס הוגש על ידי {form.studentName}</p>
+                    <time className="text-xs">{form.submissionDate}</time>
+                </div>
+            </li>
+        ];
+
+        if (form.status === 'ממתין לאישור מורה') {
+            history.push(
+                <li key="teacher-pending" className="flex items-start gap-3">
+                    <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
+                    <div>
+                        <p>ממתין לאישור של {form.teacherDetails?.name || 'המורה'} (מורה)</p>
+                    </div>
+                </li>
+            );
+        } else if (['ממתין לאישור מנהל', 'מאושר', 'נדחה'].includes(form.status)) {
+             history.push(
+                <li key="teacher-approved" className="flex items-start gap-3">
+                    <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
+                    <div>
+                        <p>אושר על ידי {form.teacherDetails?.name || 'המורה'}</p>
+                    </div>
+                </li>
+            );
+        }
+
+        if (form.status === 'ממתין לאישור מנהל') {
+            history.push(
+                <li key="admin-pending" className="flex items-start gap-3">
+                    <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
+                    <div>
+                        <p>ממתין לאישור של {user.name} (מנהל/ת)</p>
+                    </div>
+                </li>
+            );
+        } else if (form.status === 'מאושר') {
+            history.push(
+                <li key="admin-approved" className="flex items-start gap-3">
+                    <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
+                    <div>
+                        <p>אושר סופית ונחתם על ידי {form.conservatoriumManagerName || 'המנהל/ת'}</p>
+                        {form.signedAt && <time className="text-xs">{form.signedAt}</time>}
+                    </div>
+                </li>
+            );
+        } else if (form.status === 'נדחה') {
+             history.push(
+                <li key="rejected" className="flex items-start gap-3">
+                    <div className="bg-red-100 text-red-700 rounded-full h-6 w-6 flex items-center justify-center"><ThumbsDown size={14} /></div>
+                    <div>
+                        <p>הטופס נדחה</p>
+                    </div>
+                </li>
+            );
+        }
+
+        return <ul className="space-y-4 text-sm text-muted-foreground">{history}</ul>;
+    };
+
 
     return (
         <div className="space-y-6">
@@ -88,16 +184,31 @@ export default function FormDetailsPage() {
                         </CardFooter>
                     </Card>
 
-                    {canApprove && (
+                    {isTeacherApproval && (
                          <Card>
                             <CardHeader>
-                                <CardTitle>פעולות</CardTitle>
+                                <CardTitle>פעולות (מורה)</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <Textarea placeholder="הוסף הערה (אופציונלי)..." />
                                 <div className="flex gap-4">
-                                    <Button onClick={handleApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור</Button>
-                                    <Button onClick={handleReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                    <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור והעברה למנהל</Button>
+                                    <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {isAdminFinalApproval && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>פעולות (מנהל)</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <Textarea placeholder="הוסף הערה (אופציונלי)..." />
+                                <div className="flex gap-4">
+                                    <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור סופי וחתימה</Button>
+                                    <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -122,23 +233,7 @@ export default function FormDetailsPage() {
                             <CardTitle>היסטוריית אישורים</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ul className="space-y-4 text-sm text-muted-foreground">
-                                <li className="flex items-start gap-3">
-                                    <div className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center"><Send size={14} /></div>
-                                    <div>
-                                        <p>הטופס הוגש על ידי {form.studentName}</p>
-                                        <time className="text-xs">{form.submissionDate}</time>
-                                    </div>
-                                </li>
-                                {form.status !== 'טיוטה' && (
-                                    <li className="flex items-start gap-3">
-                                         <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
-                                        <div>
-                                            <p>ממתין לאישור של {form.teacherDetails?.name || 'המורה'} (מורה)</p>
-                                        </div>
-                                    </li>
-                                )}
-                            </ul>
+                           {renderApprovalHistory()}
                         </CardContent>
                     </Card>
                     {form.teacherComment && (
@@ -151,8 +246,44 @@ export default function FormDetailsPage() {
                             </CardContent>
                         </Card>
                     )}
+                    {form.signatureUrl && (
+                        <Card>
+                             <CardHeader>
+                                <CardTitle>חתימה דיגיטלית</CardTitle>
+                            </CardHeader>
+                            <CardContent className='flex justify-center items-center p-4 border-dashed border-2 rounded-lg bg-muted/50'>
+                                <img src={form.signatureUrl} alt="Digital Signature" className='h-24' />
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             </div>
+
+            <AlertDialog open={isSignatureDialogOpen} onOpenChange={setSignatureDialogOpen}>
+                <AlertDialogContent dir="rtl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>חתימה דיגיטלית לאישור הטופס</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            אנא חתום/י בתיבה למטה כדי לאשר סופית את הטופס. החתימה תצורף למסמך.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="relative w-full aspect-[2/1] rounded-lg border bg-background">
+                         <SignatureCanvas
+                            ref={sigPadRef}
+                            penColor='black'
+                            canvasProps={{ className: 'w-full h-full' }}
+                        />
+                        <Button variant="ghost" size="icon" className="absolute top-2 left-2" onClick={clearSignature}>
+                            <Trash className="h-4 w-4 text-destructive" />
+                            <span className="sr-only">נקה חתימה</span>
+                        </Button>
+                    </div>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>ביטול</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmApproval}>אשר וחתום</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

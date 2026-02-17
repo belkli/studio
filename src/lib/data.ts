@@ -299,9 +299,12 @@ export const mockFormSubmissions: FormSubmission[] = [
     submissionDate: '2024-05-18',
     totalDuration: '08:15',
     repertoire: [
-      { composer: 'מוצרט', title: 'סונטה ק. 545', duration: '08:15', genre: 'קלאסי' },
+      { composer: 'מוצרט', title: 'סונאטה ק. 545', duration: '08:15', genre: 'קלאסי' },
     ],
     conservatoriumName: studentUser2.conservatoriumName,
+    conservatoriumManagerName: conservatoriumAdminUser.name,
+    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', // Placeholder
+    signedAt: '2024-05-19',
     calculatedPrice: 10,
     paymentStatus: 'paid',
   },
@@ -333,5 +336,26 @@ export const mockFormSubmissions: FormSubmission[] = [
        { composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },
     ],
      conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה',
+  },
+  {
+    id: 'form-105',
+    formType: 'רסיטל בגרות',
+    academicYear: 'תשפ"ד',
+    grade: 'יא',
+    studentId: studentUser2.id,
+    studentName: studentUser2.name,
+    status: 'ממתין לאישור מנהל',
+    submissionDate: '2024-05-23',
+    totalDuration: '21:00',
+    repertoire: [
+      { composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', duration: '02:15', genre: 'בארוק' },
+      { composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', duration: '05:45', genre: 'קלאסי' },
+      { composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' },
+      { composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', duration: '15:00', genre: 'קלאסי' }
+    ],
+    conservatoriumName: studentUser2.conservatoriumName,
+    teacherDetails: {
+      name: teacherUser.name,
+    }
   },
 ];
