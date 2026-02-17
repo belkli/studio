@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
-import { siteAdminUser } from "@/lib/data"
 
 export function LoginForm() {
   const { toast } = useToast()
@@ -31,21 +30,29 @@ export function LoginForm() {
     setLoading(true)
     
     setTimeout(() => { // Simulate network delay
-        const user = login(email);
-        if (user) {
-            toast({
-                title: "התחברות מוצלחת",
-                description: `ברוך הבא, ${user.name.split(' ')[0]}!`,
-            })
-        } else {
-            toast({
-                variant: 'destructive',
-                title: "התחברות נכשלה",
-                description: "לא נמצא משתמש עם האימייל שהוזן.",
-            })
-            setLoading(false);
-        }
-    }, 500)
+      const { user, status } = login(email);
+
+      if (status === 'approved' && user) {
+        toast({
+            title: "התחברות מוצלחת",
+            description: `ברוך הבא, ${user.name.split(' ')[0]}!`,
+        });
+      } else if (status === 'pending') {
+        toast({
+            variant: 'destructive',
+            title: "חשבון ממתין לאישור",
+            description: "חשבונך עדיין לא אושר על ידי מנהל הקונסרבטוריון.",
+        });
+        setLoading(false);
+      } else { // status === 'not_found'
+        toast({
+            variant: 'destructive',
+            title: "התחברות נכשלה",
+            description: "לא נמצא משתמש עם האימייל שהוזן.",
+        });
+        setLoading(false);
+      }
+    }, 500);
   }
 
   const handleMagicLink = (e: React.FormEvent) => {

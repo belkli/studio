@@ -42,6 +42,7 @@ const studentUser: User = {
   instruments: [
     { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },
   ],
+  approved: true,
 };
 
 const studentUser2: User = {
@@ -64,6 +65,7 @@ const studentUser2: User = {
     { instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 },
     { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },
   ],
+  approved: true,
 };
 
 const otherStudent: User = {
@@ -85,7 +87,20 @@ const otherStudent: User = {
     instruments: [
         { instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },
     ],
+    approved: true,
 };
+
+const pendingTeacher: User = {
+  id: 'pending-teacher-1',
+  name: 'ישראל ישראלי',
+  email: 'pending.teacher@example.com',
+  role: 'teacher',
+  conservatoriumId: 'cons-1',
+  conservatoriumName: 'קונסרבטוריון הוד השרון',
+  avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher',
+  approved: false,
+};
+
 
 const teacherUser: User = {
   id: 'teacher-user-1',
@@ -95,7 +110,8 @@ const teacherUser: User = {
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher',
-  students: [studentUser.id, studentUser2.id]
+  students: [studentUser.id, studentUser2.id],
+  approved: true,
 };
 
 const teacherUser2: User = {
@@ -106,7 +122,8 @@ const teacherUser2: User = {
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher2',
-  students: [studentUser2.id]
+  students: [studentUser2.id],
+  approved: true,
 };
 
 const teacherUser3: User = {
@@ -117,7 +134,8 @@ const teacherUser3: User = {
   conservatoriumId: 'cons-3',
   conservatoriumName: 'קונסרבטוריון גבעתיים',
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher3',
-  students: [otherStudent.id]
+  students: [otherStudent.id],
+  approved: true,
 };
 
 const conservatoriumAdminUser: User = {
@@ -128,7 +146,8 @@ const conservatoriumAdminUser: User = {
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
-  students: [studentUser.id, studentUser2.id]
+  students: [studentUser.id, studentUser2.id],
+  approved: true,
 };
 
 const conservatoriumAdminUser2: User = {
@@ -139,7 +158,8 @@ const conservatoriumAdminUser2: User = {
   conservatoriumId: 'cons-3',
   conservatoriumName: 'קונסרבטוריון גבעתיים',
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin2',
-  students: [otherStudent.id]
+  students: [otherStudent.id],
+  approved: true,
 };
 
 export const siteAdminUser: User = {
@@ -150,6 +170,7 @@ export const siteAdminUser: User = {
   conservatoriumId: 'global',
   conservatoriumName: 'מנהל מערכת',
   avatarUrl: 'https://i.pravatar.cc/150?u=site-admin',
+  approved: true,
 };
 
 export const mockUsers: User[] = [
@@ -161,7 +182,8 @@ export const mockUsers: User[] = [
   conservatoriumAdminUser,
   conservatoriumAdminUser2,
   siteAdminUser,
-  otherStudent
+  otherStudent,
+  pendingTeacher,
 ];
 
 export const mockFormSubmissions: FormSubmission[] = [

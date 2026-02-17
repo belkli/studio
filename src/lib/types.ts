@@ -25,6 +25,8 @@ export type User = {
   phone?: string;
   students?: string[]; // For teachers/admins to list their students by ID
   grade?: 'י' | 'יא' | 'יב';
+  approved: boolean;
+  rejectionReason?: string;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';
