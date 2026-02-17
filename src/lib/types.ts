@@ -39,6 +39,12 @@ export type User = {
   notifications?: Notification[];
 };
 
+export type Conservatorium = {
+  id: string;
+  name: string;
+  tier: 'A' | 'B' | 'C';
+};
+
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';
 
 export type Composition = {
@@ -128,4 +134,6 @@ export type FormSubmission = {
 
   // NEW
   managerNotes?: string;
+  calculatedPrice?: number;
+  paymentStatus?: 'pending' | 'paid' | 'waived';
 };

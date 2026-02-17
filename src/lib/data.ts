@@ -1,22 +1,40 @@
-import type { User, FormSubmission, Notification } from './types';
+import type { User, FormSubmission, Notification, Conservatorium } from './types';
 
-export const conservatoriums = [
-  { id: 'cons-1', name: 'קונסרבטוריון הוד השרון' },
-  { id: 'cons-2', name: 'הקונסרבטוריון הישראלי למוסיקה תל אביב' },
-  { id: 'cons-3', name: 'קונסרבטוריון גבעתיים' },
-  { id: 'cons-4', name: 'מרכז למוסיקה ובימת אמנויות רעננה' },
-  { id: 'cons-5', name: 'קונסרבטוריון רון שולמית, ירושלים' },
-  { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה' },
-  { id: 'cons-7', name: 'קונסרבטוריון קרית אונו' },
-  { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים' },
-  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון' },
-  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה' },
-  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא' },
-  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד' },
-  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע' },
-  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות' },
-  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים' }
+export const conservatoriums: Conservatorium[] = [
+  { id: 'cons-1', name: 'קונסרבטוריון הוד השרון', tier: 'A' },
+  { id: 'cons-2', name: 'הקונסרבטוריון הישראלי למוסיקה תל אביב', tier: 'A' },
+  { id: 'cons-3', name: 'קונסרבטוריון גבעתיים', tier: 'B' },
+  { id: 'cons-4', name: 'מרכז למוסיקה ובימת אמנויות רעננה', tier: 'A' },
+  { id: 'cons-5', name: 'קונסרבטוריון רון שולמית, ירושלים', tier: 'C' },
+  { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה', tier: 'B' },
+  { id: 'cons-7', name: 'קונסרבטוריון קרית אונו', tier: 'B' },
+  { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים', tier: 'A' },
+  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון', tier: 'A' },
+  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה', tier: 'B' },
+  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא', tier: 'B' },
+  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד', tier: 'C' },
+  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע', tier: 'C' },
+  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות', tier: 'B' },
+  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים', tier: 'C' }
 ];
+
+export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
+  A: {
+    Small: { 10: 10, 15: 15, 20: 20, 25: 25, 30: 30 },
+    Medium: { 10: 15, 15: 20, 20: 25, 25: 30, 30: 35 },
+    Large: { 10: 20, 15: 25, 20: 30, 25: 35, 30: 40 },
+  },
+  B: {
+    Small: { 10: 12, 15: 16, 20: 22, 25: 27, 30: 32 },
+    Medium: { 10: 16, 15: 22, 20: 27, 25: 32, 30: 37 },
+    Large: { 10: 22, 15: 27, 20: 32, 25: 37, 30: 42 },
+  },
+  C: {
+    Small: { 10: 13, 15: 18, 20: 23, 25: 28, 30: 33 },
+    Medium: { 10: 18, 15: 23, 20: 28, 25: 33, 30: 38 },
+    Large: { 10: 23, 15: 28, 20: 33, 25: 38, 30: 43 },
+  },
+};
 
 export const instruments = ['פסנתר', 'כינור', 'צ\'לו', 'גיטרה', 'חליל צד', 'קלרינט', 'סקסופון', 'תופים', 'שירה'];
 
@@ -284,6 +302,8 @@ export const mockFormSubmissions: FormSubmission[] = [
       { composer: 'מוצרט', title: 'סונטה ק. 545', duration: '08:15', genre: 'קלאסי' },
     ],
     conservatoriumName: studentUser2.conservatoriumName,
+    calculatedPrice: 10,
+    paymentStatus: 'paid',
   },
   {
     id: 'form-103',

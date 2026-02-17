@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
+import { conservatoriums, priceMatrix } from '@/lib/data';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -61,6 +62,22 @@ const formatDurationOnBlur = (value: string): string => {
     return `${minutes}:${seconds > '59' ? '59' : seconds}`;
 }
 
+const getEnsembleSizeCategory = (numParticipants: number): 'Small' | 'Medium' | 'Large' => {
+  if (numParticipants <= 10) return 'Small';
+  if (numParticipants <= 20) return 'Medium';
+  return 'Large';
+};
+
+const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
+  const totalMinutes = totalSeconds / 60;
+  const brackets = [10, 15, 20, 25, 30];
+  for (const bracket of brackets) {
+    if (totalMinutes <= bracket) return bracket;
+  }
+  return 30; // Default to max bracket
+};
+
+
 export function KenesForm({ user, onSubmit }: KenesFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -101,14 +118,40 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
     }, 1500);
   };
 
-
+  const numParticipants = form.watch('numParticipants');
   const repertoire = form.watch('repertoire');
-  const totalDuration = repertoire.reduce((total, item) => {
+  
+  const totalDurationSeconds = useMemo(() => repertoire.reduce((total, item) => {
     const [minutes, seconds] = item.duration.split(':').map(Number);
     if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
-  }, 0);
-  const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
+  }, 0), [repertoire]);
+  
+  const totalDurationFormatted = `${String(Math.floor(totalDurationSeconds / 60)).padStart(2, '0')}:${String(totalDurationSeconds % 60).padStart(2, '0')}`;
+
+  const { tier, ensembleSize, durationMinutes, calculatedPrice } = useMemo(() => {
+    const conservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
+    if (!conservatorium) return { tier: null, ensembleSize: null, durationMinutes: 0, calculatedPrice: 0 };
+    
+    const tier = conservatorium.tier;
+    const sizeCategory = getEnsembleSizeCategory(numParticipants || 1);
+    const durationBracket = getDurationBracket(totalDurationSeconds);
+    const price = priceMatrix[tier]?.[sizeCategory]?.[durationBracket] ?? 0;
+
+    return {
+        tier,
+        ensembleSize: sizeCategory,
+        durationMinutes: totalDurationSeconds / 60,
+        calculatedPrice: price,
+    }
+  }, [user.conservatoriumId, numParticipants, totalDurationSeconds]);
+
+  const ensembleSizeLabels = {
+    'Small': 'קטנות',
+    'Medium': 'בינוניות',
+    'Large': 'גדולות',
+  };
+
 
   return (
     <FormProvider {...form}>
@@ -147,7 +190,7 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
             </CardHeader>
             <CardContent className="grid md:grid-cols-3 gap-4">
                 <FormField name="conductor" render={({ field }) => ( <FormItem><FormLabel>מנצח/ת או מנהל/ת מוזיקלי</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="accompanist" render={({ field }) => ( <FormItem><FormLabel>פסנתרן/ית מלווה</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="accompanist" render={({ field }) => ( <FormItem><FormLabel>פסנתרן/ית מלווה (אופציונלי)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="numParticipants" render={({ field }) => ( <FormItem><FormLabel>מספר משתתפים</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
@@ -218,7 +261,34 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
                 <CardTitle>4. צרכים לוגיסטיים</CardTitle>
             </CardHeader>
             <CardContent>
-                <FormField name="logisticalNeeds" render={({ field }) => ( <FormItem><FormLabel>מלל חופשי</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="logisticalNeeds" render={({ field }) => ( <FormItem><FormLabel>מלל חופשי (אופציונלי)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem> )} />
+            </CardContent>
+        </Card>
+
+         <Card>
+            <CardHeader>
+                <CardTitle>5. חישוב עלות</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
+                    <div className="flex justify-between">
+                        <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
+                        <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-muted-foreground">גודל הרכב:</span>
+                        <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)`: '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-muted-foreground">משך זמן:</span>
+                        <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-lg font-bold">
+                        <span>סה"כ לתשלום:</span>
+                        <span>{calculatedPrice} ₪</span>
+                    </div>
+                </div>
             </CardContent>
         </Card>
 
