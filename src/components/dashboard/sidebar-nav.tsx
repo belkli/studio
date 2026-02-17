@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut } from 'lucide-react';
 import { mockUser } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -20,8 +20,8 @@ import { Button } from '@/components/ui/button';
 const links = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
     { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText },
-    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, role: 'teacher' },
-    { href: '/dashboard/library', label: 'ספרייה', icon: Book, role: 'site_admin' },
+    { href: '/dashboard/approvals', label: 'אישורים', role: 'teacher' },
+    { href: '/dashboard/library', label: 'ספרייה', icon: Book },
     { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
 ];
 
@@ -29,6 +29,12 @@ export function SidebarNav() {
   const pathname = usePathname();
   const user = mockUser;
   const userRole = user.role;
+
+  const userHasRole = (role: UserRole | 'site_admin' | undefined) => {
+    if (!role) return true; // Link is for everyone
+    if (userRole === 'site_admin') return true; // Site admin sees everything
+    return userRole === role;
+  }
 
   return (
     <>
@@ -91,6 +97,14 @@ export function SidebarNav() {
                     <SidebarMenuButton isActive={pathname.startsWith('/dashboard/settings')} tooltip="הגדרות">
                         <Settings />
                         <span>הגדרות</span>
+                    </SidebarMenuButton>
+                </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+                <Link href="/" passHref>
+                    <SidebarMenuButton tooltip="התנתקות">
+                        <LogOut />
+                        <span>התנתקות</span>
                     </SidebarMenuButton>
                 </Link>
             </SidebarMenuItem>

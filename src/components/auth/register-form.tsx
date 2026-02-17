@@ -19,14 +19,17 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { conservatoriums, instruments, schools } from "@/lib/data"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
+import { Combobox } from "../ui/combobox"
+import { isValidIsraeliID } from "@/lib/utils"
+
 
 const formSchema = z.object({
     firstName: z.string().min(2, "שם פרטי חייב להכיל לפחות 2 תווים."),
     lastName: z.string().min(2, "שם משפחה חייב להכיל לפחות 2 תווים."),
     email: z.string().email("כתובת אימייל לא תקינה."),
-    idNumber: z.string().refine(val => /^\d{9}$/.test(val), "מספר ת.ז. חייב להכיל 9 ספרות."),
+    idNumber: z.string().refine(isValidIsraeliID, "מספר ת.ז. לא תקין."),
     password: z.string().min(8, "סיסמה חייבת להכיל לפחות 8 תווים."),
-    role: z.enum(["student", "teacher", "admin"], { required_error: "חובה לבחור תפקיד."}),
+    role: z.enum(["student", "teacher"], { required_error: "חובה לבחור תפקיד."}),
     instrument: z.string().optional(),
     studyYears: z.array(z.number()).optional(),
     conservatorium: z.string({ required_error: "חובה לבחור קונסרבטוריון."}).min(1, "חובה לבחור קונסרבטוריון."),
@@ -34,6 +37,8 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+const schoolOptions = schools.map(s => ({ value: s.name, label: `${s.name} (סמל: ${s.symbol})`}));
 
 export function RegisterForm() {
     const [step, setStep] = useState(0);
@@ -153,10 +158,6 @@ export function RegisterForm() {
                                                             <FormControl><RadioGroupItem value="teacher" /></FormControl>
                                                             <FormLabel className="font-normal">מורה</FormLabel>
                                                         </FormItem>
-                                                        <FormItem className="flex items-center space-x-3 space-x-reverse">
-                                                            <FormControl><RadioGroupItem value="admin" /></FormControl>
-                                                            <FormLabel className="font-normal">מנהל/ת קונסרבטוריון</FormLabel>
-                                                        </FormItem>
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <FormMessage />
@@ -203,14 +204,14 @@ export function RegisterForm() {
                                 )}
                                 {step === 2 && role === 'student' && (
                                      <FormField name="school" render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className="flex flex-col">
                                             <FormLabel>בית ספר</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl><SelectTrigger><SelectValue placeholder="חפש בית ספר..." /></SelectTrigger></FormControl>
-                                                <SelectContent>
-                                                    {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name} (סמל: {s.symbol})</SelectItem>)}
-                                                </SelectContent>
-                                            </Select>
+                                                <Combobox
+                                                    options={schoolOptions}
+                                                    selectedValue={field.value ?? ''}
+                                                    onSelectedValueChange={field.onChange}
+                                                    placeholder="חפש בית ספר..."
+                                                />
                                             <FormMessage />
                                         </FormItem>
                                     )} />
@@ -222,7 +223,7 @@ export function RegisterForm() {
                                         <div className="space-y-2 text-sm p-4 border rounded-lg bg-muted/50">
                                             <p><strong>שם:</strong> {form.getValues().firstName} {form.getValues().lastName}</p>
                                             <p><strong>אימייל:</strong> {form.getValues().email}</p>
-                                            <p><strong>תפקיד:</strong> {form.getValues().role === 'student' ? 'תלמיד' : form.getValues().role === 'teacher' ? 'מורה' : 'מנהל'}</p>
+                                            <p><strong>תפקיד:</strong> {form.getValues().role === 'student' ? 'תלמיד' : 'מורה'}</p>
                                             <p><strong>קונסרבטוריון:</strong> {form.getValues().conservatorium}</p>
                                             {role === 'student' && <>
                                                 <p><strong>כלי נגינה:</strong> {form.getValues().instrument}</p>
