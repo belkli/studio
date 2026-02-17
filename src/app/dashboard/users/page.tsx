@@ -189,6 +189,7 @@ export default function UsersPage() {
 }
 
 const UsersTable = ({ users, currentUser, showFilters }: { users: User[], currentUser: User, showFilters: boolean }) => {
+    const { toast } = useToast();
     const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
 
     const handleEdit = (user: User) => {
