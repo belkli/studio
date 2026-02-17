@@ -43,6 +43,7 @@ export type Conservatorium = {
   id: string;
   name: string;
   tier: 'A' | 'B' | 'C';
+  stampUrl?: string;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';

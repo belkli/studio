@@ -1,14 +1,14 @@
 // @ts-nocheck
 'use client';
 
-import { mockFormSubmissions, mockUsers } from '@/lib/data';
+import { mockFormSubmissions, mockUsers, conservatoriums } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
@@ -16,6 +16,8 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { useRef, useState } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import SignatureCanvas from 'react-signature-canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function FormDetailsPage() {
     const params = useParams();
@@ -39,6 +41,69 @@ export default function FormDetailsPage() {
     
     const isTeacherApproval = user.role === 'teacher' && form.status === 'ממתין לאישור מורה';
     const isAdminFinalApproval = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל';
+
+    const generatePdf = (form) => {
+        const doc = new jsPDF();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        // jsPDF doesn't support Hebrew out-of-the-box. This is a simple workaround.
+        const rtl = (text) => text ? text.split('').reverse().join('') : '';
+
+        // Header
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text(rtl(form.formType), pageWidth / 2, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(rtl(`שנת לימודים: ${form.academicYear}`), pageWidth / 2, 28, { align: 'center' });
+        doc.text(rtl(`קונסרבטוריון: ${form.conservatoriumName}`), pageWidth - 15, 40, { align: 'right' });
+        doc.text(rtl(`תלמיד/ה: ${form.studentName}`), pageWidth - 15, 48, { align: 'right' });
+
+
+        // Repertoire Table
+        autoTable(doc, {
+            startY: 60,
+            head: [[rtl('משך'), rtl('ז\'אנר'), rtl('שם היצירה'), rtl('מלחין')]],
+            body: form.repertoire.map(p => [
+                p.duration,
+                rtl(p.genre),
+                rtl(p.title),
+                rtl(p.composer)
+            ]),
+            styles: {
+                halign: 'right',
+                font: 'helvetica'
+            },
+            headStyles: {
+                fillColor: [30, 64, 175], // a shade of blue
+                halign: 'right'
+            },
+            columnStyles: { 0: { halign: 'center' } }
+        });
+        
+        // Footer section
+        const footerY = pageHeight - 55;
+
+        // Signature
+        if (form.signatureUrl) {
+            doc.addImage(form.signatureUrl, 'PNG', 140, footerY, 50, 25);
+        }
+        doc.text(rtl("חתימת המנהל"), 165, footerY + 35, { align: 'center' });
+
+        // Stamp
+        const conservatorium = conservatoriums.find(c => c.name === form.conservatoriumName);
+        if (conservatorium?.stampUrl) {
+            // Set opacity for stamp
+            const gState = new (doc as any).GState({opacity: 0.8});
+            doc.setGState(gState);
+            doc.addImage(conservatorium.stampUrl, 'PNG', 20, footerY - 5, 30, 30);
+            // Reset opacity
+            doc.setGState(new (doc as any).GState({opacity: 1}));
+        }
+
+        doc.save(`form_${form.id}.pdf`);
+    };
 
 
     const handleTeacherApprove = () => {
@@ -147,7 +212,15 @@ export default function FormDetailsPage() {
                         חזרה לכל הטפסים
                     </Link>
                 </Button>
-                <StatusBadge status={form.status} />
+                <div className="flex items-center gap-4">
+                  {form.status === 'מאושר' && (
+                    <Button onClick={() => generatePdf(form)} variant="outline">
+                        <Download className="ms-2 h-4 w-4" />
+                        הורד PDF
+                    </Button>
+                  )}
+                  <StatusBadge status={form.status} />
+                </div>
             </div>
             
             <div className="grid md:grid-cols-3 gap-6">

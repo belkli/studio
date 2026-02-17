@@ -1,21 +1,21 @@
 import type { User, FormSubmission, Notification, Conservatorium } from './types';
 
 export const conservatoriums: Conservatorium[] = [
-  { id: 'cons-1', name: 'קונסרבטוריון הוד השרון', tier: 'A' },
-  { id: 'cons-2', name: 'הקונסרבטוריון הישראלי למוסיקה תל אביב', tier: 'A' },
-  { id: 'cons-3', name: 'קונסרבטוריון גבעתיים', tier: 'B' },
-  { id: 'cons-4', name: 'מרכז למוסיקה ובימת אמנויות רעננה', tier: 'A' },
-  { id: 'cons-5', name: 'קונסרבטוריון רון שולמית, ירושלים', tier: 'C' },
-  { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה', tier: 'B' },
-  { id: 'cons-7', name: 'קונסרבטוריון קרית אונו', tier: 'B' },
-  { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים', tier: 'A' },
-  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון', tier: 'A' },
-  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה', tier: 'B' },
-  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא', tier: 'B' },
-  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד', tier: 'C' },
-  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע', tier: 'C' },
-  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות', tier: 'B' },
-  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים', tier: 'C' }
+  { id: 'cons-1', name: 'קונסרבטוריון הוד השרון', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp1/200/200' },
+  { id: 'cons-2', name: 'הקונסרבטוריון הישראלי למוסיקה תל אביב', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp2/200/200' },
+  { id: 'cons-3', name: 'קונסרבטוריון גבעתיים', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp3/200/200' },
+  { id: 'cons-4', name: 'מרכז למוסיקה ובימת אמנויות רעננה', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp4/200/200' },
+  { id: 'cons-5', name: 'קונסרבטוריון רון שולמית, ירושלים', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp5/200/200' },
+  { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp6/200/200' },
+  { id: 'cons-7', name: 'קונסרבטוריון קרית אונו', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp7/200/200' },
+  { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp8/200/200' },
+  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp9/200/200' },
+  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp10/200/200' },
+  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp11/200/200' },
+  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp12/200/200' },
+  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp13/200/200' },
+  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp14/200/200' },
+  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp15/200/200' }
 ];
 
 export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
@@ -303,7 +303,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     ],
     conservatoriumName: studentUser2.conservatoriumName,
     conservatoriumManagerName: conservatoriumAdminUser.name,
-    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', // Placeholder
+    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', // Placeholder signature
     signedAt: '2024-05-19',
     calculatedPrice: 10,
     paymentStatus: 'paid',
