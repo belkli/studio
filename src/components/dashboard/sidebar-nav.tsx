@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 const links = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
     { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText },
-    { href: '/dashboard/approvals', label: 'אישורים', role: 'teacher' },
+    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, role: 'teacher' },
     { href: '/dashboard/library', label: 'ספרייה', icon: Book },
     { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
 ];
@@ -29,12 +29,6 @@ export function SidebarNav() {
   const pathname = usePathname();
   const user = mockUser;
   const userRole = user.role;
-
-  const userHasRole = (role: UserRole | 'site_admin' | undefined) => {
-    if (!role) return true; // Link is for everyone
-    if (userRole === 'site_admin') return true; // Site admin sees everything
-    return userRole === role;
-  }
 
   return (
     <>
@@ -48,7 +42,7 @@ export function SidebarNav() {
       <SidebarContent>
         <SidebarMenu>
           {links.map((link) => {
-            const userCanView = !link.role || userRole === 'site_admin' || userRole === link.role;
+            const userCanView = !link.role || userRole === 'site_admin' || userRole === link.role || (userRole === 'conservatorium_admin' && link.role === 'teacher');
             if (!userCanView) {
                 return null;
             }
