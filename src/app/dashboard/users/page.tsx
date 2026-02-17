@@ -1,16 +1,17 @@
 'use client';
 
 import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { mockUser, mockUsers } from "@/lib/data";
+import { mockUsers } from "@/lib/data";
 import type { UserRole, User } from "@/lib/types";
 import { Edit, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/hooks/use-auth";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 const roleTranslations: Record<UserRole, string> = {
     student: "תלמיד",
@@ -21,12 +22,16 @@ const roleTranslations: Record<UserRole, string> = {
 
 export default function UsersPage() {
     const { toast } = useToast();
-    const currentUser = mockUser;
+    const { user: currentUser } = useAuth();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [instrumentFilter, setInstrumentFilter] = useState('all');
     const [teacherFilter, setTeacherFilter] = useState('all');
     const [gradeFilter, setGradeFilter] = useState('all');
+    
+    if (!currentUser) {
+        return null;
+    }
 
     const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
 
@@ -41,10 +46,9 @@ export default function UsersPage() {
             users = mockUsers.filter(user => user.role === 'conservatorium_admin');
         } else if (currentUser.role === 'conservatorium_admin') {
             users = mockUsers.filter(user => 
-                user.conservatoriumId === currentUser.conservatoriumId && user.role !== 'site_admin'
+                user.conservatoriumId === currentUser.conservatoriumId && user.id !== currentUser.id && user.role !== 'site_admin'
             );
         } else {
-            // By default, non-admins see an empty list. This can be adjusted.
             users = [];
         }
         return users;
@@ -58,8 +62,8 @@ export default function UsersPage() {
 
         studentUsers.forEach(user => {
             user.instruments?.forEach(inst => {
-                instruments.add(inst.instrument);
-                teachers.add(inst.teacherName);
+                if (inst.instrument) instruments.add(inst.instrument);
+                if (inst.teacherName) teachers.add(inst.teacherName);
             });
             if (user.grade) {
                 grades.add(user.grade);
@@ -89,7 +93,7 @@ export default function UsersPage() {
         });
     }, [usersToDisplay, searchTerm, instrumentFilter, teacherFilter, gradeFilter]);
     
-    const showFilters = currentUser.role === 'conservatorium_admin';
+    const showFilters = currentUser.role === 'conservatorium_admin' && usersToDisplay.some(u => u.role === 'student');
 
     return (
         <div className="space-y-6">
@@ -104,7 +108,7 @@ export default function UsersPage() {
                     <CardDescription>
                         {currentUser.role === 'site_admin' 
                             ? 'רשימת מנהלי הקונסרבטוריונים במערכת.'
-                            : `רשימת המשתמשים בקונסרבטוריון ${currentUser.conservatoriumName}.`
+                            : `רשימת המשתמשים ב${currentUser.conservatoriumName}.`
                         }
                     </CardDescription>
                 </CardHeader>
@@ -171,7 +175,9 @@ export default function UsersPage() {
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
-                                        <Badge variant="outline">{roleTranslations[user.role]}</Badge>
+                                        <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                                            {roleTranslations[user.role]}
+                                        </span>
                                     </TableCell>
                                      {showFilters && (
                                         <>

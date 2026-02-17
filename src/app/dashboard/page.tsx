@@ -1,12 +1,17 @@
+'use client';
 import { OverviewCards } from "@/components/dashboard/overview-cards";
 import { RecentForms } from "@/components/dashboard/recent-forms";
 import { Button } from "@/components/ui/button";
-import { mockUser } from "@/lib/data";
+import { useAuth } from "@/hooks/use-auth";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
-    const user = mockUser;
+    const { user } = useAuth();
+
+    if (!user) {
+        return null; // Or a loading spinner
+    }
 
     return (
         <div className="space-y-6">

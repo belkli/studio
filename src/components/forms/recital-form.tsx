@@ -16,6 +16,7 @@ import { getCompositionSuggestions } from '@/app/actions';
 import { useEffect, useState, useCallback } from 'react';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
+import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -106,6 +107,22 @@ interface RecitalFormProps {
     saveDraft: () => void;
 }
 
+const formatDurationOnBlur = (value: string): string => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    if (cleanValue.length === 0) return '00:00';
+    if (cleanValue.length <= 2) return `00:${cleanValue.padStart(2, '0')}`;
+    const seconds = cleanValue.slice(-2).padStart(2, '0');
+    const minutes = cleanValue.slice(0, -2).padStart(2, '0');
+    return `${minutes}:${seconds > '59' ? '59' : seconds}`;
+}
+
+const durationGuidelines = {
+  'י': { min: 15, max: 20, label: "15-20 דקות" },
+  'יא': { min: 20, max: 30, label: "20-30 דקות" },
+  'יב': { min: 25, max: 35, label: "25-35 דקות" },
+};
+
+
 export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -122,9 +139,9 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
       phone: '',
       email: '',
       schoolName: '',
-      hasMusicMajor: '',
-      isMajorParticipant: '',
-      plansTheoryExam: '',
+      hasMusicMajor: 'לא',
+      isMajorParticipant: 'לא',
+      plansTheoryExam: 'לא',
       instrument: '',
       yearsOfStudy: 0,
       teacherName: '',
@@ -168,13 +185,20 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number | null>(null);
 
   const repertoire = form.watch('repertoire');
+  const grade = form.watch('grade');
+
   const totalDuration = repertoire.reduce((total, item) => {
     const [minutes, seconds] = item.duration.split(':').map(Number);
     if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
   }, 0);
+
   const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
   
+  const guideline = grade ? durationGuidelines[grade] : undefined;
+  const totalDurationInMinutes = totalDuration / 60;
+  const isDurationOutsideGuidelines = guideline && (totalDurationInMinutes < guideline.min || totalDurationInMinutes > guideline.max) && totalDuration > 0;
+
   const areDetailsLocked = true; // Always locked once a student is selected
 
   return (
@@ -203,7 +227,7 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                 <FormField name="studentName" render={({ field }) => ( <FormItem><FormLabel>שם מלא</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="idNumber" render={({ field }) => ( <FormItem><FormLabel>מס' תעודת זהות</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="birthDate" render={({ field }) => ( <FormItem><FormLabel>תאריך לידה</FormLabel><FormControl><Input type="date" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="gender" render={({ field }) => ( <FormItem><FormLabel>מין</FormLabel><Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}><FormControl><SelectTrigger><SelectValue placeholder="בחר מין"/></SelectTrigger></FormControl><SelectContent><SelectItem value="זכר">זכר</SelectItem><SelectItem value="נקבה">נקבה</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
+                <FormField name="gender" render={({ field }) => ( <FormItem><FormLabel>מין</FormLabel><Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}><FormControl><SelectTrigger><SelectValue placeholder="בחר מין"/></SelectTrigger></FormControl><SelectContent><SelectItem value="זכר">זכר</SelectItem><SelectItem value="נקבה">נקבה</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
                 <FormField name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
@@ -215,7 +239,7 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                 <CardTitle>2. פרטי בית ספר תיכון למועמד/ת</CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
-                <FormField name="schoolName" render={({ field }) => ( <FormItem> <FormLabel>בית ספר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                <FormField name="schoolName" render={({ field }) => ( <FormItem> <FormLabel>בית ספר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
                  <FormField name="hasMusicMajor" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם קיימת מגמת מוזיקה בביה"ס?</FormLabel><FormControl><RadioGroup dir="rtl" onValueChange={field.onChange} value={field.value} className="flex gap-4 pt-2"><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
                  <FormField name="isMajorParticipant" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם המועמד/ת משתתף/ת במגמה זו?</FormLabel><FormControl><RadioGroup dir="rtl" onValueChange={field.onChange} value={field.value} className="flex gap-4 pt-2"><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
                  <FormField name="plansTheoryExam" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>מתוכנן/ת לבחינת בגרות עיונית במוזיקה?</FormLabel><FormControl><RadioGroup dir="rtl" onValueChange={field.onChange} value={field.value} className="flex gap-4 pt-2"><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
@@ -229,7 +253,7 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
              <CardContent className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                     <h3 className="font-medium text-muted-foreground">פרטי לימוד נגינה / שירה</h3>
-                    <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה / שירה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                    <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה / שירה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
                     <FormField name="yearsOfStudy" render={({ field }) => ( <FormItem><FormLabel>סך שנות לימוד בכלי הנגינה</FormLabel><FormControl><Input type="number" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 </div>
                  <div className="space-y-4">
@@ -272,7 +296,23 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                         />
                         <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( <FormItem> <FormLabel>זמן ביצוע</FormLabel> <FormControl><Input dir='ltr' {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                        <FormField 
+                            control={form.control} 
+                            name={`repertoire.${index}.duration`} 
+                            render={({ field }) => ( 
+                                <FormItem> 
+                                    <FormLabel>זמן ביצוע</FormLabel> 
+                                    <FormControl>
+                                        <Input 
+                                            dir='ltr' 
+                                            {...field} 
+                                            onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
+                                        />
+                                    </FormControl> 
+                                    <FormMessage /> 
+                                </FormItem> 
+                            )} 
+                        />
                         
                         <div className="flex items-end h-full">
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
@@ -304,6 +344,15 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
             </CardFooter>
         </Card>
         
+        {isDurationOutsideGuidelines && (
+            <Notice variant="critical">
+                <NoticeTitle>תשומת לב למשך הרסיטל</NoticeTitle>
+                <NoticeDescription>
+                משך הזמן הכולל ({totalDurationFormatted}) חורג מהמומלץ לכיתה {grade} ({guideline?.label}). אנא ודא/י שהרפרטואר מתאים.
+                </NoticeDescription>
+            </Notice>
+        )}
+
         <Card>
             <CardHeader>
                 <CardTitle>7. פרטים נוספים / הערות מנהל/ת</CardTitle>

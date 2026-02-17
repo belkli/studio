@@ -23,8 +23,6 @@ export const schools = [
 ];
 
 // --- Mock Users ---
-
-// 1. Student User
 const studentUser: User = {
   id: 'student-user-1',
   name: 'אריאל לוי',
@@ -46,7 +44,6 @@ const studentUser: User = {
   ],
 };
 
-// Another student for the teacher
 const studentUser2: User = {
   id: 'student-user-2',
   name: 'תמר ישראלי',
@@ -69,7 +66,6 @@ const studentUser2: User = {
   ],
 };
 
-// A student from another conservatorium for site admin testing
 const otherStudent: User = {
     id: 'other-student-1',
     name: 'יונתן כץ',
@@ -91,8 +87,6 @@ const otherStudent: User = {
     ],
 };
 
-
-// 2. Teacher User
 const teacherUser: User = {
   id: 'teacher-user-1',
   name: 'מרים כהן',
@@ -126,8 +120,6 @@ const teacherUser3: User = {
   students: [otherStudent.id]
 };
 
-
-// 3. Conservatorium Admin User
 const conservatoriumAdminUser: User = {
   id: 'conservatorium-admin-user-1',
   name: 'משה שפירא',
@@ -136,7 +128,7 @@ const conservatoriumAdminUser: User = {
   conservatoriumId: 'cons-1',
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
-  students: [studentUser.id, studentUser2.id] // An admin can see all students in their conservatorium
+  students: [studentUser.id, studentUser2.id]
 };
 
 const conservatoriumAdminUser2: User = {
@@ -150,8 +142,7 @@ const conservatoriumAdminUser2: User = {
   students: [otherStudent.id]
 };
 
-// 4. Site Admin User
-const siteAdminUser: User = {
+export const siteAdminUser: User = {
   id: 'site-admin-user-1',
   name: 'דנה המנהלת',
   email: 'site.admin@example.com',
@@ -161,7 +152,6 @@ const siteAdminUser: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=site-admin',
 };
 
-// The full list of users in the system
 export const mockUsers: User[] = [
   studentUser,
   studentUser2,
@@ -173,11 +163,6 @@ export const mockUsers: User[] = [
   siteAdminUser,
   otherStudent
 ];
-
-// The currently "logged in" user. Change this to test different roles.
-// To test, change this to one of: studentUser, teacherUser, conservatoriumAdminUser, siteAdminUser
-export const mockUser: User = siteAdminUser;
-
 
 export const mockFormSubmissions: FormSubmission[] = [
   {

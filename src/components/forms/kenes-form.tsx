@@ -47,6 +47,15 @@ interface KenesFormProps {
     saveDraft: () => void;
 }
 
+const formatDurationOnBlur = (value: string): string => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    if (cleanValue.length === 0) return '00:00';
+    if (cleanValue.length <= 2) return `00:${cleanValue.padStart(2, '0')}`;
+    const seconds = cleanValue.slice(-2).padStart(2, '0');
+    const minutes = cleanValue.slice(0, -2).padStart(2, '0');
+    return `${minutes}:${seconds > '59' ? '59' : seconds}`;
+}
+
 export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -123,7 +132,19 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
                     <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto] gap-4 items-end p-4 border rounded-lg relative">
                         <FormField control={form.control} name={`repertoire.${index}.composer`} render={({ field }) => ( <FormItem> <FormLabel>מלחין</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( <FormItem> <FormLabel>זמן ביצוע</FormLabel> <FormControl><Input dir='ltr' {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                        <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
+                            <FormItem> 
+                                <FormLabel>זמן ביצוע</FormLabel> 
+                                <FormControl>
+                                    <Input 
+                                        dir='ltr' 
+                                        {...field} 
+                                        onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
+                                    />
+                                </FormControl> 
+                                <FormMessage /> 
+                            </FormItem> 
+                        )} />
                         
                         <div className="flex items-end h-full">
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>

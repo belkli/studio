@@ -13,9 +13,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut } from 'lucide-react';
-import { mockUser } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
 
 const links = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
@@ -27,7 +27,12 @@ const links = [
 
 export function SidebarNav() {
   const pathname = usePathname();
-  const user = mockUser;
+  const { user, logout } = useAuth();
+
+  if (!user) {
+    return null; // Or a loading spinner
+  }
+
   const userRole = user.role;
 
   return (
@@ -95,12 +100,10 @@ export function SidebarNav() {
                 </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-                <Link href="/" passHref>
-                    <SidebarMenuButton tooltip="התנתקות">
-                        <LogOut />
-                        <span>התנתקות</span>
-                    </SidebarMenuButton>
-                </Link>
+                <SidebarMenuButton tooltip="התנתקות" onClick={logout}>
+                    <LogOut />
+                    <span>התנתקות</span>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

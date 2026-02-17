@@ -7,13 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockUser, mockUsers } from '@/lib/data';
+import { mockUsers } from '@/lib/data';
 import type { User } from '@/lib/types';
-import { Save, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { RecitalForm } from './recital-form';
 import { KenesForm } from './kenes-form';
+import { useAuth } from '@/hooks/use-auth';
 
 const formTypeSchema = z.object({
   formType: z.enum(['recital', 'kenes'], { required_error: 'חובה לבחור סוג טופס'}),
@@ -24,16 +24,23 @@ type FormTypeData = z.infer<typeof formTypeSchema>;
 
 export function NewForm() {
   const { toast } = useToast();
-  const [user] = useState(mockUser); // The logged-in user
+  const { user } = useAuth();
   const [studentList, setStudentList] = useState<User[]>([]);
   
   const formTypeForm = useForm<FormTypeData>({
     resolver: zodResolver(formTypeSchema),
-    defaultValues: {
-      formType: user.role === 'student' ? 'recital' : undefined,
-      studentId: user.role === 'student' ? user.id : undefined,
-    }
   });
+  
+  // Effect to set initial values once user is loaded
+  useEffect(() => {
+    if (user) {
+        formTypeForm.reset({
+            formType: user.role === 'student' ? 'recital' : undefined,
+            studentId: user.role === 'student' ? user.id : undefined,
+        });
+    }
+  }, [user, formTypeForm]);
+
 
   const selectedFormType = formTypeForm.watch('formType');
   const selectedStudentId = formTypeForm.watch('studentId');
@@ -41,16 +48,22 @@ export function NewForm() {
 
   // Effect to set student list based on user role
   useEffect(() => {
-    if (user.role === 'teacher') {
-        const studentsOfUser = mockUsers.filter(u => user.students?.includes(u.id));
-        setStudentList(studentsOfUser);
-    } else if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
-        const allStudentsInConservatorium = mockUsers.filter(u => u.role === 'student' && (user.role === 'site_admin' || u.conservatoriumId === user.conservatoriumId));
-        setStudentList(allStudentsInConservatorium);
-    } else if (user.role === 'student') {
-        setStudentList([user]);
+    if (user) {
+      if (user.role === 'teacher') {
+          const studentsOfUser = mockUsers.filter(u => user.students?.includes(u.id));
+          setStudentList(studentsOfUser);
+      } else if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
+          const allStudentsInConservatorium = mockUsers.filter(u => u.role === 'student' && (user.role === 'site_admin' || u.conservatoriumId === user.conservatoriumId));
+          setStudentList(allStudentsInConservatorium);
+      } else if (user.role === 'student') {
+          setStudentList([user]);
+      }
     }
   }, [user]);
+
+  if (!user) {
+    return <p>טוען נתונים...</p>
+  }
 
   const canSelectStudent = user.role !== 'student';
   const canSelectFormType = user.role !== 'student';
@@ -109,7 +122,7 @@ export function NewForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>סוג טופס</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="בחר את סוג הטופס..." />
@@ -133,7 +146,7 @@ export function NewForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>בחר תלמיד/ה</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder="בחר תלמיד/ה להגשת טופס" />

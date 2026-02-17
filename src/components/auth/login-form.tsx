@@ -7,27 +7,45 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
 import { Icons } from "@/components/icons"
-import { mockUser } from "@/lib/data"
+import { useAuth } from "@/hooks/use-auth"
+import { siteAdminUser } from "@/lib/data"
 
 export function LoginForm() {
   const { toast } = useToast()
-  const router = useRouter()
+  const { login } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('password') // Mock password
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    // Mock login logic
-    setTimeout(() => {
-      // On success
+    if (!email) {
       toast({
-        title: "התחברות מוצלחת",
-        description: "מיד תועבר ללוח הבקרה שלך.",
+        variant: "destructive",
+        title: "אימייל חסר",
+        description: "יש להזין כתובת אימייל.",
       })
-      router.push("/dashboard")
-    }, 1000)
+      return;
+    }
+    setLoading(true)
+    
+    setTimeout(() => { // Simulate network delay
+        const user = login(email);
+        if (user) {
+            toast({
+                title: "התחברות מוצלחת",
+                description: `ברוך הבא, ${user.name.split(' ')[0]}!`,
+            })
+        } else {
+            toast({
+                variant: 'destructive',
+                title: "התחברות נכשלה",
+                description: "לא נמצא משתמש עם האימייל שהוזן.",
+            })
+            setLoading(false);
+        }
+    }, 500)
   }
 
   const handleMagicLink = (e: React.FormEvent) => {
@@ -59,7 +77,7 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" defaultValue={mockUser.email} />
+                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -68,7 +86,7 @@ export function LoginForm() {
                     שכחת סיסמה?
                   </Link>
                 </div>
-                <Input id="password" type="password" required dir="ltr" className="text-left" defaultValue="password" />
+                <Input id="password" type="password" required dir="ltr" className="text-left" value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "מתחבר..." : "התחבר"}
@@ -79,7 +97,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">אימייל</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" defaultValue={mockUser.email} />
+                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "שולח..." : "שלח קישור קסום"}
