@@ -54,6 +54,13 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
       academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
       repertoire: [{ composer: '', title: '', duration: '00:00' }],
       conservatoriumName: user.conservatoriumName,
+      eventName: '',
+      eventDate: '',
+      eventLocation: '',
+      conductor: '',
+      accompanist: '',
+      numParticipants: 1,
+      logisticalNeeds: '',
     },
   });
 
@@ -90,7 +97,7 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
             </CardHeader>
             <CardContent className="grid md:grid-cols-3 gap-4">
                 <FormField name="eventName" render={({ field }) => ( <FormItem><FormLabel>שם האירוע</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="eventDate" render={({ field }) => ( <FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="eventDate" render={({ field }) => ( <FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="eventLocation" render={({ field }) => ( <FormItem><FormLabel>מיקום</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
@@ -113,7 +120,7 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
             <CardContent>
                 <div className="space-y-4">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto] gap-4 items-start p-4 border rounded-lg relative">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto] gap-4 items-end p-4 border rounded-lg relative">
                         <FormField control={form.control} name={`repertoire.${index}.composer`} render={({ field }) => ( <FormItem> <FormLabel>מלחין</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( <FormItem> <FormLabel>זמן ביצוע</FormLabel> <FormControl><Input dir='ltr' {...field} /></FormControl> <FormMessage /> </FormItem> )} />
@@ -153,7 +160,7 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
                 <CardTitle>4. צרכים לוגיסטיים</CardTitle>
             </CardHeader>
             <CardContent>
-                <FormField name="logisticalNeeds" render={({ field }) => ( <FormItem><FormLabel>ציוד נדרש, סידור במה, וכו'</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField name="logisticalNeeds" render={({ field }) => ( <FormItem><FormLabel>מלל חופשי</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
 
