@@ -39,6 +39,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const schoolOptions = schools.map(s => ({ value: s.name, label: `${s.name} (סמל: ${s.symbol})`}));
+const conservatoriumOptions = conservatoriums.map(c => ({ value: c.name, label: c.name }));
 
 export function RegisterForm() {
     const [step, setStep] = useState(0);
@@ -149,7 +150,7 @@ export function RegisterForm() {
                                             <FormItem className="space-y-3">
                                                 <FormLabel>אני...</FormLabel>
                                                 <FormControl>
-                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col items-end space-y-1">
                                                         <FormItem className="flex items-center space-x-3 space-x-reverse">
                                                             <FormControl><RadioGroupItem value="student" /></FormControl>
                                                             <FormLabel className="font-normal">תלמיד/ה</FormLabel>
@@ -165,14 +166,16 @@ export function RegisterForm() {
                                         )} />
                                         
                                         <FormField name="conservatorium" render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem className="flex flex-col">
                                                 <FormLabel>קונסרבטוריון</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl><SelectTrigger><SelectValue placeholder="בחר קונסרבטוריון" /></SelectTrigger></FormControl>
-                                                    <SelectContent>
-                                                        {conservatoriums.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                                                    </SelectContent>
-                                                </Select>
+                                                <Combobox
+                                                    options={conservatoriumOptions}
+                                                    selectedValue={field.value ?? ''}
+                                                    onSelectedValueChange={field.onChange}
+                                                    placeholder="חפש קונסרבטוריון..."
+                                                    searchPlaceholder="חיפוש..."
+                                                    notFoundMessage="לא נמצאו תוצאות."
+                                                />
                                                 <FormMessage />
                                             </FormItem>
                                         )} />
