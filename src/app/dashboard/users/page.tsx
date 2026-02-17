@@ -33,11 +33,11 @@ export default function UsersPage() {
     const [rejectionReason, setRejectionReason] = useState('');
     const [selectedUserToReject, setSelectedUserToReject] = useState<User | null>(null);
 
-    if (!currentUser) {
-        return null;
-    }
-
     const { pendingUsers, approvedUsers } = useMemo(() => {
+        if (!currentUser) {
+            return { pendingUsers: [], approvedUsers: [] };
+        }
+
         let baseUsers: User[];
         if (currentUser.role === 'site_admin') {
             baseUsers = users.filter(user => user.role === 'conservatorium_admin');
@@ -89,7 +89,11 @@ export default function UsersPage() {
         });
     }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter]);
     
-    const showFilters = currentUser.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student');
+    const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student');
+
+    if (!currentUser) {
+        return null; // Or a loading spinner
+    }
 
     const handleApprove = (user: User) => {
         approveUser(user.id);
@@ -149,7 +153,7 @@ export default function UsersPage() {
                                     </>
                                 )}
                             </div>
-                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={showFilters} />
+                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={!!showFilters} />
                         </CardContent>
                     </Card>
                 </TabsContent>
