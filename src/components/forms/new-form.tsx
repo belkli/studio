@@ -3,8 +3,7 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockUsers } from '@/lib/data';
@@ -84,12 +83,6 @@ export function NewForm() {
     });
   };
 
-  const saveDraft = () => {
-    toast({
-        title: "טיוטה נשמרה!",
-    });
-  }
-
   const renderForm = () => {
     if (!selectedFormType) return null;
     if (!selectedStudentId && selectedFormType === 'recital') {
@@ -98,9 +91,9 @@ export function NewForm() {
 
     switch(selectedFormType) {
         case 'recital':
-            return <RecitalForm user={user} student={selectedStudent!} onSubmit={onSubmitRecital} saveDraft={saveDraft} />
+            return <RecitalForm user={user} student={selectedStudent!} onSubmit={onSubmitRecital} />
         case 'kenes':
-            return <KenesForm user={user} onSubmit={onSubmitKenes} saveDraft={saveDraft} />
+            return <KenesForm user={user} onSubmit={onSubmitKenes} />
         default:
             return null;
     }

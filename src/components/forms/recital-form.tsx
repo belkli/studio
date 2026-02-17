@@ -11,12 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { schools, instruments, compositions as compositionsDB } from '@/lib/data';
 import type { User } from '@/lib/types';
-import { PlusCircle, Save, Send, Trash2 } from 'lucide-react';
+import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { Combobox } from '../ui/combobox';
+import { useToast } from '@/hooks/use-toast';
+import { SaveStatusBar, type SaveState } from './save-status-bar';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -69,16 +71,6 @@ interface RecitalFormProps {
     user: User;
     student: User;
     onSubmit: (data: FormData) => void;
-    saveDraft: () => void;
-}
-
-const formatDurationOnBlur = (value: string): string => {
-    const cleanValue = value.replace(/[^0-9]/g, '');
-    if (cleanValue.length === 0) return '00:00';
-    if (cleanValue.length <= 2) return `00:${cleanValue.padStart(2, '0')}`;
-    const seconds = cleanValue.slice(-2).padStart(2, '0');
-    const minutes = cleanValue.slice(0, -2).padStart(2, '0');
-    return `${minutes}:${seconds > '59' ? '59' : seconds}`;
 }
 
 const durationGuidelines = {
@@ -88,7 +80,7 @@ const durationGuidelines = {
 };
 
 
-export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormProps) {
+export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     const firstInstrument = student.instruments?.[0];
     
     const form = useForm<FormData>({
@@ -123,6 +115,28 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
     name: 'repertoire',
   });
 
+  const { toast } = useToast();
+  const { isDirty } = form.formState;
+  const [saveState, setSaveState] = React.useState<SaveState>('idle');
+  const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
+
+  const handleSaveDraft = () => {
+    setSaveState('saving');
+    // In a real app, you would make an API call here.
+    setTimeout(() => {
+        // Simulate success
+        setSaveState('success');
+        setLastSaved(new Date());
+        toast({ title: "טיוטה נשמרה!" });
+
+        // Reset the dirty state of the form after saving
+        form.reset(form.getValues());
+
+        // Briefly show success message, then return to idle to show last saved time
+        setTimeout(() => setSaveState('idle'), 3000);
+    }, 1500);
+  };
+
   const repertoire = form.watch('repertoire');
   const grade = form.watch('grade');
 
@@ -147,6 +161,12 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
+        <SaveStatusBar 
+            isDirty={isDirty}
+            saveState={saveState}
+            lastSaved={lastSaved}
+            onSave={handleSaveDraft}
+        />
         
         <Card>
           <CardHeader>
@@ -350,10 +370,6 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
         </Card>
 
         <div className="flex justify-end gap-4">
-            <Button type="button" variant="ghost" onClick={saveDraft}>
-                <Save className="me-2 h-4 w-4" />
-                שמור כטיוטה
-            </Button>
             <Button type="submit">
                 <Send className="me-2 h-4 w-4" />
                 הגש לאישור

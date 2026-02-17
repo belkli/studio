@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -8,9 +9,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import type { User } from '@/lib/types';
-import { PlusCircle, Save, Send, Trash2 } from 'lucide-react';
+import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { SaveStatusBar, type SaveState } from './save-status-bar';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -47,7 +50,6 @@ type FormData = z.infer<typeof formSchema>;
 interface KenesFormProps {
     user: User;
     onSubmit: (data: FormData) => void;
-    saveDraft: () => void;
 }
 
 const formatDurationOnBlur = (value: string): string => {
@@ -59,7 +61,7 @@ const formatDurationOnBlur = (value: string): string => {
     return `${minutes}:${seconds > '59' ? '59' : seconds}`;
 }
 
-export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
+export function KenesForm({ user, onSubmit }: KenesFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -81,6 +83,25 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
     name: 'repertoire',
   });
   
+  const { toast } = useToast();
+  const { isDirty } = form.formState;
+  const [saveState, setSaveState] = React.useState<SaveState>('idle');
+  const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
+
+  const handleSaveDraft = () => {
+    setSaveState('saving');
+    // In a real app, you would make an API call here.
+    setTimeout(() => {
+        // Simulate success
+        setSaveState('success');
+        setLastSaved(new Date());
+        toast({ title: "טיוטה נשמרה!" });
+        form.reset(form.getValues());
+        setTimeout(() => setSaveState('idle'), 3000);
+    }, 1500);
+  };
+
+
   const repertoire = form.watch('repertoire');
   const totalDuration = repertoire.reduce((total, item) => {
     const [minutes, seconds] = item.duration.split(':').map(Number);
@@ -92,7 +113,13 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
-        
+        <SaveStatusBar 
+            isDirty={isDirty}
+            saveState={saveState}
+            lastSaved={lastSaved}
+            onSave={handleSaveDraft}
+        />
+
         <Card>
           <CardHeader>
             <CardTitle>טופס פרטי משתתף בכנס / אירוע</CardTitle>
@@ -196,10 +223,6 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
         </Card>
 
         <div className="flex justify-end gap-4">
-            <Button type="button" variant="ghost" onClick={saveDraft}>
-                <Save className="me-2 h-4 w-4" />
-                שמור כטיוטה
-            </Button>
             <Button type="submit">
                 <Send className="me-2 h-4 w-4" />
                 הגש לאישור
