@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -8,15 +9,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { schools, instruments } from '@/lib/data';
+import { schools, instruments, compositions as compositionsDB } from '@/lib/data';
 import type { User } from '@/lib/types';
 import { PlusCircle, Save, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { getCompositionSuggestions } from '@/app/actions';
-import { useState, useCallback, useEffect } from 'react';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
+import { Combobox } from '../ui/combobox';
 
 const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
@@ -64,44 +64,6 @@ const formSchema = z.object({
 
 
 type FormData = z.infer<typeof formSchema>;
-type Suggestion = { composer: string; title: string; duration: string; genre: string };
-
-function CompositionSuggestions({ composer, onSelect }: { composer: string; onSelect: (suggestion: Suggestion) => void }) {
-    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-    const [loading, setLoading] = useState(false);
-
-    const fetchSuggestions = useCallback(async (composerName: string) => {
-        if (composerName.length < 2) {
-            setSuggestions([]);
-            return;
-        }
-        setLoading(true);
-        const result = await getCompositionSuggestions({ composer: composerName });
-        setSuggestions(result as Suggestion[]);
-        setLoading(false);
-    }, []);
-
-    useEffect(() => {
-        const debounce = setTimeout(() => {
-            fetchSuggestions(composer);
-        }, 500);
-        return () => clearTimeout(debounce);
-    }, [composer, fetchSuggestions]);
-
-    if(loading) return <div className="p-2 text-sm text-muted-foreground">טוען הצעות...</div>
-    if (suggestions.length === 0) return null;
-
-    return (
-        <div className="absolute z-10 w-full mt-1 bg-card border rounded-md shadow-lg">
-            {suggestions.map((s, i) => (
-                <div key={i} onClick={() => onSelect(s)} className="p-2 hover:bg-muted cursor-pointer text-sm">
-                    <p className="font-semibold">{s.title}</p>
-                    <p className="text-xs text-muted-foreground">{s.composer} - {s.duration}</p>
-                </div>
-            ))}
-        </div>
-    )
-}
 
 interface RecitalFormProps {
     user: User;
@@ -139,7 +101,7 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
       studentName: student.name || '',
       idNumber: student.idNumber || '',
       birthDate: student.birthDate || '',
-      gender: student.gender || '',
+      gender: student.gender || 'זכר',
       city: student.city || '',
       phone: student.phone || '',
       email: student.email || '',
@@ -151,7 +113,7 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
       yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
       teacherName: firstInstrument?.teacherName || '',
       yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
-      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ composer: '', title: '', genre: 'קלאסי', duration: '00:00' })),
+      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ composer: '', title: '', genre: '', duration: '00:00' })),
       managerNotes: '',
     },
   });
@@ -160,8 +122,6 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
     control: form.control,
     name: 'repertoire',
   });
-
-  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number | null>(null);
 
   const repertoire = form.watch('repertoire');
   const grade = form.watch('grade');
@@ -179,6 +139,10 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
   const isDurationOutsideGuidelines = guideline && (totalDurationInMinutes < guideline.min || totalDurationInMinutes > guideline.max) && totalDuration > 0;
 
   const areDetailsLocked = true; // Always locked once a student is selected
+
+  const composerOptions = useMemo(() => 
+    Array.from(new Set(compositionsDB.map(c => c.composer))).map(c => ({ value: c, label: c }))
+  , []);
 
   return (
     <FormProvider {...form}>
@@ -249,67 +213,104 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
-                        <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
-                        <FormField
-                            control={form.control}
-                            name={`repertoire.${index}.composer`}
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>מלחין</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                        <Input {...field} onFocus={() => setActiveSuggestionIndex(index)} onBlur={() => setTimeout(() => setActiveSuggestionIndex(null), 150)} />
-                                        {activeSuggestionIndex === index && <CompositionSuggestions composer={field.value} onSelect={(s) => {
-                                            form.setValue(`repertoire.${index}.composer`, s.composer);
-                                            form.setValue(`repertoire.${index}.title`, s.title);
-                                            form.setValue(`repertoire.${index}.duration`, s.duration);
-                                            form.setValue(`repertoire.${index}.genre`, s.genre);
-                                            setActiveSuggestionIndex(null);
-                                        }} />}
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField 
-                            control={form.control} 
-                            name={`repertoire.${index}.duration`} 
-                            render={({ field }) => ( 
-                                <FormItem> 
-                                    <FormLabel>זמן ביצוע</FormLabel> 
-                                    <FormControl>
-                                        <Input 
-                                            dir='ltr'
-                                            placeholder="MM:SS"
-                                            maxLength={5} 
-                                            {...field} 
-                                            onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
+                {fields.map((field, index) => {
+                    const selectedComposer = repertoire[index]?.composer;
+                    const titleOptions = selectedComposer
+                        ? compositionsDB
+                            .filter(c => c.composer === selectedComposer)
+                            .map(c => ({ value: c.id, label: c.title }))
+                        : [];
+
+                    return (
+                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
+                            <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+                            
+                            <FormField
+                                control={form.control}
+                                name={`repertoire.${index}.composer`}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>מלחין</FormLabel>
+                                        <Combobox
+                                            options={composerOptions}
+                                            selectedValue={field.value}
+                                            onSelectedValueChange={(value) => {
+                                                form.setValue(`repertoire.${index}.composer`, value);
+                                                // Reset dependent fields
+                                                form.setValue(`repertoire.${index}.title`, '');
+                                                form.setValue(`repertoire.${index}.duration`, '00:00');
+                                                form.setValue(`repertoire.${index}.genre`, '');
+                                            }}
+                                            placeholder="בחר מלחין..."
                                         />
-                                    </FormControl> 
-                                    <FormMessage /> 
-                                </FormItem> 
-                            )} 
-                        />
-                        
-                        <div className="self-center pt-6">
-                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                                <span className="sr-only">מחק יצירה</span>
-                            </Button>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name={`repertoire.${index}.title`}
+                                render={({ field: titleField }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>שם היצירה</FormLabel>
+                                        <Combobox
+                                            options={titleOptions}
+                                            selectedValue={compositionsDB.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
+                                            onSelectedValueChange={(id) => {
+                                                const composition = compositionsDB.find(c => c.id === id);
+                                                if (composition) {
+                                                    form.setValue(`repertoire.${index}.title`, composition.title);
+                                                    form.setValue(`repertoire.${index}.duration`, composition.duration);
+                                                    form.setValue(`repertoire.${index}.genre`, composition.genre);
+                                                }
+                                            }}
+                                            placeholder="בחר יצירה..."
+                                            disabled={!selectedComposer}
+                                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} readOnly className="bg-muted/50" /></FormControl> <FormMessage /> </FormItem> )} />
+                            
+                            <FormField 
+                                control={form.control} 
+                                name={`repertoire.${index}.duration`} 
+                                render={({ field }) => ( 
+                                    <FormItem> 
+                                        <FormLabel>זמן ביצוע</FormLabel> 
+                                        <FormControl>
+                                            <Input 
+                                                dir='ltr'
+                                                placeholder="MM:SS"
+                                                maxLength={5} 
+                                                {...field} 
+                                                readOnly 
+                                                className="bg-muted/50"
+                                            />
+                                        </FormControl> 
+                                        <FormMessage /> 
+                                    </FormItem> 
+                                )} 
+                            />
+                            
+                            <div className="self-center pt-6">
+                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                    <span className="sr-only">מחק יצירה</span>
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
                 </div>
                  <Button
                     type="button"
                     variant="outline"
                     className="mt-4"
-                    onClick={() => append({ composer: '', title: '', genre: 'קלאסי', duration: '00:00' })}
+                    onClick={() => append({ composer: '', title: '', genre: '', duration: '00:00' })}
                     disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
                 >
                     <PlusCircle className="me-2 h-4 w-4" />

@@ -22,6 +22,19 @@ export const schools = [
   { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
+export const compositions = [
+  { id: 'comp1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30' },
+  { id: 'comp2', composer: 'יוהאן סבסטיאן באך', title: 'טוקטה ופוגה ברה מינור, רי"ב 565', genre: 'בארוק', duration: '09:00' },
+  { id: 'comp3', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד בדו מז\'ור (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '02:15' },
+  { id: 'comp4', composer: 'לודוויג ואן בטהובן', title: 'סונאטה מס\' 14 (אור ירח)', genre: 'קלאסי', duration: '15:00' },
+  { id: 'comp5', composer: 'לודוויג ואן בטהובן', title: 'לאליזה', genre: 'קלאסי', duration: '03:00' },
+  { id: 'comp6', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331 (רון-דו אלה טורקה)', genre: 'קלאסי', duration: '03:30' },
+  { id: 'comp7', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה', genre: 'קלאסי', duration: '05:45' },
+  { id: 'comp8', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', genre: 'רומנטי', duration: '04:30' },
+  { id: 'comp9', composer: 'פרדריק שופן', title: 'אטיוד המהפכה, אופ. 10 מס\' 12', genre: 'רומנטי', duration: '02:45' },
+  { id: 'comp10', composer: 'קלוד דביסי', title: 'אור ירח (Clair de lune)', genre: 'אימפרסיוניסטי', duration: '05:00' },
+];
+
 // --- Mock Users ---
 const studentUser: User = {
   id: 'student-user-1',
