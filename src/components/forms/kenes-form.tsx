@@ -168,7 +168,7 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
           <CardHeader>
             <CardTitle>טופס פרטי משתתף בכנס / אירוע</CardTitle>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
             <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
           </CardContent>
@@ -178,7 +178,7 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
             <CardHeader>
                 <CardTitle>1. פרטי האירוע</CardTitle>
             </CardHeader>
-            <CardContent className="grid md:grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <FormField name="eventName" render={({ field }) => ( <FormItem><FormLabel>שם האירוע</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="eventDate" render={({ field }) => ( <FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="eventLocation" render={({ field }) => ( <FormItem><FormLabel>מיקום</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
@@ -189,7 +189,7 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
             <CardHeader>
                 <CardTitle>2. פרטי ההרכב</CardTitle>
             </CardHeader>
-            <CardContent className="grid md:grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <FormField name="conductor" render={({ field }) => ( <FormItem><FormLabel>מנצח/ת או מנהל/ת מוזיקלי</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="accompanist" render={({ field }) => ( <FormItem><FormLabel>פסנתרן/ית מלווה (אופציונלי)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="numParticipants" render={({ field }) => ( <FormItem><FormLabel>מספר משתתפים</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )} />
@@ -203,31 +203,40 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
             <CardContent>
                 <div className="space-y-4">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
-                        <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
-                        <FormField control={form.control} name={`repertoire.${index}.composer`} render={({ field }) => ( <FormItem> <FormLabel>מלחין</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                        <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
-                            <FormItem> 
-                                <FormLabel>זמן ביצוע</FormLabel> 
-                                <FormControl>
-                                    <Input 
-                                        dir='ltr' 
-                                        placeholder="MM:SS"
-                                        maxLength={5}
-                                        {...field} 
-                                        onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
-                                    />
-                                </FormControl> 
-                                <FormMessage /> 
-                            </FormItem> 
-                        )} />
-                        
-                        <div className="self-center pt-6">
+                     <div key={field.id} className="border rounded-lg relative">
+                        <div className="p-4 flex justify-between items-center md:hidden border-b">
+                            <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                                 <span className="sr-only">מחק יצירה</span>
                             </Button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto_1fr_1fr_auto] md:gap-x-4 gap-y-4 p-4 md:items-start">
+                            <div className="hidden md:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+                            <FormField control={form.control} name={`repertoire.${index}.composer`} render={({ field }) => ( <FormItem> <FormLabel>מלחין</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
+                                <FormItem> 
+                                    <FormLabel>זמן ביצוע</FormLabel> 
+                                    <FormControl>
+                                        <Input 
+                                            dir='ltr' 
+                                            placeholder="MM:SS"
+                                            maxLength={5}
+                                            {...field} 
+                                            onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
+                                        />
+                                    </FormControl> 
+                                    <FormMessage /> 
+                                </FormItem> 
+                            )} />
+                            
+                             <div className="hidden md:flex self-center pt-6 justify-self-end col-span-full sm:col-span-1 md:col-auto">
+                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                    <span className="sr-only">מחק יצירה</span>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 ))}

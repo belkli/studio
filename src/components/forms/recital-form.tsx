@@ -173,7 +173,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <CardTitle>טופס מועמד/ת לקראת בגרות במוזיקה - רסיטל</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="grid md:grid-cols-4 gap-4 pt-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                 <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="formType" render={({ field }) => ( <FormItem><FormLabel>סוג הטופס</FormLabel><Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="רסיטל בגרות">רסיטל בגרות</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
                 <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
@@ -186,7 +186,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <CardHeader>
                 <CardTitle>1. פרטים אישיים למועמד/ת</CardTitle>
             </CardHeader>
-            <CardContent className="grid md:grid-cols-4 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField name="studentName" render={({ field }) => ( <FormItem><FormLabel>שם מלא</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="idNumber" render={({ field }) => ( <FormItem><FormLabel>מס' תעודת זהות</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="birthDate" render={({ field }) => ( <FormItem><FormLabel>תאריך לידה</FormLabel><FormControl><Input type="date" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
@@ -201,7 +201,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <CardHeader>
                 <CardTitle>2. פרטי בית ספר תיכון למועמד/ת</CardTitle>
             </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 <FormField name="schoolName" render={({ field }) => ( <FormItem> <FormLabel>בית ספר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
                  <FormField name="hasMusicMajor" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם קיימת מגמת מוזיקה בביה"ס?</FormLabel><FormControl><RadioGroup dir="rtl" onValueChange={field.onChange} value={field.value} className="flex gap-4 pt-2"><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
                  <FormField name="isMajorParticipant" control={form.control} render={({ field }) => ( <FormItem className="flex flex-col"><FormLabel>האם המועמד/ת משתתף/ת במגמה זו?</FormLabel><FormControl><RadioGroup dir="rtl" onValueChange={field.onChange} value={field.value} className="flex gap-4 pt-2"><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="כן" /></FormControl><FormLabel className="font-normal">כן</FormLabel></FormItem><FormItem className="flex items-center gap-2 flex-row-reverse"><FormControl><RadioGroupItem value="לא" /></FormControl><FormLabel className="font-normal">לא</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem> )} />
@@ -213,7 +213,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <CardHeader>
                 <CardTitle>3 &amp; 4. פרטי לימוד והוראה</CardTitle>
             </CardHeader>
-             <CardContent className="grid md:grid-cols-2 gap-8">
+             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                     <h3 className="font-medium text-muted-foreground">פרטי לימוד נגינה / שירה</h3>
                     <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה / שירה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
@@ -242,85 +242,93 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                         : [];
 
                     return (
-                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
-                            <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
-                            
-                            <FormField
-                                control={form.control}
-                                name={`repertoire.${index}.composer`}
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>מלחין</FormLabel>
-                                        <Combobox
-                                            options={composerOptions}
-                                            selectedValue={field.value}
-                                            onSelectedValueChange={(value) => {
-                                                form.setValue(`repertoire.${index}.composer`, value);
-                                                // Reset dependent fields
-                                                form.setValue(`repertoire.${index}.title`, '');
-                                                form.setValue(`repertoire.${index}.duration`, '00:00');
-                                                form.setValue(`repertoire.${index}.genre`, '');
-                                            }}
-                                            placeholder="בחר מלחין..."
-                                        />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name={`repertoire.${index}.title`}
-                                render={({ field: titleField }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel>שם היצירה</FormLabel>
-                                        <Combobox
-                                            options={titleOptions}
-                                            selectedValue={compositionsDB.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
-                                            onSelectedValueChange={(id) => {
-                                                const composition = compositionsDB.find(c => c.id === id);
-                                                if (composition) {
-                                                    form.setValue(`repertoire.${index}.title`, composition.title);
-                                                    form.setValue(`repertoire.${index}.duration`, composition.duration);
-                                                    form.setValue(`repertoire.${index}.genre`, composition.genre);
-                                                }
-                                            }}
-                                            placeholder="בחר יצירה..."
-                                            disabled={!selectedComposer}
-                                        />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} readOnly className="bg-muted/50" /></FormControl> <FormMessage /> </FormItem> )} />
-                            
-                            <FormField 
-                                control={form.control} 
-                                name={`repertoire.${index}.duration`} 
-                                render={({ field }) => ( 
-                                    <FormItem> 
-                                        <FormLabel>זמן ביצוע</FormLabel> 
-                                        <FormControl>
-                                            <Input 
-                                                dir='ltr'
-                                                placeholder="MM:SS"
-                                                maxLength={5} 
-                                                {...field} 
-                                                readOnly 
-                                                className="bg-muted/50"
-                                            />
-                                        </FormControl> 
-                                        <FormMessage /> 
-                                    </FormItem> 
-                                )} 
-                            />
-                            
-                            <div className="self-center pt-6">
+                        <div key={field.id} className="border rounded-lg relative">
+                            <div className="p-4 flex justify-between items-center md:hidden border-b">
+                                <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
                                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                                     <Trash2 className="h-4 w-4 text-destructive" />
                                     <span className="sr-only">מחק יצירה</span>
                                 </Button>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-y-4 gap-x-4 p-4 md:items-start">
+                                <div className="hidden md:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+                                
+                                <FormField
+                                    control={form.control}
+                                    name={`repertoire.${index}.composer`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>מלחין</FormLabel>
+                                            <Combobox
+                                                options={composerOptions}
+                                                selectedValue={field.value}
+                                                onSelectedValueChange={(value) => {
+                                                    form.setValue(`repertoire.${index}.composer`, value);
+                                                    form.setValue(`repertoire.${index}.title`, '');
+                                                    form.setValue(`repertoire.${index}.duration`, '00:00');
+                                                    form.setValue(`repertoire.${index}.genre`, '');
+                                                }}
+                                                placeholder="בחר מלחין..."
+                                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name={`repertoire.${index}.title`}
+                                    render={({ field: titleField }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>שם היצירה</FormLabel>
+                                            <Combobox
+                                                options={titleOptions}
+                                                selectedValue={compositionsDB.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
+                                                onSelectedValueChange={(id) => {
+                                                    const composition = compositionsDB.find(c => c.id === id);
+                                                    if (composition) {
+                                                        form.setValue(`repertoire.${index}.title`, composition.title);
+                                                        form.setValue(`repertoire.${index}.duration`, composition.duration);
+                                                        form.setValue(`repertoire.${index}.genre`, composition.genre);
+                                                    }
+                                                }}
+                                                placeholder="בחר יצירה..."
+                                                disabled={!selectedComposer}
+                                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} readOnly className="bg-muted/50" /></FormControl> <FormMessage /> </FormItem> )} />
+                                
+                                <FormField 
+                                    control={form.control} 
+                                    name={`repertoire.${index}.duration`} 
+                                    render={({ field }) => ( 
+                                        <FormItem> 
+                                            <FormLabel>זמן ביצוע</FormLabel> 
+                                            <FormControl>
+                                                <Input 
+                                                    dir='ltr'
+                                                    placeholder="MM:SS"
+                                                    maxLength={5} 
+                                                    {...field} 
+                                                    readOnly 
+                                                    className="bg-muted/50"
+                                                />
+                                            </FormControl> 
+                                            <FormMessage /> 
+                                        </FormItem> 
+                                    )} 
+                                />
+                                
+                                <div className="hidden md:flex self-center pt-6 justify-self-end col-span-full sm:col-span-2 md:col-auto">
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                        <span className="sr-only">מחק יצירה</span>
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     );
