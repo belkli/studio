@@ -3,11 +3,11 @@ import type { FormStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const statusConfig: Record<FormStatus, { className: string; label: string }> = {
-    'טיוטה': { className: "bg-gray-200 text-gray-800 hover:bg-gray-200/80 dark:bg-gray-700 dark:text-gray-200", label: "טיוטה" },
-    'ממתין לאישור מורה': { className: "bg-orange-200 text-orange-800 hover:bg-orange-200/80 dark:bg-orange-800 dark:text-orange-100", label: "ממתין לאישור מורה" },
-    'ממתין לאישור מנהל': { className: "bg-yellow-200 text-yellow-800 hover:bg-yellow-200/80 dark:bg-yellow-800 dark:text-yellow-100", label: "ממתין לאישור מנהל" },
-    'מאושר': { className: "bg-green-200 text-green-800 hover:bg-green-200/80 dark:bg-green-800 dark:text-green-100", label: "מאושר" },
-    'נדחה': { className: "bg-red-200 text-red-800 hover:bg-red-200/80 dark:bg-red-800 dark:text-red-100", label: "נדחה" },
+    'טיוטה': { className: "bg-gray-100 text-gray-700 hover:bg-gray-100/80 dark:bg-gray-800 dark:text-gray-300", label: "טיוטה" },
+    'ממתין לאישור מורה': { className: "bg-yellow-100 text-amber-700 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200", label: "ממתין לאישור מורה" },
+    'ממתין לאישור מנהל': { className: "bg-orange-100 text-orange-800 hover:bg-orange-100/80 dark:bg-orange-900 dark:text-orange-200", label: "ממתין לאישור מנהל" },
+    'מאושר': { className: "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200", label: "מאושר" },
+    'נדחה': { className: "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200", label: "נדחה" },
 };
 
 interface StatusBadgeProps extends Omit<BadgeProps, 'variant' | 'children'> {
@@ -22,7 +22,7 @@ export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
     }
     
     return (
-        <Badge variant="outline" className={cn(config.className, className)} {...props}>
+        <Badge variant="outline" className={cn("border-transparent", config.className, className)} {...props}>
             {config.label}
         </Badge>
     );
