@@ -284,7 +284,9 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                                     <FormLabel>זמן ביצוע</FormLabel> 
                                     <FormControl>
                                         <Input 
-                                            dir='ltr' 
+                                            dir='ltr'
+                                            placeholder="MM:SS"
+                                            maxLength={5} 
                                             {...field} 
                                             onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
                                         />

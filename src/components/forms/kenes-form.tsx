@@ -64,7 +64,7 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
-      repertoire: [{ composer: '', title: '', duration: '00:00' }],
+      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ composer: '', title: '', duration: '00:00' })),
       conservatoriumName: user.conservatoriumName,
       eventName: '',
       eventDate: '',
@@ -142,6 +142,8 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
                                 <FormControl>
                                     <Input 
                                         dir='ltr' 
+                                        placeholder="MM:SS"
+                                        maxLength={5}
                                         {...field} 
                                         onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
                                     />
