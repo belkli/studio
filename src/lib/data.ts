@@ -1,4 +1,4 @@
-import type { User, FormSubmission, UserRole, InstrumentInfo } from './types';
+import type { User, FormSubmission, Notification } from './types';
 
 export const conservatoriums = [
   { id: 'cons-1', name: 'קונסרבטוריון הוד השרון' },
@@ -9,6 +9,13 @@ export const conservatoriums = [
   { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה' },
   { id: 'cons-7', name: 'קונסרבטוריון קרית אונו' },
   { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים' },
+  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון' },
+  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה' },
+  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא' },
+  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד' },
+  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע' },
+  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות' },
+  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים' }
 ];
 
 export const instruments = ['פסנתר', 'כינור', 'צ\'לו', 'גיטרה', 'חליל צד', 'קלרינט', 'סקסופון', 'תופים', 'שירה'];
@@ -35,6 +42,28 @@ export const compositions = [
   { id: 'comp10', composer: 'קלוד דביסי', title: 'אור ירח (Clair de lune)', genre: 'אימפרסיוניסטי', duration: '05:00' },
 ];
 
+// --- Mock Notifications ---
+const studentNotifications: Notification[] = [
+  { id: 'notif-s1', title: 'הטופס שלך אושר!', message: 'הטופס "רסיטל בגרות" אושר על ידי מרים כהן.', timestamp: 'לפני 2 ימים', link: '/dashboard/forms/form-101', read: false },
+  { id: 'notif-s2', title: 'הערה חדשה על טופס', message: 'המורה שלך הוסיפה הערה על הטופס.', timestamp: 'לפני 5 ימים', link: '/dashboard/forms/form-101', read: true },
+];
+
+const teacherNotifications: Notification[] = [
+  { id: 'notif-t1', title: 'טופס חדש לאישור', message: 'אריאל לוי הגיש/ה טופס "רסיטל בגרות".', timestamp: 'לפני 3 שעות', link: '/dashboard/forms/form-101', read: false },
+  { id: 'notif-t2', title: 'הטופס של תמר אושר', message: 'הטופס "קונצרט כיתתי" של תמר ישראלי אושר סופית.', timestamp: 'לפני יום', link: '/dashboard/forms/form-102', read: true },
+];
+
+const adminNotifications: Notification[] = [
+  { id: 'notif-a1', title: 'משתמש חדש ממתין לאישור', message: 'ישראל ישראלי נרשם כמורה וממתין לאישורך.', timestamp: 'לפני 10 דקות', link: '/dashboard/users', read: false },
+  { id: 'notif-a2', title: 'טופס חדש לאישור סופי', message: 'טופס של אריאל לוי אושר על ידי המורה וממתין לאישור סופי.', timestamp: 'לפני שעה', link: '/dashboard/forms/form-101', read: false },
+  { id: 'notif-a3', title: 'אישרת טופס', message: 'הטופס "קונצרט כיתתי" של תמר ישראלי אושר.', timestamp: 'לפני יום', link: '/dashboard/forms/form-102', read: true },
+];
+
+const siteAdminNotifications: Notification[] = [
+    { id: 'notif-sa1', title: 'שגיאת מערכת', message: 'זוהתה שגיאה בשרת ה-API.', timestamp: 'לפני 4 שעות', link: '#', read: true },
+];
+
+
 // --- Mock Users ---
 const studentUser: User = {
   id: 'student-user-1',
@@ -56,6 +85,7 @@ const studentUser: User = {
     { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },
   ],
   approved: true,
+  notifications: studentNotifications,
 };
 
 const studentUser2: User = {
@@ -79,6 +109,7 @@ const studentUser2: User = {
     { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },
   ],
   approved: true,
+  notifications: [],
 };
 
 const otherStudent: User = {
@@ -101,6 +132,7 @@ const otherStudent: User = {
         { instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },
     ],
     approved: true,
+    notifications: [],
 };
 
 const pendingTeacher: User = {
@@ -112,6 +144,7 @@ const pendingTeacher: User = {
   conservatoriumName: 'קונסרבטוריון הוד השרון',
   avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher',
   approved: false,
+  notifications: [],
 };
 
 
@@ -125,6 +158,7 @@ const teacherUser: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher',
   students: [studentUser.id, studentUser2.id],
   approved: true,
+  notifications: teacherNotifications,
 };
 
 const teacherUser2: User = {
@@ -137,6 +171,7 @@ const teacherUser2: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher2',
   students: [studentUser2.id],
   approved: true,
+  notifications: [],
 };
 
 const teacherUser3: User = {
@@ -149,6 +184,7 @@ const teacherUser3: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=teacher3',
   students: [otherStudent.id],
   approved: true,
+  notifications: [],
 };
 
 const conservatoriumAdminUser: User = {
@@ -161,6 +197,7 @@ const conservatoriumAdminUser: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
   students: [studentUser.id, studentUser2.id],
   approved: true,
+  notifications: adminNotifications,
 };
 
 const conservatoriumAdminUser2: User = {
@@ -173,6 +210,7 @@ const conservatoriumAdminUser2: User = {
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin2',
   students: [otherStudent.id],
   approved: true,
+  notifications: [],
 };
 
 export const siteAdminUser: User = {
@@ -184,6 +222,7 @@ export const siteAdminUser: User = {
   conservatoriumName: 'מנהל מערכת',
   avatarUrl: 'https://i.pravatar.cc/150?u=site-admin',
   approved: true,
+  notifications: siteAdminNotifications,
 };
 
 export const mockUsers: User[] = [

@@ -6,6 +6,15 @@ export type InstrumentInfo = {
   yearsOfStudy: number;
 };
 
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: string;
+  link: string;
+  read: boolean;
+};
+
 export type User = {
   id: string;
   name: string;
@@ -27,6 +36,7 @@ export type User = {
   grade?: 'י' | 'יא' | 'יב';
   approved: boolean;
   rejectionReason?: string;
+  notifications?: Notification[];
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';

@@ -12,10 +12,14 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import type { Notification } from '@/lib/types';
+
 
 const links = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
@@ -25,13 +29,45 @@ const links = [
     { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
 ];
 
+
+const NotificationItem = ({ notification }: { notification: Notification }) => (
+    <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
+        <Link href={notification.link}>
+            <div className="flex-shrink-0 mt-1">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="flex-grow">
+                <p className="font-semibold text-sm">{notification.title}</p>
+                <p className="text-xs text-muted-foreground">{notification.message}</p>
+                <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {notification.timestamp}
+                </div>
+            </div>
+        </Link>
+    </DropdownMenuItem>
+);
+
+
 export function SidebarNav() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
 
   if (!user) {
     return null; // Or a loading spinner
   }
+  
+  const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
+
+  const handleNotificationsOpen = () => {
+    if (unreadCount > 0 && user.notifications) {
+      const updatedUser = {
+        ...user,
+        notifications: user.notifications.map(n => ({...n, read: true}))
+      };
+      updateUser(updatedUser);
+    }
+  };
 
   const userRole = user.role;
 
@@ -75,10 +111,29 @@ export function SidebarNav() {
                 <AvatarImage src={user.avatarUrl} alt={user.name} />
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
-             <Button variant="ghost" size="icon" className="rounded-full group-data-[collapsible=icon]:hidden">
-                <Bell className="h-5 w-5" />
-                <span className="sr-only">התראות</span>
-            </Button>
+            
+            <DropdownMenu onOpenChange={(open) => open && handleNotificationsOpen()}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative rounded-full group-data-[collapsible=icon]:hidden">
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                        <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                            {unreadCount}
+                        </span>
+                    )}
+                    <span className="sr-only">התראות</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <DropdownMenuLabel>התראות</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {user.notifications && user.notifications.length > 0 ? (
+                    user.notifications.slice(0, 5).map(notif => <NotificationItem key={notif.id} notification={notif} />)
+                ) : (
+                    <p className="p-4 text-sm text-center text-muted-foreground">אין התראות חדשות</p>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
         </div>
         <Button asChild className="w-full">
             <Link href="/dashboard/forms/new">

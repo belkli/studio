@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   approveUser: (userId: string) => void;
   rejectUser: (userId: string, reason: string) => void;
+  updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -88,7 +89,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsers(prevUsers => prevUsers.map(u => u.id === userId ? { ...u, approved: false, rejectionReason: reason } : u));
   };
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser };
+  const updateUser = (updatedUser: User) => {
+    setUsers(prevUsers => prevUsers.map(u => u.id === updatedUser.id ? updatedUser : u));
+    if (user && user.id === updatedUser.id) {
+      setUser(updatedUser);
+    }
+  };
+
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser };
 
   return (
     <AuthContext.Provider value={value}>
