@@ -13,7 +13,7 @@ import type { User } from '@/lib/types';
 import { PlusCircle, Save, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { getCompositionSuggestions } from '@/app/actions';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
@@ -24,6 +24,9 @@ const compositionSchema = z.object({
   genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
 });
+
+const MIN_REPERTOIRE_ITEMS = 3;
+const MAX_REPERTOIRE_ITEMS = 10;
 
 const formSchema = z.object({
   formType: z.string().min(1, "חובה לבחור סוג טופס"),
@@ -55,7 +58,7 @@ const formSchema = z.object({
   yearsWithTeacher: z.coerce.number().optional(),
 
   // Repertoire
-  repertoire: z.array(compositionSchema).min(1, 'חובה להוסיף לפחות יצירה אחת'),
+  repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות ${MIN_REPERTOIRE_ITEMS} יצירות`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
   managerNotes: z.string().optional(),
 });
 
@@ -124,58 +127,34 @@ const durationGuidelines = {
 
 
 export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormProps) {
-  const form = useForm<FormData>({
+    const firstInstrument = student.instruments?.[0];
+    
+    const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       formType: 'רסיטל בגרות',
       academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
-      grade: 'י',
-      conservatoriumName: '',
-      studentName: '',
-      idNumber: '',
-      birthDate: '',
-      gender: '',
-      city: '',
-      phone: '',
-      email: '',
-      schoolName: '',
+      grade: student.grade || 'י',
+      conservatoriumName: student.conservatoriumName || user.conservatoriumName,
+      studentName: student.name || '',
+      idNumber: student.idNumber || '',
+      birthDate: student.birthDate || '',
+      gender: student.gender || '',
+      city: student.city || '',
+      phone: student.phone || '',
+      email: student.email || '',
+      schoolName: student.schoolName || '',
       hasMusicMajor: 'לא',
       isMajorParticipant: 'לא',
       plansTheoryExam: 'לא',
-      instrument: '',
-      yearsOfStudy: 0,
-      teacherName: '',
-      yearsWithTeacher: 0,
-      repertoire: [{ composer: '', title: '', genre: 'קלאסי', duration: '00:00' }],
+      instrument: firstInstrument?.instrument || '',
+      yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
+      teacherName: firstInstrument?.teacherName || '',
+      yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
+      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ composer: '', title: '', genre: 'קלאסי', duration: '00:00' })),
       managerNotes: '',
     },
   });
-
-  // Effect to pre-fill form when student is selected
-  useEffect(() => {
-    if (student) {
-        const firstInstrument = student.instruments?.[0];
-
-        form.reset({
-            ...form.getValues(), // Keep some defaults like academic year
-            studentName: student.name || '',
-            idNumber: student.idNumber || '',
-            birthDate: student.birthDate || '',
-            gender: student.gender || '',
-            city: student.city || '',
-            phone: student.phone || '',
-            email: student.email || '',
-            schoolName: student.schoolName || '',
-            instrument: firstInstrument?.instrument || '',
-            yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
-            teacherName: firstInstrument?.teacherName || '',
-            yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
-            grade: student.grade || 'י',
-            conservatoriumName: student.conservatoriumName || user.conservatoriumName,
-        });
-    }
-  }, [student, form, user.conservatoriumName]);
-
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -271,7 +250,8 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
             <CardContent>
                 <div className="space-y-4">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto_auto] gap-4 items-start p-4 border rounded-lg relative">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
+                        <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
                         <FormField
                             control={form.control}
                             name={`repertoire.${index}.composer`}
@@ -314,8 +294,8 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                             )} 
                         />
                         
-                        <div className="flex items-end h-full">
-                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                        <div className="self-center pt-6">
+                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                                 <span className="sr-only">מחק יצירה</span>
                             </Button>
@@ -328,11 +308,15 @@ export function RecitalForm({ user, student, onSubmit, saveDraft }: RecitalFormP
                     variant="outline"
                     className="mt-4"
                     onClick={() => append({ composer: '', title: '', genre: 'קלאסי', duration: '00:00' })}
+                    disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
                 >
                     <PlusCircle className="me-2 h-4 w-4" />
                     הוסף יצירה
                 </Button>
-                 <FormMessage>{form.formState.errors.repertoire?.root?.message}</FormMessage>
+                {fields.length >= MAX_REPERTOIRE_ITEMS && (
+                    <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
+                )}
+                 <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
 
             </CardContent>
             <Separator />

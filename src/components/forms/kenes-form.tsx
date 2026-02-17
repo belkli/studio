@@ -18,6 +18,9 @@ const compositionSchema = z.object({
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
 });
 
+const MIN_REPERTOIRE_ITEMS = 1;
+const MAX_REPERTOIRE_ITEMS = 10;
+
 const formSchema = z.object({
   academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
   conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
@@ -33,7 +36,7 @@ const formSchema = z.object({
   numParticipants: z.coerce.number().min(1, 'חובה להזין מספר משתתפים'),
 
   // Repertoire
-  repertoire: z.array(compositionSchema).min(1, 'חובה להוסיף לפחות יצירה אחת'),
+  repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
   
   // Logistical Needs
   logisticalNeeds: z.string().optional(),
@@ -129,7 +132,8 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
             <CardContent>
                 <div className="space-y-4">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto_auto] gap-4 items-end p-4 border rounded-lg relative">
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_auto_auto] gap-x-4 gap-y-2 items-start p-4 border rounded-lg relative">
+                        <div className="font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
                         <FormField control={form.control} name={`repertoire.${index}.composer`} render={({ field }) => ( <FormItem> <FormLabel>מלחין</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>שם היצירה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                         <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
@@ -146,8 +150,8 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
                             </FormItem> 
                         )} />
                         
-                        <div className="flex items-end h-full">
-                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                        <div className="self-center pt-6">
+                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                                 <span className="sr-only">מחק יצירה</span>
                             </Button>
@@ -160,11 +164,15 @@ export function KenesForm({ user, onSubmit, saveDraft }: KenesFormProps) {
                     variant="outline"
                     className="mt-4"
                     onClick={() => append({ composer: '', title: '', duration: '00:00' })}
+                    disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
                 >
                     <PlusCircle className="me-2 h-4 w-4" />
                     הוסף יצירה
                 </Button>
-                 <FormMessage>{form.formState.errors.repertoire?.root?.message}</FormMessage>
+                {fields.length >= MAX_REPERTOIRE_ITEMS && (
+                    <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
+                )}
+                 <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
 
             </CardContent>
             <Separator />
