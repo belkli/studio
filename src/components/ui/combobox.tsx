@@ -26,6 +26,9 @@ type ComboboxProps = {
   placeholder?: string;
   searchPlaceholder?: string;
   notFoundMessage?: string;
+  onInputChange?: (search: string) => void;
+  isLoading?: boolean;
+  disabled?: boolean;
 };
 
 export function Combobox({
@@ -34,7 +37,10 @@ export function Combobox({
   onSelectedValueChange,
   placeholder = "בחר פריט...",
   searchPlaceholder = "חפש פריט...",
-  notFoundMessage = "לא נמצאו פריטים."
+  notFoundMessage = "לא נמצאו פריטים.",
+  onInputChange,
+  isLoading = false,
+  disabled = false,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -46,25 +52,31 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          disabled={disabled}
         >
           {selectedValue
-            ? options.find((option) => option.value === selectedValue)?.label
+            ? options.find((option) => option.value === selectedValue || option.label === selectedValue)?.label ?? placeholder
             : placeholder}
           <ChevronsUpDown className="ms-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
         <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+          <CommandInput 
+            placeholder={searchPlaceholder} 
+            onValueChange={onInputChange}
+          />
           <CommandList>
-            <CommandEmpty>{notFoundMessage}</CommandEmpty>
+            {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">טוען...</div>}
+            {!isLoading && <CommandEmpty>{notFoundMessage}</CommandEmpty>}
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    onSelectedValueChange(currentValue === selectedValue ? "" : currentValue)
+                    const selectedOption = options.find(opt => opt.value.toLowerCase() === currentValue.toLowerCase());
+                    onSelectedValueChange(selectedOption ? selectedOption.value : "");
                     setOpen(false)
                   }}
                 >
