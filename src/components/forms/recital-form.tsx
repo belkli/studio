@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { schools, instruments, genres, compositions as initialCompositions } from '@/lib/data';
+import { schools, instruments, genres } from '@/lib/data';
 import type { User, Composition } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -105,7 +105,7 @@ const formatDurationOnBlur = (value: string): string => {
 }
 
 const RepertoireItem = ({ index, remove, fields }) => {
-    const { control, setValue, watch } = useFormContext();
+    const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
@@ -123,10 +123,11 @@ const RepertoireItem = ({ index, remove, fields }) => {
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
-        const results = await searchCompositions({ query, composer: selectedComposer });
+        const instrument = getValues('instrument');
+        const results = await searchCompositions({ query, composer: selectedComposer, instrument });
         setCompositionOptions(results);
         setIsLoadingCompositions(false);
-    }, 300), [selectedComposer]);
+    }, 300), [selectedComposer, getValues]);
     
     useEffect(() => {
         if(selectedComposer) {
@@ -141,7 +142,7 @@ const RepertoireItem = ({ index, remove, fields }) => {
     }, []);
 
     const handleSelectComposition = (id: string) => {
-        const composition = initialCompositions.find(c => c.id === id);
+        const composition = compositionOptions.find(c => c.id === id);
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
             setValue(`repertoire.${index}.title`, composition.title);

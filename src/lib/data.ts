@@ -49,50 +49,6 @@ export const schools = [
   { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
-export const compositions: Composition[] = [
-  // Bach
-  { id: 'bach-cello-suite-1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30', approved: true, source: 'seed' },
-  { id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '04:00', approved: true, source: 'seed' },
-  { id: 'bach-toccata-d-minor', composer: 'יוהאן סבסטיאן באך', title: 'טוקטה ופוגה ברה מינור, רי"ב 565', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed' },
-  { id: 'bach-air-on-g', composer: 'יוהאן סבסטיאן באך', title: 'אריה על מיתר סול (מתוך סוויטה תזמורתית מס\' 3)', genre: 'בארוק', duration: '05:00', approved: true, source: 'seed' },
-  { id: 'bach-jesu-joy', composer: 'יוהאן סבסטיאן באך', title: 'Jesu, Joy of Man\'s Desiring', genre: 'בארוק', duration: '03:30', approved: true, source: 'seed' },
-  
-  // Beethoven
-  { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', genre: 'קלאסי', duration: '15:00', approved: true, source: 'seed' },
-  { id: 'beethoven-pathetique-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 8 בדו מינור, אופ. 13 "הפאתטית"', genre: 'קלאסי', duration: '18:00', approved: true, source: 'seed' },
-  { id: 'beethoven-fur-elise', composer: 'לודוויג ואן בטהובן', title: 'לאליזה (Für Elise)', genre: 'קלאסי', duration: '03:00', approved: true, source: 'seed' },
-  { id: 'beethoven-symphony-5-1', composer: 'לודוויג ואן בטהובן', title: 'סימפוניה מס\' 5 בדו מינור, אופ. 67 - פרק 1', genre: 'קלאסי', duration: '07:30', approved: true, source: 'seed' },
-  
-  // Mozart
-  { id: 'mozart-sonata-11', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331', genre: 'קלאסי', duration: '14:00', approved: true, source: 'seed' },
-  { id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', genre: 'קלאסי', duration: '11:00', approved: true, source: 'seed' },
-  { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', genre: 'קלאסי', duration: '05:45', approved: true, source: 'seed' },
-  
-  // Chopin
-  { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', genre: 'רומנטי', duration: '04:30', approved: true, source: 'seed' },
-  { id: 'chopin-etude-op10-no12', composer: 'פרדריק שופן', title: 'אטיוד "המהפכה", אופ. 10 מס\' 12', genre: 'רומנטי', duration: '02:45', approved: true, source: 'seed' },
-  { id: 'chopin-waltz-op64-no1', composer: 'פרדריק שופן', title: 'ולס "הדקה", אופ. 64 מס\' 1', genre: 'רומנטי', duration: '02:00', approved: true, source: 'seed' },
-  { id: 'chopin-ballade-no1', composer: 'פרדריק שופן', title: 'בלדה מס\' 1 בסול מינור, אופ. 23', genre: 'רומנטי', duration: '09:30', approved: true, source: 'seed' },
-  { id: 'chopin-polonaise-op53', composer: 'פרדריק שופן', title: 'פולונז "הגיבורי", אופ. 53', genre: 'רומנטי', duration: '07:00', approved: true, source: 'seed' },
-
-  // Debussy
-  { id: 'debussy-clair-de-lune', composer: 'קלוד דביסי', title: 'אור ירח (Clair de lune) מתוך סוויטה ברגמסק', genre: 'אימפרסיוניסטי', duration: '05:00', approved: true, source: 'seed' },
-  { id: 'debussy-arabesque-1', composer: 'קלוד דביסי', title: 'ערבסקה מס\' 1', genre: 'אימפרסיוניסטי', duration: '04:30', approved: true, source: 'seed' },
-  { id: 'debussy-girl-flaxen-hair', composer: 'קלוד דביסי', title: 'הנערה עם שער הפשתן (La fille aux cheveux de lin)', genre: 'אימפרסיוניסטי', duration: '02:30', approved: true, source: 'seed' },
-  
-  // Vivaldi
-  { id: 'vivaldi-spring', composer: 'אנטוניו ויוואלדי', title: 'האביב (מתוך ארבע העונות)', genre: 'בארוק', duration: '10:00', approved: true, source: 'seed' },
-  { id: 'vivaldi-winter', composer: 'אנטוניו ויוואלדי', title: 'החורף (מתוך ארבע העונות)', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed' },
-
-  // Liszt
-  { id: 'liszt-liebestraum-3', composer: 'פרנץ ליסט', title: 'חלום אהבה מס\' 3 (Liebestraum No. 3)', genre: 'רומנטי', duration: '04:45', approved: true, source: 'seed' },
-  { id: 'liszt-hungarian-rhapsody-2', composer: 'פרנץ ליסט', title: 'רפסודיה הונגרית מס\' 2', genre: 'רומנטי', duration: '09:30', approved: true, source: 'seed' },
-
-  // Schubert
-  { id: 'schubert-impromptu-op90-no3', composer: 'פרנץ שוברט', title: 'אימפרומפטו בסול במול מז\'ור, אופ. 90 מס\' 3', genre: 'רומנטי', duration: '06:00', approved: true, source: 'seed' },
-  { id: 'schubert-ave-maria', composer: 'פרנץ שוברט', title: 'אווה מריה', genre: 'רומנטי', duration: '05:00', approved: true, source: 'seed' },
-];
-
 // --- Mock Notifications ---
 const studentNotifications: Notification[] = [
   { id: 'notif-s1', title: 'הטופס שלך אושר!', message: 'הטופס "רסיטל בגרות" אושר על ידי מרים כהן.', timestamp: 'לפני 2 ימים', link: '/dashboard/forms/form-101', read: false },
@@ -351,7 +307,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     ],
     conservatoriumName: studentUser2.conservatoriumName,
     conservatoriumManagerName: conservatoriumAdminUser.name,
-    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', // Placeholder signature
+    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', // Placeholder signature
     signedAt: '2024-05-19',
     calculatedPrice: 10,
     paymentStatus: 'paid',

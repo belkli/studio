@@ -55,6 +55,7 @@ export type Composition = {
   title: string;
   duration: string; // MM:SS, for the entire piece
   genre: string;
+  instrument?: string;
   approved?: boolean;
   source?: 'seed' | 'user_submitted' | 'api';
 };

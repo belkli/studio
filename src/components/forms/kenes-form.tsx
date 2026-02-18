@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
-import { conservatoriums, priceMatrix, compositions, genres } from '@/lib/data';
+import { conservatoriums, priceMatrix, genres } from '@/lib/data';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
@@ -124,7 +124,7 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
     }, []);
 
      const handleSelectComposition = (id: string) => {
-        const composition = compositions.find(c => c.id === id);
+        const composition = compositionOptions.find(c => c.id === id);
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
             setValue(`repertoire.${index}.title`, composition.title);
