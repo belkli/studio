@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockUsers } from '@/lib/data';
 import type { User } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { RecitalForm } from './recital-form';
 import { KenesForm } from './kenes-form';
@@ -43,7 +43,11 @@ export function NewForm() {
 
   const selectedFormType = formTypeForm.watch('formType');
   const selectedStudentId = formTypeForm.watch('studentId');
-  const selectedStudent = mockUsers.find(u => u.id === selectedStudentId);
+  
+  const selectedStudent = useMemo(
+    () => mockUsers.find(u => u.id === selectedStudentId),
+    [selectedStudentId]
+  );
 
   // Effect to set student list based on user role
   useEffect(() => {
@@ -84,16 +88,18 @@ export function NewForm() {
   };
 
   const renderForm = () => {
-    if (!selectedFormType) return null;
-    if (!selectedStudentId && selectedFormType === 'recital') {
-        return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>
+    if (!selectedFormType) {
+        return null;
     }
 
     switch(selectedFormType) {
         case 'recital':
-            return <RecitalForm user={user} student={selectedStudent!} onSubmit={onSubmitRecital} />
+            if (!selectedStudent) {
+                return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>;
+            }
+            return <RecitalForm user={user} student={selectedStudent} onSubmit={onSubmitRecital} />;
         case 'kenes':
-            return <KenesForm user={user} onSubmit={onSubmitKenes} />
+            return <KenesForm user={user} onSubmit={onSubmitKenes} />;
         default:
             return null;
     }
