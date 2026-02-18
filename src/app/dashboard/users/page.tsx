@@ -37,7 +37,11 @@ const editUserSchema = z.object({
     idNumber: z.string().refine(isValidIsraeliID, "מספר ת.ז. לא תקין."),
     phone: z.string().min(9, "מספר נייד לא תקין.").optional(),
     conservatoriumStudyYears: z.coerce.number().min(0, "שנים חייבות להיות מספר חיובי.").optional(),
-    instrumentYears: z.coerce.number().min(0, "שנים חייבות להיות מספר חיובי.").optional(),
+    instruments: z.array(z.object({
+        instrument: z.string(),
+        teacherName: z.string(),
+        yearsOfStudy: z.coerce.number().min(0, "שנים חייבות להיות מספר חיובי.").optional(),
+    })).optional(),
 });
 
 type EditUserFormData = z.infer<typeof editUserSchema>;
@@ -135,13 +139,6 @@ export default function UsersPage() {
             ...updatedData,
         };
 
-        if (updatedData.instrumentYears !== undefined && finalUpdatedUser.instruments && finalUpdatedUser.instruments.length > 0) {
-            const newInstruments = [...finalUpdatedUser.instruments];
-            newInstruments[0] = { ...newInstruments[0], yearsOfStudy: updatedData.instrumentYears };
-            finalUpdatedUser.instruments = newInstruments;
-        }
-        delete (finalUpdatedUser as any).instrumentYears;
-
         updateUser(finalUpdatedUser);
         toast({ title: 'משתמש עודכן', description: `פרטיו של ${finalUpdatedUser.name} עודכנו בהצלחה.` });
         setEditingUser(null);
@@ -166,11 +163,11 @@ export default function UsersPage() {
 
             <Tabs defaultValue="approved">
                 <TabsList className="grid w-full grid-cols-2">
-                     <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                     <TabsTrigger value="pending">
                         ממתינים לאישור
                         {pendingUsers.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{pendingUsers.length}</span>}
                     </TabsTrigger>
+                     <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="approved" className="mt-6">
@@ -267,7 +264,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
             <TableHeader><TableRow>
                 <TableHead>שם</TableHead>
                 <TableHead>ת.ז.</TableHead>
-                <TableHead dir="ltr">אימייל</TableHead>
+                <TableHead dir="ltr" className="text-left">אימייל</TableHead>
                 <TableHead>נייד</TableHead>
                 <TableHead>תפקיד</TableHead>
                 {showFilters && <TableHead>כלי נגינה</TableHead>}
@@ -290,7 +287,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                                 <TableCell>{user.instruments?.map(i => i.instrument).join(', ') || '-'}</TableCell>
                                 <TableCell>{user.instruments?.map(i => i.teacherName).join(', ') || '-'}</TableCell>
                                 <TableCell>{user.conservatoriumStudyYears || '-'}</TableCell>
-                                <TableCell>{user.instruments?.[0]?.yearsOfStudy || '-'}</TableCell>
+                                <TableCell>{user.instruments?.map(i => i.yearsOfStudy).join(', ') || '-'}</TableCell>
                             </>
                         )}
                         {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
@@ -314,7 +311,7 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
         <Table>
             <TableHeader><TableRow>
                 <TableHead>שם</TableHead>
-                <TableHead dir="ltr">אימייל</TableHead>
+                <TableHead dir="ltr" className="text-left">אימייל</TableHead>
                 <TableHead>תפקיד מבוקש</TableHead>
                 <TableHead className="text-left">פעולות</TableHead>
             </TableRow></TableHeader>
@@ -347,7 +344,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
             idNumber: user.idNumber || '',
             phone: user.phone || '',
             conservatoriumStudyYears: user.conservatoriumStudyYears || 0,
-            instrumentYears: user.instruments?.[0]?.yearsOfStudy || 0,
+            instruments: user.instruments || [],
         },
     });
     
@@ -386,55 +383,89 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     )}
                 />
                 {form.watch('role') === 'student' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField
-                            control={form.control}
-                            name="grade"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>כיתה</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                     <div className="space-y-4 pt-4 mt-4 border-t">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="grade"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>כיתה</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="בחר כיתה"/>
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="יב">י"ב</SelectItem>
+                                                <SelectItem value="יא">י"א</SelectItem>
+                                                <SelectItem value="י">י'</SelectItem>
+                                                <SelectItem value="ט">ט'</SelectItem>
+                                                <SelectItem value="ח">ח'</SelectItem>
+                                                <SelectItem value="ז">ז'</SelectItem>
+                                                <SelectItem value="ו">ו'</SelectItem>
+                                                <SelectItem value="ה">ה'</SelectItem>
+                                                <SelectItem value="ד">ד'</SelectItem>
+                                                <SelectItem value="ג">ג'</SelectItem>
+                                                <SelectItem value="ב">ב'</SelectItem>
+                                                <SelectItem value="א">א'</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="conservatoriumStudyYears"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>וותק בקונס' (שנים)</FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="בחר כיתה"/>
-                                            </SelectTrigger>
+                                            <Input type="number" {...field} disabled={!canEditSeniority} />
                                         </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="י">י'</SelectItem>
-                                            <SelectItem value="יא">י"א</SelectItem>
-                                            <SelectItem value="יב">י"ב</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="conservatoriumStudyYears"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>וותק בקונס'</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" {...field} disabled={!canEditSeniority} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="instrumentYears"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>וותק עם מורה</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" {...field} disabled={!canEditSeniority} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        {user.instruments && user.instruments.length > 0 && (
+                            <div className="space-y-4 pt-4 mt-4 border-t">
+                                <h4 className="font-medium text-muted-foreground">וותק עם מורים</h4>
+                                {(form.getValues('instruments') || []).map((inst, index) => (
+                                    <div key={index} className="grid grid-cols-[1fr_1fr_120px] items-end gap-2 p-3 border rounded-md bg-muted/50">
+                                        <div>
+                                            <FormLabel className="text-xs">כלי נגינה</FormLabel>
+                                            <Input value={inst.instrument} disabled className="bg-background" />
+                                        </div>
+                                        <div>
+                                            <FormLabel className="text-xs">שם המורה</FormLabel>
+                                            <Input value={inst.teacherName} disabled className="bg-background" />
+                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name={`instruments.${index}.yearsOfStudy`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-xs">שנות וותק</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            {...field}
+                                                            value={field.value ?? 0}
+                                                            onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
+                                                            disabled={!canEditSeniority}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
                 <DialogFooter>
@@ -445,3 +476,4 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
         </FormProvider>
     );
 }
+
