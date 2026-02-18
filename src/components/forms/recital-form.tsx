@@ -94,10 +94,9 @@ const getHebrewAcademicYear = () => {
     if (month < 8) { // Before September
         gregorianYear--;
     }
-    const hebrewYearShort = (gregorianYear + 5760) % 100;
-    const hebrewChar = String.fromCharCode(1488 + (hebrewYearShort-1));
-
-    return `תשפ"${hebrewChar} (${gregorianYear}-${gregorianYear + 1})`;
+    const hebrewYear = gregorianYear + 5760;
+    const hebrewYearInChars = String.fromCharCode(1488 + (hebrewYear % 1000 - 700) / 10 + 4)
+    return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
 }
 
 const MovementSelector = ({ movements, selected, onSelectionChange, onDurationChange }) => {
@@ -322,34 +321,43 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     const { toast } = useToast();
-    const firstInstrument = student.instruments?.[0];
+
+    const defaultValues = useMemo(() => {
+        const firstInstrument = student.instruments?.[0];
+        return {
+            formType: 'רסיטל בגרות',
+            academicYear: getHebrewAcademicYear(),
+            grade: student.grade || 'יב',
+            conservatoriumName: student.conservatoriumName || user.conservatoriumName,
+            studentName: student.name || '',
+            idNumber: student.idNumber || '',
+            birthDate: student.birthDate || '',
+            gender: student.gender || 'זכר',
+            city: student.city || '',
+            phone: student.phone || '',
+            email: student.email || '',
+            schoolName: student.schoolName || '',
+            hasMusicMajor: 'לא',
+            isMajorParticipant: 'לא',
+            plansTheoryExam: 'לא',
+            instrument: firstInstrument?.instrument || '',
+            yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
+            teacherName: firstInstrument?.teacherName || '',
+            yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
+            repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+            managerNotes: '',
+        };
+    }, [student, user]);
     
     const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      formType: 'רסיטל בגרות',
-      academicYear: getHebrewAcademicYear(),
-      grade: student.grade || 'יב',
-      conservatoriumName: student.conservatoriumName || user.conservatoriumName,
-      studentName: student.name || '',
-      idNumber: student.idNumber || '',
-      birthDate: student.birthDate || '',
-      gender: student.gender || 'זכר',
-      city: student.city || '',
-      phone: student.phone || '',
-      email: student.email || '',
-      schoolName: student.schoolName || '',
-      hasMusicMajor: 'לא',
-      isMajorParticipant: 'לא',
-      plansTheoryExam: 'לא',
-      instrument: firstInstrument?.instrument || '',
-      yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
-      teacherName: firstInstrument?.teacherName || '',
-      yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
-      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-      managerNotes: '',
-    },
-  });
+        resolver: zodResolver(formSchema),
+        defaultValues,
+    });
+
+    useEffect(() => {
+        form.reset(defaultValues);
+    }, [defaultValues, form]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
