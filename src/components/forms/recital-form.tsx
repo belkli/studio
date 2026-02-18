@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form'; // Added useFormContext here
+import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -94,9 +94,10 @@ const getHebrewAcademicYear = () => {
     if (month < 8) { // Before September
         gregorianYear--;
     }
-    const hebrewYearShort = (gregorianYear + 1 + 5700) % 100;
-    // For 2024 -> 2025 academic year, Hebrew year is 5785, which is תשפ"ה
-    return `תשפ"ה (2024-2025)`;
+    const hebrewYearShort = (gregorianYear + 1 + 5780) % 100 - 4; // 5785 -> פה, 5786 -> וו
+    const hebrewChar = String.fromCharCode(1488 + hebrewYearShort -1);
+
+    return `תשפ"${hebrewChar} (${gregorianYear}-${gregorianYear + 1})`;
 }
 
 const MovementSelector = ({ movements, selected, onSelectionChange, onDurationChange }) => {
@@ -160,10 +161,6 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     const selectedComposer = currentRepertoireItem?.composer;
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
-        if (query.length < 2 && query.length > 0) {
-            setComposerOptions([]);
-            return;
-        }
         setIsLoadingComposers(true);
         const results = await searchComposers(query);
         setComposerOptions(results);
@@ -218,6 +215,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                                 placeholder="בחר מלחין..."
                                 onInputChange={debouncedComposerSearch}
                                 isLoading={isLoadingComposers}
+                                filter={false}
                             />
                             <FormMessage />
                         </FormItem>
@@ -249,6 +247,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                                 placeholder="בחר יצירה..."
                                 onInputChange={debouncedCompositionSearch}
                                 isLoading={isLoadingCompositions}
+                                filter={false}
                             />
                             <FormMessage />
                         </FormItem>
@@ -261,7 +260,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     render={({ field }) => ( 
                         <FormItem> 
                             <FormLabel>ז'אנר</FormLabel> 
-                            <Select key={`${field.value}-${index}`} dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> 
+                            <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
                                 <FormControl>
                                     <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
                                 </FormControl> 
@@ -407,14 +406,14 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
           <CardContent className="space-y-4">
              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                 <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="formType" render={({ field }) => ( <FormItem><FormLabel>סוג הטופס</FormLabel><Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="רסיטל בגרות">רסיטל בגרות</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
+                <FormField name="formType" render={({ field }) => ( <FormItem><FormLabel>סוג הטופס</FormLabel><Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="רסיטל בגרות">רסיטל בגרות</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
                 <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} disabled /></FormControl> <FormMessage /> </FormItem> )} />
                 <FormField 
                     name="grade" 
                     render={({ field }) => ( 
                         <FormItem>
                             <FormLabel>כיתה</FormLabel>
-                            <Select key={field.value} dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled={areDetailsLocked}>
+                            <Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}>
                                 <FormControl><SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger></FormControl>
                                 <SelectContent>
                                     <SelectItem value="יב">י"ב</SelectItem>
@@ -452,7 +451,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     render={({ field }) => ( 
                         <FormItem>
                             <FormLabel>מין</FormLabel>
-                            <Select key={field.value} dir="rtl" onValueChange={field.onChange} defaultValue={field.value || ''} disabled={areDetailsLocked}>
+                            <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}>
                                 <FormControl>
                                     <SelectTrigger><SelectValue placeholder="בחר מין"/></SelectTrigger>
                                 </FormControl>
@@ -481,7 +480,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     render={({ field }) => ( 
                         <FormItem> 
                             <FormLabel>בית ספר</FormLabel> 
-                            <Select key={field.value} dir="rtl" onValueChange={field.onChange} defaultValue={field.value || ''} disabled={areDetailsLocked}> 
+                            <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> 
                                 <FormControl><SelectTrigger><SelectValue placeholder="בחר בית ספר" /></SelectTrigger></FormControl> 
                                 <SelectContent> {schools.map(s => <SelectItem key={s.symbol} value={s.name}>{s.name}</SelectItem>)} </SelectContent> 
                             </Select> 
@@ -507,7 +506,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                         render={({ field }) => ( 
                             <FormItem> 
                                 <FormLabel>כלי נגינה / שירה</FormLabel> 
-                                <Select key={field.value} dir="rtl" onValueChange={field.onChange} defaultValue={field.value || ''} disabled={areDetailsLocked}> 
+                                <Select dir="rtl" onValueChange={field.onChange} value={field.value || ''} disabled={areDetailsLocked}> 
                                     <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי" /></SelectTrigger></FormControl> 
                                     <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> 
                                 </Select> 
