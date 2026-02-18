@@ -81,6 +81,7 @@ export default function UsersPage() {
     }, [currentUser, users]);
     
     const filteredApprovedUsers = useMemo(() => {
+        if (!approvedUsers) return [];
         return approvedUsers.filter(user => {
             const searchMatch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
             if (user.role !== 'student') return searchMatch;
@@ -133,8 +134,8 @@ export default function UsersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">ניהול משתמשים</h1>
-                <p className="text-muted-foreground">נהל משתמשים, הרשאות ובקשות הצטרפות.</p>
+                <h1 className="text-2xl font-bold text-right">ניהול משתמשים</h1>
+                <p className="text-muted-foreground text-right">נהל משתמשים, הרשאות ובקשות הצטרפות.</p>
             </div>
 
             <Tabs defaultValue="approved">
@@ -149,7 +150,7 @@ export default function UsersPage() {
                 <TabsContent value="approved" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>
+                            <CardTitle className="text-right">
                                 {currentUser.role === 'site_admin' 
                                     ? 'מנהלי קונסרבטוריונים'
                                     : `משתמשים ב${currentUser.conservatoriumName}`
@@ -159,7 +160,7 @@ export default function UsersPage() {
                         <CardContent>
                              <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full rounded-lg bg-background ps-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 {showFilters && (
@@ -178,8 +179,8 @@ export default function UsersPage() {
                 <TabsContent value="pending" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>בקשות הצטרפות ממתינות</CardTitle>
-                            <CardDescription>אשר או דחה בקשות של משתמשים חדשים להצטרף לקונסרבטוריון שלך.</CardDescription>
+                            <CardTitle className="text-right">בקשות הצטרפות ממתינות</CardTitle>
+                            <CardDescription className="text-right">אשר או דחה בקשות של משתמשים חדשים להצטרף לקונסרבטוריון שלך.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <PendingUsersTable users={pendingUsers} onApprove={handleApprove} onReject={handleRejectClick} />
