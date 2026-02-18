@@ -193,8 +193,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto] items-end gap-4 p-4">
-                <div className="hidden lg:block font-medium text-muted-foreground self-center">{index + 1}.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_180px_230px_auto] items-start gap-4 p-4">
+                <div className="hidden lg:flex pt-8 font-medium text-muted-foreground self-start">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -255,27 +255,23 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     )}
                 />
 
-                <FormField 
-                    control={control} 
-                    name={`repertoire.${index}.genre`} 
-                    render={({ field }) => ( 
-                        <FormItem> 
-                            <FormLabel>ז'אנר</FormLabel> 
-                            <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
-                                <FormControl>
-                                    <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
-                                </FormControl> 
-                                <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> 
-                            </Select> 
-                            <FormMessage /> 
-                        </FormItem> 
-                    )} 
-                />
+                <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( 
+                    <FormItem> 
+                        <FormLabel>ז'אנר</FormLabel> 
+                        <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
+                            <FormControl>
+                                <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
+                            </FormControl> 
+                            <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> 
+                        </Select> 
+                        <FormMessage /> 
+                    </FormItem> 
+                )} />
                 
                 <div className='flex items-end gap-2'>
                     {currentRepertoireItem.movements && currentRepertoireItem.movements.length > 0 && (
-                        <FormItem className='flex-grow'>
-                            <FormLabel>פרקים</FormLabel>
+                        <FormItem>
+                            <Label>&nbsp;</Label>
                             <MovementSelector
                                 movements={currentRepertoireItem.movements}
                                 selected={currentRepertoireItem.selectedMovements || []}
@@ -288,29 +284,25 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                             />
                         </FormItem>
                     )}
-                    <FormField 
-                        control={control} 
-                        name={`repertoire.${index}.duration`} 
-                        render={({ field }) => ( 
-                            <FormItem className={cn(currentRepertoireItem.movements && currentRepertoireItem.movements.length > 0 ? "w-24" : "w-full")}> 
-                                <FormLabel>זמן ביצוע</FormLabel> 
-                                <FormControl>
-                                    <Input 
-                                        dir='ltr'
-                                        placeholder="MM:SS"
-                                        maxLength={5} 
-                                        {...field} 
-                                        readOnly 
-                                        className="bg-muted/50"
-                                    />
-                                </FormControl> 
-                                <FormMessage /> 
-                            </FormItem> 
-                        )} 
-                    />
+                    <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
+                        <FormItem className="flex-grow"> 
+                            <FormLabel>זמן ביצוע</FormLabel> 
+                            <FormControl>
+                                <Input 
+                                    dir='ltr' 
+                                    placeholder="MM:SS"
+                                    maxLength={5} 
+                                    {...field} 
+                                    readOnly 
+                                    className="bg-muted/50"
+                                />
+                            </FormControl> 
+                            <FormMessage /> 
+                        </FormItem> 
+                    )} />
                 </div>
                 
-                <div className="hidden lg:flex self-center justify-self-end">
+                <div className="hidden lg:flex self-start pt-8">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -324,34 +316,41 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
+
+  const defaultValues = useMemo(() => ({
+    formType: 'רסיטל בגרות',
+    academicYear: getHebrewAcademicYear(),
+    grade: student?.grade || 'יב',
+    conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
+    studentName: student?.name || '',
+    idNumber: student?.idNumber || '',
+    birthDate: student?.birthDate || '',
+    gender: student?.gender || 'זכר',
+    city: student?.city || '',
+    phone: student?.phone || '',
+    email: student?.email || '',
+    schoolName: student?.schoolName || '',
+    hasMusicMajor: 'לא',
+    isMajorParticipant: 'לא',
+    plansTheoryExam: 'לא',
+    instrument: student?.instruments?.[0]?.instrument || '',
+    yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
+    teacherName: student?.instruments?.[0]?.teacherName || '',
+    yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
+    repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+    managerNotes: '',
+  }), [student, user]);
     
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-        formType: 'רסיטל בגרות',
-        academicYear: getHebrewAcademicYear(),
-        grade: student?.grade || 'יב',
-        conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
-        studentName: student?.name || '',
-        idNumber: student?.idNumber || '',
-        birthDate: student?.birthDate || '',
-        gender: student?.gender || 'זכר',
-        city: student?.city || '',
-        phone: student?.phone || '',
-        email: student?.email || '',
-        schoolName: student?.schoolName || '',
-        hasMusicMajor: 'לא',
-        isMajorParticipant: 'לא',
-        plansTheoryExam: 'לא',
-        instrument: student?.instruments?.[0]?.instrument || '',
-        yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
-        teacherName: student?.instruments?.[0]?.teacherName || '',
-        yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
-        repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-        managerNotes: '',
-    },
+    defaultValues,
   });
   
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [student, defaultValues, form]);
+
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'repertoire',

@@ -77,14 +77,19 @@ export function Combobox({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={option.label} // Use label for filtering, value for selection
-                  onSelect={() => {
-                    onSelectedValueChange(option.value)
+                  value={option.label}
+                  onSelect={() => { // For keyboard
+                    if (option.value !== selectedValue) {
+                        onSelectedValueChange(option.value)
+                    }
                     setOpen(false)
                   }}
-                  onMouseDown={(e) => {
+                  onMouseDown={(e) => { // For mouse
                     e.preventDefault();
-                    e.currentTarget.click();
+                    if (option.value !== selectedValue) {
+                        onSelectedValueChange(option.value);
+                    }
+                    setOpen(false);
                   }}
                 >
                   <Check
