@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { schools, instruments, genres } from '@/lib/data';
+import { schools, instruments, genres, compositions as initialCompositions } from '@/lib/data';
 import type { User, Composition } from '@/lib/types';
 import { PlusCircle, Send, Trash2, Music4 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -94,8 +94,9 @@ const getHebrewAcademicYear = () => {
     if (month < 8) { // Before September
         gregorianYear--;
     }
-    const hebrewYear = gregorianYear + 5760;
-    const hebrewYearInChars = String.fromCharCode(1488 + (hebrewYear % 1000 - 700) / 10 + 4)
+    const hebrewYearShort = (gregorianYear + 1) % 100;
+    const hebrewYear = 5700 + hebrewYearShort + (gregorianYear - 2000) + 40; // Approximate
+    const hebrewYearInChars = String.fromCharCode(1488 + ((hebrewYear % 100) - 1));
     return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
 }
 
@@ -174,8 +175,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     }, 300), [selectedComposer]);
     
     useEffect(() => {
-        debouncedCompositionSearch('');
-    }, [selectedComposer, debouncedCompositionSearch]);
+        debouncedCompositionSearch(watch(`repertoire.${index}.title`));
+    }, [selectedComposer, debouncedCompositionSearch, index, watch]);
     
     useEffect(() => {
         debouncedComposerSearch('');
@@ -230,7 +231,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                                 options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
                                 selectedValue={currentRepertoireItem.id || ''}
                                 onSelectedValueChange={(id) => {
-                                    const composition = compositionOptions.find(c => c.id === id);
+                                    const composition = initialCompositions.find(c => c.id === id);
                                     if (composition) {
                                         setValue(`repertoire.${index}.id`, composition.id);
                                         setValue(`repertoire.${index}.title`, composition.title);
@@ -320,44 +321,39 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
-    const { toast } = useToast();
+  const { toast } = useToast();
 
-    const defaultValues = useMemo(() => {
-        const firstInstrument = student.instruments?.[0];
-        return {
-            formType: 'רסיטל בגרות',
-            academicYear: getHebrewAcademicYear(),
-            grade: student.grade || 'יב',
-            conservatoriumName: student.conservatoriumName || user.conservatoriumName,
-            studentName: student.name || '',
-            idNumber: student.idNumber || '',
-            birthDate: student.birthDate || '',
-            gender: student.gender || 'זכר',
-            city: student.city || '',
-            phone: student.phone || '',
-            email: student.email || '',
-            schoolName: student.schoolName || '',
-            hasMusicMajor: 'לא',
-            isMajorParticipant: 'לא',
-            plansTheoryExam: 'לא',
-            instrument: firstInstrument?.instrument || '',
-            yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
-            teacherName: firstInstrument?.teacherName || '',
-            yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
-            repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-            managerNotes: '',
-        };
-    }, [student, user]);
+  const defaultValues = useMemo(() => {
+    const firstInstrument = student.instruments?.[0];
+    return {
+        formType: 'רסיטל בגרות',
+        academicYear: getHebrewAcademicYear(),
+        grade: student.grade || 'יב',
+        conservatoriumName: student.conservatoriumName || user.conservatoriumName,
+        studentName: student.name || '',
+        idNumber: student.idNumber || '',
+        birthDate: student.birthDate || '',
+        gender: student.gender || 'זכר',
+        city: student.city || '',
+        phone: student.phone || '',
+        email: student.email || '',
+        schoolName: student.schoolName || '',
+        hasMusicMajor: 'לא',
+        isMajorParticipant: 'לא',
+        plansTheoryExam: 'לא',
+        instrument: firstInstrument?.instrument || '',
+        yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
+        teacherName: firstInstrument?.teacherName || '',
+        yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
+        repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+        managerNotes: '',
+    };
+  }, [student, user]);
     
-    const form = useForm<FormData>({
-        resolver: zodResolver(formSchema),
-        defaultValues,
-    });
-
-    useEffect(() => {
-        form.reset(defaultValues);
-    }, [defaultValues, form]);
-
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
+  });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -398,7 +394,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
+      <form key={student.id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
         <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
