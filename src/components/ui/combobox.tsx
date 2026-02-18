@@ -84,9 +84,6 @@ export function Combobox({
                   }}
                   onMouseDown={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
-                    onSelectedValueChange(option.value);
-                    setOpen(false);
                   }}
                 >
                   <Check

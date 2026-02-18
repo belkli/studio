@@ -25,15 +25,17 @@ export async function getCompositionSuggestions(
 }
 
 export async function searchComposers(query: string): Promise<string[]> {
-    if (!query) return [];
     const lowerCaseQuery = query.toLowerCase();
 
-    const composers = new Set(
-        allCompositions
-            .filter(c => c.composer.toLowerCase().includes(lowerCaseQuery))
-            .map(c => c.composer)
-    );
-    return Array.from(composers).slice(0, 10);
+    const allUniqueComposers = Array.from(new Set(allCompositions.map(c => c.composer)));
+
+    if (!query) {
+        return allUniqueComposers.slice(0, 20);
+    }
+
+    const filteredComposers = allUniqueComposers.filter(c => c.toLowerCase().includes(lowerCaseQuery));
+    
+    return filteredComposers.slice(0, 10);
 }
 
 type SearchCompositionsInput = {
