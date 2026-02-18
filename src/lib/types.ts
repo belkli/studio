@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'teacher' | 'conservatorium_admin' | 'site_admin';
+export type UserRole = 'student' | 'teacher' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
 
 export type InstrumentInfo = {
   instrument: string;
@@ -47,7 +47,7 @@ export type Conservatorium = {
   stampUrl?: string;
 };
 
-export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה';
+export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
 
 export type Composition = {
   id: string;
@@ -137,6 +137,7 @@ export type FormSubmission = {
   adminId?: string;
   teacherComment?: string;
   adminComment?: string;
+  ministryComment?: string;
 
   // NEW
   managerNotes?: string;

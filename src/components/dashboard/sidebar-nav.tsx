@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -27,6 +27,7 @@ const links = [
     { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, role: 'teacher' },
     { href: '/dashboard/library', label: 'ספרייה', icon: Book },
     { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
+    { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, role: 'ministry_director' },
 ];
 
 

@@ -1,22 +1,14 @@
-import type { User, FormSubmission, Notification, Conservatorium, Composition } from './types';
+import type { User, FormSubmission, Notification, Conservatorium } from './types';
+import constAdminData from '../../docs/constadmin.json';
 
-export const conservatoriums: Conservatorium[] = [
-  { id: 'cons-1', name: 'קונסרבטוריון הוד השרון', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp1/200/200' },
-  { id: 'cons-2', name: 'הקונסרבטוריון הישראלי למוסיקה תל אביב', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp2/200/200' },
-  { id: 'cons-3', name: 'קונסרבטוריון גבעתיים', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp3/200/200' },
-  { id: 'cons-4', name: 'מרכז למוסיקה ובימת אמנויות רעננה', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp4/200/200' },
-  { id: 'cons-5', name: 'קונסרבטוריון רון שולמית, ירושלים', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp5/200/200' },
-  { id: 'cons-6', name: 'הקונסרבטוריון העירוני פתח תקוה', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp6/200/200' },
-  { id: 'cons-7', name: 'קונסרבטוריון קרית אונו', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp7/200/200' },
-  { id: 'cons-8', name: 'המרכז למוסיקה ירושלים, משכנות שאננים', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp8/200/200' },
-  { id: 'cons-9', name: 'קונסרבטוריון עירוני ראשון לציון', tier: 'A', stampUrl: 'https://picsum.photos/seed/stamp9/200/200' },
-  { id: 'cons-10', name: 'קונסרבטוריון עירוני נתניה', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp10/200/200' },
-  { id: 'cons-11', name: 'קונסרבטוריון כפר סבא', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp11/200/200' },
-  { id: 'cons-12', name: 'קונסרבטוריון "אקדמא" אשדוד', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp12/200/200' },
-  { id: 'cons-13', name: 'הקונסרבטוריון העירוני באר שבע', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp13/200/200' },
-  { id: 'cons-14', name: 'הקונסרבטוריון העירוני רחובות', tier: 'B', stampUrl: 'https://picsum.photos/seed/stamp14/200/200' },
-  { id: 'cons-15', name: 'קונסרבטוריון "הסדנה" ירושלים', tier: 'C', stampUrl: 'https://picsum.photos/seed/stamp15/200/200' }
-];
+const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
+
+export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => ({
+  id: `cons-${admin.id}`,
+  name: admin.location,
+  tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
+  stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
+}));
 
 export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
   A: {
@@ -205,11 +197,11 @@ const teacherUser3: User = {
 
 const conservatoriumAdminUser: User = {
   id: 'conservatorium-admin-user-1',
-  name: 'משה שפירא',
+  name: 'צח גרטנר',
   email: 'conservatorium.admin@example.com',
   role: 'conservatorium_admin',
   conservatoriumId: 'cons-1',
-  conservatoriumName: 'קונסרבטוריון הוד השרון',
+  conservatoriumName: 'אור עקיבא',
   avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin',
   idNumber: '777777777',
   phone: '054-7777777',
@@ -247,6 +239,20 @@ export const siteAdminUser: User = {
   notifications: siteAdminNotifications,
 };
 
+export const ministryDirectorUser: User = {
+  id: 'ministry-director-user-1',
+  name: 'יעקב הלוי',
+  email: 'ministry.director@example.com',
+  role: 'ministry_director',
+  conservatoriumId: 'ministry',
+  conservatoriumName: 'משרד החינוך',
+  avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director',
+  idNumber: '123456789',
+  approved: true,
+  notifications: [],
+};
+
+
 export const mockUsers: User[] = [
   studentUser,
   studentUser2,
@@ -256,6 +262,7 @@ export const mockUsers: User[] = [
   conservatoriumAdminUser,
   conservatoriumAdminUser2,
   siteAdminUser,
+  ministryDirectorUser,
   otherStudent,
   pendingTeacher,
 ];
@@ -268,7 +275,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     grade: 'יב',
     studentId: studentUser.id,
     studentName: studentUser.name,
-    status: 'ממתין לאישור מורה',
+    status: 'מאושר',
     submissionDate: '2024-05-20',
     totalDuration: '12:30',
     repertoire: [
@@ -299,7 +306,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     formType: 'קונצרט כיתתי',
     studentId: studentUser2.id,
     studentName: studentUser2.name,
-    status: 'מאושר',
+    status: 'מאושר סופית',
     submissionDate: '2024-05-18',
     totalDuration: '08:15',
     repertoire: [
@@ -307,7 +314,7 @@ export const mockFormSubmissions: FormSubmission[] = [
     ],
     conservatoriumName: studentUser2.conservatoriumName,
     conservatoriumManagerName: conservatoriumAdminUser.name,
-    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', // Placeholder signature
+    signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', // Placeholder signature
     signedAt: '2024-05-19',
     calculatedPrice: 10,
     paymentStatus: 'paid',
@@ -348,7 +355,8 @@ export const mockFormSubmissions: FormSubmission[] = [
     grade: 'יא',
     studentId: studentUser2.id,
     studentName: studentUser2.name,
-    status: 'ממתין לאישור מנהל',
+    status: 'נדרש תיקון',
+    ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.',
     submissionDate: '2024-05-23',
     totalDuration: '21:00',
     repertoire: [

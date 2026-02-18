@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash, Download } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash, Download, CircleCheckBig, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
@@ -45,6 +45,8 @@ export default function FormDetailsPage() {
     const form = mockFormSubmissions.find(f => f.id === formId);
     
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
+    const [isMinistryRejectionDialogOpen, setMinistryRejectionDialogOpen] = useState(false);
+    const [ministryRejectionReason, setMinistryRejectionReason] = useState("");
     const sigPadRef = useRef<SignatureCanvas>(null);
 
     if (!form) {
@@ -59,6 +61,7 @@ export default function FormDetailsPage() {
     
     const isTeacherApproval = user.role === 'teacher' && form.status === 'ממתין לאישור מורה';
     const isAdminFinalApproval = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל';
+    const isMinistryApproval = user.role === 'ministry_director' && form.status === 'מאושר';
 
     const generatePdf = (form) => {
         const doc = new jsPDF();
@@ -160,6 +163,18 @@ export default function FormDetailsPage() {
         setSignatureDialogOpen(false);
     }
     
+    const handleMinistryFinalApprove = () => {
+        toast({ title: "הטופס אושר סופית", description: `הטופס של ${form.studentName} אושר סופית על ידי משרד החינוך.` });
+        // Here you would update the form status in your state/backend
+    }
+
+    const handleMinistryRequestChanges = () => {
+        setMinistryRejectionDialogOpen(false);
+        toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
+        setMinistryRejectionReason("");
+        // Here you would update the form status and add the comment
+    }
+    
     const clearSignature = () => {
         sigPadRef.current?.clear();
     }
@@ -184,7 +199,7 @@ export default function FormDetailsPage() {
                     </div>
                 </li>
             );
-        } else if (['ממתין לאישור מנהל', 'מאושר', 'נדחה'].includes(form.status)) {
+        } else if (['ממתין לאישור מנהל', 'מאושר', 'מאושר סופית', 'נדרש תיקון', 'נדחה'].includes(form.status)) {
              history.push(
                 <li key="teacher-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
@@ -204,17 +219,40 @@ export default function FormDetailsPage() {
                     </div>
                 </li>
             );
-        } else if (form.status === 'מאושר') {
+        } else if (['מאושר', 'מאושר סופית', 'נדרש תיקון'].includes(form.status)) {
             history.push(
                 <li key="admin-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
-                        <p>אושר סופית ונחתם על ידי {form.conservatoriumManagerName || 'המנהל/ת'}</p>
+                        <p>אושר ונחתם על ידי {form.conservatoriumManagerName || 'המנהל/ת'}</p>
                         {form.signedAt && <time className="text-xs">{form.signedAt}</time>}
                     </div>
                 </li>
             );
-        } else if (form.status === 'נדחה') {
+        }
+        
+        if (form.status === 'נדרש תיקון') {
+             history.push(
+                <li key="ministry-rejected" className="flex items-start gap-3">
+                    <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center"><ShieldAlert size={14} /></div>
+                    <div>
+                        <p>הוחזר לתיקונים על ידי משרד החינוך</p>
+                    </div>
+                </li>
+            );
+        } else if (form.status === 'מאושר סופית') {
+             history.push(
+                <li key="ministry-approved" className="flex items-start gap-3">
+                    <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center"><CircleCheckBig size={14} /></div>
+                    <div>
+                        <p>אושר סופית על ידי משרד החינוך</p>
+                    </div>
+                </li>
+            );
+        }
+
+
+        if (form.status === 'נדחה') {
              history.push(
                 <li key="rejected" className="flex items-start gap-3">
                     <div className="bg-red-100 text-red-700 rounded-full h-6 w-6 flex items-center justify-center"><ThumbsDown size={14} /></div>
@@ -239,7 +277,7 @@ export default function FormDetailsPage() {
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">
-                  {form.status === 'מאושר' && (
+                  {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
                     <Button onClick={() => generatePdf(form)} variant="outline">
                         <Download className="ms-2 h-4 w-4" />
                         הורד PDF
@@ -348,9 +386,21 @@ export default function FormDetailsPage() {
                             <CardContent className="space-y-4">
                                 <Textarea placeholder="הוסף הערה (אופציונלי)..." />
                                 <div className="flex gap-4">
-                                    <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור סופי וחתימה</Button>
+                                    <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור וחתימה</Button>
                                     <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
                                 </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {isMinistryApproval && (
+                         <Card>
+                            <CardHeader>
+                                <CardTitle>פעולות (משרד החינוך)</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex gap-4">
+                                <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> אישור סופי</Button>
+                                <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> דרישה לתיקונים</Button>
                             </CardContent>
                         </Card>
                     )}
@@ -384,6 +434,16 @@ export default function FormDetailsPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm italic">"{form.teacherComment}"</p>
+                            </CardContent>
+                        </Card>
+                    )}
+                     {form.ministryComment && (
+                        <Card className="border-purple-300 bg-purple-50/50">
+                            <CardHeader>
+                                <CardTitle className="text-purple-800">הערת משרד החינוך</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm italic text-purple-700">"{form.ministryComment}"</p>
                             </CardContent>
                         </Card>
                     )}
@@ -425,6 +485,27 @@ export default function FormDetailsPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            
+            <AlertDialog open={isMinistryRejectionDialogOpen} onOpenChange={setMinistryRejectionDialogOpen}>
+                <AlertDialogContent dir="rtl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>דרישה לתיקונים</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            נא לפרט את הסיבה להחזרת הטופס לתיקונים. ההערה תוצג למנהל הקונסרבטוריון.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <Textarea 
+                        placeholder="פרט את הסיבות כאן..."
+                        value={ministryRejectionReason}
+                        onChange={(e) => setMinistryRejectionReason(e.target.value)}
+                    />
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>ביטול</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleMinistryRequestChanges}>שלח דרישה לתיקונים</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
         </div>
     )
 }

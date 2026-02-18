@@ -32,10 +32,10 @@ export default function FormsPage() {
                     <FormsList />
                 </TabsContent>
                 <TabsContent value="pending" className="pt-4">
-                    <FormsList statusFilter={['ממתין לאישור מורה', 'ממתין לאישור מנהל']} />
+                    <FormsList statusFilter={['ממתין לאישור מורה', 'ממתין לאישור מנהל', 'נדרש תיקון']} />
                 </TabsContent>
                 <TabsContent value="approved" className="pt-4">
-                    <FormsList statusFilter={['מאושר']} />
+                    <FormsList statusFilter={['מאושר', 'מאושר סופית']} />
                 </TabsContent>
                 <TabsContent value="drafts" className="pt-4">
                     <FormsList statusFilter={['טיוטה']} />

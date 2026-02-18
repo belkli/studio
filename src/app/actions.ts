@@ -1,20 +1,21 @@
 // @ts-nocheck
 'use server';
 
+import type { Composition } from '@/lib/types';
+import fs from 'fs';
+import path from 'path';
 import {
   suggestCompositions,
   type SuggestCompositionsInput,
   type SuggestCompositionsOutput,
 } from '@/ai/flows/suggest-compositions';
-import type { Composition } from '@/lib/types';
-import fs from 'fs';
-import path from 'path';
+
 
 // Load and transform compositions from JSON file
 // This is done once when the server module is loaded.
 const loadCompositions = (): Composition[] => {
     try {
-        const jsonPath = path.resolve(process.cwd(), 'docs/data.json');
+        const jsonPath = path.join(process.cwd(), 'docs', 'data.json');
         const jsonData = fs.readFileSync(jsonPath, 'utf-8');
         const rawCompositions = JSON.parse(jsonData);
 
@@ -86,7 +87,7 @@ export async function searchCompositions({ query, composer, instrument }: Search
   }
   
   if (!query && !composer && !instrument) {
-    return allCompositions.slice(0, 20);
+    return source.slice(0, 20);
   }
 
   if (!query) return source.slice(0, 20);
