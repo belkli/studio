@@ -1,5 +1,3 @@
-
-
 // @ts-nocheck
 'use client';
 
@@ -152,8 +150,8 @@ const MovementSelector = ({ movements, selected, onSelectionChange, onDurationCh
     )
 }
 
-const RepertoireItem = ({ index, control, remove, field, fields }) => {
-    const { setValue, watch } = useFormContext();
+const RepertoireItem = ({ index, remove, field, fields }) => {
+    const { control, setValue, watch } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
@@ -182,7 +180,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     
      useEffect(() => {
         debouncedComposerSearch('');
-    }, []);
+    }, [debouncedComposerSearch]);
 
     return (
          <div key={field.id} className="border rounded-lg relative">
@@ -206,7 +204,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                                 options={composerOptions.map(c => ({ value: c, label: c }))}
                                 selectedValue={composerField.value}
                                 onSelectedValueChange={(value) => {
-                                    setValue(`repertoire.${index}.composer`, value);
+                                    composerField.onChange(value);
                                     setValue(`repertoire.${index}.title`, '');
                                     setValue(`repertoire.${index}.duration`, '00:00');
                                     setValue(`repertoire.${index}.genre`, '');
@@ -255,7 +253,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     )}
                 />
 
-                <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( 
+                <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => ( 
                     <FormItem> 
                         <FormLabel>ז'אנר</FormLabel> 
                         <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
@@ -284,7 +282,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                             />
                         </FormItem>
                     )}
-                    <FormField control={form.control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
+                    <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
                         <FormItem className="flex-grow"> 
                             <FormLabel>זמן ביצוע</FormLabel> 
                             <FormControl>
@@ -317,7 +315,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
 
-  const defaultValues = useMemo(() => ({
+  const defaultValues = {
     formType: 'רסיטל בגרות',
     academicYear: getHebrewAcademicYear(),
     grade: student?.grade || 'יב',
@@ -339,17 +337,12 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
     repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
     managerNotes: '',
-  }), [student, user]);
+  };
     
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
-  
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [student, defaultValues, form]);
-
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -392,7 +385,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8" key={student.id}>
+      <form onSubmit={form.handleSubmit(onSubmit)} key={student.id}>
         <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
@@ -539,7 +532,6 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     <RepertoireItem 
                         key={item.id}
                         index={index} 
-                        control={form.control}
                         remove={remove}
                         field={item}
                         fields={fields}
