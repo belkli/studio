@@ -22,6 +22,7 @@ export type User = {
   role: UserRole;
   conservatoriumId: string;
   conservatoriumName: string;
+  conservatoriumStudyYears?: number;
   instruments?: InstrumentInfo[];
   avatarUrl?: string;
   // Detailed properties for form pre-filling
