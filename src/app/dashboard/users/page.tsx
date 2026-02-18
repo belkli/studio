@@ -166,11 +166,11 @@ export default function UsersPage() {
 
             <Tabs defaultValue="approved">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                     <TabsTrigger value="pending">
                         ממתינים לאישור
                         {pendingUsers.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{pendingUsers.length}</span>}
                     </TabsTrigger>
+                    <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="approved" className="mt-6">
@@ -265,35 +265,35 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
     return (
         <Table>
             <TableHeader><TableRow>
-                <TableHead className="text-right">שם</TableHead>
-                <TableHead className="text-right">ת.ז.</TableHead>
-                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
-                <TableHead className="text-right">נייד</TableHead>
-                <TableHead className="text-right">תפקיד</TableHead>
-                {showFilters && <TableHead className="text-right">כלי נגינה</TableHead>}
-                {showFilters && <TableHead className="text-right">מורה</TableHead>}
-                {showFilters && <TableHead className="text-right">וותק בקונ'</TableHead>}
-                {showFilters && <TableHead className="text-right">וותק עם מורה</TableHead>}
-                {currentUser.role === 'site_admin' && <TableHead className="text-right">קונסרבטוריון</TableHead>}
+                <TableHead>שם</TableHead>
+                <TableHead>ת.ז.</TableHead>
+                <TableHead dir="ltr">אימייל</TableHead>
+                <TableHead>נייד</TableHead>
+                <TableHead>תפקיד</TableHead>
+                {showFilters && <TableHead>כלי נגינה</TableHead>}
+                {showFilters && <TableHead>מורה</TableHead>}
+                {showFilters && <TableHead>וותק בקונ'</TableHead>}
+                {showFilters && <TableHead>וותק עם מורה</TableHead>}
+                {currentUser.role === 'site_admin' && <TableHead>קונסרבטוריון</TableHead>}
                 {canEdit && <TableHead className="text-left">פעולות</TableHead>}
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
                     <TableRow key={user.id}>
-                        <TableCell className="font-medium text-right">{user.name}</TableCell>
-                        <TableCell className="text-right">{user.idNumber || '-'}</TableCell>
+                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell>{user.idNumber || '-'}</TableCell>
                         <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
-                        <TableCell className="text-right">{user.phone || '-'}</TableCell>
-                        <TableCell className="text-right"><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roleTranslations[user.role]}</span></TableCell>
+                        <TableCell>{user.phone || '-'}</TableCell>
+                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roleTranslations[user.role]}</span></TableCell>
                         {showFilters && (
                             <>
-                                <TableCell className="text-right">{user.instruments?.map(i => i.instrument).join(', ') || '-'}</TableCell>
-                                <TableCell className="text-right">{user.instruments?.map(i => i.teacherName).join(', ') || '-'}</TableCell>
-                                <TableCell className="text-right">{user.conservatoriumStudyYears || '-'}</TableCell>
-                                <TableCell className="text-right">{user.instruments?.[0]?.yearsOfStudy || '-'}</TableCell>
+                                <TableCell>{user.instruments?.map(i => i.instrument).join(', ') || '-'}</TableCell>
+                                <TableCell>{user.instruments?.map(i => i.teacherName).join(', ') || '-'}</TableCell>
+                                <TableCell>{user.conservatoriumStudyYears || '-'}</TableCell>
+                                <TableCell>{user.instruments?.[0]?.yearsOfStudy || '-'}</TableCell>
                             </>
                         )}
-                        {currentUser.role === 'site_admin' && (<TableCell className="text-right">{user.conservatoriumName}</TableCell>)}
+                        {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
                         {canEdit && (
                             <TableCell className="text-left">
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">ערוך</span></Button>
@@ -313,17 +313,17 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
     return (
         <Table>
             <TableHeader><TableRow>
-                <TableHead className="text-right">שם</TableHead>
-                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
-                <TableHead className="text-right">תפקיד מבוקש</TableHead>
+                <TableHead>שם</TableHead>
+                <TableHead dir="ltr">אימייל</TableHead>
+                <TableHead>תפקיד מבוקש</TableHead>
                 <TableHead className="text-left">פעולות</TableHead>
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
                     <TableRow key={user.id}>
-                        <TableCell className="font-medium text-right">{user.name}</TableCell>
+                        <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
-                        <TableCell className="text-right"><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roleTranslations[user.role]}</span></TableCell>
+                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roleTranslations[user.role]}</span></TableCell>
                         <TableCell className="text-left space-x-2 space-x-reverse">
                             <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-700" onClick={() => onApprove(user)}><Check className="h-4 w-4" /><span className="sr-only">אשר</span></Button>
                             <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => onReject(user)}><X className="h-4 w-4" /><span className="sr-only">דחה</span></Button>
