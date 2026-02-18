@@ -18,6 +18,24 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Separator } from '@/components/ui/separator';
+
+const DetailsCard = ({ title, children, columns = 4 }: { title: string, children: React.ReactNode, columns?: number }) => (
+    <Card>
+        <CardHeader><CardTitle className="text-base">{title}</CardTitle></CardHeader>
+        <CardContent className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${columns} gap-x-6 gap-y-4 text-sm`}>
+            {children}
+        </CardContent>
+    </Card>
+);
+
+const DetailItem = ({ label, value }: { label: string, value: React.ReactNode }) => (
+    <div className="flex flex-col">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-medium">{value || '-'}</span>
+    </div>
+);
+
 
 export default function FormDetailsPage() {
     const params = useParams();
@@ -47,7 +65,6 @@ export default function FormDetailsPage() {
         const pageHeight = doc.internal.pageSize.height;
         const pageWidth = doc.internal.pageSize.width;
         
-        // jsPDF doesn't support Hebrew out-of-the-box. This is a simple workaround.
         const rtl = (text) => text ? text.split('').reverse().join('') : '';
 
         // Header
@@ -57,48 +74,57 @@ export default function FormDetailsPage() {
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.text(rtl(`שנת לימודים: ${form.academicYear}`), pageWidth / 2, 28, { align: 'center' });
-        doc.text(rtl(`קונסרבטוריון: ${form.conservatoriumName}`), pageWidth - 15, 40, { align: 'right' });
-        doc.text(rtl(`תלמיד/ה: ${form.studentName}`), pageWidth - 15, 48, { align: 'right' });
-
-
-        // Repertoire Table
-        autoTable(doc, {
-            startY: 60,
-            head: [[rtl('משך'), rtl('ז\'אנר'), rtl('שם היצירה'), rtl('מלחין')]],
-            body: form.repertoire.map(p => [
-                p.duration,
-                rtl(p.genre),
-                rtl(p.title),
-                rtl(p.composer)
-            ]),
-            styles: {
-                halign: 'right',
-                font: 'helvetica'
-            },
-            headStyles: {
-                fillColor: [30, 64, 175], // a shade of blue
-                halign: 'right'
-            },
-            columnStyles: { 0: { halign: 'center' } }
-        });
         
-        // Footer section
-        const footerY = pageHeight - 55;
+        let lastY = 40;
 
-        // Signature
-        if (form.signatureUrl) {
-            doc.addImage(form.signatureUrl, 'PNG', 140, footerY, 50, 25);
+        const addSection = (title, body) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(rtl(title), pageWidth - 15, lastY, { align: 'right' });
+            autoTable(doc, {
+                startY: lastY + 5,
+                body,
+                theme: 'grid',
+                styles: { halign: 'right', font: 'helvetica' },
+                columnStyles: { 1: { halign: 'left' } },
+            });
+            lastY = (doc as any).lastAutoTable.finalY + 10;
+        };
+
+        if (form.formType === 'רסיטל בגרות') {
+             addSection("פרטי התלמיד/ה", [
+                [rtl(form.studentName), rtl('שם מלא')],
+                [formUser?.idNumber, rtl('ת.ז.')],
+                [form.applicantDetails?.birthDate, rtl('תאריך לידה')],
+                [form.applicantDetails?.city, rtl('עיר מגורים')],
+                [form.applicantDetails?.phone, rtl('טלפון')],
+                [formUser?.email, rtl('דוא"ל')],
+             ]);
+              addSection("פרטי בית ספר", [
+                [rtl(form.schoolDetails?.schoolName), rtl('בית ספר')],
+                [rtl(form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא'), rtl('מגמת מוזיקה')],
+                [rtl(form.schoolDetails?.isMajorParticipant ? 'כן' : 'לא'), rtl('משתתף במגמה')],
+              ]);
         }
-        doc.text(rtl("חתימת המנהל"), 165, footerY + 35, { align: 'center' });
+        
+        addSection("רפרטואר", form.repertoire.map(p => [
+            p.duration,
+            rtl(p.genre),
+            rtl(p.title),
+            rtl(p.composer)
+        ]));
+        doc.setFont('helvetica', 'bold');
+        doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY -10, { align: 'left' });
 
-        // Stamp
+
+        if (form.signatureUrl) {
+            doc.addImage(form.signatureUrl, 'PNG', 140, pageHeight - 55, 50, 25);
+        }
+        doc.text(rtl("חתימת המנהל"), 165, pageHeight - 20, { align: 'center' });
+
         const conservatorium = conservatoriums.find(c => c.name === form.conservatoriumName);
         if (conservatorium?.stampUrl) {
-            // Set opacity for stamp
-            const gState = new (doc as any).GState({opacity: 0.8});
-            doc.setGState(gState);
-            doc.addImage(conservatorium.stampUrl, 'PNG', 20, footerY - 5, 30, 30);
-            // Reset opacity
+            doc.setGState(new (doc as any).GState({opacity: 0.8}));
+            doc.addImage(conservatorium.stampUrl, 'PNG', 20, pageHeight - 60, 30, 30);
             doc.setGState(new (doc as any).GState({opacity: 1}));
         }
 
@@ -222,13 +248,54 @@ export default function FormDetailsPage() {
                   <StatusBadge status={form.status} />
                 </div>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{form.formType}</CardTitle>
+                    <CardDescription>
+                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} • כיתה: {form.grade} • הוגש ב-{form.submissionDate}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
             
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
+
+                    {form.formType === 'רסיטל בגרות' && (
+                        <>
+                            <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
+                                <DetailItem label="שם מלא" value={form.studentName} />
+                                <DetailItem label="ת.ז." value={formUser?.idNumber} />
+                                <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
+                                <DetailItem label="מין" value={form.applicantDetails?.gender} />
+                                <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
+                                <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
+                                <DetailItem label="אימייל" value={formUser?.email} />
+                            </DetailsCard>
+                             <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
+                                <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
+                                <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
+                                <DetailItem label="האם משתתף/ת במגמה?" value={form.schoolDetails?.isMajorParticipant ? "כן" : "לא"} />
+                             </DetailsCard>
+                            <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
+                                <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                                    <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
+                                     <DetailItem label="כלי נגינה / שירה" value={formUser?.instruments?.[0]?.instrument} />
+                                     <DetailItem label="סך שנות לימוד בכלי" value={formUser?.instruments?.[0]?.yearsOfStudy} />
+                                </div>
+                                 <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                                     <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
+                                    <DetailItem label="שם המורה" value={form.teacherDetails?.name} />
+                                    <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
+                                </div>
+                            </DetailsCard>
+                        </>
+                    )}
+
+
                     <Card>
                         <CardHeader>
-                            <CardTitle>{form.formType}</CardTitle>
-                            <CardDescription>הוגש בתאריך {form.submissionDate}</CardDescription>
+                            <CardTitle>תוכנית לביצוע</CardTitle>
                         </CardHeader>
                         <CardContent>
                              <Table>
@@ -237,7 +304,7 @@ export default function FormDetailsPage() {
                                         <TableHead>מלחין</TableHead>
                                         <TableHead>שם היצירה</TableHead>
                                         <TableHead>ז'אנר</TableHead>
-                                        <TableHead className="text-right">משך</TableHead>
+                                        <TableHead className="text-center">משך</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -246,13 +313,14 @@ export default function FormDetailsPage() {
                                             <TableCell>{piece.composer}</TableCell>
                                             <TableCell>{piece.title}</TableCell>
                                             <TableCell>{piece.genre}</TableCell>
-                                            <TableCell className="text-right">{piece.duration}</TableCell>
+                                            <TableCell className="text-center">{piece.duration}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
                         </CardContent>
-                        <CardFooter className="justify-end font-bold text-lg">
+                        <Separator />
+                        <CardFooter className="justify-end font-bold text-lg pt-6">
                             <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
                         </CardFooter>
                     </Card>
@@ -333,14 +401,14 @@ export default function FormDetailsPage() {
             </div>
 
             <AlertDialog open={isSignatureDialogOpen} onOpenChange={setSignatureDialogOpen}>
-                <AlertDialogContent dir="rtl">
+                <AlertDialogContent dir="rtl" className="sm:max-w-2xl">
                     <AlertDialogHeader>
                         <AlertDialogTitle>חתימה דיגיטלית לאישור הטופס</AlertDialogTitle>
                         <AlertDialogDescription>
                             אנא חתום/י בתיבה למטה כדי לאשר סופית את הטופס. החתימה תצורף למסמך.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="relative w-full aspect-[2/1] rounded-lg border bg-background">
+                    <div className="relative w-full aspect-[3/1] rounded-lg border bg-background">
                          <SignatureCanvas
                             ref={sigPadRef}
                             penColor='black'
@@ -353,7 +421,7 @@ export default function FormDetailsPage() {
                     </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel>ביטול</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmApproval}>אשר וחתום</AlertDialogAction>
+                        <AlertDialogAction onClick={handleConfirmApproval}>אישור וחתימה</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
