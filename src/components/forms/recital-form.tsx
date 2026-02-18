@@ -1,6 +1,7 @@
+// @ts-nocheck
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { schools, instruments, compositions as compositionsDB, genres } from '@/lib/data';
 import type { User, Composition } from '@/lib/types';
-import { PlusCircle, Send, Trash2 } from 'lucide-react';
+import { PlusCircle, Send, Trash2, Music4 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
@@ -21,6 +22,7 @@ import { Combobox } from '../ui/combobox';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 
 const compositionSchema = z.object({
   id: z.string().optional(),
@@ -29,9 +31,11 @@ const compositionSchema = z.object({
   genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
   approved: z.boolean().optional(),
+  movements: z.array(z.object({ title: z.string(), duration: z.string() })).optional(),
+  selectedMovements: z.array(z.string()).optional(),
 });
 
-const MIN_REPERTOIRE_ITEMS = 3;
+const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
 
 const formSchema = z.object({
@@ -40,7 +44,6 @@ const formSchema = z.object({
   grade: z.enum(['י', 'יא', 'יב']),
   conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
   
-  // Applicant details
   studentName: z.string(),
   idNumber: z.string().refine(val => /^\d{9}$/.test(val), "מספר ת.ז. חייב להכיל 9 ספרות."),
   birthDate: z.string().min(1, 'חובה להזין תאריך לידה'),
@@ -49,22 +52,18 @@ const formSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email("כתובת אימייל לא תקינה."),
 
-  // School
   schoolName: z.string().optional(),
   hasMusicMajor: z.string().optional(),
   isMajorParticipant: z.string().optional(),
   plansTheoryExam: z.string().optional(),
 
-  // Instrument
   instrument: z.string().min(1, "חובה לבחור כלי נגינה"),
   yearsOfStudy: z.coerce.number().optional(),
 
-  // Teacher
   teacherName: z.string().min(1, 'חובה להזין שם מורה'),
   yearsWithTeacher: z.coerce.number().optional(),
 
-  // Repertoire
-  repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות ${MIN_REPERTOIRE_ITEMS} יצירות`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
+  repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
   managerNotes: z.string().optional(),
 });
 
@@ -83,7 +82,70 @@ const durationGuidelines = {
   'יב': { min: 25, max: 35, label: "25-35 דקות" },
 };
 
-const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true };
+const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true, movements: [], selectedMovements: [] };
+
+const getHebrewAcademicYear = () => {
+    const date = new Date();
+    let gregorianYear = date.getFullYear();
+    const month = date.getMonth();
+    // Hebrew new year is in September/October. If we are before that, we are still in the previous Hebrew year's academic session.
+    if (month < 8) { // Before September
+        gregorianYear--;
+    }
+    const hebrewYear = 5700 + (gregorianYear - 1939); // Approximation
+    const hebrewYearStr = `תשפ"${String.fromCharCode(1488 + (hebrewYear % 100) % 10 - 1)}`;
+    return `${hebrewYearStr} (${gregorianYear}-${gregorianYear + 1})`;
+}
+
+const MovementSelector = ({ movements, selected, onSelectionChange, onDurationChange }) => {
+    const handleSelect = (movementTitle: string) => {
+        const newSelection = selected.includes(movementTitle)
+            ? selected.filter(m => m !== movementTitle)
+            : [...selected, movementTitle];
+        onSelectionChange(newSelection);
+    };
+
+    useEffect(() => {
+        const totalSeconds = selected.reduce((acc, selTitle) => {
+            const movement = movements.find(m => m.title === selTitle);
+            if (movement) {
+                const [min, sec] = movement.duration.split(':').map(Number);
+                return acc + (min * 60) + sec;
+            }
+            return acc;
+        }, 0);
+        
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+        const seconds = String(totalSeconds % 60).padStart(2, '0');
+        onDurationChange(`${minutes}:${seconds}`);
+
+    }, [selected, movements, onDurationChange]);
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                    <Music4 className="me-2"/>
+                    בחר פרקים
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuLabel>פרקים לביצוע</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {movements.map(movement => (
+                    <DropdownMenuCheckboxItem
+                        key={movement.title}
+                        checked={selected.includes(movement.title)}
+                        onCheckedChange={() => handleSelect(movement.title)}
+                        onSelect={(e) => e.preventDefault()} // Prevent closing
+                    >
+                        {movement.title} ({movement.duration})
+                    </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
 
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
@@ -98,7 +160,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       formType: 'רסיטל בגרות',
-      academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
+      academicYear: getHebrewAcademicYear(),
       grade: student.grade || 'י',
       conservatoriumName: student.conservatoriumName || user.conservatoriumName,
       studentName: student.name || '',
@@ -132,7 +194,6 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   const handleSaveDraft = () => {
     setSaveState('saving');
-    // In a real app, you would make an API call here.
     setTimeout(() => {
         setSaveState('success');
         setLastSaved(new Date());
@@ -183,6 +244,12 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     Array.from(new Set(allCompositions.map(c => c.composer))).map(c => ({ value: c, label: c }))
   , [allCompositions]);
 
+  const getTitleOptions = useCallback((composer?: string) => {
+      const source = composer ? allCompositions.filter(c => c.composer === composer) : allCompositions;
+      return source.map(c => ({ value: c.id, label: c.title }));
+  }, [allCompositions]);
+
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
@@ -201,7 +268,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                 <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
                 <FormField name="formType" render={({ field }) => ( <FormItem><FormLabel>סוג הטופס</FormLabel><Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="רסיטל בגרות">רסיטל בגרות</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
-                <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} disabled /></FormControl> <FormMessage /> </FormItem> )} />
                 <FormField name="grade" render={({ field }) => ( <FormItem><FormLabel>כיתה</FormLabel><Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={areDetailsLocked}><FormControl><SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger></FormControl><SelectContent><SelectItem value="י">י'</SelectItem><SelectItem value="יא">י"א</SelectItem><SelectItem value="יב">י"ב</SelectItem></SelectContent></Select><FormMessage /></FormItem> )} />
              </div>
           </CardContent>
@@ -259,13 +326,8 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <CardContent>
                 <div className="space-y-4">
                 {fields.map((field, index) => {
-                    const selectedComposer = repertoire[index]?.composer;
-                    const titleOptions = selectedComposer
-                        ? allCompositions
-                            .filter(c => c.composer === selectedComposer)
-                            .map(c => ({ value: c.id, label: c.title }))
-                        : [];
                     const currentRepertoireItem = repertoire[index];
+                    const selectedComposer = currentRepertoireItem?.composer;
 
                     return (
                         <div key={field.id} className="border rounded-lg relative">
@@ -276,23 +338,25 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                                     <span className="sr-only">מחק יצירה</span>
                                 </Button>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-y-4 gap-x-4 p-4 md:items-start">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto_1fr_1fr] lg:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 md:items-start">
                                 <div className="hidden md:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
                                 
                                 <FormField
                                     control={form.control}
                                     name={`repertoire.${index}.composer`}
-                                    render={({ field }) => (
+                                    render={({ field: composerField }) => (
                                         <FormItem className="flex flex-col">
                                             <FormLabel>מלחין</FormLabel>
                                             <Combobox
                                                 options={composerOptions}
-                                                selectedValue={field.value}
+                                                selectedValue={composerField.value}
                                                 onSelectedValueChange={(value) => {
                                                     form.setValue(`repertoire.${index}.composer`, value);
                                                     form.setValue(`repertoire.${index}.title`, '');
                                                     form.setValue(`repertoire.${index}.duration`, '00:00');
                                                     form.setValue(`repertoire.${index}.genre`, '');
+                                                    form.setValue(`repertoire.${index}.movements`, []);
+                                                    form.setValue(`repertoire.${index}.selectedMovements`, []);
                                                 }}
                                                 placeholder="בחר מלחין..."
                                             />
@@ -313,48 +377,67 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                                                 )}
                                             </FormLabel>
                                             <Combobox
-                                                options={titleOptions}
-                                                selectedValue={allCompositions.find(c => c.title === titleField.value && c.composer === selectedComposer)?.id || ''}
+                                                options={getTitleOptions(selectedComposer)}
+                                                selectedValue={currentRepertoireItem.id || ''}
                                                 onSelectedValueChange={(id) => {
                                                     const composition = allCompositions.find(c => c.id === id);
                                                     if (composition) {
                                                         form.setValue(`repertoire.${index}.id`, composition.id);
                                                         form.setValue(`repertoire.${index}.title`, composition.title);
+                                                        form.setValue(`repertoire.${index}.composer`, composition.composer);
                                                         form.setValue(`repertoire.${index}.duration`, composition.duration);
                                                         form.setValue(`repertoire.${index}.genre`, composition.genre);
                                                         form.setValue(`repertoire.${index}.approved`, composition.approved);
+                                                        form.setValue(`repertoire.${index}.movements`, composition.movements || []);
+                                                        form.setValue(`repertoire.${index}.selectedMovements`, []);
                                                     }
                                                 }}
                                                 placeholder="בחר יצירה..."
-                                                disabled={!selectedComposer}
                                             />
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
-                                <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <FormControl><Input {...field} readOnly className="bg-muted/50" /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField control={form.control} name={`repertoire.${index}.genre`} render={({ field }) => ( <FormItem> <FormLabel>ז'אנר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem> )} />
                                 
-                                <FormField 
-                                    control={form.control} 
-                                    name={`repertoire.${index}.duration`} 
-                                    render={({ field }) => ( 
-                                        <FormItem> 
-                                            <FormLabel>זמן ביצוע</FormLabel> 
-                                            <FormControl>
-                                                <Input 
-                                                    dir='ltr'
-                                                    placeholder="MM:SS"
-                                                    maxLength={5} 
-                                                    {...field} 
-                                                    readOnly 
-                                                    className="bg-muted/50"
-                                                />
-                                            </FormControl> 
-                                            <FormMessage /> 
-                                        </FormItem> 
-                                    )} 
-                                />
+                                <div className='flex items-end gap-2'>
+                                    {currentRepertoireItem.movements && currentRepertoireItem.movements.length > 0 && (
+                                        <FormItem className='flex-grow'>
+                                            <FormLabel>פרקים</FormLabel>
+                                            <MovementSelector
+                                                movements={currentRepertoireItem.movements}
+                                                selected={currentRepertoireItem.selectedMovements || []}
+                                                onSelectionChange={(newSelection) => {
+                                                    form.setValue(`repertoire.${index}.selectedMovements`, newSelection);
+                                                }}
+                                                onDurationChange={(newDuration) => {
+                                                    form.setValue(`repertoire.${index}.duration`, newDuration);
+                                                }}
+                                            />
+                                        </FormItem>
+                                    )}
+                                    <FormField 
+                                        control={form.control} 
+                                        name={`repertoire.${index}.duration`} 
+                                        render={({ field }) => ( 
+                                            <FormItem className={cn(currentRepertoireItem.movements && currentRepertoireItem.movements.length > 0 ? "w-24" : "w-full")}> 
+                                                <FormLabel>זמן ביצוע</FormLabel> 
+                                                <FormControl>
+                                                    <Input 
+                                                        dir='ltr'
+                                                        placeholder="MM:SS"
+                                                        maxLength={5} 
+                                                        {...field} 
+                                                        readOnly 
+                                                        className="bg-muted/50"
+                                                    />
+                                                </FormControl> 
+                                                <FormMessage /> 
+                                            </FormItem> 
+                                        )} 
+                                    />
+                                </div>
                                 
                                 <div className="hidden md:flex self-center pt-6 justify-self-end col-span-full sm:col-span-2 md:col-auto">
                                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>

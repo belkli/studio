@@ -34,7 +34,7 @@ export type User = {
   city?: string;
   phone?: string;
   students?: string[]; // For teachers/admins to list their students by ID
-  grade?: 'י' | 'יא' | 'יב';
+  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
   approved: boolean;
   rejectionReason?: string;
   notifications?: Notification[];
@@ -53,8 +53,9 @@ export type Composition = {
   id: string;
   composer: string;
   title: string;
-  duration: string; // MM:SS
+  duration: string; // MM:SS, for the entire piece
   genre: string;
+  movements?: { title: string; duration: string }[];
   approved?: boolean;
   source?: 'seed' | 'user_submitted' | 'api';
 };
