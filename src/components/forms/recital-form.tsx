@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form'; // Added useFormContext here
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { searchComposers, searchCompositions } from '@/app/actions';
-import { debounce } from '@/lib/utils';
+import { debounce, cn } from '@/lib/utils';
 
 
 const compositionSchema = z.object({
@@ -186,7 +186,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
         if (selectedComposer) {
              debouncedCompositionSearch('');
         }
-    }, [selectedComposer]);
+    }, [selectedComposer, debouncedCompositionSearch]);
 
     return (
          <div key={field.id} className="border rounded-lg relative">
