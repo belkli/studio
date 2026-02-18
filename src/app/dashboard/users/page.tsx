@@ -166,11 +166,11 @@ export default function UsersPage() {
 
             <Tabs defaultValue="approved">
                 <TabsList className="grid w-full grid-cols-2">
+                     <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                     <TabsTrigger value="pending">
                         ממתינים לאישור
                         {pendingUsers.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{pendingUsers.length}</span>}
                     </TabsTrigger>
-                    <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="approved" className="mt-6">
@@ -371,7 +371,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>תפקיד</FormLabel>
-                            <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole}>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole} dir="rtl">
                                 <FormControl>
                                     <SelectTrigger><SelectValue placeholder="בחר תפקיד" /></SelectTrigger>
                                 </FormControl>
@@ -387,9 +387,54 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                 />
                 {form.watch('role') === 'student' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="grade" render={({ field }) => ( <FormItem> <FormLabel>כיתה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger> </FormControl> <SelectContent> <SelectItem value="י">י'</SelectItem> <SelectItem value="יא">י"א</SelectItem> <SelectItem value="יב">י"ב</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
-                        <FormField name="conservatoriumStudyYears" render={({ field }) => ( <FormItem><FormLabel>וותק בקונס'</FormLabel><FormControl><Input type="number" {...field} disabled={!canEditSeniority} /></FormControl><FormMessage /></FormItem> )}/>
-                        <FormField name="instrumentYears" render={({ field }) => ( <FormItem><FormLabel>וותק עם מורה</FormLabel><FormControl><Input type="number" {...field} disabled={!canEditSeniority} /></FormControl><FormMessage /></FormItem> )}/>
+                        <FormField
+                            control={form.control}
+                            name="grade"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>כיתה</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="בחר כיתה"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="י">י'</SelectItem>
+                                            <SelectItem value="יא">י"א</SelectItem>
+                                            <SelectItem value="יב">י"ב</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="conservatoriumStudyYears"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>וותק בקונס'</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} disabled={!canEditSeniority} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="instrumentYears"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>וותק עם מורה</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} disabled={!canEditSeniority} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
                 )}
                 <DialogFooter>
