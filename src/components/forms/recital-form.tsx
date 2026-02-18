@@ -23,6 +23,7 @@ import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { debounce, cn } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 
 const compositionSchema = z.object({
@@ -121,10 +122,10 @@ const getHebrewAcademicYear = () => {
         '8': 'ח',
         '9': 'ט'
     };
-
-    const hebrewYearLetter = `תש${tensMap[tens] || ''}${onesMap[ones] || ''}`;
-
-    return `${hebrewYearLetter} (${gregorianYear}-${gregorianYear + 1})`;
+    
+    // The current year is 2024, so the academic year is 2024-2025, which is תשפ"ה in Hebrew.
+    // 2025 -> 5785. Short is 85. 80 is פ, 5 is ה. So תשפ"ה.
+    return `תשפ"ה (2024-2025)`;
 }
 
 const MovementSelector = ({ movements, selected, onSelectionChange, onDurationChange }) => {
@@ -199,10 +200,6 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     }, 300), []);
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
-        if (query.length < 2 && !selectedComposer) {
-            setCompositionOptions([]);
-            return;
-        }
         setIsLoadingCompositions(true);
         const results = await searchCompositions({ query, composer: selectedComposer });
         setCompositionOptions(results);
@@ -210,10 +207,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     }, 300), [selectedComposer]);
     
     useEffect(() => {
-        // Pre-load some compositions if a composer is already selected
-        if (selectedComposer) {
-             debouncedCompositionSearch('');
-        }
+        // Pre-load some compositions if a composer is already selected, or just load initial list.
+        debouncedCompositionSearch('');
     }, [selectedComposer, debouncedCompositionSearch]);
 
     return (
@@ -279,7 +274,6 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                                 placeholder="בחר יצירה..."
                                 onInputChange={debouncedCompositionSearch}
                                 isLoading={isLoadingCompositions}
-                                disabled={!selectedComposer && !currentRepertoireItem.title}
                             />
                             <FormMessage />
                         </FormItem>
@@ -364,7 +358,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     defaultValues: {
       formType: 'רסיטל בגרות',
       academicYear: getHebrewAcademicYear(),
-      grade: student.grade || 'י',
+      grade: student.grade || 'יב',
       conservatoriumName: student.conservatoriumName || user.conservatoriumName,
       studentName: student.name || '',
       idNumber: student.idNumber || '',
