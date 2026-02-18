@@ -22,8 +22,9 @@ import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { searchComposers, searchCompositions } from '@/app/actions';
-import { debounce, cn } from '@/lib/utils';
+import { debounce } from '@/lib/utils';
 import { Label } from '../ui/label';
+import { cn } from '@/lib/utils';
 
 
 const compositionSchema = z.object({
@@ -184,15 +185,15 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 
     return (
          <div key={field.id} className="border rounded-lg relative">
-            <div className="p-4 flex justify-between items-center md:hidden border-b">
+            <div className="p-4 flex justify-between items-center lg:hidden border-b">
                 <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[auto_1fr_1fr] lg:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 md:items-start">
-                <div className="hidden md:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 lg:items-start">
+                <div className="hidden lg:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -308,7 +309,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     />
                 </div>
                 
-                <div className="hidden md:flex self-center pt-6 justify-self-end col-span-full sm:col-span-2 md:col-auto">
+                <div className="hidden lg:flex self-center pt-6 justify-self-end">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -322,10 +323,21 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
+    
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+  });
 
-  const defaultValues = useMemo(() => {
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'repertoire',
+  });
+
+  // This effect resets the form when the student prop changes.
+  // The 'key' prop on the form element ensures the component re-mounts.
+  useEffect(() => {
     const firstInstrument = student.instruments?.[0];
-    return {
+    const defaultValues = {
         formType: 'רסיטל בגרות',
         academicYear: getHebrewAcademicYear(),
         grade: student.grade || 'יב',
@@ -348,17 +360,9 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
         repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
         managerNotes: '',
     };
-  }, [student, user]);
-    
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
-  });
+    form.reset(defaultValues);
+  }, [student, user, form]);
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'repertoire',
-  });
 
   const { isDirty } = form.formState;
   const [saveState, setSaveState] = React.useState<SaveState>('idle');

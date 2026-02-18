@@ -58,7 +58,7 @@ export function Combobox({
         >
           <span className="truncate">
             {selectedValue
-              ? options.find((option) => option.value === selectedValue)?.label ?? placeholder
+              ? options.find((option) => option.value === selectedValue || option.label === selectedValue)?.label ?? placeholder
               : placeholder}
           </span>
           <ChevronsUpDown className="ms-2 h-4 w-4 shrink-0 opacity-50" />
@@ -77,9 +77,9 @@ export function Combobox({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    onSelectedValueChange(currentValue)
+                  value={option.label} // Use label for filtering, value for selection
+                  onSelect={() => {
+                    onSelectedValueChange(option.value)
                     setOpen(false)
                   }}
                   onMouseDown={(e) => {
