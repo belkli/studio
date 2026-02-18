@@ -51,59 +51,21 @@ export const schools = [
 
 export const compositions: Composition[] = [
   // Bach
-  { id: 'bach-cello-suite-1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30', approved: true, source: 'seed',
-    movements: [
-      { title: 'I. Prelude', duration: '02:30' },
-      { title: 'II. Allemande', duration: '03:45' },
-      { title: 'III. Courante', duration: '02:30' },
-      { title: 'IV. Sarabande', duration: '03:15' },
-      { title: 'V. Minuet I & II', duration: '03:00' },
-      { title: 'VI. Gigue', duration: '02:30' },
-    ]
-  },
-  { id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '04:00', approved: true, source: 'seed',
-    movements: [
-        { title: 'Prelude', duration: '02:15' },
-        { title: 'Fugue', duration: '01:45' },
-    ]
-  },
+  { id: 'bach-cello-suite-1', composer: 'יוהאן סבסטיאן באך', title: 'סוויטה לצ\'לו מס\' 1 בסול מז\'ור, רי"ב 1007', genre: 'בארוק', duration: '17:30', approved: true, source: 'seed' },
+  { id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', genre: 'בארוק', duration: '04:00', approved: true, source: 'seed' },
   { id: 'bach-toccata-d-minor', composer: 'יוהאן סבסטיאן באך', title: 'טוקטה ופוגה ברה מינור, רי"ב 565', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed' },
   { id: 'bach-air-on-g', composer: 'יוהאן סבסטיאן באך', title: 'אריה על מיתר סול (מתוך סוויטה תזמורתית מס\' 3)', genre: 'בארוק', duration: '05:00', approved: true, source: 'seed' },
   { id: 'bach-jesu-joy', composer: 'יוהאן סבסטיאן באך', title: 'Jesu, Joy of Man\'s Desiring', genre: 'בארוק', duration: '03:30', approved: true, source: 'seed' },
   
   // Beethoven
-  { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', genre: 'קלאסי', duration: '15:00', approved: true, source: 'seed',
-    movements: [
-      { title: 'I. Adagio sostenuto', duration: '06:00' },
-      { title: 'II. Allegretto', duration: '02:30' },
-      { title: 'III. Presto agitato', duration: '06:30' },
-    ]
-  },
-  { id: 'beethoven-pathetique-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 8 בדו מינור, אופ. 13 "הפאתטית"', genre: 'קלאסי', duration: '18:00', approved: true, source: 'seed',
-    movements: [
-      { title: 'I. Grave – Allegro di molto e con brio', duration: '08:30' },
-      { title: 'II. Adagio cantabile', duration: '05:30' },
-      { title: 'III. Rondo: Allegro', duration: '04:00' },
-    ]
-  },
+  { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', genre: 'קלאסי', duration: '15:00', approved: true, source: 'seed' },
+  { id: 'beethoven-pathetique-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 8 בדו מינור, אופ. 13 "הפאתטית"', genre: 'קלאסי', duration: '18:00', approved: true, source: 'seed' },
   { id: 'beethoven-fur-elise', composer: 'לודוויג ואן בטהובן', title: 'לאליזה (Für Elise)', genre: 'קלאסי', duration: '03:00', approved: true, source: 'seed' },
   { id: 'beethoven-symphony-5-1', composer: 'לודוויג ואן בטהובן', title: 'סימפוניה מס\' 5 בדו מינור, אופ. 67 - פרק 1', genre: 'קלאסי', duration: '07:30', approved: true, source: 'seed' },
   
   // Mozart
-  { id: 'mozart-sonata-11', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331', genre: 'קלאסי', duration: '14:00', approved: true, source: 'seed',
-    movements: [
-      { title: 'I. Andante grazioso', duration: '06:00' },
-      { title: 'II. Menuetto', duration: '04:30' },
-      { title: 'III. Alla turca – Allegretto', duration: '03:30' },
-    ]
-  },
-  { id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', genre: 'קלאסי', duration: '11:00', approved: true, source: 'seed',
-    movements: [
-      { title: 'I. Allegro', duration: '04:30' },
-      { title: 'II. Andante', duration: '04:00' },
-      { title: 'III. Rondo: Allegretto', duration: '02:30' },
-    ]
-  },
+  { id: 'mozart-sonata-11', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 11 בלה מז\'ור, ק. 331', genre: 'קלאסי', duration: '14:00', approved: true, source: 'seed' },
+  { id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', genre: 'קלאסי', duration: '11:00', approved: true, source: 'seed' },
   { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', genre: 'קלאסי', duration: '05:45', approved: true, source: 'seed' },
   
   // Chopin
@@ -119,20 +81,8 @@ export const compositions: Composition[] = [
   { id: 'debussy-girl-flaxen-hair', composer: 'קלוד דביסי', title: 'הנערה עם שער הפשתן (La fille aux cheveux de lin)', genre: 'אימפרסיוניסטי', duration: '02:30', approved: true, source: 'seed' },
   
   // Vivaldi
-  { id: 'vivaldi-spring', composer: 'אנטוניו ויוואלדי', title: 'האביב (מתוך ארבע העונות)', genre: 'בארוק', duration: '10:00', approved: true, source: 'seed',
-    movements: [
-        { title: 'I. Allegro', duration: '03:30' },
-        { title: 'II. Largo e pianissimo sempre', duration: '02:30' },
-        { title: 'III. Allegro pastorale', duration: '04:00' },
-    ]
-  },
-  { id: 'vivaldi-winter', composer: 'אנטוניו ויוואלדי', title: 'החורף (מתוך ארבע העונות)', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed',
-    movements: [
-        { title: 'I. Allegro non molto', duration: '03:30' },
-        { title: 'II. Largo', duration: '02:00' },
-        { title: 'III. Allegro', duration: '03:30' },
-    ]
-  },
+  { id: 'vivaldi-spring', composer: 'אנטוניו ויוואלדי', title: 'האביב (מתוך ארבע העונות)', genre: 'בארוק', duration: '10:00', approved: true, source: 'seed' },
+  { id: 'vivaldi-winter', composer: 'אנטוניו ויוואלדי', title: 'החורף (מתוך ארבע העונות)', genre: 'בארוק', duration: '09:00', approved: true, source: 'seed' },
 
   // Liszt
   { id: 'liszt-liebestraum-3', composer: 'פרנץ ליסט', title: 'חלום אהבה מס\' 3 (Liebestraum No. 3)', genre: 'רומנטי', duration: '04:45', approved: true, source: 'seed' },

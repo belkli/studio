@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { schools, instruments, genres, compositions as initialCompositions } from '@/lib/data';
 import type { User, Composition } from '@/lib/types';
-import { PlusCircle, Send, Trash2, Music4 } from 'lucide-react';
+import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
@@ -20,10 +20,8 @@ import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { Combobox } from '../ui/combobox';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { searchComposers, searchCompositions } from '@/app/actions';
-import { debounce, cn } from '@/lib/utils';
-import { Label } from '../ui/label';
+import { debounce } from '@/lib/utils';
 
 
 const compositionSchema = z.object({
@@ -33,8 +31,6 @@ const compositionSchema = z.object({
   genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
   approved: z.boolean().optional(),
-  movements: z.array(z.object({ title: z.string(), duration: z.string() })).optional(),
-  selectedMovements: z.array(z.string()).optional(),
 });
 
 const MIN_REPERTOIRE_ITEMS = 1;
@@ -84,7 +80,7 @@ const durationGuidelines = {
   'יב': { min: 25, max: 35, label: "25-35 דקות" },
 };
 
-const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true, movements: [], selectedMovements: [] };
+const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
 const getHebrewAcademicYear = () => {
     const date = new Date();
@@ -100,54 +96,13 @@ const getHebrewAcademicYear = () => {
     return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
 }
 
-const MovementSelector = ({ movements, selected, onSelectionChange, onDurationChange }) => {
-    const handleSelect = (movementTitle: string) => {
-        const newSelection = selected.includes(movementTitle)
-            ? selected.filter(m => m !== movementTitle)
-            : [...selected, movementTitle];
-        onSelectionChange(newSelection);
-    };
-
-    useEffect(() => {
-        const totalSeconds = selected.reduce((acc, selTitle) => {
-            const movement = movements.find(m => m.title === selTitle);
-            if (movement) {
-                const [min, sec] = movement.duration.split(':').map(Number);
-                return acc + (min * 60) + sec;
-            }
-            return acc;
-        }, 0);
-        
-        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-        const seconds = String(totalSeconds % 60).padStart(2, '0');
-        onDurationChange(`${minutes}:${seconds}`);
-
-    }, [selected, movements, onDurationChange]);
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                    <Music4 className="me-2"/>
-                    בחר פרקים
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                <DropdownMenuLabel>פרקים לביצוע</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {movements.map(movement => (
-                    <DropdownMenuCheckboxItem
-                        key={movement.title}
-                        checked={selected.includes(movement.title)}
-                        onCheckedChange={() => handleSelect(movement.title)}
-                        onSelect={(e) => e.preventDefault()} // Prevent closing
-                    >
-                        {movement.title} ({movement.duration})
-                    </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
+const formatDurationOnBlur = (value: string): string => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    if (cleanValue.length === 0) return '00:00';
+    if (cleanValue.length <= 2) return `00:${cleanValue.padStart(2, '0')}`;
+    const seconds = cleanValue.slice(-2).padStart(2, '0');
+    const minutes = cleanValue.slice(0, -2).padStart(2, '0');
+    return `${minutes}:${seconds > '59' ? '59' : seconds}`;
 }
 
 const RepertoireItem = ({ index, remove, field, fields }) => {
@@ -191,8 +146,8 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_180px_230px_auto] items-start gap-4 p-4">
-                <div className="hidden lg:flex pt-8 font-medium text-muted-foreground self-start">{index + 1}.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_180px_120px_auto] items-center gap-4 p-4">
+                <div className="hidden lg:block font-medium text-muted-foreground">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -208,8 +163,6 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                                     setValue(`repertoire.${index}.title`, '');
                                     setValue(`repertoire.${index}.duration`, '00:00');
                                     setValue(`repertoire.${index}.genre`, '');
-                                    setValue(`repertoire.${index}.movements`, []);
-                                    setValue(`repertoire.${index}.selectedMovements`, []);
                                 }}
                                 placeholder="בחר מלחין..."
                                 onInputChange={debouncedComposerSearch}
@@ -239,8 +192,6 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                                         setValue(`repertoire.${index}.duration`, composition.duration);
                                         setValue(`repertoire.${index}.genre`, composition.genre);
                                         setValue(`repertoire.${index}.approved`, composition.approved);
-                                        setValue(`repertoire.${index}.movements`, composition.movements || []);
-                                        setValue(`repertoire.${index}.selectedMovements`, []);
                                     }
                                 }}
                                 placeholder="בחר יצירה..."
@@ -266,41 +217,23 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     </FormItem> 
                 )} />
                 
-                <div className='flex items-end gap-2'>
-                    {currentRepertoireItem.movements && currentRepertoireItem.movements.length > 0 && (
-                        <FormItem>
-                            <Label>&nbsp;</Label>
-                            <MovementSelector
-                                movements={currentRepertoireItem.movements}
-                                selected={currentRepertoireItem.selectedMovements || []}
-                                onSelectionChange={(newSelection) => {
-                                    setValue(`repertoire.${index}.selectedMovements`, newSelection);
-                                }}
-                                onDurationChange={(newDuration) => {
-                                    setValue(`repertoire.${index}.duration`, newDuration);
-                                }}
+                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
+                    <FormItem> 
+                        <FormLabel>זמן ביצוע</FormLabel> 
+                        <FormControl>
+                            <Input 
+                                dir='ltr' 
+                                placeholder="MM:SS"
+                                maxLength={5}
+                                {...field} 
+                                onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
                             />
-                        </FormItem>
-                    )}
-                    <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
-                        <FormItem className="flex-grow"> 
-                            <FormLabel>זמן ביצוע</FormLabel> 
-                            <FormControl>
-                                <Input 
-                                    dir='ltr' 
-                                    placeholder="MM:SS"
-                                    maxLength={5} 
-                                    {...field} 
-                                    readOnly 
-                                    className="bg-muted/50"
-                                />
-                            </FormControl> 
-                            <FormMessage /> 
-                        </FormItem> 
-                    )} />
-                </div>
+                        </FormControl> 
+                        <FormMessage /> 
+                    </FormItem> 
+                )} />
                 
-                <div className="hidden lg:flex self-start pt-8">
+                <div className="hidden lg:flex self-center">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -315,7 +248,7 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
 
-  const defaultValues = {
+  const defaultValues = useMemo(() => ({
     formType: 'רסיטל בגרות',
     academicYear: getHebrewAcademicYear(),
     grade: student?.grade || 'יב',
@@ -337,12 +270,16 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
     repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
     managerNotes: '',
-  };
+  }), [user, student]);
     
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [student, form, defaultValues]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,

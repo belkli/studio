@@ -70,7 +70,7 @@ export function Combobox({
             placeholder={searchPlaceholder} 
             onValueChange={onInputChange}
           />
-          <CommandList>
+          <CommandList onMouseDown={(e) => e.preventDefault()}>
             {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">טוען...</div>}
             {!isLoading && <CommandEmpty>{notFoundMessage}</CommandEmpty>}
             <CommandGroup>
@@ -78,17 +78,8 @@ export function Combobox({
                 <CommandItem
                   key={option.value}
                   value={option.label}
-                  onSelect={() => { // For keyboard
-                    if (option.value !== selectedValue) {
-                        onSelectedValueChange(option.value)
-                    }
-                    setOpen(false)
-                  }}
-                  onMouseDown={(e) => { // For mouse
-                    e.preventDefault();
-                    if (option.value !== selectedValue) {
-                        onSelectedValueChange(option.value);
-                    }
+                  onSelect={() => {
+                    onSelectedValueChange(option.value);
                     setOpen(false);
                   }}
                 >
