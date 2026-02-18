@@ -187,7 +187,7 @@ export default function UsersPage() {
                              <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
                                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full rounded-lg bg-background ps-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                    <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full rounded-lg bg-background pr-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 {showFilters && (
                                     <>
@@ -266,7 +266,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
         <Table>
             <TableHeader><TableRow>
                 <TableHead className="text-right">שם</TableHead>
-                <TableHead className="text-right">אימייל</TableHead>
+                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
                 <TableHead className="text-right">ת.ז.</TableHead>
                 <TableHead className="text-right">נייד</TableHead>
                 <TableHead className="text-right">תפקיד</TableHead>
@@ -314,7 +314,7 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
         <Table>
             <TableHeader><TableRow>
                 <TableHead className="text-right">שם</TableHead>
-                <TableHead className="text-right">אימייל</TableHead>
+                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
                 <TableHead className="text-right">תפקיד מבוקש</TableHead>
                 <TableHead className="text-left">פעולות</TableHead>
             </TableRow></TableHeader>
@@ -371,9 +371,9 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>תפקיד</FormLabel>
-                            <Select dir="rtl" onValueChange={field.onChange} value={field.value} disabled={!canChangeRole}>
+                            <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole}>
                                 <FormControl>
-                                    <SelectTrigger><SelectValue/></SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder="בחר תפקיד" /></SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                     {currentUser.role === 'site_admin' && <SelectItem value="conservatorium_admin">מנהל קונסרבטוריון</SelectItem>}
@@ -387,7 +387,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                 />
                 {form.watch('role') === 'student' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="grade" render={({ field }) => ( <FormItem> <FormLabel>כיתה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl> <SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger> </FormControl> <SelectContent> <SelectItem value="י">י'</SelectItem> <SelectItem value="יא">י"א</SelectItem> <SelectItem value="יב">י"ב</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
+                        <FormField name="grade" render={({ field }) => ( <FormItem> <FormLabel>כיתה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger> </FormControl> <SelectContent> <SelectItem value="י">י'</SelectItem> <SelectItem value="יא">י"א</SelectItem> <SelectItem value="יב">י"ב</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
                         <FormField name="conservatoriumStudyYears" render={({ field }) => ( <FormItem><FormLabel>וותק בקונס'</FormLabel><FormControl><Input type="number" {...field} disabled={!canEditSeniority} /></FormControl><FormMessage /></FormItem> )}/>
                         <FormField name="instrumentYears" render={({ field }) => ( <FormItem><FormLabel>וותק עם מורה</FormLabel><FormControl><Input type="number" {...field} disabled={!canEditSeniority} /></FormControl><FormMessage /></FormItem> )}/>
                     </div>
