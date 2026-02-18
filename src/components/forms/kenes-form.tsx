@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
-import { conservatoriums, priceMatrix, initialCompositions, genres } from '@/lib/data';
+import { conservatoriums, priceMatrix, compositions, genres } from '@/lib/data';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
@@ -26,7 +26,7 @@ const compositionSchema = z.object({
   composer: z.string().min(1, 'חובה להזין מלחין'),
   title: z.string().min(1, 'חובה להזין שם יצירה'),
   duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
-  genre: z.string().optional(),
+  genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
   approved: z.boolean().optional(),
 });
 
@@ -114,23 +114,40 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
     }, 300), [selectedComposer]);
     
     useEffect(() => {
-        debouncedCompositionSearch('');
-    }, [selectedComposer, debouncedCompositionSearch]);
+        debouncedComposerSearch('');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComposer]);
     
      useEffect(() => {
         debouncedComposerSearch('');
-    }, [debouncedComposerSearch]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+     const handleSelectComposition = (id: string) => {
+        const composition = compositions.find(c => c.id === id);
+        if (composition) {
+            setValue(`repertoire.${index}.id`, composition.id);
+            setValue(`repertoire.${index}.title`, composition.title);
+            setValue(`repertoire.${index}.composer`, composition.composer);
+            setValue(`repertoire.${index}.duration`, composition.duration);
+            setValue(`repertoire.${index}.genre`, composition.genre);
+            setValue(`repertoire.${index}.approved`, composition.approved);
+        } else {
+             setValue(`repertoire.${index}.title`, id);
+        }
+    }
+
 
     return (
          <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
                 <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
-                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
+                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_1.5fr_2.5fr_1fr_auto] items-start gap-x-4 gap-y-2 p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
                 <div className="hidden lg:flex items-center justify-center h-10 font-medium text-muted-foreground">{index + 1}.</div>
                 
                 <FormField
@@ -169,18 +186,8 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
                              <FormControl>
                                 <Combobox
                                     options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
-                                    selectedValue={currentRepertoireItem.id || ''}
-                                    onSelectedValueChange={(id) => {
-                                        const composition = initialCompositions.find(c => c.id === id);
-                                        if (composition) {
-                                            setValue(`repertoire.${index}.id`, composition.id);
-                                            setValue(`repertoire.${index}.title`, composition.title);
-                                            setValue(`repertoire.${index}.composer`, composition.composer);
-                                            setValue(`repertoire.${index}.duration`, composition.duration);
-                                            setValue(`repertoire.${index}.genre`, composition.genre);
-                                            setValue(`repertoire.${index}.approved`, composition.approved);
-                                        }
-                                    }}
+                                    selectedValue={currentRepertoireItem.id || titleField.value}
+                                    onSelectedValueChange={handleSelectComposition}
                                     placeholder="בחר יצירה..."
                                     onInputChange={debouncedCompositionSearch}
                                     isLoading={isLoadingCompositions}
@@ -191,6 +198,20 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
                         </FormItem>
                     )}
                 />
+
+                <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => ( 
+                    <FormItem> 
+                        <FormLabel>ז'אנר</FormLabel> 
+                        <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
+                            <FormControl>
+                                <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
+                            </FormControl> 
+                            <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> 
+                        </Select> 
+                        <FormMessage /> 
+                    </FormItem> 
+                )} />
+
                 
                 <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
                     <FormItem> 
@@ -208,7 +229,7 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
                 )} />
                 
                 <div className="hidden lg:flex items-center justify-center h-10">
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
                     </Button>
@@ -413,7 +434,7 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
                         </div>
                         <Separator />
                         <div className="flex justify-between text-lg font-bold">
-                            <span>סה"כ לתשלום:</span>
+                            <span>סה״כ לתשלום:</span>
                             <span>{calculatedPrice} ₪</span>
                         </div>
                     </div>
