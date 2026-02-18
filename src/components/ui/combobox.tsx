@@ -79,7 +79,7 @@ export function Combobox({
                   key={option.value}
                   value={option.label}
                   onSelect={() => {
-                    onSelectedValueChange(option.value);
+                    onSelectedValueChange(option.value === selectedValue ? "" : option.value);
                     setOpen(false);
                   }}
                 >

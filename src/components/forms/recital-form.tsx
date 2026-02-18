@@ -105,7 +105,7 @@ const formatDurationOnBlur = (value: string): string => {
     return `${minutes}:${seconds > '59' ? '59' : seconds}`;
 }
 
-const RepertoireItem = ({ index, remove, field, fields }) => {
+const RepertoireItem = ({ index, remove, fields }) => {
     const { control, setValue, watch } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
@@ -138,7 +138,7 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
     }, [debouncedComposerSearch]);
 
     return (
-         <div key={field.id} className="border rounded-lg relative">
+         <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
                 <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
@@ -146,8 +146,8 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_180px_120px_auto] items-center gap-4 p-4">
-                <div className="hidden lg:block font-medium text-muted-foreground">{index + 1}.</div>
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
+                <div className="hidden lg:flex items-center justify-center h-10 font-medium text-muted-foreground">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -155,20 +155,22 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     render={({ field: composerField }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>מלחין</FormLabel>
-                            <Combobox
-                                options={composerOptions.map(c => ({ value: c, label: c }))}
-                                selectedValue={composerField.value}
-                                onSelectedValueChange={(value) => {
-                                    composerField.onChange(value);
-                                    setValue(`repertoire.${index}.title`, '');
-                                    setValue(`repertoire.${index}.duration`, '00:00');
-                                    setValue(`repertoire.${index}.genre`, '');
-                                }}
-                                placeholder="בחר מלחין..."
-                                onInputChange={debouncedComposerSearch}
-                                isLoading={isLoadingComposers}
-                                filter={false}
-                            />
+                            <FormControl>
+                                <Combobox
+                                    options={composerOptions.map(c => ({ value: c, label: c }))}
+                                    selectedValue={composerField.value}
+                                    onSelectedValueChange={(value) => {
+                                        composerField.onChange(value);
+                                        setValue(`repertoire.${index}.title`, '');
+                                        setValue(`repertoire.${index}.duration`, '00:00');
+                                        setValue(`repertoire.${index}.genre`, '');
+                                    }}
+                                    placeholder="בחר מלחין..."
+                                    onInputChange={debouncedComposerSearch}
+                                    isLoading={isLoadingComposers}
+                                    filter={false}
+                                />
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -180,25 +182,27 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     render={({ field: titleField }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>שם היצירה</FormLabel>
-                            <Combobox
-                                options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
-                                selectedValue={currentRepertoireItem.id || ''}
-                                onSelectedValueChange={(id) => {
-                                    const composition = initialCompositions.find(c => c.id === id);
-                                    if (composition) {
-                                        setValue(`repertoire.${index}.id`, composition.id);
-                                        setValue(`repertoire.${index}.title`, composition.title);
-                                        setValue(`repertoire.${index}.composer`, composition.composer);
-                                        setValue(`repertoire.${index}.duration`, composition.duration);
-                                        setValue(`repertoire.${index}.genre`, composition.genre);
-                                        setValue(`repertoire.${index}.approved`, composition.approved);
-                                    }
-                                }}
-                                placeholder="בחר יצירה..."
-                                onInputChange={debouncedCompositionSearch}
-                                isLoading={isLoadingCompositions}
-                                filter={false}
-                            />
+                             <FormControl>
+                                <Combobox
+                                    options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
+                                    selectedValue={currentRepertoireItem.id || ''}
+                                    onSelectedValueChange={(id) => {
+                                        const composition = initialCompositions.find(c => c.id === id);
+                                        if (composition) {
+                                            setValue(`repertoire.${index}.id`, composition.id);
+                                            setValue(`repertoire.${index}.title`, composition.title);
+                                            setValue(`repertoire.${index}.composer`, composition.composer);
+                                            setValue(`repertoire.${index}.duration`, composition.duration);
+                                            setValue(`repertoire.${index}.genre`, composition.genre);
+                                            setValue(`repertoire.${index}.approved`, composition.approved);
+                                        }
+                                    }}
+                                    placeholder="בחר יצירה..."
+                                    onInputChange={debouncedCompositionSearch}
+                                    isLoading={isLoadingCompositions}
+                                    filter={false}
+                                />
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -224,7 +228,6 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                             <Input 
                                 dir='ltr' 
                                 placeholder="MM:SS"
-                                maxLength={5}
                                 {...field} 
                                 onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
                             />
@@ -233,7 +236,7 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
                     </FormItem> 
                 )} />
                 
-                <div className="hidden lg:flex self-center">
+                <div className="hidden lg:flex items-center justify-center h-10">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -248,38 +251,32 @@ const RepertoireItem = ({ index, remove, field, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
 
-  const defaultValues = useMemo(() => ({
-    formType: 'רסיטל בגרות',
-    academicYear: getHebrewAcademicYear(),
-    grade: student?.grade || 'יב',
-    conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
-    studentName: student?.name || '',
-    idNumber: student?.idNumber || '',
-    birthDate: student?.birthDate || '',
-    gender: student?.gender || 'זכר',
-    city: student?.city || '',
-    phone: student?.phone || '',
-    email: student?.email || '',
-    schoolName: student?.schoolName || '',
-    hasMusicMajor: 'לא',
-    isMajorParticipant: 'לא',
-    plansTheoryExam: 'לא',
-    instrument: student?.instruments?.[0]?.instrument || '',
-    yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
-    teacherName: student?.instruments?.[0]?.teacherName || '',
-    yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
-    repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-    managerNotes: '',
-  }), [user, student]);
-    
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues: useMemo(() => ({
+        formType: 'רסיטל בגרות',
+        academicYear: getHebrewAcademicYear(),
+        grade: student?.grade || 'יב',
+        conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
+        studentName: student?.name || '',
+        idNumber: student?.idNumber || '',
+        birthDate: student?.birthDate || '',
+        gender: student?.gender || 'זכר',
+        city: student?.city || '',
+        phone: student?.phone || '',
+        email: student?.email || '',
+        schoolName: student?.schoolName || '',
+        hasMusicMajor: 'לא',
+        isMajorParticipant: 'לא',
+        plansTheoryExam: 'לא',
+        instrument: student?.instruments?.[0]?.instrument || '',
+        yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
+        teacherName: student?.instruments?.[0]?.teacherName || '',
+        yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
+        repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+        managerNotes: '',
+    }), [user, student]),
   });
-
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [student, form, defaultValues]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -316,7 +313,9 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   
   const guideline = grade ? durationGuidelines[grade] : undefined;
   const totalDurationInMinutes = totalDuration / 60;
-  const isDurationOutsideGuidelines = guideline && (totalDurationInMinutes < guideline.min || totalDurationInMinutes > guideline.max) && totalDuration > 0;
+  const isDurationUnder = guideline && totalDurationInMinutes > 0 && totalDurationInMinutes < guideline.min;
+  const isDurationOver = guideline && totalDurationInMinutes > guideline.max;
+  const isDurationOutsideGuidelines = isDurationUnder || isDurationOver;
 
   const areDetailsLocked = true;
 
@@ -470,7 +469,6 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                         key={item.id}
                         index={index} 
                         remove={remove}
-                        field={item}
                         fields={fields}
                     />
                 ))}
@@ -505,7 +503,10 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             <Notice variant="critical">
                 <NoticeTitle>תשומת לב למשך הרסיטל</NoticeTitle>
                 <NoticeDescription>
-                משך הזמן הכולל ({totalDurationFormatted}) חורג מהמומלץ לכיתה {grade} ({guideline?.label}). אנא ודא/י שהרפרטואר מתאים.
+                {isDurationUnder
+                    ? `משך הזמן הכולל (${totalDurationFormatted}) קצר מהמומלץ לכיתה ${grade} (${guideline?.label}).`
+                    : `משך הזמן הכולל (${totalDurationFormatted}) ארוך מהמומלץ לכיתה ${grade} (${guideline?.label}).`
+                } אנא ודא/י שהרפרטואר מתאים.
                 </NoticeDescription>
             </Notice>
         )}
