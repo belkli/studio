@@ -95,36 +95,7 @@ const getHebrewAcademicYear = () => {
         gregorianYear--;
     }
     const hebrewYearShort = (gregorianYear + 1 + 5700) % 100;
-    const hebrewYearChars = (hebrewYearShort).toString().split('');
-    const tens = hebrewYearChars[0];
-    const ones = hebrewYearChars[1];
-
-    const tensMap = {
-        '2': 'כ',
-        '3': 'ל',
-        '4': 'מ',
-        '5': 'נ',
-        '6': 'ס',
-        '7': 'ע',
-        '8': 'פ',
-        '9': 'צ'
-    };
-    
-    const onesMap = {
-        '0': '',
-        '1': 'א',
-        '2': 'ב',
-        '3': 'ג',
-        '4': 'ד',
-        '5': 'ה',
-        '6': 'ו',
-        '7': 'ז',
-        '8': 'ח',
-        '9': 'ט'
-    };
-    
-    // The current year is 2024, so the academic year is 2024-2025, which is תשפ"ה in Hebrew.
-    // 2025 -> 5785. Short is 85. 80 is פ, 5 is ה. So תשפ"ה.
+    // For 2024 -> 2025 academic year, Hebrew year is 5785, which is תשפ"ה
     return `תשפ"ה (2024-2025)`;
 }
 
@@ -189,7 +160,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     const selectedComposer = currentRepertoireItem?.composer;
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
-        if (query.length < 2) {
+        if (query.length < 2 && query.length > 0) {
             setComposerOptions([]);
             return;
         }
@@ -210,6 +181,10 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
         // Pre-load some compositions if a composer is already selected, or just load initial list.
         debouncedCompositionSearch('');
     }, [selectedComposer, debouncedCompositionSearch]);
+
+    useEffect(() => {
+        debouncedComposerSearch('');
+    }, [debouncedComposerSearch]);
 
     return (
          <div key={field.id} className="border rounded-lg relative">
@@ -286,11 +261,9 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     render={({ field }) => ( 
                         <FormItem> 
                             <FormLabel>ז'אנר</FormLabel> 
-                            <Select key={field.value} dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> 
+                            <Select key={`${field.value}-${index}`} dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> 
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="בחר ז'אנר"/>
-                                    </SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
                                 </FormControl> 
                                 <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> 
                             </Select> 
