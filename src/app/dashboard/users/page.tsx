@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { UserRole, User } from "@/lib/types";
-import { Check, Edit, Search, ThumbsDown, X } from "lucide-react";
+import { Check, Edit, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,6 +13,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 
 const roleTranslations: Record<UserRole, string> = {
     student: "תלמיד",
@@ -23,7 +29,7 @@ const roleTranslations: Record<UserRole, string> = {
 
 export default function UsersPage() {
     const { toast } = useToast();
-    const { user: currentUser, users, approveUser, rejectUser } = useAuth();
+    const { user: currentUser, users, approveUser, rejectUser, updateUser } = useAuth();
     
     const [searchTerm, setSearchTerm] = useState('');
     const [instrumentFilter, setInstrumentFilter] = useState('all');
@@ -32,10 +38,11 @@ export default function UsersPage() {
     
     const [rejectionReason, setRejectionReason] = useState('');
     const [selectedUserToReject, setSelectedUserToReject] = useState<User | null>(null);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
 
-    const { pendingUsers, approvedUsers } = useMemo(() => {
+    const { pendingUsers, approvedUsers, availableInstruments, availableTeachers, availableGrades } = useMemo(() => {
         if (!currentUser) {
-            return { pendingUsers: [], approvedUsers: [] };
+            return { pendingUsers: [], approvedUsers: [], availableInstruments: [], availableTeachers: [], availableGrades: [] };
         }
 
         let baseUsers: User[];
@@ -49,14 +56,7 @@ export default function UsersPage() {
             baseUsers = [];
         }
 
-        return {
-            pendingUsers: baseUsers.filter(u => !u.approved),
-            approvedUsers: baseUsers.filter(u => u.approved),
-        }
-    }, [currentUser, users]);
-
-    const { availableInstruments, availableTeachers, availableGrades } = useMemo(() => {
-        const studentUsers = approvedUsers.filter(u => u.role === 'student');
+        const studentUsers = baseUsers.filter(u => u.approved && u.role === 'student');
         const instruments = new Set<string>();
         const teachers = new Set<string>();
         const grades = new Set<string>();
@@ -72,11 +72,13 @@ export default function UsersPage() {
         });
 
         return {
+            pendingUsers: baseUsers.filter(u => !u.approved),
+            approvedUsers: baseUsers.filter(u => u.approved),
             availableInstruments: Array.from(instruments),
             availableTeachers: Array.from(teachers),
             availableGrades: Array.from(grades).sort(),
-        };
-    }, [approvedUsers]);
+        }
+    }, [currentUser, users]);
     
     const filteredApprovedUsers = useMemo(() => {
         return approvedUsers.filter(user => {
@@ -103,6 +105,18 @@ export default function UsersPage() {
     const handleRejectClick = (user: User) => {
         setSelectedUserToReject(user);
     };
+
+    const handleEditClick = (user: User) => {
+        setEditingUser(user);
+    }
+
+    const handleUpdateUser = (updatedData: Partial<User>) => {
+        if (!editingUser) return;
+        const updatedUser = { ...editingUser, ...updatedData };
+        updateUser(updatedUser);
+        toast({ title: 'משתמש עודכן', description: `פרטיו של ${updatedUser.name} עודכנו בהצלחה.` });
+        setEditingUser(null);
+    }
     
     const confirmReject = () => {
         if (selectedUserToReject) {
@@ -142,8 +156,8 @@ export default function UsersPage() {
                         <CardContent>
                              <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full ps-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full pe-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 {showFilters && (
                                     <>
@@ -153,7 +167,7 @@ export default function UsersPage() {
                                     </>
                                 )}
                             </div>
-                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={!!showFilters} />
+                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={!!showFilters} onEdit={handleEditClick} />
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -188,17 +202,22 @@ export default function UsersPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            <Dialog open={!!editingUser} onOpenChange={(isOpen) => !isOpen && setEditingUser(null)}>
+                <DialogContent dir="rtl">
+                    <DialogHeader>
+                        <DialogTitle>עריכת משתמש: {editingUser?.name}</DialogTitle>
+                    </DialogHeader>
+                    {editingUser && <EditUserForm user={editingUser} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} />}
+                </DialogContent>
+            </Dialog>
+
         </div>
     );
 }
 
-const UsersTable = ({ users, currentUser, showFilters }: { users: User[], currentUser: User, showFilters: boolean }) => {
-    const { toast } = useToast();
+const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[], currentUser: User, showFilters: boolean, onEdit: (user: User) => void }) => {
     const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
-
-    const handleEdit = (user: User) => {
-        toast({ title: 'עריכת משתמש', description: `כאן תתבצע עריכה עבור ${user.name}.` });
-    };
 
     if (users.length === 0) {
         return <p className="text-center text-muted-foreground pt-8">לא נמצאו משתמשים התואמים את החיפוש.</p>;
@@ -213,7 +232,7 @@ const UsersTable = ({ users, currentUser, showFilters }: { users: User[], curren
                 {showFilters && <TableHead>כלי נגינה</TableHead>}
                 {showFilters && <TableHead>מורה</TableHead>}
                 {currentUser.role === 'site_admin' && <TableHead>קונסרבטוריון</TableHead>}
-                {canEdit && <TableHead className="text-left">פעולות</TableHead>}
+                {canEdit && <TableHead className="text-right">פעולות</TableHead>}
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
@@ -229,8 +248,8 @@ const UsersTable = ({ users, currentUser, showFilters }: { users: User[], curren
                         )}
                         {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
                         {canEdit && (
-                            <TableCell className="text-left">
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">ערוך</span></Button>
+                            <TableCell className="text-right">
+                                <Button variant="ghost" size="icon" onClick={() => onEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">ערוך</span></Button>
                             </TableCell>
                         )}
                     </TableRow>
@@ -250,7 +269,7 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
                 <TableHead>שם</TableHead>
                 <TableHead>אימייל</TableHead>
                 <TableHead>תפקיד מבוקש</TableHead>
-                <TableHead className="text-left">פעולות</TableHead>
+                <TableHead className="text-right">פעולות</TableHead>
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
@@ -258,7 +277,7 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roleTranslations[user.role]}</span></TableCell>
-                        <TableCell className="text-left space-x-2 space-x-reverse">
+                        <TableCell className="text-right space-x-2 space-x-reverse">
                             <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-700" onClick={() => onApprove(user)}><Check className="h-4 w-4" /><span className="sr-only">אשר</span></Button>
                             <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => onReject(user)}><X className="h-4 w-4" /><span className="sr-only">דחה</span></Button>
                         </TableCell>
@@ -268,3 +287,85 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
         </Table>
     );
 };
+
+
+const editUserSchema = z.object({
+    name: z.string().min(2, "שם מלא חייב להכיל לפחות 2 תווים."),
+    email: z.string().email("כתובת אימייל לא תקינה."),
+    role: z.enum(["student", "teacher", "conservatorium_admin", "site_admin"]),
+    grade: z.enum(['י', 'יא', 'יב']).optional(),
+});
+
+type EditUserFormData = z.infer<typeof editUserSchema>;
+
+const EditUserForm = ({ user, onSubmit, onCancel }: { user: User, onSubmit: (data: EditUserFormData) => void, onCancel: () => void }) => {
+    const form = useForm<EditUserFormData>({
+        resolver: zodResolver(editUserSchema),
+        defaultValues: {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            grade: user.grade,
+        },
+    });
+
+    return (
+        <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>שם מלא</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>אימייל</FormLabel>
+                            <FormControl>
+                                <Input type="email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {user.role === 'student' && (
+                    <FormField
+                        control={form.control}
+                        name="grade"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>כיתה</FormLabel>
+                                <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger><SelectValue placeholder="בחר כיתה"/></SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="י">י'</SelectItem>
+                                        <SelectItem value="יא">י"א</SelectItem>
+                                        <SelectItem value="יב">י"ב</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
+                {/* Note: Role editing could be added here for Site Admins */}
+                <DialogFooter>
+                    <Button type="button" variant="ghost" onClick={onCancel}>ביטול</Button>
+                    <Button type="submit">שמור שינויים</Button>
+                </DialogFooter>
+            </form>
+        </FormProvider>
+    );
+}
