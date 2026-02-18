@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 'use client';
 
@@ -22,9 +23,8 @@ import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { searchComposers, searchCompositions } from '@/app/actions';
-import { debounce } from '@/lib/utils';
+import { debounce, cn } from '@/lib/utils';
 import { Label } from '../ui/label';
-import { cn } from '@/lib/utils';
 
 
 const compositionSchema = z.object({
@@ -176,12 +176,17 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     }, 300), [selectedComposer]);
     
     useEffect(() => {
-        debouncedCompositionSearch(watch(`repertoire.${index}.title`));
+        debouncedCompositionSearch('');
+    }, [selectedComposer, debouncedCompositionSearch]);
+    
+    useEffect(() => {
+        debouncedComposerSearch(watch(`repertoire.${index}.title`));
     }, [selectedComposer, debouncedCompositionSearch, index, watch]);
     
     useEffect(() => {
         debouncedComposerSearch('');
-    }, [debouncedComposerSearch]);
+        debouncedComposerSearch(watch(`repertoire.${index}.title`));
+    }, []);
 
     return (
          <div key={field.id} className="border rounded-lg relative">
@@ -192,8 +197,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 lg:items-start">
-                <div className="hidden lg:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr] xl:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 lg:items-start">
+                <div className="hidden xl:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -309,7 +314,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     />
                 </div>
                 
-                <div className="hidden lg:flex self-center pt-6 justify-self-end">
+                <div className="hidden xl:flex self-center pt-6 justify-self-end">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -333,11 +338,9 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     name: 'repertoire',
   });
 
-  // This effect resets the form when the student prop changes.
-  // The 'key' prop on the form element ensures the component re-mounts.
-  useEffect(() => {
+  const defaultValues = useMemo(() => {
     const firstInstrument = student.instruments?.[0];
-    const defaultValues = {
+    return {
         formType: 'רסיטל בגרות',
         academicYear: getHebrewAcademicYear(),
         grade: student.grade || 'יב',
@@ -360,8 +363,11 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
         repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
         managerNotes: '',
     };
+  }, [student, user]);
+
+  useEffect(() => {
     form.reset(defaultValues);
-  }, [student, user, form]);
+  }, [defaultValues, form]);
 
 
   const { isDirty } = form.formState;
@@ -382,7 +388,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const repertoire = form.watch('repertoire');
   const grade = form.watch('grade');
 
-  const totalDuration = repertoire.reduce((total, item) => {
+  const totalDuration = (repertoire || []).reduce((total, item) => {
     const [minutes, seconds] = item.duration.split(':').map(Number);
     if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
