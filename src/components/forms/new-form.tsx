@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockUsers } from '@/lib/data';
 import type { User } from '@/lib/types';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { RecitalForm } from './recital-form';
 import { KenesForm } from './kenes-form';
@@ -71,21 +71,21 @@ export function NewForm() {
   const canSelectStudent = user.role !== 'student';
   const canSelectFormType = user.role !== 'student';
   
-  const onSubmitRecital = (data: any) => {
+  const onSubmitRecital = useCallback((data: any) => {
     console.log("Recital Form Data:", data);
     toast({
         title: "טופס רסיטל הוגש בהצלחה!",
         description: "הטופס נשלח לאישור המורה.",
     });
-  };
+  }, [toast]);
 
-  const onSubmitKenes = (data: any) => {
+  const onSubmitKenes = useCallback((data: any) => {
     console.log("Kenes Form Data:", data);
     toast({
         title: "טופס כנס הוגש בהצלחה!",
         description: "הטופס נשלח לאישור המנהל.",
     });
-  };
+  }, [toast]);
 
   const renderForm = () => {
     if (!selectedFormType) {
