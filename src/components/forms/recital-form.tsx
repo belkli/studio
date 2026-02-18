@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
@@ -251,32 +250,39 @@ const RepertoireItem = ({ index, remove, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
 
+  const defaultValues = useMemo(() => ({
+    formType: 'רסיטל בגרות',
+    academicYear: getHebrewAcademicYear(),
+    grade: student?.grade || 'יב',
+    conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
+    studentName: student?.name || '',
+    idNumber: student?.idNumber || '',
+    birthDate: student?.birthDate || '',
+    gender: student?.gender || 'זכר',
+    city: student?.city || '',
+    phone: student?.phone || '',
+    email: student?.email || '',
+    schoolName: student?.schoolName || '',
+    hasMusicMajor: 'לא',
+    isMajorParticipant: 'לא',
+    plansTheoryExam: 'לא',
+    instrument: student?.instruments?.[0]?.instrument || '',
+    yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
+    teacherName: student?.instruments?.[0]?.teacherName || '',
+    yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
+    repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+    managerNotes: '',
+  }), [user, student]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: useMemo(() => ({
-        formType: 'רסיטל בגרות',
-        academicYear: getHebrewAcademicYear(),
-        grade: student?.grade || 'יב',
-        conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
-        studentName: student?.name || '',
-        idNumber: student?.idNumber || '',
-        birthDate: student?.birthDate || '',
-        gender: student?.gender || 'זכר',
-        city: student?.city || '',
-        phone: student?.phone || '',
-        email: student?.email || '',
-        schoolName: student?.schoolName || '',
-        hasMusicMajor: 'לא',
-        isMajorParticipant: 'לא',
-        plansTheoryExam: 'לא',
-        instrument: student?.instruments?.[0]?.instrument || '',
-        yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
-        teacherName: student?.instruments?.[0]?.teacherName || '',
-        yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
-        repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-        managerNotes: '',
-    }), [user, student]),
+    defaultValues,
   });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -302,20 +308,32 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const repertoire = form.watch('repertoire');
   const grade = form.watch('grade');
 
-  const totalDuration = (repertoire || []).reduce((total, item) => {
+  const totalDuration = useMemo(() => (repertoire || []).reduce((total, item) => {
     if (!item?.duration) return total;
     const [minutes, seconds] = item.duration.split(':').map(Number);
     if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
-  }, 0);
+  }, 0), [repertoire]);
 
   const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
   
-  const guideline = grade ? durationGuidelines[grade] : undefined;
-  const totalDurationInMinutes = totalDuration / 60;
-  const isDurationUnder = guideline && totalDurationInMinutes > 0 && totalDurationInMinutes < guideline.min;
-  const isDurationOver = guideline && totalDurationInMinutes > guideline.max;
-  const isDurationOutsideGuidelines = isDurationUnder || isDurationOver;
+  const { guideline, isDurationOutsideGuidelines, isDurationUnder } = useMemo(() => {
+    if (!grade) return { guideline: undefined, isDurationOutsideGuidelines: false, isDurationUnder: false };
+    
+    const guidelineForGrade = durationGuidelines[grade];
+    if (!guidelineForGrade) return { guideline: undefined, isDurationOutsideGuidelines: false, isDurationUnder: false };
+
+    const totalDurationInMinutes = totalDuration / 60;
+    const under = totalDurationInMinutes > 0 && totalDurationInMinutes < guidelineForGrade.min;
+    const over = totalDurationInMinutes > guidelineForGrade.max;
+    
+    return {
+      guideline: guidelineForGrade,
+      isDurationOutsideGuidelines: under || over,
+      isDurationUnder: under
+    };
+  }, [grade, totalDuration]);
+
 
   const areDetailsLocked = true;
 
@@ -397,7 +415,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     )} 
                 />
                 <FormField control={form.control} name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormMessage> )} />
                 <FormField control={form.control} name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
@@ -499,13 +517,13 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
             </CardFooter>
         </Card>
         
-        {isDurationOutsideGuidelines && (
+        {isDurationOutsideGuidelines && guideline && (
             <Notice variant="critical">
                 <NoticeTitle>תשומת לב למשך הרסיטל</NoticeTitle>
                 <NoticeDescription>
                 {isDurationUnder
-                    ? `משך הזמן הכולל (${totalDurationFormatted}) קצר מהמומלץ לכיתה ${grade} (${guideline?.label}).`
-                    : `משך הזמן הכולל (${totalDurationFormatted}) ארוך מהמומלץ לכיתה ${grade} (${guideline?.label}).`
+                    ? `משך הזמן הכולל (${totalDurationFormatted}) קצר מהמומלץ לכיתה ${grade} (${guideline.label}).`
+                    : `משך הזמן הכולל (${totalDurationFormatted}) ארוך מהמומלץ לכיתה ${grade} (${guideline.label}).`
                 } אנא ודא/י שהרפרטואר מתאים.
                 </NoticeDescription>
             </Notice>
