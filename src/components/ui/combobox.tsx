@@ -84,6 +84,7 @@ export function Combobox({
                   }}
                   onMouseDown={(e) => {
                     e.preventDefault();
+                    e.currentTarget.click();
                   }}
                 >
                   <Check

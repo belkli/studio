@@ -1,4 +1,5 @@
 
+
 // @ts-nocheck
 'use client';
 
@@ -179,13 +180,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
         debouncedCompositionSearch('');
     }, [selectedComposer, debouncedCompositionSearch]);
     
-    useEffect(() => {
-        debouncedComposerSearch(watch(`repertoire.${index}.title`));
-    }, [selectedComposer, debouncedCompositionSearch, index, watch]);
-    
-    useEffect(() => {
+     useEffect(() => {
         debouncedComposerSearch('');
-        debouncedComposerSearch(watch(`repertoire.${index}.title`));
     }, []);
 
     return (
@@ -197,8 +193,8 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     <span className="sr-only">מחק יצירה</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_1fr_1fr] xl:grid-cols-[auto_1fr_1fr_1fr_auto_auto] gap-y-4 gap-x-4 p-4 lg:items-start">
-                <div className="hidden xl:block font-medium text-muted-foreground self-center pt-6">{index + 1}.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto] items-end gap-4 p-4">
+                <div className="hidden lg:block font-medium text-muted-foreground self-center">{index + 1}.</div>
                 
                 <FormField
                     control={control}
@@ -314,7 +310,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
                     />
                 </div>
                 
-                <div className="hidden xl:flex self-center pt-6 justify-self-end">
+                <div className="hidden lg:flex self-center justify-self-end">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">מחק יצירה</span>
@@ -329,38 +325,33 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
     
-  const defaultValues = useMemo(() => {
-    const firstInstrument = student.instruments?.[0];
-    return {
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
         formType: 'רסיטל בגרות',
         academicYear: getHebrewAcademicYear(),
-        grade: student.grade || 'יב',
-        conservatoriumName: student.conservatoriumName || user.conservatoriumName,
-        studentName: student.name || '',
-        idNumber: student.idNumber || '',
-        birthDate: student.birthDate || '',
-        gender: student.gender || 'זכר',
-        city: student.city || '',
-        phone: student.phone || '',
-        email: student.email || '',
-        schoolName: student.schoolName || '',
+        grade: student?.grade || 'יב',
+        conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
+        studentName: student?.name || '',
+        idNumber: student?.idNumber || '',
+        birthDate: student?.birthDate || '',
+        gender: student?.gender || 'זכר',
+        city: student?.city || '',
+        phone: student?.phone || '',
+        email: student?.email || '',
+        schoolName: student?.schoolName || '',
         hasMusicMajor: 'לא',
         isMajorParticipant: 'לא',
         plansTheoryExam: 'לא',
-        instrument: firstInstrument?.instrument || '',
-        yearsOfStudy: firstInstrument?.yearsOfStudy || 0,
-        teacherName: firstInstrument?.teacherName || '',
-        yearsWithTeacher: firstInstrument?.yearsOfStudy || 0,
+        instrument: student?.instruments?.[0]?.instrument || '',
+        yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
+        teacherName: student?.instruments?.[0]?.teacherName || '',
+        yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
         repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
         managerNotes: '',
-    };
-  }, [student, user]);
-  
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
+    },
   });
-
+  
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'repertoire',
@@ -402,7 +393,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8" key={student.id}>
         <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
