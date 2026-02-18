@@ -29,6 +29,7 @@ type ComboboxProps = {
   onInputChange?: (search: string) => void;
   isLoading?: boolean;
   disabled?: boolean;
+  filter?: boolean;
 };
 
 export function Combobox({
@@ -41,6 +42,7 @@ export function Combobox({
   onInputChange,
   isLoading = false,
   disabled = false,
+  filter = true,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -54,14 +56,16 @@ export function Combobox({
           className="w-full justify-between"
           disabled={disabled}
         >
-          {selectedValue
-            ? options.find((option) => option.value === selectedValue || option.label === selectedValue)?.label ?? placeholder
-            : placeholder}
+          <span className="truncate">
+            {selectedValue
+              ? options.find((option) => option.value === selectedValue)?.label ?? placeholder
+              : placeholder}
+          </span>
           <ChevronsUpDown className="ms-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-        <Command filter={() => 1}>
+        <Command filter={filter ? undefined : () => 1}>
           <CommandInput 
             placeholder={searchPlaceholder} 
             onValueChange={onInputChange}
@@ -75,9 +79,11 @@ export function Combobox({
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    const selectedOption = options.find(opt => opt.value.toLowerCase() === currentValue.toLowerCase() || opt.label.toLowerCase() === currentValue.toLowerCase());
-                    onSelectedValueChange(selectedOption ? selectedOption.value : "");
+                    onSelectedValueChange(currentValue)
                     setOpen(false)
+                  }}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
                   }}
                 >
                   <Check
