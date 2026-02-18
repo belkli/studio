@@ -79,7 +79,7 @@ const durationGuidelines = {
   'יב': { min: 25, max: 35, label: "25-35 דקות" },
 };
 
-const emptyComposition = { composer: '', title: '', genre: '', duration: '00:00', approved: true };
+const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
 const getHebrewAcademicYear = () => {
     const date = new Date();
@@ -129,12 +129,31 @@ const RepertoireItem = ({ index, remove, fields }) => {
     }, 300), [selectedComposer]);
     
     useEffect(() => {
-        debouncedCompositionSearch('');
-    }, [selectedComposer, debouncedCompositionSearch]);
+        if(selectedComposer) {
+            debouncedCompositionSearch('');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComposer]);
     
      useEffect(() => {
         debouncedComposerSearch('');
-    }, [debouncedComposerSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleSelectComposition = (id: string) => {
+        const composition = initialCompositions.find(c => c.id === id);
+        if (composition) {
+            setValue(`repertoire.${index}.id`, composition.id);
+            setValue(`repertoire.${index}.title`, composition.title);
+            setValue(`repertoire.${index}.composer`, composition.composer);
+            setValue(`repertoire.${index}.duration`, composition.duration);
+            setValue(`repertoire.${index}.genre`, composition.genre);
+            setValue(`repertoire.${index}.approved`, composition.approved);
+        } else {
+             setValue(`repertoire.${index}.title`, id);
+        }
+    }
+
 
     return (
          <div className="border rounded-lg relative">
@@ -184,18 +203,8 @@ const RepertoireItem = ({ index, remove, fields }) => {
                              <FormControl>
                                 <Combobox
                                     options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
-                                    selectedValue={currentRepertoireItem.id || ''}
-                                    onSelectedValueChange={(id) => {
-                                        const composition = initialCompositions.find(c => c.id === id);
-                                        if (composition) {
-                                            setValue(`repertoire.${index}.id`, composition.id);
-                                            setValue(`repertoire.${index}.title`, composition.title);
-                                            setValue(`repertoire.${index}.composer`, composition.composer);
-                                            setValue(`repertoire.${index}.duration`, composition.duration);
-                                            setValue(`repertoire.${index}.genre`, composition.genre);
-                                            setValue(`repertoire.${index}.approved`, composition.approved);
-                                        }
-                                    }}
+                                    selectedValue={currentRepertoireItem.id || titleField.value}
+                                    onSelectedValueChange={handleSelectComposition}
                                     placeholder="בחר יצירה..."
                                     onInputChange={debouncedCompositionSearch}
                                     isLoading={isLoadingCompositions}
@@ -279,11 +288,6 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
     defaultValues,
   });
 
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues, form]);
-
-
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'repertoire',
@@ -339,7 +343,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} key={student.id}>
+       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8" key={student.id}>
         <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
@@ -415,7 +419,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
                     )} 
                 />
                 <FormField control={form.control} name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormMessage> )} />
+                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
                 <FormField control={form.control} name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
@@ -518,12 +522,12 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
         </Card>
         
         {isDurationOutsideGuidelines && guideline && (
-            <Notice variant="critical">
+            <Notice variant={isDurationUnder ? 'info' : 'critical'}>
                 <NoticeTitle>תשומת לב למשך הרסיטל</NoticeTitle>
                 <NoticeDescription>
                 {isDurationUnder
                     ? `משך הזמן הכולל (${totalDurationFormatted}) קצר מהמומלץ לכיתה ${grade} (${guideline.label}).`
-                    : `משך הזמן הכולל (${totalDurationFormatted}) ארוך מהמומלץ לכיתה ${grade} (${guideline.label}).`
+                    : `משך הזמן הכולל (${totalDurationFormatted}) חורג מהמומלץ לכיתה ${grade} (${guideline.label}).`
                 } אנא ודא/י שהרפרטואר מתאים.
                 </NoticeDescription>
             </Notice>
