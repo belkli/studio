@@ -94,8 +94,8 @@ const getHebrewAcademicYear = () => {
     if (month < 8) { // Before September
         gregorianYear--;
     }
-    const hebrewYearShort = (gregorianYear + 1 + 5780) % 100 - 4; // 5785 -> פה, 5786 -> ו
-    const hebrewChar = String.fromCharCode(1488 + hebrewYearShort);
+    const hebrewYearShort = (gregorianYear + 5760) % 100;
+    const hebrewChar = String.fromCharCode(1488 + (hebrewYearShort-1));
 
     return `תשפ"${hebrewChar} (${gregorianYear}-${gregorianYear + 1})`;
 }
@@ -151,13 +151,13 @@ const MovementSelector = ({ movements, selected, onSelectionChange, onDurationCh
 }
 
 const RepertoireItem = ({ index, control, remove, field, fields }) => {
-    const { setValue } = useFormContext();
+    const { setValue, watch } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
     const [isLoadingCompositions, setIsLoadingCompositions] = useState(false);
 
-    const currentRepertoireItem = useFormContext().watch(`repertoire.${index}`);
+    const currentRepertoireItem = watch(`repertoire.${index}`);
     const selectedComposer = currentRepertoireItem?.composer;
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
@@ -177,7 +177,7 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
     useEffect(() => {
         debouncedCompositionSearch('');
     }, [selectedComposer, debouncedCompositionSearch]);
-
+    
     useEffect(() => {
         debouncedComposerSearch('');
     }, [debouncedComposerSearch]);

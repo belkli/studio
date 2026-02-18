@@ -82,8 +82,11 @@ export function Combobox({
                     onSelectedValueChange(currentValue)
                     setOpen(false)
                   }}
-                  onPointerDown={(e) => {
+                  onMouseDown={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
+                    onSelectedValueChange(option.value);
+                    setOpen(false);
                   }}
                 >
                   <Check
@@ -92,7 +95,7 @@ export function Combobox({
                       selectedValue === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {option.label}
+                  <span className="truncate">{option.label}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
