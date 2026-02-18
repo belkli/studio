@@ -97,7 +97,7 @@ export function NewForm() {
             if (!selectedStudent) {
                 return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>;
             }
-            return <RecitalForm user={user} student={selectedStudent} onSubmit={onSubmitRecital} />;
+            return <RecitalForm key={selectedStudent.id} user={user} student={selectedStudent} onSubmit={onSubmitRecital} />;
         case 'kenes':
             return <KenesForm user={user} onSubmit={onSubmitKenes} />;
         default:

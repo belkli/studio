@@ -329,15 +329,6 @@ const RepertoireItem = ({ index, control, remove, field, fields }) => {
 export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { toast } = useToast();
     
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'repertoire',
-  });
-
   const defaultValues = useMemo(() => {
     const firstInstrument = student.instruments?.[0];
     return {
@@ -364,10 +355,16 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
         managerNotes: '',
     };
   }, [student, user]);
+  
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
+  });
 
-  useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues, form]);
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'repertoire',
+  });
 
 
   const { isDirty } = form.formState;
@@ -389,6 +386,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const grade = form.watch('grade');
 
   const totalDuration = (repertoire || []).reduce((total, item) => {
+    if (!item?.duration) return total;
     const [minutes, seconds] = item.duration.split(':').map(Number);
     if(isNaN(minutes) || isNaN(seconds)) return total;
     return total + (minutes * 60) + seconds;
@@ -404,7 +402,7 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
 
   return (
     <FormProvider {...form}>
-      <form key={student.id} onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
         <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
