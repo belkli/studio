@@ -266,8 +266,8 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
         <Table>
             <TableHeader><TableRow>
                 <TableHead className="text-right">שם</TableHead>
-                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
                 <TableHead className="text-right">ת.ז.</TableHead>
+                <TableHead className="text-right" dir="ltr">אימייל</TableHead>
                 <TableHead className="text-right">נייד</TableHead>
                 <TableHead className="text-right">תפקיד</TableHead>
                 {showFilters && <TableHead className="text-right">כלי נגינה</TableHead>}
@@ -281,8 +281,8 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell className="font-medium text-right">{user.name}</TableCell>
-                        <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
                         <TableCell className="text-right">{user.idNumber || '-'}</TableCell>
+                        <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
                         <TableCell className="text-right">{user.phone || '-'}</TableCell>
                         <TableCell className="text-right"><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roleTranslations[user.role]}</span></TableCell>
                         {showFilters && (
