@@ -12,6 +12,8 @@ import { he } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ToastAction } from '@/components/ui/toast';
+import Link from 'next/link';
 
 interface SickLeaveModalProps {
   open: boolean;
@@ -48,7 +50,12 @@ export function SickLeaveModal({ open, onOpenChange }: SickLeaveModalProps) {
         onOpenChange(false);
         toast({
             title: 'דיווח מחלה התקבל',
-            description: `${cancelledLessons.length} שיעורים בוטלו. הודעות נשלחו לתלמידים והונפקו זיכויים לשיעורי השלמה.`,
+            description: `${cancelledLessons.length} שיעורים בוטלו.`,
+            action: user.role === 'conservatorium_admin' || user.role === 'site_admin' ? (
+                <ToastAction altText="שבץ מחליפים" asChild>
+                    <Link href="/dashboard/admin/substitute">שבץ מחליפים</Link>
+                </ToastAction>
+            ) : undefined,
         });
         setDateRange({ from: new Date(), to: new Date() });
     }, 1000);

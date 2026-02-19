@@ -57,6 +57,7 @@ interface AuthContextType {
   updateLessonStatus: (lessonId: string, status: SlotStatus) => void;
   rescheduleLesson: (lessonId: string, newStartTime: string) => void;
   reportSickLeave: (teacherId: string, startDate: Date, endDate: Date) => LessonSlot[];
+  assignSubstitute: (lessonId: string, newTeacherId: string) => void;
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   addPracticeLog: (log: Partial<PracticeLog>) => void;
@@ -332,6 +333,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return affectedLessons;
   }, []);
 
+  const assignSubstitute = (lessonId: string, newTeacherId: string) => {
+    setLessons(prevLessons => prevLessons.map(lesson => 
+        lesson.id === lessonId
+            ? { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() }
+            : lesson
+    ));
+    // In a real app, also trigger notifications here
+  };
+
   const addPracticeLog = (log: Partial<PracticeLog>) => {
     if (!user) return;
     
@@ -412,6 +422,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateLessonStatus,
       rescheduleLesson,
       reportSickLeave,
+      assignSubstitute,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
       mockPracticeLogs: practiceLogs, 
