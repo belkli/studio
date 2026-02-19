@@ -2,7 +2,17 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { mockUsers as initialUsers, mockFormSubmissions as initialForms, conservatoriums, type User, type FormSubmission } from '@/lib/data';
+import { 
+    mockUsers as initialUsers, 
+    mockFormSubmissions as initialForms, 
+    conservatoriums, 
+    mockInvoices as initialInvoices,
+    mockPracticeLogs as initialPracticeLogs,
+    type User, 
+    type FormSubmission,
+    type Invoice,
+    type PracticeLog
+} from '@/lib/data';
 
 interface LoginResult {
   user: User | null;
@@ -21,6 +31,8 @@ interface AuthContextType {
   addUser: (newUser: Partial<User>) => void;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
+  mockInvoices: Invoice[];
+  mockPracticeLogs: PracticeLog[];
   newFeaturesEnabled: boolean;
 }
 
@@ -30,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [forms, setForms] = useState<FormSubmission[]>(initialForms);
+  const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
+  const [practiceLogs, setPracticeLogs] = useState<PracticeLog[]>(initialPracticeLogs);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -125,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userConservatorium?.newFeaturesEnabled ?? false;
   }, [user]);
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled, mockInvoices: invoices, mockPracticeLogs: practiceLogs };
 
   return (
     <AuthContext.Provider value={value}>

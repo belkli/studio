@@ -210,6 +210,7 @@ export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
 
 export type Invoice = {
   id: string;
+  invoiceNumber: string;
   conservatoriumId: string;
   payerId: string; // Parent or adult Student
   lineItems: { description: string; total: number; }[];
@@ -228,7 +229,7 @@ export type PracticeLog = {
     mood: 'GREAT' | 'OKAY' | 'HARD';
     studentNote?: string;
     teacherComment?: string;
-}
+};
 
 export type LessonNote = {
     id: string;
