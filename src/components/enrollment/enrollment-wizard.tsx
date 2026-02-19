@@ -257,7 +257,9 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
           <div className="mx-auto bg-green-100 dark:bg-green-900 rounded-full p-3 w-fit">
             <ShieldCheck className="h-12 w-12 text-accent" />
           </div>
-          <CardTitle className="text-2xl font-bold mt-4">ההרשמה הושלמה בהצלחה!</CardTitle>
+          <CardTitle className="text-2xl font-bold mt-4">
+             {isAdminFlow ? "התלמיד נרשם בהצלחה!" : "ההרשמה הושלמה בהצלחה!"}
+          </CardTitle>
           <CardDescription>
             {isAdminFlow 
             ? 'התלמיד נוסף למערכת וניתן לנהל את הפרופיל שלו.'
@@ -282,7 +284,9 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   return (
     <Card className="w-full max-w-4xl mx-4 shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">הרשמה לקונסרבטוריון</CardTitle>
+        <CardTitle className="text-2xl font-bold">
+            {isAdminFlow ? 'רישום תלמיד חדש (מנהל מערכת)' : 'הרשמה לקונסרבטוריון'}
+        </CardTitle>
         <CardDescription>מלא/י את הפרטים כדי להצטרף להרמוניה.</CardDescription>
         <div className="pt-4">
           <Stepper currentStep={step} steps={steps} />
