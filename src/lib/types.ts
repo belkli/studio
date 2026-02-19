@@ -301,3 +301,10 @@ export type Announcement = {
   channels: Channel[];
   sentAt: string; // ISO Timestamp
 };
+
+export type Room = {
+  id: string;
+  name: string;
+  instruments?: string[];
+  capacity?: number;
+};

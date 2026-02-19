@@ -39,6 +39,7 @@ const harmoniaLinks = [
     { href: '/dashboard/teacher/availability', label: 'הזמינות שלי', icon: Calendar, roles: ['teacher'] },
     { href: '/dashboard/enroll', label: 'רישום חדש', icon: UserPlus, roles: ['conservatorium_admin', 'site_admin']},
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/master-schedule', label: 'מערכת ראשית', icon: Calendar, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
     { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent', 'teacher'] },
     { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent', 'teacher'] },
