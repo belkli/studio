@@ -3,19 +3,35 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil } from "lucide-react";
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, Medal, CalendarCheck2 } from "lucide-react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { AssignedRepertoire, RepertoireStatus, User } from "@/lib/types";
+import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement } from "@/lib/types";
+import { formatDistanceToNow } from 'date-fns';
+import { he } from 'date-fns/locale';
 
 const statusTranslations: Record<RepertoireStatus, string> = {
     LEARNING: 'למידה',
     POLISHING: 'ליטוש',
     PERFORMANCE_READY: 'מוכן להופעה',
     COMPLETED: 'הושלם'
+};
+
+const AchievementIcon = ({ type }: { type: AchievementType }) => {
+    switch (type) {
+        case 'PRACTICE_STREAK_7':
+        case 'PRACTICE_STREAK_30':
+            return <Flame className="h-6 w-6 text-orange-500" />;
+        case 'PIECE_COMPLETED':
+            return <Medal className="h-6 w-6 text-yellow-500" />;
+        case 'YEARS_ENROLLED_1':
+            return <CalendarCheck2 className="h-6 w-6 text-blue-500" />;
+        default:
+            return <Star className="h-6 w-6 text-gray-500" />;
+    }
 };
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
@@ -213,6 +229,32 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                     </Card>
                 </div>
             </div>
+             <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Trophy /> הישגים ותעודות</CardTitle>
+                    <CardDescription>אבני דרך במסע המוזיקלי שלך.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {student.achievements && student.achievements.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {student.achievements.map((ach: Achievement) => (
+                                <div key={ach.id} className="flex items-center gap-4 p-4 border rounded-lg bg-muted/30">
+                                    <AchievementIcon type={ach.type} />
+                                    <div className="flex-1">
+                                        <p className="font-semibold">{ach.title}</p>
+                                        <p className="text-xs text-muted-foreground">{ach.description}</p>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground whitespace-nowrap">
+                                        {formatDistanceToNow(new Date(ach.achievedAt), { addSuffix: true, locale: he })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-muted-foreground py-8">אין עדיין הישגים להצגה. המשיכו להתאמן!</p>
+                    )}
+                </CardContent>
+            </Card>
         </>
     )
 }

@@ -49,6 +49,25 @@ export type WeeklyAvailabilityBlock = {
   endTime: string; // "HH:mm"
 };
 
+// From SDD-14B: Student Achievement & Certificate System
+export type AchievementType =
+  | 'PRACTICE_STREAK_7'          // 7-day practice streak
+  | 'PRACTICE_STREAK_30'         // 30-day practice streak
+  | 'PIECE_COMPLETED'            // teacher marks a piece as performance-ready
+  | 'FIRST_RECITAL'              // first public performance
+  | 'EXAM_PASSED'                // Ministry exam passed
+  | 'YEARS_ENROLLED_1';          // 1 year anniversary
+
+export type Achievement = {
+  id: string;
+  type: AchievementType;
+  title: string;
+  description: string;
+  achievedAt: string; // ISO Timestamp
+  certificateUrl?: string;
+};
+
+
 export type User = {
   id: string;
   name: string;
@@ -91,6 +110,7 @@ export type User = {
   weeklyPracticeGoal?: number;
   packageId?: string;
   notificationPreferences?: NotificationPreferences;
+  achievements?: Achievement[];
 };
 
 export type PricingConfig = {

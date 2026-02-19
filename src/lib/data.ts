@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -79,6 +79,31 @@ export const compositions: Composition[] = (rawCompositions as any[]).map((item:
     source: 'seed',
 })).filter(c => c.composer && c.title);
 
+// --- Mock Achievements (SDD-14B) ---
+const mockAchievements: Achievement[] = [
+    {
+        id: 'ach-1',
+        type: 'PRACTICE_STREAK_7',
+        title: 'רצף אימונים של 7 ימים',
+        description: 'כל הכבוד על ההתמדה!',
+        achievedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+    },
+    {
+        id: 'ach-2',
+        type: 'PIECE_COMPLETED',
+        title: 'יצירה ראשונה הושלמה!',
+        description: 'סיימת ללמוד את "סונאטה של מוצרט".',
+        achievedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
+    },
+    {
+        id: 'ach-3',
+        type: 'YEARS_ENROLLED_1',
+        title: 'שנה בהרמוניה!',
+        description: 'חוגגים שנה שלמה של לימודים בקונסרבטוריון.',
+        achievedAt: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
+    }
+];
+
 // --- Mock Notifications ---
 const studentNotifications: Notification[] = [
   { id: 'notif-s1', title: 'הטופס שלך אושר!', message: 'הטופס "רסיטל בגרות" אושר על ידי מרים כהן.', timestamp: 'לפני 2 ימים', link: '/dashboard/forms/form-101', read: false },
@@ -110,7 +135,7 @@ const siteAdminNotifications: Notification[] = [ { id: 'notif-sa1', title: 'שג
 
 // --- Mock Users ---
 const studentUser: User = {
-  id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [ { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 }, ], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly'
+  id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [ { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 }, ], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
 };
 
 const parentUser: User = {
@@ -509,4 +534,4 @@ export const mockWaitlist: WaitlistEntry[] = [
 ];
 
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences };
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType };
