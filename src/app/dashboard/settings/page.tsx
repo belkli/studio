@@ -75,19 +75,20 @@ export default function SettingsPage() {
                 </CardContent>
             </Card>
 
-             {isAdmin && (
+             {isAdmin && newFeaturesEnabled && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>הגדרות קונסרבטוריון</CardTitle>
-                        <CardDescription>נהל הגדרות גלובליות עבור המוסד שלך.</CardDescription>
+                        <CardTitle>הגדרות מוסד</CardTitle>
+                        <CardDescription>נהל הגדרות גלובליות עבור המוסד שלך, כולל תכונות, תמחור ועוד.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                         <Link href="/dashboard/settings/conservatorium">
-                            <Button variant="outline">עבור להגדרות מתקדמות</Button>
-                        </Link>
+                    <CardContent className="flex flex-wrap gap-2">
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">ניהול תכונות</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">הגדרות תמחור</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/ai">ניהול סוכני AI</Link></Button>
                     </CardContent>
                 </Card>
             )}
+
 
             <Card>
                 <CardHeader>

@@ -64,6 +64,22 @@ export type User = {
   packageId?: string;
 };
 
+export type PricingConfig = {
+  baseRatePerLesson: {
+    '30': number;
+    '45': number;
+    '60': number;
+  };
+  discounts: {
+    pack5: number;
+    pack10: number;
+    yearly: number;
+    sibling: number;
+  };
+  adHocPremium: number; // as a percentage, e.g. 15 for 15%
+  trialPrice: number;
+};
+
 export type Conservatorium = {
   id: string;
   name: string;
@@ -71,6 +87,7 @@ export type Conservatorium = {
   stampUrl?: string;
   newFeaturesEnabled?: boolean;
   aiAgentsConfig?: Record<string, boolean>;
+  pricingConfig?: PricingConfig;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';

@@ -22,6 +22,21 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
         "admin-alerts-agent": true,
         "lead-nurture-agent": false,
     } : undefined,
+    pricingConfig: isHodHasharon ? {
+        baseRatePerLesson: {
+            '30': 80,
+            '45': 100,
+            '60': 120,
+        },
+        discounts: {
+            pack5: 5, // percentage
+            pack10: 10,
+            yearly: 15,
+            sibling: 10,
+        },
+        adHocPremium: 15, // percentage
+        trialPrice: 50,
+    } : undefined,
   };
 });
 
