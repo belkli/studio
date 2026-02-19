@@ -69,6 +69,7 @@ export type Conservatorium = {
   tier: 'A' | 'B' | 'C';
   stampUrl?: string;
   newFeaturesEnabled?: boolean;
+  aiAgentsConfig?: Record<string, boolean>;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';

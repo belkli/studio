@@ -1,8 +1,10 @@
 'use client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Bot, BrainCircuit, HeartHandshake, MessageSquare, Presentation, Bell, Search, FilePlus } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { useMemo } from "react";
 
 const agents = [
     {
@@ -50,6 +52,38 @@ const agents = [
 ];
 
 export default function AiAgentsPage() {
+    const { user, conservatoriums, updateConservatorium } = useAuth();
+    const { toast } = useToast();
+
+    const currentConservatorium = useMemo(() => {
+        if (!user) return null;
+        return conservatoriums.find(c => c.id === user.conservatoriumId);
+    }, [user, conservatoriums]);
+
+    const handleAgentToggle = (agentId: string, enabled: boolean) => {
+        if (!currentConservatorium) return;
+        
+        const newConfig = {
+            ...currentConservatorium.aiAgentsConfig,
+            [agentId]: enabled,
+        };
+
+        updateConservatorium({ ...currentConservatorium, aiAgentsConfig: newConfig });
+        
+        toast({
+            title: "הגדרה עודכנה",
+            description: `סוכן "${agents.find(a => a.id === agentId)?.title}" ${enabled ? 'הופעל' : 'כובה'}.`
+        });
+    };
+    
+    if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
+        return <p>אין לך הרשאה לצפות בעמוד זה.</p>
+    }
+
+    if (!currentConservatorium) {
+        return <div>טוען הגדרות...</div>;
+    }
+
     return (
         <div className="space-y-6">
             <div>
@@ -58,22 +92,30 @@ export default function AiAgentsPage() {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {agents.map((agent) => (
-                    <Card key={agent.id}>
-                        <CardHeader>
-                            <div className="flex items-start justify-between">
-                                <div className="flex items-center gap-4">
-                                     <div className="bg-primary/10 p-3 rounded-full">
-                                        <agent.icon className="h-6 w-6 text-primary" />
+                {agents.map((agent) => {
+                    const isChecked = currentConservatorium.aiAgentsConfig?.[agent.id] ?? agent.defaultChecked;
+                    return (
+                        <Card key={agent.id}>
+                            <CardHeader>
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="bg-primary/10 p-3 rounded-full">
+                                            <agent.icon className="h-6 w-6 text-primary" />
+                                        </div>
+                                        <CardTitle>{agent.title}</CardTitle>
                                     </div>
-                                    <CardTitle>{agent.title}</CardTitle>
+                                    <Switch 
+                                        id={agent.id}
+                                        checked={isChecked}
+                                        onCheckedChange={(checked) => handleAgentToggle(agent.id, checked)}
+                                        aria-label={`Enable ${agent.title}`} 
+                                    />
                                 </div>
-                                 <Switch id={agent.id} defaultChecked={agent.defaultChecked} aria-label={`Enable ${agent.title}`} />
-                            </div>
-                            <CardDescription className="pt-2">{agent.description}</CardDescription>
-                        </CardHeader>
-                    </Card>
-                ))}
+                                <CardDescription className="pt-2">{agent.description}</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    );
+                })}
             </div>
         </div>
     );

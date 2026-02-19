@@ -5,14 +5,25 @@ import rawCompositions from '../../docs/data.json';
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
 // Generate Conservatoriums from the JSON file
-export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => ({
-  id: `cons-${admin.id}`,
-  name: admin.location, // Using location as the conservatorium name
-  tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
-  stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
-  // Enable new features for "הוד השרון" for demonstration purposes
-  newFeaturesEnabled: admin.location === 'הוד השרון', 
-}));
+export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => {
+  const isHodHasharon = admin.location === 'הוד השרון';
+  return {
+    id: `cons-${admin.id}`,
+    name: admin.location, // Using location as the conservatorium name
+    tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
+    stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
+    // Enable new features for "הוד השרון" for demonstration purposes
+    newFeaturesEnabled: isHodHasharon, 
+    aiAgentsConfig: isHodHasharon ? {
+        "matchmaker-agent": true,
+        "composition-suggester": true,
+        "reschedule-agent": false,
+        "progress-report-agent": false,
+        "admin-alerts-agent": true,
+        "lead-nurture-agent": false,
+    } : undefined,
+  };
+});
 
 export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
   A: { Small: { 10: 10, 15: 15, 20: 20, 25: 25, 30: 30 }, Medium: { 10: 15, 15: 20, 20: 25, 25: 30, 30: 35 }, Large: { 10: 20, 15: 25, 20: 30, 25: 35, 30: 40 }, },
