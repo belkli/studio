@@ -5,9 +5,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
+import { instruments } from "@/lib/data";
 
 export function AcademicReports() {
-    const { mockPracticeLogs, users, mockAssignedRepertoire, instruments } = useAuth();
+    const { mockPracticeLogs, users, mockAssignedRepertoire } = useAuth();
     
     const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
@@ -98,7 +99,7 @@ export function AcademicReports() {
             engagementByTeacher: teacherEngagementData,
             avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire, instruments]);
+    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire]);
 
 
     return (
@@ -209,3 +210,5 @@ export function AcademicReports() {
         </div>
     );
 }
+
+    
