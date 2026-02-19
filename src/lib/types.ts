@@ -288,3 +288,15 @@ export type ProgressReport = {
   createdAt: string; // ISO Timestamp
   sentAt?: string; // ISO Timestamp
 };
+
+export type Channel = 'IN_APP' | 'EMAIL' | 'SMS';
+
+export type Announcement = {
+  id: string;
+  conservatoriumId: string;
+  title: string;
+  body: string;
+  targetAudience: 'ALL' | 'STUDENTS' | 'PARENTS' | 'TEACHERS';
+  channels: Channel[];
+  sentAt: string; // ISO Timestamp
+};

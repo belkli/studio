@@ -14,6 +14,7 @@ import {
     mockMessageThreads as initialMessageThreads,
     mockPackages as initialPackages,
     mockProgressReports as initialProgressReports,
+    mockAnnouncements as initialAnnouncements,
     compositions as initialCompositions,
     type User, 
     type FormSubmission,
@@ -28,6 +29,7 @@ import {
     type MessageThread,
     type ProgressReport,
     type SlotStatus,
+    type Announcement,
 } from '@/lib/data';
 
 interface LoginResult {
@@ -67,6 +69,8 @@ interface AuthContextType {
   updateUserPracticeGoal: (studentId: string, goal: number) => void;
   mockProgressReports: ProgressReport[];
   addProgressReport: (report: Partial<ProgressReport>) => void;
+  mockAnnouncements: Announcement[];
+  addAnnouncement: (announcement: Partial<Announcement>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -82,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
   const [progressReports, setProgressReports] = useState<ProgressReport[]>(initialProgressReports);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -289,6 +294,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setPracticeLogs(prev => [newLog, ...prev]);
   };
 
+  const addAnnouncement = (announcement: Partial<Announcement>) => {
+    if (!user) return;
+    const newAnnouncement: Announcement = {
+      id: `anno-${Date.now()}`,
+      conservatoriumId: user.conservatoriumId,
+      sentAt: new Date().toISOString(),
+      ...announcement,
+    } as Announcement;
+    setAnnouncements(prev => [newAnnouncement, ...prev]);
+  };
+
 
   const value = { 
       user, 
@@ -322,6 +338,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateUserPracticeGoal,
       mockProgressReports: progressReports,
       addProgressReport,
+      mockAnnouncements: announcements,
+      addAnnouncement,
   };
 
   return (

@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -371,3 +371,24 @@ export const mockMessageThreads: MessageThread[] = [
 ];
 
 export const mockProgressReports: ProgressReport[] = [];
+
+export const mockAnnouncements: Announcement[] = [
+    {
+        id: 'anno-1',
+        conservatoriumId: 'cons-15',
+        title: 'חופשת פסח - עדכון לוח זמנים',
+        body: 'שלום לכולם, הקונסרבטוריון יצא לחופשת פסח בתאריכים 21.04.2024 עד 29.04.2024. לא יתקיימו שיעורים בתקופה זו. חג שמח!',
+        targetAudience: 'ALL',
+        channels: ['IN_APP', 'EMAIL'],
+        sentAt: new Date('2024-04-15T10:00:00Z').toISOString(),
+    },
+    {
+        id: 'anno-2',
+        conservatoriumId: 'cons-15',
+        title: 'הרשמה לרסיטל סוף שנה',
+        body: 'ההרשמה לרסיטל סוף השנה נפתחה! תלמידים המעוניינים להשתתף מתבקשים למלא את טופס ההרשמה דרך המערכת עד לתאריך 15.06.2024.',
+        targetAudience: 'STUDENTS',
+        channels: ['IN_APP'],
+        sentAt: new Date('2024-05-20T14:30:00Z').toISOString(),
+    }
+];

@@ -6,7 +6,7 @@ import { PlusCircle, FilePlus, Megaphone } from "lucide-react";
 import Link from "next/link";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";
-import { AiAlertsCard } from "./ai-alerts-card";
+import { RecentAnnouncementsCard } from "./recent-announcements-card";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 
@@ -51,7 +51,7 @@ export function AdminCommandCenter() {
                     <TodaySnapshotCard />
                 </div>
                 <div className="lg:col-span-1">
-                    <AiAlertsCard />
+                    <RecentAnnouncementsCard />
                 </div>
             </div>
              <Card>

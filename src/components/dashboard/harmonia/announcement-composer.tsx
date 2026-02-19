@@ -33,7 +33,7 @@ const channelOptions = [
 
 export function AnnouncementComposer() {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, addAnnouncement } = useAuth();
   
   const form = useForm<AnnouncementFormData>({
     resolver: zodResolver(announcementSchema),
@@ -46,7 +46,7 @@ export function AnnouncementComposer() {
   });
 
   const onSubmit = (data: AnnouncementFormData) => {
-    console.log("Sending announcement:", data);
+    addAnnouncement(data as any);
     toast({
       title: "ההכרזה נשלחה בהצלחה!",
       description: `ההודעה "${data.title}" נשלחה לקהל היעד הנבחר.`,
@@ -142,7 +142,7 @@ export function AnnouncementComposer() {
                                     checked={field.value?.includes(item.id)}
                                     onCheckedChange={(checked) => {
                                       return checked
-                                        ? field.onChange([...field.value, item.id])
+                                        ? field.onChange([...(field.value || []), item.id])
                                         : field.onChange(
                                             field.value?.filter(
                                               (value) => value !== item.id
