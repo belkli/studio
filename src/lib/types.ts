@@ -223,6 +223,7 @@ export type Invoice = {
 export type PracticeLog = {
     id: string;
     studentId: string;
+    teacherId?: string;
     date: string; // ISO Date
     durationMinutes: number;
     pieces: { title: string; focusArea?: string }[];

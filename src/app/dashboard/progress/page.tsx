@@ -1,6 +1,6 @@
 'use client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Target, Medal, Clock } from "lucide-react";
+import { Target, Medal, Clock, Flame } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuth } from "@/hooks/use-auth";
@@ -11,8 +11,15 @@ export default function ProgressPage() {
     const { user, mockPracticeLogs } = useAuth();
     if (!user) return null;
 
-    const weeklyPracticeData = useMemo(() => {
+    const userLogs = useMemo(() => {
+        if (!user) return [];
+        return mockPracticeLogs.filter(log => log.studentId === user.id);
+    }, [mockPracticeLogs, user]);
+
+    const { weeklyPracticeData, totalMinutesThisWeek, weeklyGoal, totalMinutesThisMonth, streak } = useMemo(() => {
         const today = new Date();
+        
+        // Weekly chart data (last 7 days)
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
             const d = new Date();
             d.setDate(today.getDate() - i);
@@ -23,7 +30,7 @@ export default function ProgressPage() {
             };
         }).reverse();
 
-        mockPracticeLogs.forEach(log => {
+        userLogs.forEach(log => {
             const logDate = log.date.split('T')[0];
             const dayData = last7Days.find(d => d.date === logDate);
             if (dayData) {
@@ -31,9 +38,48 @@ export default function ProgressPage() {
             }
         });
         
-        return last7Days;
+        // Weekly goal calculation
+        const weeklyGoal = 120;
+        const totalMinutesThisWeek = last7Days.slice(-7).reduce((sum, day) => sum + day.minutes, 0);
 
-    }, [mockPracticeLogs]);
+        // Monthly total calculation
+        const thisMonth = today.getMonth();
+        const thisYear = today.getFullYear();
+        const totalMinutesThisMonth = userLogs.reduce((sum, log) => {
+            const logDate = new Date(log.date);
+            if (logDate.getMonth() === thisMonth && logDate.getFullYear() === thisYear) {
+                return sum + log.durationMinutes;
+            }
+            return sum;
+        }, 0);
+
+        // Streak calculation
+        const logDates = [...new Set(userLogs.map(log => new Date(log.date.split('T')[0]).getTime()))].sort((a,b) => b-a);
+        
+        let currentStreak = 0;
+        if(logDates.length > 0) {
+            const todayTime = new Date();
+            todayTime.setHours(0,0,0,0);
+            const yesterdayTime = new Date(todayTime);
+            yesterdayTime.setDate(todayTime.getDate() - 1);
+
+            if (logDates[0] === todayTime.getTime() || logDates[0] === yesterdayTime.getTime()) {
+                 currentStreak = 1;
+                 for (let i = 0; i < logDates.length - 1; i++) {
+                    const diff = (logDates[i] - logDates[i+1]) / (1000 * 60 * 60 * 24);
+                    if (diff === 1) {
+                        currentStreak++;
+                    } else {
+                        break;
+                    }
+                 }
+            }
+        }
+
+
+        return { weeklyPracticeData: last7Days, totalMinutesThisWeek, weeklyGoal, totalMinutesThisMonth, streak: currentStreak };
+
+    }, [userLogs]);
 
     return (
         <div className="space-y-6">
@@ -49,17 +95,17 @@ export default function ProgressPage() {
                         <Target className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">45 / 90 דקות</div>
-                        <Progress value={50} className="mt-2" />
+                        <div className="text-2xl font-bold">{totalMinutesThisWeek} / {weeklyGoal} דקות</div>
+                        <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">רצף אימונים</CardTitle>
-                        <Medal className="h-4 w-4 text-muted-foreground" />
+                        <Flame className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">🔥 4 ימים</div>
+                        <div className="text-2xl font-bold">🔥 {streak} ימים</div>
                         <p className="text-xs text-muted-foreground">כל הכבוד על ההתמדה!</p>
                     </CardContent>
                 </Card>
@@ -69,8 +115,8 @@ export default function ProgressPage() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">8.5 שעות</div>
-                         <p className="text-xs text-muted-foreground">+20% מהחודש שעבר</p>
+                        <div className="text-2xl font-bold">{(totalMinutesThisMonth / 60).toFixed(1)} שעות</div>
+                         <p className="text-xs text-muted-foreground">{totalMinutesThisMonth} דקות בסך הכל</p>
                     </CardContent>
                 </Card>
             </div>

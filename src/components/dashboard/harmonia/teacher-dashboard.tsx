@@ -8,11 +8,26 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check, ThumbsDown, Phone, MessageSquare, PlusCircle } from "lucide-react";
 import { useMemo } from "react";
-import type { FormSubmission } from "@/lib/types";
+import type { User, PracticeLog } from "@/lib/types";
 
-function StudentRosterCard({ student }: { student: ReturnType<typeof useAuth>['user'] }) {
-    if (!student) return null;
+function StudentRosterCard({ student, practiceLogs }: { student: User, practiceLogs: PracticeLog[] }) {
     
+    const weeklyPractice = useMemo(() => {
+        const today = new Date();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(today.getDate() - 7);
+
+        return practiceLogs.reduce((sum, log) => {
+            const logDate = new Date(log.date);
+            if (logDate >= oneWeekAgo && logDate <= today) {
+                return sum + log.durationMinutes;
+            }
+            return sum;
+        }, 0);
+    }, [practiceLogs]);
+
+    const weeklyGoal = 90; // Example goal
+
     return (
         <Card>
             <CardHeader className="flex flex-row items-center gap-4">
@@ -36,7 +51,11 @@ function StudentRosterCard({ student }: { student: ReturnType<typeof useAuth>['u
                 </div>
                 <div>
                     <p className="font-semibold">התקדמות אימון:</p>
-                    <p className="text-muted-foreground">התאמן/ה 45/90 דקות השבוע</p>
+                    {weeklyPractice > 0 ? (
+                        <p className="text-muted-foreground">התאמן/ה {weeklyPractice} דקות השבוע</p>
+                    ) : (
+                        <p className="text-muted-foreground text-orange-600">לא דווח אימון השבוע</p>
+                    )}
                 </div>
                  <div className="flex gap-2 pt-2">
                     <Button variant="outline" size="sm" className="flex-1">
@@ -54,7 +73,7 @@ function StudentRosterCard({ student }: { student: ReturnType<typeof useAuth>['u
 
 
 export function TeacherDashboard() {
-    const { user, users, mockLessons, mockFormSubmissions } = useAuth();
+    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs } = useAuth();
     if (!user) return null;
     
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
@@ -180,7 +199,7 @@ export function TeacherDashboard() {
                     <CardDescription>נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} />)}
+                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} />)}
                 </CardContent>
             </Card>
 
