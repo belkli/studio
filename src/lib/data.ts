@@ -90,6 +90,11 @@ const parentNotifications: Notification[] = [
     { id: 'notif-p2', title: 'חיוב חדש', message: 'חשבונית חדשה על סך 450 ש"ח הופקה.', timestamp: 'לפני 3 ימים', link: '/dashboard/billing', read: true},
 ];
 
+const thirteenYearsAgo = new Date();
+thirteenYearsAgo.setFullYear(thirteenYearsAgo.getFullYear() - 13);
+const thirteenYearsAgoDateString = thirteenYearsAgo.toISOString().split('T')[0];
+
+
 const teacherNotifications: Notification[] = [
   { id: 'notif-t1', title: 'טופס חדש לאישור', message: 'אריאל לוי הגיש/ה טופס "רסיטל בגרות".', timestamp: 'לפני 3 שעות', link: '/dashboard/forms/form-101', read: false },
   { id: 'notif-t2', title: 'הטופס של תמר אושר', message: 'הטופס "קונצרט כיתתי" של תמר ישראלי אושר סופית.', timestamp: 'לפני יום', link: '/dashboard/forms/form-102', read: true },
@@ -109,8 +114,13 @@ const studentUser: User = {
 };
 
 const parentUser: User = {
-    id: 'parent-user-1', name: 'דני לוי', email: 'parent@example.com', role: 'parent', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=parent', idNumber: '987654321', phone: '050-9876543', approved: true, childIds: [studentUser.id], notifications: parentNotifications,
+    id: 'parent-user-1', name: 'דני לוי', email: 'parent@example.com', role: 'parent', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=parent', idNumber: '987654321', phone: '050-9876543', approved: true, childIds: ['student-user-1', 'student-user-noa'], notifications: parentNotifications,
 }
+
+const noaLevi: User = {
+  id: 'student-user-noa', name: 'נועה לוי', email: parentUser.email, role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student-noa', idNumber: '333444555', birthDate: thirteenYearsAgoDateString, city: 'הוד השרון', gender: 'נקבה', grade: 'ז', approved: true, notifications: [], parentId: 'parent-user-1', packageId: 'pkg-5', instruments: [{ instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 1 }]
+};
+
 
 const studentUser2: User = {
   id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [ { instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 }, ], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
@@ -154,7 +164,7 @@ export const mockTeachers: Partial<User>[] = [
 ];
 
 const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id, disengagedStudent.id], approved: true, notifications: teacherNotifications, } as User;
-const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], maxStudents: 15 } as User;
+const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id, noaLevi.id], approved: true, notifications: [], maxStudents: 15 } as User;
 const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=teacher3', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18 } as User;
 
 // Generate Conservatorium Admins from the JSON file, adding the logged-in user for "הוד השרון"
@@ -170,7 +180,7 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
             avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin15',
             idNumber: `admin-id-15`,
             phone: '052-4619363',
-            students: [studentUser.id, studentUser2.id, disengagedStudent.id],
+            students: [studentUser.id, studentUser2.id, disengagedStudent.id, noaLevi.id],
             approved: true,
             notifications: adminNotifications,
         };
@@ -208,6 +218,7 @@ export const mockUsers: User[] = [
   teacherUser2,
   teacherUser3,
   otherStudent,
+  noaLevi,
   pendingTeacher,
   siteAdminUser,
   ministryDirectorUser,

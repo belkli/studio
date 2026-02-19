@@ -1,18 +1,22 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ArrowLeft, Calendar, FileText, Package } from "lucide-react";
+import { PlusCircle, ArrowLeft, Calendar, FileText, Package, Gift } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMemo } from "react";
-import { format } from "date-fns";
+import { useMemo, useState } from "react";
+import { format, differenceInYears } from "date-fns";
 import { he } from "date-fns/locale";
+import { AgeUpgradeModal } from "./age-upgrade-modal";
+import type { User } from "@/lib/types";
 
 export function FamilyHub() {
     const { user, users, mockLessons, mockFormSubmissions, mockPackages, isLoading } = useAuth();
+    const [selectedChildForUpgrade, setSelectedChildForUpgrade] = useState<User | null>(null);
+
 
     const childrenWithData = useMemo(() => {
         if (!user || !user.childIds) return [];
@@ -20,6 +24,8 @@ export function FamilyHub() {
         return user.childIds.map(childId => {
             const child = users.find(u => u.id === childId);
             if (!child) return null;
+
+            const age = child.birthDate ? differenceInYears(new Date(), new Date(child.birthDate)) : 0;
 
             const now = new Date();
             const upcomingLessons = mockLessons
@@ -42,6 +48,7 @@ export function FamilyHub() {
 
             return {
                 ...child,
+                age,
                 nextLesson,
                 pendingFormsCount: pendingForms.length,
                 package: currentPackage,
@@ -59,6 +66,10 @@ export function FamilyHub() {
              </div>
         );
     }
+    
+    const handleUpgradeClick = (child: User) => {
+        setSelectedChildForUpgrade(child);
+    };
 
     return (
         <div className="space-y-6">
@@ -66,6 +77,9 @@ export function FamilyHub() {
                 {childrenWithData.map(child => {
                     if (!child) return null;
                     const teacher = child.nextLesson ? users.find(u => u.id === child.nextLesson!.teacherId) : null;
+                    
+                    // For now, let's assume a child needs an upgrade if they are 13 and don't have their own email set (or it's same as parent)
+                    const needsAgeUpgrade = child.age === 13 && (!child.email || child.email === user.email);
                     
                     return (
                         <Card key={child.id} className="flex flex-col">
@@ -110,14 +124,20 @@ export function FamilyHub() {
                                     )}
                                 </div>
                             </CardContent>
-                            <CardContent>
-                                <Button variant="outline" size="sm" className="w-full mt-2" asChild>
+                            <CardFooter className="flex-col items-stretch gap-2">
+                                {needsAgeUpgrade && (
+                                    <Button variant="outline" className="w-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/20" onClick={() => handleUpgradeClick(child)}>
+                                        <Gift className="ms-2 h-4 w-4" />
+                                        הזמן את {child.name.split(' ')[0]} לנהל את החשבון
+                                    </Button>
+                                )}
+                                <Button variant="outline" size="sm" className="w-full" asChild>
                                     <Link href={`/dashboard/student/${child.id}`}>
                                         מעבר לפרופיל המלא
                                         <ArrowLeft className="ms-2 h-4 w-4" />
                                     </Link>
                                 </Button>
-                            </CardContent>
+                            </CardFooter>
                         </Card>
                     );
                 })}
@@ -133,6 +153,11 @@ export function FamilyHub() {
                     </CardContent>
                 </Card>
             </div>
+            <AgeUpgradeModal 
+                child={selectedChildForUpgrade} 
+                open={!!selectedChildForUpgrade} 
+                onOpenChange={() => setSelectedChildForUpgrade(null)}
+            />
         </div>
     );
 }
