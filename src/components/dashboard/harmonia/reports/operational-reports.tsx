@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useMemo } from 'react';
 import { getDay } from 'date-fns';
+import { RoomOccupancyHeatmap } from "./room-occupancy-heatmap";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -95,6 +96,7 @@ export function OperationalReports() {
                     </CardContent>
                 </Card>
             </div>
+            <RoomOccupancyHeatmap />
              <Card>
                 <CardHeader>
                     <CardTitle>קיבולת מורים (% תפוסה)</CardTitle>
