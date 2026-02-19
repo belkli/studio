@@ -48,7 +48,7 @@ import {
     type AuditLogEntry,
     type Channel,
 } from '@/lib/data';
-import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 interface LoginResult {
@@ -191,14 +191,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     });
 
-    const overdueInvoices = initialInvoices.filter(inv => inv.status === 'SENT' && new Date(inv.dueDate) < now);
-    overdueInvoices.forEach(inv => {
-        addNotificationAndLog(
-            inv.payerId,
-            'תשלום נדרש: חשבונית בפיגור',
-            `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
-            '/dashboard/billing'
-        );
+    const sentInvoicesToday: string[] = []; // To avoid spamming on hot-reloads in dev
+    initialInvoices.forEach(inv => {
+        if (inv.status === 'SENT' && !sentInvoicesToday.includes(inv.id)) {
+            addNotificationAndLog(
+                inv.payerId,
+                'חשבונית חדשה הופקה',
+                `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ זמינה לצפייה ותשלום.`,
+                '/dashboard/billing'
+            );
+            sentInvoicesToday.push(inv.id);
+        }
+
+        if (inv.status === 'OVERDUE' && !sentInvoicesToday.includes(inv.id)) {
+            addNotificationAndLog(
+                inv.payerId,
+                'תשלום נדרש: חשבונית בפיגור',
+                `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
+                '/dashboard/billing'
+            );
+            sentInvoicesToday.push(inv.id);
+        }
+    });
+    
+    // Check for expiring makeup credits
+    const studentUsers = initialUsers.filter(u => u.role === 'student' && u.approved);
+    studentUsers.forEach(student => {
+        const studentLessons = initialLessons.filter(l => l.studentId === student.id);
+        
+        const grantedLessons = studentLessons.filter(l => 
+            ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
+        ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+        const usedCredits = studentLessons.filter(l => l.type === 'MAKEUP').length;
+        const balance = grantedLessons.length - usedCredits;
+
+        if (balance > 0) {
+            const earliestCreditLesson = grantedLessons[usedCredits];
+            const MAKEUP_EXPIRY_DAYS = 60;
+            const EXPIRING_SOON_DAYS = 7;
+            const expiryDate = addDays(new Date(earliestCreditLesson.createdAt), MAKEUP_EXPIRY_DAYS);
+            const daysUntilExpiry = differenceInDays(expiryDate, now);
+
+            if (daysUntilExpiry > 0 && daysUntilExpiry <= EXPIRING_SOON_DAYS) {
+                const userToNotifyId = student.parentId || student.id;
+                addNotificationAndLog(
+                    userToNotifyId,
+                    'זיכוי לשיעור השלמה עומד לפוג',
+                    `יתרת שיעורי ההשלמה שלך (${balance}) תפוג בעוד ${daysUntilExpiry} ימים. מהר/י לקבוע שיעור!`,
+                    '/dashboard/makeups'
+                );
+            }
+        }
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
