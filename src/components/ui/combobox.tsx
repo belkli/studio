@@ -74,9 +74,9 @@ export function Combobox({
             {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">טוען...</div>}
             {!isLoading && <CommandEmpty>{notFoundMessage}</CommandEmpty>}
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.value}
+                  key={`${option.value}-${index}`}
                   value={option.label}
                   onSelect={() => {
                     onSelectedValueChange(option.value === selectedValue ? "" : option.value);
