@@ -10,6 +10,11 @@ export default function Home() {
           <Icons.logo className="h-6 w-6 text-primary" />
           <span className="ms-2 text-xl font-bold">הַרמוֹנְיָה</span>
         </Link>
+        <nav className="hidden md:flex gap-4 sm:gap-6 mx-6">
+            <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">שיעורים פנויים</Link>
+            <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">אודות</Link>
+            <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">צור קשר</Link>
+        </nav>
         <div className="flex-grow" />
         <div className="flex items-center gap-2">
             <Button asChild variant="ghost">
@@ -34,10 +39,10 @@ export default function Home() {
               </div>
               <div className="space-x-4 space-x-reverse">
                 <Button asChild size="lg">
-                  <Link href="/login">התחבר</Link>
+                  <Link href="/register">הרשמה</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
-                  <Link href="/register">הרשם חדש</Link>
+                <Button asChild variant="secondary" size="lg">
+                  <Link href="/available-now">צפה בשיעורים פנויים</Link>
                 </Button>
               </div>
             </div>
