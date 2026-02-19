@@ -13,6 +13,11 @@ import {
   type MatchTeacherInput,
   type MatchTeacherOutput
 } from '@/ai/flows/match-teacher-flow';
+import {
+    draftProgressReport,
+    type DraftProgressReportInput,
+    type DraftProgressReportOutput,
+} from '@/ai/flows/draft-progress-report-flow';
 
 
 export async function getCompositionSuggestions(
@@ -84,4 +89,16 @@ export async function getTeacherMatches(
     console.error('Error getting teacher matches:', error);
     return { matches: [] };
   }
+}
+
+export async function generateProgressReport(
+  input: DraftProgressReportInput
+): Promise<DraftProgressReportOutput> {
+    try {
+        const result = await draftProgressReport(input);
+        return result;
+    } catch (error) {
+        console.error('Error drafting progress report:', error);
+        return { reportText: 'שגיאה ביצירת טיוטת הדוח.' };
+    }
 }

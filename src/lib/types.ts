@@ -272,3 +272,13 @@ export type MessageThread = {
   lessonSlotId?: string;
   messages: Message[];
 };
+
+export type ProgressReport = {
+  id: string;
+  studentId: string;
+  teacherId: string;
+  period: string; // e.g., "Fall 2024"
+  reportText: string;
+  createdAt: string; // ISO Timestamp
+  sentAt?: string; // ISO Timestamp
+};

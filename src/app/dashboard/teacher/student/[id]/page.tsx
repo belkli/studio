@@ -10,13 +10,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Clock, Music, Pencil, Activity, Target } from 'lucide-react';
+import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { generateProgressReport } from '@/app/actions';
 
 
 export default function TeacherStudentProfilePage() {
@@ -28,12 +29,14 @@ export default function TeacherStudentProfilePage() {
 
     const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
     
+    const [newNote, setNewNote] = useState('');
+    const [practiceGoal, setPracticeGoal] = useState(student?.weeklyPracticeGoal || 120);
+    const [reportDraft, setReportDraft] = useState<string | null>(null);
+    const [isDrafting, setIsDrafting] = useState(false);
+    
     if (!student) {
         notFound();
     }
-    
-    const [newNote, setNewNote] = useState('');
-    const [practiceGoal, setPracticeGoal] = useState(student.weeklyPracticeGoal || 120);
     
     if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
         router.push('/dashboard');
@@ -74,6 +77,7 @@ export default function TeacherStudentProfilePage() {
             summary: newNote,
         });
         setNewNote('');
+        toast({ title: "הערה נוספה" });
     };
 
     const handleSetPracticeGoal = () => {
@@ -82,7 +86,26 @@ export default function TeacherStudentProfilePage() {
             title: "יעד אימון עודכן",
             description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
         });
-    }
+    };
+    
+    const handleGenerateReport = async () => {
+        setIsDrafting(true);
+        setReportDraft(null);
+
+        const input = {
+            studentName: student.name,
+            teacherName: teacher.name,
+            instrument: student.instruments?.[0]?.instrument || 'כלי נגינה',
+            period: 'סמסטר אביב 2024',
+            practiceLogs: studentLogs,
+            lessonNotes: studentNotes,
+            repertoire: studentRepertoire,
+        };
+
+        const result = await generateProgressReport(input);
+        setReportDraft(result.reportText);
+        setIsDrafting(false);
+    };
 
     return (
         <div className="space-y-6">
@@ -190,12 +213,14 @@ export default function TeacherStudentProfilePage() {
                 <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> הערות שיעור</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-                        {studentNotes.map(note => (
+                        {studentNotes.length > 0 ? studentNotes.map(note => (
                             <div key={note.id} className="border-b pb-2">
                                 <p className="text-sm">{note.summary}</p>
                                 <p className="text-xs text-muted-foreground">{new Date(note.createdAt).toLocaleString('he-IL')}</p>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-center text-muted-foreground py-4">אין עדיין הערות לשיעור.</p>
+                        )}
                     </div>
                     <div className="flex gap-2">
                         <Textarea placeholder="כתוב הערה חדשה..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
@@ -204,6 +229,39 @@ export default function TeacherStudentProfilePage() {
                 </CardContent>
             </Card>
 
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><FileSignature /> דוח התקדמות סמסטריאלי</CardTitle>
+                    <CardDescription>צור טיוטה של דוח התקדמות עבור התלמיד/ה באמצעות AI, ולאחר מכן ערוך ושלח.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {!reportDraft && (
+                        <div className="text-center">
+                            <Button onClick={handleGenerateReport} disabled={isDrafting}>
+                                {isDrafting ? <><Loader2 className="ms-2 h-4 w-4 animate-spin" /> יוצר טיוטה...</> : 'צור טיוטת דוח בעזרת AI'}
+                            </Button>
+                        </div>
+                    )}
+                    {isDrafting && !reportDraft && (
+                        <div className="flex justify-center items-center p-8 text-muted-foreground">
+                            <Loader2 className="ms-2 h-6 w-6 animate-spin" />
+                            <span>מנתח נתונים וכותב את הדוח...</span>
+                        </div>
+                    )}
+                    {reportDraft && (
+                         <div>
+                            <Label htmlFor="report-draft">טיוטת דוח (ניתן לערוך)</Label>
+                            <Textarea id="report-draft" rows={15} value={reportDraft} onChange={(e) => setReportDraft(e.target.value)} className="mt-2 bg-background"/>
+                         </div>
+                    )}
+                </CardContent>
+                {reportDraft && (
+                    <CardFooter className="justify-end gap-2">
+                        <Button variant="ghost" onClick={() => setReportDraft(null)}>מחק טיוטה</Button>
+                        <Button>שלח דוח להורים</Button>
+                    </CardFooter>
+                )}
+            </Card>
         </div>
     )
 }

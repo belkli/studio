@@ -13,6 +13,7 @@ import {
     mockLessonNotes as initialNotes,
     mockMessageThreads as initialMessageThreads,
     mockPackages as initialPackages,
+    mockProgressReports as initialProgressReports,
     compositions as initialCompositions,
     type User, 
     type FormSubmission,
@@ -25,7 +26,8 @@ import {
     type Composition,
     type LessonNote,
     type MessageThread,
-    type Package
+    type Package,
+    type ProgressReport,
 } from '@/lib/data';
 
 interface LoginResult {
@@ -60,6 +62,8 @@ interface AuthContextType {
   updateConservatorium: (updatedConservatorium: Conservatorium) => void;
   mockPackages: Package[];
   updateUserPracticeGoal: (studentId: string, goal: number) => void;
+  mockProgressReports: ProgressReport[];
+  addProgressReport: (report: Partial<ProgressReport>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -72,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [assignedRepertoire, setAssignedRepertoire] = useState<AssignedRepertoire[]>(initialRepertoire);
   const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
+  const [progressReports, setProgressReports] = useState<ProgressReport[]>(initialProgressReports);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -215,6 +220,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(prev => prev ? ({ ...prev, weeklyPracticeGoal: goal }) : null);
     }
   };
+  
+  const addProgressReport = (report: Partial<ProgressReport>) => {
+      const newReport = {
+          id: `report-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          ...report,
+      } as ProgressReport;
+      setProgressReports(prev => [newReport, ...prev]);
+  }
 
   const value = { 
       user, 
@@ -243,6 +257,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addMessage,
       mockPackages: initialPackages,
       updateUserPracticeGoal,
+      mockProgressReports: progressReports,
+      addProgressReport,
   };
 
   return (
