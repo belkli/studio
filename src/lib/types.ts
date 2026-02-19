@@ -476,4 +476,30 @@ export type AuditLogEntry = {
   title: string;
   body: string;
   errorMessage?: string;
-}
+};
+
+// From SDD-14A: Event Production Manager
+export type EventProductionStatus = 'PLANNING' | 'OPEN_REGISTRATION' | 'CLOSED' | 'COMPLETED';
+
+export type PerformanceSlot = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  compositionTitle: string;
+  composer: string;
+  duration: string; // MM:SS
+};
+
+export type EventProduction = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  type: 'RECITAL' | 'CONCERT' | 'EXAM_PERFORMANCE' | 'OPEN_DAY';
+  venue: string;
+  eventDate: string; // ISO Date string
+  startTime: string; // "HH:mm"
+  status: EventProductionStatus;
+  program: PerformanceSlot[];
+  isPublic: boolean;
+  ticketPrice: number;
+};

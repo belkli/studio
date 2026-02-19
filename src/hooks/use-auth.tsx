@@ -20,6 +20,7 @@ import {
     mockWaitlist as initialWaitlist,
     mockFormTemplates as initialFormTemplates,
     mockAuditLog as initialAuditLog,
+    mockEvents as initialEvents,
     type User, 
     type FormSubmission,
     type Notification,
@@ -30,8 +31,8 @@ import {
     type PracticeLog,
     type Composition,
     type AssignedRepertoire,
-    type RepertoireStatus,
     type LessonNote,
+    type RepertoireStatus,
     type MessageThread,
     type ProgressReport,
     type Announcement,
@@ -47,6 +48,9 @@ import {
     type SlotStatus,
     type AuditLogEntry,
     type Channel,
+    type Achievement,
+    type AchievementType,
+    type EventProduction,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -108,6 +112,8 @@ interface AuthContextType {
   addFormTemplate: (template: Partial<FormTemplate>) => void;
   updateNotificationPreferences: (preferences: NotificationPreferences) => void;
   mockAuditLog: AuditLogEntry[];
+  mockEvents: EventProduction[];
+  addEvent: (event: Partial<EventProduction>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -129,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(initialWaitlist);
   const [formTemplates, setFormTemplates] = useState<FormTemplate[]>(initialFormTemplates);
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>(initialAuditLog);
+  const [events, setEvents] = useState<EventProduction[]>(initialEvents);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -173,7 +180,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Simulate checking for expiring packages and overdue invoices once on app load
     const now = new Date();
-    initialUsers.forEach(u => {
+    const notifiedUserIds = new Set();
+    
+    const checkAndNotify = (userId: string, notificationKey: string, createNotification: () => void) => {
+        const key = `${userId}-${notificationKey}`;
+        if (!notifiedUserIds.has(key)) {
+            createNotification();
+            notifiedUserIds.add(key);
+        }
+    }
+
+    users.forEach(u => {
         const studentPackage = initialPackages.find(p => p.id === u.packageId);
         if (studentPackage && studentPackage.validUntil) {
             const expiryDate = new Date(studentPackage.validUntil);
@@ -181,43 +198,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (daysUntilExpiry > 0 && daysUntilExpiry <= 14) {
                 const userToNotifyId = u.parentId || u.id;
-                addNotificationAndLog(
-                    userToNotifyId,
-                    'חבילתך עומדת לפוג!',
-                    `נותרו רק ${daysUntilExpiry} ימים עד תום החבילה "${studentPackage.title}".`,
-                    '/dashboard/billing'
-                );
+                 checkAndNotify(userToNotifyId, `expiring-package-${u.id}`, () => {
+                    addNotificationAndLog(
+                        userToNotifyId,
+                        'חבילתך עומדת לפוג!',
+                        `נותרו רק ${daysUntilExpiry} ימים עד תום החבילה "${studentPackage.title}".`,
+                        '/dashboard/billing'
+                    );
+                });
             }
         }
     });
 
-    const sentInvoicesToday: string[] = []; // To avoid spamming on hot-reloads in dev
     initialInvoices.forEach(inv => {
-        if (inv.status === 'SENT' && !sentInvoicesToday.includes(inv.id)) {
-            addNotificationAndLog(
-                inv.payerId,
-                'חשבונית חדשה הופקה',
-                `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ זמינה לצפייה ותשלום.`,
-                '/dashboard/billing'
-            );
-            sentInvoicesToday.push(inv.id);
+        if (inv.status === 'SENT') {
+            checkAndNotify(inv.payerId, `new-invoice-${inv.id}`, () => {
+                addNotificationAndLog(
+                    inv.payerId,
+                    'חשבונית חדשה הופקה',
+                    `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ זמינה לצפייה ותשלום.`,
+                    '/dashboard/billing'
+                );
+            });
         }
 
-        if (inv.status === 'OVERDUE' && !sentInvoicesToday.includes(inv.id)) {
-            addNotificationAndLog(
-                inv.payerId,
-                'תשלום נדרש: חשבונית בפיגור',
-                `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
-                '/dashboard/billing'
-            );
-            sentInvoicesToday.push(inv.id);
+        if (inv.status === 'OVERDUE') {
+            checkAndNotify(inv.payerId, `overdue-invoice-${inv.id}`, () => {
+                addNotificationAndLog(
+                    inv.payerId,
+                    'תשלום נדרש: חשבונית בפיגור',
+                    `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
+                    '/dashboard/billing'
+                );
+            });
         }
     });
     
     // Check for expiring makeup credits
-    const studentUsers = initialUsers.filter(u => u.role === 'student' && u.approved);
+    const studentUsers = users.filter(u => u.role === 'student' && u.approved);
     studentUsers.forEach(student => {
-        const studentLessons = initialLessons.filter(l => l.studentId === student.id);
+        const studentLessons = lessons.filter(l => l.studentId === student.id);
         
         const grantedLessons = studentLessons.filter(l => 
             ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
@@ -235,18 +255,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (daysUntilExpiry > 0 && daysUntilExpiry <= EXPIRING_SOON_DAYS) {
                 const userToNotifyId = student.parentId || student.id;
-                addNotificationAndLog(
-                    userToNotifyId,
-                    'זיכוי לשיעור השלמה עומד לפוג',
-                    `יתרת שיעורי ההשלמה שלך (${balance}) תפוג בעוד ${daysUntilExpiry} ימים. מהר/י לקבוע שיעור!`,
-                    '/dashboard/makeups'
-                );
+                checkAndNotify(userToNotifyId, `expiring-makeup-${student.id}`, () => {
+                    addNotificationAndLog(
+                        userToNotifyId,
+                        'זיכוי לשיעור השלמה עומד לפוג',
+                        `יתרת שיעורי ההשלמה שלך (${balance}) תפוג בעוד ${daysUntilExpiry} ימים. מהר/י לקבוע שיעור!`,
+                        '/dashboard/makeups'
+                    );
+                });
             }
         }
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [users, lessons]);
 
 
   useEffect(() => {
@@ -491,7 +513,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         ...newLesson,
-        bookingSource: newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF'),
     } as LessonSlot;
     setLessons(prev => [...prev, fullLesson]);
 
@@ -820,6 +841,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             updateUser({ ...user, notificationPreferences: preferences });
         }
     };
+    
+  const addEvent = (event: Partial<EventProduction>) => {
+    if (!user) return;
+    const newEvent: EventProduction = {
+        id: `event-${Date.now()}`,
+        conservatoriumId: user.conservatoriumId,
+        status: 'PLANNING',
+        program: [],
+        ...event,
+    } as EventProduction;
+    setEvents(prev => [newEvent, ...prev]);
+  };
 
 
   const value = { 
@@ -874,6 +907,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addFormTemplate,
       updateNotificationPreferences,
       mockAuditLog: auditLog,
+      mockEvents: events,
+      addEvent,
   };
 
   return (
