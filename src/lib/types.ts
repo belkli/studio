@@ -15,6 +15,28 @@ export type Notification = {
   read: boolean;
 };
 
+// From SDD-07
+export type Channel = 'IN_APP' | 'EMAIL' | 'SMS' | 'WHATSAPP';
+
+export type NotificationType = 
+    | 'lessonReminders' 
+    | 'lessonCancellation' 
+    | 'makeupCredits' 
+    | 'paymentDue' 
+    | 'formStatusChanges' 
+    | 'teacherMessages' 
+    | 'systemAnnouncements';
+
+export type NotificationPreferences = {
+    preferences: Record<NotificationType, Channel[]>;
+    quietHours: {
+        enabled: boolean;
+        startTime: string; // "HH:mm"
+        endTime: string; // "HH:mm"
+    };
+    language: 'HE' | 'EN' | 'AR' | 'RU';
+}
+
 // From SDD-03
 export type TeacherSpecialty = 'EXAM_PREP' | 'EARLY_CHILDHOOD' | 'PERFORMANCE' | 'JAZZ' | 'THEORY' | 'SPECIAL_NEEDS' | 'BEGINNER_ADULTS' | 'COMPETITION' | 'ENSEMBLE';
 export type Language = 'HE' | 'EN' | 'AR' | 'RU';
@@ -68,6 +90,7 @@ export type User = {
   // Student-specific fields from SDD-09
   weeklyPracticeGoal?: number;
   packageId?: string;
+  notificationPreferences?: NotificationPreferences;
 };
 
 export type PricingConfig = {
@@ -340,8 +363,6 @@ export type ProgressReport = {
   createdAt: string; // ISO Timestamp
   sentAt?: string; // ISO Timestamp
 };
-
-export type Channel = 'IN_APP' | 'EMAIL' | 'SMS';
 
 export type Announcement = {
   id: string;

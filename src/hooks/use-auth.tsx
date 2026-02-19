@@ -33,7 +33,6 @@ import {
     type LessonNote,
     type MessageThread,
     type ProgressReport,
-    type SlotStatus,
     type Announcement,
     type Room,
     type PayrollSummary,
@@ -43,6 +42,7 @@ import {
     type WaitlistEntry,
     type WaitlistStatus,
     type FormTemplate,
+    type NotificationPreferences,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
@@ -101,6 +101,7 @@ interface AuthContextType {
   updateWaitlistStatus: (entryId: string, status: WaitlistStatus) => void;
   mockFormTemplates: FormTemplate[];
   addFormTemplate: (template: Partial<FormTemplate>) => void;
+  updateNotificationPreferences: (preferences: NotificationPreferences) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -547,6 +548,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } as FormTemplate;
         setFormTemplates(prev => [newTemplate, ...prev]);
     };
+    
+    const updateNotificationPreferences = (preferences: NotificationPreferences) => {
+        if (user) {
+            updateUser({ ...user, notificationPreferences: preferences });
+        }
+    };
+
 
   const value = { 
       user, 
@@ -598,6 +606,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateWaitlistStatus,
       mockFormTemplates: formTemplates,
       addFormTemplate,
+      updateNotificationPreferences,
   };
 
   return (

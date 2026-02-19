@@ -1,9 +1,8 @@
 'use client';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
@@ -93,24 +92,18 @@ export default function SettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>התראות</CardTitle>
-                    <CardDescription>נהל את העדפות ההתראות שלך.</CardDescription>
+                    <CardDescription>בחר אילו התראות לקבל ובאיזה ערוץ - אימייל, SMS או בתוך האפליקציה.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <Label htmlFor="email-notifications">התראות באימייל</Label>
-                            <p className="text-sm text-muted-foreground">קבל אימיילים על עדכוני טפסים ואישורים.</p>
-                        </div>
-                        <Switch id="email-notifications" defaultChecked />
-                    </div>
-                     <div className="flex items-center justify-between">
-                        <div>
-                            <Label htmlFor="push-notifications">התראות דחיפה</Label>
-                            <p className="text-sm text-muted-foreground">קבל התראות דחיפה בדפדפן.</p>
-                        </div>
-                        <Switch id="push-notifications" />
-                    </div>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                        התאם אישית את ההתראות עבור תזכורות שיעורים, ביטולים, עדכוני חיובים ועוד.
+                    </p>
                 </CardContent>
+                <CardFooter>
+                     <Button asChild>
+                        <Link href="/dashboard/settings/notifications">נהל העדפות התראות</Link>
+                    </Button>
+                </CardFooter>
             </Card>
         </div>
     )
