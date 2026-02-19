@@ -94,7 +94,7 @@ function StudentBillingDashboard() {
                                     <TableCell>{new Date(invoice.dueDate).toLocaleDateString('he-IL')}</TableCell>
                                     <TableCell>{invoice.lineItems[0].description}</TableCell>
                                     <TableCell>{invoice.total} ₪</TableCell>
-                                    <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className="bg-green-100 text-green-800">{invoice.status === 'PAID' ? 'שולם' : 'ממתין'}</Badge></TableCell>
+                                    <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>{invoice.status === 'PAID' ? 'שולם' : 'ממתין'}</Badge></TableCell>
                                     <TableCell className="text-left">
                                         <Button variant="ghost" size="icon">
                                             <Download className="h-4 w-4"/>
@@ -114,8 +114,19 @@ function StudentBillingDashboard() {
 export default function BillingPage() {
     const { user, newFeaturesEnabled } = useAuth();
     
-    if (!user || !newFeaturesEnabled) {
+    if (!user) {
          // Render a placeholder or legacy page if needed for non-feature-flagged users
+         return (
+            <div className="space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold">חיובים</h1>
+                    <p className="text-muted-foreground">טוען נתונים...</p>
+                </div>
+            </div>
+        );
+    }
+    
+    if (!newFeaturesEnabled) {
          return (
             <div className="space-y-6">
                 <div>
@@ -125,7 +136,7 @@ export default function BillingPage() {
             </div>
         );
     }
-    
+
     const isAdmin = user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
     return (

@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -32,9 +32,10 @@ const legacyLinks = [
 ];
 
 const harmoniaLinks = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'student'] },
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/teacher', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['teacher'] },
     { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
+    { href: '/dashboard/profile', label: 'הפרופיל שלי', icon: UserCircle, roles: ['student', 'teacher'] },
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
     { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent', 'teacher'] },
@@ -91,6 +92,16 @@ export function SidebarNav() {
   const userRole = user.role;
   const links = newFeaturesEnabled ? harmoniaLinks : legacyLinks;
   
+  const getLinkHref = (role: UserRole, baseHref: string): string => {
+    if (baseHref === '/dashboard/profile') {
+        if (role === 'teacher') return '/dashboard/teacher/profile';
+    }
+    if (baseHref === '/dashboard') {
+        if (role === 'teacher') return '/dashboard/teacher';
+    }
+    return baseHref;
+  }
+
   return (
     <>
       <SidebarHeader>
@@ -108,14 +119,20 @@ export function SidebarNav() {
                 return null;
             }
             
-            const dashboardLink = user.role === 'teacher' ? '/dashboard/teacher' : '/dashboard';
-            const finalHref = link.href === '/dashboard' ? dashboardLink : link.href;
+            // Special handling for dashboard links to avoid multiple "לוח בקרה" items
+            if (link.href === '/dashboard' && user.role === 'teacher' && newFeaturesEnabled) return null;
+            if (link.href === '/dashboard/teacher' && user.role !== 'teacher') return null;
+            if (link.href === '/dashboard/teacher/profile' && user.role === 'teacher') return null; // Handled by /dashboard/profile
+
+
+            const finalHref = getLinkHref(userRole, link.href);
+            const isActive = pathname === finalHref || (finalHref !== '/dashboard' && finalHref !== '/dashboard/teacher' && pathname.startsWith(finalHref));
 
             return (
                 <SidebarMenuItem key={link.href}>
                   <Link href={finalHref} passHref>
                     <SidebarMenuButton
-                      isActive={pathname === finalHref || (finalHref !== '/dashboard' && finalHref !== '/dashboard/teacher' && pathname.startsWith(finalHref))}
+                      isActive={isActive}
                       tooltip={link.label}
                     >
                       <link.icon />

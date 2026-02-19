@@ -10,11 +10,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PracticeLogForm } from "@/components/dashboard/harmonia/practice-log-form";
+import { StudentProfilePage } from "./profile/page";
 
 function StudentDashboard() {
-    const { user } = useAuth();
+    const { user, newFeaturesEnabled } = useAuth();
+    if (!user) return null;
+
+    if (newFeaturesEnabled) {
+      return <StudentProfilePage />;
+    }
+
+    // Legacy Student Dashboard
     return (
          <div className="space-y-6">
              <div className="flex items-center justify-between">
@@ -25,24 +31,12 @@ function StudentDashboard() {
                 <Button asChild>
                     <Link href="/dashboard/forms/new">
                         <PlusCircle className="me-2 h-4 w-4" />
-                        הגש טופס חדש
+                        טופס חדש
                     </Link>
                 </Button>
             </div>
-            <div className="grid lg:grid-cols-2 gap-6">
-                <Card>
-                    <CardHeader><CardTitle>תרגול אחרון</CardTitle></CardHeader>
-                    <CardContent>
-                        <PracticeLogForm />
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader><CardTitle>הגשות אחרונות</CardTitle></CardHeader>
-                    <CardContent>
-                        <RecentForms />
-                    </CardContent>
-                </Card>
-            </div>
+            <OverviewCards />
+            <RecentForms />
         </div>
     )
 }
@@ -56,9 +50,6 @@ export default function DashboardPage() {
         if (!isLoading && newFeaturesEnabled) {
             if (user?.role === 'parent') {
                 router.replace('/dashboard/family');
-            }
-            if (user?.role === 'teacher') {
-                router.replace('/dashboard/teacher');
             }
         }
     }, [isLoading, newFeaturesEnabled, user, router]);
@@ -85,30 +76,18 @@ export default function DashboardPage() {
     }
     
     if (newFeaturesEnabled) {
-        if (user.role === 'parent' || user.role === 'teacher') {
-             return (
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <Skeleton className="h-8 w-48" />
-                            <Skeleton className="h-5 w-64 mt-2" />
-                        </div>
-                    </div>
-                    <Skeleton className="h-96" />
-                </div>
-            );
-        }
-
         if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
             return <AdminCommandCenter />;
         }
-        
-        if (user.role === 'student') {
+        if (user.role === 'teacher') {
+            return <TeacherDashboard />;
+        }
+        if (user.role === 'student' || user.role === 'parent') {
              return <StudentDashboard />;
         }
     }
 
-    // Legacy Dashboard
+    // Legacy Dashboard for roles not covered by new features yet, or when flag is off
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
