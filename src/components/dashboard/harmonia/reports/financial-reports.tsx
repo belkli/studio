@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { useMemo } from 'react';
 
 const revenueData = [
   { name: 'ינו׳', revenue: 41200 },
@@ -25,7 +26,7 @@ const packageRevenueData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function FinancialReports() {
-    const { mockInvoices, users } = useAuth();
+    const { mockInvoices, users, mockLessons } = useAuth();
 
     const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
     
@@ -34,6 +35,17 @@ export function FinancialReports() {
         name: teacher.name,
         revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mock revenue
     })).sort((a, b) => b.revenue - a.revenue);
+
+    const creditsIssuedThisMonth = useMemo(() => {
+        const thisMonth = new Date().getMonth();
+        const thisYear = new Date().getFullYear();
+        return mockLessons.filter(lesson => {
+            const lessonDate = new Date(lesson.startTime);
+            return (lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'CANCELLED_CONSERVATORIUM') &&
+                   lessonDate.getMonth() === thisMonth &&
+                   lessonDate.getFullYear() === thisYear;
+        }).length;
+    }, [mockLessons]);
 
     return (
         <div className="space-y-6 mt-6">
@@ -63,7 +75,7 @@ export function FinancialReports() {
                 </CardContent>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>התפלגות הכנסות לפי חבילה</CardTitle>
@@ -91,6 +103,18 @@ export function FinancialReports() {
                         <Progress value={collectionRate} className="mt-2 h-3" />
                         <p className="text-xs text-muted-foreground mt-2">
                            {mockInvoices.filter(i => i.status === 'OVERDUE').length} חשבוניות בפיגור.
+                        </p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                     <CardHeader>
+                        <CardTitle>זיכויים וקרדיטים</CardTitle>
+                        <CardDescription>זיכויים שהונפקו לתלמידים החודש.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold">{creditsIssuedThisMonth}</div>
+                         <p className="text-xs text-muted-foreground mt-2">
+                           זיכויים לשיעורי השלמה.
                         </p>
                     </CardContent>
                 </Card>

@@ -2,6 +2,8 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useMemo } from 'react';
+import { getDay } from 'date-fns';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -21,10 +23,23 @@ export function OperationalReports() {
         capacity: Math.floor(Math.random() * (100 - 60 + 1) + 60), // Mock capacity
     }));
 
+    const cancellationsByDay = useMemo(() => {
+        const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+        const data = days.map(day => ({ name: day, cancellations: 0 }));
+
+        mockLessons.forEach(lesson => {
+            if (lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW')) {
+                const dayIndex = getDay(new Date(lesson.startTime));
+                data[dayIndex].cancellations++;
+            }
+        });
+        return data;
+    }, [mockLessons]);
+
     return (
          <div className="space-y-6 mt-6">
-            <div className="grid md:grid-cols-3 gap-6">
-                 <Card>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <Card className="lg:col-span-1">
                     <CardHeader>
                         <CardTitle>התפלגות ביטולים</CardTitle>
                     </CardHeader>
@@ -41,7 +56,25 @@ export function OperationalReports() {
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
-                 <Card>
+                 <Card className="lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle>ביטולים לפי יום בשבוע</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[250px] ps-0">
+                         <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={cancellationsByDay}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false}/>
+                                <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis fontSize={12} tickLine={false} axisLine={false} allowDecimals={false}/>
+                                <Tooltip formatter={(value: number) => [value, 'ביטולים']} cursor={{fill: 'hsl(var(--muted))'}} contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)'}}/>
+                                <Bar dataKey="cancellations" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            </div>
+             <div className="grid md:grid-cols-2 gap-6">
+                <Card>
                     <CardHeader>
                         <CardTitle>שיעור המרה</CardTitle>
                         <CardDescription>שיעור ניסיון להרשמה</CardDescription>
