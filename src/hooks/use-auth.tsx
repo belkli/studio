@@ -7,11 +7,13 @@ import {
     mockFormSubmissions as initialForms, 
     conservatoriums as initialConservatoriums, 
     mockInvoices,
+    mockLessons,
     mockPracticeLogs,
     type User, 
     type FormSubmission,
     type Conservatorium,
     type Invoice,
+    type LessonSlot,
     type PracticeLog
 } from '@/lib/data';
 
@@ -32,6 +34,7 @@ interface AuthContextType {
   addUser: (newUser: Partial<User>) => void;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
+  mockLessons: LessonSlot[];
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   newFeaturesEnabled: boolean;
@@ -145,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
   }
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled, mockInvoices, mockPracticeLogs, conservatoriums, updateConservatorium };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, mockLessons, newFeaturesEnabled, mockInvoices, mockPracticeLogs, conservatoriums, updateConservatorium };
 
   return (
     <AuthContext.Provider value={value}>

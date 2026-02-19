@@ -1,6 +1,5 @@
 'use client';
 import { useAuth } from "@/hooks/use-auth";
-import { mockLessons } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -43,7 +42,7 @@ function LessonItem({ lesson, userRole, users }: { lesson: LessonSlot, userRole:
 }
 
 export default function SchedulePage() {
-    const { user, users } = useAuth();
+    const { user, users, mockLessons } = useAuth();
     if (!user) return null;
 
     const relevantLessons = useMemo(() => {
@@ -58,7 +57,7 @@ export default function SchedulePage() {
             return true; // for admins
         }).sort((a,b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
 
-    }, [user]);
+    }, [user, mockLessons]);
 
     const upcomingLessons = relevantLessons.filter(l => new Date(l.startTime) >= new Date());
     const pastLessons = relevantLessons.filter(l => new Date(l.startTime) < new Date());
