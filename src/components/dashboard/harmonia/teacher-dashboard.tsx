@@ -5,11 +5,74 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
 import { useMemo } from "react";
-import type { User, PracticeLog, Package } from "@/lib/types";
+import type { User, PracticeLog, Package, LessonSlot, SlotStatus } from "@/lib/types";
+import { format } from "date-fns";
+import { he } from 'date-fns/locale';
+import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
-function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[] }) {
+function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (status: SlotStatus) => void }) {
+    const isPast = new Date(lesson.startTime) < new Date();
+    const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
+
+    const attendanceButtons = (
+        <>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('COMPLETED')}>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>סמן נוכחות</p></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('NO_SHOW_STUDENT')}>
+                            <XCircle className="h-4 w-4 text-red-500" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>סמן אי-הגעה (ללא הודעה)</p></TooltipContent>
+                </Tooltip>
+                 <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('CANCELLED_STUDENT_NOTICED')}>
+                            <Clock className="h-4 w-4 text-orange-500" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>סמן היעדרות (עם הודעה)</p></TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        </>
+    );
+
+    return (
+        <div className="flex items-center gap-4 p-3 rounded-lg border">
+            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit'})}</span>
+            <Avatar>
+                <AvatarImage src={student?.avatarUrl} />
+                <AvatarFallback>{student?.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+                <p className="font-semibold">{student?.name}</p>
+                <p className="text-sm text-muted-foreground">
+                    {lesson.instrument}, חדר {lesson.roomId || '?'}
+                </p>
+            </div>
+            <div className="flex gap-2">
+                {!isPast && !isCancelled && attendanceButtons}
+                {isCancelled && <Badge variant="destructive">בוטל</Badge>}
+                {isPast && !isCancelled && lesson.status === 'COMPLETED' && <Badge>הושלם</Badge>}
+            </div>
+        </div>
+    );
+}
+
+
+function StudentRosterCard({ student, practiceLogs, mockPackages, lessons }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[], lessons: LessonSlot[] }) {
     
     const weeklyPractice = useMemo(() => {
         const today = new Date();
@@ -26,7 +89,14 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
     }, [practiceLogs]);
 
     const studentPackage = mockPackages.find(p => p.id === student.packageId);
-
+    
+    const nextLesson = useMemo(() => {
+        const now = new Date();
+        return lessons
+            .filter(l => l.studentId === student.id && new Date(l.startTime) >= now)
+            .sort((a,b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+            [0];
+    }, [lessons, student.id]);
 
     return (
         <Card className="flex flex-col">
@@ -43,7 +113,11 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
             <CardContent className="space-y-3 text-sm flex-grow">
                 <div>
                     <p className="font-semibold">השיעור הבא:</p>
-                    <p className="text-muted-foreground">יום ג', 16:00 (פסנתר)</p>
+                    {nextLesson ? (
+                        <p className="text-muted-foreground">{format(new Date(nextLesson.startTime), "EEEE, dd/MM 'בשעה' HH:mm", { locale: he })} ({nextLesson.instrument})</p>
+                    ) : (
+                        <p className="text-muted-foreground">אין שיעור קרוב</p>
+                    )}
                 </div>
                 <div>
                     <p className="font-semibold">סטטוס חבילה:</p>
@@ -76,44 +150,10 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
     );
 }
 
-
-function TeacherTodaySnapshot({ todayLessonsCount, pendingApprovalsCount }: { todayLessonsCount: number, pendingApprovalsCount: number }) {
-    return (
-        <Card className="h-full flex flex-col">
-            <CardHeader>
-                <CardTitle>תמונת מצב יומית</CardTitle>
-                <CardDescription>השיעורים והמשימות שלך להיום.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow grid grid-cols-2 gap-4">
-                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-blue-50 dark:bg-blue-900/50">
-                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{todayLessonsCount}</span>
-                    <span className="text-sm text-muted-foreground mt-1">שיעורים להיום</span>
-                </div>
-                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-orange-50 dark:bg-orange-900/50">
-                    <span className="text-3xl font-bold text-orange-600 dark:text-orange-400">{pendingApprovalsCount}</span>
-                    <span className="text-sm text-muted-foreground mt-1">אישורים ממתינים</span>
-                </div>
-            </CardContent>
-            <CardFooter className="grid grid-cols-2 gap-2">
-                <Button variant="outline" className="w-full" asChild>
-                    <Link href="/dashboard/schedule">
-                        <Calendar className="h-4 w-4 me-2"/>
-                        למערכת
-                    </Link>
-                </Button>
-                 <Button variant="outline" className="w-full" asChild>
-                    <Link href="/dashboard/approvals">
-                        <CheckCircle className="h-4 w-4 me-2"/>
-                        לאישורים
-                    </Link>
-                </Button>
-            </CardFooter>
-        </Card>
-    );
-}
-
 export function TeacherDashboard() {
     const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages } = useAuth();
+    const { toast } = useToast();
+
     if (!user) return null;
     
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
@@ -122,7 +162,7 @@ export function TeacherDashboard() {
     const todayLessons = mockLessons.filter(lesson => 
         lesson.teacherId === user.id && 
         new Date(lesson.startTime).toDateString() === today.toDateString()
-    );
+    ).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
     const pendingApprovals = useMemo(() => {
         return mockFormSubmissions.filter(form => 
@@ -130,6 +170,14 @@ export function TeacherDashboard() {
             user.students?.includes(form.studentId)
         )
     }, [mockFormSubmissions, user.students]);
+
+    const handleAttendance = (lessonId: string, status: SlotStatus) => {
+        // In a real app, this would call an API to update the lesson status.
+        toast({
+            title: "הנוכחות סומנה",
+            description: `סטטוס השיעור עודכן.`
+        });
+    };
 
 
     return (
@@ -153,16 +201,30 @@ export function TeacherDashboard() {
             </div>
             
             <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1">
-                    <TeacherTodaySnapshot 
-                        todayLessonsCount={todayLessons.length} 
-                        pendingApprovalsCount={pendingApprovals.length} 
-                    />
-                </div>
-                 <div className="lg:col-span-2">
-                     <Card>
+                <div className="lg:col-span-2 space-y-6">
+                    <Card>
                         <CardHeader>
-                            <CardTitle>אישורים אחרונים ממתינים ({pendingApprovals.length})</CardTitle>
+                            <CardTitle>השיעורים להיום</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                           {todayLessons.length > 0 ? todayLessons.map(lesson => (
+                                <TodaysLessonCard 
+                                    key={lesson.id} 
+                                    lesson={lesson} 
+                                    student={users.find(u => u.id === lesson.studentId)}
+                                    onAttendance={(status) => handleAttendance(lesson.id, status)}
+                                />
+                           )) : (
+                                <p className="text-center text-muted-foreground py-8">אין שיעורים מתוכננים להיום.</p>
+                           )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>אישורים ממתינים ({pendingApprovals.length})</CardTitle>
                             <CardDescription>הטפסים האחרונים שהוגשו וממתינים לאישורך.</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -187,6 +249,11 @@ export function TeacherDashboard() {
                                 )}
                             </div>
                         </CardContent>
+                        {pendingApprovals.length > 0 && 
+                            <CardFooter>
+                                <Button variant="secondary" className="w-full" asChild><Link href="/dashboard/approvals">לכל האישורים</Link></Button>
+                            </CardFooter>
+                        }
                     </Card>
                 </div>
             </div>
@@ -197,7 +264,7 @@ export function TeacherDashboard() {
                     <CardDescription>נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} />)}
+                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}
                 </CardContent>
             </Card>
 
