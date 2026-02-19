@@ -31,7 +31,7 @@ const legacyLinks = [
 ];
 
 const harmoniaLinks = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'student'] },
     { href: '/dashboard/teacher', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['teacher'] },
     { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
@@ -90,10 +90,6 @@ export function SidebarNav() {
   const userRole = user.role;
   const links = newFeaturesEnabled ? harmoniaLinks : legacyLinks;
   
-  const newFormPath = newFeaturesEnabled ? '/dashboard/enroll' : '/dashboard/forms/new';
-  const newFormLabel = newFeaturesEnabled ? 'רשום תלמיד' : 'טופס חדש';
-
-
   return (
     <>
       <SidebarHeader>
@@ -131,8 +127,8 @@ export function SidebarNav() {
         </SidebarMenu>
       </SidebarContent>
       
-      <div className="p-4 space-y-2 mt-auto">
-        <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
+      <SidebarFooter>
+        <div className="flex items-center justify-between p-2 group-data-[collapsible=icon]:justify-center">
             <Avatar className="h-9 w-9">
                 <AvatarImage src={user.avatarUrl} alt={user.name} />
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -161,17 +157,7 @@ export function SidebarNav() {
               </DropdownMenuContent>
             </DropdownMenu>
         </div>
-        {(user.role === 'conservatorium_admin' || user.role === 'site_admin') && newFeaturesEnabled && (
-          <Button asChild className="w-full">
-              <Link href={newFormPath}>
-                  <FilePlus className="me-2 h-4 w-4" />
-                  <span className="group-data-[collapsible=icon]:hidden">{newFormLabel}</span>
-              </Link>
-          </Button>
-        )}
-      </div>
-
-      <SidebarFooter>
+        
         <SidebarSeparator />
         <SidebarMenu>
             <SidebarMenuItem>
