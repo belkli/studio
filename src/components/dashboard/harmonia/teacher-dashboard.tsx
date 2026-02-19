@@ -14,16 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 
-function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (status: SlotStatus) => void }) {
+function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (lessonId: string, status: SlotStatus) => void }) {
     const isPast = new Date(lesson.startTime) < new Date();
     const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
+    const isCompleted = lesson.status === 'COMPLETED';
 
     const attendanceButtons = (
         <>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('COMPLETED')}>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'COMPLETED')}>
                             <CheckCircle className="h-4 w-4 text-green-500" />
                         </Button>
                     </TooltipTrigger>
@@ -31,7 +32,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('NO_SHOW_STUDENT')}>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'NO_SHOW_STUDENT')}>
                             <XCircle className="h-4 w-4 text-red-500" />
                         </Button>
                     </TooltipTrigger>
@@ -39,7 +40,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
                 </Tooltip>
                  <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance('CANCELLED_STUDENT_NOTICED')}>
+                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'CANCELLED_STUDENT_NOTICED')}>
                             <Clock className="h-4 w-4 text-orange-500" />
                         </Button>
                     </TooltipTrigger>
@@ -63,9 +64,10 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
                 </p>
             </div>
             <div className="flex gap-2">
-                {!isPast && !isCancelled && attendanceButtons}
-                {isCancelled && <Badge variant="destructive">בוטל</Badge>}
-                {isPast && !isCancelled && lesson.status === 'COMPLETED' && <Badge>הושלם</Badge>}
+                {!isPast && !isCancelled && !isCompleted && attendanceButtons}
+                {isCancelled && <Badge variant="destructive">{lesson.status === 'NO_SHOW_STUDENT' ? 'לא הגיע' : 'בוטל'}</Badge>}
+                {isCompleted && <Badge>הושלם</Badge>}
+                {isPast && !isCompleted && !isCancelled && <Badge variant="secondary">ממתין לסימון</Badge>}
             </div>
         </div>
     );
@@ -151,7 +153,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons }: { s
 }
 
 export function TeacherDashboard() {
-    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages } = useAuth();
+    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages, updateLessonStatus } = useAuth();
     const { toast } = useToast();
 
     if (!user) return null;
@@ -172,7 +174,7 @@ export function TeacherDashboard() {
     }, [mockFormSubmissions, user.students]);
 
     const handleAttendance = (lessonId: string, status: SlotStatus) => {
-        // In a real app, this would call an API to update the lesson status.
+        updateLessonStatus(lessonId, status);
         toast({
             title: "הנוכחות סומנה",
             description: `סטטוס השיעור עודכן.`
@@ -212,7 +214,7 @@ export function TeacherDashboard() {
                                     key={lesson.id} 
                                     lesson={lesson} 
                                     student={users.find(u => u.id === lesson.studentId)}
-                                    onAttendance={(status) => handleAttendance(lesson.id, status)}
+                                    onAttendance={handleAttendance}
                                 />
                            )) : (
                                 <p className="text-center text-muted-foreground py-8">אין שיעורים מתוכננים להיום.</p>

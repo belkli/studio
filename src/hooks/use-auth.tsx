@@ -52,6 +52,7 @@ interface AuthContextType {
   mockLessons: LessonSlot[];
   addLesson: (newLesson: Partial<LessonSlot>) => void;
   cancelLesson: (lessonId: string) => void;
+  updateLessonStatus: (lessonId: string, status: SlotStatus) => void;
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   addPracticeLog: (log: Partial<PracticeLog>) => void;
@@ -275,6 +276,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const updateLessonStatus = (lessonId: string, status: SlotStatus) => {
+    setLessons(prevLessons => prevLessons.map(lesson =>
+      lesson.id === lessonId
+        ? { ...lesson, status, attendanceMarkedAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+        : lesson
+    ));
+  };
+
   const addPracticeLog = (log: Partial<PracticeLog>) => {
     if (!user) return;
     
@@ -336,6 +345,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockLessons: lessons, 
       addLesson,
       cancelLesson,
+      updateLessonStatus,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
       mockPracticeLogs: practiceLogs, 
