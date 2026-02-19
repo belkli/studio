@@ -378,3 +378,18 @@ export type PayrollSummary = {
     grossPay: number;
     status: PayrollStatus;
 };
+
+export type WaitlistStatus = 'WAITING' | 'OFFERED' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED';
+
+export type WaitlistEntry = {
+    id: string;
+    studentId: string;
+    teacherId: string;
+    conservatoriumId: string;
+    instrument: string;
+    preferredDays: DayOfWeek[];
+    preferredTimes: TimeRange[];
+    joinedAt: string; // ISO Timestamp
+    notifiedAt?: string; // ISO Timestamp
+    status: WaitlistStatus;
+};
