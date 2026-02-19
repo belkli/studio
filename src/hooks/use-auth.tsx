@@ -48,6 +48,7 @@ interface AuthContextType {
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
   mockLessons: LessonSlot[];
+  addLesson: (newLesson: Partial<LessonSlot>) => void;
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   mockAssignedRepertoire: AssignedRepertoire[];
@@ -73,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [forms, setForms] = useState<FormSubmission[]>(initialForms);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialConservatoriums);
+  const [lessons, setLessons] = useState<LessonSlot[]>(initialLessons);
   const [assignedRepertoire, setAssignedRepertoire] = useState<AssignedRepertoire[]>(initialRepertoire);
   const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
@@ -228,7 +230,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           ...report,
       } as ProgressReport;
       setProgressReports(prev => [newReport, ...prev]);
-  }
+  };
+
+  const addLesson = (newLesson: Partial<LessonSlot>) => {
+    const fullLesson: LessonSlot = {
+        id: `lesson-${Date.now()}`,
+        conservatoriumId: user!.conservatoriumId,
+        type: 'ADHOC',
+        status: 'SCHEDULED',
+        bookingSource: user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF',
+        isVirtual: false,
+        isCreditConsumed: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        ...newLesson
+    } as LessonSlot;
+    setLessons(prev => [...prev, fullLesson]);
+  };
 
   const value = { 
       user, 
@@ -242,7 +260,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addUser, 
       mockFormSubmissions: forms, 
       updateForm, 
-      mockLessons: initialLessons, 
+      mockLessons: lessons, 
+      addLesson,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
       mockPracticeLogs: initialPracticeLogs, 

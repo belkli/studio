@@ -43,7 +43,7 @@ export default function SchedulePage() {
                     <p className="text-muted-foreground">צפה ונהל את השיעורים, ההזמנות והזמינות שלך.</p>
                 </div>
                  <Button asChild>
-                    <Link href="#">
+                    <Link href="/dashboard/schedule/book">
                         <PlusCircle className="ms-2 h-4 w-4" />
                         הזמן שיעור חדש
                     </Link>
