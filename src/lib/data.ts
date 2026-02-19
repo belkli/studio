@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -448,4 +448,20 @@ export const mockAnnouncements: Announcement[] = [
     }
 ];
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary };
+export const mockPracticeVideos: PracticeVideo[] = [
+    {
+        id: 'pv-1',
+        studentId: 'student-user-1',
+        teacherId: 'teacher-user-1',
+        repertoireTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2',
+        videoUrl: 'https://placehold.co/600x400.mp4',
+        studentNote: 'אני לא בטוח לגבי הדינמיקה בחלק האמצעי, זה מרגיש לי קצת שטוח. אשמח למשוב.',
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+        feedback: [
+            { teacherId: 'teacher-user-1', comment: 'ביצוע יפה אריאל! נסה להדגיש יותר את הקו המלודי ביד ימין ולהשתמש ביותר רובטו כדי לתת לזה תחושה יותר נושמת. נדבר על זה בשיעור.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() }
+        ]
+    }
+];
+
+
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo };

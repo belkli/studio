@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle, Flame, Clock, Medal } from 'lucide-react';
+import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle, Flame, Clock, Medal, Video } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,6 +19,7 @@ import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNot
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateProgressReport } from '@/app/actions';
 import { AssignRepertoireDialog } from '@/components/dashboard/harmonia/assign-repertoire-dialog';
+import { MultimediaFeedbackCard } from '@/components/dashboard/harmonia/multimedia-feedback-card';
 
 
 export default function TeacherStudentProfilePage() {
@@ -347,6 +348,9 @@ export default function TeacherStudentProfilePage() {
                     </Card>
                  </div>
             </div>
+
+            <MultimediaFeedbackCard student={student} />
+            
              <Card>
                 <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> הערות שיעור</CardTitle></CardHeader>
                 <CardContent className="space-y-4">

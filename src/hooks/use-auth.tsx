@@ -15,16 +15,19 @@ import {
     mockPackages as initialPackages,
     mockProgressReports as initialProgressReports,
     mockAnnouncements as initialAnnouncements,
+    mockPracticeVideos as initialPracticeVideos,
     compositions as initialCompositions,
     type User, 
     type FormSubmission,
+    type Notification,
     type Conservatorium,
-    type Invoice,
+    type Package,
     type LessonSlot,
+    type Invoice,
     type PracticeLog,
+    type Composition,
     type AssignedRepertoire,
     type RepertoireStatus,
-    type Composition,
     type LessonNote,
     type MessageThread,
     type ProgressReport,
@@ -33,6 +36,8 @@ import {
     type Room,
     type PayrollSummary,
     type PayrollStatus,
+    type PracticeVideo,
+    type VideoFeedback,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
@@ -83,6 +88,9 @@ interface AuthContextType {
   getMakeupCreditBalance: (studentIds: string[]) => number;
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
+  mockPracticeVideos: PracticeVideo[];
+  addPracticeVideo: (videoData: Partial<PracticeVideo>) => PracticeVideo | undefined;
+  addVideoFeedback: (videoId: string, comment: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -99,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
   const [progressReports, setProgressReports] = useState<ProgressReport[]>(initialProgressReports);
   const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+  const [practiceVideos, setPracticeVideos] = useState<PracticeVideo[]>(initialPracticeVideos);
   const [payrolls, setPayrolls] = useState<PayrollSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -420,6 +429,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setPracticeLogs(prev => [newLog, ...prev]);
   };
+  
+   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
+        if (!user) return;
+        const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
+        if (!studentId) return;
+
+        const student = users.find(u => u.id === studentId);
+        const teacherId = student?.instruments?.[0]?.teacherName ? users.find(u => u.name === student.instruments![0].teacherName)?.id : undefined;
+        if (!teacherId) return;
+
+        const newVideo: PracticeVideo = {
+            id: `vid-${Date.now()}`,
+            studentId,
+            teacherId: teacherId,
+            videoUrl: 'https://placehold.co/600x400.mp4',
+            createdAt: new Date().toISOString(),
+            feedback: [],
+            ...videoData
+        } as PracticeVideo;
+        setPracticeVideos(prev => [newVideo, ...prev]);
+        return newVideo;
+    };
+
+    const addVideoFeedback = (videoId: string, comment: string) => {
+        if (!user || user.role !== 'teacher') return;
+        setPracticeVideos(prev => prev.map(video => {
+            if (video.id === videoId) {
+                const newFeedback: VideoFeedback = {
+                    teacherId: user.id,
+                    comment,
+                    createdAt: new Date().toISOString(),
+                };
+                return { ...video, feedback: [...(video.feedback || []), newFeedback] };
+            }
+            return video;
+        }));
+    };
 
   const addAnnouncement = (announcement: Partial<Announcement>) => {
     if (!user) return;
@@ -505,6 +551,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getMakeupCreditBalance,
       mockPayrolls: payrolls,
       updatePayrollStatus,
+      mockPracticeVideos: practiceVideos,
+      addPracticeVideo,
+      addVideoFeedback,
   };
 
   return (

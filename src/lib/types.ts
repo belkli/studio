@@ -272,6 +272,24 @@ export type PracticeLog = {
     teacherComment?: string;
 };
 
+export type VideoFeedback = {
+  teacherId: string;
+  comment: string;
+  createdAt: string; // ISO Timestamp
+};
+
+export type PracticeVideo = {
+  id: string;
+  studentId: string;
+  teacherId: string;
+  repertoireTitle: string;
+  videoUrl: string;
+  studentNote?: string;
+  createdAt: string; // ISO Timestamp
+  feedback?: VideoFeedback[];
+};
+
+
 export type LessonNote = {
     id: string;
     lessonSlotId: string;
@@ -293,7 +311,6 @@ export type AssignedRepertoire = {
     status: RepertoireStatus;
     assignedAt: string; // ISO Timestamp
     completedAt?: string; // ISO Timestamp
-    teacherNotes?: string;
 };
 
 export type Message = {
