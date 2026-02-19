@@ -126,6 +126,112 @@ const DetailItem = ({ label, value }: { label: string; value: React.ReactNode })
     </div>
 );
 
+const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void }) => {
+    const form = useFormContext<FormData>();
+    const registrationType = form.watch("registrationType");
+
+    return (
+        <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>פרטי הרשמה</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField name="registrationType" control={form.control} render={({ field }) => (
+                        <FormItem className="space-y-3">
+                            <FormLabel>מי נרשם?</FormLabel>
+                            <FormControl>
+                            <RadioGroup onValueChange={field.onChange} value={field.value} className="flex space-x-2 space-x-reverse">
+                                <FormItem className="flex items-center space-x-2 space-x-reverse">
+                                <FormControl><RadioGroupItem value="parent" /></FormControl>
+                                <FormLabel className="font-normal">הורה רושם ילד/ה</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-x-reverse">
+                                <FormControl><RadioGroupItem value="self" /></FormControl>
+                                <FormLabel className="font-normal">תלמיד/ה 13+</FormLabel>
+                                </FormItem>
+                            </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )} />
+                        <FormField name="conservatorium" render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                            <FormLabel>קונסרבטוריון</FormLabel>
+                            <Combobox options={conservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder="חפש קונסרבטוריון..." />
+                            <FormMessage />
+                        </FormItem>
+                        )} />
+                    </CardContent>
+                </Card>
+
+                {registrationType === 'parent' && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <Card>
+                             <CardHeader><CardTitle>פרטי ההורה</CardTitle></CardHeader>
+                             <CardContent className="space-y-4">
+                                <FormField name="parentDetails.parentFirstName" render={({ field }) => ( <FormItem> <FormLabel>שם פרטי</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="parentDetails.parentLastName" render={({ field }) => ( <FormItem> <FormLabel>שם משפחה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="parentDetails.parentEmail" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="parentDetails.parentIdNumber" render={({ field }) => ( <FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="parentDetails.parentPhone" render={({ field }) => ( <FormItem> <FormLabel>טלפון נייד</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                             </CardContent>
+                        </Card>
+                        <Card>
+                             <CardHeader><CardTitle>פרטי התלמיד/ה</CardTitle></CardHeader>
+                             <CardContent className="space-y-4">
+                                <FormField name="studentDetails.childFirstName" render={({ field }) => ( <FormItem> <FormLabel>שם פרטי</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="studentDetails.childLastName" render={({ field }) => ( <FormItem> <FormLabel>שם משפחה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                                <FormField name="studentDetails.childBirthDate" render={({ field }) => ( <FormItem> <FormLabel>תאריך לידה</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+                 {registrationType === 'self' && (
+                    <Card>
+                        <CardHeader><CardTitle>פרטים אישיים</CardTitle></CardHeader>
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField name="selfDetails.firstName" render={({ field }) => ( <FormItem> <FormLabel>שם פרטי</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField name="selfDetails.lastName" render={({ field }) => ( <FormItem> <FormLabel>שם משפחה</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField name="selfDetails.email" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField name="selfDetails.idNumber" render={({ field }) => ( <FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField name="selfDetails.birthDate" render={({ field }) => ( <FormItem> <FormLabel>תאריך לידה</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                            <FormField name="selfDetails.phone" render={({ field }) => ( <FormItem> <FormLabel>טלפון נייד</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                        </CardContent>
+                    </Card>
+                )}
+                
+                <Card>
+                    <CardHeader><CardTitle>פרופיל מוזיקלי</CardTitle></CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי נגינה" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                        <FormField name="level" render={({ field }) => ( <FormItem> <FormLabel>רמה נוכחית</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר רמה" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Beginner">מתחיל/ה</SelectItem> <SelectItem value="Intermediate">ביניים</SelectItem> <SelectItem value="Advanced">מתקדם/ת</SelectItem> <SelectItem value="Exam Candidate">מועמד/ת לבחינה</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                        <FormField name="lessonDuration" render={({ field }) => ( <FormItem> <FormLabel>אורך שיעור</FormLabel> <Select dir="rtl" onValueChange={(v) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder="בחר אורך שיעור" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">30 דקות</SelectItem> <SelectItem value="45">45 דקות</SelectItem> <SelectItem value="60">60 דקות</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                        <FormField name="packageId" control={form.control} render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>חבילה</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                    <FormControl>
+                                        <SelectTrigger><SelectValue placeholder="בחר חבילה..." /></SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {(useAuth().mockPackages || []).map(p => <SelectItem key={p.id} value={p.id}>{p.title} - {p.price}₪</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <div className="md:col-span-2"><FormField name="password" render={({ field }) => ( <FormItem> <FormLabel>סיסמה התחלתית</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} /></div>
+                    </CardContent>
+                </Card>
+                <div className="flex justify-end">
+                    <Button type="submit">רשום תלמיד</Button>
+                </div>
+            </form>
+        </FormProvider>
+    )
+}
 
 export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolean }) {
   const [step, setStep] = useState(0);
@@ -183,10 +289,10 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     };
     
    useEffect(() => {
-        if (currentStepId === 'matching' && !teacherMatches) {
+        if (!isAdminFlow && currentStepId === 'matching' && !teacherMatches) {
             triggerTeacherMatching();
         }
-    }, [currentStepId, teacherMatches]);
+    }, [currentStepId, teacherMatches, isAdminFlow]);
 
 
   const processStep = async () => {
@@ -273,6 +379,22 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
           <Button onClick={() => router.push(isAdminFlow ? '/dashboard/users' : '/')}>
             {isAdminFlow ? 'חזרה לניהול משתמשים' : 'חזרה לדף הבית'}
           </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  if (isAdminFlow) {
+    return (
+      <Card className="w-full max-w-4xl mx-4">
+        <CardHeader>
+          <CardTitle>רישום תלמיד חדש</CardTitle>
+          <CardDescription>מלא את כל הפרטים כדי לרשום את התלמיד/ה.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormProvider {...form}>
+            <AdminEnrollmentForm onSubmit={onSubmit} />
+          </FormProvider>
         </CardContent>
       </Card>
     );
