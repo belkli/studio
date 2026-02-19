@@ -1,5 +1,5 @@
 'use client';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -23,12 +23,12 @@ export function OperationalReports() {
 
     return (
          <div className="space-y-6 mt-6">
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
                  <Card>
                     <CardHeader>
                         <CardTitle>התפלגות ביטולים</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[300px]">
+                    <CardContent className="h-[250px]">
                          <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie data={cancellationData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} (${entry.value})`}>
@@ -43,11 +43,22 @@ export function OperationalReports() {
                 </Card>
                  <Card>
                     <CardHeader>
-                        <CardTitle>שיעור המרה (שיעור ניסיון להרשמה)</CardTitle>
+                        <CardTitle>שיעור המרה</CardTitle>
+                        <CardDescription>שיעור ניסיון להרשמה</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center h-[300px]">
+                    <CardContent className="flex flex-col items-center justify-center h-[200px]">
                         <div className="text-5xl font-bold text-primary">68%</div>
-                        <p className="text-muted-foreground mt-2">21 מתוך 31 תלמידי ניסיון נרשמו החודש.</p>
+                        <p className="text-muted-foreground mt-2 text-center">21 מתוך 31 תלמידי ניסיון נרשמו החודש.</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>שימוש בשיעורי השלמה</CardTitle>
+                        <CardDescription>אחוז שיעורי ההשלמה שנוצלו</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center justify-center h-[200px]">
+                        <div className="text-5xl font-bold text-accent">82%</div>
+                        <p className="text-muted-foreground mt-2 text-center">18% מהזיכויים פגים ללא שימוש.</p>
                     </CardContent>
                 </Card>
             </div>
