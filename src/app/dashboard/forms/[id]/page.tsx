@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client';
 
-import { mockFormSubmissions, mockUsers, conservatoriums } from '@/lib/data';
+import { mockUsers, conservatoriums } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -386,8 +386,8 @@ export default function FormDetailsPage() {
                                     <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
                                             <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
-                                             <DetailItem label="כלי נגינה / שירה" value={formUser?.instruments?.[0]?.instrument} />
-                                             <DetailItem label="סך שנות לימוד בכלי" value={formUser?.instruments?.[0]?.yearsOfStudy} />
+                                             <DetailItem label="כלי נגינה / שירה" value={form.instrumentDetails?.instrument} />
+                                             <DetailItem label="סך שנות לימוד בכלי" value={form.instrumentDetails?.yearsOfStudy} />
                                         </div>
                                          <div className="space-y-4 rounded-lg bg-muted/30 p-4">
                                              <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>

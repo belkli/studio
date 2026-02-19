@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { schools, instruments, genres } from '@/lib/data';
 import type { User, Composition, FormSubmission } from '@/lib/types';
-import { PlusCircle, Send, Trash2 } from 'lucide-react';
+import { PlusCircle, Send, Trash2, Edit, Save } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Textarea } from '../ui/textarea';
@@ -19,8 +19,9 @@ import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { Combobox } from '../ui/combobox';
 import { useToast } from '@/hooks/use-toast';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
-import { searchComposers, searchCompositions } from '@/app/actions';
-import { debounce } from '@/lib/utils';
+import { searchComposers, searchCompositions, getCompositionSuggestions } from '@/app/actions';
+import { debounce, isValidIsraeliID } from '@/lib/utils';
+import { SuggestionButton } from './suggestion-button';
 
 
 const compositionSchema = z.object({
@@ -42,7 +43,7 @@ const formSchema = z.object({
   conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
   
   studentName: z.string(),
-  idNumber: z.string().refine(val => /^\d{9}$/.test(val), "מספר ת.ז. חייב להכיל 9 ספרות."),
+  idNumber: z.string().refine(isValidIsraeliID, "מספר ת.ז. חייב להכיל 9 ספרות."),
   birthDate: z.string().min(1, 'חובה להזין תאריך לידה'),
   gender: z.string().optional(),
   city: z.string().optional(),
@@ -470,9 +471,9 @@ export function RecitalForm({ user, student, onSubmit, initialData, isEditing = 
                         </FormItem> 
                     )} 
                 />
-                <FormField control={form.control} name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField control={form.control} name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} disabled={areDetailsLocked} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField control={form.control} name="city" render={({ field }) => ( <FormItem><FormLabel>עיר/יישוב מגורים</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField control={form.control} name="phone" render={({ field }) => ( <FormItem><FormLabel>טלפון נייד</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem> )} />
+                <FormField control={form.control} name="email" render={({ field }) => ( <FormItem><FormLabel>דוא"ל</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem> )} />
             </CardContent>
         </Card>
         
@@ -547,7 +548,7 @@ export function RecitalForm({ user, student, onSubmit, initialData, isEditing = 
                     />
                 ))}
                 </div>
-                <div className="flex items-center gap-4 mt-4">
+                 <div className="flex items-center gap-4 mt-4">
                      <Button
                         type="button"
                         variant="outline"
@@ -557,6 +558,11 @@ export function RecitalForm({ user, student, onSubmit, initialData, isEditing = 
                         <PlusCircle className="me-2 h-4 w-4" />
                         הוסף יצירה
                     </Button>
+                    <SuggestionButton 
+                        fields={fields} 
+                        append={append}
+                        getValues={form.getValues}
+                    />
                 </div>
                 {fields.length >= MAX_REPERTOIRE_ITEMS && (
                     <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
