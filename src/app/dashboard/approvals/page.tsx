@@ -4,12 +4,16 @@ import type { FormSubmission, UserRole } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Eye, Check, ThumbsDown } from 'lucide-react';
+import { Eye, Check, ThumbsDown, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { useMemo } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const FormCard = ({ form, onApprove, onReject }: { form: FormSubmission; onApprove: () => void; onReject: () => void }) => {
+    const { user } = useAuth();
+    const canRevise = (user?.role === 'conservatorium_admin' || user?.role === 'site_admin') && form.status === 'נדרש תיקון';
+
     return (
         <Card className="mb-4 flex flex-col">
             <CardHeader className="pb-2">
@@ -32,14 +36,27 @@ const FormCard = ({ form, onApprove, onReject }: { form: FormSubmission; onAppro
                         צפייה
                     </Link>
                 </Button>
-                <Button variant="outline" size="sm" onClick={onApprove} className="col-span-1 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700">
-                    <Check className="ms-1 h-4 w-4" />
-                    אישור
-                </Button>
-                <Button variant="outline" size="sm" onClick={onReject} className="col-span-1 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
-                    <ThumbsDown className="ms-1 h-4 w-4" />
-                    דחייה
-                </Button>
+
+                {canRevise ? (
+                     <Button asChild variant="outline" size="sm" className="col-span-2 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                        <Link href={`/dashboard/forms/${form.id}`}>
+                            <Edit className="ms-1 h-4 w-4" />
+                            תקן ושלח מחדש
+                        </Link>
+                    </Button>
+                ) : (
+                    <>
+                        <Button variant="outline" size="sm" onClick={onApprove} className="col-span-1 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700">
+                            <Check className="ms-1 h-4 w-4" />
+                            אישור
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={onReject} className="col-span-1 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+                            <ThumbsDown className="ms-1 h-4 w-4" />
+                            דחייה
+                        </Button>
+                    </>
+                )}
+                
             </CardFooter>
         </Card>
     );
@@ -53,29 +70,36 @@ export default function ApprovalsPage() {
         if (!user) return { myQueue: [], allPending: [] };
         
         const myQueueForms: FormSubmission[] = [];
-        const allPendingForms: FormSubmission[] = [];
+        const allPendingForms = mockFormSubmissions.filter(form => form.status !== 'טיוטה' && form.status !== 'נדחה' && form.status !== 'מאושר סופית');
 
         mockFormSubmissions.forEach(form => {
-            let isPending = false;
             let isInMyQueue = false;
 
-            if (form.status === 'ממתין לאישור מורה') {
-                isPending = true;
-                if(user.role === 'teacher' && user.students?.includes(form.studentId)) {
-                    isInMyQueue = true;
-                }
-            } else if (form.status === 'ממתין לאישור מנהל') {
-                isPending = true;
-                if((user.role === 'conservatorium_admin' || user.role === 'site_admin') && (user.conservatoriumId === form.conservatoriumId || user.role === 'site_admin')) {
-                    isInMyQueue = true;
-                }
+            switch(user.role) {
+                case 'teacher':
+                    if (form.status === 'ממתין לאישור מורה' && user.students?.includes(form.studentId)) {
+                        isInMyQueue = true;
+                    }
+                    break;
+                case 'conservatorium_admin':
+                     if ((form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') && form.conservatoriumId === user.conservatoriumId) {
+                        isInMyQueue = true;
+                    }
+                    break;
+                case 'site_admin':
+                     if (form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') {
+                        isInMyQueue = true;
+                    }
+                    break;
+                case 'ministry_director':
+                    if (form.status === 'מאושר') {
+                        isInMyQueue = true;
+                    }
+                    break;
             }
 
             if (isInMyQueue) {
                 myQueueForms.push(form);
-            }
-            if (isPending) {
-                allPendingForms.push(form);
             }
         });
         return { myQueue: myQueueForms, allPending: allPendingForms };
@@ -101,12 +125,12 @@ export default function ApprovalsPage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold">אישורים</h1>
-                <p className="text-muted-foreground">כאן תוכל לצפות ולאשר טפסים של תלמידים.</p>
+                <p className="text-muted-foreground">כאן תוכל לצפות ולאשר טפסים של תלמידים ומורים.</p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>ממתין לאישורך ({myQueue.length})</CardTitle>
+                        <CardTitle>ממתין לטיפולך ({myQueue.length})</CardTitle>
                     </CardHeader>
                     <CardContent className="max-h-[60vh] overflow-y-auto p-4">
                         {myQueue.length > 0 ? (
@@ -119,31 +143,41 @@ export default function ApprovalsPage() {
                                 />
                             ))
                         ) : (
-                            <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים הממתינים לך לאישור.</p>
+                            <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים הממתינים לך לטיפול.</p>
                         )}
                     </CardContent>
                 </Card>
                 
                 <Card className="lg:col-span-2">
                     <CardHeader>
-                        <CardTitle>כלל הטפסים הממתינים ({allPending.length})</CardTitle>
+                        <CardTitle>כלל הטפסים הפתוחים במערכת ({allPending.length})</CardTitle>
                     </CardHeader>
-                     <CardContent className="max-h-[60vh] overflow-y-auto p-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                     <CardContent className="max-h-[60vh] overflow-y-auto p-0">
                         {allPending.length > 0 ? (
-                            allPending.map(form => (
-                                <Card key={form.id} className="p-4">
-                                    <p className="font-semibold">{form.studentName}</p>
-                                    <p className="text-sm text-muted-foreground">{form.formType}</p>
-                                    <div className="mt-2">
-                                        <StatusBadge status={form.status} />
-                                    </div>
-                                     <Link href={`/dashboard/forms/${form.id}`} className="text-sm text-primary hover:underline mt-2 inline-block">
-                                        צפה בפרטים
-                                    </Link>
-                                </Card>
-                            ))
+                             <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>שם התלמיד/ה</TableHead>
+                                        <TableHead>סוג</TableHead>
+                                        <TableHead>קונסרבטוריון</TableHead>
+                                        <TableHead>סטטוס</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {allPending.map(form => (
+                                        <TableRow key={form.id}>
+                                            <TableCell className="font-medium">
+                                                <Link href={`/dashboard/forms/${form.id}`} className="hover:underline">{form.studentName}</Link>
+                                            </TableCell>
+                                            <TableCell>{form.formType}</TableCell>
+                                            <TableCell>{form.conservatoriumName}</TableCell>
+                                            <TableCell><StatusBadge status={form.status} /></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         ) : (
-                             <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים ממתינים במערכת.</p>
+                             <p className="text-sm text-muted-foreground p-4 text-center">אין טפסים פתוחים במערכת.</p>
                         )}
                     </CardContent>
                 </Card>
