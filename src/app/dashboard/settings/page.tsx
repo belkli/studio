@@ -75,7 +75,7 @@ export default function SettingsPage() {
                 </CardContent>
             </Card>
 
-             {newFeaturesEnabled && isAdmin && (
+             {isAdmin && (
                 <Card>
                     <CardHeader>
                         <CardTitle>הגדרות קונסרבטוריון</CardTitle>

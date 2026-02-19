@@ -7,10 +7,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ConservatoriumSettingsPage() {
     const { toast } = useToast();
     const { user, conservatoriums, updateConservatorium } = useAuth();
+    const router = useRouter();
     
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
         return <p>אין לך הרשאה לגשת לעמוד זה.</p>;
@@ -26,8 +28,10 @@ export default function ConservatoriumSettingsPage() {
         updateConservatorium({ ...currentConservatorium, newFeaturesEnabled: enabled });
         toast({
             title: `הפיצ'רים החדשים ${enabled ? 'הופעלו' : 'כובו'}`,
-            description: `השינויים יחולו לאחר רענון הדף.`,
+            description: `השינויים יחולו לאחר רענון הדף. מרענן...`,
         });
+        // Force a reload to apply changes across the app
+        setTimeout(() => window.location.reload(), 1500);
     }
 
     return (

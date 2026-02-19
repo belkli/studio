@@ -6,13 +6,12 @@ import { Receipt, CreditCard, CalendarClock, Package, FileText, Download } from 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { mockInvoices } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { AdminFinancialDashboard } from "@/components/dashboard/harmonia/admin-finance-dashboard";
 
 
 function StudentBillingDashboard() {
-    const { user } = useAuth();
+    const { user, mockInvoices } = useAuth();
     if (!user) return null;
 
     const userInvoices = mockInvoices.filter(inv => inv.payerId === user.id || user.childIds?.includes(inv.payerId));
