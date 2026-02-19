@@ -115,6 +115,7 @@ export function BookLessonWizard() {
             instrument: data.instrument,
             startTime: lessonStartTime.toISOString(),
             durationMinutes: data.durationMinutes as 30 | 45 | 60,
+            bookingSource: user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF',
         });
 
         toast({

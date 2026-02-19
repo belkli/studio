@@ -530,6 +530,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
             startTime: lessonStartTime.toISOString(),
             durationMinutes: data.lessonDuration as 30 | 45 | 60,
             type: 'ADHOC', 
+            bookingSource: isAdminFlow ? 'ADMIN' : (data.registrationType === 'parent' ? 'PARENT' : 'STUDENT_SELF'),
         });
     }
     

@@ -48,7 +48,8 @@ import {
     type AuditLogEntry,
     type Channel,
 } from '@/lib/data';
-import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format } from 'date-fns';
+import { he } from 'date-fns/locale';
 
 interface LoginResult {
   user: User | null;
@@ -434,21 +435,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } as ProgressReport;
       setProgressReports(prev => [newReport, ...prev]);
   };
-
+  
   const addLesson = (newLesson: Partial<LessonSlot>) => {
     const fullLesson: LessonSlot = {
         id: `lesson-${Date.now()}`,
         conservatoriumId: user!.conservatoriumId,
         type: 'ADHOC',
         status: 'SCHEDULED',
-        bookingSource: user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF',
         isVirtual: false,
         isCreditConsumed: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        ...newLesson
+        ...newLesson,
+        bookingSource: newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF'),
     } as LessonSlot;
     setLessons(prev => [...prev, fullLesson]);
+
+    // NOTIFICATION LOGIC
+    const bookingSource = newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF');
+    if (bookingSource === 'ADMIN' || bookingSource === 'TEACHER') {
+        const student = users.find(u => u.id === fullLesson.studentId);
+        const teacher = users.find(u => u.id === fullLesson.teacherId);
+        if (student && teacher) {
+            const userToNotifyId = student.parentId || student.id;
+            addNotificationAndLog(
+                userToNotifyId,
+                'שיעור חדש נקבע עבורך',
+                `המורה ${teacher.name} קבע/ה עבורך שיעור ${fullLesson.instrument} ביום ${format(new Date(fullLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(fullLesson.startTime), 'HH:mm')}.`,
+                '/dashboard/schedule'
+            );
+        }
+    }
   };
 
   const cancelLesson = (lessonId: string) => {
@@ -462,8 +479,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const newStatus: SlotStatus = hoursUntilLesson > 24 
             ? 'CANCELLED_STUDENT_NOTICED' 
             : 'CANCELLED_STUDENT_NO_NOTICE';
+        
+        const updatedLesson = { ...lesson, status: newStatus, updatedAt: new Date().toISOString() };
 
-        return { ...lesson, status: newStatus, updatedAt: new Date().toISOString() };
+        // NOTIFICATION LOGIC
+        const student = users.find(u => u.id === lesson.studentId);
+        const teacher = users.find(u => u.id === lesson.teacherId);
+        if (student && teacher) {
+            const lessonTimeStr = `${format(lessonStartTime, 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(lessonStartTime, 'HH:mm')}`;
+            if (newStatus === 'CANCELLED_STUDENT_NOTICED') {
+                 addNotificationAndLog(
+                    teacher.id,
+                    'ביטול שיעור',
+                    `${student.name} ביטל/ה את השיעור בתאריך ${lessonTimeStr}. המשבצת פנויה כעת.`,
+                    '/dashboard/schedule'
+                );
+            } else {
+                 addNotificationAndLog(
+                    teacher.id,
+                    'ביטול שיעור מאוחר',
+                    `${student.name} ביטל/ה באיחור את השיעור בתאריך ${lessonTimeStr}.`,
+                    '/dashboard/schedule'
+                );
+            }
+        }
+        
+        return updatedLesson;
       }
       return lesson;
     }));
@@ -478,11 +519,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const rescheduleLesson = (lessonId: string, newStartTime: string) => {
-    setLessons(prevLessons => prevLessons.map(lesson => 
-        lesson.id === lessonId
-            ? { ...lesson, startTime: newStartTime, status: 'SCHEDULED', updatedAt: new Date().toISOString() }
-            : lesson
-    ));
+    setLessons(prevLessons => prevLessons.map(lesson => {
+        if (lesson.id === lessonId) {
+            const updatedLesson = { ...lesson, startTime: newStartTime, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
+            
+            // NOTIFICATION LOGIC
+            const student = users.find(u => u.id === lesson.studentId);
+            const teacher = users.find(u => u.id === lesson.teacherId);
+            if (student && teacher) {
+                const userToNotifyId = student.parentId || student.id;
+                const newTimeStr = `${format(new Date(newStartTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(newStartTime), 'HH:mm')}`;
+                
+                // Notify student/parent
+                addNotificationAndLog(
+                    userToNotifyId,
+                    'שיעור נקבע מחדש',
+                    `השיעור שלך עם ${teacher.name} נקבע מחדש למועד: ${newTimeStr}.`,
+                    '/dashboard/schedule'
+                );
+
+                // Notify teacher
+                addNotificationAndLog(
+                    teacher.id,
+                    'שיעור נקבע מחדש',
+                    `השיעור של ${student.name} נקבע מחדש למועד: ${newTimeStr}.`,
+                    '/dashboard/schedule'
+                );
+            }
+
+            return updatedLesson;
+        }
+        return lesson;
+    }));
   };
 
   const reportSickLeave = useCallback((teacherId: string, startDate: Date, endDate: Date): LessonSlot[] => {
