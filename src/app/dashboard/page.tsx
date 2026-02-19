@@ -116,12 +116,14 @@ export default function DashboardPage() {
                     <h1 className="text-2xl font-bold">ברוך הבא, {user.name.split(' ')[0]}</h1>
                     <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
                 </div>
-                <Button asChild>
-                    <Link href="/dashboard/forms/new">
-                        <PlusCircle className="me-2 h-4 w-4" />
-                        טופס חדש
-                    </Link>
-                </Button>
+                 {user.role !== 'ministry_director' && (
+                    <Button asChild>
+                        <Link href="/dashboard/forms/new">
+                            <PlusCircle className="me-2 h-4 w-4" />
+                            טופס חדש
+                        </Link>
+                    </Button>
+                )}
             </div>
             <OverviewCards />
             <RecentForms />

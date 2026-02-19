@@ -24,6 +24,7 @@ import type { Notification, UserRole } from '@/lib/types';
 const legacyLinks = [
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
     { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/forms/new', label: 'טופס חדש', icon: PlusCircle, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/library', label: 'ספרייה', icon: Book, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/users', label: 'משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },

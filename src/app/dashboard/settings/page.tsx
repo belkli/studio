@@ -6,10 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import Link from 'next/link';
 
 export default function SettingsPage() {
     const { toast } = useToast();
-    const { user } = useAuth();
+    const { user, newFeaturesEnabled } = useAuth();
 
     if (!user) {
         return null;
@@ -24,6 +25,8 @@ export default function SettingsPage() {
         e.preventDefault();
         toast({ title: 'הסיסמה עודכנה', description: 'הסיסמה החדשה שלך נשמרה.' });
     }
+    
+    const isAdmin = user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
     return (
         <div className="space-y-6">
@@ -71,6 +74,20 @@ export default function SettingsPage() {
                     </form>
                 </CardContent>
             </Card>
+
+             {newFeaturesEnabled && isAdmin && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>הגדרות קונסרבטוריון</CardTitle>
+                        <CardDescription>נהל הגדרות גלובליות עבור המוסד שלך.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <Link href="/dashboard/settings/conservatorium">
+                            <Button variant="outline">עבור להגדרות מתקדמות</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            )}
 
             <Card>
                 <CardHeader>

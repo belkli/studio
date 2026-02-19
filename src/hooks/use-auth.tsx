@@ -1,15 +1,16 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { 
     mockUsers as initialUsers, 
     mockFormSubmissions as initialForms, 
-    conservatoriums, 
-    mockInvoices as initialInvoices,
-    mockPracticeLogs as initialPracticeLogs,
+    conservatoriums as initialConservatoriums, 
+    mockInvoices,
+    mockPracticeLogs,
     type User, 
     type FormSubmission,
+    type Conservatorium,
     type Invoice,
     type PracticeLog
 } from '@/lib/data';
@@ -34,6 +35,8 @@ interface AuthContextType {
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   newFeaturesEnabled: boolean;
+  conservatoriums: Conservatorium[];
+  updateConservatorium: (updatedConservatorium: Conservatorium) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,8 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [forms, setForms] = useState<FormSubmission[]>(initialForms);
-  const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
-  const [practiceLogs, setPracticeLogs] = useState<PracticeLog[]>(initialPracticeLogs);
+  const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialConservatoriums);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -133,13 +135,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   };
   
-  const newFeaturesEnabled = useMemo(() => {
+  const newFeaturesEnabled = React.useMemo(() => {
     if (!user) return false;
     const userConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
     return userConservatorium?.newFeaturesEnabled ?? false;
-  }, [user]);
+  }, [user, conservatoriums]);
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled, mockInvoices: invoices, mockPracticeLogs: practiceLogs };
+  const updateConservatorium = (updatedConservatorium: Conservatorium) => {
+    setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
+  }
+
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled, mockInvoices, mockPracticeLogs, conservatoriums, updateConservatorium };
 
   return (
     <AuthContext.Provider value={value}>
