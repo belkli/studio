@@ -1,4 +1,4 @@
-{// @ts-nocheck
+// @ts-nocheck
 'use client';
 
 import { mockUsers, conservatoriums, examLevels, examTypes } from '@/lib/data';
