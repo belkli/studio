@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { FormSubmission, FormStatus } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -21,11 +21,10 @@ export default function MinistryExportPage() {
 
   const formsForExport = useMemo(() => {
     if (!user) return [];
-    // Only show approved recital forms for the admin's conservatorium
     return mockFormSubmissions.filter(form => 
         form.conservatoriumId === user.conservatoriumId &&
         exportableStatuses.includes(form.status) &&
-        (form.formType === 'רסיטל בגרות' || form.formType === 'EXAM_REGISTRATION') // Future proofing
+        (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה')
     );
   }, [user, mockFormSubmissions]);
 
@@ -54,36 +53,47 @@ export default function MinistryExportPage() {
     const selectedForms = formsForExport.filter(f => selectedRows.includes(f.id));
     
     // Simulate CSV generation
-    const headers = ["Form ID", "Student Name", "Student ID", "Instrument", "Teacher", "Total Duration"];
+    const headers = [
+        "Form ID", "Form Type", "Student Name", "Student ID", 
+        "Instrument", "Teacher", "Total Duration", "Grade", 
+        "Exam Level", "Exam Type"
+    ];
+    
     const rows = selectedForms.map(form => {
         const student = users.find(u => u.id === form.studentId);
         return [
             form.id,
+            form.formType,
             form.studentName,
             student?.idNumber || '',
-            form.instrumentDetails?.instrument || '',
+            form.instrumentDetails?.instrument || form.instrument || '',
             form.teacherDetails?.name || '',
-            form.totalDuration
+            form.totalDuration,
+            form.grade || '',
+            form.examLevel || '',
+            form.examType || '',
         ].join(',');
     });
 
     const csvContent = [headers.join(','), ...rows].join('\n');
-    console.log("--- GENERATED CSV ---");
-    console.log(csvContent);
-    console.log("---------------------");
+    
+    // This part simulates a file download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `ministry_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
     toast({
-        title: "ייצוא לקובץ התחיל",
-        description: `מייצא ${selectedRows.length} טפסים לקובץ CSV.`
+        title: "ייצוא לקובץ הושלם",
+        description: `${selectedRows.length} טפסים יוצאו לקובץ CSV.`
     });
-
-    // In a real app, this would trigger a file download.
-    setTimeout(() => {
-        toast({
-            title: "הייצוא הושלם",
-            description: "קובץ ה-CSV מוכן להורדה." 
-        });
-    }, 1500);
   };
 
 
@@ -100,13 +110,13 @@ export default function MinistryExportPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">ייצוא טפסים למשרד החינוך</h1>
-        <p className="text-muted-foreground">בחר את טפסי הרסיטל המאושרים שברצונך לייצא ולהגיש למשרד החינוך.</p>
+        <p className="text-muted-foreground">בחר את הטפסים המאושרים שברצונך לייצא ולהגיש למשרד החינוך.</p>
       </div>
       
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>טפסי בגרות מאושרים</CardTitle>
+            <CardTitle>טפסים מאושרים המוכנים לייצוא</CardTitle>
             <Button onClick={handleExport} disabled={selectedRows.length === 0}>
                 <Download className="ms-2 h-4 w-4" />
                 ייצא נבחרים ({selectedRows.length})
@@ -125,8 +135,9 @@ export default function MinistryExportPage() {
                         />
                     </TableHead>
                     <TableHead>שם התלמיד/ה</TableHead>
+                    <TableHead>סוג טופס</TableHead>
                     <TableHead>ת.ז.</TableHead>
-                    <TableHead>כיתה</TableHead>
+                    <TableHead>כיתה/רמה</TableHead>
                     <TableHead>סטטוס</TableHead>
                     <TableHead>תאריך אישור</TableHead>
                     <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
@@ -145,8 +156,9 @@ export default function MinistryExportPage() {
                              />
                         </TableCell>
                         <TableCell className="font-medium">{form.studentName}</TableCell>
+                        <TableCell>{form.formType}</TableCell>
                         <TableCell>{student?.idNumber || '-'}</TableCell>
-                        <TableCell>{form.grade || '-'}</TableCell>
+                        <TableCell>{form.grade || form.examLevel || '-'}</TableCell>
                         <TableCell>
                             <StatusBadge status={form.status} />
                         </TableCell>
@@ -159,7 +171,7 @@ export default function MinistryExportPage() {
                     </TableRow>
                 )}) : (
                     <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground p-8">לא נמצאו טפסים מאושרים לייצוא.</TableCell>
+                        <TableCell colSpan={8} className="text-center text-muted-foreground p-8">לא נמצאו טפסים מאושרים לייצוא.</TableCell>
                     </TableRow>
                 )}
             </TableBody>
