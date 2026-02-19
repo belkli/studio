@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { mockUsers as initialUsers, type User } from '@/lib/data';
+import { mockUsers as initialUsers, mockFormSubmissions as initialForms, type User, type FormSubmission } from '@/lib/data';
 
 interface LoginResult {
   user: User | null;
@@ -18,6 +18,8 @@ interface AuthContextType {
   approveUser: (userId: string) => void;
   rejectUser: (userId: string, reason: string) => void;
   updateUser: (updatedUser: User) => void;
+  mockFormSubmissions: FormSubmission[];
+  updateForm: (updatedForm: FormSubmission) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(initialUsers);
+  const [forms, setForms] = useState<FormSubmission[]>(initialForms);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -95,8 +98,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(updatedUser);
     }
   };
+  
+  const updateForm = (updatedForm: FormSubmission) => {
+    setForms(prevForms =>
+      prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f))
+    );
+  };
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, mockFormSubmissions: forms, updateForm };
 
   return (
     <AuthContext.Provider value={value}>

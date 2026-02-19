@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { schools, instruments, genres } from '@/lib/data';
-import type { User, Composition } from '@/lib/types';
+import type { User, Composition, FormSubmission } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
@@ -70,7 +70,10 @@ type FormData = z.infer<typeof formSchema>;
 interface RecitalFormProps {
     user: User;
     student: User;
-    onSubmit: (data: FormData) => void;
+    onSubmit: (data: Partial<FormSubmission>) => void;
+    initialData?: FormSubmission;
+    isEditing?: boolean;
+    onCancel?: () => void;
 }
 
 const durationGuidelines = {
@@ -257,37 +260,58 @@ const RepertoireItem = ({ index, remove, fields }) => {
 }
 
 
-export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
+export function RecitalForm({ user, student, onSubmit, initialData, isEditing = false, onCancel }: RecitalFormProps) {
   const { toast } = useToast();
 
-  const defaultValues = useMemo(() => ({
-    formType: 'רסיטל בגרות',
-    academicYear: getHebrewAcademicYear(),
-    grade: student?.grade || 'יב',
-    conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
-    studentName: student?.name || '',
-    idNumber: student?.idNumber || '',
-    birthDate: student?.birthDate || '',
-    gender: student?.gender || 'זכר',
-    city: student?.city || '',
-    phone: student?.phone || '',
-    email: student?.email || '',
-    schoolName: student?.schoolName || '',
-    hasMusicMajor: 'לא',
-    isMajorParticipant: 'לא',
-    plansTheoryExam: 'לא',
-    instrument: student?.instruments?.[0]?.instrument || '',
-    yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
-    teacherName: student?.instruments?.[0]?.teacherName || '',
-    yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
-    repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-    managerNotes: '',
-  }), [user, student]);
+  const defaultValues = useMemo(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        idNumber: student.idNumber,
+        teacherName: initialData.teacherDetails?.name,
+        yearsWithTeacher: initialData.teacherDetails?.yearsWithTeacher,
+        instrument: initialData.instrumentDetails?.instrument,
+        yearsOfStudy: initialData.instrumentDetails?.yearsOfStudy,
+        schoolName: initialData.schoolDetails?.schoolName,
+        hasMusicMajor: initialData.schoolDetails?.hasMusicMajor ? 'כן' : 'לא',
+        isMajorParticipant: initialData.schoolDetails?.isMajorParticipant ? 'כן' : 'לא',
+        plansTheoryExam: initialData.schoolDetails?.plansTheoryExam ? 'כן' : 'לא',
+      }
+    }
+    return {
+      formType: 'רסיטל בגרות',
+      academicYear: getHebrewAcademicYear(),
+      grade: student?.grade || 'יב',
+      conservatoriumName: student?.conservatoriumName || user.conservatoriumName,
+      studentName: student?.name || '',
+      idNumber: student?.idNumber || '',
+      birthDate: student?.birthDate || '',
+      gender: student?.gender || 'זכר',
+      city: student?.city || '',
+      phone: student?.phone || '',
+      email: student?.email || '',
+      schoolName: student?.schoolName || '',
+      hasMusicMajor: 'לא',
+      isMajorParticipant: 'לא',
+      plansTheoryExam: 'לא',
+      instrument: student?.instruments?.[0]?.instrument || '',
+      yearsOfStudy: student?.instruments?.[0]?.yearsOfStudy || 0,
+      teacherName: student?.instruments?.[0]?.teacherName || '',
+      yearsWithTeacher: student?.instruments?.[0]?.yearsOfStudy || 0,
+      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+      managerNotes: '',
+    }
+  }, [user, student, initialData]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
+
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -298,6 +322,33 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   const { isDirty } = form.formState;
   const [saveState, setSaveState] = React.useState<SaveState>('idle');
   const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
+  
+  const handleFormSubmit = (data: FormData) => {
+    const submissionData: Partial<FormSubmission> = {
+      ...data,
+      applicantDetails: {
+        birthDate: data.birthDate,
+        city: data.city,
+        gender: data.gender,
+        phone: data.phone,
+      },
+      schoolDetails: {
+        schoolName: data.schoolName,
+        hasMusicMajor: data.hasMusicMajor === 'כן',
+        isMajorParticipant: data.isMajorParticipant === 'כן',
+        plansTheoryExam: data.plansTheoryExam === 'כן',
+      },
+      teacherDetails: {
+        name: data.teacherName,
+        yearsWithTeacher: data.yearsWithTeacher,
+      },
+      instrumentDetails: {
+        instrument: data.instrument,
+        yearsOfStudy: data.yearsOfStudy,
+      },
+    };
+    onSubmit(submissionData);
+  };
 
   const handleSaveDraft = () => {
     setSaveState('saving');
@@ -340,17 +391,17 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
   }, [grade, totalDuration]);
 
 
-  const areDetailsLocked = true;
+  const areDetailsLocked = !isEditing && !initialData;
 
   return (
     <FormProvider {...form}>
-       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8" key={student.id}>
-        <SaveStatusBar 
+       <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 mt-8" key={student.id}>
+        {!isEditing && <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
             lastSaved={lastSaved}
             onSave={handleSaveDraft}
-        />
+        />}
         
         <Card>
           <CardHeader>
@@ -544,9 +595,14 @@ export function RecitalForm({ user, student, onSubmit }: RecitalFormProps) {
         </Card>
 
         <div className="flex justify-end gap-4">
+             {isEditing && onCancel && (
+                <Button type="button" variant="ghost" onClick={onCancel}>
+                    ביטול
+                </Button>
+            )}
             <Button type="submit">
                 <Send className="me-2 h-4 w-4" />
-                הגש לאישור
+                {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
             </Button>
         </div>
       </form>

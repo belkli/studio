@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import type { User, Composition } from '@/lib/types';
+import type { User, Composition, FormSubmission } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
@@ -61,7 +61,10 @@ type FormData = z.infer<typeof formSchema>;
 
 interface KenesFormProps {
     user: User;
-    onSubmit: (data: FormData) => void;
+    onSubmit: (data: Partial<FormSubmission>) => void;
+    initialData?: FormSubmission;
+    isEditing?: boolean;
+    onCancel?: () => void;
 }
 
 const formatDurationOnBlur = (value: string): string => {
@@ -240,10 +243,10 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
 }
 
 
-export function KenesForm({ user, onSubmit }: KenesFormProps) {
+export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCancel }: KenesFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
       repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
       conservatoriumName: user.conservatoriumName,
@@ -319,12 +322,12 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
-        <SaveStatusBar 
+        {!isEditing && <SaveStatusBar 
             isDirty={isDirty}
             saveState={saveState}
             lastSaved={lastSaved}
             onSave={handleSaveDraft}
-        />
+        />}
 
         <Card>
           <CardHeader>
@@ -443,9 +446,14 @@ export function KenesForm({ user, onSubmit }: KenesFormProps) {
         </Card>
 
         <div className="flex justify-end gap-4">
+             {isEditing && onCancel && (
+                <Button type="button" variant="ghost" onClick={onCancel}>
+                    ביטול
+                </Button>
+            )}
             <Button type="submit">
                 <Send className="me-2 h-4 w-4" />
-                הגש לאישור
+                {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
             </Button>
         </div>
       </form>

@@ -8,17 +8,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash, Download, CircleCheckBig, ShieldAlert } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft, Signature, Trash, Download, CircleCheckBig, ShieldAlert, Edit } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Separator } from '@/components/ui/separator';
+import { RecitalForm } from '@/components/forms/recital-form';
+import { KenesForm } from '@/components/forms/kenes-form';
+import type { FormSubmission } from '@/lib/types';
+
 
 const DetailsCard = ({ title, children, columns = 4 }: { title: string, children: React.ReactNode, columns?: number }) => (
     <Card>
@@ -41,9 +45,11 @@ export default function FormDetailsPage() {
     const params = useParams();
     const formId = params.id;
     const { toast } = useToast();
-    const { user } = useAuth();
-    const form = mockFormSubmissions.find(f => f.id === formId);
+    const { user, mockFormSubmissions: forms, updateForm } = useAuth();
     
+    const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
+    
+    const [isEditing, setIsEditing] = useState(false);
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
     const [isMinistryRejectionDialogOpen, setMinistryRejectionDialogOpen] = useState(false);
     const [ministryRejectionReason, setMinistryRejectionReason] = useState("");
@@ -62,6 +68,8 @@ export default function FormDetailsPage() {
     const isTeacherApproval = user.role === 'teacher' && form.status === 'ממתין לאישור מורה';
     const isAdminFinalApproval = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל';
     const isMinistryApproval = user.role === 'ministry_director' && form.status === 'מאושר';
+    const isRevisable = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'נדרש תיקון';
+
 
     const generatePdf = (form) => {
         const doc = new jsPDF();
@@ -98,7 +106,7 @@ export default function FormDetailsPage() {
                 [rtl(form.studentName), rtl('שם מלא')],
                 [formUser?.idNumber, rtl('ת.ז.')],
                 [form.applicantDetails?.birthDate, rtl('תאריך לידה')],
-                [form.applicantDetails?.city, rtl('עיר מגורים')],
+                [rtl(form.applicantDetails?.city), rtl('עיר מגורים')],
                 [form.applicantDetails?.phone, rtl('טלפון')],
                 [formUser?.email, rtl('דוא"ל')],
              ]);
@@ -136,14 +144,20 @@ export default function FormDetailsPage() {
 
 
     const handleTeacherApprove = () => {
+        const updatedForm = { ...form, status: 'ממתין לאישור מנהל' };
+        updateForm(updatedForm);
         toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
     }
     
     const handleTeacherReject = () => {
+        const updatedForm = { ...form, status: 'נדחה' };
+        updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
     
     const handleAdminReject = () => {
+        const updatedForm = { ...form, status: 'נדחה' };
+        updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
 
@@ -157,24 +171,49 @@ export default function FormDetailsPage() {
             return;
         }
         const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
-        console.log('Signature Data URL:', signatureDataUrl); // Simulate saving the signature
+        const updatedForm = { ...form, status: 'מאושר', signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
+        updateForm(updatedForm);
         
         toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
         setSignatureDialogOpen(false);
     }
     
     const handleMinistryFinalApprove = () => {
+        const updatedForm = { ...form, status: 'מאושר סופית' };
+        updateForm(updatedForm);
         toast({ title: "הטופס אושר סופית", description: `הטופס של ${form.studentName} אושר סופית על ידי משרד החינוך.` });
-        // Here you would update the form status in your state/backend
     }
 
     const handleMinistryRequestChanges = () => {
+        const updatedForm = { ...form, status: 'נדרש תיקון', ministryComment: ministryRejectionReason };
+        updateForm(updatedForm);
         setMinistryRejectionDialogOpen(false);
         toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
         setMinistryRejectionReason("");
-        // Here you would update the form status and add the comment
     }
     
+    const handleResubmit = (data: Partial<FormSubmission>) => {
+        const totalDuration = (data.repertoire || []).reduce((total, item) => {
+            if (!item?.duration) return total;
+            const [minutes, seconds] = item.duration.split(':').map(Number);
+            if(isNaN(minutes) || isNaN(seconds)) return total;
+            return total + (minutes * 60) + seconds;
+        }, 0);
+
+        const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
+
+        const updatedForm = { 
+            ...form, 
+            ...data, 
+            totalDuration: totalDurationFormatted,
+            status: 'מאושר', // Send back for ministry approval
+            ministryComment: undefined,
+        };
+        updateForm(updatedForm);
+        toast({ title: 'הטופס עודכן ונשלח מחדש לאישור.' });
+        setIsEditing(false);
+    };
+
     const clearSignature = () => {
         sigPadRef.current?.clear();
     }
@@ -277,6 +316,12 @@ export default function FormDetailsPage() {
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">
+                  {isRevisable && (
+                    <Button onClick={() => setIsEditing(true)}>
+                      <Edit className="ms-2 h-4 w-4" />
+                      תקן ושלח מחדש
+                    </Button>
+                  )}
                   {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
                     <Button onClick={() => generatePdf(form)} variant="outline">
                         <Download className="ms-2 h-4 w-4" />
@@ -286,123 +331,147 @@ export default function FormDetailsPage() {
                   <StatusBadge status={form.status} />
                 </div>
             </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>{form.formType}</CardTitle>
-                    <CardDescription>
-                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} • כיתה: {form.grade} • הוגש ב-{form.submissionDate}
-                    </CardDescription>
-                </CardHeader>
-            </Card>
             
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
 
-                    {form.formType === 'רסיטל בגרות' && (
+                    {isEditing ? (
+                         <div className="space-y-6">
+                            {form.formType === 'רסיטל בגרות' && formUser && (
+                                <RecitalForm
+                                    user={user}
+                                    student={formUser}
+                                    initialData={form}
+                                    onSubmit={handleResubmit}
+                                    isEditing={true}
+                                    onCancel={() => setIsEditing(false)}
+                                />
+                            )}
+                            {form.formType === 'כנס / אירוע' && (
+                                <KenesForm
+                                    user={user}
+                                    initialData={form}
+                                    onSubmit={handleResubmit}
+                                    isEditing={true}
+                                    onCancel={() => setIsEditing(false)}
+                                />
+                            )}
+                         </div>
+                    ) : (
                         <>
-                            <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
-                                <DetailItem label="שם מלא" value={form.studentName} />
-                                <DetailItem label="ת.ז." value={formUser?.idNumber} />
-                                <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
-                                <DetailItem label="מין" value={form.applicantDetails?.gender} />
-                                <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
-                                <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
-                                <DetailItem label="אימייל" value={formUser?.email} />
-                            </DetailsCard>
-                             <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
-                                <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
-                                <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
-                                <DetailItem label="האם משתתף/ת במגמה?" value={form.schoolDetails?.isMajorParticipant ? "כן" : "לא"} />
-                             </DetailsCard>
-                            <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
-                                <div className="space-y-4 rounded-lg bg-muted/30 p-4">
-                                    <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
-                                     <DetailItem label="כלי נגינה / שירה" value={formUser?.instruments?.[0]?.instrument} />
-                                     <DetailItem label="סך שנות לימוד בכלי" value={formUser?.instruments?.[0]?.yearsOfStudy} />
-                                </div>
-                                 <div className="space-y-4 rounded-lg bg-muted/30 p-4">
-                                     <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
-                                    <DetailItem label="שם המורה" value={form.teacherDetails?.name} />
-                                    <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
-                                </div>
-                            </DetailsCard>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{form.formType}</CardTitle>
+                                    <CardDescription>
+                                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} • כיתה: {form.grade} • הוגש ב-{form.submissionDate}
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                            {form.formType === 'רסיטל בגרות' && (
+                                <>
+                                    <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
+                                        <DetailItem label="שם מלא" value={form.studentName} />
+                                        <DetailItem label="ת.ז." value={formUser?.idNumber} />
+                                        <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
+                                        <DetailItem label="מין" value={form.applicantDetails?.gender} />
+                                        <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
+                                        <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
+                                        <DetailItem label="אימייל" value={formUser?.email} />
+                                    </DetailsCard>
+                                     <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
+                                        <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
+                                        <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
+                                        <DetailItem label="האם משתתף/ת במגמה?" value={form.schoolDetails?.isMajorParticipant ? "כן" : "לא"} />
+                                     </DetailsCard>
+                                    <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
+                                        <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                                            <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
+                                             <DetailItem label="כלי נגינה / שירה" value={formUser?.instruments?.[0]?.instrument} />
+                                             <DetailItem label="סך שנות לימוד בכלי" value={formUser?.instruments?.[0]?.yearsOfStudy} />
+                                        </div>
+                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                                             <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
+                                            <DetailItem label="שם המורה" value={form.teacherDetails?.name} />
+                                            <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
+                                        </div>
+                                    </DetailsCard>
+                                </>
+                            )}
+                            
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>תוכנית לביצוע</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                     <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>מלחין</TableHead>
+                                                <TableHead>שם היצירה</TableHead>
+                                                <TableHead>ז'אנר</TableHead>
+                                                <TableHead className="text-center">משך</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {form.repertoire.map((piece, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell>{piece.composer}</TableCell>
+                                                    <TableCell>{piece.title}</TableCell>
+                                                    <TableCell>{piece.genre}</TableCell>
+                                                    <TableCell className="text-center">{piece.duration}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                                <Separator />
+                                <CardFooter className="justify-end font-bold text-lg pt-6">
+                                    <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
+                                </CardFooter>
+                            </Card>
+
+                            {isTeacherApproval && (
+                                 <Card>
+                                    <CardHeader>
+                                        <CardTitle>פעולות (מורה)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <Textarea placeholder="הוסף הערה (אופציונלי)..." />
+                                        <div className="flex gap-4">
+                                            <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור והעברה למנהל</Button>
+                                            <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+        
+                            {isAdminFinalApproval && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>פעולות (מנהל)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <Textarea placeholder="הוסף הערה (אופציונלי)..." />
+                                        <div className="flex gap-4">
+                                            <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור וחתימה</Button>
+                                            <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+        
+                            {isMinistryApproval && (
+                                 <Card>
+                                    <CardHeader>
+                                        <CardTitle>פעולות (משרד החינוך)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="flex gap-4">
+                                        <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> אישור סופי</Button>
+                                        <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> דרישה לתיקונים</Button>
+                                    </CardContent>
+                                </Card>
+                            )}
                         </>
-                    )}
-
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>תוכנית לביצוע</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                             <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>מלחין</TableHead>
-                                        <TableHead>שם היצירה</TableHead>
-                                        <TableHead>ז'אנר</TableHead>
-                                        <TableHead className="text-center">משך</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {form.repertoire.map((piece, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{piece.composer}</TableCell>
-                                            <TableCell>{piece.title}</TableCell>
-                                            <TableCell>{piece.genre}</TableCell>
-                                            <TableCell className="text-center">{piece.duration}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                        <Separator />
-                        <CardFooter className="justify-end font-bold text-lg pt-6">
-                            <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
-                        </CardFooter>
-                    </Card>
-
-                    {isTeacherApproval && (
-                         <Card>
-                            <CardHeader>
-                                <CardTitle>פעולות (מורה)</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <Textarea placeholder="הוסף הערה (אופציונלי)..." />
-                                <div className="flex gap-4">
-                                    <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור והעברה למנהל</Button>
-                                    <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {isAdminFinalApproval && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>פעולות (מנהל)</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <Textarea placeholder="הוסף הערה (אופציונלי)..." />
-                                <div className="flex gap-4">
-                                    <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור וחתימה</Button>
-                                    <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {isMinistryApproval && (
-                         <Card>
-                            <CardHeader>
-                                <CardTitle>פעולות (משרד החינוך)</CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex gap-4">
-                                <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> אישור סופי</Button>
-                                <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> דרישה לתיקונים</Button>
-                            </CardContent>
-                        </Card>
                     )}
                 </div>
 
