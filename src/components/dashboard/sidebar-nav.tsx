@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -51,6 +51,7 @@ const harmoniaLinks = [
     { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent', 'teacher'] },
     { href: '/dashboard/makeups', label: 'שיעורי השלמה', icon: Coins, roles: ['student', 'parent'] },
     { href: '/dashboard/notifications', label: 'התראות', icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/notifications/log', label: 'יומן התראות', icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin'] },

@@ -445,3 +445,15 @@ export type FormTemplate = {
   workflow: WorkflowStepDefinition[];
   createdAt: string; // ISO Timestamp
 };
+
+export type AuditLogEntry = {
+  id: string;
+  notificationId: string;
+  userId: string;
+  channel: Channel;
+  status: 'SENT' | 'DELIVERED' | 'FAILED' | 'OPTED_OUT';
+  sentAt: string; // ISO Timestamp
+  title: string;
+  body: string;
+  errorMessage?: string;
+}

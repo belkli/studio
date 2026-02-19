@@ -19,6 +19,7 @@ import {
     compositions as initialCompositions,
     mockWaitlist as initialWaitlist,
     mockFormTemplates as initialFormTemplates,
+    mockAuditLog as initialAuditLog,
     type User, 
     type FormSubmission,
     type Notification,
@@ -43,6 +44,9 @@ import {
     type WaitlistStatus,
     type FormTemplate,
     type NotificationPreferences,
+    type SlotStatus,
+    type AuditLogEntry,
+    type Channel,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
@@ -102,6 +106,7 @@ interface AuthContextType {
   mockFormTemplates: FormTemplate[];
   addFormTemplate: (template: Partial<FormTemplate>) => void;
   updateNotificationPreferences: (preferences: NotificationPreferences) => void;
+  mockAuditLog: AuditLogEntry[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -122,9 +127,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [payrolls, setPayrolls] = useState<PayrollSummary[]>([]);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(initialWaitlist);
   const [formTemplates, setFormTemplates] = useState<FormTemplate[]>(initialFormTemplates);
+  const [auditLog, setAuditLog] = useState<AuditLogEntry[]>(initialAuditLog);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+
+  const addNotificationAndLog = useCallback((userId: string, title: string, message: string, link: string) => {
+    // This is a mock function. In a real app, this would be a complex backend service.
+    const userToNotify = users.find(u => u.id === userId);
+    if (!userToNotify) return;
+
+    // Simulate checking user preferences - for now, always send IN_APP
+    const channelsToSend: Channel[] = ['IN_APP']; // Mock: always send in-app
+
+    const notificationId = `notif-${Date.now()}`;
+    
+    // 1. Add notification to user's list if IN_APP is a preferred channel
+    if (channelsToSend.includes('IN_APP')) {
+        const newNotification: Notification = {
+          id: notificationId,
+          title,
+          message,
+          link,
+          read: false,
+          timestamp: new Date().toISOString(),
+        };
+
+        setUsers(prevUsers => prevUsers.map(u => 
+            u.id === userId
+                ? { ...u, notifications: [newNotification, ...(u.notifications || [])]}
+                : u
+        ));
+        if (user?.id === userId) {
+            setUser(prev => prev ? { ...prev, notifications: [newNotification, ...(prev.notifications || [])]} : null);
+        }
+    }
+    
+    // 2. Add entries to the audit log for each channel
+    channelsToSend.forEach(channel => {
+        const newLogEntry: AuditLogEntry = {
+            id: `log-${channel}-${Date.now()}`,
+            notificationId,
+            userId,
+            channel,
+            status: 'DELIVERED', // Mock status
+            sentAt: new Date().toISOString(),
+            title,
+            body: message,
+        };
+        setAuditLog(prev => [newLogEntry, ...prev]);
+    });
+
+  }, [users, user?.id]);
 
   useEffect(() => {
     const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
@@ -262,12 +316,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const updateForm = (updatedForm: FormSubmission) => {
     const formIndex = forms.findIndex(f => f.id === updatedForm.id);
-    if (formIndex > -1) {
-      setForms(prevForms =>
-        prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f))
-      );
+    const isNew = formIndex === -1;
+    
+    if (isNew) {
+      setForms(prevForms => [updatedForm, ...prevForms]);
     } else {
-        setForms(prevForms => [updatedForm, ...prevForms]);
+      setForms(prevForms => prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f)));
+    }
+    
+    // NOTIFICATION LOGIC
+    if (isNew) {
+      // Find approver and notify them
+      if (updatedForm.status === 'ממתין לאישור מורה') {
+        const student = users.find(u => u.id === updatedForm.studentId);
+        const teacher = users.find(u => u.name === student?.instruments?.[0]?.teacherName);
+        if (teacher) {
+          addNotificationAndLog(teacher.id, 'טופס חדש ממתין לאישורך', `התלמיד/ה ${updatedForm.studentName} הגיש/ה טופס.`, `/dashboard/approvals`);
+        }
+      }
+    } else {
+      // Notify submitter of status change
+      const student = users.find(u => u.id === updatedForm.studentId);
+      if (!student) return;
+      const userToNotifyId = student.parentId || student.id;
+      addNotificationAndLog(userToNotifyId, `סטטוס טופס עודכן: ${updatedForm.formType}`, `הסטטוס של הטופס שונה ל: ${updatedForm.status}.`, `/dashboard/forms/${updatedForm.id}`);
     }
   };
   
@@ -405,6 +477,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     updatedAt: new Date().toISOString()
                 };
                 affectedLessons.push(updatedLesson);
+                
+                // NOTIFICATION LOGIC
+                const student = users.find(u => u.id === lesson.studentId);
+                if (student) {
+                    const notifyUser = users.find(u => u.id === student.parentId) || student;
+                    const teacher = users.find(u => u.id === teacherId);
+                    addNotificationAndLog(
+                        notifyUser.id,
+                        'שיעור בוטל עקב מחלת מורה',
+                        `השיעור של ${student.name} עם ${teacher?.name} בוטל. יתרת שיעורי ההשלמה עודכנה.`,
+                        '/dashboard/makeups'
+                    );
+                }
+                
                 return updatedLesson;
             }
             return lesson;
@@ -412,7 +498,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return updatedLessons;
     });
     return affectedLessons;
-  }, []);
+  }, [addNotificationAndLog, users]);
 
   const assignSubstitute = (lessonId: string, newTeacherId: string) => {
     setLessons(prevLessons => prevLessons.map(lesson => 
@@ -607,6 +693,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockFormTemplates: formTemplates,
       addFormTemplate,
       updateNotificationPreferences,
+      mockAuditLog: auditLog,
   };
 
   return (
