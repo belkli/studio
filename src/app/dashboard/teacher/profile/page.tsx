@@ -1,4 +1,3 @@
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { TeacherProfileEditor } from "@/components/dashboard/harmonia/teacher-profile-editor";
 
 export default function TeacherProfilePage() {
