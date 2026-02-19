@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { getTeacherMatches } from "@/app/actions";
+import type { MatchTeacherOutput } from "@/ai/flows/match-teacher-flow";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -16,13 +18,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, School, ShieldCheck, HeartHandshake, Package as PackageIcon } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2 } from "lucide-react";
 import { Combobox } from "../ui/combobox";
-import { Stepper, Step } from "@/components/ui/stepper";
+import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
 import { conservatoriums, instruments, schools, mockPackages, mockTeachers } from "@/lib/data";
 import type { StudentGoal, DayOfWeek, TimeRange } from "@/lib/types";
 import { Checkbox } from "../ui/checkbox";
+import { TeacherMatchCard } from "./teacher-match-card";
+
 
 const parentSchema = z.object({
   parentFirstName: z.string().min(2, "שם פרטי חייב להכיל לפחות 2 תווים."),
@@ -59,19 +64,18 @@ const formSchema = z.object({
   password: z.string().min(8, "סיסמה חייבת להכיל לפחות 8 תווים."),
   conservatorium: z.string({ required_error: "חובה לבחור קונסרבטוריון." }).min(1, "חובה לבחור קונסרבטוריון."),
   
-  // Musical Profile
   instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
   level: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Exam Candidate']),
   previousExperience: z.string().optional(),
   goals: z.array(z.string()).optional(),
   lessonDuration: z.coerce.number().optional(),
 
-  // Schedule Preferences
   availableDays: z.array(z.string()).optional(),
   availableTimes: z.array(z.string()).optional(),
   isVirtualOk: z.enum(['yes', 'no', 'only']).optional(),
+  
+  teacherId: z.string().optional(),
 
-  // Package
   packageId: z.string().min(1, "חובה לבחור חבילה."),
 
 }).superRefine((data, ctx) => {
@@ -93,6 +97,8 @@ const steps = [
   { id: 'role', title: 'סוג הרשמה', icon: UserIcon },
   { id: 'details', title: 'פרטים אישיים', icon: Contact },
   { id: 'musical', title: 'פרופיל מוזיקלי', icon: Music },
+  { id: 'schedule', title: 'העדפות מערכת', icon: Calendar },
+  { id: 'matching', title: 'התאמת מורה', icon: HeartHandshake },
   { id: 'package', title: 'בחירת חבילה', icon: PackageIcon },
   { id: 'summary', title: 'סיכום ואישור', icon: ShieldCheck },
 ];
@@ -115,6 +121,8 @@ const timeOptions: {id: TimeRange; label: string}[] = [
 export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolean }) {
   const [step, setStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [teacherMatches, setTeacherMatches] = useState<MatchTeacherOutput | null>(null);
+  const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const { addUser } = useAuth();
@@ -132,17 +140,59 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const registrationType = form.watch("registrationType");
   const currentStepId = steps[step].id;
 
+  const triggerTeacherMatching = async () => {
+        setIsMatchingLoading(true);
+        const formData = form.getValues();
+        const studentProfile = {
+            instrument: formData.instrument,
+            level: formData.level,
+            goals: formData.goals,
+            preferredDays: formData.availableDays,
+            preferredTimes: formData.availableTimes,
+            isVirtualOk: formData.isVirtualOk,
+            birthDate: formData.registrationType === 'self' ? formData.selfDetails?.birthDate! : formData.studentDetails?.childBirthDate!,
+        };
+
+        try {
+            const result = await getTeacherMatches({
+                studentProfile,
+                availableTeachers: mockTeachers.map(t => ({
+                    id: t.id!,
+                    name: t.name!,
+                    bio: t.bio,
+                    specialties: t.specialties as string[],
+                    teachingLanguages: t.teachingLanguages as string[],
+                }))
+            });
+            setTeacherMatches(result);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'שגיאה בהתאמת מורה', description: 'אירעה שגיאה בעת ניסיון התאמת המורה. אנא נסה שוב.' });
+        } finally {
+            setIsMatchingLoading(false);
+        }
+    };
+    
+   useEffect(() => {
+        if (currentStepId === 'matching' && !teacherMatches) {
+            triggerTeacherMatching();
+        }
+    }, [currentStepId, teacherMatches]);
+
+
   const processStep = async () => {
-    let fieldsToValidate: (keyof FormData)[] = [];
+    let fieldsToValidate: any[] = [];
     switch (currentStepId) {
         case 'role': fieldsToValidate = ['registrationType', 'conservatorium']; break;
         case 'details': fieldsToValidate = registrationType === 'parent' ? ['parentDetails', 'studentDetails', 'password'] : ['selfDetails', 'password']; break;
         case 'musical': fieldsToValidate = ['instrument', 'level', 'lessonDuration']; break;
+        case 'schedule': fieldsToValidate = ['availableDays', 'availableTimes', 'isVirtualOk']; break;
+        case 'matching': fieldsToValidate = ['teacherId']; break;
         case 'package': fieldsToValidate = ['packageId']; break;
         default: break;
     }
 
-    const isValid = await form.trigger(fieldsToValidate as any);
+    const isValid = await form.trigger(fieldsToValidate);
     if (!isValid) return;
 
     if (step < steps.length - 1) {
@@ -153,39 +203,8 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   };
 
   const onSubmit = (data: FormData) => {
-    let newUser: Partial<User> = {};
-    if (data.registrationType === 'self' && data.selfDetails) {
-        newUser = {
-            name: `${data.selfDetails.firstName} ${data.selfDetails.lastName}`,
-            email: data.selfDetails.email,
-            idNumber: data.selfDetails.idNumber,
-            phone: data.selfDetails.phone,
-            birthDate: data.selfDetails.birthDate,
-            role: 'student',
-            conservatoriumName: data.conservatorium,
-            conservatoriumId: conservatoriums.find(c => c.name === data.conservatorium)?.id,
-            grade: data.selfDetails.grade as any,
-            schoolName: data.selfDetails.schoolName,
-            instruments: [{ instrument: data.instrument, teacherName: '', yearsOfStudy: 0 }],
-        };
-    } else if (data.registrationType === 'parent' && data.parentDetails && data.studentDetails) {
-        // Here you would normally create two users (parent and child) and link them.
-        // For this mock, we'll just create the student.
-         newUser = {
-            name: `${data.studentDetails.childFirstName} ${data.studentDetails.childLastName}`,
-            email: data.parentDetails.parentEmail, // Child might not have email
-            role: 'student',
-            conservatoriumName: data.conservatorium,
-            conservatoriumId: conservatoriums.find(c => c.name === data.conservatorium)?.id,
-            birthDate: data.studentDetails.childBirthDate,
-            grade: data.studentDetails.childGrade as any,
-            schoolName: data.studentDetails.childSchoolName,
-            instruments: [{ instrument: data.instrument, teacherName: '', yearsOfStudy: 0 }],
-            parentId: 'parent-user-id-placeholder' // In real app, create parent and link ID
-        };
-    }
-
-    addUser(newUser);
+    // This would create the user(s) and enrollment record in a real app
+    console.log("Final form data:", data);
     setIsSubmitted(true);
     toast({
       title: "ההרשמה נשלחה בהצלחה!",
@@ -309,14 +328,14 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                     <div className="space-y-6">
                         <FormField name="instrument" render={({ field }) => ( <FormItem> <FormLabel>כלי נגינה</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר כלי נגינה" /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem> )} />
                         <FormField name="level" render={({ field }) => ( <FormItem> <FormLabel>רמה נוכחית</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר רמה" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Beginner">מתחיל/ה</SelectItem> <SelectItem value="Intermediate">ביניים</SelectItem> <SelectItem value="Advanced">מתקדם/ת</SelectItem> <SelectItem value="Exam Candidate">מועמד/ת לבחינה</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )} />
+                         <FormField name="previousExperience" render={({ field }) => ( <FormItem><FormLabel>ניסיון קודם (אופציונלי)</FormLabel><FormControl><Textarea placeholder="לדוגמה: 3 שנות פסנתר, ללא רקע בתיאוריה..." {...field} /></FormControl><FormMessage /></FormItem> )} />
                         <FormField name="goals" render={() => (
                              <FormItem>
-                                <div className="mb-4">
-                                    <FormLabel>מטרות ויעדים</FormLabel>
-                                </div>
+                                <div className="mb-4"> <FormLabel>מטרות ויעדים</FormLabel> </div>
+                                <div className="grid grid-cols-2 gap-4">
                                 {goalOptions.map((item) => (
                                     <FormField key={item.id} name="goals" render={({ field }) => (
-                                        <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-x-reverse space-y-0">
+                                        <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
                                             <FormControl>
                                                 <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
                                                     return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value) => value !== item.id))
@@ -326,13 +345,110 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                                         </FormItem>
                                     )} />
                                 ))}
+                                </div>
                                 <FormMessage />
                             </FormItem>
                         )}/>
                         <FormField name="lessonDuration" render={({ field }) => ( <FormItem> <FormLabel>אורך שיעור מועדף</FormLabel> <Select dir="rtl" onValueChange={(v) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder="בחר אורך שיעור" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">30 דקות</SelectItem> <SelectItem value="45">45 דקות</SelectItem> <SelectItem value="60">60 דקות</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )} />
                     </div>
                 )}
+
+                {currentStepId === 'schedule' && (
+                     <div className="space-y-6">
+                        <FormField name="availableDays" render={() => (
+                             <FormItem>
+                                <div className="mb-4"> <FormLabel>ימים פנויים</FormLabel> </div>
+                                <div className="grid grid-cols-3 gap-4">
+                                {dayOptions.map((item) => (
+                                    <FormField key={item.id} name="availableDays" render={({ field }) => (
+                                        <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
+                                            <FormControl>
+                                                <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
+                                                    return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value) => value !== item.id))
+                                                }} />
+                                            </FormControl>
+                                            <FormLabel className="font-normal">{item.label}</FormLabel>
+                                        </FormItem>
+                                    )} />
+                                ))}
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )}/>
+                         <FormField name="availableTimes" render={() => (
+                             <FormItem>
+                                <div className="mb-4"> <FormLabel>זמנים מועדפים</FormLabel> </div>
+                                <div className="grid grid-cols-3 gap-4">
+                                {timeOptions.map((item) => (
+                                    <FormField key={item.id} name="availableTimes" render={({ field }) => (
+                                        <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
+                                            <FormControl>
+                                                <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
+                                                    return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value) => value !== item.id))
+                                                }} />
+                                            </FormControl>
+                                            <FormLabel className="font-normal">{item.label}</FormLabel>
+                                        </FormItem>
+                                    )} />
+                                ))}
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )}/>
+                        <FormField name="isVirtualOk" control={form.control} render={({ field }) => (
+                          <FormItem className="space-y-3">
+                            <FormLabel>שיעורים וירטואליים</FormLabel>
+                            <FormControl>
+                              <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-2">
+                                <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                                  <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                  <FormLabel className="font-normal flex-1">כן, אפשרי</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                                  <FormControl><RadioGroupItem value="no" /></FormControl>
+                                  <FormLabel className="font-normal flex-1">לא, רק פרונטלי</FormLabel>
+                                </FormItem>
+                                 <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                                  <FormControl><RadioGroupItem value="only" /></FormControl>
+                                  <FormLabel className="font-normal flex-1">רק וירטואלי</FormLabel>
+                                </FormItem>
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                    </div>
+                )}
                 
+                {currentStepId === 'matching' && (
+                    <FormField name="teacherId" render={({ field }) => (
+                        <FormItem>
+                             <FormControl>
+                                <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                                    {isMatchingLoading && (
+                                        <div className="md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center text-muted-foreground p-8">
+                                            <Loader2 className="h-10 w-10 animate-spin mb-4" />
+                                            <p>ממליץ על המורים המתאימים ביותר עבורך...</p>
+                                        </div>
+                                    )}
+                                    {teacherMatches?.matches.map(match => {
+                                        const teacher = mockTeachers.find(t => t.id === match.teacherId);
+                                        if (!teacher) return null;
+                                        return (
+                                            <FormItem key={match.teacherId}>
+                                                 <FormControl>
+                                                    <TeacherMatchCard match={match} teacher={teacher} isSelected={field.value === match.teacherId} />
+                                                 </FormControl>
+                                            </FormItem>
+                                        )
+                                    })}
+                                </RadioGroup>
+                             </FormControl>
+                             <FormMessage className="pt-4" />
+                        </FormItem>
+                    )} />
+                )}
+
                 {currentStepId === 'package' && (
                     <div className="space-y-4">
                         <FormField name="packageId" control={form.control} render={({ field }) => (
@@ -384,6 +500,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                       )}
                        <p><strong>קונסרבטוריון:</strong> {form.getValues().conservatorium}</p>
                        <p><strong>כלי נגינה:</strong> {form.getValues().instrument}</p>
+                       <p><strong>מורה:</strong> {mockTeachers.find(t => t.id === form.getValues().teacherId)?.name || 'לא נבחר'}</p>
                        <p><strong>חבילה:</strong> {mockPackages.find(p => p.id === form.getValues().packageId)?.title}</p>
                     </div>
                   </div>
@@ -418,3 +535,5 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     </Card>
   );
 }
+
+    

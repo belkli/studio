@@ -54,10 +54,20 @@ export async function matchTeacher(input: MatchTeacherInput): Promise<MatchTeach
   return matchTeacherFlow(input);
 }
 
+function getAgeGroup(birthDate: string): 'Child' | 'Teen' | 'Adult' {
+    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+    if (age < 13) return 'Child';
+    if (age < 18) return 'Teen';
+    return 'Adult';
+}
+
 
 const matchPrompt = ai.definePrompt({
     name: 'teacherMatchPrompt',
-    input: { schema: MatchTeacherInputSchema },
+    input: { schema: z.object({
+        studentProfile: StudentProfileSchema.extend({ ageGroup: z.string() }),
+        availableTeachers: z.array(TeacherProfileSchema)
+    }) },
     output: { schema: MatchTeacherOutputSchema },
     prompt: `You are an expert AI assistant for a music conservatorium, specializing in matching students with the most suitable teachers. Your task is to analyze a student's profile and compare it against a list of available teachers to find the best possible matches.
 
@@ -66,9 +76,10 @@ Return the top 3 matches, scored from 0-100, with clear, concise reasons for eac
 STUDENT PROFILE:
 - Instrument: {{{studentProfile.instrument}}}
 - Current Level: {{{studentProfile.level}}}
+- Age Group: {{{studentProfile.ageGroup}}}
 - Goals: {{#if studentProfile.goals}}{{#each studentProfile.goals}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}Not specified{{/if}}
 - Availability: {{#if studentProfile.preferredDays}}{{#each studentProfile.preferredDays}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{#if studentProfile.preferredTimes}} during {{#each studentProfile.preferredTimes}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}{{else}}Flexible{{/if}}
-- Date of Birth: {{{studentProfile.birthDate}}}
+- Virtual Lessons: {{{studentProfile.isVirtualOk}}}
 
 AVAILABLE TEACHERS:
 \`\`\`json
@@ -77,11 +88,11 @@ AVAILABLE TEACHERS:
 
 SCORING CRITERIA (weights are suggestions, use your expert judgment):
 1.  **Specialty Alignment (40%):** How well do the teacher's specialties (e.g., 'EXAM_PREP', 'JAZZ', 'EARLY_CHILDHOOD') align with the student's stated goals? This is the most important factor.
-2.  **Level Appropriateness (30%):** Does the teacher have experience with the student's level (Beginner, Intermediate, Advanced)?
-3.  **Age Group Experience (20%):** Based on the student's date of birth, determine their age group (Child, Teen, Adult) and assess if the teacher's profile indicates experience with that group (e.g., 'EARLY_CHILDHOOD' for young children, 'BEGINNER_ADULTS' for adults).
+2.  **Age Group Experience (30%):** How suitable is the teacher for the student's age group? ('Child', 'Teen', 'Adult'). For example, 'EARLY_CHILDHOOD' is a strong match for a 'Child', while 'BEGINNER_ADULTS' is great for an 'Adult'.
+3.  **Level Appropriateness (20%):** Does the teacher have experience with the student's level (Beginner, Intermediate, Advanced)?
 4.  **Bio/General Impression (10%):** Does the teacher's bio suggest a teaching philosophy that would resonate with the student's goals (e.g., performance-focused vs. enjoyment-focused)?
 
-For each of the top 3 teachers, provide a score and a 'matchReasons' array containing 2-3 short, human-readable strings explaining WHY they are a good match. For example: "מתמחה בהכנה לבחינות", "מעולה עם מתחילים", "זמינה בשעות אחר הצהריים".
+For each of the top 3 teachers, provide a score and a 'matchReasons' array containing 2-3 short, human-readable strings explaining WHY they are a good match. The reasons should be in Hebrew. For example: "מתמחה בהכנה לבחינות", "מעולה עם ילדים", "מלמד/ת גם ג'אז ואימפרוביזציה".
 
 Sort the final list by score in descending order.
 `,
@@ -97,8 +108,17 @@ const matchTeacherFlow = ai.defineFlow(
   async (input) => {
     // In a real application, we would first do a hard filter based on availability, instrument, etc.
     // For this mock, we pass all available teachers to the LLM for scoring.
+    const ageGroup = getAgeGroup(input.studentProfile.birthDate);
     
-    const { output } = await matchPrompt(input);
+    const { output } = await matchPrompt({
+        ...input,
+        studentProfile: {
+            ...input.studentProfile,
+            ageGroup,
+        }
+    });
     return output!;
   }
 );
+
+    
