@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { LessonSlot, User, Room } from '@/lib/types';
+import { instruments } from '@/lib/data';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -46,7 +47,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 };
 
 export function MasterScheduleCalendar() {
-    const { user, users, mockLessons, mockRooms, instruments } = useAuth();
+    const { user, users, mockLessons, mockRooms } = useAuth();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
         teacherId: 'all',
