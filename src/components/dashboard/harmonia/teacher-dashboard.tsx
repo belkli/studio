@@ -62,11 +62,14 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
                     <Button variant="outline" size="sm" className="flex-1" asChild>
                        <Link href={`/dashboard/teacher/student/${student.id}`}>
                             <ArrowLeft className="ms-2 h-4 w-4" />
-                           צפה בפרופיל
+                           פרופיל מלא
                        </Link>
                     </Button>
-                    <Button variant="ghost" size="icon">
-                        <MessageSquare className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link href="/dashboard/messages" title="שלח הודעה">
+                            <MessageSquare className="h-4 w-4" />
+                            <span className="sr-only">שלח הודעה</span>
+                        </Link>
                     </Button>
                 </div>
             </CardContent>

@@ -319,6 +319,17 @@ export const mockLessonNotes: LessonNote[] = [
         isSharedWithStudent: true,
         isSharedWithParent: true,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString()
+    },
+    { 
+        id: 'note-2', 
+        lessonSlotId: 'lesson-1-past',
+        teacherId: 'teacher-user-1', 
+        studentId: 'student-user-1', 
+        summary: 'התקדמות יפה בנוקטורן של שופן. יש לעבוד על אצבוע מדויק יותר בתיבות 20-25.',
+        homeworkAssignments: ['לנגן את הנוקטורן 5 פעמים ברצף ללא טעויות', 'להאזין לביצוע של ארתור רובינשטיין'],
+        isSharedWithStudent: true,
+        isSharedWithParent: true,
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString()
     }
 ];
 
@@ -336,6 +347,14 @@ export const mockMessageThreads: MessageThread[] = [
         participants: ['teacher-user-1', 'student-user-2'],
         messages: [
             { senderId: 'teacher-user-1', body: 'תמר, תוכלי להביא את התווים של הפרטיטה של באך לשיעור ביום שלישי?', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString()},
+        ]
+    },
+    {
+        id: 'thread-3',
+        participants: ['teacher-user-1', 'parent-user-1'],
+        messages: [
+            { senderId: 'parent-user-1', body: 'היי מרים, רציתי לשאול לגבי אפשרות להעביר את השיעור של אריאל בשבוע הבא מיום שלישי לחמישי.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString()},
+            { senderId: 'teacher-user-1', body: 'היי דני, בטח. בוא נבדוק זמינות. אשלח לך אופציות בהמשך היום.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString()},
         ]
     }
 ];

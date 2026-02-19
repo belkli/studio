@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star } from "lucide-react";
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil } from "lucide-react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -20,12 +20,17 @@ const statusTranslations: Record<RepertoireStatus, string> = {
 
 
 export function StudentProfilePage() {
-    const { user, mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions } = useAuth();
+    const { user, mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes } = useAuth();
     if (!user || user.role !== 'student') return null;
 
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === user.id), [mockPracticeLogs, user.id]);
     const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === user.id), [mockAssignedRepertoire, user.id]);
     const currentPackage = useMemo(() => mockPackages.find(p => p.id === user.packageId), [mockPackages, user.packageId]);
+    const userNotes = useMemo(() => {
+        return mockLessonNotes
+            .filter(note => note.studentId === user.id && note.isSharedWithStudent)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }, [mockLessonNotes, user.id]);
 
 
     const { totalMinutesThisWeek, weeklyGoal, streak } = useMemo(() => {
@@ -132,8 +137,8 @@ export function StudentProfilePage() {
                 </Card>
             </div>
             
-            <div className="grid lg:grid-cols-2 gap-6">
-                <Card>
+            <div className="grid lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Star /> הרפרטואר שלי</CardTitle>
                     </CardHeader>
@@ -165,27 +170,49 @@ export function StudentProfilePage() {
                         </Table>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                        {userLogs.slice(0,3).map(log => (
-                            <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
-                                <div>
-                                    <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                                    <p className="text-xs text-muted-foreground">{log.pieces.map(p => p.title).join(', ')}</p>
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {userLogs.slice(0,3).map(log => (
+                                <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
+                                    <div>
+                                        <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                                        <p className="text-xs text-muted-foreground">{log.pieces.map(p => p.title).join(', ')}</p>
+                                    </div>
+                                    <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
+                                        {log.durationMinutes} דקות
+                                    </Badge>
                                 </div>
-                                <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
-                                    {log.durationMinutes} דקות
-                                </Badge>
-                            </div>
-                        ))}
-                        <Button variant="outline" className="w-full" asChild>
-                            <Link href="/dashboard/progress">לכל האימונים</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+                            ))}
+                            <Button variant="outline" className="w-full" asChild>
+                                <Link href="/dashboard/progress">לכל האימונים</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><Pencil /> הערות מהמורה</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {userNotes.length > 0 ? userNotes.slice(0, 2).map(note => (
+                                <div key={note.id} className="text-sm border-b pb-3 last:border-b-0 last:pb-0">
+                                    <p className="text-muted-foreground text-xs">{new Date(note.createdAt).toLocaleDateString('he-IL', { day: 'numeric', month: 'long' })}</p>
+                                    <p className="mt-1">{note.summary}</p>
+                                    {note.homeworkAssignments && note.homeworkAssignments.length > 0 && (
+                                        <ul className="mt-2 text-xs list-disc list-inside text-muted-foreground marker:text-primary/50">
+                                            {note.homeworkAssignments.map((hw, i) => <li key={i}>{hw}</li>)}
+                                        </ul>
+                                    )}
+                                </div>
+                            )) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">אין הערות מהמורה לאחרונה.</p>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     )
