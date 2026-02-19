@@ -27,7 +27,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 export function FinancialReports() {
     const { mockInvoices, users } = useAuth();
 
-    const collectionRate = (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100;
+    const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
     
     const teachers = users.filter(u => u.role === 'teacher');
     const teacherRevenue = teachers.map(teacher => ({

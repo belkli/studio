@@ -18,7 +18,7 @@ export function AcademicReports() {
     const studentsWhoPracticed = new Set(logsThisWeek.map(log => log.studentId));
     const practiceEngagementRate = (studentsWhoPracticed.size / students.length) * 100;
     
-    const averageMinutes = logsThisWeek.length > 0 
+    const averageMinutes = logsThisWeek.length > 0 && studentsWhoPracticed.size > 0
         ? logsThisWeek.reduce((sum, log) => sum + log.durationMinutes, 0) / studentsWhoPracticed.size
         : 0;
 

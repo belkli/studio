@@ -6,7 +6,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function OperationalReports() {
-    const { mockLessons, mockTeachers } = useAuth();
+    const { mockLessons, users } = useAuth();
+    const mockTeachers = users.filter(u => u.role === 'teacher');
 
     const cancellationData = [
         { name: 'ביטול תלמיד (בזמן)', value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
