@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { CancelLessonDialog } from './cancel-lesson-dialog';
+import { RescheduleLessonDialog } from './reschedule-lesson-dialog';
 import { cn } from '@/lib/utils';
 
 interface ScheduleCalendarProps {
@@ -52,7 +53,7 @@ const LessonCard = ({ lesson, onCancelClick, onRescheduleClick }: { lesson: Less
             
             {lesson.status === 'SCHEDULED' && !isPast && !isTeacher && (
                 <div className="flex gap-1 mt-2">
-                    <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={onRescheduleClick} disabled>
+                    <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={onRescheduleClick}>
                         שינוי מועד
                     </Button>
                     <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10" onClick={onCancelClick}>
@@ -66,7 +67,8 @@ const LessonCard = ({ lesson, onCancelClick, onRescheduleClick }: { lesson: Less
 
 export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
   const [lessonToCancel, setLessonToCancel] = useState<LessonSlot | null>(null);
-  const { cancelLesson } = useAuth();
+  const [lessonToReschedule, setLessonToReschedule] = useState<LessonSlot | null>(null);
+  const { cancelLesson, rescheduleLesson } = useAuth();
   const { toast } = useToast();
 
   const handleConfirmCancel = () => {
@@ -74,6 +76,13 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
         cancelLesson(lessonToCancel.id);
         toast({ title: "השיעור בוטל" });
         setLessonToCancel(null);
+    }
+  }
+
+  const handleConfirmReschedule = (newStartTime: string) => {
+    if (lessonToReschedule) {
+        rescheduleLesson(lessonToReschedule.id, newStartTime);
+        setLessonToReschedule(null);
     }
   }
   
@@ -115,7 +124,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
                                     <LessonCard 
                                         lesson={lesson} 
                                         onCancelClick={() => setLessonToCancel(lesson)}
-                                        onRescheduleClick={() => toast({ title: "בקרוב...", description: "אפשרות לשינוי מועד תהיה זמינה בעתיד."})}
+                                        onRescheduleClick={() => setLessonToReschedule(lesson)}
                                     />
                                 )}
                             </div>
@@ -131,6 +140,12 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
         open={!!lessonToCancel}
         onOpenChange={(open) => !open && setLessonToCancel(null)}
         onConfirm={handleConfirmCancel}
+    />
+    <RescheduleLessonDialog
+        lesson={lessonToReschedule}
+        open={!!lessonToReschedule}
+        onOpenChange={(open) => !open && setLessonToReschedule(null)}
+        onConfirm={handleConfirmReschedule}
     />
     </>
   );
