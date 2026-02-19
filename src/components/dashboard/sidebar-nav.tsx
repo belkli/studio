@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -32,41 +32,54 @@ const legacyLinks = [
 ];
 
 const harmoniaLinks = [
+    // --- Dashboards ---
     { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/teacher', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['teacher'] },
     { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
-    { href: '/dashboard/profile', label: 'הפרופיל שלי', icon: UserCircle, roles: ['student', 'teacher'] },
+    { href: '/dashboard/profile', label: 'הפרופיל שלי', icon: UserCircle, roles: ['student'] },
+
+    // --- Teacher Section ---
+    { href: '/dashboard/teacher/profile', label: 'פרופיל מורה', icon: UserCircle, roles: ['teacher'] },
+    { href: '/dashboard/teacher/performance-profile', label: 'פרופיל הופעות', icon: Music, roles: ['teacher'] },
     { href: '/dashboard/teacher/availability', label: 'הזמינות שלי', icon: Calendar, roles: ['teacher'] },
-    { href: '/dashboard/enroll', label: 'רישום חדש', icon: UserPlus, roles: ['conservatorium_admin', 'site_admin']},
-    { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/teacher/reports', label: 'הדוחות שלי', icon: LineChart, roles: ['teacher'] },
+    { href: '/dashboard/teacher/payroll', label: 'תלושי שכר', icon: Banknote, roles: ['teacher'] },
+    
+    // --- Student & Parent Section ---
+    { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher'] },
+    { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent'] },
+    { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent'] },
+    { href: '/dashboard/makeups', label: 'שיעורי השלמה', icon: Coins, roles: ['student', 'parent'] },
     { href: '/dashboard/ai-reschedule', label: 'עוזר תיאום AI', icon: MessageCircleQuestion, roles: ['student', 'parent']},
+
+    // --- Shared Features ---
+    { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/notifications', label: 'התראות', icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
+    
+    // --- Admin Section ---
+    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/enroll', label: 'רישום חדש', icon: UserPlus, roles: ['conservatorium_admin', 'site_admin']},
     { href: '/dashboard/master-schedule', label: 'מערכת ראשית', icon: Calendar, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/events', label: 'אירועים', icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/performances', label: 'ניהול הופעות', icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/rentals', label: 'השאלות כלים', icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: 'רשימות המתנה', icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/makeups', label: 'ניהול השלמות', icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/substitute', label: 'ניהול מחליפים', icon: UserCheck, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
     { href: '/dashboard/admin/payroll', label: 'שכר מורים', icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/teacher/payroll', label: 'תלושי שכר', icon: Banknote, roles: ['teacher'] },
-    { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent', 'teacher'] },
-    { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent', 'teacher'] },
-    { href: '/dashboard/makeups', label: 'שיעורי השלמה', icon: Coins, roles: ['student', 'parent'] },
-    { href: '/dashboard/notifications', label: 'התראות', icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/notifications/log', label: 'יומן התראות', icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
-    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin'] },
     { href: '/dashboard/announcements', label: 'הכרזות', icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/reports', label: 'דוחות ואנליטיקה', icon: LineChart, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/teacher/reports', label: 'הדוחות שלי', icon: LineChart, roles: ['teacher'] },
-    { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/form-builder', label: 'בנאי טפסים', icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ai', label: 'סוכני AI', icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ministry-export', label: 'ייצוא למשה"ח', icon: Download, roles: ['conservatorium_admin', 'site_admin'] },
+    
+    // --- Ministry Section ---
     { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, roles: ['ministry_director'] },
 ];
-
 
 const NotificationItem = ({ notification }: { notification: Notification }) => (
     <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
@@ -109,16 +122,6 @@ export function SidebarNav() {
 
   const userRole = user.role;
   const links = newFeaturesEnabled ? harmoniaLinks : legacyLinks;
-  
-  const getLinkHref = (role: UserRole, baseHref: string): string => {
-    if (baseHref === '/dashboard/profile') {
-        if (role === 'teacher') return '/dashboard/teacher/profile';
-    }
-    if (baseHref === '/dashboard') {
-        if (role === 'teacher') return '/dashboard/teacher';
-    }
-    return baseHref;
-  }
 
   return (
     <>
@@ -136,19 +139,12 @@ export function SidebarNav() {
             if (!userCanView) {
                 return null;
             }
-            
-            // Special handling for dashboard links to avoid multiple "לוח בקרה" items
-            if (link.href === '/dashboard' && (user.role === 'teacher' || user.role === 'student' || user.role === 'parent') && newFeaturesEnabled) return null;
-            if (link.href === '/dashboard/teacher' && user.role !== 'teacher') return null;
-            if (link.href === '/dashboard/teacher/profile' && user.role === 'teacher') return null; // Handled by /dashboard/profile
 
-
-            const finalHref = getLinkHref(userRole, link.href);
-            const isActive = pathname === finalHref || (finalHref !== '/dashboard' && finalHref !== '/dashboard/teacher' && pathname.startsWith(finalHref));
+            const isActive = pathname === link.href || (link.href !== '/dashboard' && link.href !== '/dashboard/teacher' && pathname.startsWith(link.href));
 
             return (
-                <SidebarMenuItem key={link.href}>
-                  <Link href={finalHref} passHref>
+                <SidebarMenuItem key={link.label}>
+                  <Link href={link.href} passHref>
                     <SidebarMenuButton
                       isActive={isActive}
                       tooltip={link.label}

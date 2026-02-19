@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 import { addDays } from 'date-fns';
@@ -58,6 +58,14 @@ export const teacherSpecialties = [
     {id: 'SPECIAL_NEEDS', label: 'צרכים מיוחדים'},
     {id: 'BEGINNER_ADULTS', label: 'מתחילים מבוגרים'},
     {id: 'ENSEMBLE', label: 'הדרכת הרכבים'},
+];
+export const performanceGenres: { id: PerformanceGenre, label: string }[] = [
+    { id: 'CLASSICAL', label: 'קלאסי' },
+    { id: 'JAZZ', label: 'ג\'אז' },
+    { id: 'KLEZMER', label: 'כליזמר' },
+    { id: 'MIDDLE_EASTERN', label: 'מוזיקת עולם/מזרחית' },
+    { id: 'POPULAR', label: 'פופ/רוק' },
+    { id: 'LITURGICAL', label: 'ליטורגי' },
 ];
 export const languages = [{id: 'HE', label: 'עברית'}, {id: 'EN', label: 'אנגלית'}, {id: 'AR', label: 'ערבית'}, {id: 'RU', label: 'רוסית'}];
 
@@ -156,7 +164,15 @@ export const mockTeachers: Partial<User>[] = [
         teachingLanguages: ['HE', 'EN'],
         maxStudents: 20,
         employmentType: 'EMPLOYEE',
-        ratePerDuration: { '30': 80, '45': 100, '60': 120 }
+        ratePerDuration: { '30': 80, '45': 100, '60': 120 },
+        performanceProfile: {
+            isOptedIn: true,
+            adminApproved: true,
+            headline: 'פסנתרנית קונצרטים ומוזיקאית קאמרית',
+            performanceBio: 'זוכת תחרויות ובעלת ניסיון רב בהופעות באירועים פרטיים ורשמיים. רפרטואר רחב, מקלאסי ועד ג\'אז קל.',
+            performanceGenres: ['CLASSICAL', 'JAZZ', 'FILM_MUSIC'],
+            videoLinks: [{title: 'Chopin Nocturne', url: 'https://youtube.com'}]
+        }
     },
     {
         id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com',
@@ -165,7 +181,10 @@ export const mockTeachers: Partial<User>[] = [
         teachingLanguages: ['HE', 'RU'],
         maxStudents: 15,
         employmentType: 'FREELANCE',
-        ratePerDuration: { '30': 90, '45': 110, '60': 130 }
+        ratePerDuration: { '30': 90, '45': 110, '60': 130 },
+        performanceProfile: {
+            isOptedIn: false,
+        }
     },
     {
         id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com',
@@ -174,7 +193,12 @@ export const mockTeachers: Partial<User>[] = [
         teachingLanguages: ['HE'],
         maxStudents: 18,
         employmentType: 'FREELANCE',
-        ratePerDuration: { '30': 85, '45': 105, '60': 125 }
+        ratePerDuration: { '30': 85, '45': 105, '60': 125 },
+        performanceProfile: {
+            isOptedIn: true,
+            adminApproved: false,
+            headline: 'גיטריסטית קלאסית ויוצרת',
+        }
     },
 ];
 
@@ -579,4 +603,4 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
 
 
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition };
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole };

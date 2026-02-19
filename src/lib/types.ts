@@ -67,6 +67,38 @@ export type Achievement = {
   certificateUrl?: string;
 };
 
+// From SDD-13
+export type PerformanceGenre = 'CLASSICAL' | 'JAZZ' | 'KLEZMER' | 'MIDDLE_EASTERN' | 'POPULAR' | 'LITURGICAL' | 'FILM_MUSIC';
+export type EnsembleRole = 'LEAD_VIOLIN' | 'ACCOMPANIST' | 'SECTION_PLAYER';
+
+export type RepertoireHighlight = {
+  title: string;
+  composer: string;
+  occasion?: string;
+};
+
+export type MediaLink = {
+  title: string;
+  url: string;
+  thumbnailUrl?: string;
+  occasion?: string;
+};
+
+export type PerformanceProfile = {
+  isOptedIn?: boolean;
+  adminApproved?: boolean;
+  headline?: string;
+  performanceBio?: string;
+  performanceGenres?: PerformanceGenre[];
+  repertoireHighlights?: RepertoireHighlight[];
+  videoLinks?: MediaLink[];
+  audioLinks?: MediaLink[];
+  performanceRatePerHour?: number;
+  travelRadiusKm?: number;
+  canPerformSolo?: boolean;
+  canPerformChamber?: boolean;
+  ensembleRoles?: EnsembleRole[];
+};
 
 export type User = {
   id: string;
@@ -94,7 +126,7 @@ export type User = {
   childIds?: string[];  // Link to child users
   students?: string[]; // For teachers/admins to list their students by ID
   grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
-  // Teacher-specific fields from SDD-03
+  // Teacher-specific fields from SDD-03 & SDD-13
   bio?: string;
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
@@ -106,6 +138,7 @@ export type User = {
       '45': number;
       '60': number;
   };
+  performanceProfile?: PerformanceProfile;
   // Student-specific fields from SDD-09
   weeklyPracticeGoal?: number;
   packageId?: string;
