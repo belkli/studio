@@ -11,11 +11,12 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { RecitalForm } from './recital-form';
 import { KenesForm } from './kenes-form';
+import { ExamRegistrationForm } from './exam-registration-form';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 
 const formTypeSchema = z.object({
-  formType: z.enum(['recital', 'kenes'], { required_error: 'חובה לבחור סוג טופס'}),
+  formType: z.enum(['recital', 'kenes', 'exam_registration'], { required_error: 'חובה לבחור סוג טופס'}),
   studentId: z.string().optional(),
 });
 
@@ -32,21 +33,28 @@ export function NewForm() {
     resolver: zodResolver(formTypeSchema),
   });
 
-  const onFormSubmit = useCallback((formType: 'recital' | 'kenes') => (data: any) => {
+  const onFormSubmit = useCallback((formType: 'recital' | 'kenes' | 'exam_registration') => (data: any) => {
+    let formTitle = '';
+    switch (formType) {
+        case 'recital': formTitle = 'רסיטל בגרות'; break;
+        case 'kenes': formTitle = 'כנס / אירוע'; break;
+        case 'exam_registration': formTitle = 'הרשמה לבחינה'; break;
+    }
+
     const newSubmission: FormSubmission = {
       id: `form-${Date.now()}`,
       status: user?.role === 'student' ? 'ממתין לאישור מורה' : 'ממתין לאישור מנהל',
-      studentId: formType === 'recital' ? data.studentId : user!.id,
-      studentName: formType === 'recital' ? users.find(u => u.id === data.studentId)?.name ?? '' : user!.name,
+      studentId: formType === 'recital' || formType === 'exam_registration' ? data.studentId : user!.id,
+      studentName: formType === 'recital' || formType === 'exam_registration' ? users.find(u => u.id === data.studentId)?.name ?? '' : user!.name,
       submissionDate: new Date().toLocaleDateString('he-IL'),
       ...data,
+      formType: formTitle,
     };
 
-    // This is a mock implementation. In a real app, you'd likely have a single `addForm` function.
     updateForm(newSubmission);
 
     toast({
-        title: `טופס ${formType === 'recital' ? 'רסיטל' : 'כנס'} הוגש בהצלחה!`,
+        title: `טופס ${formTitle} הוגש בהצלחה!`,
         description: `הטופס נשלח לאישור.`,
     });
     router.push('/dashboard/forms');
@@ -106,6 +114,11 @@ export function NewForm() {
             return <RecitalForm key={selectedStudent.id} user={user} student={selectedStudent} onSubmit={onFormSubmit('recital')} />;
         case 'kenes':
             return <KenesForm user={user} onSubmit={onFormSubmit('kenes')} />;
+        case 'exam_registration':
+             if (!selectedStudent) {
+                return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>;
+            }
+            return <ExamRegistrationForm key={selectedStudent.id} user={user} student={selectedStudent} onSubmit={onFormSubmit('exam_registration')} />;
         default:
             return null;
     }
@@ -136,6 +149,7 @@ export function NewForm() {
                           <SelectContent>
                             <SelectItem value="recital">רסיטל בגרות</SelectItem>
                             <SelectItem value="kenes">כנס / אירוע</SelectItem>
+                             <SelectItem value="exam_registration">הרשמה לבחינה</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -144,7 +158,7 @@ export function NewForm() {
                   />
                )}
               
-              {canSelectStudent && selectedFormType === 'recital' && (
+              {canSelectStudent && (selectedFormType === 'recital' || selectedFormType === 'exam_registration') && (
                  <FormField
                     control={formTypeForm.control}
                     name="studentId"

@@ -49,6 +49,10 @@ export const schools = [
   { symbol: '44570001', name: 'תיכון הדרים, הוד השרון' }, { symbol: '12345678', name: 'תיכון חדש, תל אביב' }, { symbol: '87654321', name: 'תיכון הראשונים, הרצליה' }, { symbol: '11223344', name: 'בית ספר לאמנויות, ירושלים' }, { symbol: '22334455', name: 'תיכון אלון, רמת השרון' }, { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
+export const examLevels = ['בגרות (יחידה 1)', 'בגרות (5 יחידות)', 'אקדמאי', 'אחר'];
+export const examTypes = ['ביצוע (רסיטל)', 'תאוריה', 'משולב'];
+
+
 export const compositions: Composition[] = (rawCompositions as any[]).map((item: any, index: number) => ({
     id: `comp-db-${index}`,
     composer: item['מלחין'] || 'לא ידוע',

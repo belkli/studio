@@ -1,7 +1,7 @@
-// @ts-nocheck
+{// @ts-nocheck
 'use client';
 
-import { mockUsers, conservatoriums } from '@/lib/data';
+import { mockUsers, conservatoriums, examLevels, examTypes } from '@/lib/data';
 import { notFound, useParams, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -21,6 +21,7 @@ import autoTable from 'jspdf-autotable';
 import { Separator } from '@/components/ui/separator';
 import { RecitalForm } from '@/components/forms/recital-form';
 import { KenesForm } from '@/components/forms/kenes-form';
+import { ExamRegistrationForm } from '@/components/forms/exam-registration-form';
 import type { FormSubmission } from '@/lib/types';
 
 
@@ -108,7 +109,7 @@ export default function FormDetailsPage() {
             lastY = (doc as any).lastAutoTable.finalY + 10;
         };
 
-        if (form.formType === 'רסיטל בגרות') {
+        if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
              addSection("פרטי התלמיד/ה", [
                 [rtl(form.studentName), rtl('שם מלא')],
                 [formUser?.idNumber, rtl('ת.ז.')],
@@ -117,6 +118,8 @@ export default function FormDetailsPage() {
                 [form.applicantDetails?.phone, rtl('טלפון')],
                 [formUser?.email, rtl('דוא"ל')],
              ]);
+        }
+        if (form.formType === 'רסיטל בגרות') {
               addSection("פרטי בית ספר", [
                 [rtl(form.schoolDetails?.schoolName), rtl('בית ספר')],
                 [rtl(form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא'), rtl('מגמת מוזיקה')],
@@ -124,6 +127,13 @@ export default function FormDetailsPage() {
               ]);
         }
         
+        if (form.formType === 'הרשמה לבחינה') {
+             addSection("פרטי הבחינה", [
+                [rtl(form.examLevel), rtl('רמת בחינה')],
+                [rtl(form.examType), rtl('סוג בחינה')],
+             ]);
+        }
+
         addSection("רפרטואר", form.repertoire.map(p => [
             p.duration,
             rtl(p.genre),
@@ -363,6 +373,16 @@ export default function FormDetailsPage() {
                                     onCancel={() => setIsEditing(false)}
                                 />
                             )}
+                             {form.formType === 'הרשמה לבחינה' && formUser && (
+                                <ExamRegistrationForm
+                                    user={user}
+                                    student={formUser}
+                                    initialData={form}
+                                    onSubmit={handleResubmit}
+                                    isEditing={true}
+                                    onCancel={() => setIsEditing(false)}
+                                />
+                            )}
                          </div>
                     ) : (
                         <>
@@ -374,17 +394,22 @@ export default function FormDetailsPage() {
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
+
+                             {(form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') && (
+                                <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
+                                    <DetailItem label="שם מלא" value={form.studentName} />
+                                    <DetailItem label="ת.ז." value={formUser?.idNumber} />
+                                    <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
+                                    <DetailItem label="מין" value={form.applicantDetails?.gender} />
+                                    <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
+                                    <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
+                                    <DetailItem label="אימייל" value={formUser?.email} />
+                                </DetailsCard>
+                             )}
+
+
                             {form.formType === 'רסיטל בגרות' && (
                                 <>
-                                    <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
-                                        <DetailItem label="שם מלא" value={form.studentName} />
-                                        <DetailItem label="ת.ז." value={formUser?.idNumber} />
-                                        <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
-                                        <DetailItem label="מין" value={form.applicantDetails?.gender} />
-                                        <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
-                                        <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
-                                        <DetailItem label="אימייל" value={formUser?.email} />
-                                    </DetailsCard>
                                      <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
                                         <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
                                         <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
@@ -418,6 +443,14 @@ export default function FormDetailsPage() {
                                 </DetailsCard>
                                 </>
                             )}
+
+                             {form.formType === 'הרשמה לבחינה' && (
+                                <DetailsCard title="פרטי בחינה" columns={3}>
+                                    <DetailItem label="רמת בחינה" value={form.examLevel} />
+                                    <DetailItem label="סוג בחינה" value={form.examType} />
+                                    <DetailItem label="טווח תאריכים מועדף" value={form.preferredExamDateRange} />
+                                </DetailsCard>
+                             )}
                             
                             <Card>
                                 <CardHeader>

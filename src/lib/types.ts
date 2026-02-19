@@ -140,6 +140,7 @@ export type FormSubmission = {
   conservatoriumManagerName?: string;
   conservatoriumManagerPhone?: string;
   conservatoriumManagerEmail?: string;
+  conservatoriumId?: string;
 
   studentId: string;
   studentName: string;
@@ -168,6 +169,12 @@ export type FormSubmission = {
   signatureUrl?: string;
   signedBy?: string;
   signedAt?: string;
+
+  // New fields for Exam Registration
+  examLevel?: string;
+  examType?: string;
+  preferredExamDateRange?: string;
+  teacherDeclaration?: boolean;
 };
 
 // --- New Types from SDDs ---
