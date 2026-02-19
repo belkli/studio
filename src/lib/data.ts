@@ -1,6 +1,7 @@
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
+import { addDays } from 'date-fns';
 
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
@@ -105,35 +106,18 @@ const mockAchievements: Achievement[] = [
 ];
 
 // --- Mock Notifications ---
-const studentNotifications: Notification[] = [
-  { id: 'notif-s1', title: 'הטופס שלך אושר!', message: 'הטופס "רסיטל בגרות" אושר על ידי מרים כהן.', timestamp: 'לפני 2 ימים', link: '/dashboard/forms/form-101', read: false },
-  { id: 'notif-s2', title: 'הערה חדשה על טופס', message: 'המורה שלך הוסיפה הערה על הטופס.', timestamp: 'לפני 5 ימים', link: '/dashboard/forms/form-101', read: true },
-];
+const studentNotifications: Notification[] = [];
+const parentNotifications: Notification[] = [];
+const teacherNotifications: Notification[] = [];
+const adminNotifications: Notification[] = [];
+const siteAdminNotifications: Notification[] = [];
 
-const parentNotifications: Notification[] = [
-    { id: 'notif-p1', title: 'תזכורת שיעור', message: 'השיעור של אריאל יתקיים מחר בשעה 16:00.', timestamp: 'לפני יום', link: '/dashboard/schedule', read: false},
-    { id: 'notif-p2', title: 'חיוב חדש', message: 'חשבונית חדשה על סך 450 ש"ח הופקה.', timestamp: 'לפני 3 ימים', link: '/dashboard/billing', read: true},
-];
-
+// --- Mock Users ---
 const thirteenYearsAgo = new Date();
 thirteenYearsAgo.setFullYear(thirteenYearsAgo.getFullYear() - 13);
 const thirteenYearsAgoDateString = thirteenYearsAgo.toISOString().split('T')[0];
 
 
-const teacherNotifications: Notification[] = [
-  { id: 'notif-t1', title: 'טופס חדש לאישור', message: 'אריאל לוי הגיש/ה טופס "רסיטל בגרות".', timestamp: 'לפני 3 שעות', link: '/dashboard/forms/form-101', read: false },
-  { id: 'notif-t2', title: 'הטופס של תמר אושר', message: 'הטופס "קונצרט כיתתי" של תמר ישראלי אושר סופית.', timestamp: 'לפני יום', link: '/dashboard/forms/form-102', read: true },
-];
-
-const adminNotifications: Notification[] = [
-  { id: 'notif-a1', title: 'משתמש חדש ממתין לאישור', message: 'ישראל ישראלי נרשם כמורה וממתין לאישורך.', timestamp: 'לפני 10 דקות', link: '/dashboard/users', read: false },
-  { id: 'notif-a2', title: 'טופס חדש לאישור סופי', message: 'טופס של אריאל לוי אושר על ידי המורה וממתין לאישור סופי.', timestamp: 'לפני שעה', link: '/dashboard/forms/form-101', read: false },
-  { id: 'notif-a3', title: 'אישרת טופס', message: 'הטופס "קונצרט כיתתי" של תמר ישראלי אושר.', timestamp: 'לפני יום', link: '/dashboard/forms/form-102', read: true },
-];
-
-const siteAdminNotifications: Notification[] = [ { id: 'notif-sa1', title: 'שגיאת מערכת', message: 'זוהתה שגיאה בשרת ה-API.', timestamp: 'לפני 4 שעות', link: '#', read: true }, ];
-
-// --- Mock Users ---
 const studentUser: User = {
   id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [ { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 }, ], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
 };
@@ -266,18 +250,13 @@ export const mockFormSubmissions: FormSubmission[] = [
   { id: 'form-106', formType: 'בקשה להשאלת כלי נגינה', formTemplateId: 'template-1', studentId: studentUser.id, studentName: studentUser.name, conservatoriumName: studentUser.conservatoriumName, conservatoriumId: studentUser.conservatoriumId, status: 'ממתין לאישור מנהל', submissionDate: '2024-07-20', totalDuration: '00:00', repertoire: [], formData: { 'field-1': 'הכינור שלי נשלח לתיקון ויחזור רק בעוד כשבועיים. אני זקוק/ה לכלי חלופי כדי להמשיך להתאמן לקראת הרסיטל.', 'field-2': '2024-07-22', 'field-3': 'כינור', 'field-4': true, } }
 ];
 
-const tenDaysFromNow = new Date();
-tenDaysFromNow.setDate(tenDaysFromNow.getDate() + 10);
-const tenDaysFromNowISO = tenDaysFromNow.toISOString().split('T')[0];
-
-const thirtyDaysFromNow = new Date();
-thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-const thirtyDaysFromNowISO = thirtyDaysFromNow.toISOString().split('T')[0];
+const tenDaysFromNow = addDays(new Date(), 10).toISOString().split('T')[0];
+const thirtyDaysFromNow = addDays(new Date(), 30).toISOString().split('T')[0];
 
 export const mockPackages: Package[] = [
     { id: 'pkg-trial', type: 'TRIAL', title: 'שיעור ניסיון', description: 'שיעור אחד, ללא התחייבות', price: 80 },
-    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית', price: 750, totalCredits: 5, validUntil: tenDaysFromNowISO },
-    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400, totalCredits: 10, validUntil: thirtyDaysFromNowISO },
+    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית', price: 750, totalCredits: 5, validUntil: tenDaysFromNow },
+    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400, totalCredits: 10, validUntil: thirtyDaysFromNow },
     { id: 'pkg-monthly', type: 'MONTHLY', title: 'מנוי חודשי', description: 'שיעור שבועי קבוע, חידוש אוטומטי', price: 560 },
     { id: 'pkg-yearly', type: 'YEARLY', title: 'מנוי שנתי', description: 'המחיר הטוב ביותר, שמירת מקום מובטחת', price: 5800 },
 ];
@@ -291,8 +270,8 @@ export const mockRooms: Room[] = [
 ];
 
 export const mockLessons: LessonSlot[] = [
-  { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: addDays(new Date(), 2).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: addDays(new Date(), 3).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },

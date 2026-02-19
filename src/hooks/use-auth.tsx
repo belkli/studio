@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { 
     mockUsers as initialUsers, 
@@ -52,7 +52,7 @@ import {
     type AchievementType,
     type EventProduction,
 } from '@/lib/data';
-import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays, addHours, startOfDay, endOfDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 interface LoginResult {
@@ -139,6 +139,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const notificationsSentOnLoad = useRef(new Set<string>());
+
 
   const addNotificationAndLog = useCallback((userId: string, title: string, message: string, link: string) => {
     const notificationId = `notif-${Date.now()}-${Math.random()}`;
@@ -151,7 +153,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     
-    // Use functional updates to avoid stale state issues in callbacks
     setUsers(prevUsers => prevUsers.map(u => 
         u.id === userId
             ? { ...u, notifications: [newNotification, ...(u.notifications || [])]}
@@ -163,7 +164,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         : prevUser
     );
 
-    // For now, we only log IN_APP notifications as that's what we're creating
     const newLogEntry: AuditLogEntry = {
       id: `log-IN_APP-${Date.now()}`,
       notificationId,
@@ -178,19 +178,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Simulate checking for expiring packages and overdue invoices once on app load
-    const now = new Date();
-    const notifiedUserIds = new Set();
-    
     const checkAndNotify = (userId: string, notificationKey: string, createNotification: () => void) => {
         const key = `${userId}-${notificationKey}`;
-        if (!notifiedUserIds.has(key)) {
+        if (!notificationsSentOnLoad.current.has(key)) {
             createNotification();
-            notifiedUserIds.add(key);
+            notificationsSentOnLoad.current.add(key);
         }
-    }
+    };
 
-    users.forEach(u => {
+    const now = new Date();
+
+    // Check for expiring packages
+    initialUsers.forEach(u => {
         const studentPackage = initialPackages.find(p => p.id === u.packageId);
         if (studentPackage && studentPackage.validUntil) {
             const expiryDate = new Date(studentPackage.validUntil);
@@ -198,7 +197,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (daysUntilExpiry > 0 && daysUntilExpiry <= 14) {
                 const userToNotifyId = u.parentId || u.id;
-                 checkAndNotify(userToNotifyId, `expiring-package-${u.id}`, () => {
+                checkAndNotify(userToNotifyId, `expiring-package-${u.id}`, () => {
                     addNotificationAndLog(
                         userToNotifyId,
                         'חבילתך עומדת לפוג!',
@@ -210,6 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     });
 
+    // Check for overdue/new invoices
     initialInvoices.forEach(inv => {
         if (inv.status === 'SENT') {
             checkAndNotify(inv.payerId, `new-invoice-${inv.id}`, () => {
@@ -235,9 +235,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     
     // Check for expiring makeup credits
-    const studentUsers = users.filter(u => u.role === 'student' && u.approved);
+    const studentUsers = initialUsers.filter(u => u.role === 'student' && u.approved);
     studentUsers.forEach(student => {
-        const studentLessons = lessons.filter(l => l.studentId === student.id);
+        const studentLessons = initialLessons.filter(l => l.studentId === student.id);
         
         const grantedLessons = studentLessons.filter(l => 
             ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
@@ -266,10 +266,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         }
     });
+    
+    // Check for 24-hour lesson reminders
+    const tomorrow = addDays(now, 1);
+    const startOfTomorrow = startOfDay(tomorrow);
+    const endOfTomorrow = endOfDay(tomorrow);
+    
+    initialLessons.forEach(lesson => {
+        const lessonTime = new Date(lesson.startTime);
+        if (lesson.status === 'SCHEDULED' && isWithinInterval(lessonTime, { start: startOfTomorrow, end: endOfTomorrow })) {
+            const student = initialUsers.find(u => u.id === lesson.studentId);
+            const teacher = initialUsers.find(u => u.id === lesson.teacherId);
+            if (student && teacher) {
+                // Notify student/parent
+                const userToNotifyId = student.parentId || student.id;
+                checkAndNotify(userToNotifyId, `reminder-student-${lesson.id}`, () => {
+                    addNotificationAndLog(
+                        userToNotifyId,
+                        'תזכורת: שיעור מחר',
+                        `שיעור ${lesson.instrument} עם ${teacher.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
+                        '/dashboard/schedule'
+                    );
+                });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [users, lessons]);
+                // Notify teacher
+                checkAndNotify(teacher.id, `reminder-teacher-${lesson.id}`, () => {
+                     addNotificationAndLog(
+                        teacher.id,
+                        'תזכורת: שיעור מחר',
+                        `שיעור ${lesson.instrument} עם ${student.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
+                        '/dashboard/schedule'
+                    );
+                });
+            }
+        }
+    });
 
+  }, [addNotificationAndLog]);
 
   useEffect(() => {
     const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
@@ -415,9 +448,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setForms(prevForms => prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f)));
     }
     
-    // NOTIFICATION LOGIC
     if (isNew) {
-      // Find approver and notify them
       if (updatedForm.status === 'ממתין לאישור מורה') {
         const student = users.find(u => u.id === updatedForm.studentId);
         const teacher = users.find(u => u.name === student?.instruments?.[0]?.teacherName);
@@ -426,7 +457,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     } else {
-      // Notify submitter of status change
       const student = users.find(u => u.id === updatedForm.studentId);
       if (!student) return;
       const userToNotifyId = student.parentId || student.id;
@@ -516,7 +546,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } as LessonSlot;
     setLessons(prev => [...prev, fullLesson]);
 
-    // NOTIFICATION LOGIC
     const bookingSource = newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF');
     if (bookingSource === 'ADMIN' || bookingSource === 'TEACHER') {
         const student = users.find(u => u.id === fullLesson.studentId);
@@ -540,14 +569,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const now = new Date();
         const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-        // Mock policy: 24 hours notice
         const newStatus: SlotStatus = hoursUntilLesson > 24 
             ? 'CANCELLED_STUDENT_NOTICED' 
             : 'CANCELLED_STUDENT_NO_NOTICE';
         
         const updatedLesson = { ...lesson, status: newStatus, updatedAt: new Date().toISOString() };
 
-        // NOTIFICATION LOGIC
         const student = users.find(u => u.id === lesson.studentId);
         const teacher = users.find(u => u.id === lesson.teacherId);
         if (student && teacher) {
@@ -588,14 +615,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (lesson.id === lessonId) {
             const updatedLesson = { ...lesson, startTime: newStartTime, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
             
-            // NOTIFICATION LOGIC
             const student = users.find(u => u.id === lesson.studentId);
             const teacher = users.find(u => u.id === lesson.teacherId);
             if (student && teacher) {
                 const userToNotifyId = student.parentId || student.id;
                 const newTimeStr = `${format(new Date(newStartTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(newStartTime), 'HH:mm')}`;
                 
-                // Notify student/parent
                 addNotificationAndLog(
                     userToNotifyId,
                     'שיעור נקבע מחדש',
@@ -603,7 +628,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     '/dashboard/schedule'
                 );
 
-                // Notify teacher
                 addNotificationAndLog(
                     teacher.id,
                     'שיעור נקבע מחדש',
@@ -635,7 +659,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 };
                 affectedLessons.push(updatedLesson);
                 
-                // NOTIFICATION LOGIC
                 const student = users.find(u => u.id === lesson.studentId);
                 if (student) {
                     const notifyUser = users.find(u => u.id === student.parentId) || student;
@@ -662,14 +685,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (lesson.id === lessonId) {
             const updatedLesson = { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
             
-            // NOTIFICATION LOGIC
             const student = users.find(u => u.id === lesson.studentId);
             const newTeacher = users.find(u => u.id === newTeacherId);
             if (student && newTeacher) {
                 const userToNotifyId = student.parentId || student.id;
                 const lessonTimeStr = `${format(new Date(updatedLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(updatedLesson.startTime), 'HH:mm')}`;
                 
-                // Notify student/parent
                 addNotificationAndLog(
                     userToNotifyId,
                     'נמצא מורה מחליף לשיעור',
@@ -677,7 +698,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     '/dashboard/schedule'
                 );
 
-                // Notify new teacher
                 addNotificationAndLog(
                     newTeacher.id,
                     'שיבוץ לשיעור כמחליף/ה',
@@ -695,7 +715,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const addPracticeLog = (log: Partial<PracticeLog>) => {
     if (!user) return;
     
-    // Determine studentId for parent or student
     const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
     if (!studentId) return;
 
