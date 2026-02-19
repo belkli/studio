@@ -47,6 +47,7 @@ const SuggestCompositionsOutputSchema = z.object({
           .regex(/^\d{2}:\d{2}$/)
           .describe('The duration of the piece in MM:SS format.'),
         genre: z.string().describe('The genre of the piece.'),
+        imslpUrl: z.string().optional().describe('A URL to the composition on IMSLP if available.'),
       })
     )
     .describe('An array of suggested compositions.'),
@@ -63,7 +64,45 @@ const prompt = ai.definePrompt({
   name: 'compositionSuggestionPrompt',
   input: {schema: SuggestCompositionsInputSchema},
   output: {schema: SuggestCompositionsOutputSchema},
-  prompt: `אתה קטלוגר ומומחה למוזיקה, בעל ידע נרחב בספריית יצירות מוזיקליות. המשימה שלך היא להציע יצירות מוזיקליות מתאימות על סמך הקריטריונים של המשתמש.\n\nקח בחשבון את הפרטים הבאים:\n{{#if composer}}מלחין: {{{composer}}}{{/if}}\n{{#if instrument}}כלי נגינה: {{{instrument}}}{{/if}}\n{{#if genre}}ז'אנר: {{{genre}}}{{/if}}\n{{#if context}}הקשר/העדפות נוספות: {{{context}}}{{/if}}\n{{#if existingCompositions}}הימנע מהצעת היצירות הבאות (כבר נבחרו): {{{existingCompositions}}}{{/if}}\n\nאנא הצע 3-5 יצירות שונות המתאימות לקריטריונים. עבור כל הצעה, ציין את המלחין, הכותרת, משך הזמן בפורמט MM:SS (הערך במידת הצורך), והז'אנר. ודא שההצעות מגוונות אך רלוונטיות. תעדף יצירות ידועות ומתאימות לרסיטלים או קונצרטים אם ההקשר מרמז על כך.\n\nדוגמת פורמט פלט (JSON):\nאני רוצה רק את ה-JSON בפלט, ושום טקסט אחר לפני או אחרי.\n\n\`\`\`json\n{\n  "suggestions": [\n    {\n      "composer": "יוהאן סבסטיאן באך",\n      "title": "פרלוד ופוגה בדו מז'ור (מתוך הפסנתר המושווה, ספר א')",\n      "duration": "03:30",\n      "genre": "קלאסי"\n    },\n    {\n      "composer": "פרדריק שופן",\n      "title": "נוקטורן במי במול מז'ור, אופ. 9 מס' 2",\n      "duration": "04:00",\n      "genre": "קלאסי"\n    }\n  ]\n}\n\`\`\``,
+  prompt: `אתה קטלוגר ומומחה למוזיקה, בעל ידע נרחב בספריית יצירות מוזיקליות. המשימה שלך היא להציע יצירות מוזיקליות מתאימות על סמך הקריטריונים של המשתמש, עבור רסיטל או תוכנית קונצרט.
+
+קח בחשבון את הפרטים הבאים:
+{{#if composer}}מלחין: {{{composer}}}{{/if}}
+{{#if instrument}}כלי נגינה: {{{instrument}}}{{/if}}
+{{#if genre}}ז'אנר: {{{genre}}}{{/if}}
+{{#if context}}הקשר/העדפות נוספות (לדוגמה, מטרות התלמיד, רמת קושי, אווירה): {{{context}}}{{/if}}
+{{#if existingCompositions}}הימנע מהצעת היצירות הבאות (כבר נבחרו): {{{existingCompositions}}}{{/if}}
+
+אנא הצע 3-5 יצירות שונות המתאימות לקריטריונים. אם ההקשר מרמז על בניית תוכנית מלאה, נסה להציע רפרטואר מאוזן (לדוגמה, יצירה מהירה, יצירה איטית, יצירה וירטואוזית).
+
+עבור כל הצעה, ציין את המלחין, הכותרת, משך הזמן בפורמט MM:SS (הערך במידת הצורך), והז'אנר.
+בנוסף, אם היצירה היא ברשות הציבור, חפש וספק קישור (URL) לדף היצירה באתר IMSLP בשדה 'imslpUrl'.
+
+ודא שההצעות מגוונות אך רלוונטיות. תעדף יצירות ידועות ומתאימות לרסיטלים או קונצרטים.
+
+דוגמת פורמט פלט (JSON):
+אני רוצה רק את ה-JSON בפלט, ושום טקסט אחר לפני או אחרי.
+
+\`\`\`json
+{
+  "suggestions": [
+    {
+      "composer": "יוהאן סבסטיאן באך",
+      "title": "פרלוד ופוגה בדו מז'ור (מתוך הפסנתר המושווה, ספר א')",
+      "duration": "03:30",
+      "genre": "בארוק",
+      "imslpUrl": "https://imslp.org/wiki/Das_wohltemperirte_Clavier,_BWV_846-893_(Bach,_Johann_Sebastian)"
+    },
+    {
+      "composer": "פרדריק שופן",
+      "title": "נוקטורן במי במול מז'ור, אופ. 9 מס' 2",
+      "duration": "04:00",
+      "genre": "רומנטי",
+      "imslpUrl": "https://imslp.org/wiki/Nocturnes,_Op.9_(Chopin,_Fr%C3%A9d%C3%A9ric)"
+    }
+  ]
+}
+\`\`\``,
 });
 
 const suggestCompositionsFlow = ai.defineFlow(

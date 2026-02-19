@@ -9,6 +9,11 @@ import {
   type SuggestCompositionsInput,
   type SuggestCompositionsOutput,
 } from '@/ai/flows/suggest-compositions';
+import {
+  matchTeacher,
+  type MatchTeacherInput,
+  type MatchTeacherOutput
+} from '@/ai/flows/match-teacher-flow';
 
 
 // Load and transform compositions from JSON file
@@ -17,7 +22,9 @@ const loadCompositions = (): Composition[] => {
     try {
         const jsonPath = path.join(process.cwd(), 'docs', 'data.json');
         const jsonData = fs.readFileSync(jsonPath, 'utf-8');
-        const rawCompositions = JSON.parse(jsonData);
+        // Manually replace NaN with a valid JSON value like null or a specific string
+        const sanitizedJsonData = jsonData.replace(/NaN/g, 'null');
+        const rawCompositions = JSON.parse(sanitizedJsonData);
 
         if (!Array.isArray(rawCompositions)) {
             console.error('Error: docs/data.json is not an array.');
@@ -100,4 +107,16 @@ export async function searchCompositions({ query, composer, instrument }: Search
   );
   
   return results.slice(0, 20);
+}
+
+export async function getTeacherMatches(
+  input: MatchTeacherInput
+): Promise<MatchTeacherOutput> {
+  try {
+    const result = await matchTeacher(input);
+    return result;
+  } catch (error) {
+    console.error('Error getting teacher matches:', error);
+    return { matches: [] };
+  }
 }
