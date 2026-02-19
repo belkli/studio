@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FilePlus } from "lucide-react";
+import { PlusCircle, FilePlus, Megaphone } from "lucide-react";
 import Link from "next/link";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";
@@ -23,6 +23,12 @@ export function AdminCommandCenter() {
                     <p className="text-muted-foreground">זהו מרכז הבקרה שלך עבור {user.conservatoriumName}.</p>
                 </div>
                  <div className="flex items-center gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href="/dashboard/announcements">
+                            <Megaphone className="me-2 h-4 w-4" />
+                            שלח הכרזה
+                        </Link>
+                    </Button>
                     <Button variant="outline" asChild>
                         <Link href="/dashboard/forms/new">
                             <FilePlus className="me-2 h-4 w-4" />
