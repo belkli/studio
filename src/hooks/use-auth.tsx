@@ -12,6 +12,7 @@ import {
     mockAssignedRepertoire as initialRepertoire,
     mockLessonNotes as initialNotes,
     mockMessageThreads as initialMessageThreads,
+    mockPackages as initialPackages,
     compositions as initialCompositions,
     type User, 
     type FormSubmission,
@@ -24,6 +25,7 @@ import {
     type Composition,
     type LessonNote,
     type MessageThread,
+    type Package
 } from '@/lib/data';
 
 interface LoginResult {
@@ -56,6 +58,8 @@ interface AuthContextType {
   newFeaturesEnabled: boolean;
   conservatoriums: Conservatorium[];
   updateConservatorium: (updatedConservatorium: Conservatorium) => void;
+  mockPackages: Package[];
+  updateUserPracticeGoal: (studentId: string, goal: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -205,6 +209,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }))
   }
 
+  const updateUserPracticeGoal = (studentId: string, goal: number) => {
+    setUsers(prevUsers => prevUsers.map(u => u.id === studentId ? { ...u, weeklyPracticeGoal: goal } : u));
+    if (user && user.id === studentId) {
+      setUser(prev => prev ? ({ ...prev, weeklyPracticeGoal: goal }) : null);
+    }
+  };
+
   const value = { 
       user, 
       users, 
@@ -230,6 +241,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addLessonNote,
       mockMessageThreads: messageThreads,
       addMessage,
+      mockPackages: initialPackages,
+      updateUserPracticeGoal,
   };
 
   return (

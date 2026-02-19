@@ -24,7 +24,7 @@ import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calenda
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
-import { conservatoriums, instruments, schools, mockPackages, mockTeachers } from "@/lib/data";
+import { conservatoriums, instruments, schools, mockTeachers } from "@/lib/data";
 import type { StudentGoal, DayOfWeek, TimeRange, User, Package } from "@/lib/types";
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
@@ -134,7 +134,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const { addUser } = useAuth();
+  const { addUser, mockPackages } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

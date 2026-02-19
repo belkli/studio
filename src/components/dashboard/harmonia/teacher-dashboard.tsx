@@ -8,9 +8,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check, ThumbsDown, Phone, MessageSquare, PlusCircle } from "lucide-react";
 import { useMemo } from "react";
-import type { User, PracticeLog } from "@/lib/types";
+import type { User, PracticeLog, Package } from "@/lib/types";
 
-function StudentRosterCard({ student, practiceLogs }: { student: User, practiceLogs: PracticeLog[] }) {
+function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[] }) {
     
     const weeklyPractice = useMemo(() => {
         const today = new Date();
@@ -25,6 +25,8 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
             return sum;
         }, 0);
     }, [practiceLogs]);
+
+    const studentPackage = mockPackages.find(p => p.id === student.packageId);
 
 
     return (
@@ -46,7 +48,7 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
                 </div>
                 <div>
                     <p className="font-semibold">סטטוס חבילה:</p>
-                    <p className="text-muted-foreground">חבילה חודשית, 2 שיעורים נותרו</p>
+                    <p className="text-muted-foreground">{studentPackage?.title || 'לא שויכה חבילה'}</p>
                 </div>
                 <div>
                     <p className="font-semibold">התקדמות אימון:</p>
@@ -74,7 +76,7 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
 
 
 export function TeacherDashboard() {
-    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs } = useAuth();
+    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages } = useAuth();
     if (!user) return null;
     
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
@@ -200,7 +202,7 @@ export function TeacherDashboard() {
                     <CardDescription>נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} />)}
+                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} />)}
                 </CardContent>
             </Card>
 

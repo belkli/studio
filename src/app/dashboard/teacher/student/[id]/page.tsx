@@ -7,7 +7,10 @@ import { notFound } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BookOpen, Clock, Music, Pencil, Activity } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, BookOpen, Clock, Music, Pencil, Activity, Target } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,14 +22,18 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 export default function TeacherStudentProfilePage() {
     const params = useParams();
     const studentId = params.id as string;
-    const { user: teacher, users, mockPracticeLogs, mockAssignedRepertoire, compositions, mockLessonNotes, updateRepertoireStatus, addLessonNote } = useAuth();
+    const { user: teacher, users, mockPracticeLogs, mockAssignedRepertoire, compositions, mockLessonNotes, updateRepertoireStatus, addLessonNote, updateUserPracticeGoal } = useAuth();
     const router = useRouter();
+    const { toast } = useToast();
 
     const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
-
+    
     if (!student) {
         notFound();
     }
+    
+    const [newNote, setNewNote] = useState('');
+    const [practiceGoal, setPracticeGoal] = useState(student.weeklyPracticeGoal || 120);
     
     if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
         router.push('/dashboard');
@@ -36,8 +43,6 @@ export default function TeacherStudentProfilePage() {
     const studentLogs = mockPracticeLogs.filter(log => log.studentId === studentId);
     const studentRepertoire = mockAssignedRepertoire.filter(rep => rep.studentId === studentId);
     const studentNotes = mockLessonNotes.filter(note => note.studentId === studentId);
-
-    const [newNote, setNewNote] = useState('');
 
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
@@ -69,6 +74,14 @@ export default function TeacherStudentProfilePage() {
             summary: newNote,
         });
         setNewNote('');
+    };
+
+    const handleSetPracticeGoal = () => {
+        updateUserPracticeGoal(student.id, practiceGoal);
+        toast({
+            title: "יעד אימון עודכן",
+            description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
+        });
     }
 
     return (
@@ -94,8 +107,8 @@ export default function TeacherStudentProfilePage() {
                 </CardHeader>
             </Card>
 
-            <div className="grid lg:grid-cols-2 gap-6">
-                <Card>
+            <div className="grid lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2">
                     <CardHeader><CardTitle className="flex items-center gap-2"><Music /> רפרטואר</CardTitle></CardHeader>
                     <CardContent>
                         <Table>
@@ -136,24 +149,42 @@ export default function TeacherStudentProfilePage() {
                         </Table>
                     </CardContent>
                 </Card>
-                 <Card>
-                    <CardHeader><CardTitle className="flex items-center gap-2"><Activity /> פעילות אימונים (7 ימים אחרונים)</CardTitle></CardHeader>
-                    <CardContent className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={weeklyPracticeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} ד'`}/>
-                                <Tooltip
-                                    cursor={{ fill: 'hsl(var(--muted))' }}
-                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
-                                    formatter={(value: number) => [`${value} דקות`, 'זמן אימון']}
+                 <div className="space-y-6">
+                    <Card>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><Target /> יעד אימון שבועי</CardTitle></CardHeader>
+                        <CardContent className="space-y-2">
+                            <Label htmlFor="practice-goal">דקות אימון בשבוע</Label>
+                            <div className="flex gap-2">
+                                <Input 
+                                    id="practice-goal" 
+                                    type="number" 
+                                    value={practiceGoal} 
+                                    onChange={(e) => setPracticeGoal(Number(e.target.value))}
+                                    step={15}
                                 />
-                                <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
+                                <Button onClick={handleSetPracticeGoal}>הגדר</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><Activity /> פעילות אימונים (7 ימים אחרונים)</CardTitle></CardHeader>
+                        <CardContent className="h-[250px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={weeklyPracticeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} ד'`}/>
+                                    <Tooltip
+                                        cursor={{ fill: 'hsl(var(--muted))' }}
+                                        contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
+                                        formatter={(value: number) => [`${value} דקות`, 'זמן אימון']}
+                                    />
+                                    <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                 </div>
             </div>
              <Card>
                 <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> הערות שיעור</CardTitle></CardHeader>

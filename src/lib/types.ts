@@ -53,6 +53,9 @@ export type User = {
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
   availability?: any; // To be defined more strictly later
+  // Student-specific fields from SDD-09
+  weeklyPracticeGoal?: number;
+  packageId?: string;
 };
 
 export type Conservatorium = {

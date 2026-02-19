@@ -3,20 +3,33 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame } from "lucide-react";
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star } from "lucide-react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { AssignedRepertoire, RepertoireStatus } from "@/lib/types";
+
+const statusTranslations: Record<RepertoireStatus, string> = {
+    LEARNING: 'למידה',
+    POLISHING: 'ליטוש',
+    PERFORMANCE_READY: 'מוכן להופעה',
+    COMPLETED: 'הושלם'
+};
+
 
 export function StudentProfilePage() {
-    const { user, mockPracticeLogs } = useAuth();
+    const { user, mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions } = useAuth();
     if (!user || user.role !== 'student') return null;
 
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === user.id), [mockPracticeLogs, user.id]);
+    const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === user.id), [mockAssignedRepertoire, user.id]);
+    const currentPackage = useMemo(() => mockPackages.find(p => p.id === user.packageId), [mockPackages, user.packageId]);
+
 
     const { totalMinutesThisWeek, weeklyGoal, streak } = useMemo(() => {
-        const weeklyGoal = 120; // Example weekly goal in minutes
+        const weeklyGoal = user.weeklyPracticeGoal || 120; 
 
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -55,7 +68,7 @@ export function StudentProfilePage() {
         }
 
         return { totalMinutesThisWeek: totalMinutes, weeklyGoal, streak: currentStreak };
-    }, [userLogs]);
+    }, [userLogs, user.weeklyPracticeGoal]);
 
     return (
         <div className="space-y-6">
@@ -82,8 +95,8 @@ export function StudentProfilePage() {
                 </CardHeader>
             </Card>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><UserCircle className="text-primary" /> המורה שלי</CardTitle>
                     </CardHeader>
@@ -92,58 +105,88 @@ export function StudentProfilePage() {
                         <p className="text-muted-foreground">{user.instruments?.[0]?.instrument}</p>
                     </CardContent>
                 </Card>
-                <Card>
+                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Music className="text-accent"/> החבילה שלי</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-medium">מנוי חודשי</p>
-                        <p className="text-sm text-muted-foreground">3 מתוך 4 שיעורים נותרו</p>
-                        <Progress value={75} className="mt-2" />
+                       {currentPackage ? (
+                        <>
+                            <p className="text-lg font-medium">{currentPackage.title}</p>
+                            <p className="text-sm text-muted-foreground">{currentPackage.description}</p>
+                        </>
+                       ) : (
+                        <p className="text-muted-foreground">לא שויכה חבילה</p>
+                       )}
                     </CardContent>
                 </Card>
-                 <Card>
+                <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Clock className="text-green-500" /> יעד אימון שבועי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Target className="text-red-500" /> יעד שבועי</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p className="text-lg font-medium">{totalMinutesThisWeek} / {weeklyGoal} דקות</p>
-                        <p className="text-sm text-muted-foreground">התקדמות לקראת היעד השבועי שלך</p>
+                        <p className="text-sm text-muted-foreground">התקדמות לקראת היעד שהוגדר</p>
                          <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
                     </CardContent>
                 </Card>
-                 <Card>
+            </div>
+            
+            <div className="grid lg:grid-cols-2 gap-6">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Flame className="text-orange-500" /> רצף אימונים</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Star /> הרפרטואר שלי</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-medium">{streak} ימים</p>
-                        <p className="text-sm text-muted-foreground">כל הכבוד על ההתמדה!</p>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>יצירה</TableHead>
+                                    <TableHead>סטטוס</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {userRepertoire.map(rep => {
+                                    const composition = compositions.find(c => c.id === rep.compositionId);
+                                    return (
+                                        <TableRow key={rep.id}>
+                                            <TableCell>
+                                                <p className="font-medium">{composition?.title}</p>
+                                                <p className="text-xs text-muted-foreground">{composition?.composer}</p>
+                                            </TableCell>
+                                            <TableCell>
+                                                 <Badge variant="outline">{statusTranslations[rep.status]}</Badge>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                                 {userRepertoire.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-4">טרם הוגדר רפרטואר.</TableCell></TableRow>}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {userLogs.slice(0,3).map(log => (
+                            <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
+                                <div>
+                                    <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                                    <p className="text-xs text-muted-foreground">{log.pieces.map(p => p.title).join(', ')}</p>
+                                </div>
+                                <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
+                                    {log.durationMinutes} דקות
+                                </Badge>
+                            </div>
+                        ))}
+                        <Button variant="outline" className="w-full" asChild>
+                            <Link href="/dashboard/progress">לכל האימונים</Link>
+                        </Button>
                     </CardContent>
                 </Card>
             </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    {userLogs.slice(0,3).map(log => (
-                         <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
-                            <div>
-                                <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                                <p className="text-xs text-muted-foreground">{log.pieces.map(p => p.title).join(', ')}</p>
-                            </div>
-                            <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
-                                {log.durationMinutes} דקות
-                            </Badge>
-                        </div>
-                    ))}
-                    <Button variant="outline" className="w-full" asChild>
-                        <Link href="/dashboard/progress">לכל האימונים</Link>
-                    </Button>
-                </CardContent>
-            </Card>
         </div>
     )
 }
