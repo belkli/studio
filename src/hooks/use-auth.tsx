@@ -593,12 +593,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [addNotificationAndLog, users]);
 
   const assignSubstitute = (lessonId: string, newTeacherId: string) => {
-    setLessons(prevLessons => prevLessons.map(lesson => 
-        lesson.id === lessonId
-            ? { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() }
-            : lesson
-    ));
-    // In a real app, also trigger notifications here
+    setLessons(prevLessons => prevLessons.map(lesson => {
+        if (lesson.id === lessonId) {
+            const updatedLesson = { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
+            
+            // NOTIFICATION LOGIC
+            const student = users.find(u => u.id === lesson.studentId);
+            const newTeacher = users.find(u => u.id === newTeacherId);
+            if (student && newTeacher) {
+                const userToNotifyId = student.parentId || student.id;
+                const lessonTimeStr = `${format(new Date(updatedLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(updatedLesson.startTime), 'HH:mm')}`;
+                
+                // Notify student/parent
+                addNotificationAndLog(
+                    userToNotifyId,
+                    'נמצא מורה מחליף לשיעור',
+                    `שיעור ה${lesson.instrument} שלך יתקיים כרגיל עם המורה המחליף/ה ${newTeacher.name} במועד: ${lessonTimeStr}.`,
+                    '/dashboard/schedule'
+                );
+
+                // Notify new teacher
+                addNotificationAndLog(
+                    newTeacher.id,
+                    'שיבוץ לשיעור כמחליף/ה',
+                    `שובצת להעביר שיעור ${lesson.instrument} לתלמיד/ה ${student.name} במועד: ${lessonTimeStr}.`,
+                    '/dashboard/schedule'
+                );
+            }
+
+            return updatedLesson;
+        }
+        return lesson;
+    }));
   };
 
   const addPracticeLog = (log: Partial<PracticeLog>) => {
