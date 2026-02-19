@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle } from 'lucide-react';
+import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle, Flame, Clock, Medal } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -101,6 +101,45 @@ export default function TeacherStudentProfilePage() {
         return last7Days;
     }, [studentLogs]);
     
+    const { streak, totalMinutesThisMonth, piecesLearned } = useMemo(() => {
+        const today = new Date();
+        const thisMonth = today.getMonth();
+        const thisYear = today.getFullYear();
+    
+        const totalMinutesThisMonth = studentLogs.reduce((sum, log) => {
+            const logDate = new Date(log.date);
+            if (logDate.getMonth() === thisMonth && logDate.getFullYear() === thisYear) {
+                return sum + log.durationMinutes;
+            }
+            return sum;
+        }, 0);
+    
+        const piecesLearned = studentRepertoire.filter(rep => rep.status === 'COMPLETED').length;
+    
+        const logDates = [...new Set(studentLogs.map(log => new Date(log.date.split('T')[0]).getTime()))].sort((a, b) => b - a);
+        let currentStreak = 0;
+        if (logDates.length > 0) {
+            const todayTime = new Date();
+            todayTime.setHours(0, 0, 0, 0);
+            const yesterdayTime = new Date(todayTime);
+            yesterdayTime.setDate(todayTime.getDate() - 1);
+    
+            if (logDates[0] === todayTime.getTime() || logDates[0] === yesterdayTime.getTime()) {
+                currentStreak = 1;
+                for (let i = 0; i < logDates.length - 1; i++) {
+                    const diff = (logDates[i] - logDates[i + 1]) / (1000 * 60 * 60 * 24);
+                    if (diff === 1) {
+                        currentStreak++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    
+        return { streak: currentStreak, totalMinutesThisMonth, piecesLearned };
+    }, [studentLogs, studentRepertoire]);
+
     useEffect(() => {
         if (student?.weeklyPracticeGoal) {
             setPracticeGoal(student.weeklyPracticeGoal);
@@ -189,6 +228,39 @@ export default function TeacherStudentProfilePage() {
                     </div>
                 </CardHeader>
             </Card>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">רצף אימונים</CardTitle>
+                        <Flame className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">🔥 {streak} ימים</div>
+                        <p className="text-xs text-muted-foreground">ימים רצופים של אימון מתועד</p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">זמן אימון (החודש)</CardTitle>
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{(totalMinutesThisMonth / 60).toFixed(1)} שעות</div>
+                         <p className="text-xs text-muted-foreground">{totalMinutesThisMonth} דקות בסך הכל</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">רפרטואר שהושלם</CardTitle>
+                        <Medal className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{piecesLearned} יצירות</div>
+                         <p className="text-xs text-muted-foreground">בסך הכל מתחילת השנה</p>
+                    </CardContent>
+                </Card>
+            </div>
 
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
