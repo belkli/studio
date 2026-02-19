@@ -45,6 +45,7 @@ const harmoniaLinks = [
     { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent', 'teacher'] },
     { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent', 'teacher'] },
     { href: '/dashboard/makeups', label: 'שיעורי השלמה', icon: Coins, roles: ['student', 'parent'] },
+    { href: '/dashboard/notifications', label: 'התראות', icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin'] },
@@ -62,7 +63,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => (
     <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
         <Link href={notification.link}>
             <div className="flex-shrink-0 mt-1">
-                <Mail className="h-4 w-4 text-muted-foreground" />
+                <Bell className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="flex-grow">
                 <p className="font-semibold text-sm">{notification.title}</p>
@@ -180,6 +181,12 @@ export function SidebarNav() {
                 ) : (
                     <p className="p-4 text-sm text-center text-muted-foreground">אין התראות חדשות</p>
                 )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="flex items-center justify-center cursor-pointer text-sm text-primary hover:text-primary">
+                    <Link href="/dashboard/notifications">
+                        הצג את כל ההתראות
+                    </Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
         </div>
