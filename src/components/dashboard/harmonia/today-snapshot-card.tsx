@@ -1,24 +1,18 @@
 'use client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-
-const mockLessons = [
-    { time: '14:00', student: 'אבי כהן', teacher: 'מרים כהן', room: 'חדר 3' },
-    { time: '14:45', student: 'יעל לוי', teacher: 'מרים כהן', room: 'חדר 3', status: 'Canceled' },
-    { time: '15:30', student: 'דניאל שפירא', teacher: 'דוד המלך', room: 'אולפן 1' },
-    { time: '16:00', student: 'אריאל לוי', teacher: 'מרים כהן', room: 'חדר 3', status: 'Late' },
-];
-
-const mockPayments = [
-    { name: 'משפחת כהן', status: 'נכשל' },
-    { name: 'משפחת ישראלי', status: 'שולם' },
-];
+import { useAuth } from "@/hooks/use-auth";
 
 export function TodaySnapshotCard() {
+    const { mockLessons, users, mockInvoices } = useAuth();
+    
+    const today = new Date();
+    const todayLessons = mockLessons.filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
+    const failedPayments = mockInvoices.filter(inv => inv.status === 'OVERDUE');
+
     return (
         <Card className="h-full">
             <CardHeader>
@@ -27,30 +21,37 @@ export function TodaySnapshotCard() {
             </CardHeader>
             <CardContent className="grid gap-6">
                 <div>
-                    <h4 className="text-sm font-semibold mb-2">השיעורים הבאים</h4>
+                    <h4 className="text-sm font-semibold mb-2">השיעורים להיום</h4>
                     <div className="space-y-2">
-                        {mockLessons.map((lesson, index) => (
-                             <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
-                                <span className="font-mono text-muted-foreground">{lesson.time}</span>
-                                <span className="font-medium flex-1">{lesson.student}</span>
-                                <span className="text-muted-foreground">{lesson.teacher}</span>
-                                <span className="text-muted-foreground">{lesson.room}</span>
-                                {lesson.status && <Badge variant={lesson.status === 'Canceled' ? 'destructive' : 'secondary'}>{lesson.status === 'Canceled' ? 'בוטל' : 'איחור'}</Badge>}
-                            </div>
-                        ))}
+                        {todayLessons.length > 0 ? todayLessons.map((lesson, index) => {
+                            const student = users.find(u => u.id === lesson.studentId);
+                            const teacher = users.find(u => u.id === lesson.teacherId);
+                            return (
+                                 <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
+                                    <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit'})}</span>
+                                    <span className="font-medium flex-1">{student?.name}</span>
+                                    <span className="text-muted-foreground">{teacher?.name}</span>
+                                    <span className="text-muted-foreground">חדר {lesson.roomId || 'לא שויך'}</span>
+                                    {lesson.status !== 'SCHEDULED' && <Badge variant={lesson.status === 'CANCELLED_STUDENT_NO_NOTICE' ? 'destructive' : 'secondary'}>{lesson.status}</Badge>}
+                                </div>
+                            )
+                        }) : <p className="text-sm text-muted-foreground">אין שיעורים מתוכננים להיום.</p>}
                     </div>
                 </div>
                  <div>
-                    <h4 className="text-sm font-semibold mb-2">תשלומים אחרונים</h4>
+                    <h4 className="text-sm font-semibold mb-2">בעיות בגבייה</h4>
                      <div className="space-y-2">
-                        {mockPayments.map((payment, index) => (
-                            <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
-                                <span className="font-medium flex-1">{payment.name}</span>
-                                <Badge variant={payment.status === 'נכשל' ? 'destructive' : 'default'} className="bg-green-100 text-green-800 data-[variant=destructive]:bg-red-100 data-[variant=destructive]:text-red-800 border-none">
-                                    {payment.status}
-                                </Badge>
-                            </div>
-                        ))}
+                        {failedPayments.length > 0 ? failedPayments.map((payment, index) => {
+                            const payer = users.find(u => u.id === payment.payerId);
+                            return (
+                                <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
+                                    <span className="font-medium flex-1">{payer?.name}</span>
+                                    <Badge variant={'destructive'} className="bg-red-100 text-red-800 border-none">
+                                        בפיגור
+                                    </Badge>
+                                </div>
+                            )
+                        }) : <p className="text-sm text-muted-foreground">אין בעיות בגבייה כרגע.</p>}
                      </div>
                 </div>
 

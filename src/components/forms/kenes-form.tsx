@@ -20,6 +20,8 @@ import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { SuggestionButton } from './suggestion-button';
+
 
 const compositionSchema = z.object({
   id: z.string().optional(),
@@ -93,7 +95,7 @@ const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
 
 
 const KenesRepertoireItem = ({ index, remove, fields }) => {
-    const { control, setValue, watch } = useFormContext();
+    const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
@@ -376,16 +378,22 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                     />
                 ))}
                 </div>
-                 <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => append({ ...emptyComposition })}
-                    disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
-                >
-                    <PlusCircle className="me-2 h-4 w-4" />
-                    הוסף יצירה
-                </Button>
+                <div className="flex items-center gap-4 mt-4">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => append({ ...emptyComposition })}
+                        disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
+                    >
+                        <PlusCircle className="me-2 h-4 w-4" />
+                        הוסף יצירה
+                    </Button>
+                    <SuggestionButton 
+                        fields={fields} 
+                        append={append}
+                        getValues={form.getValues}
+                    />
+                </div>
                 {fields.length >= MAX_REPERTOIRE_ITEMS && (
                     <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
                 )}

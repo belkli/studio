@@ -363,7 +363,7 @@ export default function FormDetailsPage() {
                                 <CardHeader>
                                     <CardTitle>{form.formType}</CardTitle>
                                     <CardDescription>
-                                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} • כיתה: {form.grade} • הוגש ב-{form.submissionDate}
+                                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} {form.grade && `• כיתה: ${form.grade}`} • הוגש ב-{form.submissionDate}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -395,6 +395,20 @@ export default function FormDetailsPage() {
                                             <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
                                         </div>
                                     </DetailsCard>
+                                </>
+                            )}
+                             {form.formType === 'כנס / אירוע' && (
+                                <>
+                                <DetailsCard title="1. פרטי האירוע" columns={3}>
+                                    <DetailItem label="שם האירוע" value={form.eventName} />
+                                    <DetailItem label="תאריך" value={form.eventDate} />
+                                    <DetailItem label="מיקום" value={form.eventLocation} />
+                                </DetailsCard>
+                                <DetailsCard title="2. פרטי ההרכב" columns={3}>
+                                    <DetailItem label="מנצח/ת" value={form.conductor} />
+                                    <DetailItem label="מלווה" value={form.accompanist} />
+                                    <DetailItem label="מספר משתתפים" value={form.numParticipants} />
+                                </DetailsCard>
                                 </>
                             )}
                             
