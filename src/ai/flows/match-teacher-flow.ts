@@ -30,13 +30,13 @@ const TeacherProfileSchema = z.object({
   teachingLanguages: z.array(z.string()).optional(),
 });
 
-export const MatchTeacherInputSchema = z.object({
+const MatchTeacherInputSchema = z.object({
   studentProfile: StudentProfileSchema,
   availableTeachers: z.array(TeacherProfileSchema),
 });
 export type MatchTeacherInput = z.infer<typeof MatchTeacherInputSchema>;
 
-export const MatchTeacherOutputSchema = z.object({
+const MatchTeacherOutputSchema = z.object({
   matches: z
     .array(
       z.object({
