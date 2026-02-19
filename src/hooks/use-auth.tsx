@@ -48,7 +48,7 @@ import {
     type AuditLogEntry,
     type Channel,
 } from '@/lib/data';
-import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays } from 'date-fns';
 
 interface LoginResult {
   user: User | null;
@@ -133,52 +133,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const addNotificationAndLog = useCallback((userId: string, title: string, message: string, link: string) => {
-    // This is a mock function. In a real app, this would be a complex backend service.
-    const userToNotify = users.find(u => u.id === userId);
-    if (!userToNotify) return;
-
-    // Simulate checking user preferences - for now, always send IN_APP
-    const channelsToSend: Channel[] = ['IN_APP']; // Mock: always send in-app
-
-    const notificationId = `notif-${Date.now()}`;
+    const notificationId = `notif-${Date.now()}-${Math.random()}`;
+    const newNotification: Notification = {
+      id: notificationId,
+      title,
+      message,
+      link,
+      read: false,
+      timestamp: new Date().toISOString(),
+    };
     
-    // 1. Add notification to user's list if IN_APP is a preferred channel
-    if (channelsToSend.includes('IN_APP')) {
-        const newNotification: Notification = {
-          id: notificationId,
-          title,
-          message,
-          link,
-          read: false,
-          timestamp: new Date().toISOString(),
-        };
+    // Use functional updates to avoid stale state issues in callbacks
+    setUsers(prevUsers => prevUsers.map(u => 
+        u.id === userId
+            ? { ...u, notifications: [newNotification, ...(u.notifications || [])]}
+            : u
+    ));
+    
+    setUser(prevUser => (prevUser && prevUser.id === userId) 
+        ? { ...prevUser, notifications: [newNotification, ...(prevUser.notifications || [])]} 
+        : prevUser
+    );
 
-        setUsers(prevUsers => prevUsers.map(u => 
-            u.id === userId
-                ? { ...u, notifications: [newNotification, ...(u.notifications || [])]}
-                : u
-        ));
-        if (user?.id === userId) {
-            setUser(prev => prev ? { ...prev, notifications: [newNotification, ...(prev.notifications || [])]} : null);
+    // For now, we only log IN_APP notifications as that's what we're creating
+    const newLogEntry: AuditLogEntry = {
+      id: `log-IN_APP-${Date.now()}`,
+      notificationId,
+      userId,
+      channel: 'IN_APP',
+      status: 'DELIVERED', // Mock status
+      sentAt: new Date().toISOString(),
+      title,
+      body: message,
+    };
+    setAuditLog(prev => [newLogEntry, ...prev]);
+  }, []);
+
+  useEffect(() => {
+    // Simulate checking for expiring packages and overdue invoices once on app load
+    const now = new Date();
+    initialUsers.forEach(u => {
+        const studentPackage = initialPackages.find(p => p.id === u.packageId);
+        if (studentPackage && studentPackage.validUntil) {
+            const expiryDate = new Date(studentPackage.validUntil);
+            const daysUntilExpiry = differenceInDays(expiryDate, now);
+
+            if (daysUntilExpiry > 0 && daysUntilExpiry <= 14) {
+                const userToNotifyId = u.parentId || u.id;
+                addNotificationAndLog(
+                    userToNotifyId,
+                    'חבילתך עומדת לפוג!',
+                    `נותרו רק ${daysUntilExpiry} ימים עד תום החבילה "${studentPackage.title}".`,
+                    '/dashboard/billing'
+                );
+            }
         }
-    }
-    
-    // 2. Add entries to the audit log for each channel
-    channelsToSend.forEach(channel => {
-        const newLogEntry: AuditLogEntry = {
-            id: `log-${channel}-${Date.now()}`,
-            notificationId,
-            userId,
-            channel,
-            status: 'DELIVERED', // Mock status
-            sentAt: new Date().toISOString(),
-            title,
-            body: message,
-        };
-        setAuditLog(prev => [newLogEntry, ...prev]);
     });
 
-  }, [users, user?.id]);
+    const overdueInvoices = initialInvoices.filter(inv => inv.status === 'SENT' && new Date(inv.dueDate) < now);
+    overdueInvoices.forEach(inv => {
+        addNotificationAndLog(
+            inv.payerId,
+            'תשלום נדרש: חשבונית בפיגור',
+            `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
+            '/dashboard/billing'
+        );
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   useEffect(() => {
     const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
@@ -618,11 +642,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return newEntry;
     };
     
-    const updateWaitlistStatus = (entryId: string, status: WaitlistStatus) => {
-        setWaitlist(prev => prev.map(entry =>
-            entry.id === entryId ? { ...entry, status, notifiedAt: status === 'OFFERED' ? new Date().toISOString() : entry.notifiedAt } : entry
-        ));
-    };
+    const updateWaitlistStatus = useCallback((entryId: string, status: WaitlistStatus) => {
+        setWaitlist(prev => prev.map(entry => {
+            if (entry.id === entryId) {
+                const updatedEntry = { ...entry, status, notifiedAt: status === 'OFFERED' ? new Date().toISOString() : entry.notifiedAt };
+    
+                if (status === 'OFFERED') {
+                    const student = users.find(u => u.id === entry.studentId);
+                    const teacher = users.find(u => u.id === entry.teacherId);
+                    if (student) {
+                        const userToNotifyId = student.parentId || student.id;
+                        addNotificationAndLog(
+                            userToNotifyId,
+                            'מקום התפנה!',
+                            `התפנה מקום אצל ${teacher?.name || 'המורה המבוקש/ת'}. יש לך 48 שעות להבטיח את המקום.`,
+                            '/dashboard/schedule/book'
+                        );
+                    }
+                }
+                return updatedEntry;
+            }
+            return entry;
+        }));
+    }, [users, addNotificationAndLog]);
 
     const addFormTemplate = (template: Partial<FormTemplate>) => {
         if (!user) return;
