@@ -6,13 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { User, PracticeLog, Package, LessonSlot, SlotStatus } from "@/lib/types";
 import { format } from "date-fns";
 import { he } from 'date-fns/locale';
 import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { SickLeaveModal } from "./sick-leave-modal";
 
 function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (lessonId: string, status: SlotStatus) => void }) {
     const isPast = new Date(lesson.startTime) < new Date();
@@ -155,6 +156,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons }: { s
 export function TeacherDashboard() {
     const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages, updateLessonStatus } = useAuth();
     const { toast } = useToast();
+    const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
 
     if (!user) return null;
     
@@ -190,6 +192,10 @@ export function TeacherDashboard() {
                     <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
                 </div>
                 <div className="flex gap-2">
+                    <Button variant="destructive" onClick={() => setIsSickLeaveModalOpen(true)}>
+                        <XCircle className="ms-2 h-4 w-4" />
+                        דיווח מחלה / היעדרות
+                    </Button>
                     <Button variant="outline" asChild>
                         <Link href="/dashboard/forms/new">
                             <PlusCircle className="ms-2 h-4 w-4" />
@@ -269,7 +275,7 @@ export function TeacherDashboard() {
                     {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}
                 </CardContent>
             </Card>
-
+            <SickLeaveModal open={isSickLeaveModalOpen} onOpenChange={setIsSickLeaveModalOpen} />
         </div>
     );
 }

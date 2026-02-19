@@ -32,6 +32,7 @@ import {
     type Announcement,
     type Room,
 } from '@/lib/data';
+import { startOfDay, endOfDay } from 'date-fns';
 
 interface LoginResult {
   user: User | null;
@@ -55,6 +56,7 @@ interface AuthContextType {
   cancelLesson: (lessonId: string) => void;
   updateLessonStatus: (lessonId: string, status: SlotStatus) => void;
   rescheduleLesson: (lessonId: string, newStartTime: string) => void;
+  reportSickLeave: (teacherId: string, startDate: Date, endDate: Date) => LessonSlot[];
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   addPracticeLog: (log: Partial<PracticeLog>) => void;
@@ -305,6 +307,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ));
   };
 
+  const reportSickLeave = useCallback((teacherId: string, startDate: Date, endDate: Date): LessonSlot[] => {
+    let affectedLessons: LessonSlot[] = [];
+    setLessons(prevLessons => {
+        const updatedLessons = prevLessons.map(lesson => {
+            const lessonDate = new Date(lesson.startTime);
+            if (lesson.teacherId === teacherId && 
+                lessonDate >= startDate && 
+                lessonDate <= endDate &&
+                lesson.status === 'SCHEDULED') {
+                
+                const updatedLesson = { 
+                    ...lesson, 
+                    status: 'CANCELLED_TEACHER' as SlotStatus,
+                    updatedAt: new Date().toISOString()
+                };
+                affectedLessons.push(updatedLesson);
+                return updatedLesson;
+            }
+            return lesson;
+        });
+        return updatedLessons;
+    });
+    return affectedLessons;
+  }, []);
+
   const addPracticeLog = (log: Partial<PracticeLog>) => {
     if (!user) return;
     
@@ -384,6 +411,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelLesson,
       updateLessonStatus,
       rescheduleLesson,
+      reportSickLeave,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
       mockPracticeLogs: practiceLogs, 
