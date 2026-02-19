@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 import { addDays } from 'date-fns';
@@ -544,5 +544,39 @@ export const mockEvents: EventProduction[] = [
     }
 ];
 
+export const mockInstrumentInventory: InstrumentInventory[] = [
+    {
+        id: 'inst-inv-1',
+        conservatoriumId: 'cons-15',
+        type: 'כינור',
+        brand: 'Stentor',
+        serialNumber: 'SN12345',
+        condition: 'GOOD',
+        rentalRatePerMonth: 50,
+        currentRenterId: 'student-user-1',
+        rentalStartDate: new Date('2024-06-01').toISOString(),
+        expectedReturnDate: new Date('2025-06-01').toISOString(),
+    },
+    {
+        id: 'inst-inv-2',
+        conservatoriumId: 'cons-15',
+        type: 'צ\'לו',
+        brand: 'Yamaha',
+        serialNumber: 'SN67890',
+        condition: 'NEW',
+        rentalRatePerMonth: 80,
+    },
+    {
+        id: 'inst-inv-3',
+        conservatoriumId: 'cons-15',
+        type: 'חליל צד',
+        brand: 'Jupiter',
+        serialNumber: 'SN54321',
+        condition: 'FAIR',
+        rentalRatePerMonth: 40,
+    }
+];
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot };
+
+
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition };

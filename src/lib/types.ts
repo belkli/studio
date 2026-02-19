@@ -503,3 +503,20 @@ export type EventProduction = {
   isPublic: boolean;
   ticketPrice: number;
 };
+
+// From SDD-14G: Instrument Rental Management
+export type InstrumentCondition = 'NEW' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR';
+
+export type InstrumentInventory = {
+  id: string;
+  conservatoriumId: string;
+  type: string; // Instrument type, e.g. 'כינור'
+  brand: string;
+  serialNumber: string;
+  condition: InstrumentCondition;
+  rentalRatePerMonth: number;
+  currentRenterId?: string;
+  rentalStartDate?: string; // ISO Date string
+  expectedReturnDate?: string; // ISO Date string
+  notes?: string;
+};
