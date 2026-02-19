@@ -1,5 +1,5 @@
 'use client';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -21,8 +21,8 @@ export function TodaySnapshotCard() {
             </CardHeader>
             <CardContent className="grid gap-6">
                 <div>
-                    <h4 className="text-sm font-semibold mb-2">השיעורים להיום</h4>
-                    <div className="space-y-2">
+                    <h4 className="text-sm font-semibold mb-2">השיעורים להיום ({todayLessons.length})</h4>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
                         {todayLessons.length > 0 ? todayLessons.map((lesson, index) => {
                             const student = users.find(u => u.id === lesson.studentId);
                             const teacher = users.find(u => u.id === lesson.teacherId);

@@ -26,8 +26,8 @@ import {
     type Composition,
     type LessonNote,
     type MessageThread,
-    type Package,
     type ProgressReport,
+    type SlotStatus,
 } from '@/lib/data';
 
 interface LoginResult {
@@ -49,6 +49,7 @@ interface AuthContextType {
   updateForm: (updatedForm: FormSubmission) => void;
   mockLessons: LessonSlot[];
   addLesson: (newLesson: Partial<LessonSlot>) => void;
+  cancelLesson: (lessonId: string) => void;
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
   mockAssignedRepertoire: AssignedRepertoire[];
@@ -248,6 +249,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLessons(prev => [...prev, fullLesson]);
   };
 
+  const cancelLesson = (lessonId: string) => {
+    setLessons(prevLessons => prevLessons.map(lesson => {
+      if (lesson.id === lessonId) {
+        const lessonStartTime = new Date(lesson.startTime);
+        const now = new Date();
+        const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+        // Mock policy: 24 hours notice
+        const newStatus: SlotStatus = hoursUntilLesson > 24 
+            ? 'CANCELLED_STUDENT_NOTICED' 
+            : 'CANCELLED_STUDENT_NO_NOTICE';
+
+        return { ...lesson, status: newStatus, updatedAt: new Date().toISOString() };
+      }
+      return lesson;
+    }));
+  };
+
   const value = { 
       user, 
       users, 
@@ -262,6 +281,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateForm, 
       mockLessons: lessons, 
       addLesson,
+      cancelLesson,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
       mockPracticeLogs: initialPracticeLogs, 

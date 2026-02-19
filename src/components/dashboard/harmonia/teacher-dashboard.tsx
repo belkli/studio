@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, PlusCircle } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle } from "lucide-react";
 import { useMemo } from "react";
 import type { User, PracticeLog, Package } from "@/lib/types";
 
@@ -77,7 +77,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
 }
 
 
-function TodaySnapshotCardForTeacher({ todayLessonsCount, pendingApprovalsCount }: { todayLessonsCount: number, pendingApprovalsCount: number }) {
+function TeacherTodaySnapshot({ todayLessonsCount, pendingApprovalsCount }: { todayLessonsCount: number, pendingApprovalsCount: number }) {
     return (
         <Card className="h-full flex flex-col">
             <CardHeader>
@@ -97,14 +97,14 @@ function TodaySnapshotCardForTeacher({ todayLessonsCount, pendingApprovalsCount 
             <CardFooter className="grid grid-cols-2 gap-2">
                 <Button variant="outline" className="w-full" asChild>
                     <Link href="/dashboard/schedule">
-                        למערכת המלאה
-                        <ArrowLeft className="ms-2 h-4 w-4" />
+                        <Calendar className="h-4 w-4 me-2"/>
+                        למערכת
                     </Link>
                 </Button>
                  <Button variant="outline" className="w-full" asChild>
                     <Link href="/dashboard/approvals">
-                        טפל באישור
-                        <ArrowLeft className="ms-2 h-4 w-4" />
+                        <CheckCircle className="h-4 w-4 me-2"/>
+                        לאישורים
                     </Link>
                 </Button>
             </CardFooter>
@@ -154,7 +154,7 @@ export function TeacherDashboard() {
             
             <div className="grid lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1">
-                    <TodaySnapshotCardForTeacher 
+                    <TeacherTodaySnapshot 
                         todayLessonsCount={todayLessons.length} 
                         pendingApprovalsCount={pendingApprovals.length} 
                     />
