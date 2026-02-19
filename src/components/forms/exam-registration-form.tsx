@@ -199,10 +199,19 @@ const getHebrewAcademicYear = () => {
     return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
 }
 
-export function ExamRegistrationForm({ user, student, onSubmit, isEditing = false, onCancel }: ExamRegistrationFormProps) {
+export function ExamRegistrationForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: ExamRegistrationFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData ? {
+        studentId: student.id,
+        studentName: student.name,
+        instrument: student.instruments?.[0]?.instrument || '',
+        examLevel: initialData.examLevel,
+        examType: initialData.examType,
+        preferredExamDateRange: initialData.preferredExamDateRange,
+        repertoire: initialData.repertoire,
+        teacherDeclaration: initialData.teacherDeclaration ?? false,
+    } : {
         studentId: student.id,
         studentName: student.name,
         instrument: student.instruments?.[0]?.instrument || '',
