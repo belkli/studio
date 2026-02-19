@@ -15,6 +15,10 @@ export type Notification = {
   read: boolean;
 };
 
+// From SDD-03
+export type TeacherSpecialty = 'EXAM_PREP' | 'EARLY_CHILDHOOD' | 'PERFORMANCE' | 'JAZZ' | 'THEORY' | 'SPECIAL_NEEDS' | 'BEGINNER_ADULTS' | 'COMPETITION' | 'ENSEMBLE';
+export type Language = 'HE' | 'EN' | 'AR' | 'RU';
+
 export type User = {
   id: string;
   name: string;
@@ -41,6 +45,11 @@ export type User = {
   childIds?: string[];  // Link to child users
   students?: string[]; // For teachers/admins to list their students by ID
   grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
+  // Teacher-specific fields from SDD-03
+  bio?: string;
+  specialties?: TeacherSpecialty[];
+  teachingLanguages?: Language[];
+  availability?: any; // To be defined more strictly later
 };
 
 export type Conservatorium = {
@@ -149,6 +158,8 @@ export type FormSubmission = {
 };
 
 // --- New Types from SDDs ---
+export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' | 'OTHER';
+
 export type DayOfWeek = 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
 export type TimeRange = 'MORNING' | 'AFTERNOON' | 'EVENING';
 
@@ -178,19 +189,21 @@ export type LessonSlot = {
   updatedAt: string; // ISO Timestamp
 };
 
-export type PackageType = 'MONTHLY' | 'TRIAL' | 'PACK_5' | 'PACK_10' | 'YEARLY';
+export type PackageType = 'TRIAL' | 'PACK_5' | 'PACK_10' | 'MONTHLY' | 'YEARLY' | 'ADHOC_SINGLE';
 export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED';
 
 export type Package = {
   id: string;
-  studentId: string;
+  studentId?: string;
   type: PackageType;
-  totalCredits: number;
-  usedCredits: number;
+  title: string;
+  description: string;
+  totalCredits?: number;
+  usedCredits?: number;
   price: number;
-  paymentStatus: PaymentStatus;
-  validFrom: string; // ISO Date
-  validUntil: string; // ISO Date
+  paymentStatus?: PaymentStatus;
+  validFrom?: string; // ISO Date
+  validUntil?: string; // ISO Date
 };
 
 export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';

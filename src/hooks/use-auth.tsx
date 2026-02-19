@@ -18,6 +18,7 @@ interface AuthContextType {
   approveUser: (userId: string) => void;
   rejectUser: (userId: string, reason: string) => void;
   updateUser: (updatedUser: User) => void;
+  addUser: (newUser: Partial<User>) => void;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
   newFeaturesEnabled: boolean;
@@ -99,6 +100,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(updatedUser);
     }
   };
+
+  const addUser = (newUser: Partial<User>) => {
+    const fullNewUser: User = {
+        id: `user-${Date.now()}`,
+        approved: false, // All new users start as not approved
+        role: 'student', // Default role
+        conservatoriumName: '', // Default
+        notifications: [],
+        ...newUser,
+    } as User;
+    setUsers(prevUsers => [...prevUsers, fullNewUser]);
+};
   
   const updateForm = (updatedForm: FormSubmission) => {
     setForms(prevForms =>
@@ -112,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userConservatorium?.newFeaturesEnabled ?? false;
   }, [user]);
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled };
 
   return (
     <AuthContext.Provider value={value}>

@@ -7,11 +7,20 @@ import { useAuth } from "@/hooks/use-auth";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
     const { user, newFeaturesEnabled, isLoading } = useAuth();
+    const router = useRouter();
 
-    if (isLoading || !user) {
+    useEffect(() => {
+        if (!isLoading && newFeaturesEnabled && user?.role === 'parent') {
+            router.replace('/dashboard/family');
+        }
+    }, [isLoading, newFeaturesEnabled, user, router]);
+
+    if (isLoading || !user || (newFeaturesEnabled && user.role === 'parent')) {
         return (
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -33,10 +42,14 @@ export default function DashboardPage() {
     }
 
     if (newFeaturesEnabled) {
-        return <AdminCommandCenter />;
+        // Teachers and students will get their own dashboards later.
+        // For now, only admin has the command center.
+        if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
+            return <AdminCommandCenter />;
+        }
     }
 
-    // Legacy Dashboard
+    // Legacy Dashboard or placeholder for other new roles
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">

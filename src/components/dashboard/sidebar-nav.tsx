@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, MessageSquare, Bot } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -31,7 +31,7 @@ const legacyLinks = [
 ];
 
 const harmoniaLinks = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'teacher', 'parent', 'student'] },
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'teacher', 'student'] },
     { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
@@ -86,6 +86,10 @@ export function SidebarNav() {
 
   const userRole = user.role;
   const links = newFeaturesEnabled ? harmoniaLinks : legacyLinks;
+  
+  const newFormPath = newFeaturesEnabled ? '/dashboard/enroll' : '/dashboard/forms/new';
+  const newFormLabel = newFeaturesEnabled ? 'רשום תלמיד' : 'טופס חדש';
+
 
   return (
     <>
@@ -152,9 +156,9 @@ export function SidebarNav() {
             </DropdownMenu>
         </div>
         <Button asChild className="w-full">
-            <Link href="/dashboard/forms/new">
-                <PlusCircle className="me-2 h-4 w-4" />
-                <span className="group-data-[collapsible=icon]:hidden">טופס חדש</span>
+            <Link href={newFormPath}>
+                <FilePlus className="me-2 h-4 w-4" />
+                <span className="group-data-[collapsible=icon]:hidden">{newFormLabel}</span>
             </Link>
         </Button>
       </div>
