@@ -47,7 +47,7 @@ export default function FormDetailsPage() {
     const searchParams = useSearchParams();
     const formId = params.id;
     const { toast } = useToast();
-    const { user, mockFormSubmissions: forms, updateForm } = useAuth();
+    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
     
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
     
@@ -78,6 +78,8 @@ export default function FormDetailsPage() {
     }
     
     const formUser = mockUsers.find(u => u.id === form.studentId);
+    const customFormTemplate = form.formTemplateId ? mockFormTemplates.find(t => t.id === form.formTemplateId) : undefined;
+
 
     const generatePdf = (form) => {
         const doc = new jsPDF();
@@ -394,6 +396,24 @@ export default function FormDetailsPage() {
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
+                            
+                            {customFormTemplate && form.formData && (
+                                <DetailsCard title="פרטי הטופס" columns={1}>
+                                    {customFormTemplate.fields.map(field => {
+                                        const value = form.formData[field.id];
+                                        if (value === undefined || value === null) return null;
+                                        
+                                        let displayValue = String(value);
+                                        if (field.type === 'checkbox') {
+                                            displayValue = value ? 'כן' : 'לא';
+                                        } else if (typeof value === 'boolean') {
+                                            displayValue = value ? 'כן' : 'לא';
+                                        }
+
+                                        return <DetailItem key={field.id} label={field.label} value={displayValue} />;
+                                    })}
+                                </DetailsCard>
+                            )}
 
                              {(form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') && (
                                 <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
@@ -452,37 +472,39 @@ export default function FormDetailsPage() {
                                 </DetailsCard>
                              )}
                             
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>תוכנית לביצוע</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                     <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>מלחין</TableHead>
-                                                <TableHead>שם היצירה</TableHead>
-                                                <TableHead>ז'אנר</TableHead>
-                                                <TableHead className="text-center">משך</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {form.repertoire.map((piece, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell>{piece.composer}</TableCell>
-                                                    <TableCell>{piece.title}</TableCell>
-                                                    <TableCell>{piece.genre}</TableCell>
-                                                    <TableCell className="text-center">{piece.duration}</TableCell>
+                            {form.repertoire.length > 0 && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>תוכנית לביצוע</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>מלחין</TableHead>
+                                                    <TableHead>שם היצירה</TableHead>
+                                                    <TableHead>ז'אנר</TableHead>
+                                                    <TableHead className="text-center">משך</TableHead>
                                                 </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </CardContent>
-                                <Separator />
-                                <CardFooter className="justify-end font-bold text-lg pt-6">
-                                    <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
-                                </CardFooter>
-                            </Card>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {form.repertoire.map((piece, index) => (
+                                                    <TableRow key={index}>
+                                                        <TableCell>{piece.composer}</TableCell>
+                                                        <TableCell>{piece.title}</TableCell>
+                                                        <TableCell>{piece.genre}</TableCell>
+                                                        <TableCell className="text-center">{piece.duration}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </CardContent>
+                                    <Separator />
+                                    <CardFooter className="justify-end font-bold text-lg pt-6">
+                                        <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
+                                    </CardFooter>
+                                </Card>
+                            )}
 
                             {isTeacherApproval && (
                                  <Card>
