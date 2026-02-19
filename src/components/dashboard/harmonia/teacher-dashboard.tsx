@@ -1,12 +1,11 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, ThumbsDown, Phone, MessageSquare, PlusCircle } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle } from "lucide-react";
 import { useMemo } from "react";
 import type { User, PracticeLog, Package } from "@/lib/types";
 
@@ -78,6 +77,41 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
 }
 
 
+function TodaySnapshotCardForTeacher({ todayLessonsCount, pendingApprovalsCount }: { todayLessonsCount: number, pendingApprovalsCount: number }) {
+    return (
+        <Card className="h-full flex flex-col">
+            <CardHeader>
+                <CardTitle>תמונת מצב יומית</CardTitle>
+                <CardDescription>השיעורים והמשימות שלך להיום.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow grid grid-cols-2 gap-4">
+                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-blue-50 dark:bg-blue-900/50">
+                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{todayLessonsCount}</span>
+                    <span className="text-sm text-muted-foreground mt-1">שיעורים להיום</span>
+                </div>
+                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-orange-50 dark:bg-orange-900/50">
+                    <span className="text-3xl font-bold text-orange-600 dark:text-orange-400">{pendingApprovalsCount}</span>
+                    <span className="text-sm text-muted-foreground mt-1">אישורים ממתינים</span>
+                </div>
+            </CardContent>
+            <CardFooter className="grid grid-cols-2 gap-2">
+                <Button variant="outline" className="w-full" asChild>
+                    <Link href="/dashboard/schedule">
+                        למערכת המלאה
+                        <ArrowLeft className="ms-2 h-4 w-4" />
+                    </Link>
+                </Button>
+                 <Button variant="outline" className="w-full" asChild>
+                    <Link href="/dashboard/approvals">
+                        טפל באישור
+                        <ArrowLeft className="ms-2 h-4 w-4" />
+                    </Link>
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
 export function TeacherDashboard() {
     const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages } = useAuth();
     if (!user) return null;
@@ -119,53 +153,17 @@ export function TeacherDashboard() {
             </div>
             
             <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                    <Card className="h-full">
-                        <CardHeader>
-                            <CardTitle>תמונת מצב יומית</CardTitle>
-                            <CardDescription>השיעורים והמשימות שלך להיום.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <h4 className="text-sm font-semibold mb-2">השיעורים להיום</h4>
-                            <div className="space-y-2">
-                                {todayLessons.length > 0 ? (
-                                    todayLessons.map((lesson, index) => {
-                                        const student = users.find(u=>u.id === lesson.studentId);
-                                        return (
-                                            <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
-                                                <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit'})}</span>
-                                                <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={student?.avatarUrl} />
-                                                    <AvatarFallback>{student?.name.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                                <span className="font-medium flex-1">{student?.name}</span>
-                                                <span className="text-muted-foreground">{lesson.instrument}</span>
-                                                {lesson.status !== 'SCHEDULED' && <Badge variant={lesson.status === 'COMPLETED' ? 'default' : 'secondary'}>{lesson.status}</Badge>}
-                                                <div className="flex gap-1">
-                                                    <Button size="icon" variant="ghost" className="h-7 w-7 text-green-600 hover:text-green-700"><Check /></Button>
-                                                    <Button size="icon" variant="ghost" className="h-7 w-7 text-red-600 hover:text-red-700"><ThumbsDown /></Button>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                ) : (
-                                    <p className="text-muted-foreground text-center py-4">אין לך שיעורים מתוכננים להיום.</p>
-                                )}
-                            </div>
-                            <Button variant="outline" className="w-full" asChild>
-                                <Link href="/dashboard/schedule">
-                                    למערכת השעות המלאה
-                                    <ArrowLeft className="ms-2 h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
                 <div className="lg:col-span-1">
+                    <TodaySnapshotCardForTeacher 
+                        todayLessonsCount={todayLessons.length} 
+                        pendingApprovalsCount={pendingApprovals.length} 
+                    />
+                </div>
+                 <div className="lg:col-span-2">
                      <Card>
                         <CardHeader>
-                            <CardTitle>אישורים ממתינים ({pendingApprovals.length})</CardTitle>
-                            <CardDescription>טפסים שממתינים לאישורך.</CardDescription>
+                            <CardTitle>אישורים אחרונים ממתינים ({pendingApprovals.length})</CardTitle>
+                            <CardDescription>הטפסים האחרונים שהוגשו וממתינים לאישורך.</CardDescription>
                         </CardHeader>
                         <CardContent>
                              <div className="space-y-3">
@@ -188,12 +186,6 @@ export function TeacherDashboard() {
                                     <p className="text-muted-foreground text-center py-4">אין טפסים הממתינים לאישורך.</p>
                                 )}
                             </div>
-                             <Button variant="outline" className="w-full mt-4" asChild>
-                                <Link href="/dashboard/approvals">
-                                    לכל האישורים
-                                    <ArrowLeft className="ms-2 h-4 w-4" />
-                                </Link>
-                            </Button>
                         </CardContent>
                     </Card>
                 </div>
