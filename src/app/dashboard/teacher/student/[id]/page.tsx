@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/use-auth';
 import { useParams, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -28,18 +28,31 @@ export default function TeacherStudentProfilePage() {
     const { toast } = useToast();
 
     const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
+
+    useEffect(() => {
+        // This effect handles the redirection if the user is not authorized.
+        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
+            router.push('/dashboard');
+        }
+    }, [teacher, studentId, router]);
     
     const [newNote, setNewNote] = useState('');
-    const [practiceGoal, setPracticeGoal] = useState(student?.weeklyPracticeGoal || 120);
+    const [practiceGoal, setPracticeGoal] = useState(120);
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
     
+    useEffect(() => {
+        if (student?.weeklyPracticeGoal) {
+            setPracticeGoal(student.weeklyPracticeGoal);
+        }
+    }, [student]);
+
     if (!student) {
         notFound();
     }
     
+    // This check prevents rendering the component for unauthorized users, while the useEffect handles the redirect.
     if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
-        router.push('/dashboard');
         return null;
     }
 
@@ -196,7 +209,7 @@ export default function TeacherStudentProfilePage() {
                                 <BarChart data={weeklyPracticeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                     <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} ד'`}/>
+                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${''}${value} ד`}/>
                                     <Tooltip
                                         cursor={{ fill: 'hsl(var(--muted))' }}
                                         contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
