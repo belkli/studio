@@ -13,7 +13,7 @@ import { format, startOfMonth, addMonths } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 export function StudentBillingDashboard() {
-    const { user, mockInvoices, mockPackages, mockLessons } = useAuth();
+    const { user, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
     if (!user) return null;
     
     const userAndChildrenIds = useMemo(() => {
@@ -22,6 +22,9 @@ export function StudentBillingDashboard() {
     }, [user]);
 
     const userInvoices = mockInvoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
+    
+    const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
+
 
     const currentPackage = useMemo(() => {
         const pkg = mockPackages.find(p => p.id === user.packageId);
@@ -41,23 +44,6 @@ export function StudentBillingDashboard() {
             nextBillingDate,
         };
     }, [mockPackages, user.packageId, mockLessons]);
-
-    const makeupCreditBalance = useMemo(() => {
-        const studentIds = user.role === 'parent' ? (user.childIds || []) : [user.id];
-        
-        const grantedCredits = mockLessons.filter(l => 
-            studentIds.includes(l.studentId) && 
-            (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM')
-        ).length;
-
-        const usedCredits = mockLessons.filter(l => 
-            studentIds.includes(l.studentId) && 
-            l.type === 'MAKEUP'
-        ).length;
-
-        return grantedCredits - usedCredits;
-    }, [mockLessons, user]);
-
 
     return (
         <div className="space-y-6">
@@ -98,14 +84,18 @@ export function StudentBillingDashboard() {
                 <Card className="flex flex-col">
                      <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent"/> שיעורי השלמה</CardTitle>
-                        <CardDescription>זיכויים זמינים לשיעורי השלמה עקב ביטולי מורה/מערכת.</CardDescription>
+                        <CardDescription>זיכויים זמינים עקב ביטולים.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col items-center justify-center">
                         <div className="text-5xl font-bold">{makeupCreditBalance}</div>
                         <p className="text-sm text-muted-foreground mt-1">זיכויים</p>
                     </CardContent>
                     <CardFooter>
-                         <Button variant="secondary" className="w-full" disabled={makeupCreditBalance <= 0}>הזמן שיעור השלמה</Button>
+                         <Button variant="secondary" className="w-full" asChild>
+                            <Link href="/dashboard/makeups">
+                                עבור לניהול שיעורי השלמה
+                            </Link>
+                         </Button>
                     </CardFooter>
                 </Card>
             </div>

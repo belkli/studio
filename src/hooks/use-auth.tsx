@@ -75,6 +75,7 @@ interface AuthContextType {
   addProgressReport: (report: Partial<ProgressReport>) => void;
   mockAnnouncements: Announcement[];
   addAnnouncement: (announcement: Partial<Announcement>) => void;
+  getMakeupCreditBalance: (studentIds: string[]) => number;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -348,6 +349,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAssignedRepertoire(prev => [...prev, newRepertoireItem]);
   }, []);
 
+  const getMakeupCreditBalance = useCallback((studentIds: string[]): number => {
+    if (!studentIds.length) return 0;
+    
+    const grantedCredits = lessons.filter(l => 
+        studentIds.includes(l.studentId) && 
+        (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
+    ).length;
+
+    const usedCredits = lessons.filter(l => 
+        studentIds.includes(l.studentId) && 
+        l.type === 'MAKEUP'
+    ).length;
+    
+    return grantedCredits - usedCredits;
+  }, [lessons]);
+
 
   const value = { 
       user, 
@@ -383,8 +400,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockPackages: initialPackages,
       updateUserPracticeGoal,
       mockProgressReports: progressReports,
-      addProgressReport,
       mockAnnouncements: announcements,
+      addAnnouncement,
+      getMakeupCreditBalance,
   };
 
   return (
