@@ -426,7 +426,27 @@ export const mockMessageThreads: MessageThread[] = [
 ];
 
 export const mockProgressReports: ProgressReport[] = [];
-export const mockFormTemplates: FormTemplate[] = [];
+
+export const mockFormTemplates: FormTemplate[] = [
+  {
+    id: 'template-1',
+    conservatoriumId: 'cons-15', // 'הוד השרון'
+    title: 'בקשה להשאלת כלי נגינה',
+    description: 'טופס להגשת בקשה להשאלה של כלי נגינה מהמלאי של הקונסרבטוריון.',
+    fields: [
+      { id: 'field-1', label: 'סיבת הבקשה', type: 'textarea', required: true, placeholder: 'לדוגמה: הכלי שלי בתיקון, צורך בכלי שני...' },
+      { id: 'field-2', label: 'תאריך התחלה רצוי', type: 'date', required: true },
+      { id: 'field-3', label: 'סוג הכלי המבוקש', type: 'dropdown', required: true, options: 'כינור,צ\'לו,גיטרה,חליל,קלרינט' },
+      { id: 'field-4', label: 'קראתי ואני מאשר/ת את תנאי ההשאלה', type: 'checkbox', required: true },
+    ],
+    workflow: [
+      { id: 'wf-1', stepIndex: 0, roleName: 'אישור מורה', requiredRole: 'teacher' },
+      { id: 'wf-2', stepIndex: 1, roleName: 'אישור מנהל מלאי', requiredRole: 'conservatorium_admin' },
+    ],
+    createdAt: new Date().toISOString(),
+  }
+];
+
 
 export const mockAnnouncements: Announcement[] = [
     {

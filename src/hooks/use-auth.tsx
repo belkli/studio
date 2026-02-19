@@ -18,6 +18,7 @@ import {
     mockPracticeVideos as initialPracticeVideos,
     compositions as initialCompositions,
     mockWaitlist as initialWaitlist,
+    mockFormTemplates as initialFormTemplates,
     type User, 
     type FormSubmission,
     type Notification,
@@ -41,6 +42,7 @@ import {
     type VideoFeedback,
     type WaitlistEntry,
     type WaitlistStatus,
+    type FormTemplate,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
@@ -97,6 +99,8 @@ interface AuthContextType {
   mockWaitlist: WaitlistEntry[];
   addToWaitlist: (entry: Partial<WaitlistEntry>) => WaitlistEntry;
   updateWaitlistStatus: (entryId: string, status: WaitlistStatus) => void;
+  mockFormTemplates: FormTemplate[];
+  addFormTemplate: (template: Partial<FormTemplate>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -116,6 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [practiceVideos, setPracticeVideos] = useState<PracticeVideo[]>(initialPracticeVideos);
   const [payrolls, setPayrolls] = useState<PayrollSummary[]>([]);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(initialWaitlist);
+  const [formTemplates, setFormTemplates] = useState<FormTemplate[]>(initialFormTemplates);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -532,6 +537,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ));
     };
 
+    const addFormTemplate = (template: Partial<FormTemplate>) => {
+        if (!user) return;
+        const newTemplate: FormTemplate = {
+            id: `template-${Date.now()}`,
+            conservatoriumId: user.conservatoriumId,
+            createdAt: new Date().toISOString(),
+            ...template,
+        } as FormTemplate;
+        setFormTemplates(prev => [newTemplate, ...prev]);
+    };
 
   const value = { 
       user, 
@@ -581,6 +596,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockWaitlist: waitlist,
       addToWaitlist,
       updateWaitlistStatus,
+      mockFormTemplates: formTemplates,
+      addFormTemplate,
   };
 
   return (
