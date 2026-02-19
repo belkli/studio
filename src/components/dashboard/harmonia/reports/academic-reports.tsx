@@ -7,39 +7,36 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 
 export function AcademicReports() {
-    const { mockPracticeLogs, users } = useAuth();
+    const { mockPracticeLogs, users, mockAssignedRepertoire, instruments } = useAuth();
     
     const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
+    const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
     
-    const { practiceEngagementRate, averageMinutes, practiceByDayData, lowEngagementStudents } = useMemo(() => {
+    const { 
+        practiceEngagementRate, 
+        averageMinutes, 
+        lowEngagementStudents,
+        repertoireAdvancement,
+        engagementByTeacher,
+        avgMinutesByInstrument,
+    } = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(today.getDate() - 7);
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(today.getMonth() - 1);
 
         const logsThisWeek = mockPracticeLogs.filter(log => {
             const logDate = new Date(log.date);
             return logDate >= oneWeekAgo && logDate <= today;
         });
 
-        const studentsWhoPracticed = new Set(logsThisWeek.map(log => log.studentId));
-        const engagementRate = students.length > 0 ? (studentsWhoPracticed.size / students.length) * 100 : 0;
+        const studentsWhoPracticedThisWeek = new Set(logsThisWeek.map(log => log.studentId));
+        const engagementRate = students.length > 0 ? (studentsWhoPracticedThisWeek.size / students.length) * 100 : 0;
         
-        const avgMinutes = logsThisWeek.length > 0 && studentsWhoPracticed.size > 0
-            ? logsThisWeek.reduce((sum, log) => sum + log.durationMinutes, 0) / studentsWhoPracticed.size
+        const avgMinutes = logsThisWeek.length > 0 && studentsWhoPracticedThisWeek.size > 0
+            ? logsThisWeek.reduce((sum, log) => sum + log.durationMinutes, 0) / studentsWhoPracticedThisWeek.size
             : 0;
-
-        const dailyData = Array.from({ length: 7 }).map((_, i) => {
-            const d = new Date();
-            d.setDate(new Date().getDate() - i);
-            return { name: d.toLocaleDateString('he-IL', { weekday: 'short' }), date: d.toISOString().split('T')[0], minutes: 0 };
-        }).reverse();
-
-        logsThisWeek.forEach(log => {
-            const dayData = dailyData.find(d => d.date === log.date.split('T')[0]);
-            if (dayData) {
-                dayData.minutes += log.durationMinutes;
-            }
-        });
         
         const studentsPractice = students.map(student => {
             const totalMinutes = mockPracticeLogs
@@ -52,14 +49,56 @@ export function AcademicReports() {
             .filter(item => item.totalMinutes < 30) // Example threshold
             .sort((a,b) => a.totalMinutes - b.totalMinutes)
             .slice(0, 5);
+        
+        const repAdvancement = mockAssignedRepertoire.filter(rep => {
+            if (!rep.completedAt) return false;
+            const completedDate = new Date(rep.completedAt);
+            return completedDate >= oneMonthAgo && completedDate <= today;
+        }).length;
+
+        const teacherEngagementData = teachers.map(teacher => {
+            const teacherStudents = students.filter(s => s.instruments?.some(i => i.teacherName === teacher.name));
+            if (teacherStudents.length === 0) return { name: teacher.name, engagement: 0 };
+
+            const practicedStudents = new Set(
+                mockPracticeLogs
+                    .filter(log => {
+                        const logDate = new Date(log.date);
+                        return logDate >= oneWeekAgo && teacherStudents.some(s => s.id === log.studentId);
+                    })
+                    .map(log => log.studentId)
+            );
+            
+            return {
+                name: teacher.name,
+                engagement: (practicedStudents.size / teacherStudents.length) * 100
+            };
+        });
+
+        const instrumentAvgMinutes = instruments.map(instrument => {
+            const studentsWithInstrument = students.filter(s => s.instruments?.some(i => i.instrument === instrument));
+            if(studentsWithInstrument.length === 0) return { name: instrument, 'ממוצע דקות': 0};
+
+            const logsForInstrument = mockPracticeLogs.filter(log => {
+                 const logDate = new Date(log.date);
+                 return logDate >= oneMonthAgo && studentsWithInstrument.some(s => s.id === log.studentId);
+            });
+            const totalMinutes = logsForInstrument.reduce((sum, log) => sum + log.durationMinutes, 0);
+            return {
+                name: instrument,
+                'ממוצע דקות': studentsWithInstrument.length > 0 ? totalMinutes / studentsWithInstrument.length : 0,
+            }
+        });
 
         return { 
             practiceEngagementRate: engagementRate, 
             averageMinutes: avgMinutes, 
-            practiceByDayData: dailyData,
-            lowEngagementStudents: lowEngagers
+            lowEngagementStudents: lowEngagers,
+            repertoireAdvancement: repAdvancement,
+            engagementByTeacher: teacherEngagementData,
+            avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [mockPracticeLogs, students]);
+    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire, instruments]);
 
 
     return (
@@ -89,35 +128,52 @@ export function AcademicReports() {
                         <CardDescription>יצירות שהושלמו החודש.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">
-                        <div className="text-5xl font-bold">12</div>
+                        <div className="text-5xl font-bold">{repertoireAdvancement}</div>
                     </CardContent>
                 </Card>
             </div>
-             <Card>
-                <CardHeader>
-                    <CardTitle>סה"כ דקות אימון לפי יום (שבוע אחרון)</CardTitle>
-                </CardHeader>
-                 <CardContent className="h-[350px]">
-                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={practiceByDayData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                            <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} ד'`}/>
-                            <Tooltip
-                                cursor={{ fill: 'hsl(var(--muted))' }}
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background))',
-                                    borderColor: 'hsl(var(--border))',
-                                    borderRadius: 'var(--radius)',
-                                    direction: 'rtl',
-                                }}
-                                 formatter={(value: number) => [`${value} דקות`, 'זמן אימון כולל']}
-                            />
-                            <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
+            <div className="grid lg:grid-cols-2 gap-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>מעורבות באימונים לפי מורה (שבוע אחרון)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[350px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={engagementByTeacher} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
+                                <Tooltip
+                                    cursor={{ fill: 'hsl(var(--muted))' }}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
+                                    formatter={(value: number) => [`${value.toFixed(0)}%`, 'מעורבות']}
+                                />
+                                <Bar dataKey="engagement" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>ממוצע דקות אימון חודשי לפי כלי</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[350px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={avgMinutesByInstrument} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
+                                <Tooltip
+                                    cursor={{ fill: 'hsl(var(--muted))' }}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
+                                    formatter={(value: number) => [value.toFixed(0), 'ממוצע דקות']}
+                                />
+                                <Bar dataKey="ממוצע דקות" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            </div>
              <Card>
                 <CardHeader>
                     <CardTitle>תלמידים עם מעורבות נמוכה</CardTitle>

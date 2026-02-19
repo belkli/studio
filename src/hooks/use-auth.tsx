@@ -196,7 +196,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
-    setAssignedRepertoire(prev => prev.map(rep => rep.id === repertoireId ? { ...rep, status } : rep));
+    setAssignedRepertoire(prev => prev.map(rep => {
+        if (rep.id === repertoireId) {
+            const updatedRep: AssignedRepertoire = { ...rep, status };
+            if (status === 'COMPLETED' && !rep.completedAt) {
+                updatedRep.completedAt = new Date().toISOString();
+            }
+            return updatedRep;
+        }
+        return rep;
+    }));
   };
 
   const addLessonNote = (note: Partial<LessonNote>) => {
@@ -376,7 +385,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockProgressReports: progressReports,
       addProgressReport,
       mockAnnouncements: announcements,
-      addAnnouncement,
   };
 
   return (

@@ -262,6 +262,7 @@ export type AssignedRepertoire = {
     compositionId: string;
     status: RepertoireStatus;
     assignedAt: string; // ISO Timestamp
+    completedAt?: string; // ISO Timestamp
     teacherNotes?: string;
 };
 

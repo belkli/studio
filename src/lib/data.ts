@@ -335,7 +335,7 @@ export const mockPracticeLogs: PracticeLog[] = [
 export const mockAssignedRepertoire: AssignedRepertoire[] = [
     { id: 'rep-1', studentId: 'student-user-1', compositionId: 'bach-wtc1-prelude-c', status: 'POLISHING', assignedAt: new Date().toISOString() },
     { id: 'rep-2', studentId: 'student-user-1', compositionId: 'chopin-nocturne-op9-no2', status: 'LEARNING', assignedAt: new Date().toISOString() },
-    { id: 'rep-3', studentId: 'student-user-2', compositionId: 'mozart-sonata-16', status: 'PERFORMANCE_READY', assignedAt: new Date().toISOString() },
+    { id: 'rep-3', studentId: 'student-user-2', compositionId: 'mozart-sonata-16', status: 'COMPLETED', assignedAt: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(), completedAt: new Date().toISOString() },
 ];
 
 export const mockLessonNotes: LessonNote[] = [
