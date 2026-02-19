@@ -27,11 +27,17 @@ export function StudentBillingDashboard() {
 
 
     const currentPackage = useMemo(() => {
-        const pkg = mockPackages.find(p => p.id === user.packageId);
+        const studentForPackage = user.role === 'student' ? user : (user.childIds ? user.childIds[0] : null);
+        if (!studentForPackage) return null;
+        
+        const pkg = mockPackages.find(p => p.id === studentForPackage.packageId);
         if (!pkg) return null;
         
-        // Mock dynamic credits for demo
-        const creditsRemaining = pkg.totalCredits ? Math.max(0, Math.floor(pkg.totalCredits! * 0.7) - mockLessons.filter(l => l.packageId === pkg.id && l.status === 'COMPLETED').length) : undefined;
+        let creditsRemaining: number | undefined;
+        if (pkg.totalCredits) {
+             const lessonsUsed = mockLessons.filter(l => l.studentId === studentForPackage.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
+             creditsRemaining = pkg.totalCredits - lessonsUsed;
+        }
 
         let nextBillingDate: string | undefined = undefined;
         if (pkg.type === 'MONTHLY') {
@@ -43,7 +49,7 @@ export function StudentBillingDashboard() {
             creditsRemaining,
             nextBillingDate,
         };
-    }, [mockPackages, user.packageId, mockLessons]);
+    }, [mockPackages, user, mockLessons]);
 
     return (
         <div className="space-y-6">
@@ -59,7 +65,7 @@ export function StudentBillingDashboard() {
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {currentPackage?.totalCredits ? (
+                        {currentPackage?.totalCredits && currentPackage.creditsRemaining !== undefined ? (
                             <div>
                                 <div className="flex justify-between items-baseline mb-1">
                                     <span className="text-sm font-medium">שיעורים נותרו</span>
@@ -67,15 +73,17 @@ export function StudentBillingDashboard() {
                                 </div>
                                 <Progress value={(currentPackage.creditsRemaining! / currentPackage.totalCredits) * 100} className="h-2" />
                             </div>
+                        ) : currentPackage ? (
+                            <div className="text-muted-foreground text-sm">מנוי חודשי ללא הגבלת שיעורים.</div>
                         ) : (
-                            <div className="text-muted-foreground text-sm">מנוי ללא הגבלת שיעורים.</div>
+                             <div className="text-muted-foreground text-sm">לא משויכת חבילה.</div>
                         )}
                          <div className="flex justify-between text-sm pt-2 border-t">
                             <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4"/>
-                            {currentPackage?.nextBillingDate ? 'חיוב הבא' : (currentPackage?.validUntil ? 'תוקף חבילה' : '')}</span>
+                            {currentPackage?.nextBillingDate ? 'חיוב הבא' : (currentPackage?.validUntil ? 'תוקף חבילה' : 'סטטוס')}</span>
                             <span className="font-semibold">
                                 {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString('he-IL')} (${currentPackage.price} ₪)` 
-                                : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString('he-IL') : 'N/A')}
+                                : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString('he-IL') : 'פעיל')}
                             </span>
                         </div>
                     </CardContent>

@@ -9,12 +9,12 @@ import { useMemo } from 'react';
 export default function MakeupsPage() {
     const { user, getMakeupCreditBalance } = useAuth();
     
-    const studentIds = useMemo(() => {
+    const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
-        return user.role === 'parent' ? (user.childIds || []) : [user.id];
+        return [user.id, ...(user.childIds || [])];
     }, [user]);
 
-    const makeupCreditBalance = getMakeupCreditBalance(studentIds);
+    const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
 
     if (!user) return null;
 
