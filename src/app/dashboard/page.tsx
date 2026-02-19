@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
-import { StudentProfilePage } from "./profile/page";
+import StudentProfilePage from "./profile/page";
 
 
 export default function DashboardPage() {
