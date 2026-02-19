@@ -9,12 +9,19 @@ import {
     mockInvoices as initialInvoices,
     mockLessons as initialLessons,
     mockPracticeLogs as initialPracticeLogs,
+    mockAssignedRepertoire as initialRepertoire,
+    mockLessonNotes as initialNotes,
+    compositions as initialCompositions,
     type User, 
     type FormSubmission,
     type Conservatorium,
     type Invoice,
     type LessonSlot,
-    type PracticeLog
+    type PracticeLog,
+    type AssignedRepertoire,
+    type RepertoireStatus,
+    type Composition,
+    type LessonNote
 } from '@/lib/data';
 
 interface LoginResult {
@@ -37,6 +44,11 @@ interface AuthContextType {
   mockLessons: LessonSlot[];
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
+  mockAssignedRepertoire: AssignedRepertoire[];
+  compositions: Composition[];
+  mockLessonNotes: LessonNote[];
+  updateRepertoireStatus: (repertoireId: string, status: RepertoireStatus) => void;
+  addLessonNote: (note: Partial<LessonNote>) => void;
   newFeaturesEnabled: boolean;
   conservatoriums: Conservatorium[];
   updateConservatorium: (updatedConservatorium: Conservatorium) => void;
@@ -49,6 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [forms, setForms] = useState<FormSubmission[]>(initialForms);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialConservatoriums);
+  const [assignedRepertoire, setAssignedRepertoire] = useState<AssignedRepertoire[]>(initialRepertoire);
+  const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -133,9 +147,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 };
   
   const updateForm = (updatedForm: FormSubmission) => {
-    setForms(prevForms =>
-      prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f))
-    );
+    const formIndex = forms.findIndex(f => f.id === updatedForm.id);
+    if (formIndex > -1) {
+      setForms(prevForms =>
+        prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f))
+      );
+    } else {
+        setForms(prevForms => [updatedForm, ...prevForms]);
+    }
   };
   
   const newFeaturesEnabled = React.useMemo(() => {
@@ -148,7 +167,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
   }
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, mockLessons: initialLessons, newFeaturesEnabled, mockInvoices: initialInvoices, mockPracticeLogs: initialPracticeLogs, conservatoriums, updateConservatorium };
+  const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
+    setAssignedRepertoire(prev => prev.map(rep => rep.id === repertoireId ? { ...rep, status } : rep));
+  };
+
+  const addLessonNote = (note: Partial<LessonNote>) => {
+    const newNote: LessonNote = {
+      id: `note-${Date.now()}`,
+      lessonSlotId: 'lesson-placeholder-id',
+      isSharedWithParent: true,
+      isSharedWithStudent: true,
+      homeworkAssignments: [],
+      createdAt: new Date().toISOString(),
+      ...note,
+    } as LessonNote;
+    setLessonNotes(prev => [newNote, ...prev]);
+  };
+
+  const value = { 
+      user, 
+      users, 
+      login, 
+      logout, 
+      isLoading, 
+      approveUser, 
+      rejectUser, 
+      updateUser, 
+      addUser, 
+      mockFormSubmissions: forms, 
+      updateForm, 
+      mockLessons: initialLessons, 
+      newFeaturesEnabled, 
+      mockInvoices: initialInvoices, 
+      mockPracticeLogs: initialPracticeLogs, 
+      conservatoriums, 
+      updateConservatorium,
+      mockAssignedRepertoire: assignedRepertoire,
+      compositions: initialCompositions,
+      mockLessonNotes: lessonNotes,
+      updateRepertoireStatus,
+      addLessonNote,
+  };
 
   return (
     <AuthContext.Provider value={value}>

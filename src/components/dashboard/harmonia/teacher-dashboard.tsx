@@ -26,10 +26,9 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
         }, 0);
     }, [practiceLogs]);
 
-    const weeklyGoal = 90; // Example goal
 
     return (
-        <Card>
+        <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center gap-4">
                  <Avatar className="h-12 w-12">
                     <AvatarImage src={student.avatarUrl} alt={student.name} />
@@ -40,7 +39,7 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
                     <p className="text-sm text-muted-foreground">{student.instruments?.map(i => i.instrument).join(', ')}</p>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm">
+            <CardContent className="space-y-3 text-sm flex-grow">
                 <div>
                     <p className="font-semibold">השיעור הבא:</p>
                     <p className="text-muted-foreground">יום ג', 16:00 (פסנתר)</p>
@@ -58,12 +57,14 @@ function StudentRosterCard({ student, practiceLogs }: { student: User, practiceL
                     )}
                 </div>
                  <div className="flex gap-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                        <MessageSquare className="ms-2 h-4 w-4" />
-                        שלח הודעה
+                    <Button variant="outline" size="sm" className="flex-1" asChild>
+                       <Link href={`/dashboard/teacher/student/${student.id}`}>
+                            <ArrowLeft className="ms-2 h-4 w-4" />
+                           צפה בפרופיל
+                       </Link>
                     </Button>
                     <Button variant="ghost" size="icon">
-                        <Phone className="h-4 w-4" />
+                        <MessageSquare className="h-4 w-4" />
                     </Button>
                 </div>
             </CardContent>

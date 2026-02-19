@@ -11,7 +11,7 @@ export default function TeacherRootPage() {
         return <div>טוען...</div>
     }
 
-    if (user?.role !== 'teacher') {
+    if (!user || user.role !== 'teacher') {
         router.replace('/dashboard');
         return null;
     }

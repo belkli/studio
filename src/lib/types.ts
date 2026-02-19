@@ -238,16 +238,19 @@ export type LessonNote = {
     teacherId: string;
     studentId: string;
     summary: string;
-    focusItems: string[];
     homeworkAssignments: string[];
     isSharedWithStudent: boolean;
     isSharedWithParent: boolean;
+    createdAt: string; // ISO Timestamp
 };
+
+export type RepertoireStatus = 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
 
 export type AssignedRepertoire = {
     id: string;
     studentId: string;
     compositionId: string;
-    status: 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
+    status: RepertoireStatus;
     assignedAt: string; // ISO Timestamp
+    teacherNotes?: string;
 };

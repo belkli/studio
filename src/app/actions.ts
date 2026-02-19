@@ -2,8 +2,7 @@
 'use server';
 
 import type { Composition } from '@/lib/types';
-import fs from 'fs';
-import path from 'path';
+import { compositions as allCompositions } from '@/lib/data';
 import {
   suggestCompositions,
   type SuggestCompositionsInput,
@@ -14,40 +13,6 @@ import {
   type MatchTeacherInput,
   type MatchTeacherOutput
 } from '@/ai/flows/match-teacher-flow';
-
-
-// Load and transform compositions from JSON file
-// This is done once when the server module is loaded.
-const loadCompositions = (): Composition[] => {
-    try {
-        const jsonPath = path.join(process.cwd(), 'docs', 'data.json');
-        const jsonData = fs.readFileSync(jsonPath, 'utf-8');
-        // Manually replace NaN with a valid JSON value like null or a specific string
-        const sanitizedJsonData = jsonData.replace(/NaN/g, 'null');
-        const rawCompositions = JSON.parse(sanitizedJsonData);
-
-        if (!Array.isArray(rawCompositions)) {
-            console.error('Error: docs/data.json is not an array.');
-            return [];
-        }
-
-        return rawCompositions.map((item: any, index: number) => ({
-            id: `comp-db-${index}`,
-            composer: item['מלחין'] || 'לא ידוע',
-            title: item['יצירה'] || 'ללא כותרת',
-            duration: '05:00', // Placeholder duration, as it's not in the JSON
-            genre: item['תקופה'] || 'לא ידוע',
-            instrument: item['כלי'] || undefined,
-            approved: item['מאושר כיצירה מרכזית'] === 'כן',
-            source: 'seed',
-        })).filter(c => c.composer && c.title);
-    } catch (error) {
-        console.error('Failed to load or parse docs/data.json', error);
-        return [];
-    }
-};
-
-const allCompositions = loadCompositions();
 
 
 export async function getCompositionSuggestions(
