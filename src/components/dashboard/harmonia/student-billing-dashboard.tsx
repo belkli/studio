@@ -2,15 +2,17 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins } from "lucide-react";
+import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import Link from 'next/link';
 import { useMemo } from "react";
-import { format, startOfMonth, addMonths } from 'date-fns';
+import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
+
 
 export function StudentBillingDashboard() {
     const { user, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
@@ -51,8 +53,34 @@ export function StudentBillingDashboard() {
         };
     }, [mockPackages, user, mockLessons]);
 
+    const expiringPackageInfo = useMemo(() => {
+        if (!currentPackage || !currentPackage.validUntil) return null;
+
+        const expiryDate = new Date(currentPackage.validUntil);
+        const daysUntilExpiry = differenceInDays(expiryDate, new Date());
+
+        if (daysUntilExpiry <= 14 && daysUntilExpiry >= 0) {
+            return {
+                days: daysUntilExpiry,
+                date: format(expiryDate, 'dd/MM/yyyy'),
+            };
+        }
+        return null;
+    }, [currentPackage]);
+
+
     return (
         <div className="space-y-6">
+            {expiringPackageInfo && (
+                <Notice variant="critical">
+                    <AlertTriangle className="absolute left-4 top-4 h-5 w-5" />
+                    <NoticeTitle>תוקף החבילה שלך עומד לפוג!</NoticeTitle>
+                    <NoticeDescription>
+                        נותרו {expiringPackageInfo.days} ימים עד שהחבילה שלך תפוג בתאריך {expiringPackageInfo.date}. 
+                        <Button variant="link" className="p-0 text-red-800 dark:text-red-300">לחץ כאן כדי לחדש ולשמור על מקומך.</Button>
+                    </NoticeDescription>
+                </Notice>
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader>

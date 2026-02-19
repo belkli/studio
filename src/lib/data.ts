@@ -241,10 +241,18 @@ export const mockFormSubmissions: FormSubmission[] = [
   { id: 'form-106', formType: 'בקשה להשאלת כלי נגינה', formTemplateId: 'template-1', studentId: studentUser.id, studentName: studentUser.name, conservatoriumName: studentUser.conservatoriumName, conservatoriumId: studentUser.conservatoriumId, status: 'ממתין לאישור מנהל', submissionDate: '2024-07-20', totalDuration: '00:00', repertoire: [], formData: { 'field-1': 'הכינור שלי נשלח לתיקון ויחזור רק בעוד כשבועיים. אני זקוק/ה לכלי חלופי כדי להמשיך להתאמן לקראת הרסיטל.', 'field-2': '2024-07-22', 'field-3': 'כינור', 'field-4': true, } }
 ];
 
+const tenDaysFromNow = new Date();
+tenDaysFromNow.setDate(tenDaysFromNow.getDate() + 10);
+const tenDaysFromNowISO = tenDaysFromNow.toISOString().split('T')[0];
+
+const thirtyDaysFromNow = new Date();
+thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+const thirtyDaysFromNowISO = thirtyDaysFromNow.toISOString().split('T')[0];
+
 export const mockPackages: Package[] = [
     { id: 'pkg-trial', type: 'TRIAL', title: 'שיעור ניסיון', description: 'שיעור אחד, ללא התחייבות', price: 80 },
-    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית', price: 750, totalCredits: 5, validUntil: '2024-12-31' },
-    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400, totalCredits: 10, validUntil: '2025-06-30' },
+    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית', price: 750, totalCredits: 5, validUntil: tenDaysFromNowISO },
+    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400, totalCredits: 10, validUntil: thirtyDaysFromNowISO },
     { id: 'pkg-monthly', type: 'MONTHLY', title: 'מנוי חודשי', description: 'שיעור שבועי קבוע, חידוש אוטומטי', price: 560 },
     { id: 'pkg-yearly', type: 'YEARLY', title: 'מנוי שנתי', description: 'המחיר הטוב ביותר, שמירת מקום מובטחת', price: 5800 },
 ];
