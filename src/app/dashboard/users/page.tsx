@@ -25,14 +25,16 @@ import { isValidIsraeliID } from "@/lib/utils";
 const roleTranslations: Record<UserRole, string> = {
     student: "תלמיד",
     teacher: "מורה",
+    parent: "הורה",
     conservatorium_admin: "מנהל קונסרבטוריון",
-    site_admin: "מנהל מערכת"
+    site_admin: "מנהל מערכת",
+    ministry_director: "מנהל משרד החינוך"
 };
 
 const editUserSchema = z.object({
     name: z.string().min(2, "שם מלא חייב להכיל לפחות 2 תווים."),
     email: z.string().email("כתובת אימייל לא תקינה."),
-    role: z.enum(["student", "teacher", "conservatorium_admin", "site_admin"]),
+    role: z.enum(["student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director"]),
     grade: z.string().optional(),
     idNumber: z.string().refine(isValidIsraeliID, "מספר ת.ז. לא תקין."),
     phone: z.string().min(9, "מספר נייד לא תקין.").optional(),
@@ -47,7 +49,7 @@ const editUserSchema = z.object({
 type EditUserFormData = z.infer<typeof editUserSchema>;
 
 export default function UsersPage() {
-    const { user: currentUser, users, approveUser, rejectUser, updateUser } = useAuth();
+    const { user: currentUser, users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     
     const [searchTerm, setSearchTerm] = useState('');
     const [instrumentFilter, setInstrumentFilter] = useState('all');
@@ -65,7 +67,7 @@ export default function UsersPage() {
 
         let baseUsers: User[];
         if (currentUser.role === 'site_admin') {
-            baseUsers = users.filter(user => user.role === 'conservatorium_admin');
+            baseUsers = users.filter(user => user.id !== currentUser.id);
         } else if (currentUser.role === 'conservatorium_admin') {
             baseUsers = users.filter(user => 
                 user.conservatoriumId === currentUser.conservatoriumId && user.id !== currentUser.id && user.role !== 'site_admin'
@@ -102,15 +104,15 @@ export default function UsersPage() {
         if (!approvedUsers) return [];
         return approvedUsers.filter(user => {
             const searchMatch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
-            if (user.role !== 'student') return searchMatch;
+            if (user.role !== 'student' || !newFeaturesEnabled) return searchMatch;
             const instrumentMatch = instrumentFilter === 'all' || user.instruments?.some(i => i.instrument === instrumentFilter);
             const teacherMatch = teacherFilter === 'all' || user.instruments?.some(i => i.teacherName === teacherFilter);
             const gradeMatch = gradeFilter === 'all' || user.grade === gradeFilter;
             return searchMatch && instrumentMatch && teacherMatch && gradeMatch;
         });
-    }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter]);
+    }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter, newFeaturesEnabled]);
     
-    const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student');
+    const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student') && newFeaturesEnabled;
 
     if (!currentUser) {
         return null; // Or a loading spinner
@@ -175,7 +177,7 @@ export default function UsersPage() {
                         <CardHeader>
                             <CardTitle className="text-right">
                                 {currentUser.role === 'site_admin' 
-                                    ? 'מנהלי קונסרבטוריונים'
+                                    ? 'כלל המשתמשים'
                                     : `משתמשים ב${currentUser.conservatoriumName}`
                                 }
                             </CardTitle>
@@ -194,7 +196,7 @@ export default function UsersPage() {
                                     </>
                                 )}
                             </div>
-                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={!!showFilters} onEdit={handleEditClick} />
+                            <UsersTable users={filteredApprovedUsers} currentUser={currentUser} showFilters={!!showFilters && newFeaturesEnabled} onEdit={handleEditClick} />
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -263,14 +265,13 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
         <Table>
             <TableHeader><TableRow>
                 <TableHead>שם</TableHead>
-                <TableHead>ת.ז.</TableHead>
+                {showFilters && <TableHead>ת.ז.</TableHead>}
                 <TableHead dir="ltr" className="text-left">אימייל</TableHead>
-                <TableHead>נייד</TableHead>
+                {showFilters && <TableHead>נייד</TableHead>}
                 <TableHead>תפקיד</TableHead>
                 {showFilters && <TableHead>כלי נגינה</TableHead>}
                 {showFilters && <TableHead>מורה</TableHead>}
-                {showFilters && <TableHead>וותק בקונ'</TableHead>}
-                {showFilters && <TableHead>וותק עם מורה</TableHead>}
+                {showFilters && <TableHead>וותק בקונס'</TableHead>}
                 {currentUser.role === 'site_admin' && <TableHead>קונסרבטוריון</TableHead>}
                 {canEdit && <TableHead className="text-left">פעולות</TableHead>}
             </TableRow></TableHeader>
@@ -278,16 +279,15 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell>{user.idNumber || '-'}</TableCell>
+                        {showFilters && <TableCell>{user.idNumber || '-'}</TableCell>}
                         <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
-                        <TableCell>{user.phone || '-'}</TableCell>
+                        {showFilters && <TableCell>{user.phone || '-'}</TableCell>}
                         <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roleTranslations[user.role]}</span></TableCell>
                         {showFilters && (
                             <>
                                 <TableCell>{user.instruments?.map(i => i.instrument).join(', ') || '-'}</TableCell>
                                 <TableCell>{user.instruments?.map(i => i.teacherName).join(', ') || '-'}</TableCell>
                                 <TableCell>{user.conservatoriumStudyYears || '-'}</TableCell>
-                                <TableCell>{user.instruments?.map(i => i.yearsOfStudy).join(', ') || '-'}</TableCell>
                             </>
                         )}
                         {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
@@ -354,7 +354,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">
                     <FormField name="name" render={({ field }) => ( <FormItem> <FormLabel>שם מלא</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                     <FormField name="email" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
@@ -376,6 +376,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                                     {currentUser.role === 'site_admin' && <SelectItem value="conservatorium_admin">מנהל קונסרבטוריון</SelectItem>}
                                     <SelectItem value="teacher">מורה</SelectItem>
                                     <SelectItem value="student">תלמיד</SelectItem>
+                                    <SelectItem value="parent">הורה</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -476,4 +477,3 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
         </FormProvider>
     );
 }
-
