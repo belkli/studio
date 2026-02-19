@@ -254,3 +254,18 @@ export type AssignedRepertoire = {
     assignedAt: string; // ISO Timestamp
     teacherNotes?: string;
 };
+
+export type Message = {
+  senderId: string;
+  body: string;
+  attachmentUrl?: string;
+  sentAt: string; // ISO Timestamp
+  readAt?: string; // ISO Timestamp
+};
+
+export type MessageThread = {
+  id: string;
+  participants: string[]; // [teacherId, studentId (or parentId)]
+  lessonSlotId?: string;
+  messages: Message[];
+};

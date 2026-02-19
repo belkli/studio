@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -319,5 +319,23 @@ export const mockLessonNotes: LessonNote[] = [
         isSharedWithStudent: true,
         isSharedWithParent: true,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString()
+    }
+];
+
+export const mockMessageThreads: MessageThread[] = [
+    {
+        id: 'thread-1',
+        participants: ['teacher-user-1', 'student-user-1'],
+        messages: [
+            { senderId: 'teacher-user-1', body: 'היי אריאל, אל תשכח לתרגל את המעבר בתיבה 24 לקראת השיעור הבא.', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString()},
+            { senderId: 'student-user-1', body: 'בסדר גמור, מרים. אני עובד על זה!', sentAt: new Date().toISOString()},
+        ]
+    },
+    {
+        id: 'thread-2',
+        participants: ['teacher-user-1', 'student-user-2'],
+        messages: [
+            { senderId: 'teacher-user-1', body: 'תמר, תוכלי להביא את התווים של הפרטיטה של באך לשיעור ביום שלישי?', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString()},
+        ]
     }
 ];

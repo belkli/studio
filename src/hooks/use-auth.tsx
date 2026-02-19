@@ -11,6 +11,7 @@ import {
     mockPracticeLogs as initialPracticeLogs,
     mockAssignedRepertoire as initialRepertoire,
     mockLessonNotes as initialNotes,
+    mockMessageThreads as initialMessageThreads,
     compositions as initialCompositions,
     type User, 
     type FormSubmission,
@@ -21,7 +22,8 @@ import {
     type AssignedRepertoire,
     type RepertoireStatus,
     type Composition,
-    type LessonNote
+    type LessonNote,
+    type MessageThread,
 } from '@/lib/data';
 
 interface LoginResult {
@@ -49,6 +51,8 @@ interface AuthContextType {
   mockLessonNotes: LessonNote[];
   updateRepertoireStatus: (repertoireId: string, status: RepertoireStatus) => void;
   addLessonNote: (note: Partial<LessonNote>) => void;
+  mockMessageThreads: MessageThread[];
+  addMessage: (threadId: string, senderId: string, body: string) => void;
   newFeaturesEnabled: boolean;
   conservatoriums: Conservatorium[];
   updateConservatorium: (updatedConservatorium: Conservatorium) => void;
@@ -63,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialConservatoriums);
   const [assignedRepertoire, setAssignedRepertoire] = useState<AssignedRepertoire[]>(initialRepertoire);
   const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
+  const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -183,6 +188,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } as LessonNote;
     setLessonNotes(prev => [newNote, ...prev]);
   };
+  
+  const addMessage = (threadId: string, senderId: string, body: string) => {
+      setMessageThreads(prev => prev.map(thread => {
+          if (thread.id === threadId) {
+              return {
+                  ...thread,
+                  messages: [...thread.messages, {
+                      senderId,
+                      body,
+                      sentAt: new Date().toISOString(),
+                  }]
+              }
+          }
+          return thread;
+      }))
+  }
 
   const value = { 
       user, 
@@ -207,6 +228,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockLessonNotes: lessonNotes,
       updateRepertoireStatus,
       addLessonNote,
+      mockMessageThreads: messageThreads,
+      addMessage,
   };
 
   return (
