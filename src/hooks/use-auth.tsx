@@ -17,6 +17,7 @@ import {
     mockAnnouncements as initialAnnouncements,
     mockPracticeVideos as initialPracticeVideos,
     compositions as initialCompositions,
+    mockWaitlist as initialWaitlist,
     type User, 
     type FormSubmission,
     type Notification,
@@ -38,6 +39,8 @@ import {
     type PayrollStatus,
     type PracticeVideo,
     type VideoFeedback,
+    type WaitlistEntry,
+    type WaitlistStatus,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
@@ -91,6 +94,9 @@ interface AuthContextType {
   mockPracticeVideos: PracticeVideo[];
   addPracticeVideo: (videoData: Partial<PracticeVideo>) => PracticeVideo | undefined;
   addVideoFeedback: (videoId: string, comment: string) => void;
+  mockWaitlist: WaitlistEntry[];
+  addToWaitlist: (entry: Partial<WaitlistEntry>) => WaitlistEntry;
+  updateWaitlistStatus: (entryId: string, status: WaitlistStatus) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -109,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
   const [practiceVideos, setPracticeVideos] = useState<PracticeVideo[]>(initialPracticeVideos);
   const [payrolls, setPayrolls] = useState<PayrollSummary[]>([]);
+  const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(initialWaitlist);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -508,6 +515,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return grantedCredits - usedCredits;
   }, [lessons]);
 
+  const addToWaitlist = (entry: Partial<WaitlistEntry>) => {
+        const newEntry: WaitlistEntry = {
+            id: `waitlist-${Date.now()}`,
+            status: 'WAITING',
+            joinedAt: new Date().toISOString(),
+            ...entry,
+        } as WaitlistEntry;
+        setWaitlist(prev => [newEntry, ...prev]);
+        return newEntry;
+    };
+    
+    const updateWaitlistStatus = (entryId: string, status: WaitlistStatus) => {
+        setWaitlist(prev => prev.map(entry =>
+            entry.id === entryId ? { ...entry, status, notifiedAt: status === 'OFFERED' ? new Date().toISOString() : entry.notifiedAt } : entry
+        ));
+    };
+
 
   const value = { 
       user, 
@@ -554,6 +578,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockPracticeVideos: practiceVideos,
       addPracticeVideo,
       addVideoFeedback,
+      mockWaitlist: waitlist,
+      addToWaitlist,
+      updateWaitlistStatus,
   };
 
   return (

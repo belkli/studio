@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -460,6 +460,20 @@ export const mockPracticeVideos: PracticeVideo[] = [
         feedback: [
             { teacherId: 'teacher-user-1', comment: 'ביצוע יפה אריאל! נסה להדגיש יותר את הקו המלודי ביד ימין ולהשתמש ביותר רובטו כדי לתת לזה תחושה יותר נושמת. נדבר על זה בשיעור.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() }
         ]
+    }
+];
+
+export const mockWaitlist: WaitlistEntry[] = [
+    {
+        id: 'waitlist-1',
+        studentId: 'other-student-1',
+        teacherId: 'teacher-user-1',
+        conservatoriumId: 'cons-15',
+        instrument: 'פסנתר',
+        preferredDays: ['MON', 'WED'],
+        preferredTimes: ['AFTERNOON'],
+        joinedAt: new Date('2024-05-10T10:00:00Z').toISOString(),
+        status: 'WAITING',
     }
 ];
 

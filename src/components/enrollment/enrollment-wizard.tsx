@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
@@ -358,7 +358,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const { addUser, mockPackages, addLesson } = useAuth();
+  const { addUser, mockPackages, addLesson, addToWaitlist } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -438,6 +438,57 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     }
   };
 
+  const handleWaitlistSubmit = () => {
+        const data = form.getValues();
+        let newUser: Partial<User>;
+        
+        if (data.registrationType === 'self' && data.selfDetails) {
+            newUser = {
+                name: `${data.selfDetails.firstName} ${data.selfDetails.lastName}`,
+                email: data.selfDetails.email,
+                role: 'student',
+                idNumber: data.selfDetails.idNumber,
+                birthDate: data.selfDetails.birthDate,
+                phone: data.selfDetails.phone,
+                conservatoriumName: data.conservatorium,
+                grade: data.grade,
+                packageId: data.packageId,
+            }
+        } else if (data.registrationType === 'parent' && data.studentDetails && data.parentDetails) {
+            newUser = {
+                name: `${data.studentDetails.childFirstName} ${data.studentDetails.childLastName}`,
+                email: data.parentDetails.parentEmail,
+                role: 'student',
+                birthDate: data.studentDetails.childBirthDate,
+                conservatoriumName: data.conservatorium,
+                grade: data.grade,
+                parentId: 'parent-user-id',
+                packageId: data.packageId,
+            }
+        } else {
+            toast({ variant: 'destructive', title: 'שגיאה', description: 'פרטים חסרים, לא ניתן להשלים את ההרשמה.' });
+            return;
+        }
+
+        const createdUser = addUser(newUser, isAdminFlow);
+        const conservatorium = conservatoriums.find(c => c.name === data.conservatorium);
+
+        addToWaitlist({
+            studentId: createdUser.id,
+            teacherId: 'any', // General waitlist
+            instrument: data.instrument,
+            conservatoriumId: conservatorium?.id,
+            preferredDays: data.availableDays as DayOfWeek[],
+            preferredTimes: data.availableTimes as TimeRange[],
+        });
+        
+        setIsSubmitted(true);
+        toast({
+          title: "הצטרפת לרשימת ההמתנה!",
+          description: isAdminFlow ? `${createdUser.name} נוסף למערכת ולרשימת המתנה.` : "נודיע לך כאשר יתפנה מקום.",
+        });
+    };
+
   const onSubmit = (data: FormData) => {
     let newUser: Partial<User>;
     
@@ -453,15 +504,14 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
             grade: data.grade,
         }
     } else if (data.registrationType === 'parent' && data.studentDetails && data.parentDetails) {
-        // In a real app, you'd create/link the parent user too. Here we just create the student.
         newUser = {
             name: `${data.studentDetails.childFirstName} ${data.studentDetails.childLastName}`,
-            email: data.parentDetails.parentEmail, // Use parent's email for child under 13
+            email: data.parentDetails.parentEmail, 
             role: 'student',
             birthDate: data.studentDetails.childBirthDate,
             conservatoriumName: data.conservatorium,
             grade: data.grade,
-            parentId: 'parent-user-id', // Placeholder for parent linkage
+            parentId: 'parent-user-id', 
         }
     } else {
         toast({ variant: 'destructive', title: 'שגיאה', description: 'פרטים חסרים, לא ניתן להשלים את ההרשמה.' });
@@ -479,7 +529,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
             instrument: data.instrument,
             startTime: lessonStartTime.toISOString(),
             durationMinutes: data.lessonDuration as 30 | 45 | 60,
-            type: 'ADHOC', // First lesson from enrollment
+            type: 'ADHOC', 
         });
     }
     
@@ -727,32 +777,55 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                 )}
                 
                 {currentStepId === 'matching' && (
-                    <FormField name="teacherId" render={({ field }) => (
-                        <FormItem>
-                             <FormControl>
-                                <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                                    {isMatchingLoading && (
-                                        <div className="md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center text-muted-foreground p-8">
-                                            <Loader2 className="h-10 w-10 animate-spin mb-4" />
-                                            <p>ממליץ על המורים המתאימים ביותר עבורך...</p>
-                                        </div>
-                                    )}
-                                    {teacherMatches?.matches.map(match => {
-                                        const teacher = mockTeachers.find(t => t.id === match.teacherId);
-                                        if (!teacher) return null;
-                                        return (
-                                            <FormItem key={match.teacherId}>
-                                                 <FormControl>
-                                                    <TeacherMatchCard match={match} teacher={teacher} isSelected={field.value === match.teacherId} />
-                                                 </FormControl>
-                                            </FormItem>
-                                        )
-                                    })}
-                                </RadioGroup>
-                             </FormControl>
-                             <FormMessage className="pt-4" />
-                        </FormItem>
-                    )} />
+                    <>
+                    {isMatchingLoading && (
+                        <div className="md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center text-muted-foreground p-8">
+                            <Loader2 className="h-10 w-10 animate-spin mb-4" />
+                            <p>ממליץ על המורים המתאימים ביותר עבורך...</p>
+                        </div>
+                    )}
+                    {!isMatchingLoading && teacherMatches && teacherMatches.matches.length > 0 && (
+                        <FormField name="teacherId" render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                                        {teacherMatches.matches.map(match => {
+                                            const teacher = mockTeachers.find(t => t.id === match.teacherId);
+                                            if (!teacher) return null;
+                                            return (
+                                                <FormItem key={match.teacherId}>
+                                                    <FormControl>
+                                                        <TeacherMatchCard match={match} teacher={teacher} isSelected={field.value === match.teacherId} />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )
+                                        })}
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormMessage className="pt-4" />
+                            </FormItem>
+                        )} />
+                    )}
+                    {!isMatchingLoading && (!teacherMatches || teacherMatches.matches.length === 0) && (
+                        <Card className="text-center col-span-full">
+                            <CardHeader>
+                                <CardTitle>לא נמצאו מורים פנויים כרגע</CardTitle>
+                                <CardDescription>
+                                    כל המורים המתאימים להעדפותיך תפוסים כעת. באפשרותך להצטרף לרשימת ההמתנה ונודיע לך כאשר יתפנה מקום.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button onClick={handleWaitlistSubmit}>
+                                    <UserPlus className="me-2 h-4 w-4" />
+                                    הצטרף לרשימת המתנה
+                                </Button>
+                                <p className="text-xs text-muted-foreground mt-2">
+                                    לחילופין, תוכל/י לחזור אחורה ולשנות את העדפות המערכת.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    )}
+                    </>
                 )}
 
                 {currentStepId === 'package' && (
