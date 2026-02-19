@@ -52,6 +52,7 @@ interface AuthContextType {
   cancelLesson: (lessonId: string) => void;
   mockInvoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
+  addPracticeLog: (log: Partial<PracticeLog>) => void;
   mockAssignedRepertoire: AssignedRepertoire[];
   compositions: Composition[];
   mockLessonNotes: LessonNote[];
@@ -76,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [forms, setForms] = useState<FormSubmission[]>(initialForms);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialConservatoriums);
   const [lessons, setLessons] = useState<LessonSlot[]>(initialLessons);
+  const [practiceLogs, setPracticeLogs] = useState<PracticeLog[]>(initialPracticeLogs);
   const [assignedRepertoire, setAssignedRepertoire] = useState<AssignedRepertoire[]>(initialRepertoire);
   const [lessonNotes, setLessonNotes] = useState<LessonNote[]>(initialNotes);
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
@@ -267,6 +269,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const addPracticeLog = (log: Partial<PracticeLog>) => {
+    if (!user) return;
+    
+    // Determine studentId for parent or student
+    const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
+    if (!studentId) return;
+
+    const student = users.find(u => u.id === studentId);
+    const teacherId = student?.instruments?.[0]?.teacherName ? users.find(u => u.name === student.instruments![0].teacherName)?.id : undefined;
+
+    const newLog: PracticeLog = {
+        id: `plog-${Date.now()}`,
+        studentId: studentId,
+        teacherId: teacherId,
+        ...log,
+    } as PracticeLog;
+
+    setPracticeLogs(prev => [newLog, ...prev]);
+  };
+
+
   const value = { 
       user, 
       users, 
@@ -284,7 +307,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelLesson,
       newFeaturesEnabled, 
       mockInvoices: initialInvoices, 
-      mockPracticeLogs: initialPracticeLogs, 
+      mockPracticeLogs: practiceLogs, 
+      addPracticeLog,
       conservatoriums, 
       updateConservatorium,
       mockAssignedRepertoire: assignedRepertoire,

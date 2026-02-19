@@ -13,6 +13,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useToast } from "@/hooks/use-toast";
 import { ThumbsUp, Meh, Frown } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 const practiceLogSchema = z.object({
   date: z.string().min(1, "יש לבחור תאריך."),
@@ -28,7 +30,8 @@ type PracticeLogFormData = z.infer<typeof practiceLogSchema>;
 
 export function PracticeLogForm() {
   const { toast } = useToast();
-  const [duration, setDuration] = useState(30);
+  const { addPracticeLog } = useAuth();
+  const router = useRouter();
 
   const form = useForm<PracticeLogFormData>({
     resolver: zodResolver(practiceLogSchema),
@@ -39,11 +42,16 @@ export function PracticeLogForm() {
   });
 
   const onSubmit = (data: PracticeLogFormData) => {
-    console.log(data);
+    const practiceData = {
+        ...data,
+        pieces: data.pieces ? data.pieces.split(',').map(p => ({ title: p.trim() })) : [],
+    };
+    addPracticeLog(practiceData);
     toast({
       title: "האימון נרשם בהצלחה!",
       description: `כל הכבוד על אימון של ${data.durationMinutes} דקות.`,
     });
+    router.push('/dashboard/progress');
   };
 
   return (
@@ -98,6 +106,7 @@ export function PracticeLogForm() {
                   <FormControl>
                     <Textarea placeholder="לדוגמה: סונטה של מוצרט (חזרתי על הפתיחה), אטיוד של שופן..." {...field} />
                   </FormControl>
+                   <p className="text-xs text-muted-foreground">הפרד יצירות בפסיק (,)</p>
                   <FormMessage />
                 </FormItem>
               )}
