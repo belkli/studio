@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -39,6 +39,7 @@ const harmoniaLinks = [
     { href: '/dashboard/teacher/availability', label: 'הזמינות שלי', icon: Calendar, roles: ['teacher'] },
     { href: '/dashboard/enroll', label: 'רישום חדש', icon: UserPlus, roles: ['conservatorium_admin', 'site_admin']},
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/ai-reschedule', label: 'עוזר תיאום AI', icon: MessageCircleQuestion, roles: ['student', 'parent']},
     { href: '/dashboard/master-schedule', label: 'מערכת ראשית', icon: Calendar, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: 'רשימות המתנה', icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/makeups', label: 'ניהול השלמות', icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },

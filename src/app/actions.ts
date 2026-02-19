@@ -18,6 +18,11 @@ import {
     type DraftProgressReportInput,
     type DraftProgressReportOutput,
 } from '@/ai/flows/draft-progress-report-flow';
+import {
+    handleRescheduleRequest,
+    type RescheduleRequestInput,
+    type RescheduleResponse,
+} from '@/ai/flows/reschedule-flow';
 
 
 export async function getCompositionSuggestions(
@@ -100,5 +105,18 @@ export async function generateProgressReport(
     } catch (error) {
         console.error('Error drafting progress report:', error);
         return { reportText: 'שגיאה ביצירת טיוטת הדוח.' };
+    }
+}
+
+export async function processNlpRescheduleRequest(input: RescheduleRequestInput): Promise<RescheduleResponse> {
+    try {
+        const result = await handleRescheduleRequest(input);
+        return result;
+    } catch (error) {
+        console.error('Error processing reschedule request:', error);
+        return {
+            responseText: 'אני מתנצל/ת, אבל נתקלתי בשגיאה פנימית. העברתי את פנייתך לגורם אנושי שיטפל בה בהקדם.',
+            actionType: 'ESCALATION',
+        };
     }
 }
