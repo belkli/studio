@@ -1,7 +1,7 @@
 'use client';
 import { useAuth } from '@/hooks/use-auth';
 import type { FormSubmission, UserRole } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Eye, Check, ThumbsDown } from 'lucide-react';
@@ -32,11 +32,11 @@ const FormCard = ({ form, onApprove, onReject }: { form: FormSubmission; onAppro
                         צפייה
                     </Link>
                 </Button>
-                <Button variant="ghost" size="sm" onClick={onApprove} className="col-span-1 bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800">
+                <Button variant="outline" size="sm" onClick={onApprove} className="col-span-1 text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700">
                     <Check className="ms-1 h-4 w-4" />
                     אישור
                 </Button>
-                <Button variant="ghost" size="sm" onClick={onReject} className="col-span-1 bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-800">
+                <Button variant="outline" size="sm" onClick={onReject} className="col-span-1 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
                     <ThumbsDown className="ms-1 h-4 w-4" />
                     דחייה
                 </Button>
