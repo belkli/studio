@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Check, Send, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const statusTranslations: Record<PayrollStatus, string> = {
     DRAFT: 'טיוטה',
@@ -30,6 +32,55 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
     const handleMarkAsPaid = (id: string, teacherName: string) => {
         updatePayrollStatus(id, 'PAID');
         toast({ title: `השכר של ${teacherName} סומן כ"שולם"`});
+    }
+
+    const handleExport = (payroll: PayrollSummary) => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        
+        const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text(rtl(`דוח שכר - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(rtl(`תקופה: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
+        doc.text(rtl(`סטטוס: ${statusTranslations[payroll.status]}`), pageWidth - 15, 42, { align: 'right' });
+        
+        const head = [[rtl('סכום'), rtl('תעריף'), rtl('משך (דקות)'), rtl('תלמיד/ה'), rtl('תאריך')]];
+        const body = payroll.completedLessons.map(lesson => [
+            rtl(`₪${lesson.subtotal.toFixed(2)}`),
+            rtl(`₪${lesson.rate}`),
+            rtl(lesson.durationMinutes),
+            rtl(lesson.studentName),
+            rtl(format(new Date(lesson.completedAt), 'dd/MM/yyyy'))
+        ]);
+
+        (doc as any).autoTable({
+            startY: 55,
+            head: head,
+            body: body,
+            styles: {
+                halign: 'right',
+                font: 'helvetica',
+            },
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+            },
+        });
+        
+        const finalY = (doc as any).lastAutoTable.finalY;
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text(rtl(`שעות סה"כ: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
+        doc.text(rtl(`שכר ברוטו: ₪${payroll.grossPay.toLocaleString()}`), pageWidth - 15, finalY + 25, { align: 'right' });
+
+        doc.save(`payroll_${payroll.teacherId}_${payroll.periodStart.slice(0, 7)}.pdf`);
     }
 
     if (payrolls.length === 0) {
@@ -74,7 +125,9 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
                                     </Button>
                                 )}
                                 {payroll.status === 'PAID' && (
-                                     <Button size="sm" variant="outline" disabled><Download className="ms-2 h-4 w-4" /> יצא</Button>
+                                     <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleExport(payroll); }}>
+                                        <Download className="ms-2 h-4 w-4" /> יצא
+                                     </Button>
                                 )}
                             </div>
                         </div>

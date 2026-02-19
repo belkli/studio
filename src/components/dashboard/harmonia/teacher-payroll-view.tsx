@@ -8,6 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const statusConfig: Record<PayrollStatus, { label: string; className: string }> = {
     DRAFT: { label: 'בבדיקה', className: 'bg-yellow-100 text-yellow-800' },
@@ -24,6 +28,55 @@ export function TeacherPayrollView() {
             .filter(p => p.teacherId === user.id)
             .sort((a,b) => new Date(b.periodStart).getTime() - new Date(a.periodStart).getTime());
     }, [mockPayrolls, user]);
+
+    const handleExport = (payroll: PayrollSummary) => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        
+        const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text(rtl(`דוח שכר - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(rtl(`תקופה: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
+        doc.text(rtl(`סטטוס: ${statusConfig[payroll.status].label}`), pageWidth - 15, 42, { align: 'right' });
+        
+        const head = [[rtl('סכום'), rtl('תעריף'), rtl('משך (דקות)'), rtl('תלמיד/ה'), rtl('תאריך')]];
+        const body = payroll.completedLessons.map(lesson => [
+            rtl(`₪${lesson.subtotal.toFixed(2)}`),
+            rtl(`₪${lesson.rate}`),
+            rtl(lesson.durationMinutes),
+            rtl(lesson.studentName),
+            rtl(format(new Date(lesson.completedAt), 'dd/MM/yyyy'))
+        ]);
+
+        (doc as any).autoTable({
+            startY: 55,
+            head: head,
+            body: body,
+            styles: {
+                halign: 'right',
+                font: 'helvetica',
+            },
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+            },
+        });
+        
+        const finalY = (doc as any).lastAutoTable.finalY;
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text(rtl(`שעות סה"כ: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
+        doc.text(rtl(`שכר ברוטו: ₪${payroll.grossPay.toLocaleString()}`), pageWidth - 15, finalY + 25, { align: 'right' });
+
+        doc.save(`payroll_${payroll.teacherId}_${payroll.periodStart.slice(0, 7)}.pdf`);
+    }
 
     if (teacherPayrolls.length === 0) {
         return (
@@ -54,6 +107,9 @@ export function TeacherPayrollView() {
                         <div className="text-xl font-bold text-green-600 me-4">
                            ₪{payroll.grossPay.toLocaleString()}
                         </div>
+                        <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleExport(payroll); }} className="me-4">
+                            <Download className="ms-2 h-4 w-4" /> יצא PDF
+                        </Button>
                     </AccordionTrigger>
                     <AccordionContent className="bg-muted/20">
                         <div className="p-4">
