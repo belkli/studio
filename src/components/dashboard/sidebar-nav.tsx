@@ -57,6 +57,7 @@ const harmoniaLinks = [
     { href: '/dashboard/reports', label: 'דוחות ואנליטיקה', icon: LineChart, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/teacher/reports', label: 'הדוחות שלי', icon: LineChart, roles: ['teacher'] },
     { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/form-builder', label: 'בנאי טפסים', icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ai', label: 'סוכני AI', icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ministry-export', label: 'ייצוא למשה"ח', icon: Download, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, roles: ['ministry_director'] },

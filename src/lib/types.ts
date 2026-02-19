@@ -192,6 +192,9 @@ export type FormSubmission = {
   signatureUrl?: string;
   signedBy?: string;
   signedAt?: string;
+  
+  formData?: Record<string, any>;
+  formTemplateId?: string;
 
   // New fields for Exam Registration
   examLevel?: string;
@@ -392,4 +395,32 @@ export type WaitlistEntry = {
     joinedAt: string; // ISO Timestamp
     notifiedAt?: string; // ISO Timestamp
     status: WaitlistStatus;
+};
+
+export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'dropdown' | 'checkbox';
+
+export type FormFieldDefinition = {
+  id: string;
+  label: string;
+  type: FormFieldType;
+  required: boolean;
+  placeholder?: string;
+  options?: string; // Comma-separated values for dropdown
+};
+
+export type WorkflowStepDefinition = {
+    id: string;
+    stepIndex: number;
+    roleName: string; // e.g., "Teacher Approval"
+    requiredRole: UserRole;
+};
+
+export type FormTemplate = {
+  id: string;
+  conservatoriumId: string;
+  title: string;
+  description: string;
+  fields: FormFieldDefinition[];
+  workflow: WorkflowStepDefinition[];
+  createdAt: string; // ISO Timestamp
 };

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { SuggestionButton } from './suggestion-button';
-import { examLevels, examTypes } from '@/lib/data';
+import { examLevels, examTypes, genres } from '@/lib/data';
 import { Checkbox } from '../ui/checkbox';
 
 
