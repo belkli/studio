@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download } from 'lucide-react';
+import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote, ProgressReport } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateProgressReport } from '@/app/actions';
+import { AssignRepertoireDialog } from '@/components/dashboard/harmonia/assign-repertoire-dialog';
 
 
 export default function TeacherStudentProfilePage() {
@@ -44,16 +45,17 @@ export default function TeacherStudentProfilePage() {
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
     const [newNote, setNewNote] = useState('');
+    const [isAssignRepertoireOpen, setIsAssignRepertoireOpen] = useState(false);
 
     const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
 
     useEffect(() => {
-        // This effect handles the redirection if the user is not authorized.
-        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
+        if (!teacher) return;
+        if (teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
             router.push('/dashboard');
         }
     }, [teacher, studentId, router]);
-
+    
     const studentLogs = useMemo(() => {
         if (!student) return [];
         return mockPracticeLogs.filter(log => log.studentId === student.id);
@@ -102,13 +104,8 @@ export default function TeacherStudentProfilePage() {
         }
     }, [student]);
 
-    // This check prevents rendering the component for unauthorized users, while the useEffect handles the redirect.
-    if (!teacher || teacher.role !== 'teacher' || !student) {
+    if (!teacher || !student) {
         return null; // Or a loading skeleton
-    }
-    
-    if (!teacher.students?.includes(studentId)) {
-        return null;
     }
     
     const handleAddNote = () => {
@@ -192,7 +189,13 @@ export default function TeacherStudentProfilePage() {
 
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
-                    <CardHeader><CardTitle className="flex items-center gap-2"><Music /> רפרטואר</CardTitle></CardHeader>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle className="flex items-center gap-2"><Music /> רפרטואר</CardTitle>
+                         <Button variant="outline" size="sm" onClick={() => setIsAssignRepertoireOpen(true)}>
+                            <PlusCircle className="ms-2 h-4 w-4" />
+                            הקצה יצירה חדשה
+                        </Button>
+                    </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
@@ -353,6 +356,13 @@ export default function TeacherStudentProfilePage() {
                     </CardContent>
                 </Card>
             )}
+
+            <AssignRepertoireDialog
+                studentId={student.id}
+                open={isAssignRepertoireOpen}
+                onOpenChange={setIsAssignRepertoireOpen}
+            />
+
         </div>
     )
 }

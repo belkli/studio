@@ -60,6 +60,7 @@ interface AuthContextType {
   mockLessonNotes: LessonNote[];
   updateRepertoireStatus: (repertoireId: string, status: RepertoireStatus) => void;
   addLessonNote: (note: Partial<LessonNote>) => void;
+  assignRepertoire: (studentId: string, compositionId: string) => void;
   mockMessageThreads: MessageThread[];
   addMessage: (threadId: string, senderId: string, body: string) => void;
   newFeaturesEnabled: boolean;
@@ -304,6 +305,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } as Announcement;
     setAnnouncements(prev => [newAnnouncement, ...prev]);
   };
+  
+  const assignRepertoire = useCallback((studentId: string, compositionId: string) => {
+    const composition = initialCompositions.find(c => c.id === compositionId);
+    if (!composition) return;
+
+    const newRepertoireItem: AssignedRepertoire = {
+      id: `rep-${Date.now()}`,
+      studentId,
+      compositionId,
+      status: 'LEARNING',
+      assignedAt: new Date().toISOString(),
+    };
+    setAssignedRepertoire(prev => [...prev, newRepertoireItem]);
+  }, []);
 
 
   const value = { 
@@ -332,6 +347,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockLessonNotes: lessonNotes,
       updateRepertoireStatus,
       addLessonNote,
+      assignRepertoire,
       mockMessageThreads: messageThreads,
       addMessage,
       mockPackages: initialPackages,
