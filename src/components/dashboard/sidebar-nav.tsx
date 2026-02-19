@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -31,17 +31,19 @@ const legacyLinks = [
 ];
 
 const harmoniaLinks = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'teacher', 'student'] },
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/teacher', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['teacher'] },
     { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
     { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
-    { href: '/dashboard/practice', label: 'יומן אימונים', icon: Book, roles: ['student', 'parent', 'teacher'] },
-    { href: '/dashboard/messages', label: 'הודעות', icon: MessageSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent', 'teacher'] },
+    { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent', 'teacher'] },
+    { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
     { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin'] },
     { href: '/dashboard/reports', label: 'דוחות ואנליטיקה', icon: LineChart, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/ai', label: 'סוכני AI', icon: Bot, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ai', label: 'סוכני AI', icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },
 ];
 
 
@@ -108,11 +110,14 @@ export function SidebarNav() {
                 return null;
             }
             
+            const dashboardLink = user.role === 'teacher' ? '/dashboard/teacher' : '/dashboard';
+            const finalHref = link.href === '/dashboard' ? dashboardLink : link.href;
+
             return (
                 <SidebarMenuItem key={link.href}>
-                  <Link href={link.href} passHref>
+                  <Link href={finalHref} passHref>
                     <SidebarMenuButton
-                      isActive={pathname === link.href || (link.href !== '/dashboard' && pathname.startsWith(link.href))}
+                      isActive={pathname === finalHref || (finalHref !== '/dashboard' && finalHref !== '/dashboard/teacher' && pathname.startsWith(finalHref))}
                       tooltip={link.label}
                     >
                       <link.icon />
@@ -155,12 +160,14 @@ export function SidebarNav() {
               </DropdownMenuContent>
             </DropdownMenu>
         </div>
-        <Button asChild className="w-full">
-            <Link href={newFormPath}>
-                <FilePlus className="me-2 h-4 w-4" />
-                <span className="group-data-[collapsible=icon]:hidden">{newFormLabel}</span>
-            </Link>
-        </Button>
+        {(user.role === 'conservatorium_admin' || user.role === 'site_admin') && newFeaturesEnabled && (
+          <Button asChild className="w-full">
+              <Link href={newFormPath}>
+                  <FilePlus className="me-2 h-4 w-4" />
+                  <span className="group-data-[collapsible=icon]:hidden">{newFormLabel}</span>
+              </Link>
+          </Button>
+        )}
       </div>
 
       <SidebarFooter>

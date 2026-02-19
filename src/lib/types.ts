@@ -18,6 +18,9 @@ export type Notification = {
 // From SDD-03
 export type TeacherSpecialty = 'EXAM_PREP' | 'EARLY_CHILDHOOD' | 'PERFORMANCE' | 'JAZZ' | 'THEORY' | 'SPECIAL_NEEDS' | 'BEGINNER_ADULTS' | 'COMPETITION' | 'ENSEMBLE';
 export type Language = 'HE' | 'EN' | 'AR' | 'RU';
+export type DayOfWeek = 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
+export type TimeRange = 'MORNING' | 'AFTERNOON' | 'EVENING';
+
 
 export type User = {
   id: string;
@@ -160,9 +163,6 @@ export type FormSubmission = {
 // --- New Types from SDDs ---
 export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' | 'OTHER';
 
-export type DayOfWeek = 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
-export type TimeRange = 'MORNING' | 'AFTERNOON' | 'EVENING';
-
 export type LessonType = 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
 export type SlotStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED_STUDENT_NOTICED' | 'CANCELLED_STUDENT_NO_NOTICE' | 'CANCELLED_TEACHER' | 'CANCELLED_CONSERVATORIUM' | 'NO_SHOW_STUDENT' | 'NO_SHOW_TEACHER';
 
@@ -217,4 +217,35 @@ export type Invoice = {
   status: InvoiceStatus;
   dueDate: string; // ISO Date
   paidAt?: string; // ISO Date
+};
+
+export type PracticeLog = {
+    id: string;
+    studentId: string;
+    date: string; // ISO Date
+    durationMinutes: number;
+    pieces: { title: string; focusArea?: string }[];
+    mood: 'GREAT' | 'OKAY' | 'HARD';
+    studentNote?: string;
+    teacherComment?: string;
+}
+
+export type LessonNote = {
+    id: string;
+    lessonSlotId: string;
+    teacherId: string;
+    studentId: string;
+    summary: string;
+    focusItems: string[];
+    homeworkAssignments: string[];
+    isSharedWithStudent: boolean;
+    isSharedWithParent: boolean;
+};
+
+export type AssignedRepertoire = {
+    id: string;
+    studentId: string;
+    compositionId: string;
+    status: 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
+    assignedAt: string; // ISO Timestamp
 };

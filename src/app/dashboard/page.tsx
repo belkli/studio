@@ -9,18 +9,24 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
 
 export default function DashboardPage() {
     const { user, newFeaturesEnabled, isLoading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading && newFeaturesEnabled && user?.role === 'parent') {
-            router.replace('/dashboard/family');
+        if (!isLoading && newFeaturesEnabled) {
+            if (user?.role === 'parent') {
+                router.replace('/dashboard/family');
+            }
+            if (user?.role === 'teacher') {
+                router.replace('/dashboard/teacher');
+            }
         }
     }, [isLoading, newFeaturesEnabled, user, router]);
 
-    if (isLoading || !user || (newFeaturesEnabled && user.role === 'parent')) {
+    if (isLoading || !user || (newFeaturesEnabled && (user.role === 'parent' || user.role === 'teacher'))) {
         return (
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -42,14 +48,16 @@ export default function DashboardPage() {
     }
 
     if (newFeaturesEnabled) {
-        // Teachers and students will get their own dashboards later.
-        // For now, only admin has the command center.
         if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
             return <AdminCommandCenter />;
         }
+        // Fallback for student for now
+        if (user.role === 'student') {
+             return <RecentForms />;
+        }
     }
 
-    // Legacy Dashboard or placeholder for other new roles
+    // Legacy Dashboard
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
