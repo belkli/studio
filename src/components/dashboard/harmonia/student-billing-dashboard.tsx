@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Progress } from "@/components/ui/progress";
 import Link from 'next/link';
 import { useMemo } from "react";
-import { format, startOfNextMonth } from 'date-fns';
+import { format, startOfMonth, addMonths } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 export function StudentBillingDashboard() {
@@ -32,7 +32,7 @@ export function StudentBillingDashboard() {
 
         let nextBillingDate: string | undefined = undefined;
         if (pkg.type === 'MONTHLY') {
-            nextBillingDate = format(startOfNextMonth(new Date()), 'yyyy-MM-dd');
+            nextBillingDate = format(startOfMonth(addMonths(new Date(), 1)), 'yyyy-MM-dd');
         }
 
         return {
