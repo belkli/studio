@@ -27,38 +27,27 @@ export default function TeacherStudentProfilePage() {
     const router = useRouter();
     const { toast } = useToast();
 
-    const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
-
-    useEffect(() => {
-        // This effect handles the redirection if the user is not authorized.
-        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
-            router.push('/dashboard');
-        }
-    }, [teacher, studentId, router]);
-    
     const [newNote, setNewNote] = useState('');
     const [practiceGoal, setPracticeGoal] = useState(120);
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
-    
-    useEffect(() => {
-        if (student?.weeklyPracticeGoal) {
-            setPracticeGoal(student.weeklyPracticeGoal);
-        }
-    }, [student]);
 
-    if (!student) {
-        notFound();
-    }
-    
-    // This check prevents rendering the component for unauthorized users, while the useEffect handles the redirect.
-    if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
-        return null;
-    }
+    const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
 
-    const studentLogs = mockPracticeLogs.filter(log => log.studentId === studentId);
-    const studentRepertoire = mockAssignedRepertoire.filter(rep => rep.studentId === studentId);
-    const studentNotes = mockLessonNotes.filter(note => note.studentId === studentId);
+    const studentLogs = useMemo(() => {
+        if (!student) return [];
+        return mockPracticeLogs.filter(log => log.studentId === student.id);
+    }, [mockPracticeLogs, student]);
+    
+    const studentRepertoire = useMemo(() => {
+        if (!student) return [];
+        return mockAssignedRepertoire.filter(rep => rep.studentId === student.id);
+    }, [mockAssignedRepertoire, student]);
+
+    const studentNotes = useMemo(() => {
+        if (!student) return [];
+        return mockLessonNotes.filter(note => note.studentId === student.id);
+    }, [mockLessonNotes, student]);
 
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
@@ -72,7 +61,7 @@ export default function TeacherStudentProfilePage() {
             };
         }).reverse();
 
-        studentLogs.forEach(log => {
+        (studentLogs || []).forEach(log => {
             const logDate = log.date.split('T')[0];
             const dayData = last7Days.find(d => d.date === logDate);
             if (dayData) {
@@ -81,7 +70,29 @@ export default function TeacherStudentProfilePage() {
         });
         return last7Days;
     }, [studentLogs]);
+    
+    useEffect(() => {
+        // This effect handles the redirection if the user is not authorized.
+        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
+            router.push('/dashboard');
+        }
+    }, [teacher, studentId, router]);
 
+    useEffect(() => {
+        if (student?.weeklyPracticeGoal) {
+            setPracticeGoal(student.weeklyPracticeGoal);
+        }
+    }, [student]);
+
+    // This check prevents rendering the component for unauthorized users, while the useEffect handles the redirect.
+    if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
+        return null;
+    }
+
+    if (!student) {
+        notFound();
+    }
+    
     const handleAddNote = () => {
         if(newNote.trim() === '') return;
         addLessonNote({
