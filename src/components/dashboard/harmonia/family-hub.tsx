@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ArrowLeft, Calendar, FileText } from "lucide-react";
+import { PlusCircle, ArrowLeft, Calendar, FileText, Package } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo } from "react";
@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
 export function FamilyHub() {
-    const { user, users, mockLessons, mockFormSubmissions, isLoading } = useAuth();
+    const { user, users, mockLessons, mockFormSubmissions, mockPackages, isLoading } = useAuth();
 
     const childrenWithData = useMemo(() => {
         if (!user || !user.childIds) return [];
@@ -31,14 +31,24 @@ export function FamilyHub() {
             const pendingForms = mockFormSubmissions.filter(
                 f => f.studentId === childId && (f.status === 'ממתין לאישור מורה' || f.status === 'ממתין לאישור מנהל')
             );
+            
+            const currentPackage = mockPackages.find(p => p.id === child.packageId);
+            let creditsRemaining: number | undefined;
+            if (currentPackage && currentPackage.totalCredits) {
+                 const lessonsUsed = mockLessons.filter(l => l.studentId === childId && l.packageId === currentPackage.id && l.status === 'COMPLETED').length;
+                 creditsRemaining = currentPackage.totalCredits - lessonsUsed;
+            }
+
 
             return {
                 ...child,
                 nextLesson,
                 pendingFormsCount: pendingForms.length,
+                package: currentPackage,
+                creditsRemaining,
             };
         }).filter(Boolean);
-    }, [user, users, mockLessons, mockFormSubmissions]);
+    }, [user, users, mockLessons, mockFormSubmissions, mockPackages]);
 
 
     if (isLoading || !user) {
@@ -86,6 +96,17 @@ export function FamilyHub() {
                                         <p className="text-muted-foreground pe-2">{child.pendingFormsCount} {child.pendingFormsCount === 1 ? 'טופס ממתין' : 'טפסים ממתינים'} לאישור.</p>
                                     ) : (
                                         <p className="text-muted-foreground pe-2">אין טפסים הממתינים לפעולה.</p>
+                                    )}
+                                </div>
+                                 <div>
+                                    <p className="font-semibold flex items-center gap-2"><Package className="h-4 w-4 text-purple-500"/>סטטוס חבילה:</p>
+                                    {child.package ? (
+                                        <p className="text-muted-foreground pe-2">
+                                            {child.package.title}
+                                            {child.creditsRemaining !== undefined && ` (${child.creditsRemaining} שיעורים נותרו)`}
+                                        </p>
+                                    ) : (
+                                        <p className="text-muted-foreground pe-2">לא משויכת חבילה.</p>
                                     )}
                                 </div>
                             </CardContent>
