@@ -47,7 +47,7 @@ interface AuthContextType {
   approveUser: (userId: string) => void;
   rejectUser: (userId: string, reason: string) => void;
   updateUser: (updatedUser: User) => void;
-  addUser: (newUser: Partial<User>, isApproved?: boolean) => void;
+  addUser: (newUser: Partial<User>, isApproved?: boolean) => User;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
   mockLessons: LessonSlot[];
@@ -163,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addUser = (newUser: Partial<User>, isApproved = false) => {
+  const addUser = (newUser: Partial<User>, isApproved = false): User => {
     const fullNewUser: User = {
         id: `user-${Date.now()}`,
         approved: isApproved,
@@ -173,6 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ...newUser,
     } as User;
     setUsers(prevUsers => [...prevUsers, fullNewUser]);
+    return fullNewUser;
 };
   
   const updateForm = (updatedForm: FormSubmission) => {
@@ -400,6 +401,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockPackages: initialPackages,
       updateUserPracticeGoal,
       mockProgressReports: progressReports,
+      addProgressReport,
       mockAnnouncements: announcements,
       addAnnouncement,
       getMakeupCreditBalance,

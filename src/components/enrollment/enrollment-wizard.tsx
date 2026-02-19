@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { getTeacherMatches } from "@/app/actions";
 import type { MatchTeacherOutput } from "@/ai/flows/match-teacher-flow";
 import { cn } from "@/lib/utils";
+import { add, set, format, getDay, isBefore } from 'date-fns';
+import { he } from 'date-fns/locale';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -20,14 +22,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2 } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
 import { conservatoriums, instruments, schools, mockTeachers } from "@/lib/data";
-import type { StudentGoal, DayOfWeek, TimeRange, User, Package } from "@/lib/types";
+import type { StudentGoal, DayOfWeek, TimeRange, User, Package, LessonSlot } from "@/lib/types";
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
+import { Calendar as UICalendar } from "@/components/ui/calendar";
 
 
 const parentSchema = z.object({
@@ -79,6 +82,9 @@ const formSchema = z.object({
 
   packageId: z.string().min(1, "חובה לבחור חבילה."),
 
+  firstLessonDate: z.date().optional(),
+  firstLessonTime: z.string().optional(),
+
 }).superRefine((data, ctx) => {
   if (data.registrationType === 'parent') {
     if (!data.parentDetails) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['parentDetails'], message: "נדרש" });
@@ -101,6 +107,7 @@ const steps = [
   { id: 'schedule', title: 'העדפות מערכת', icon: Calendar },
   { id: 'matching', title: 'התאמת מורה', icon: HeartHandshake },
   { id: 'package', title: 'בחירת חבילה', icon: PackageIcon },
+  { id: 'book', title: 'תיאום שיעור ראשון', icon: CalendarClock },
   { id: 'summary', title: 'סיכום ואישור', icon: ShieldCheck },
 ];
 
@@ -125,6 +132,117 @@ const DetailItem = ({ label, value }: { label: string; value: React.ReactNode })
         <span className="font-medium text-right">{value || '-'}</span>
     </div>
 );
+
+const BookFirstLessonStep = () => {
+    const form = useFormContext<FormData>();
+    const { users, mockLessons } = useAuth();
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
+    const teacherId = form.watch('teacherId');
+    const selectedDate = form.watch('firstLessonDate');
+    const duration = form.watch('lessonDuration') || 45;
+
+    useEffect(() => {
+        if (!teacherId || !selectedDate) {
+            setAvailableSlots([]);
+            return;
+        }
+
+        setIsLoadingSlots(true);
+        // Simulate fetching slots
+        setTimeout(() => {
+            const teacher = users.find(u => u.id === teacherId);
+            if (!teacher?.availability) {
+                setAvailableSlots([]);
+                setIsLoadingSlots(false);
+                return;
+            }
+
+            const dayIndex = getDay(selectedDate);
+            const dayOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dayIndex];
+            const teacherDayAvailability = teacher.availability.find(a => a.dayOfWeek === dayOfWeek);
+            
+            if (!teacherDayAvailability) {
+                setAvailableSlots([]);
+                setIsLoadingSlots(false);
+                return;
+            }
+
+            const dayLessons = mockLessons.filter(l => 
+                l.teacherId === teacherId && 
+                format(new Date(l.startTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
+            );
+            
+            const slots: string[] = [];
+            let currentTime = set(new Date(), { hours: parseInt(teacherDayAvailability.startTime.split(':')[0]), minutes: 0 });
+            const endTime = set(new Date(), { hours: parseInt(teacherDayAvailability.endTime.split(':')[0]), minutes: 0 });
+
+            while (isBefore(currentTime, endTime)) {
+                const slotTimeStr = format(currentTime, 'HH:mm');
+                const isBooked = dayLessons.some(l => format(new Date(l.startTime), 'HH:mm') === slotTimeStr);
+                
+                if (!isBooked) {
+                     const potentialSlotTime = set(selectedDate, { hours: parseInt(slotTimeStr.split(':')[0]), minutes: parseInt(slotTimeStr.split(':')[1])});
+                    if (isBefore(new Date(), potentialSlotTime)) {
+                        slots.push(slotTimeStr);
+                    }
+                }
+                currentTime = add(currentTime, { minutes: duration });
+            }
+            
+            setAvailableSlots(slots);
+            setIsLoadingSlots(false);
+        }, 300);
+
+    }, [teacherId, selectedDate, duration, users, mockLessons]);
+    
+    return (
+      <div className="grid md:grid-cols-2 gap-8">
+          <FormField name="firstLessonDate" control={form.control} render={({ field }) => (
+              <FormItem className="flex justify-center">
+                  <FormControl>
+                      <UICalendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                              field.onChange(date);
+                              form.setValue('firstLessonTime', undefined); // Reset time when date changes
+                          }}
+                          disabled={(date) => isBefore(date, new Date())}
+                          initialFocus
+                          locale={he}
+                          className="rounded-md border"
+                      />
+                  </FormControl>
+                  <FormMessage />
+              </FormItem>
+          )} />
+          <FormField name="firstLessonTime" control={form.control} render={({ field }) => (
+              <FormItem>
+                  <FormLabel>שעות פנויות</FormLabel>
+                  <FormControl>
+                      <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md">
+                          {isLoadingSlots && <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/></div>}
+                          {!isLoadingSlots && availableSlots.length === 0 && <p className="text-center text-sm text-muted-foreground p-4">לא נמצאו שעות פנויות למורה בתאריך זה.</p>}
+                          {!isLoadingSlots && availableSlots.map(slot => (
+                              <FormItem key={slot}>
+                                  <FormControl>
+                                      <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
+                                          <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden"/>
+                                          <span className="font-mono">{slot}</span>
+                                      </label>
+                                  </FormControl>
+                              </FormItem>
+                          ))}
+                      </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+              </FormItem>
+          )} />
+      </div>
+    )
+}
 
 const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void }) => {
     const form = useFormContext<FormData>();
@@ -240,7 +358,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const { addUser, mockPackages } = useAuth();
+  const { addUser, mockPackages, addLesson } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -249,6 +367,8 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       goals: [],
       availableDays: [],
       availableTimes: [],
+      lessonDuration: 45,
+      firstLessonDate: new Date(),
     },
   });
 
@@ -304,6 +424,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
         case 'schedule': fieldsToValidate = ['availableDays', 'availableTimes', 'isVirtualOk']; break;
         case 'matching': fieldsToValidate = ['teacherId']; break;
         case 'package': fieldsToValidate = ['packageId']; break;
+        case 'book': fieldsToValidate = ['firstLessonDate', 'firstLessonTime']; break;
         default: break;
     }
 
@@ -347,7 +468,20 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
         return;
     }
     
-    addUser(newUser, isAdminFlow);
+    const createdUser = addUser(newUser, isAdminFlow);
+
+    if (data.firstLessonDate && data.firstLessonTime) {
+        const [hours, minutes] = data.firstLessonTime.split(':');
+        const lessonStartTime = set(data.firstLessonDate, { hours: parseInt(hours), minutes: parseInt(minutes) });
+        addLesson({
+            studentId: createdUser.id,
+            teacherId: data.teacherId,
+            instrument: data.instrument,
+            startTime: lessonStartTime.toISOString(),
+            durationMinutes: data.lessonDuration as 30 | 45 | 60,
+            type: 'ADHOC', // First lesson from enrollment
+        });
+    }
     
     setIsSubmitted(true);
     toast({
@@ -658,7 +792,8 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         )} />
                     </div>
                 )}
-
+                
+                {currentStepId === 'book' && <BookFirstLessonStep />}
 
                 {currentStepId === 'summary' && (
                   <div className="space-y-6">
@@ -682,6 +817,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                            <DetailItem label="כלי נגינה" value={formData.instrument} />
                            <DetailItem label="מורה" value={mockTeachers.find(t => t.id === formData.teacherId)?.name || 'טרם נבחר'} />
                            <DetailItem label="חבילה" value={selectedPackage?.title} />
+                           <DetailItem label="מועד שיעור ראשון" value={formData.firstLessonDate && formData.firstLessonTime ? `${format(formData.firstLessonDate, 'dd/MM/yyyy')} בשעה ${formData.firstLessonTime}` : 'יקבע בהמשך'} />
                            {selectedPackage && <DetailItem label="מחיר" value={`${selectedPackage.price} ₪`} />}
                         </CardContent>
                      </Card>
