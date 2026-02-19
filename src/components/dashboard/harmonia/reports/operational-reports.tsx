@@ -12,30 +12,57 @@ export function OperationalReports() {
     const { mockLessons, users } = useAuth();
     const mockTeachers = users.filter(u => u.role === 'teacher');
 
-    const cancellationData = [
-        { name: 'ביטול תלמיד (בזמן)', value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
-        { name: 'ביטול תלמיד (איחור)', value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
-        { name: 'ביטול מורה', value: mockLessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
-        { name: 'לא הופעה', value: mockLessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
-    ];
-    
-    const capacityData = mockTeachers.map(teacher => ({
-        name: teacher.name,
-        capacity: Math.floor(Math.random() * (100 - 60 + 1) + 60), // Mock capacity
-    }));
+    const {
+        cancellationData,
+        cancellationsByDay,
+        capacityData,
+        trialConversionRate,
+        makeupUtilizationRate
+    } = useMemo(() => {
+        // Cancellation breakdown
+        const cancellationData = [
+            { name: 'ביטול תלמיד (בזמן)', value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
+            { name: 'ביטול תלמיד (איחור)', value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
+            { name: 'ביטול מורה', value: mockLessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
+            { name: 'לא הופעה', value: mockLessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
+        ];
 
-    const cancellationsByDay = useMemo(() => {
+        // Cancellations by day
         const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-        const data = days.map(day => ({ name: day, cancellations: 0 }));
-
+        const dailyCancellations = days.map(day => ({ name: day, cancellations: 0 }));
         mockLessons.forEach(lesson => {
             if (lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW')) {
                 const dayIndex = getDay(new Date(lesson.startTime));
-                data[dayIndex].cancellations++;
+                dailyCancellations[dayIndex].cancellations++;
             }
         });
-        return data;
-    }, [mockLessons]);
+
+        // Teacher capacity
+        const teacherCapacity = mockTeachers.map(teacher => {
+            if (!teacher.students || !teacher.maxStudents) {
+                return { name: teacher.name, capacity: 0 };
+            }
+            const capacityPercentage = (teacher.students.length / teacher.maxStudents) * 100;
+            return {
+                name: teacher.name,
+                capacity: Math.min(100, Math.floor(capacityPercentage)), // Cap at 100%
+            };
+        }).sort((a,b) => b.capacity - a.capacity);
+
+        // Makeup utilization
+        const issuedCredits = mockLessons.filter(l => ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM'].includes(l.status)).length;
+        const usedCredits = mockLessons.filter(l => l.type === 'MAKEUP' && l.status === 'COMPLETED').length;
+        const makeupUtilization = issuedCredits > 0 ? (usedCredits / issuedCredits) * 100 : 0;
+        
+        return {
+            cancellationData,
+            cancellationsByDay: dailyCancellations,
+            capacityData: teacherCapacity,
+            trialConversionRate: 68, // Mocked for now
+            makeupUtilizationRate: makeupUtilization
+        }
+
+    }, [mockLessons, mockTeachers]);
 
     return (
          <div className="space-y-6 mt-6">
@@ -81,8 +108,8 @@ export function OperationalReports() {
                         <CardDescription>שיעור ניסיון להרשמה</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center h-[200px]">
-                        <div className="text-5xl font-bold text-primary">68%</div>
-                        <p className="text-muted-foreground mt-2 text-center">21 מתוך 31 תלמידי ניסיון נרשמו החודש.</p>
+                        <div className="text-5xl font-bold text-primary">{trialConversionRate}%</div>
+                        <p className="text-muted-foreground mt-2 text-center">21 מתוך 31 תלמידי ניסיון נרשמו החודש (נתוני דמה).</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -91,8 +118,8 @@ export function OperationalReports() {
                         <CardDescription>אחוז שיעורי ההשלמה שנוצלו</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center h-[200px]">
-                        <div className="text-5xl font-bold text-accent">82%</div>
-                        <p className="text-muted-foreground mt-2 text-center">18% מהזיכויים פגים ללא שימוש.</p>
+                        <div className="text-5xl font-bold text-accent">{makeupUtilizationRate.toFixed(0)}%</div>
+                        <p className="text-muted-foreground mt-2 text-center">מתוך כלל הזיכויים שנוצרו עקב ביטולי מורה/מערכת.</p>
                     </CardContent>
                 </Card>
             </div>

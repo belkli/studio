@@ -22,7 +22,7 @@ export function RoomOccupancyHeatmap() {
     const { mockLessons } = useAuth();
 
     const occupancyData = useMemo(() => {
-        const grid: Record<string, { booked: number, lessons: string[] }> = {};
+        const grid: Record<string, { booked: number, rooms: string[] }> = {};
 
         // This is a mock for a "typical week". In a real app, this would be based on a selected week.
         mockLessons.forEach(lesson => {
@@ -33,12 +33,13 @@ export function RoomOccupancyHeatmap() {
                 const gridKey = `${dayKey}-${hourKey}`;
                 
                 if (!grid[gridKey]) {
-                    grid[gridKey] = { booked: 0, lessons: [] };
+                    grid[gridKey] = { booked: 0, rooms: [] };
                 }
+                
                 // Avoid double counting if multiple lessons are in the same room at the same time (data issue)
-                if (lesson.roomId && !grid[gridKey].lessons.includes(lesson.roomId)) {
+                if (lesson.roomId && !grid[gridKey].rooms.includes(lesson.roomId)) {
                      grid[gridKey].booked++;
-                     grid[gridKey].lessons.push(lesson.roomId);
+                     grid[gridKey].rooms.push(lesson.roomId);
                 }
             }
         });
@@ -90,7 +91,7 @@ export function RoomOccupancyHeatmap() {
                             <div className="p-2 border-s border-t flex items-center justify-center text-xs text-muted-foreground font-mono bg-muted/30">{time}</div>
                             {days.map(day => {
                                 const gridKey = `${day.key}-${time}`;
-                                const data = occupancyData[gridKey] || { booked: 0, lessons: [] };
+                                const data = occupancyData[gridKey] || { booked: 0, rooms: [] };
                                 const occupancyLevel = getOccupancyLevel(data.booked);
                                 const colorClass = occupancyColors[occupancyLevel];
 

@@ -6,35 +6,77 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { useMemo } from 'react';
-
-const revenueData = [
-  { name: 'ינו׳', revenue: 41200 },
-  { name: 'פבר׳', revenue: 38900 },
-  { name: 'מרץ', revenue: 50500 },
-  { name: 'אפר׳', revenue: 47800 },
-  { name: 'מאי', revenue: 62300 },
-  { name: 'יוני', revenue: 58100 },
-];
-
-const packageRevenueData = [
-  { name: 'מנוי שנתי', value: 45 },
-  { name: 'מנוי חודשי', value: 35 },
-  { name: 'חבילות', value: 15 },
-  { name: 'שיעורים בודדים', value: 5 },
-];
+import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { he } from 'date-fns/locale';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function FinancialReports() {
-    const { mockInvoices, users, mockLessons } = useAuth();
+    const { mockInvoices, users, mockPackages, mockLessons } = useAuth();
 
-    const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
-    
-    const teachers = users.filter(u => u.role === 'teacher');
-    const teacherRevenue = teachers.map(teacher => ({
-        name: teacher.name,
-        revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mock revenue
-    })).sort((a, b) => b.revenue - a.revenue);
+    const {
+        revenueData,
+        packageRevenueData,
+        collectionRate,
+        teacherRevenue
+    } = useMemo(() => {
+        // Monthly Revenue (last 6 months)
+        const revenueByMonth: {[key: string]: number} = {};
+        const now = new Date();
+        for (let i=5; i >= 0; i--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const monthKey = format(date, 'MMM', { locale: he });
+            revenueByMonth[monthKey] = 0;
+        }
+        
+        mockInvoices.filter(inv => inv.status === 'PAID' && inv.paidAt).forEach(inv => {
+            const paidDate = new Date(inv.paidAt!);
+            const monthKey = format(paidDate, 'MMM', { locale: he });
+            if (monthKey in revenueByMonth) {
+                revenueByMonth[monthKey] += inv.total;
+            }
+        });
+
+        const finalRevenueData = Object.keys(revenueByMonth).map(month => ({ name: month, revenue: revenueByMonth[month] }));
+
+        // Package Revenue Breakdown
+        let totalRevenue = 0;
+        const revenueByPackageType: Record<string, number> = {
+            'מנוי שנתי': 0, 'מנוי חודשי': 0, 'חבילות': 0, 'שיעורים בודדים': 0
+        };
+
+        mockInvoices.filter(i => i.status === 'PAID').forEach(invoice => {
+            totalRevenue += invoice.total;
+            // This is a simplified logic, a real app would link invoices to packages
+            if (invoice.lineItems[0].description.includes('שנתי')) revenueByPackageType['מנוי שנתי'] += invoice.total;
+            else if (invoice.lineItems[0].description.includes('חודשי')) revenueByPackageType['מנוי חודשי'] += invoice.total;
+            else if (invoice.lineItems[0].description.includes('חבילת')) revenueByPackageType['חבילות'] += invoice.total;
+            else revenueByPackageType['שיעורים בודדים'] += invoice.total;
+        });
+
+        const finalPackageRevenueData = Object.keys(revenueByPackageType).map(name => ({
+            name,
+            value: totalRevenue > 0 ? parseFloat(((revenueByPackageType[name] / totalRevenue) * 100).toFixed(1)) : 0
+        }));
+
+        // Collection Rate
+        const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
+        
+        // Teacher Revenue
+        const teachers = users.filter(u => u.role === 'teacher');
+        const teacherRevenueData = teachers.map(teacher => ({
+            name: teacher.name,
+            revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mocked for simplicity
+        })).sort((a, b) => b.revenue - a.revenue);
+
+        return {
+            revenueData: finalRevenueData,
+            packageRevenueData: finalPackageRevenueData,
+            collectionRate,
+            teacherRevenue: teacherRevenueData,
+        }
+
+    }, [mockInvoices, users]);
 
     const creditsIssuedThisMonth = useMemo(() => {
         const thisMonth = new Date().getMonth();
@@ -96,7 +138,7 @@ export function FinancialReports() {
                 <Card>
                      <CardHeader>
                         <CardTitle>שיעור גבייה</CardTitle>
-                        <CardDescription>אחוז החשבוניות ששולמו בזמן.</CardDescription>
+                        <CardDescription>אחוז החשבוניות ששולמו.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="text-4xl font-bold text-green-600">{collectionRate.toFixed(1)}%</div>
@@ -129,7 +171,7 @@ export function FinancialReports() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>מורה</TableHead>
-                                <TableHead className="text-left">הכנסה חודשית</TableHead>
+                                <TableHead className="text-left">הכנסה חודשית (אומדן)</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
