@@ -21,6 +21,11 @@ export type Language = 'HE' | 'EN' | 'AR' | 'RU';
 export type DayOfWeek = 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
 export type TimeRange = 'MORNING' | 'AFTERNOON' | 'EVENING';
 
+export type WeeklyAvailabilityBlock = {
+  dayOfWeek: DayOfWeek;
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+};
 
 export type User = {
   id: string;
@@ -52,7 +57,7 @@ export type User = {
   bio?: string;
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
-  availability?: any; // To be defined more strictly later
+  availability?: WeeklyAvailabilityBlock[];
   // Student-specific fields from SDD-09
   weeklyPracticeGoal?: number;
   packageId?: string;

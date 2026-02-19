@@ -64,7 +64,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages }: { student: U
                            פרופיל מלא
                        </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" asChild>
+                     <Button variant="ghost" size="icon" asChild>
                         <Link href="/dashboard/messages" title="שלח הודעה">
                             <MessageSquare className="h-4 w-4" />
                             <span className="sr-only">שלח הודעה</span>
