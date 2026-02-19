@@ -186,8 +186,8 @@ export const mockFormSubmissions: FormSubmission[] = [
 
 export const mockPackages: Package[] = [
     { id: 'pkg-trial', type: 'TRIAL', title: 'שיעור ניסיון', description: 'שיעור אחד, ללא התחייבות', price: 80 },
-    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית, תוקף ל-6 חודשים', price: 750 },
-    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400 },
+    { id: 'pkg-5', type: 'PACK_5', title: 'חבילת 5 שיעורים', description: 'גמישות מירבית, תוקף ל-6 חודשים', price: 750, totalCredits: 5 },
+    { id: 'pkg-10', type: 'PACK_10', title: 'חבילת 10 שיעורים', description: 'החבילה הפופולרית ביותר', price: 1400, totalCredits: 10 },
     { id: 'pkg-monthly', type: 'MONTHLY', title: 'מנוי חודשי', description: 'שיעור שבועי קבוע, חידוש אוטומטי', price: 560 },
     { id: 'pkg-yearly', type: 'YEARLY', title: 'מנוי שנתי', description: 'המחיר הטוב ביותר, שמירת מקום מובטחת', price: 5800 },
 ];

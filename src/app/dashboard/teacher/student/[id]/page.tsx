@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote } from '@/lib/types';
+import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote, ProgressReport } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { generateProgressReport } from '@/app/actions';
 
@@ -23,16 +23,36 @@ import { generateProgressReport } from '@/app/actions';
 export default function TeacherStudentProfilePage() {
     const params = useParams();
     const studentId = params.id as string;
-    const { user: teacher, users, mockPracticeLogs, mockAssignedRepertoire, compositions, mockLessonNotes, updateRepertoireStatus, addLessonNote, updateUserPracticeGoal } = useAuth();
+    const { 
+        user: teacher, 
+        users, 
+        mockPracticeLogs, 
+        mockAssignedRepertoire, 
+        compositions, 
+        mockLessonNotes, 
+        mockProgressReports,
+        updateRepertoireStatus, 
+        addLessonNote, 
+        updateUserPracticeGoal,
+        addProgressReport,
+    } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
 
-    const [newNote, setNewNote] = useState('');
+    
     const [practiceGoal, setPracticeGoal] = useState(120);
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
+    const [newNote, setNewNote] = useState('');
 
     const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
+
+    useEffect(() => {
+        // This effect handles the redirection if the user is not authorized.
+        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
+            router.push('/dashboard');
+        }
+    }, [teacher, studentId, router]);
 
     const studentLogs = useMemo(() => {
         if (!student) return [];
@@ -48,6 +68,11 @@ export default function TeacherStudentProfilePage() {
         if (!student) return [];
         return mockLessonNotes.filter(note => note.studentId === student.id);
     }, [mockLessonNotes, student]);
+    
+    const studentReports = useMemo(() => {
+        if (!student) return [];
+        return mockProgressReports.filter(report => report.studentId === student.id);
+    }, [mockProgressReports, student]);
 
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
@@ -72,25 +97,18 @@ export default function TeacherStudentProfilePage() {
     }, [studentLogs]);
     
     useEffect(() => {
-        // This effect handles the redirection if the user is not authorized.
-        if (teacher && (teacher.role !== 'teacher' || !teacher.students?.includes(studentId))) {
-            router.push('/dashboard');
-        }
-    }, [teacher, studentId, router]);
-
-    useEffect(() => {
         if (student?.weeklyPracticeGoal) {
             setPracticeGoal(student.weeklyPracticeGoal);
         }
     }, [student]);
 
     // This check prevents rendering the component for unauthorized users, while the useEffect handles the redirect.
-    if (!teacher || teacher.role !== 'teacher' || !teacher.students?.includes(studentId)) {
-        return null;
+    if (!teacher || teacher.role !== 'teacher' || !student) {
+        return null; // Or a loading skeleton
     }
-
-    if (!student) {
-        notFound();
+    
+    if (!teacher.students?.includes(studentId)) {
+        return null;
     }
     
     const handleAddNote = () => {
@@ -130,6 +148,24 @@ export default function TeacherStudentProfilePage() {
         setReportDraft(result.reportText);
         setIsDrafting(false);
     };
+
+    const handleSendReport = () => {
+        if (!reportDraft) return;
+        
+        addProgressReport({
+            studentId: student.id,
+            teacherId: teacher.id,
+            period: 'סמסטר אביב 2024',
+            reportText: reportDraft,
+        });
+
+        toast({
+            title: 'דוח התקדמות נשלח',
+            description: `הדוח עבור ${student.name} נשמר ונשלח להורים.`
+        });
+        setReportDraft(null);
+    };
+
 
     return (
         <div className="space-y-6">
@@ -282,10 +318,41 @@ export default function TeacherStudentProfilePage() {
                 {reportDraft && (
                     <CardFooter className="justify-end gap-2">
                         <Button variant="ghost" onClick={() => setReportDraft(null)}>מחק טיוטה</Button>
-                        <Button>שלח דוח להורים</Button>
+                        <Button onClick={handleSendReport}>שלח דוח להורים</Button>
                     </CardFooter>
                 )}
             </Card>
+
+            {studentReports.length > 0 && (
+                 <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2"><FileText /> דוחות שמורים</CardTitle></CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>תקופה</TableHead>
+                                    <TableHead>תאריך שליחה</TableHead>
+                                    <TableHead className="text-left">פעולות</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {studentReports.map(report => (
+                                    <TableRow key={report.id}>
+                                        <TableCell>{report.period}</TableCell>
+                                        <TableCell>{new Date(report.createdAt).toLocaleDateString('he-IL')}</TableCell>
+                                        <TableCell className="text-left">
+                                            <Button variant="outline" size="sm" disabled>
+                                                <Download className="ms-2 h-3 w-3" />
+                                                הורד
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            )}
         </div>
     )
 }
