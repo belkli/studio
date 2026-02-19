@@ -19,7 +19,9 @@ export function MessagingInterface() {
 
   const threads = useMemo(() => {
     if (!user) return [];
-    return mockMessageThreads.filter(thread => thread.participants.includes(user.id));
+    return mockMessageThreads
+      .filter(thread => thread.participants.includes(user.id))
+      .sort((a, b) => new Date(b.messages[b.messages.length - 1].sentAt).getTime() - new Date(a.messages[a.messages.length - 1].sentAt).getTime());
   }, [user, mockMessageThreads]);
 
   useEffect(() => {
@@ -107,6 +109,12 @@ export function MessagingInterface() {
                       message.senderId === user.id ? "justify-end" : "justify-start"
                     )}
                   >
+                    {message.senderId !== user.id && (
+                        <Avatar className="h-6 w-6">
+                            <AvatarImage src={getOtherParticipant(selectedThread)?.avatarUrl} />
+                            <AvatarFallback>{getOtherParticipant(selectedThread)?.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                    )}
                     <div
                       className={cn(
                         "p-3 rounded-lg max-w-xs lg:max-w-md",
@@ -139,7 +147,7 @@ export function MessagingInterface() {
               <Button size="icon" onClick={handleSendMessage}>
                 <Send className="h-4 w-4" />
               </Button>
-               <Button size="icon" variant="ghost">
+               <Button size="icon" variant="ghost" disabled>
                 <Paperclip className="h-4 w-4" />
               </Button>
             </div>
