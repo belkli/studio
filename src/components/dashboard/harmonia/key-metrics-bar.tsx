@@ -1,18 +1,42 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, BookOpen, Calendar, CircleDollarSign } from "lucide-react"
+import { Users, BookOpen, Calendar, Bell } from "lucide-react"
+import { useAdminAlerts } from "@/hooks/use-admin-alerts";
+import { useAuth } from "@/hooks/use-auth";
+import { useMemo } from "react";
+import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 
 export function KeyMetricsBar() {
-    // In a real app, this data would be fetched from the backend.
-    const stats = [
-        { title: "תלמידים פעילים", value: "87", icon: Users, color: "text-blue-500" },
-        { title: "שיעורים השבוע", value: "112", icon: Calendar, color: "text-green-500" },
-        { title: "אישורים ממתינים", value: "4", icon: BookOpen, color: "text-orange-500" },
-        { title: "הכנסה החודש", value: "41,400 ₪", icon: CircleDollarSign, color: "text-purple-500" },
+    const alerts = useAdminAlerts();
+    const { users, mockLessons, mockFormSubmissions } = useAuth();
+    
+    const stats = useMemo(() => {
+        const activeStudents = users.filter(u => u.role === 'student' && u.approved).length;
+        
+        const today = new Date();
+        const weekStart = startOfWeek(today, { weekStartsOn: 0 }); // Sunday
+        const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+
+        const lessonsThisWeek = mockLessons.filter(l => {
+            const lessonDate = new Date(l.startTime);
+            return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
+        }).length;
+        
+        const pendingForms = mockFormSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
+        
+        return { activeStudents, lessonsThisWeek, pendingForms };
+    }, [users, mockLessons, mockFormSubmissions]);
+
+
+    const metrics = [
+        { title: "תלמידים פעילים", value: stats.activeStudents.toString(), icon: Users, color: "text-blue-500" },
+        { title: "שיעורים השבוע", value: stats.lessonsThisWeek.toString(), icon: Calendar, color: "text-green-500" },
+        { title: "אישורים ממתינים", value: stats.pendingForms.toString(), icon: BookOpen, color: "text-orange-500" },
+        { title: "התראות AI", value: alerts.length.toString(), icon: Bell, color: alerts.length > 0 ? "text-red-500" : "text-purple-500" },
     ]
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
+            {metrics.map((stat) => (
                 <Card key={stat.title}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>

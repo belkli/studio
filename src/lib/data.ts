@@ -97,6 +97,11 @@ const studentUser2: User = {
   id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [ { instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 }, ], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
 };
 
+const disengagedStudent: User = {
+  id: 'student-user-3', name: 'מאיה כהן', email: 'disengaged@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student3', idNumber: '333333333', approved: true, notifications: [], parentId: 'parent-user-2', instruments: [{ instrument: 'צ\'לו', teacherName: 'מרים כהן', yearsOfStudy: 1 }], weeklyPracticeGoal: 90,
+};
+
+
 const otherStudent: User = {
     id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [ { instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 }, ], approved: true, notifications: [],
 };
@@ -111,22 +116,25 @@ export const mockTeachers: Partial<User>[] = [
         bio: 'מורה לפסנתר וכינור עם 15 שנות ניסיון, מתמחה בהכנה לרסיטלים ובחינות בגרות. בוגרת האקדמיה למוסיקה בירושלים. מאמינה בגישה אישית ומעצימה לכל תלמיד.',
         specialties: ['EXAM_PREP', 'PERFORMANCE', 'BEGINNER_ADULTS'],
         teachingLanguages: ['HE', 'EN'],
+        maxStudents: 20,
     },
     {
         id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com',
         bio: 'נשפן וירטואוז, מומחה בחליל צד, סקסופון וקלרינט. מתמחה בג\'אז ואימפרוביזציה, ומעביר סדנאות אמן ברחבי הארץ. מביא אנרגיה ייחודית לשיעורים.',
         specialties: ['JAZZ', 'ENSEMBLE', 'PERFORMANCE'],
         teachingLanguages: ['HE', 'RU'],
+        maxStudents: 15,
     },
     {
         id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com',
         bio: 'גיטריסטית ומורה, מתמחה בעבודה עם ילדים ונוער. בעלת ניסיון רב עם צרכים מיוחדים ופיתוח יצירתיות דרך המוזיקה.',
         specialties: ['EARLY_CHILDHOOD', 'SPECIAL_NEEDS', 'THEORY'],
         teachingLanguages: ['HE'],
+        maxStudents: 18,
     },
 ];
 
-const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id], approved: true, notifications: teacherNotifications, } as User;
+const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id, disengagedStudent.id], approved: true, notifications: teacherNotifications, } as User;
 const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], } as User;
 const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=teacher3', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], } as User;
 
@@ -143,7 +151,7 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
             avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin15',
             idNumber: `admin-id-15`,
             phone: '052-4619363',
-            students: [studentUser.id, studentUser2.id],
+            students: [studentUser.id, studentUser2.id, disengagedStudent.id],
             approved: true,
             notifications: adminNotifications,
         };
@@ -176,6 +184,7 @@ export const ministryDirectorUser: User = {
 export const mockUsers: User[] = [
   studentUser,
   studentUser2,
+  disengagedStudent,
   teacherUser,
   teacherUser2,
   teacherUser3,
@@ -208,6 +217,8 @@ export const mockLessons: LessonSlot[] = [
   { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-d2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
 ];
 
 export const mockInvoices: Invoice[] = [
@@ -240,7 +251,7 @@ export const mockInvoices: Invoice[] = [
     payerId: 'parent-user-1',
     lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - יולי 2024', total: 560 }],
     total: 560,
-    status: 'SENT',
+    status: 'OVERDUE',
     dueDate: '2024-07-01',
   },
 ];

@@ -7,8 +7,7 @@ import Link from "next/link";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";
 import { RecentAnnouncementsCard } from "./recent-announcements-card";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Activity } from "lucide-react";
+import { AiAlertsCard } from "./ai-alerts-card";
 
 export function AdminCommandCenter() {
     const { user } = useAuth();
@@ -51,21 +50,10 @@ export function AdminCommandCenter() {
                     <TodaySnapshotCard />
                 </div>
                 <div className="lg:col-span-1">
-                    <RecentAnnouncementsCard />
+                    <AiAlertsCard />
                 </div>
             </div>
-             <Card>
-                <CardHeader>
-                    <CardTitle>פעילות אחרונה</CardTitle>
-                    <CardDescription>ציר הזמן של האירועים האחרונים בקונסרבטוריון.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="h-48 flex items-center justify-center text-muted-foreground">
-                        <Activity className="h-8 w-8 me-2" />
-                        <span>תרשים פעילות יופיע כאן...</span>
-                    </div>
-                </CardContent>
-             </Card>
+             <RecentAnnouncementsCard />
         </div>
     )
 }

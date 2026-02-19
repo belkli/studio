@@ -58,6 +58,7 @@ export type User = {
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
   availability?: WeeklyAvailabilityBlock[];
+  maxStudents?: number;
   // Student-specific fields from SDD-09
   weeklyPracticeGoal?: number;
   packageId?: string;
