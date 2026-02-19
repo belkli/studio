@@ -53,6 +53,8 @@ import {
     type Achievement,
     type AchievementType,
     type EventProduction,
+    type EventProductionStatus,
+    type PerformanceSlot,
     type InstrumentInventory,
     type InstrumentCondition,
 } from '@/lib/data';
@@ -119,6 +121,8 @@ interface AuthContextType {
   mockAuditLog: AuditLogEntry[];
   mockEvents: EventProduction[];
   addEvent: (event: Partial<EventProduction>) => void;
+  addPerformanceToEvent: (eventId: string, studentId: string, repertoireId: string) => void;
+  removePerformanceFromEvent: (eventId: string, performanceSlotId: string) => void;
   mockInstrumentInventory: InstrumentInventory[];
   assignInstrumentToStudent: (instrumentId: string, studentId: string) => void;
   returnInstrument: (instrumentId: string) => void;
@@ -249,15 +253,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     studentUsers.forEach(student => {
         const studentLessons = initialLessons.filter(l => l.studentId === student.id);
         
-        const grantedLessons = studentLessons.filter(l => 
+        const grantedCredits = studentLessons.filter(l => 
             ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
         ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
         const usedCredits = studentLessons.filter(l => l.type === 'MAKEUP').length;
-        const balance = grantedLessons.length - usedCredits;
+        const balance = grantedCredits.length - usedCredits;
 
         if (balance > 0) {
-            const earliestCreditLesson = grantedLessons[usedCredits];
+            const earliestCreditLesson = grantedCredits[usedCredits];
             const MAKEUP_EXPIRY_DAYS = 60;
             const EXPIRING_SOON_DAYS = 7;
             const expiryDate = addDays(new Date(earliestCreditLesson.createdAt), MAKEUP_EXPIRY_DAYS);
@@ -883,6 +887,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setEvents(prev => [newEvent, ...prev]);
   };
 
+  const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
+    const student = users.find(u => u.id === studentId);
+    const repertoireItem = assignedRepertoire.find(r => r.id === repertoireId);
+    const composition = initialCompositions.find(c => c.id === repertoireItem?.compositionId);
+
+    if (!student || !repertoireItem || !composition) {
+      toast({ variant: 'destructive', title: 'שגיאה', description: 'לא ניתן להוסיף את המשתתף. פרטים חסרים.' });
+      return;
+    }
+
+    const newPerformanceSlot: PerformanceSlot = {
+      id: `perf-${Date.now()}`,
+      studentId: student.id,
+      studentName: student.name,
+      compositionTitle: composition.title,
+      composer: composition.composer,
+      duration: composition.duration,
+    };
+
+    setEvents(prev => prev.map(event => {
+      if (event.id === eventId) {
+        return { ...event, program: [...event.program, newPerformanceSlot] };
+      }
+      return event;
+    }));
+
+    toast({ title: 'משתתף נוסף!', description: `${student.name} נוסף לתוכנית האירוע.` });
+  };
+  
+  const removePerformanceFromEvent = (eventId: string, performanceSlotId: string) => {
+    setEvents(prev => prev.map(event => {
+        if (event.id === eventId) {
+            return { ...event, program: event.program.filter(p => p.id !== performanceSlotId) };
+        }
+        return event;
+    }));
+    toast({ title: 'משתתף הוסר מהתוכנית.' });
+  };
+
   const assignInstrumentToStudent = (instrumentId: string, studentId: string) => {
     setInstrumentInventory(prev => prev.map(inst => {
         if (inst.id === instrumentId) {
@@ -966,6 +1009,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockAuditLog: auditLog,
       mockEvents: events,
       addEvent,
+      addPerformanceToEvent,
+      removePerformanceFromEvent,
       mockInstrumentInventory: instrumentInventory,
       assignInstrumentToStudent,
       returnInstrument,

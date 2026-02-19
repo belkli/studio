@@ -2,17 +2,20 @@
 
 import { useAuth } from '@/hooks/use-auth';
 import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Calendar, Clock, Edit, MapPin, Printer, UserPlus } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit, MapPin, Printer, UserPlus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import type { EventProductionStatus } from '@/lib/types';
+import { AssignPerformerDialog } from './assign-performer-dialog';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 const statusConfig: Record<EventProductionStatus, { label: string; className: string }> = {
@@ -26,9 +29,60 @@ const statusConfig: Record<EventProductionStatus, { label: string; className: st
 export function EventDetails() {
     const params = useParams();
     const eventId = params.id as string;
-    const { mockEvents } = useAuth();
+    const { mockEvents, removePerformanceFromEvent } = useAuth();
+    const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
     const event = useMemo(() => mockEvents.find(e => e.id === eventId), [mockEvents, eventId]);
+    
+    const handlePrintProgram = () => {
+        if (!event) return;
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        
+        const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
+        
+        // This is a hack to support Hebrew in jsPDF. A proper solution would require embedding a Hebrew-supporting font.
+        doc.setFont('helvetica');
+
+        doc.setFontSize(22);
+        doc.text(rtl(event.name), pageWidth / 2, 20, { align: 'center' });
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'normal');
+        doc.text(rtl(`${format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })} | ${event.startTime} | ${event.venue}`), pageWidth / 2, 30, { align: 'center' });
+
+        const head = [[rtl('משך'), rtl('מלחין'), rtl('יצירה'), rtl('מבצע/ת')]];
+        const body = event.program.map(p => [
+            rtl(p.duration),
+            rtl(p.composer),
+            rtl(p.compositionTitle),
+            rtl(p.studentName),
+        ]);
+
+        (doc as any).autoTable({
+            startY: 45,
+            head: head,
+            body: body,
+            theme: 'striped',
+            styles: {
+                halign: 'right',
+                font: 'helvetica',
+            },
+            headStyles: {
+                fillColor: [44, 62, 80],
+                textColor: 255,
+                fontStyle: 'bold',
+            },
+            bodyStyles: {
+                cellPadding: 3,
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+        });
+
+        doc.save(`${event.name}_program.pdf`);
+    };
 
     if (!event) {
         notFound();
@@ -66,8 +120,12 @@ export function EventDetails() {
                     <div className="flex justify-between items-center">
                         <CardTitle>תוכנית האירוע ({event.program.length} משתתפים)</CardTitle>
                         <div className="flex gap-2">
-                            <Button variant="outline"><UserPlus className="ms-2 h-4 w-4"/>הוסף משתתף</Button>
-                             <Button variant="outline"><Printer className="ms-2 h-4 w-4"/>הדפס תוכניה</Button>
+                            <Button variant="outline" onClick={() => setIsAssignDialogOpen(true)}>
+                                <UserPlus className="ms-2 h-4 w-4"/>הוסף משתתף
+                            </Button>
+                             <Button variant="outline" onClick={handlePrintProgram}>
+                                <Printer className="ms-2 h-4 w-4"/>הדפס תוכניה
+                            </Button>
                         </div>
                     </div>
                 </CardHeader>
@@ -79,7 +137,8 @@ export function EventDetails() {
                                 <TableHead>מבצע/ת</TableHead>
                                 <TableHead>יצירה</TableHead>
                                 <TableHead>מלחין</TableHead>
-                                <TableHead className="text-left">משך</TableHead>
+                                <TableHead>משך</TableHead>
+                                <TableHead className="text-left">פעולות</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -89,17 +148,28 @@ export function EventDetails() {
                                     <TableCell className="font-medium">{item.studentName}</TableCell>
                                     <TableCell>{item.compositionTitle}</TableCell>
                                     <TableCell>{item.composer}</TableCell>
-                                    <TableCell className="text-left font-mono">{item.duration}</TableCell>
+                                    <TableCell className="font-mono">{item.duration}</TableCell>
+                                    <TableCell className="text-left">
+                                        <Button variant="ghost" size="icon" onClick={() => removePerformanceFromEvent(event.id, item.id)}>
+                                            <Trash2 className="h-4 w-4 text-destructive" />
+                                            <span className="sr-only">הסר</span>
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-24 text-center">טרם שובצו משתתפים לתוכנית.</TableCell>
+                                    <TableCell colSpan={6} className="h-24 text-center">טרם שובצו משתתפים לתוכנית.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </CardContent>
             </Card>
+            <AssignPerformerDialog
+                eventId={event.id}
+                open={isAssignDialogOpen}
+                onOpenChange={setIsAssignDialogOpen}
+            />
         </div>
     )
 }
