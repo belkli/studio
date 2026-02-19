@@ -2,7 +2,7 @@
 'use client';
 
 import { mockUsers, conservatoriums } from '@/lib/data';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -43,13 +43,26 @@ const DetailItem = ({ label, value }: { label: string, value: React.ReactNode })
 
 export default function FormDetailsPage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const formId = params.id;
     const { toast } = useToast();
     const { user, mockFormSubmissions: forms, updateForm } = useAuth();
     
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
     
-    const [isEditing, setIsEditing] = useState(false);
+    const { isTeacherApproval, isAdminFinalApproval, isMinistryApproval, isRevisable } = useMemo(() => {
+        if (!user || !form) {
+            return { isTeacherApproval: false, isAdminFinalApproval: false, isMinistryApproval: false, isRevisable: false };
+        }
+        return {
+            isTeacherApproval: user.role === 'teacher' && form.status === 'ממתין לאישור מורה',
+            isAdminFinalApproval: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל',
+            isMinistryApproval: user.role === 'ministry_director' && form.status === 'מאושר',
+            isRevisable: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'נדרש תיקון',
+        }
+    }, [user, form]);
+    
+    const [isEditing, setIsEditing] = useState(() => searchParams.get('edit') === 'true' && isRevisable);
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
     const [isMinistryRejectionDialogOpen, setMinistryRejectionDialogOpen] = useState(false);
     const [ministryRejectionReason, setMinistryRejectionReason] = useState("");
@@ -64,12 +77,6 @@ export default function FormDetailsPage() {
     }
     
     const formUser = mockUsers.find(u => u.id === form.studentId);
-    
-    const isTeacherApproval = user.role === 'teacher' && form.status === 'ממתין לאישור מורה';
-    const isAdminFinalApproval = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל';
-    const isMinistryApproval = user.role === 'ministry_director' && form.status === 'מאושר';
-    const isRevisable = (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'נדרש תיקון';
-
 
     const generatePdf = (form) => {
         const doc = new jsPDF();
