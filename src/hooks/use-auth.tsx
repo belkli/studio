@@ -30,6 +30,7 @@ import {
     type ProgressReport,
     type SlotStatus,
     type Announcement,
+    type Room,
 } from '@/lib/data';
 
 interface LoginResult {

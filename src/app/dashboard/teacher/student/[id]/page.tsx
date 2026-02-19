@@ -36,6 +36,7 @@ export default function TeacherStudentProfilePage() {
         addLessonNote, 
         updateUserPracticeGoal,
         addProgressReport,
+        assignRepertoire,
     } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
@@ -68,12 +69,14 @@ export default function TeacherStudentProfilePage() {
 
     const studentNotes = useMemo(() => {
         if (!student) return [];
-        return mockLessonNotes.filter(note => note.studentId === student.id);
+        return mockLessonNotes.filter(note => note.studentId === student.id)
+            .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [mockLessonNotes, student]);
     
     const studentReports = useMemo(() => {
         if (!student) return [];
-        return mockProgressReports.filter(report => report.studentId === student.id);
+        return mockProgressReports.filter(report => report.studentId === student.id)
+            .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [mockProgressReports, student]);
 
     const weeklyPracticeData = useMemo(() => {
@@ -201,7 +204,7 @@ export default function TeacherStudentProfilePage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>יצירה</TableHead>
-                                    <TableHead>סטטוס</TableHead>
+                                    <TableHead className="w-[150px]">סטטוס</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -213,7 +216,7 @@ export default function TeacherStudentProfilePage() {
                                                 <p className="font-medium">{composition?.title}</p>
                                                 <p className="text-xs text-muted-foreground">{composition?.composer}</p>
                                             </TableCell>
-                                            <TableCell className="w-[150px]">
+                                            <TableCell>
                                                  <Select 
                                                     value={rep.status} 
                                                     onValueChange={(newStatus: RepertoireStatus) => updateRepertoireStatus(rep.id, newStatus)}
