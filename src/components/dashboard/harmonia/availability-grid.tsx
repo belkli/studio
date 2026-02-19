@@ -20,7 +20,7 @@ const days: { he: string, key: DayOfWeek }[] = [
 const times = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 export function AvailabilityGrid() {
-    const { user, mockLessons, updateUser } = useAuth();
+    const { user, users, mockLessons, updateUser } = useAuth();
     const { toast } = useToast();
     const [availableSlots, setAvailableSlots] = useState<Record<string, boolean>>({});
     const [isDirty, setIsDirty] = useState(false);
