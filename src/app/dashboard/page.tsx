@@ -1,18 +1,42 @@
 'use client';
 import { OverviewCards } from "@/components/dashboard/overview-cards";
 import { RecentForms } from "@/components/dashboard/recent-forms";
+import { AdminCommandCenter } from "@/components/dashboard/harmonia/admin-command-center";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
-    const { user } = useAuth();
+    const { user, newFeaturesEnabled, isLoading } = useAuth();
 
-    if (!user) {
-        return null; // Or a loading spinner
+    if (isLoading || !user) {
+        return (
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-5 w-64 mt-2" />
+                    </div>
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                </div>
+                <Skeleton className="h-96" />
+            </div>
+        );
     }
 
+    if (newFeaturesEnabled) {
+        return <AdminCommandCenter />;
+    }
+
+    // Legacy Dashboard
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">

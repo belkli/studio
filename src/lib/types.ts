@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'teacher' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
+export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
 
 export type InstrumentInfo = {
   instrument: string;
@@ -25,7 +25,6 @@ export type User = {
   conservatoriumStudyYears?: number;
   instruments?: InstrumentInfo[];
   avatarUrl?: string;
-  // Detailed properties for form pre-filling
   idNumber?: string;
   schoolName?: string;
   schoolSymbol?: string;
@@ -33,11 +32,15 @@ export type User = {
   gender?: 'זכר' | 'נקבה';
   city?: string;
   phone?: string;
-  students?: string[]; // For teachers/admins to list their students by ID
-  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
   approved: boolean;
   rejectionReason?: string;
   notifications?: Notification[];
+  // New fields from SDDs
+  dateOfBirth?: string; // ISO Date
+  parentId?: string;    // Link to parent user
+  childIds?: string[];  // Link to child users
+  students?: string[]; // For teachers/admins to list their students by ID
+  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
 };
 
 export type Conservatorium = {
@@ -45,6 +48,7 @@ export type Conservatorium = {
   name: string;
   tier: 'A' | 'B' | 'C';
   stampUrl?: string;
+  newFeaturesEnabled?: boolean;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
@@ -60,7 +64,7 @@ export type Composition = {
   source?: 'seed' | 'user_submitted' | 'api';
 };
 
-// New detailed types based on the image
+// New detailed types based on the image and SDDs
 export type RecitalApplicantDetails = {
   gender?: string;
   city?: string;
@@ -108,8 +112,7 @@ export type PreviousRepertoire = {
 export type FormSubmission = {
   id: string;
   formType: string;
-  // NEW fields from image
-  academicYear?: string; // e.g. תשפ"ו
+  academicYear?: string;
   grade?: 'י' | 'יא' | 'יב';
   conservatoriumName?: string;
   conservatoriumManagerName?: string;
@@ -119,7 +122,6 @@ export type FormSubmission = {
   studentId: string;
   studentName: string;
   
-  // NEW nested objects
   applicantDetails?: RecitalApplicantDetails;
   schoolDetails?: SchoolDetails;
   instrumentDetails?: MainInstrumentDetails;
@@ -130,22 +132,76 @@ export type FormSubmission = {
   status: FormStatus;
   submissionDate: string;
   totalDuration: string;
-  repertoire: Composition[]; // This is the main recital program
-  
-  // Existing fields
+  repertoire: Composition[];
+
   teacherId?: string;
   adminId?: string;
   teacherComment?: string;
   adminComment?: string;
   ministryComment?: string;
-
-  // NEW
   managerNotes?: string;
   calculatedPrice?: number;
   paymentStatus?: 'pending' | 'paid' | 'waived';
   
-  // For signature feature
   signatureUrl?: string;
   signedBy?: string;
   signedAt?: string;
+};
+
+// --- New Types from SDDs ---
+export type DayOfWeek = 'SUN' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT';
+export type TimeRange = 'MORNING' | 'AFTERNOON' | 'EVENING';
+
+export type LessonType = 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
+export type SlotStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED_STUDENT_NOTICED' | 'CANCELLED_STUDENT_NO_NOTICE' | 'CANCELLED_TEACHER' | 'CANCELLED_CONSERVATORIUM' | 'NO_SHOW_STUDENT' | 'NO_SHOW_TEACHER';
+
+export type LessonSlot = {
+  id: string;
+  conservatoriumId: string;
+  teacherId: string;
+  studentId: string;
+  instrument: string;
+  startTime: string; // ISO Timestamp
+  durationMinutes: 30 | 45 | 60;
+  recurrenceId?: string;
+  type: LessonType;
+  bookingSource: 'STUDENT_SELF' | 'PARENT' | 'TEACHER' | 'ADMIN' | 'AUTO_MAKEUP';
+  roomId?: string;
+  isVirtual: boolean;
+  meetingLink?: string;
+  packageId?: string;
+  isCreditConsumed: boolean;
+  status: SlotStatus;
+  attendanceMarkedAt?: string; // ISO Timestamp
+  teacherNote?: string;
+  createdAt: string; // ISO Timestamp
+  updatedAt: string; // ISO Timestamp
+};
+
+export type PackageType = 'MONTHLY' | 'TRIAL' | 'PACK_5' | 'PACK_10' | 'YEARLY';
+export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED';
+
+export type Package = {
+  id: string;
+  studentId: string;
+  type: PackageType;
+  totalCredits: number;
+  usedCredits: number;
+  price: number;
+  paymentStatus: PaymentStatus;
+  validFrom: string; // ISO Date
+  validUntil: string; // ISO Date
+};
+
+export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+
+export type Invoice = {
+  id: string;
+  conservatoriumId: string;
+  payerId: string; // Parent or adult Student
+  lineItems: { description: string; total: number; }[];
+  total: number;
+  status: InvoiceStatus;
+  dueDate: string; // ISO Date
+  paidAt?: string; // ISO Date
 };

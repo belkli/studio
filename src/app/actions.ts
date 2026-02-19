@@ -95,7 +95,8 @@ export async function searchCompositions({ query, composer, instrument }: Search
   const lowerCaseQuery = query.toLowerCase();
 
   const results = source.filter(c => 
-    c.title.toLowerCase().includes(lowerCaseQuery)
+    c.title.toLowerCase().includes(lowerCaseQuery) || 
+    c.composer.toLowerCase().includes(lowerCaseQuery)
   );
   
   return results.slice(0, 20);

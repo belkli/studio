@@ -1,8 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { mockUsers as initialUsers, mockFormSubmissions as initialForms, type User, type FormSubmission } from '@/lib/data';
+import { mockUsers as initialUsers, mockFormSubmissions as initialForms, conservatoriums, type User, type FormSubmission } from '@/lib/data';
 
 interface LoginResult {
   user: User | null;
@@ -20,6 +20,7 @@ interface AuthContextType {
   updateUser: (updatedUser: User) => void;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
+  newFeaturesEnabled: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, isLoading, pathname, router]);
   
   const login = (email: string): LoginResult => {
-    const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const foundUser = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
     
     if (!foundUser) {
       return { user: null, status: 'not_found' };
@@ -104,8 +105,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f))
     );
   };
+  
+  const newFeaturesEnabled = useMemo(() => {
+    if (!user) return false;
+    const userConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
+    return userConservatorium?.newFeaturesEnabled ?? false;
+  }, [user]);
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, mockFormSubmissions: forms, updateForm };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, mockFormSubmissions: forms, updateForm, newFeaturesEnabled };
 
   return (
     <AuthContext.Provider value={value}>

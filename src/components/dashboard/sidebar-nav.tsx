@@ -12,22 +12,36 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, MessageSquare, Bot } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import type { Notification } from '@/lib/types';
+import type { Notification, UserRole } from '@/lib/types';
 
 
-const links = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
-    { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText },
-    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, role: 'teacher' },
-    { href: '/dashboard/library', label: 'ספרייה', icon: Book },
-    { href: '/dashboard/users', label: 'משתמשים', icon: User, role: 'conservatorium_admin' },
-    { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, role: 'ministry_director' },
+const legacyLinks = [
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
+    { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/library', label: 'ספרייה', icon: Book, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/users', label: 'משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, roles: ['ministry_director'] },
+];
+
+const harmoniaLinks = [
+    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin', 'teacher', 'parent', 'student'] },
+    { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'] },
+    { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'] },
+    { href: '/dashboard/practice', label: 'יומן אימונים', icon: Book, roles: ['student', 'parent', 'teacher'] },
+    { href: '/dashboard/messages', label: 'הודעות', icon: MessageSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin'] },
+    { href: '/dashboard/reports', label: 'דוחות ואנליטיקה', icon: LineChart, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ai', label: 'סוכני AI', icon: Bot, roles: ['conservatorium_admin', 'site_admin'] },
 ];
 
 
@@ -52,7 +66,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => (
 
 export function SidebarNav() {
   const pathname = usePathname();
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
 
   if (!user) {
     return null; // Or a loading spinner
@@ -71,6 +85,7 @@ export function SidebarNav() {
   };
 
   const userRole = user.role;
+  const links = newFeaturesEnabled ? harmoniaLinks : legacyLinks;
 
   return (
     <>
@@ -84,7 +99,7 @@ export function SidebarNav() {
       <SidebarContent>
         <SidebarMenu>
           {links.map((link) => {
-            const userCanView = !link.role || userRole === 'site_admin' || userRole === link.role || (userRole === 'conservatorium_admin' && link.role === 'teacher');
+            const userCanView = link.roles.includes(userRole);
             if (!userCanView) {
                 return null;
             }
