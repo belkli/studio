@@ -6,7 +6,7 @@ import { Megaphone, Mail, MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Channel } from '@/lib/types';
+import type { Channel } from '@/lib/types';
 
 export function RecentAnnouncementsCard() {
     const { mockAnnouncements, user } = useAuth();
