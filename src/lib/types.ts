@@ -59,6 +59,12 @@ export type User = {
   teachingLanguages?: Language[];
   availability?: WeeklyAvailabilityBlock[];
   maxStudents?: number;
+  employmentType?: 'EMPLOYEE' | 'FREELANCE';
+  ratePerDuration?: {
+      '30': number;
+      '45': number;
+      '60': number;
+  };
   // Student-specific fields from SDD-09
   weeklyPracticeGoal?: number;
   packageId?: string;
@@ -332,4 +338,26 @@ export type Room = {
   name: string;
   instruments?: string[];
   capacity?: number;
+};
+
+export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
+
+export type PayrollSummary = {
+    id: string;
+    teacherId: string;
+    teacherName: string;
+    periodStart: string; // ISO Date string
+    periodEnd: string; // ISO Date string
+    completedLessons: {
+        slotId: string;
+        studentId: string;
+        studentName: string;
+        durationMinutes: number;
+        rate: number;
+        subtotal: number;
+        completedAt: string; // ISO Timestamp
+    }[];
+    totalHours: number;
+    grossPay: number;
+    status: PayrollStatus;
 };

@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -146,6 +146,8 @@ export const mockTeachers: Partial<User>[] = [
         specialties: ['EXAM_PREP', 'PERFORMANCE', 'BEGINNER_ADULTS'],
         teachingLanguages: ['HE', 'EN'],
         maxStudents: 20,
+        employmentType: 'EMPLOYEE',
+        ratePerDuration: { '30': 80, '45': 100, '60': 120 }
     },
     {
         id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com',
@@ -153,6 +155,8 @@ export const mockTeachers: Partial<User>[] = [
         specialties: ['JAZZ', 'ENSEMBLE', 'PERFORMANCE'],
         teachingLanguages: ['HE', 'RU'],
         maxStudents: 15,
+        employmentType: 'FREELANCE',
+        ratePerDuration: { '30': 90, '45': 110, '60': 130 }
     },
     {
         id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com',
@@ -160,6 +164,8 @@ export const mockTeachers: Partial<User>[] = [
         specialties: ['EARLY_CHILDHOOD', 'SPECIAL_NEEDS', 'THEORY'],
         teachingLanguages: ['HE'],
         maxStudents: 18,
+        employmentType: 'FREELANCE',
+        ratePerDuration: { '30': 85, '45': 105, '60': 125 }
     },
 ];
 
@@ -253,8 +259,8 @@ export const mockRooms: Room[] = [
 export const mockLessons: LessonSlot[] = [
   { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
   { id: 'lesson-d2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
 ];
@@ -441,3 +447,5 @@ export const mockAnnouncements: Announcement[] = [
         sentAt: new Date('2024-05-20T14:30:00Z').toISOString(),
     }
 ];
+
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary };

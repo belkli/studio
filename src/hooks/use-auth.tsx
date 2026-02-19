@@ -31,8 +31,10 @@ import {
     type SlotStatus,
     type Announcement,
     type Room,
+    type PayrollSummary,
+    type PayrollStatus,
 } from '@/lib/data';
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
 interface LoginResult {
   user: User | null;
@@ -79,6 +81,8 @@ interface AuthContextType {
   mockAnnouncements: Announcement[];
   addAnnouncement: (announcement: Partial<Announcement>) => void;
   getMakeupCreditBalance: (studentIds: string[]) => number;
+  mockPayrolls: PayrollSummary[];
+  updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -95,9 +99,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [messageThreads, setMessageThreads] = useState<MessageThread[]>(initialMessageThreads);
   const [progressReports, setProgressReports] = useState<ProgressReport[]>(initialProgressReports);
   const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+  const [payrolls, setPayrolls] = useState<PayrollSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
+    const now = new Date();
+    const periodStart = startOfMonth(now);
+    const periodEnd = endOfMonth(now);
+
+    const generatedPayrolls = teachers.map(teacher => {
+        const completedLessons = lessons.filter(l => 
+            l.teacherId === teacher.id && 
+            l.status === 'COMPLETED' &&
+            l.attendanceMarkedAt &&
+            isWithinInterval(new Date(l.attendanceMarkedAt), { start: periodStart, end: periodEnd })
+        );
+
+        let grossPay = 0;
+        let totalMinutes = 0;
+
+        const lessonDetails = completedLessons.map(lesson => {
+            const rate = teacher.ratePerDuration?.[lesson.durationMinutes] || 0;
+            const student = users.find(u => u.id === lesson.studentId);
+            grossPay += rate;
+            totalMinutes += lesson.durationMinutes;
+            return {
+                slotId: lesson.id,
+                studentId: lesson.studentId,
+                studentName: student?.name || 'Unknown',
+                durationMinutes: lesson.durationMinutes,
+                rate: rate, // this is hourly rate, we need to adjust
+                subtotal: rate,
+                completedAt: lesson.attendanceMarkedAt!,
+            }
+        });
+        
+        return {
+            id: `payroll-${teacher.id}-${now.toISOString().slice(0, 7)}`,
+            teacherId: teacher.id,
+            teacherName: teacher.name,
+            periodStart: periodStart.toISOString(),
+            periodEnd: periodEnd.toISOString(),
+            completedLessons: lessonDetails,
+            totalHours: totalMinutes / 60,
+            grossPay,
+            status: 'DRAFT' as PayrollStatus,
+        }
+    });
+
+    setPayrolls(generatedPayrolls);
+  }, [users, lessons]);
+
+  const updatePayrollStatus = (payrollId: string, status: PayrollStatus) => {
+    setPayrolls(prev => prev.map(p => p.id === payrollId ? { ...p, status } : p));
+  };
+
 
   const loadUserFromStorage = useCallback(() => {
     try {
@@ -444,6 +503,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockAnnouncements: announcements,
       addAnnouncement,
       getMakeupCreditBalance,
+      mockPayrolls: payrolls,
+      updatePayrollStatus,
   };
 
   return (
