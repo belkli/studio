@@ -120,7 +120,7 @@ export function SidebarNav() {
             }
             
             // Special handling for dashboard links to avoid multiple "לוח בקרה" items
-            if (link.href === '/dashboard' && user.role === 'teacher' && newFeaturesEnabled) return null;
+            if (link.href === '/dashboard' && (user.role === 'teacher' || user.role === 'student' || user.role === 'parent') && newFeaturesEnabled) return null;
             if (link.href === '/dashboard/teacher' && user.role !== 'teacher') return null;
             if (link.href === '/dashboard/teacher/profile' && user.role === 'teacher') return null; // Handled by /dashboard/profile
 

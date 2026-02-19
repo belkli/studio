@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from "react";
-import { useForm, FormProvider, useFieldArray } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { getTeacherMatches } from "@/app/actions";
 import type { MatchTeacherOutput } from "@/ai/flows/match-teacher-flow";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -24,7 +25,7 @@ import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
 import { conservatoriums, instruments, schools, mockPackages, mockTeachers } from "@/lib/data";
-import type { StudentGoal, DayOfWeek, TimeRange } from "@/lib/types";
+import type { StudentGoal, DayOfWeek, TimeRange, User, Package } from "@/lib/types";
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
 
@@ -118,6 +119,14 @@ const timeOptions: {id: TimeRange; label: string}[] = [
     {id: 'MORNING', label: 'בוקר (8-13)'}, {id: 'AFTERNOON', label: 'צהריים (13-17)'}, {id: 'EVENING', label: 'ערב (17-21)'}
 ]
 
+const DetailItem = ({ label, value }: { label: string; value: React.ReactNode }) => (
+    <div className="flex justify-between py-1">
+        <span className="text-muted-foreground">{label}:</span>
+        <span className="font-medium text-right">{value || '-'}</span>
+    </div>
+);
+
+
 export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolean }) {
   const [step, setStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -192,7 +201,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
         default: break;
     }
 
-    const isValid = await form.trigger(fieldsToValidate);
+    const isValid = fieldsToValidate.length > 0 ? await form.trigger(fieldsToValidate) : true;
     if (!isValid) return;
 
     if (step < steps.length - 1) {
@@ -203,12 +212,41 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   };
 
   const onSubmit = (data: FormData) => {
-    // This would create the user(s) and enrollment record in a real app
-    console.log("Final form data:", data);
+    let newUser: Partial<User>;
+    
+    if (data.registrationType === 'self' && data.selfDetails) {
+        newUser = {
+            name: `${data.selfDetails.firstName} ${data.selfDetails.lastName}`,
+            email: data.selfDetails.email,
+            role: 'student',
+            idNumber: data.selfDetails.idNumber,
+            birthDate: data.selfDetails.birthDate,
+            phone: data.selfDetails.phone,
+            conservatoriumName: data.conservatorium,
+            grade: data.grade,
+        }
+    } else if (data.registrationType === 'parent' && data.studentDetails && data.parentDetails) {
+        // In a real app, you'd create/link the parent user too. Here we just create the student.
+        newUser = {
+            name: `${data.studentDetails.childFirstName} ${data.studentDetails.childLastName}`,
+            email: data.parentDetails.parentEmail, // Use parent's email for child under 13
+            role: 'student',
+            birthDate: data.studentDetails.childBirthDate,
+            conservatoriumName: data.conservatorium,
+            grade: data.grade,
+            parentId: 'parent-user-id', // Placeholder for parent linkage
+        }
+    } else {
+        toast({ variant: 'destructive', title: 'שגיאה', description: 'פרטים חסרים, לא ניתן להשלים את ההרשמה.' });
+        return;
+    }
+    
+    addUser(newUser, isAdminFlow);
+    
     setIsSubmitted(true);
     toast({
       title: "ההרשמה נשלחה בהצלחה!",
-      description: "בקשתך נשלחה לאישור מנהל הקונסרבטוריון. תקבל/י הודעה במייל.",
+      description: isAdminFlow ? `${newUser.name} נוסף למערכת.` : "בקשתך נשלחה לאישור מנהל הקונסרבטוריון.",
     });
   };
 
@@ -221,17 +259,25 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
           </div>
           <CardTitle className="text-2xl font-bold mt-4">ההרשמה הושלמה בהצלחה!</CardTitle>
           <CardDescription>
-            בקשתך נשלחה למנהל/ת הקונסרבטוריון לאישור.
+            {isAdminFlow 
+            ? 'התלמיד נוסף למערכת וניתן לנהל את הפרופיל שלו.'
+            : <>בקשתך נשלחה למנהל/ת הקונסרבטוריון לאישור.
             <br />
-            תקבל/י הודעת אימייל כאשר חשבונך יאושר ותוכל/י להתחבר למערכת.
+            תקבל/י הודעת אימייל כאשר חשבונך יאושר ותוכל/י להתחבר למערכת.</>
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={() => router.push('/')}>חזרה לדף הבית</Button>
+          <Button onClick={() => router.push(isAdminFlow ? '/dashboard/users' : '/')}>
+            {isAdminFlow ? 'חזרה לניהול משתמשים' : 'חזרה לדף הבית'}
+          </Button>
         </CardContent>
       </Card>
     );
   }
+
+  const formData = form.getValues();
+  const selectedPackage = mockPackages.find(p => p.id === formData.packageId);
 
   return (
     <Card className="w-full max-w-4xl mx-4 shadow-xl">
@@ -456,22 +502,25 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                                 <FormLabel>בחירת חבילת לימוד</FormLabel>
                                 <FormControl>
                                     <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                        {mockPackages.map(pkg => (
+                                        {mockPackages.map((pkg: Package) => (
                                             <FormItem key={pkg.id} className="flex-1">
                                                 <FormControl>
-                                                    <Card className={cn("cursor-pointer hover:bg-muted/50", field.value === pkg.id && "border-primary ring-2 ring-primary")}>
-                                                        <CardHeader>
-                                                            <div className="flex justify-between items-start">
-                                                                <div>
-                                                                    <CardTitle>{pkg.title}</CardTitle>
-                                                                    <CardDescription>{pkg.description}</CardDescription>
+                                                     <Card className={cn("cursor-pointer hover:bg-muted/50 transition-all", field.value === pkg.id && "border-primary ring-2 ring-primary")}>
+                                                        <label htmlFor={pkg.id} className="block cursor-pointer">
+                                                            <CardHeader>
+                                                                <div className="flex justify-between items-start">
+                                                                    <div>
+                                                                        <CardTitle>{pkg.title}</CardTitle>
+                                                                        <CardDescription>{pkg.description}</CardDescription>
+                                                                    </div>
+                                                                    <RadioGroupItem value={pkg.id} id={pkg.id} className="ms-4 mt-1" />
                                                                 </div>
-                                                                <RadioGroupItem value={pkg.id} className="ms-4 mt-1" />
-                                                            </div>
-                                                        </CardHeader>
-                                                        <CardContent>
-                                                            <p className="text-2xl font-bold">{pkg.price} ₪</p>
-                                                        </CardContent>
+                                                            </CardHeader>
+                                                            <CardContent>
+                                                                <p className="text-2xl font-bold">{pkg.price} ₪</p>
+                                                                <p className="text-xs text-muted-foreground">{pkg.type === 'MONTHLY' ? '/חודש' : ''}</p>
+                                                            </CardContent>
+                                                        </label>
                                                     </Card>
                                                 </FormControl>
                                             </FormItem>
@@ -486,23 +535,30 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
 
                 {currentStepId === 'summary' && (
-                  <div>
-                    <h3 className="text-lg font-medium mb-4">סיכום ואישור</h3>
-                    <div className="space-y-2 text-sm p-4 border rounded-lg bg-muted/50">
-                      {form.getValues().registrationType === 'self' && form.getValues().selfDetails && (
-                        <p><strong>שם:</strong> {form.getValues().selfDetails!.firstName} {form.getValues().selfDetails!.lastName}</p>
-                      )}
-                      {form.getValues().registrationType === 'parent' && form.getValues().studentDetails && (
-                        <p><strong>שם התלמיד/ה:</strong> {form.getValues().studentDetails!.childFirstName} {form.getValues().studentDetails!.childLastName}</p>
-                      )}
-                      {form.getValues().registrationType === 'parent' && form.getValues().parentDetails && (
-                        <p><strong>שם ההורה:</strong> {form.getValues().parentDetails!.parentFirstName} {form.getValues().parentDetails!.parentLastName}</p>
-                      )}
-                       <p><strong>קונסרבטוריון:</strong> {form.getValues().conservatorium}</p>
-                       <p><strong>כלי נגינה:</strong> {form.getValues().instrument}</p>
-                       <p><strong>מורה:</strong> {mockTeachers.find(t => t.id === form.getValues().teacherId)?.name || 'לא נבחר'}</p>
-                       <p><strong>חבילה:</strong> {mockPackages.find(p => p.id === form.getValues().packageId)?.title}</p>
-                    </div>
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-medium">סיכום ואישור</h3>
+                     <Card>
+                        <CardContent className="p-6 space-y-3">
+                           {formData.registrationType === 'self' && formData.selfDetails && (
+                            <>
+                                <DetailItem label="שם הנרשם" value={`${formData.selfDetails.firstName} ${formData.selfDetails.lastName}`} />
+                                <DetailItem label="אימייל" value={formData.selfDetails.email} />
+                            </>
+                          )}
+                          {formData.registrationType === 'parent' && formData.studentDetails && formData.parentDetails && (
+                            <>
+                               <DetailItem label="שם התלמיד/ה" value={`${formData.studentDetails.childFirstName} ${formData.studentDetails.childLastName}`} />
+                               <DetailItem label="שם ההורה" value={`${formData.parentDetails.parentFirstName} ${formData.parentDetails.parentLastName}`} />
+                               <DetailItem label="אימייל ליצירת קשר" value={formData.parentDetails.parentEmail} />
+                            </>
+                          )}
+                           <DetailItem label="קונסרבטוריון" value={formData.conservatorium} />
+                           <DetailItem label="כלי נגינה" value={formData.instrument} />
+                           <DetailItem label="מורה" value={mockTeachers.find(t => t.id === formData.teacherId)?.name || 'טרם נבחר'} />
+                           <DetailItem label="חבילה" value={selectedPackage?.title} />
+                           {selectedPackage && <DetailItem label="מחיר" value={`${selectedPackage.price} ₪`} />}
+                        </CardContent>
+                     </Card>
                   </div>
                 )}
               </motion.div>
@@ -535,5 +591,3 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     </Card>
   );
 }
-
-    

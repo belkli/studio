@@ -6,9 +6,9 @@ import {
     mockUsers as initialUsers, 
     mockFormSubmissions as initialForms, 
     conservatoriums as initialConservatoriums, 
-    mockInvoices,
-    mockLessons,
-    mockPracticeLogs,
+    mockInvoices as initialInvoices,
+    mockLessons as initialLessons,
+    mockPracticeLogs as initialPracticeLogs,
     type User, 
     type FormSubmission,
     type Conservatorium,
@@ -31,7 +31,7 @@ interface AuthContextType {
   approveUser: (userId: string) => void;
   rejectUser: (userId: string, reason: string) => void;
   updateUser: (updatedUser: User) => void;
-  addUser: (newUser: Partial<User>) => void;
+  addUser: (newUser: Partial<User>, isApproved?: boolean) => void;
   mockFormSubmissions: FormSubmission[];
   updateForm: (updatedForm: FormSubmission) => void;
   mockLessons: LessonSlot[];
@@ -120,10 +120,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addUser = (newUser: Partial<User>) => {
+  const addUser = (newUser: Partial<User>, isApproved = false) => {
     const fullNewUser: User = {
         id: `user-${Date.now()}`,
-        approved: false, // All new users start as not approved
+        approved: isApproved,
         role: 'student', // Default role
         conservatoriumName: '', // Default
         notifications: [],
@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
   }
 
-  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, mockLessons, newFeaturesEnabled, mockInvoices, mockPracticeLogs, conservatoriums, updateConservatorium };
+  const value = { user, users, login, logout, isLoading, approveUser, rejectUser, updateUser, addUser, mockFormSubmissions: forms, updateForm, mockLessons: initialLessons, newFeaturesEnabled, mockInvoices: initialInvoices, mockPracticeLogs: initialPracticeLogs, conservatoriums, updateConservatorium };
 
   return (
     <AuthContext.Provider value={value}>

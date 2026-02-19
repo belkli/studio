@@ -12,35 +12,6 @@ import { useEffect } from "react";
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
 import { StudentProfilePage } from "./profile/page";
 
-function StudentDashboard() {
-    const { user, newFeaturesEnabled } = useAuth();
-    if (!user) return null;
-
-    if (newFeaturesEnabled) {
-      return <StudentProfilePage />;
-    }
-
-    // Legacy Student Dashboard
-    return (
-         <div className="space-y-6">
-             <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">ברוך הבא, {user?.name.split(' ')[0]}</h1>
-                    <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
-                </div>
-                <Button asChild>
-                    <Link href="/dashboard/forms/new">
-                        <PlusCircle className="me-2 h-4 w-4" />
-                        טופס חדש
-                    </Link>
-                </Button>
-            </div>
-            <OverviewCards />
-            <RecentForms />
-        </div>
-    )
-}
-
 
 export default function DashboardPage() {
     const { user, newFeaturesEnabled, isLoading } = useAuth();
@@ -50,6 +21,8 @@ export default function DashboardPage() {
         if (!isLoading && newFeaturesEnabled) {
             if (user?.role === 'parent') {
                 router.replace('/dashboard/family');
+            } else if (user?.role === 'student') {
+                router.replace('/dashboard/profile');
             }
         }
     }, [isLoading, newFeaturesEnabled, user, router]);
@@ -82,8 +55,9 @@ export default function DashboardPage() {
         if (user.role === 'teacher') {
             return <TeacherDashboard />;
         }
+        // Fallback for student/parent if redirect hasn't happened yet
         if (user.role === 'student' || user.role === 'parent') {
-             return <StudentDashboard />;
+             return <StudentProfilePage />;
         }
     }
 
