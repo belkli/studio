@@ -552,7 +552,6 @@ export type InstrumentInventory = {
   currentRenterId?: string;
   rentalStartDate?: string; // ISO Date string
   expectedReturnDate?: string; // ISO Date string
-  notes?: string;
 };
 
 // From SDD-13
@@ -590,5 +589,3 @@ export type PerformanceBooking = {
   depositAmount: number;
   inquiryReceivedAt: string; // ISO Timestamp
 };
-
-  
