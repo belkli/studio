@@ -208,6 +208,12 @@ export function SidebarNav() {
                 </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
+                <Button variant="ghost" className="w-full justify-start gap-2 p-2 text-sm" tooltip="עזרה" id="help-button">
+                    <MessageCircleQuestion/>
+                    <span>עזרה</span>
+                </Button>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
                 <SidebarMenuButton tooltip="התנתקות" onClick={logout}>
                     <LogOut />
                     <span>התנתקות</span>

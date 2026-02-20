@@ -126,6 +126,7 @@ interface AuthContextType {
   mockInstrumentInventory: InstrumentInventory[];
   assignInstrumentToStudent: (instrumentId: string, studentId: string) => void;
   returnInstrument: (instrumentId: string) => void;
+  markWalkthroughAsSeen: (userId: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -396,7 +397,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Redirect to login if no user and not on a public page
   useEffect(() => {
-    if (!isLoading && !user && !['/login', '/register', '/'].includes(pathname)) {
+    const publicPages = ['/login', '/register', '/', '/available-now', '/musicians'];
+    if (!isLoading && !user && !publicPages.includes(pathname)) {
         router.push('/login');
     }
   }, [user, isLoading, pathname, router]);
@@ -954,6 +956,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const markWalkthroughAsSeen = (userId: string) => {
+    updateUser({ ...users.find(u => u.id === userId)!, hasSeenWalkthrough: true });
+  }
 
   const value = { 
       user, 
@@ -1014,6 +1019,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockInstrumentInventory: instrumentInventory,
       assignInstrumentToStudent,
       returnInstrument,
+      markWalkthroughAsSeen,
   };
 
   return (
