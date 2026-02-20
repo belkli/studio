@@ -144,6 +144,7 @@ export type User = {
   packageId?: string;
   notificationPreferences?: NotificationPreferences;
   achievements?: Achievement[];
+  hasSeenWalkthrough?: boolean;
 };
 
 export type PricingConfig = {

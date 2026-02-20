@@ -1,4 +1,5 @@
 import { SidebarNav } from '@/components/dashboard/sidebar-nav';
+import { WalkthroughManager } from '@/components/dashboard/walkthrough-manager';
 import {
   Sidebar,
   SidebarInset,
@@ -20,6 +21,7 @@ export default function DashboardLayout({
           {children}
         </div>
       </SidebarInset>
+      <WalkthroughManager />
     </SidebarProvider>
   );
 }

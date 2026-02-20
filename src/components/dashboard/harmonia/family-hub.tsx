@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 import { differenceInYears } from 'date-fns';
 import { AgeUpgradeModal } from "./age-upgrade-modal";
 import type { User } from "@/lib/types";
-import { WeeklyDigestCard } from "./weekly-digest-card"; // Import the new component
+import { WeeklyDigestCard } from "./weekly-digest-card";
 
 export function FamilyHub() {
     const { user, users, isLoading } = useAuth();
@@ -33,12 +33,12 @@ export function FamilyHub() {
     return (
         <div className="space-y-6">
             <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-                {children.map(child => {
+                {children.map((child, index) => {
                     const age = child.birthDate ? differenceInYears(new Date(), new Date(child.birthDate)) : 0;
                     const needsAgeUpgrade = age === 13 && (!child.email || child.email === user.email);
 
                     return (
-                        <div key={child.id} className="flex flex-col gap-6">
+                        <div key={child.id} id={`child-card-${index}`} className="flex flex-col gap-6">
                             <WeeklyDigestCard child={child} />
                             {needsAgeUpgrade && (
                                  <Button variant="outline" className="w-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/20" onClick={() => setSelectedChildForUpgrade(child)}>

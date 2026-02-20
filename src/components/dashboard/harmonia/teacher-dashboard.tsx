@@ -75,7 +75,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
 }
 
 
-function StudentRosterCard({ student, practiceLogs, mockPackages, lessons }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[], lessons: LessonSlot[] }) {
+function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[], lessons: LessonSlot[], id?: string }) {
     
     const weeklyPractice = useMemo(() => {
         const today = new Date();
@@ -102,7 +102,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons }: { s
     }, [lessons, student.id]);
 
     return (
-        <Card className="flex flex-col">
+        <Card id={id} className="flex flex-col">
             <CardHeader className="flex flex-row items-center gap-4">
                  <Avatar className="h-12 w-12">
                     <AvatarImage src={student.avatarUrl} alt={student.name} />
@@ -192,7 +192,7 @@ export function TeacherDashboard() {
                     <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="destructive" onClick={() => setIsSickLeaveModalOpen(true)}>
+                    <Button id="sick-leave-button" variant="destructive" onClick={() => setIsSickLeaveModalOpen(true)}>
                         <XCircle className="ms-2 h-4 w-4" />
                         דיווח מחלה / היעדרות
                     </Button>
@@ -210,7 +210,7 @@ export function TeacherDashboard() {
             
             <div className="grid lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    <Card>
+                    <Card id="today-lessons-card">
                         <CardHeader>
                             <CardTitle>השיעורים להיום</CardTitle>
                         </CardHeader>
@@ -272,7 +272,7 @@ export function TeacherDashboard() {
                     <CardDescription>נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {assignedStudents.map(student => <StudentRosterCard key={student.id} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}
+                    {assignedStudents.map((student, index) => <StudentRosterCard key={student.id} id={index === 0 ? "student-roster-card" : undefined} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}
                 </CardContent>
             </Card>
             <SickLeaveModal open={isSickLeaveModalOpen} onOpenChange={setIsSickLeaveModalOpen} />

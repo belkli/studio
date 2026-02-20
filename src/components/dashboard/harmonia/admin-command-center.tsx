@@ -49,7 +49,7 @@ export function AdminCommandCenter() {
                 <div className="lg:col-span-2">
                     <TodaySnapshotCard />
                 </div>
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1" id="ai-alerts-card">
                     <AiAlertsCard />
                 </div>
             </div>

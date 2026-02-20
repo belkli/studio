@@ -35,7 +35,7 @@ export function KeyMetricsBar() {
     ]
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div id="key-metrics-bar" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {metrics.map((stat) => (
                 <Card key={stat.title}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
