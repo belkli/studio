@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
-import { BadgeCheck, Calendar, Check, Guitar, Heart, Music, Shield, SlidersHorizontal, Users } from "lucide-react";
+import { BadgeCheck, Calendar, Check, Guitar, Heart, Music, Shield, SlidersHorizontal, Users, Briefcase } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { User } from "@/lib/types";
 import { Stepper } from "@/components/ui/stepper";
