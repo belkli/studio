@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 import { addDays } from 'date-fns';
@@ -406,7 +406,7 @@ export const mockPracticeLogs: PracticeLog[] = [
 ];
 
 export const mockAssignedRepertoire: AssignedRepertoire[] = [
-    { id: 'rep-1', studentId: 'student-user-1', compositionId: 'bach-wtc1-prelude-c', status: 'POLISHING', assignedAt: new Date().toISOString() },
+    { id: 'rep-1', studentId: 'student-user-1', compositionId: 'bach-wtc1-prelude-c', status: 'PERFORMANCE_READY', assignedAt: new Date().toISOString() },
     { id: 'rep-2', studentId: 'student-user-1', compositionId: 'chopin-nocturne-op9-no2', status: 'LEARNING', assignedAt: new Date().toISOString() },
     { id: 'rep-3', studentId: 'student-user-2', compositionId: 'mozart-sonata-16', status: 'COMPLETED', assignedAt: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(), completedAt: new Date().toISOString() },
 ];
@@ -601,6 +601,65 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
     }
 ];
 
+export const mockPerformanceBookings: PerformanceBooking[] = [
+    {
+        id: 'perf-booking-1',
+        conservatoriumId: 'cons-15',
+        clientName: 'חברת הייטק בע"מ',
+        clientEmail: 'events@hightech.co.il',
+        clientPhone: '052-1234567',
+        eventName: 'אירוע חברה שנתי',
+        eventType: 'Corporate Event',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
+        eventTime: '19:00',
+        eventDurationHours: 3,
+        status: 'INQUIRY_RECEIVED',
+        totalQuote: 3500,
+        depositAmount: 1750,
+        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+    },
+    {
+        id: 'perf-booking-2',
+        conservatoriumId: 'cons-15',
+        clientName: 'משפחת כהן',
+        clientEmail: 'cohen.family@email.com',
+        clientPhone: '054-7654321',
+        eventName: 'חתונה של דנה ואבי',
+        eventType: 'Wedding Reception',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 45)).toISOString(),
+        eventTime: '20:00',
+        eventDurationHours: 4,
+        status: 'QUOTE_SENT',
+        assignedMusicians: [
+            { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' }
+        ],
+        totalQuote: 2800,
+        depositAmount: 1400,
+        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    },
+    {
+        id: 'perf-booking-3',
+        conservatoriumId: 'cons-15',
+        clientName: 'עיריית הוד השרון',
+        clientEmail: 'culture@hod-hasharon.muni.il',
+        clientPhone: '09-1234567',
+        eventName: 'קבלת פנים חגיגית',
+        eventType: 'Concert & Cultural Event',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString(),
+        eventTime: '18:00',
+        eventDurationHours: 2,
+        status: 'BOOKING_CONFIRMED',
+         assignedMusicians: [
+            { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' },
+            { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'חליל צד' }
+        ],
+        totalQuote: 2200,
+        depositAmount: 1100,
+        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
+    }
+];
 
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole };
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus };
+
+  

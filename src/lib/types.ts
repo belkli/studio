@@ -554,3 +554,41 @@ export type InstrumentInventory = {
   expectedReturnDate?: string; // ISO Date string
   notes?: string;
 };
+
+// From SDD-13
+export type PerformanceBookingStatus =
+  | 'INQUIRY_RECEIVED'
+  | 'ADMIN_REVIEWING'
+  | 'MUSICIANS_CONFIRMED'
+  | 'QUOTE_SENT'
+  | 'DEPOSIT_PAID'
+  | 'BOOKING_CONFIRMED'
+  | 'EVENT_COMPLETED'
+  | 'FINAL_PAYMENT_COLLECTED'
+  | 'TEACHER_PAYMENT_ISSUED';
+
+
+export type PerformanceBooking = {
+  id: string;
+  conservatoriumId: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  eventName: string;
+  eventType: string; // e.g., 'Wedding', 'Corporate'
+  eventDate: string; // ISO Date string
+  eventTime: string; // "HH:mm"
+  eventDurationHours: number;
+  eventLocation: string;
+  status: PerformanceBookingStatus;
+  assignedMusicians?: {
+    userId: string;
+    name: string;
+    instrument: string;
+  }[];
+  totalQuote: number;
+  depositAmount: number;
+  inquiryReceivedAt: string; // ISO Timestamp
+};
+
+  

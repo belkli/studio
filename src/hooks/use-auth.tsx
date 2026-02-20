@@ -23,6 +23,7 @@ import {
     mockAuditLog as initialAuditLog,
     mockEvents as initialEvents,
     mockInstrumentInventory as initialInstrumentInventory,
+    mockPerformanceBookings as initialPerformanceBookings,
     type User, 
     type FormSubmission,
     type Notification,
@@ -57,6 +58,8 @@ import {
     type PerformanceSlot,
     type InstrumentInventory,
     type InstrumentCondition,
+    type PerformanceBooking,
+    type PerformanceBookingStatus,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays, addHours, startOfDay, endOfDay } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -126,6 +129,7 @@ interface AuthContextType {
   mockInstrumentInventory: InstrumentInventory[];
   assignInstrumentToStudent: (instrumentId: string, studentId: string) => void;
   returnInstrument: (instrumentId: string) => void;
+  mockPerformanceBookings: PerformanceBooking[];
   markWalkthroughAsSeen: (userId: string) => void;
 }
 
@@ -150,6 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>(initialAuditLog);
   const [events, setEvents] = useState<EventProduction[]>(initialEvents);
   const [instrumentInventory, setInstrumentInventory] = useState<InstrumentInventory[]>(initialInstrumentInventory);
+  const [performanceBookings, setPerformanceBookings] = useState<PerformanceBooking[]>(initialPerformanceBookings);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
@@ -397,8 +402,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Redirect to login if no user and not on a public page
   useEffect(() => {
-    const publicPages = ['/login', '/register', '/', '/available-now', '/musicians'];
-    if (!isLoading && !user && !publicPages.includes(pathname)) {
+    const publicPages = ['/login', '/register', '/', '/available-now', '/musicians', '/donate'];
+    if (!isLoading && !user && !publicPages.some(page => pathname.startsWith(page))) {
         router.push('/login');
     }
   }, [user, isLoading, pathname, router]);
@@ -1019,6 +1024,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mockInstrumentInventory: instrumentInventory,
       assignInstrumentToStudent,
       returnInstrument,
+      mockPerformanceBookings: performanceBookings,
       markWalkthroughAsSeen,
   };
 
@@ -1036,3 +1042,5 @@ export function useAuth() {
   }
   return context;
 }
+
+  
