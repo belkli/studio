@@ -23,7 +23,7 @@ const AvailabilitySlotSchema = z.object({
   endTime: z.string(),
 });
 
-export const RescheduleRequestInputSchema = z.object({
+const RescheduleRequestInputSchema = z.object({
   userId: z.string(),
   userMessage: z.string(),
   upcomingLessons: z.array(LessonSchema),
@@ -53,7 +53,7 @@ const ProposedChangeSchema = z.union([
   }),
 ]);
 
-export const RescheduleResponseSchema = z.object({
+const RescheduleResponseSchema = z.object({
   responseText: z.string().describe('The natural language response to show to the user.'),
   actionType: z.enum(['CONFIRMATION_NEEDED', 'CLARIFICATION', 'ESCALATION', 'INFO_PROVIDED']),
   proposedChange: ProposedChangeSchema.optional(),

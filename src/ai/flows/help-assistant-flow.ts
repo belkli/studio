@@ -10,7 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const HelpAssistantInputSchema = z.object({
+const HelpAssistantInputSchema = z.object({
   question: z.string(),
   userId: z.string(),
   locale: z.string().default('he'),
@@ -21,7 +21,7 @@ export const HelpAssistantInputSchema = z.object({
 });
 export type HelpAssistantInput = z.infer<typeof HelpAssistantInputSchema>;
 
-export const HelpAssistantResponseSchema = z.object({
+const HelpAssistantResponseSchema = z.object({
   answer: z.string().describe('The helpful, conversational answer to the user\'s question.'),
   suggestedActions: z.array(z.object({
       label: z.string(),

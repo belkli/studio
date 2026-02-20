@@ -33,13 +33,13 @@ const EmptySlotSchema = z.object({
 });
 
 
-export const TargetSlotsInputSchema = z.object({
+const TargetSlotsInputSchema = z.object({
   emptySlot: EmptySlotSchema,
   eligibleRecipients: z.array(EligibleRecipientSchema),
 });
 export type TargetSlotsInput = z.infer<typeof TargetSlotsInputSchema>;
 
-export const TargetSlotsOutputSchema = z.object({
+const TargetSlotsOutputSchema = z.object({
   suggestions: z
     .array(
       z.object({
@@ -70,7 +70,7 @@ Analyze the empty slot and compare it against the list of eligible recipients. F
 4.  **Waitlist Status:** If the recipient is on a waitlist for this instrument/teacher, add +20.
 5.  **General Proximity:** Is the slot time generally convenient (e.g., after school hours)? Add +10 for peak times.
 
-For the top 3-5 matches, provide a `personalizationHooks` array. These should be short, compelling, human-readable strings **in Hebrew** that an admin could use in an outreach message.
+For the top 3-5 matches, provide a \`personalizationHooks\` array. These should be short, compelling, human-readable strings **in Hebrew** that an admin could use in an outreach message.
 
 **Examples of good personalization hooks:**
 - "יש לה יתרת שיעור השלמה לניצול"
