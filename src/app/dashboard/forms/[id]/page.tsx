@@ -47,7 +47,7 @@ export default function FormDetailsPage() {
     const searchParams = useSearchParams();
     const formId = params.id;
     const { toast } = useToast();
-    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
+    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } from useAuth();
     
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
     
