@@ -78,7 +78,7 @@ export default function MinistryExportPage() {
     const csvContent = [headers.join(','), ...rows].join('\n');
     
     // This part simulates a file download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
