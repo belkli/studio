@@ -15,6 +15,8 @@ export default function AvailableNowPage() {
                 </Link>
                  <nav className="hidden md:flex gap-4 sm:gap-6 mx-6">
                     <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">שיעורים פנויים</Link>
+                     <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">מוזיקאים לאירועים</Link>
+                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">תרומה</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">אודות</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">צור קשר</Link>
                 </nav>

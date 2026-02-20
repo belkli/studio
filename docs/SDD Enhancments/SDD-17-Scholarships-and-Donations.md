@@ -211,6 +211,16 @@ type DocumentType =
 
 This is a standalone, emotionally resonant page designed to convert casual visitors into donors. It is fully accessible without login.
 
+### 4.0 Visual Design Philosophy
+
+The public donation page at `/donate` must be a visually compelling, emotionally resonant landing page designed for conversion, not a simple administrative form. It should function as a marketing asset that tells a story and inspires giving. Key elements include:
+*   **High-Quality Imagery:** Use professional, evocative (yet anonymized) photography of students and music. Avoid generic stock photos. Photos should convey dedication, passion, and the joy of music.
+*   **Strong Emotional Hook:** The headline and opening section must immediately connect with the visitor's desire to make a difference.
+*   **Clear Impact Metrics:** Use bold typography and counters to show tangible results (e.g., "XX students supported").
+*   **Storytelling:** Anonymized student stories are the core of the page and should be presented as visually distinct cards with a personal touch.
+*   **Trust and Transparency:** The design should feel professional and trustworthy, with clear information on fund allocation and tax-deductibility.
+
+
 ### 4.1 Page Structure
 
 **Section 1 — The Hook**

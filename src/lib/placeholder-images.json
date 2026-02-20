@@ -5,6 +5,30 @@
       "description": "A placeholder logo for a music conservatorium.",
       "imageUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXNpYyUyMGxvZ298ZW58MHx8fHwxNzcxMTA0NDY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "music logo"
+    },
+    {
+      "id": "donate-hero",
+      "description": "A wide shot of a student musician performing passionately in a concert.",
+      "imageUrl": "https://images.unsplash.com/photo-1665118439071-8bc2c89f73af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzdHVkZW50JTIwbXVzaWNpYW4lMjBjb25jZXJ0fGVufDB8fHx8MTc3MTU2NTc2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student musician concert"
+    },
+    {
+      "id": "student-story-1",
+      "description": "Close-up of a young child playing the violin.",
+      "imageUrl": "https://images.unsplash.com/photo-1642940141270-ab08508c9c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaGlsZCUyMHZpb2xpbnxlbnwwfHx8fDE3NzE1NjU3NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "child violin"
+    },
+    {
+      "id": "student-story-2",
+      "description": "A teenager thoughtfully playing the piano.",
+      "imageUrl": "https://images.unsplash.com/photo-1678756320244-d678a2abc9ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0ZWVuYWdlciUyMHBpYW5vfGVufDB8fHx8MTc3MTU2NTc2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "teenager piano"
+    },
+    {
+      "id": "student-story-3",
+      "description": "A young girl concentrating while playing the flute.",
+      "imageUrl": "https://images.unsplash.com/photo-1640286724511-2eab6a68ccc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnaXJsJTIwZmx1dGV8ZW58MHx8fHwxNzcxNTY1NzYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "girl flute"
     }
   ]
 }
