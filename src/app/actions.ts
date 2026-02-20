@@ -23,6 +23,11 @@ import {
     type RescheduleRequestInput,
     type RescheduleResponse,
 } from '@/ai/flows/reschedule-flow';
+import {
+    askHelpAssistant,
+    type HelpAssistantInput,
+    type HelpAssistantResponse
+} from '@/ai/flows/help-assistant-flow';
 
 
 export async function getCompositionSuggestions(
@@ -117,6 +122,18 @@ export async function processNlpRescheduleRequest(input: RescheduleRequestInput)
         return {
             responseText: 'אני מתנצל/ת, אבל נתקלתי בשגיאה פנימית. העברתי את פנייתך לגורם אנושי שיטפל בה בהקדם.',
             actionType: 'ESCALATION',
+        };
+    }
+}
+
+export async function getAiHelpResponse(input: HelpAssistantInput): Promise<HelpAssistantResponse> {
+    try {
+        const result = await askHelpAssistant(input);
+        return result;
+    } catch (error) {
+        console.error('Error getting AI help response:', error);
+        return {
+            answer: 'אני מתנצל/ת, אבל נתקלתי בשגיאה פנימית. אנא נסה/י לשאול שוב בעוד מספר רגעים.',
         };
     }
 }
