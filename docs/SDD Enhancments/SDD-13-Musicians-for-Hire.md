@@ -22,7 +22,19 @@ This module creates a **two-sided marketplace** embedded within Harmonia:
 
 ---
 
-## 2. Architecture Overview
+## 2. Visual Design Philosophy
+
+The public "Musicians for Hire" page must function as a compelling sales and marketing tool, not as a simple administrative interface. The design should be vivid, professional, and built to convert visitors into clients.
+
+*   **Evocative Imagery & Video:** Use high-quality, professional photography and video of musicians in performance settings. The hero section should immediately convey elegance, talent, and emotion.
+*   **Build Trust Instantly:** Prominently display key value propositions like "Vetted Professional Musicians," "Backup Guarantee," and "Managed by [Conservatorium Name]" to build credibility.
+*   **Storytelling and Connection:** Showcase musicians not just as a list but as individual artists with bios, photos, and video samples. Help event organizers connect with the talent.
+*   **Clear Call-to-Action:** The primary goal is to generate booking inquiries. The "Instant Quote Configurator" should be the central interactive element, guiding the user smoothly from interest to inquiry.
+*   **Mobile-First Experience:** The entire booking inquiry process must be seamless on a mobile device, from browsing musicians to submitting a request.
+
+---
+
+## 3. Architecture Overview
 
 The Musicians for Hire feature lives on a **dedicated public microsite** that is branded per-conservatorium (or co-branded across a network of conservatoriums):
 
@@ -35,9 +47,9 @@ The microsite is a Next.js app with its own routes, completely accessible withou
 
 ---
 
-## 3. Musician Profile (Supply Side)
+## 4. Musician Profile (Supply Side)
 
-### 3.1 Data Model
+### 4.1 Data Model
 
 ```typescript
 {
@@ -95,7 +107,7 @@ The microsite is a Next.js app with its own routes, completely accessible withou
 }
 ```
 
-### 3.2 Teacher Opt-In Flow
+### 4.2 Teacher Opt-In Flow
 
 From the teacher dashboard (`/dashboard/teacher/performance-profile`):
 
@@ -110,9 +122,9 @@ From the teacher dashboard (`/dashboard/teacher/performance-profile`):
 
 ---
 
-## 4. Event Booking — Public-Facing Experience
+## 5. Event Booking — Public-Facing Experience
 
-### 4.1 The Landing Page
+### 5.1 The Landing Page
 
 `/musicians` or the conservatorium's subdomain
 
@@ -135,7 +147,7 @@ From the teacher dashboard (`/dashboard/teacher/performance-profile`):
 - 🕍 Bar/Bat Mitzvah | ✡️ Memorial Ceremony
 - 🎂 Private Party | 🎓 Graduation | 🎭 Concert & Cultural Event
 
-### 4.2 The Instant Quote Configurator
+### 5.2 The Instant Quote Configurator
 
 A step-by-step interactive form that produces a real-time price estimate:
 
@@ -214,9 +226,9 @@ No payment collected at this stage — this generates a **booking inquiry**.
 
 ---
 
-## 5. Booking Management (Admin Side)
+## 6. Booking Management (Admin Side)
 
-### 5.1 Booking Inquiry Lifecycle
+### 6.1 Booking Inquiry Lifecycle
 
 ```
 INQUIRY_RECEIVED 
@@ -230,7 +242,7 @@ INQUIRY_RECEIVED
                 → TEACHER_PAYMENT_ISSUED
 ```
 
-### 5.2 Admin Booking Management (`/admin/performances`)
+### 6.2 Admin Booking Management (`/admin/performances`)
 
 Dashboard showing all performance bookings:
 - **Pipeline view:** Kanban-style columns matching the lifecycle stages
@@ -246,7 +258,7 @@ Dashboard showing all performance bookings:
 - Contract status (PDF generated, signed, returned)
 - Notes field for special arrangements
 
-### 5.3 Automated Conflict Checking
+### 6.3 Automated Conflict Checking
 
 When admin assigns a teacher to a performance:
 - System cross-references the performance date/time with the teacher's lesson schedule
@@ -255,9 +267,9 @@ When admin assigns a teacher to a performance:
 
 ---
 
-## 6. Pricing Engine
+## 7. Pricing Engine
 
-### 6.1 Price Components
+### 7.1 Price Components
 
 ```typescript
 {
@@ -299,7 +311,7 @@ When admin assigns a teacher to a performance:
 }
 ```
 
-### 6.2 Teacher Performance Payment
+### 7.2 Teacher Performance Payment
 
 Musicians are paid via their regular payroll (Module 03):
 - Performance appears as a line item in their monthly paystub: "Performance at [event], [date], [hours]"
@@ -321,7 +333,7 @@ Musicians are paid via their regular payroll (Module 03):
 
 ---
 
-## 7. Cross-Conservatorium Network (Optional)
+## 8. Cross-Conservatorium Network (Optional)
 
 For regional or national reach:
 
@@ -335,7 +347,7 @@ This is how a small event organizer in Eilat can book a string quartet from Haif
 
 ---
 
-## 8. Contract & Legal Documents
+## 9. Contract & Legal Documents
 
 Each confirmed booking generates:
 
@@ -345,7 +357,7 @@ Each confirmed booking generates:
 
 All documents use the conservatorium's letterhead and are signed digitally (using the signature system from Module 08).
 
-### 8.1 Backup Guarantee Policy
+### 9.1 Backup Guarantee Policy
 
 A key differentiator vs. booking directly from a musician:
 > "If a confirmed musician is unable to perform due to illness or emergency, [Conservatorium Name] guarantees to provide a replacement musician of equal or superior caliber. If no replacement is available, a full refund is issued."
@@ -354,7 +366,7 @@ This is only possible because the conservatorium has a roster of musicians and i
 
 ---
 
-## 9. Post-Event Flow
+## 10. Post-Event Flow
 
 After an event is marked as completed:
 
@@ -366,7 +378,7 @@ After an event is marked as completed:
 
 ---
 
-## 10. SEO & Marketing Integration
+## 11. SEO & Marketing Integration
 
 The microsite is built for organic discovery:
 
@@ -378,7 +390,7 @@ The microsite is built for organic discovery:
 
 ---
 
-## 11. UI Components Required
+## 12. UI Components Required
 
 **Public Microsite:**
 | Component | Description |

@@ -29,6 +29,48 @@
       "description": "A young girl concentrating while playing the flute.",
       "imageUrl": "https://images.unsplash.com/photo-1640286724511-2eab6a68ccc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnaXJsJTIwZmx1dGV8ZW58MHx8fHwxNzcxNTY1NzYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "girl flute"
+    },
+    {
+      "id": "musicians-hero",
+      "description": "A string quartet playing elegantly at an event.",
+      "imageUrl": "https://images.unsplash.com/photo-1588492398394-1578338d3568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdHJpbmclMjBxdWFydGV0JTIwZXZlbnR8ZW58MHx8fHwxNzcxNzE3NTU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "string quartet event"
+    },
+    {
+      "id": "musician-miriam",
+      "description": "A professional portrait of a female pianist.",
+      "imageUrl": "https://images.unsplash.com/photo-1594125528292-941130194364?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMGZlbWFsZSUyMHBpYW5pc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "female pianist"
+    },
+    {
+      "id": "musician-david",
+      "description": "A professional portrait of a male saxophonist.",
+      "imageUrl": "https://images.unsplash.com/photo-1524230659267-39921e87516d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYWxlJTIwc2F4b3Bob25pc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "male saxophonist"
+    },
+    {
+      "id": "musician-galit",
+      "description": "A professional portrait of a female guitarist.",
+      "imageUrl": "https://images.unsplash.com/photo-1510901509923-a169b2b5167f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBndWl0YXJpc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "female guitarist"
+    },
+    {
+      "id": "event-wedding",
+      "description": "A musician playing at a beautiful wedding ceremony.",
+      "imageUrl": "https://images.unsplash.com/photo-1511285560921-5c3453b37a85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwbXVzaWNpYW5zfGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wedding music"
+    },
+    {
+      "id": "event-corporate",
+      "description": "A jazz trio performing at an upscale corporate event.",
+      "imageUrl": "https://images.unsplash.com/photo-1520869562321-393baf247a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqYXp6JTIwdHJpbyUyMGV2ZW50fGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "jazz trio"
+    },
+    {
+      "id": "event-private",
+      "description": "Musicians performing at an intimate private party or event.",
+      "imageUrl": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtdXNpYyUyMGV2ZW50fGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "music event"
     }
   ]
 }
