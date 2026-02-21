@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { useAuth } from './use-auth';
 import { Users, UserX, CalendarClock, CreditCard } from "lucide-react";
-import { subDays } from 'date-fns';
+import { subDays, isFuture } from 'date-fns';
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 
@@ -80,15 +80,15 @@ export function useAdminAlerts(): AdminAlert[] {
                     icon: CalendarClock,
                     title: `יתרת שיעורי השלמה גבוהה: ${student.name}`,
                     description: `לתלמיד/ה יתרה של ${balance} שיעורי השלמה. יש לעודד קביעת שיעורים.`,
-                    actionLink: `/dashboard/schedule`,
-                    actionLabel: 'צפה בלו"ז'
+                    actionLink: `/dashboard/admin/makeups`,
+                    actionLabel: 'צפה בלוח ההשלמות'
                 });
             }
         });
         
         // Alert 4: Payment failure spike
         const overdueInvoices = mockInvoices.filter(inv => inv.status === 'OVERDUE');
-        if (overdueInvoices.length > 0) { // Changed to > 0 to show for mock data
+        if (overdueInvoices.length > 0) {
              allAlerts.push({
                 id: `payment-spike`,
                 severity: 'critical',
@@ -97,6 +97,20 @@ export function useAdminAlerts(): AdminAlert[] {
                 description: `קיימות ${overdueInvoices.length} חשבוניות שלא שולמו בזמן. יש לבצע מעקב.`,
                 actionLink: `/dashboard/billing`,
                 actionLabel: 'עבור לחיובים'
+            });
+        }
+        
+        // Alert 5: Substitute Needed
+        const lessonsNeedingSub = mockLessons.filter(l => l.status === 'CANCELLED_TEACHER' && isFuture(new Date(l.startTime)));
+        if (lessonsNeedingSub.length > 0) {
+            allAlerts.push({
+                id: 'substitute-needed',
+                severity: 'critical',
+                icon: UserX,
+                title: 'דרוש שיבוץ מחליף/ה',
+                description: `${lessonsNeedingSub.length} שיעורים בוטלו עקב היעדרות מורה ודורשים שיבוץ מורה מחליף.`,
+                actionLink: '/dashboard/admin/substitute',
+                actionLabel: 'שבץ מורים מחליפים',
             });
         }
 
