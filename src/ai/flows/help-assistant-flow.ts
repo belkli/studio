@@ -7,8 +7,10 @@
  * - HelpAssistantResponse - The return type for the function.
  */
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+'use server';
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
 
 export const HelpAssistantInputSchema = z.object({
   question: z.string(),
@@ -22,22 +24,33 @@ export const HelpAssistantInputSchema = z.object({
 export type HelpAssistantInput = z.infer<typeof HelpAssistantInputSchema>;
 
 export const HelpAssistantResponseSchema = z.object({
-  answer: z.string().describe('The helpful, conversational answer to the user\'s question.'),
-  suggestedActions: z.array(z.object({
-    label: z.string(),
-    href: z.string(),
-  })).optional().describe('Up to 2 suggested action buttons relevant to the answer.'),
+  answer: z
+    .string()
+    .describe(
+      "The helpful, conversational answer to the user's question."
+    ),
+  suggestedActions: z
+    .array(
+      z.object({
+        label: z.string(),
+        href: z.string(),
+      })
+    )
+    .optional()
+    .describe('Up to 2 suggested action buttons relevant to the answer.'),
 });
 export type HelpAssistantResponse = z.infer<typeof HelpAssistantResponseSchema>;
 
-export async function askHelpAssistant(input: HelpAssistantInput): Promise<HelpAssistantResponse> {
+export async function askHelpAssistant(
+  input: HelpAssistantInput
+): Promise<HelpAssistantResponse> {
   return helpAssistantFlow(input);
 }
 
 const prompt = ai.definePrompt({
   name: 'helpAssistantPrompt',
-  input: { schema: HelpAssistantInputSchema },
-  output: { schema: HelpAssistantResponseSchema },
+  input: {schema: HelpAssistantInputSchema},
+  output: {schema: HelpAssistantResponseSchema},
   prompt: `You are a friendly and knowledgeable AI assistant for "Harmonia", a music conservatorium management system. Your name is Harmony.
 Your goal is to answer user questions about how to use the system. You must be polite, concise, and helpful. Always respond in Hebrew.
 
@@ -83,10 +96,10 @@ const helpAssistantFlow = ai.defineFlow(
     inputSchema: HelpAssistantInputSchema,
     outputSchema: HelpAssistantResponseSchema,
   },
-  async (input) => {
+  async input => {
     // In a real implementation with RAG, we would first search for relevant articles
     // and populate the 'context' field for the prompt. For now, it's empty.
-    const { output } = await prompt(input);
+    const {output} = await prompt(input);
     return output!;
   }
 );

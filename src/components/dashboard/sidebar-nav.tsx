@@ -213,10 +213,11 @@ export function SidebarNav() {
             </Link>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <Button variant="ghost" className="w-full justify-start gap-2 p-2 text-sm" id="help-button">
+            {/* The FAB is now the primary help trigger */}
+            <SidebarMenuButton id="sidebar-help-button">
               <MessageCircleQuestion />
               <span>{t('help')}</span>
-            </Button>
+            </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={logout}>

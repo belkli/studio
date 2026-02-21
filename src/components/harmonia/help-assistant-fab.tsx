@@ -132,6 +132,8 @@ export function HelpAssistantFAB() {
         }
     };
 
+    if (!user || !user.approved) return null;
+
     return (
         <div className="fixed bottom-6 end-6 z-50 flex flex-col items-end">
             {isOpen && (
