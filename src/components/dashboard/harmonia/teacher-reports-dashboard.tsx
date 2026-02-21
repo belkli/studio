@@ -44,7 +44,7 @@ export function TeacherReportsDashboard() {
         const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
         
         const upcomingExams = mockFormSubmissions.filter(f => 
-            (f.formType === 'רסיטל בגרות' || f.formType === 'EXAM_REGISTRATION') && 
+            (f.formType === 'רסיטל בגרות' || f.formType === 'הרשמה לבחינה') && 
             assignedStudents.some(s => s.id === f.studentId) &&
             f.status !== 'נדחה' && f.status !== 'טיוטה'
         );
