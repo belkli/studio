@@ -80,7 +80,7 @@ export function SidebarNav() {
     { href: '/dashboard/practice', label: t('practiceLog'), icon: PencilRuler, roles: ['student', 'parent'], id: 'nav-practice' },
     { href: '/dashboard/progress', label: t('progress'), icon: BarChart3, roles: ['student', 'parent'] },
     { href: '/dashboard/makeups', label: t('makeups'), icon: Coins, roles: ['student', 'parent'] },
-    { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: MessageCircleQuestion, roles: ['student', 'parent'] },
+    { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: BrainCircuit, roles: ['student', 'parent'] },
     { href: '/dashboard/apply-for-aid', label: 'בקשת מלגה', icon: ShieldQuestion, roles: ['student', 'parent'] },
 
     // --- Shared Features ---

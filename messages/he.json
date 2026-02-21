@@ -4,6 +4,7 @@
         "lessons": "שיעורים פנויים",
         "musicians": "מוזיקאים",
         "donate": "תרומה",
+        "openDay": "יום פתוח",
         "about": "אודות",
         "contact": "צור קשר",
         "login": "כניסה",
@@ -25,6 +26,112 @@
         "title": "שיעורים פנויים להיום ומחר",
         "subtitle": "מצאו שיעור מוזיקה במחיר מיוחד! הזדמנות חד-פעמית ללמוד מהמורים הטובים ביותר בהנחות של עד 40%."
     },
+    "OpenDay": {
+        "heroTitle": "יום פתוח בקונסרבטוריון",
+        "heroSubtitle": "בואו להכיר את המורים, לנסות כלי נגינה חדשים ולשמוע את תלמידינו. חוויה מוזיקלית לכל המשפחה!",
+        "registerNow": "הרשמה למפגש היכרות",
+        "featuresTitle": "מה מחכה לכם ביום הפתוח?",
+        "feature1Title": "מפגש עם המורים",
+        "feature1Desc": "הזדמנות להכיר את הצוות הפדגוגי המוביל שלנו, לשאול שאלות ולקבל הכוונה אישית.",
+        "feature2Title": "התנסות בכלים",
+        "feature2Desc": "הילדים יוכלו לגעת, להרגיש ולנגן במגוון כלי נגינה בליווי והדרכה של מורינו.",
+        "feature3Title": "הופעות חיות",
+        "feature3Desc": "צפו בתלמידים המוכשרים שלנו מציגים את מה שלמדו בקונצרטים קצרים לאורך היום.",
+        "formTitle": "הרשמה ליום הפתוח",
+        "formSubtitle": "שריינו פגישת היכרות אישית. מספר המקומות מוגבל.",
+        "registrationDetails": "פרטי הרשמה",
+        "familyName": "שם משפחה",
+        "parentEmail": "אימייל הורה",
+        "parentPhone": "טלפון הורה",
+        "childName": "שם הילד/ה",
+        "childAge": "גיל הילד/ה",
+        "instrumentInterest": "כלי נגינה מעניין",
+        "selectInstrument": "בחרו כלי...",
+        "selectTime": "בחירת שעת הגעה",
+        "noSlots": "כל המקומות תפוסים. נסו מועד אחר.",
+        "submit": "אשרו הרשמה",
+        "successTitle": "הרשמתכם התקבלה!",
+        "successDesc": "תודה על הרשמתכם ליום הפתוח. אישור ופרטים נוספים נשלחו למייל שהזנתם. נשמח לראות אתכם!",
+        "backToHome": "חזרה לדף הבית"
+    },
+    "AdminOpenDay": {
+        "title": "ניהול יום פתוח",
+        "subtitle": "עקוב אחר הנרשמים ונהל את הפגישות לאירוע היום הפתוח.",
+        "appointmentTime": "שעת פגישה",
+        "familyName": "שם משפחה",
+        "childName": "שם הילד/ה",
+        "instrumentInterest": "כלי עניין",
+        "contactDetails": "פרטי קשר",
+        "status": "סטטוס",
+        "noAppointments": "טרם נרשמו משפחות.",
+        "statuses": {
+            "SCHEDULED": "מתוכנן",
+            "ATTENDED": "הגיע/ה",
+            "NO_SHOW": "לא הגיע/ה"
+        }
+    },
+    "MusiciansForHire": {
+        "heroTitle": "מוזיקאים מקצועיים לאירועים שלא נשכחים",
+        "heroSubtitle": "כל המוזיקאים מ[שם הקונסרבטוריון] - בדוקים, אמינים ומבוטחים לחלוטין.",
+        "getQuote": "קבל הצעת מחיר מיידית",
+        "features": {
+            "experienced": "מנוסים ומקצועיים",
+            "experiencedDesc": "כל מוזיקאי הוא מורה מקצועי או תלמיד מתקדם מהקונסרבטוריון שלנו.",
+            "backup": "גיבוי מובטח",
+            "backupDesc": "במקרה של ביטול, אנו מספקים נגן חלופי ברמה שווה או גבוהה יותר, באחריות.",
+            "professional": "ניהול מקצועי",
+            "professionalDesc": "אנחנו מטפלים בכל הלוגיסטיקה, מהזמנה ועד תשלום, לחוויה חלקה."
+        },
+        "occasionsTitle": "מוזיקה לכל אירוע",
+        "occasionsSubtitle": "מטקסים אינטימיים ועד לאירועי חברה גדולים, אנחנו מספקים את הפסקול המושלם.",
+        "occasion": {
+            "wedding": "חתונות",
+            "corporate": "אירועי חברה",
+            "private": "מסיבות פרטיות"
+        },
+        "configuratorTitle": "קבלו הצעת מחיר מיידית",
+        "configuratorSubtitle": "הגדירו את צרכי האירוע שלכם וקבלו הערכת מחיר בזמן אמת.",
+        "steps": {
+            "event": "פרטי האירוע",
+            "music": "צרכים מוזיקליים",
+            "quote": "הצעת המחיר שלך"
+        },
+        "form": {
+            "eventType": "סוג האירוע",
+            "eventPlaceholder": "בחר סוג אירוע...",
+            "date": "תאריך",
+            "location": "מיקום",
+            "locationPlaceholder": "לדוגמה, תל אביב",
+            "duration": "משך (שעות)",
+            "ensembleSize": "גודל ההרכב",
+            "ensemblePlaceholder": "בחר גודל...",
+            "ensemble": {
+                "solo": "סולו (נגן 1)",
+                "duo": "דואט (2 נגנים)",
+                "trio": "טריו (3 נגנים)",
+                "quartet": "רביעייה (4 נגנים)"
+            },
+            "genre": "ז'אנר",
+            "genrePlaceholder": "בחר ז'אנר...",
+            "genres": {
+                "classical": "קלאסי",
+                "jazz": "ג'אז",
+                "israeli": "ישראלי",
+                "pop": "פופ"
+            },
+            "requests": "בקשות מיוחדות",
+            "requestsPlaceholder": "שירים ספציפיים, עיבודים מיוחדים וכו'.",
+            "previous": "הקודם",
+            "next": "הבא",
+            "quoteTitle": "הצעת המחיר המשוערכת שלך",
+            "quotePrice": "{price}₪",
+            "quoteDetails": "{ensemble} למשך {duration} שעות",
+            "submitRequest": "שלח בקשת הזמנה"
+        },
+        "musiciansTitle": "הכירו את המוזיקאים שלנו",
+        "musiciansSubtitle": "מבחר מהמורים והתלמידים המתקדמים המצטיינים שלנו, זמינים לאירועים.",
+        "viewProfile": "צפה בפרופיל"
+    },
     "EnrollmentWizard": {
         "steps": {
             "role": "סוג רישום",
@@ -43,6 +150,10 @@
             "self": "אני רושם/ת את עצמי (מעל גיל 13)",
             "conservatorium": "קונסרבטוריון",
             "conservatoriumPlaceholder": "חפש קונסרבטוריון..."
+        },
+        "common": {
+            "alreadyHaveAccount": "יש לך כבר חשבון?",
+            "loginHere": "התחבר/י כאן"
         },
         "details": {
             "parentTitle": "פרטי ההורה",
@@ -164,6 +275,19 @@
             "selectConservatorium": "חובה לבחור קונסרבטוריון",
             "selectInstrument": "חובה לבחור כלי נגינה",
             "selectPackage": "חובה לבחור חבילה"
+        },
+        "summary": {
+            "title": "סיכום",
+            "studentName": "שם התלמיד",
+            "parentName": "שם ההורה",
+            "email": "אימייל",
+            "instrument": "כלי נגינה",
+            "teacher": "מורה",
+            "package": "חבילה",
+            "firstLesson": "שיעור ראשון",
+            "price": "מחיר",
+            "notSelected": "לא נבחר",
+            "later": "ייקבע בהמשך"
         }
     },
     "Dashboard": {
@@ -289,6 +413,7 @@
         "newRegistration": "רישום חדש",
         "masterSchedule": "מערכת ראשית",
         "events": "אירועים",
+        "manageOpenDay": "ניהול יום פתוח",
         "performances": "ניהול הופעות",
         "rentals": "השאלות כלים",
         "waitlists": "רשימות המתנה",
