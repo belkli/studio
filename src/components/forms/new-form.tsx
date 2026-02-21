@@ -161,15 +161,24 @@ export function NewForm() {
       return null;
     }
 
+    // Default needs student selection
+    let needsStudentSelection = true;
+    if (selectedFormType === 'kenes' || mockFormTemplates.some(t => t.id === selectedFormType)) {
+        needsStudentSelection = false;
+    }
+    
+    if (needsStudentSelection && !selectedStudent) {
+        return <p className="text-center text-muted-foreground pt-4">אנא בחר/י תלמיד/ה כדי להמשיך.</p>;
+    }
+
+
     switch (selectedFormType) {
       case 'recital':
-        if (!selectedStudent) return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>;
-        return <RecitalForm key={selectedStudent.id} user={user} student={selectedStudent} onSubmit={(data) => onFormSubmit(data)} />;
+        return <RecitalForm key={selectedStudent!.id} user={user} student={selectedStudent!} onSubmit={(data) => onFormSubmit(data)} />;
       case 'kenes':
         return <KenesForm user={user} onSubmit={(data) => onFormSubmit(data)} />;
       case 'exam_registration':
-        if (!selectedStudent) return <p className="text-center text-muted-foreground pt-4">אנא בחר תלמיד/ה כדי להמשיך.</p>;
-        return <ExamRegistrationForm key={selectedStudent.id} user={user} student={selectedStudent} onSubmit={(data) => onFormSubmit(data)} />;
+        return <ExamRegistrationForm key={selectedStudent!.id} user={user} student={selectedStudent!} onSubmit={(data) => onFormSubmit(data)} />;
       default:
         // This handles custom forms
         const template = mockFormTemplates.find(t => t.id === selectedFormType);
@@ -180,7 +189,7 @@ export function NewForm() {
     }
   }
 
-  const needsStudentSelection = ['recital', 'exam_registration'].includes(selectedFormType ?? '');
+  const needsStudentSelectionForSelected = ['recital', 'exam_registration'].includes(selectedFormType ?? '');
 
   return (
     <div className="space-y-8">
@@ -214,7 +223,7 @@ export function NewForm() {
                 />
               )}
 
-              {canSelectStudent && needsStudentSelection && (
+              {canSelectStudent && needsStudentSelectionForSelected && (
                 <FormField
                   control={formTypeForm.control}
                   name="studentId"
