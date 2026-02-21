@@ -588,4 +588,156 @@ export type InstrumentInventory = {
   rentalStartDate?: string; // ISO Date string
   expectedReturnDate?: string; // ISO Date string
 };
-```
+
+// From SDD-17: Scholarship Fund & Donation Management
+
+export type Donation = {
+  id: string;
+  conservatoriumId: string;
+  isAnonymous: boolean;
+  donorName?: string;
+  donorEmail?: string;
+  donorPhone?: string;
+  donorIdNumber?: string;
+  donorOrganization?: string;
+  amount: number;
+  currency: 'ILS';
+  paymentMethod: 'CARD' | 'BANK_TRANSFER' | 'CHECK' | 'CASH';
+  paymentReference?: string;
+  taxReceiptEligible: boolean;
+  section46AllocationNumber?: string;
+  receiptUrl?: string;
+  reportedToTaxAuthority: boolean;
+  reportedAt?: string; // ISO Timestamp
+  isDedicated: boolean;
+  dedicationText?: string;
+  targetType: 'GENERAL_FUND' | 'SPECIFIC_STUDENT' | 'INSTRUMENT_FUND';
+  targetStudentId?: string;
+  targetInstrument?: string;
+  status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+  confirmedAt?: string; // ISO Timestamp
+  isRecurring: boolean;
+  recurringIntervalMonths?: 1 | 3 | 12;
+  donorMessage?: string;
+  thankYouReceived: boolean;
+  createdAt: string; // ISO Timestamp
+};
+
+export type ApplicationStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'DOCUMENTS_PENDING'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'PARTIALLY_APPROVED'
+  | 'WAITLISTED'
+  | 'REJECTED'
+  | 'EXPIRED';
+
+export type DocumentType =
+  | 'INCOME_CERTIFICATE'
+  | 'SINGLE_PARENT_CERTIFICATE'
+  | 'NEW_IMMIGRANT_CERTIFICATE'
+  | 'DISABILITY_CERTIFICATE'
+  | 'SOCIAL_WORKER_LETTER'
+  | 'NATIONAL_INSURANCE_BENEFIT'
+  | 'TEACHER_RECOMMENDATION'
+  | 'EXAM_CERTIFICATE'
+  | 'COMPETITION_AWARD';
+
+export type ScholarshipApplication = {
+  id: string;
+  studentId: string;
+  studentName: string; // denormalized for easier display
+  instrument: string; // denormalized for easier display
+  conservatoriumId: string;
+  academicYear: string;
+  type: 'FINANCIAL_AID' | 'MERIT_SCHOLARSHIP' | 'COMBINED';
+  documents?: {
+    type: DocumentType;
+    fileUrl: string;
+    uploadedAt: string; // ISO Timestamp
+  }[];
+  teacherEndorsement?: string;
+  teacherRating?: number;
+  recitalPerformances?: number;
+  examGrade?: string;
+  competitionResults?: string;
+  householdSize?: number;
+  monthlyIncome?: number;
+  isSingleParent?: boolean;
+  isNewImmigrant?: boolean;
+  isDisabled?: boolean;
+  additionalContext?: string;
+  requestedDiscountPercent?: number;
+  requestedMonths?: number;
+  status: ApplicationStatus;
+  priorityScore: number;
+  committeeNotes?: string;
+  awardedDiscountPercent?: number;
+  awardedMonths?: number;
+  awardedFrom?: string; // ISO Date
+  awardedUntil?: string; // ISO Date
+  linkedDonationIds?: string[];
+  submittedAt: string; // ISO Timestamp
+  reviewedAt?: string; // ISO Timestamp
+};
+
+export type ScholarshipFund = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  description: string;
+  totalReceived: number;
+  totalAwarded: number;
+  currentBalance: number;
+  annualTarget: number;
+  section46ApprovalNumber?: string;
+};
+
+// From SDD-14E
+export type OpenDayEvent = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  description: string;
+  date: string; // ISO Date
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+  appointmentDuration: number; // in minutes
+  isActive: boolean;
+};
+
+export type OpenDayAppointment = {
+  id: string;
+  eventId: string;
+  familyName: string;
+  parentEmail: string;
+  parentPhone: string;
+  childName: string;
+  childAge: number;
+  instrumentInterest: string;
+  appointmentTime: string; // ISO Timestamp
+  status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
+  registeredAt: string; // ISO Timestamp
+};
+
+// From SDD-13
+export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
+
+export type PerformanceBooking = {
+  id: string;
+  conservatoriumId: string;
+  status: PerformanceBookingStatus;
+  inquiryReceivedAt: string; // ISO Timestamp
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  eventName: string;
+  eventType: string;
+  eventDate: string; // ISO Date
+  eventTime: string; // "HH:mm"
+  eventLocation: string;
+  totalQuote: number;
+  assignedMusicians?: { userId: string, name: string, instrument: string }[];
+};

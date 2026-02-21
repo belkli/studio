@@ -15,7 +15,7 @@ interface CancelLessonDialogProps {
     lesson: LessonSlot | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onConfirm: () => void;
+    onConfirm: (withNotice: boolean) => void;
 }
 
 export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: CancelLessonDialogProps) {
@@ -47,7 +47,7 @@ export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: Ca
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>חזרה</AlertDialogCancel>
-                    <AlertDialogAction onClick={onConfirm} className={!hasNotice ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}>
+                    <AlertDialogAction onClick={() => onConfirm(hasNotice)} className={!hasNotice ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}>
                         {hasNotice ? "כן, בטל וקבל זיכוי" : "כן, בטל בכל זאת"}
                     </AlertDialogAction>
                 </AlertDialogFooter>
