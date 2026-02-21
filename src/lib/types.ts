@@ -1,3 +1,4 @@
+
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
 
 export type InstrumentInfo = {
@@ -100,6 +101,13 @@ export type PerformanceProfile = {
   ensembleRoles?: EnsembleRole[];
 };
 
+export type Branch = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  address: string;
+};
+
 export type User = {
   id: string;
   name: string;
@@ -107,6 +115,7 @@ export type User = {
   role: UserRole;
   conservatoriumId: string;
   conservatoriumName: string;
+  branchId?: string;
   conservatoriumStudyYears?: number;
   instruments?: InstrumentInfo[];
   avatarUrl?: string;
@@ -320,6 +329,7 @@ export type LessonSlot = {
   type: LessonType;
   bookingSource: 'STUDENT_SELF' | 'PARENT' | 'TEACHER' | 'ADMIN' | 'AUTO_MAKEUP';
   roomId?: string;
+  branchId?: string;
   isVirtual: boolean;
   meetingLink?: string;
   packageId?: string;
@@ -455,6 +465,7 @@ export type Room = {
   name: string;
   instruments?: string[];
   capacity?: number;
+  branchId?: string;
 };
 
 export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
@@ -558,6 +569,7 @@ export type EventProduction = {
   program: PerformanceSlot[];
   isPublic: boolean;
   ticketPrice: number;
+  branchId?: string;
 };
 
 // From SDD-14G: Instrument Rental Management

@@ -1,5 +1,5 @@
 
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, OpenDayEvent, OpenDayAppointment } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 import { addDays, setHours, setMinutes } from 'date-fns';
@@ -90,6 +90,13 @@ export const compositions: Composition[] = (rawCompositions as any[]).map((item:
 })).filter(c => c.composer && c.title);
 
 
+// --- Mock Branches (SDD-14F) ---
+export const mockBranches: Branch[] = [
+  { id: 'branch-1', conservatoriumId: 'cons-15', name: 'קמפוס מרכזי', address: 'רחוב הראשונים 1, הוד השרון' },
+  { id: 'branch-2', conservatoriumId: 'cons-15', name: 'שלוחת נווה הדר', address: 'רחוב הבנים 14, הוד השרון' },
+  { id: 'branch-3', conservatoriumId: 'cons-12', name: 'סניף ראשי גבעתיים', address: 'רחוב ויצמן 2, גבעתיים' },
+];
+
 // --- Mock Achievements (SDD-14B) ---
 const mockAchievements: Achievement[] = [
     {
@@ -129,7 +136,7 @@ const thirteenYearsAgoDateString = thirteenYearsAgo.toISOString().split('T')[0];
 
 
 const studentUser: User = {
-    id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [{ instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
+    id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', branchId: 'branch-1', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [{ instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
 };
 
 const parentUser: User = {
@@ -137,12 +144,12 @@ const parentUser: User = {
 }
 
 const noaLevi: User = {
-    id: 'student-user-noa', name: 'נועה לוי', email: parentUser.email, role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student-noa', idNumber: '333444555', birthDate: thirteenYearsAgoDateString, city: 'הוד השרון', gender: 'נקבה', grade: 'ז', approved: true, notifications: [], parentId: 'parent-user-1', packageId: 'pkg-5', instruments: [{ instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 1 }]
+    id: 'student-user-noa', name: 'נועה לוי', email: parentUser.email, role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', branchId: 'branch-2', avatarUrl: 'https://i.pravatar.cc/150?u=student-noa', idNumber: '333444555', birthDate: thirteenYearsAgoDateString, city: 'הוד השרון', gender: 'נקבה', grade: 'ז', approved: true, notifications: [], parentId: 'parent-user-1', packageId: 'pkg-5', instruments: [{ instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 1 }]
 };
 
 
 const studentUser2: User = {
-    id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [{ instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
+    id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', branchId: 'branch-2', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [{ instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
 };
 
 const disengagedStudent: User = {
@@ -151,7 +158,7 @@ const disengagedStudent: User = {
 
 
 const otherStudent: User = {
-    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [{ instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },], approved: true, notifications: [],
+    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', branchId: 'branch-3', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [{ instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },], approved: true, notifications: [],
 };
 
 const pendingTeacher: User = {
@@ -204,9 +211,9 @@ export const mockTeachers: Partial<User>[] = [
     },
 ];
 
-const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id, disengagedStudent.id], approved: true, notifications: teacherNotifications, } as User;
-const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id, noaLevi.id], approved: true, notifications: [], maxStudents: 15 } as User;
-const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=teacher3', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18 } as User;
+const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', branchId: 'branch-1', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id, disengagedStudent.id], approved: true, notifications: teacherNotifications, } as User;
+const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', branchId: 'branch-2', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id, noaLevi.id], approved: true, notifications: [], maxStudents: 15 } as User;
+const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', branchId: 'branch-3', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=teacher3', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18 } as User;
 
 // Generate Conservatorium Admins from the JSON file, adding the logged-in user for "הוד השרון"
 const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
@@ -217,6 +224,7 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
             email: 'admin@example.com',
             role: 'conservatorium_admin',
             conservatoriumId: 'cons-15',
+            branchId: 'branch-1',
             conservatoriumName: 'הוד השרון',
             avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin15',
             idNumber: `admin-id-15`,
@@ -288,26 +296,26 @@ export const mockPackages: Package[] = [
 ];
 
 export const mockRooms: Room[] = [
-    { id: 'room-101', name: 'Room 101' },
-    { id: 'room-102', name: 'Room 102 - Piano Studio' },
-    { id: 'room-103', name: 'Room 103' },
-    { id: 'room-201', name: 'Room 201 - Ensemble Hall' },
-    { id: 'room-202', name: 'Room 202' },
+    { id: 'room-101', name: 'Room 101', branchId: 'branch-1' },
+    { id: 'room-102', name: 'Room 102 - Piano Studio', branchId: 'branch-1' },
+    { id: 'room-103', name: 'Room 103', branchId: 'branch-2' },
+    { id: 'room-201', name: 'Room 201 - Ensemble Hall', branchId: 'branch-2' },
+    { id: 'room-202', name: 'Room 202', branchId: 'branch-1' },
 ];
 
 export const mockLessons: LessonSlot[] = [
-    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: addDays(new Date(), 2).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: addDays(new Date(), 3).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-d2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-1', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: addDays(new Date(), 2).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-2', conservatoriumId: 'cons-15', branchId: 'branch-2', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: addDays(new Date(), 3).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-3', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-4', conservatoriumId: 'cons-15', branchId: 'branch-2', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-d1', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-d2', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), updatedAt: new Date().toISOString() },
     // Credits for Ariel
-    { id: 'lesson-cancel-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 70)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_TEACHER', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 71)).toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-cancel-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_CONSERVATORIUM', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 31)).toISOString(), updatedAt: new Date().toISOString() },
-    { id: 'lesson-cancel-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_STUDENT_NOTICED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 11)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-cancel-1', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 70)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_TEACHER', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 71)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-cancel-2', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_CONSERVATORIUM', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 31)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-cancel-3', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_STUDENT_NOTICED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 11)).toISOString(), updatedAt: new Date().toISOString() },
     // Used credit
-    { id: 'lesson-makeup-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 45, type: 'MAKEUP', status: 'COMPLETED', bookingSource: 'STUDENT_SELF', isVirtual: false, isCreditConsumed: false, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-makeup-1', conservatoriumId: 'cons-15', branchId: 'branch-1', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 45, type: 'MAKEUP', status: 'COMPLETED', bookingSource: 'STUDENT_SELF', isVirtual: false, isCreditConsumed: false, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
 ];
 
 export const mockInvoices: Invoice[] = [
@@ -548,6 +556,7 @@ export const mockEvents: EventProduction[] = [
     {
         id: 'event-spring-2024',
         conservatoriumId: 'cons-15',
+        branchId: 'branch-1',
         name: 'רסיטל אביב 2024',
         type: 'RECITAL',
         venue: 'אולם הקונצרטים, הוד השרון',
@@ -564,6 +573,7 @@ export const mockEvents: EventProduction[] = [
     {
         id: 'event-exam-2024',
         conservatoriumId: 'cons-15',
+        branchId: 'branch-2',
         name: 'בחינות בגרות - מועד קיץ',
         type: 'EXAM_PERFORMANCE',
         venue: 'חדר 201 - אולם אנסמבלים',
@@ -747,4 +757,4 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 ];
 
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus, type OpenDayEvent, type OpenDayAppointment };
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus, type ScholarshipApplication, type OpenDayEvent, type OpenDayAppointment, type Branch };
