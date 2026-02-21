@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Clock, Music, Share2, Tag } from "lucide-react";
 import Link from 'next/link';
 import { format } from "date-fns";
-import { he } from 'date-fns/locale';
+import { he } from "date-fns/locale";
 import type { EmptySlot } from "./available-slots-marketplace";
 import { useToast } from "@/hooks/use-toast";
 

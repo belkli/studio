@@ -70,46 +70,44 @@ export function AvailableSlotsMarketplace() {
                 );
 
                 for (let hour = parseInt(teacherDayAvailability.startTime.split(':')[0]); hour < parseInt(teacherDayAvailability.endTime.split(':')[0]); hour++) {
-                    for (let minute = 0; minute < 60; minute += 30) {
-                        const slotStartTime = setMinutes(setHours(date, hour), minute);
+                    const slotStartTime = setHours(date, hour);
+                    slotStartTime.setMinutes(0, 0, 0); // Normalize to the hour
 
-                        if (isAfter(new Date(), slotStartTime)) continue;
+                    if (isAfter(new Date(), slotStartTime)) continue;
 
-                        const isBooked = dayLessons.some(l => {
-                            const lessonStart = startOfHour(new Date(l.startTime));
-                            return isSameDay(lessonStart, slotStartTime) && lessonStart.getHours() === slotStartTime.getHours();
-                        });
+                    const isBooked = dayLessons.some(l => {
+                        return new Date(l.startTime).getHours() === hour;
+                    });
 
-                        if (!isBooked) {
-                            teacherInstruments.forEach(instrument => {
-                                [45, 60].forEach(duration => { // Offer 45 and 60 min slots
-                                    const basePrice = teacher.ratePerDuration?.[duration.toString() as '30' | '45' | '60'] || 120;
-                                    const urgency = isSameDay(date, today) ? 'SAME_DAY' : 'TOMORROW';
-                                    const demandLevel = getDemandLevel(slotStartTime);
-                                    const discount = DISCOUNT_MATRIX[urgency][demandLevel];
-                                    const promotionalPrice = Math.round(basePrice * (1 - discount / 100));
+                    if (!isBooked) {
+                        teacherInstruments.forEach(instrument => {
+                            [45, 60].forEach(duration => {
+                                const basePrice = teacher.ratePerDuration?.[duration.toString() as '45' | '60'] || 120;
+                                const urgency = isSameDay(date, today) ? 'SAME_DAY' : 'TOMORROW';
+                                const demandLevel = getDemandLevel(slotStartTime);
+                                const discount = DISCOUNT_MATRIX[urgency][demandLevel];
+                                const promotionalPrice = Math.round(basePrice * (1 - discount / 100));
 
-                                    slots.push({
-                                        id: `${teacher.id}-${instrument}-${slotStartTime.toISOString()}-${duration}`,
-                                        teacher,
-                                        instrument,
-                                        startTime: slotStartTime,
-                                        durationMinutes: duration,
-                                        urgency,
-                                        demandLevel,
-                                        basePrice,
-                                        promotionalPrice,
-                                        discount,
-                                    });
+                                slots.push({
+                                    id: `${teacher.id}-${instrument}-${slotStartTime.toISOString()}-${duration}`,
+                                    teacher,
+                                    instrument,
+                                    startTime: slotStartTime,
+                                    durationMinutes: duration,
+                                    urgency,
+                                    demandLevel,
+                                    basePrice,
+                                    promotionalPrice,
+                                    discount,
                                 });
                             });
-                        }
+                        });
                     }
                 }
             });
         });
 
-        // Remove duplicate slots that might arise from 30 min increments but offering 45/60 min lessons
+        // Remove duplicate slots
         const uniqueSlots = Array.from(new Map(slots.map(item => [item.id, item])).values());
 
         return uniqueSlots.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
