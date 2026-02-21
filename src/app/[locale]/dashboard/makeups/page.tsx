@@ -3,24 +3,24 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Coins, PlusCircle, AlertCircle, CheckCircle2, History } from 'lucide-react';
+import { Coins, PlusCircle, History } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { he, enUS, ru, ar } from 'date-fns/locale';
+import { he, en, ru, ar } from 'date-fns/locale';
 import { useParams } from 'next/navigation';
 
-const localesArr = { he, en: enUS, ru, ar };
+const localesArr: { [key: string]: Locale } = { he, en, ru, ar };
 
 export default function MakeupsPage() {
     const { user, getMakeupCreditBalance, getMakeupCreditsDetail } = useAuth();
     const t = useTranslations('Dashboard.makeups');
     const { locale } = useParams();
 
-    const dateLocale = localesArr[locale as keyof typeof localesArr] || he;
+    const dateLocale = localesArr[locale as string] || he;
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
@@ -32,7 +32,7 @@ export default function MakeupsPage() {
 
     if (!user) return null;
 
-    const statusStyles = {
+    const statusStyles: { [key: string]: string } = {
         AVAILABLE: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
         USED: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
         EXPIRED: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"

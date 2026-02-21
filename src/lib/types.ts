@@ -1,4 +1,5 @@
 
+
 import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
@@ -304,6 +305,8 @@ export type FormSubmission = {
 };
 
 // --- New Types from SDDs ---
+export type MakeupCreditReason = 'TEACHER_CANCELLED' | 'ADMIN_CANCELLED' | 'STUDENT_CANCELLED_NOTICED';
+
 export type MakeupCredit = {
   id: string;
   sourceLessonId: string;
@@ -311,7 +314,7 @@ export type MakeupCredit = {
   grantedAt: string; // ISO Timestamp
   expiresAt: string; // ISO Timestamp
   status: 'AVAILABLE' | 'USED' | 'EXPIRED';
-  reason: 'TEACHER_CANCELLED' | 'ADMIN_CANCELLED' | 'STUDENT_CANCELLED_NOTICED';
+  reason: MakeupCreditReason;
 };
 
 export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' | 'OTHER';
