@@ -595,6 +595,9 @@ export type PerformanceBooking = {
   clientName: string;
   clientEmail: string;
   clientPhone: string;
+  organization?: string;
+  eventDescription?: string;
+  specialRequests?: string;
   eventName: string;
   eventType: string; // e.g., 'Wedding', 'Corporate'
   eventDate: string; // ISO Date string
