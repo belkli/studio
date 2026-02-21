@@ -39,17 +39,25 @@ export function EventDetails() {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.width;
         
+        // This is a hack to support Hebrew in jsPDF. A proper solution would require embedding a Hebrew-supporting font.
+        // For the demo, we will reverse strings.
         const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
         
-        // This is a hack to support Hebrew in jsPDF. A proper solution would require embedding a Hebrew-supporting font.
-        doc.setFont('helvetica');
+        // The font needs to support Hebrew. 'helvetica' does not. 'arial' is a safer bet on most systems but not guaranteed.
+        // For a real app, we'd embed a font like 'Arimo' or 'Rubik'.
+        // doc.addFont('Rubik-Regular.ttf', 'Rubik', 'normal'); // Example of embedding
+        // doc.setFont('Rubik');
+
+        doc.setFont('helvetica'); // Fallback for demo
+
+        doc.setR2L(true); // Enable Right-to-Left text direction
 
         doc.setFontSize(22);
-        doc.text(rtl(event.name), pageWidth / 2, 20, { align: 'center' });
+        doc.text(event.name, pageWidth / 2, 20, { align: 'center' });
 
         doc.setFontSize(14);
         doc.setFont('helvetica', 'normal');
-        doc.text(rtl(`${format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })} | ${event.startTime} | ${event.venue}`), pageWidth / 2, 30, { align: 'center' });
+        doc.text(`${format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })} | ${event.startTime} | ${event.venue}`, pageWidth / 2, 30, { align: 'center' });
 
         const head = [[rtl('משך'), rtl('מלחין'), rtl('יצירה'), rtl('מבצע/ת')]];
         const body = event.program.map(p => [
@@ -67,6 +75,7 @@ export function EventDetails() {
             styles: {
                 halign: 'right',
                 font: 'helvetica',
+                // font: 'Rubik', // Use the embedded font
             },
             headStyles: {
                 fillColor: [44, 62, 80],
