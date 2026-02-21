@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { DayOfWeek, TimeRange, User, Room } from '@/lib/types';
+import type { DayOfWeek, TimeRange, User, Room, EmptySlot } from '@/lib/types';
 import { addDays, getDay, startOfHour, isAfter, isSameDay, setHours, setMinutes } from 'date-fns';
 import { instruments } from '@/lib/data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,19 +11,6 @@ import { Loader2 } from 'lucide-react';
 
 export type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
 export type SlotDemandLevel = 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND';
-
-export interface EmptySlot {
-    id: string;
-    teacher: User;
-    instrument: string;
-    startTime: Date;
-    durationMinutes: number;
-    urgency: SlotUrgency;
-    demandLevel: SlotDemandLevel;
-    basePrice: number;
-    promotionalPrice: number;
-    discount: number;
-}
 
 const DISCOUNT_MATRIX: Record<SlotUrgency, Record<SlotDemandLevel, number>> = {
     SAME_DAY: { HIGH_DEMAND: 20, MEDIUM_DEMAND: 30, LOW_DEMAND: 40 },

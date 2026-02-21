@@ -1,4 +1,5 @@
 
+import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
 
@@ -307,14 +308,20 @@ export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' 
 
 export type LessonType = 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
 
+export type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
+export type SlotDemandLevel = 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND';
+
 export type EmptySlot = {
-  id: string;
-  teacherName: string;
-  instrument: string;
-  startTime: string; // ISO Timestamp
-  durationMinutes: number;
-  promotionalPrice: number;
-  basePrice: number;
+    id: string;
+    teacher: User;
+    instrument: string;
+    startTime: Date;
+    durationMinutes: number;
+    urgency: SlotUrgency;
+    demandLevel: SlotDemandLevel;
+    basePrice: number;
+    promotionalPrice: number;
+    discount: number;
 };
 export type SlotStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED_STUDENT_NOTICED' | 'CANCELLED_STUDENT_NO_NOTICE' | 'CANCELLED_TEACHER' | 'CANCELLED_CONSERVATORIUM' | 'NO_SHOW_STUDENT' | 'NO_SHOW_TEACHER';
 
@@ -589,6 +596,26 @@ export type InstrumentInventory = {
   expectedReturnDate?: string; // ISO Date string
 };
 
+// From SDD-13
+export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
+
+export type PerformanceBooking = {
+  id: string;
+  conservatoriumId: string;
+  status: PerformanceBookingStatus;
+  inquiryReceivedAt: string; // ISO Timestamp
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  eventName: string;
+  eventType: string;
+  eventDate: string; // ISO Date
+  eventTime: string; // "HH:mm"
+  eventLocation: string;
+  totalQuote: number;
+  assignedMusicians?: { userId: string, name: string, instrument: string }[];
+};
+
 // From SDD-17: Scholarship Fund & Donation Management
 
 export type Donation = {
@@ -720,24 +747,4 @@ export type OpenDayAppointment = {
   appointmentTime: string; // ISO Timestamp
   status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
   registeredAt: string; // ISO Timestamp
-};
-
-// From SDD-13
-export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
-
-export type PerformanceBooking = {
-  id: string;
-  conservatoriumId: string;
-  status: PerformanceBookingStatus;
-  inquiryReceivedAt: string; // ISO Timestamp
-  clientName: string;
-  clientEmail: string;
-  clientPhone: string;
-  eventName: string;
-  eventType: string;
-  eventDate: string; // ISO Date
-  eventTime: string; // "HH:mm"
-  eventLocation: string;
-  totalQuote: number;
-  assignedMusicians?: { userId: string, name: string, instrument: string }[];
 };
