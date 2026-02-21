@@ -7,7 +7,7 @@ import { instruments, mockRooms } from '@/lib/data';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, SlidersHorizontal, User as UserIcon, DoorOpen, Music } from 'lucide-react';
+import { ArrowLeft, ArrowRight, SlidersHorizontal, User as UserIcon, DoorOpen, Music, Building2 } from 'lucide-react';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -47,9 +47,10 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 };
 
 export function MasterScheduleCalendar() {
-    const { user, users, mockLessons } = useAuth();
+    const { user, users, mockLessons, mockBranches } = useAuth();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
+        branchId: 'all',
         teacherId: 'all',
         roomId: 'all',
         instrument: 'all',
@@ -64,12 +65,18 @@ export function MasterScheduleCalendar() {
 
     const daysOfWeek = eachDayOfInterval(weekInterval);
 
+    const filteredRooms = useMemo(() => {
+        if (filters.branchId === 'all') return mockRooms;
+        return mockRooms.filter(r => r.branchId === filters.branchId);
+    }, [filters.branchId]);
+    
     const filteredLessons = useMemo(() => {
         return mockLessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
             const inCurrentWeek = lessonDate >= weekInterval.start && lessonDate <= weekInterval.end;
             if (!inCurrentWeek) return false;
 
+            if (filters.branchId !== 'all' && lesson.branchId !== filters.branchId) return false;
             if (filters.teacherId !== 'all' && lesson.teacherId !== filters.teacherId) return false;
             if (filters.roomId !== 'all' && lesson.roomId !== filters.roomId) return false;
             if (filters.instrument !== 'all' && lesson.instrument !== filters.instrument) return false;
@@ -87,7 +94,14 @@ export function MasterScheduleCalendar() {
     };
 
     const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
-        setFilters(prev => ({ ...prev, [filterName]: value }));
+        setFilters(prev => {
+            const newFilters = { ...prev, [filterName]: value };
+            if (filterName === 'branchId') {
+                // Reset room filter when branch changes
+                newFilters.roomId = 'all';
+            }
+            return newFilters;
+        });
     };
     
     const handleWeekChange = (direction: 'next' | 'prev') => {
@@ -105,8 +119,9 @@ export function MasterScheduleCalendar() {
                     </div>
                      <div className="flex flex-wrap items-center gap-2">
                         <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
+                        <Select dir="rtl" value={filters.branchId} onValueChange={(v) => handleFilterChange('branchId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל הסניפים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הסניפים</SelectItem>{mockBranches.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select>
                         <Select dir="rtl" value={filters.teacherId} onValueChange={(v) => handleFilterChange('teacherId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל המורים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל המורים</SelectItem>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל החדרים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל החדרים</SelectItem>{mockRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir="rtl" value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל החדרים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל החדרים</SelectItem>{filteredRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
                         <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Music className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל הכלים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select>
                     </div>
                 </div>

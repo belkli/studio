@@ -502,56 +502,6 @@ export const mockFormTemplates: FormTemplate[] = [
 
 export const mockAuditLog: AuditLogEntry[] = [];
 
-export const mockAnnouncements: Announcement[] = [
-    {
-        id: 'anno-1',
-        conservatoriumId: 'cons-15',
-        title: 'חופשת פסח - עדכון לוח זמנים',
-        body: 'שלום לכולם, הקונסרבטוריון יצא לחופשת פסח בתאריכים 21.04.2024 עד 29.04.2024. לא יתקיימו שיעורים בתקופה זו. חג שמח!',
-        targetAudience: 'ALL',
-        channels: ['IN_APP', 'EMAIL'],
-        sentAt: new Date('2024-04-15T10:00:00Z').toISOString(),
-    },
-    {
-        id: 'anno-2',
-        conservatoriumId: 'cons-15',
-        title: 'הרשמה לרסיטל סוף שנה',
-        body: 'ההרשמה לרסיטל סוף השנה נפתחה! תלמידים המעוניינים להשתתף מתבקשים למלא את טופס ההרשמה דרך המערכת עד לתאריך 15.06.2024.',
-        targetAudience: 'STUDENTS',
-        channels: ['IN_APP'],
-        sentAt: new Date('2024-05-20T14:30:00Z').toISOString(),
-    }
-];
-
-export const mockPracticeVideos: PracticeVideo[] = [
-    {
-        id: 'pv-1',
-        studentId: 'student-user-1',
-        teacherId: 'teacher-user-1',
-        repertoireTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2',
-        videoUrl: 'https://placehold.co/600x400.mp4',
-        studentNote: 'אני לא בטוח לגבי הדינמיקה בחלק האמצעי, זה מרגיש לי קצת שטוח. אשמח למשוב.',
-        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-        feedback: [
-            { teacherId: 'teacher-user-1', comment: 'ביצוע יפה אריאל! נסה להדגיש יותר את הקו המלודי ביד ימין ולהשתמש ביותר רובטו כדי לתת לזה תחושה יותר נושמת. נדבר על זה בשיעור.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() }
-        ]
-    }
-];
-
-export const mockWaitlist: WaitlistEntry[] = [
-    {
-        id: 'waitlist-1',
-        studentId: 'other-student-1',
-        teacherId: 'teacher-user-1',
-        conservatoriumId: 'cons-15',
-        instrument: 'פסנתר',
-        preferredDays: ['MON', 'WED'],
-        preferredTimes: ['AFTERNOON'],
-        joinedAt: new Date('2024-05-10T10:00:00Z').toISOString(),
-        status: 'WAITING',
-    }
-];
-
 export const mockEvents: EventProduction[] = [
     {
         id: 'event-spring-2024',
@@ -711,6 +661,27 @@ export const mockScholarshipApplications: ScholarshipApplication[] = [
         priorityScore: 92,
         submittedAt: new Date(new Date().setDate(new Date().getDate() - 12)).toISOString(),
     }
+];
+
+export const mockAnnouncements: Announcement[] = [
+    {
+        id: 'ann-1',
+        conservatoriumId: 'cons-15',
+        title: 'חופשת פסח - עדכון',
+        body: 'הקונסרבטוריון יהיה סגור לרגל חופשת הפסח בין התאריכים 22.04 ועד 29.04. הלימודים יתחדשו ב-30.04. חג שמח!',
+        targetAudience: 'ALL',
+        channels: ['IN_APP', 'EMAIL'],
+        sentAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    },
+    {
+        id: 'ann-2',
+        conservatoriumId: 'cons-15',
+        title: 'הרשמה לרסיטל סוף שנה',
+        body: 'ההרשמה לרסיטל סוף השנה נפתחה! יש להגיש טפסי רסיטל עד לתאריך 15.05. לפרטים נוספים, פנו למורים.',
+        targetAudience: 'STUDENTS',
+        channels: ['IN_APP'],
+        sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+    },
 ];
 
 export const mockOpenDayEvents: OpenDayEvent[] = [
