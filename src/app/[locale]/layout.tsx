@@ -1,20 +1,36 @@
 import type { Metadata } from 'next';
-import './globals.css';
+import '../globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
+import { notFound } from 'next/navigation';
+import { HelpAssistantFAB } from '@/components/harmonia/help-assistant-fab';
 
 export const metadata: Metadata = {
   title: 'הַרמוֹנְיָה',
   description: 'מערכת ניהול קונסרבטוריונים למוזיקה',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+  const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <html lang="he" dir="rtl">
+    <html lang={locale} dir={dir}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -24,10 +40,13 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <AuthProvider>
+        <NextIntlClientProvider messages={messages}>
+          <AuthProvider>
             {children}
             <Toaster />
-        </AuthProvider>
+            <HelpAssistantFAB />
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

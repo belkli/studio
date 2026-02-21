@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
@@ -18,21 +18,21 @@ import { Save } from 'lucide-react';
 import type { NotificationType, Channel, NotificationPreferences as NotificationPreferencesType } from '@/lib/types';
 
 const notificationPreferencesSchema = z.object({
-  preferences: z.object({
-    lessonReminders: z.array(z.string()),
-    lessonCancellation: z.array(z.string()),
-    makeupCredits: z.array(z.string()),
-    paymentDue: z.array(z.string()),
-    formStatusChanges: z.array(z.string()),
-    teacherMessages: z.array(z.string()),
-    systemAnnouncements: z.array(z.string()),
-  }),
-  quietHours: z.object({
-    enabled: z.boolean(),
-    startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "פורמט לא תקין"),
-    endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "פורמט לא תקין"),
-  }),
-  language: z.enum(['HE', 'EN', 'AR', 'RU']),
+    preferences: z.object({
+        lessonReminders: z.array(z.string()),
+        lessonCancellation: z.array(z.string()),
+        makeupCredits: z.array(z.string()),
+        paymentDue: z.array(z.string()),
+        formStatusChanges: z.array(z.string()),
+        teacherMessages: z.array(z.string()),
+        systemAnnouncements: z.array(z.string()),
+    }),
+    quietHours: z.object({
+        enabled: z.boolean(),
+        startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "פורמט לא תקין"),
+        endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "פורמט לא תקין"),
+    }),
+    language: z.enum(['HE', 'EN', 'AR', 'RU']),
 });
 
 type NotificationPreferencesFormData = z.infer<typeof notificationPreferencesSchema>;
@@ -80,7 +80,7 @@ export function NotificationPreferences() {
         toast({ title: "העדפות עודכנו", description: "העדפות ההתראות שלך נשמרו." });
         form.reset(data); // reset dirty state
     };
-    
+
     if (!user) return null;
 
     return (
@@ -150,16 +150,16 @@ export function NotificationPreferences() {
                             )}
                         />
                         {form.watch('quietHours.enabled') && (
-                             <div className="grid grid-cols-2 gap-4">
-                                 <FormField control={form.control} name="quietHours.startTime" render={({ field }) => ( <FormItem> <FormLabel>שעת התחלה</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                                 <FormField control={form.control} name="quietHours.endTime" render={({ field }) => ( <FormItem> <FormLabel>שעת סיום</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField control={form.control} name="quietHours.startTime" render={({ field }) => (<FormItem> <FormLabel>שעת התחלה</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="quietHours.endTime" render={({ field }) => (<FormItem> <FormLabel>שעת סיום</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            </div>
                         )}
                         <FormField control={form.control} name="language" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>שפת התראות</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
-                                    <FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl>
+                                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                                     <SelectContent>
                                         <SelectItem value="HE">עברית</SelectItem>
                                         <SelectItem value="EN">English</SelectItem>
@@ -167,12 +167,12 @@ export function NotificationPreferences() {
                                         <SelectItem value="RU">Русский</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                     </CardContent>
                 </Card>
-                 <div className="flex justify-end">
+                <div className="flex justify-end">
                     <Button type="submit" disabled={!form.formState.isDirty}>
                         <Save className="me-2 h-4 w-4" />
                         שמור שינויים

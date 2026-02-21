@@ -6,9 +6,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { StatusBadge } from "../ui/status-badge";
+import { useTranslations } from 'next-intl';
 
 
 export function RecentForms() {
+    const t = useTranslations('Dashboard.recentForms');
     const { user, mockFormSubmissions } = useAuth();
 
     if (!user) {
@@ -33,12 +35,14 @@ export function RecentForms() {
     };
 
     const cardDescription = {
-        student: "אלו הטפסים האחרונים שהגשת.",
-        teacher: "אלו הטפסים האחרונים שהוגשו על ידי התלמידים שלך.",
-        conservatorium_admin: "אלו הטפסים האחרונים שהוגשו בקונסרבטוריון שלך.",
-        site_admin: "אלו כלל הטפסים האחרונים שהוגשו במערכת.",
-        ministry_director: "אלו כלל הטפסים האחרונים שאושרו וממתינים לבחינה."
+        student: t('descriptions.student'),
+        teacher: t('descriptions.teacher'),
+        conservatorium_admin: t('descriptions.conservatorium_admin'),
+        site_admin: t('descriptions.site_admin'),
+        ministry_director: t('descriptions.ministry_director'),
+        parent: t('descriptions.parent')
     }
+
 
     const recentForms = getFilteredForms().slice(0, 5);
 
@@ -46,15 +50,15 @@ export function RecentForms() {
         <Card>
             <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                    <CardTitle>הגשות אחרונות</CardTitle>
+                    <CardTitle>{t('title')}</CardTitle>
                     <CardDescription>
-                        {cardDescription[user.role] || 'להלן הגשות הטפסים האחרונות.'}
+                        {cardDescription[user.role as keyof typeof cardDescription] || t('descriptions.default')}
                     </CardDescription>
                 </div>
                 <Button asChild size="sm" className="me-auto gap-1">
                     <Link href="/dashboard/forms">
-                        כל הטפסים
-                        <ArrowLeft className="h-4 w-4" />
+                        {t('viewAll')}
+                        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
                     </Link>
                 </Button>
             </CardHeader>
@@ -62,11 +66,11 @@ export function RecentForms() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            {user.role !== 'student' && <TableHead>שם התלמיד/ה</TableHead>}
-                            <TableHead>סוג הטופס</TableHead>
-                            <TableHead>סטטוס</TableHead>
-                            <TableHead>תאריך הגשה</TableHead>
-                            <TableHead><span className="sr-only">פעולות</span></TableHead>
+                            {user.role !== 'student' && <TableHead>{t('studentName')}</TableHead>}
+                            <TableHead>{t('formType')}</TableHead>
+                            <TableHead>{t('status')}</TableHead>
+                            <TableHead>{t('submissionDate')}</TableHead>
+                            <TableHead><span className="sr-only">{t('actions')}</span></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -80,7 +84,7 @@ export function RecentForms() {
                                 <TableCell>{form.submissionDate}</TableCell>
                                 <TableCell className="text-left">
                                     <Button variant="outline" size="sm" asChild>
-                                        <Link href={`/dashboard/forms/${form.id}`}>צפה</Link>
+                                        <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
                                     </Button>
                                 </TableCell>
                             </TableRow>

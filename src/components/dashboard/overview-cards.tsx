@@ -1,13 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BadgeCheck, Clock, File, FileCheck, FileX } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 export function OverviewCards() {
+    const t = useTranslations('Dashboard.overview');
     // In a real app, this data would be fetched based on the user's role and data.
     const stats = [
-        { title: "אישורים ממתינים", value: "3", icon: Clock, color: "text-orange-500" },
-        { title: "טפסים שאושרו", value: "12", icon: FileCheck, color: "text-green-500" },
-        { title: "טפסים שנדחו", value: "1", icon: FileX, color: "text-red-500" },
-        { title: "סך הכל הגשות", value: "16", icon: File, color: "text-primary" },
+        { title: t('pending'), value: "3", icon: Clock, color: "text-orange-500" },
+        { title: t('approved'), value: "12", icon: FileCheck, color: "text-green-500" },
+        { title: t('rejected'), value: "1", icon: FileX, color: "text-red-500" },
+        { title: t('total'), value: "16", icon: File, color: "text-primary" },
     ]
 
     return (

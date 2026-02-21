@@ -1,69 +1,128 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 220 13% 91%;
-    --foreground: 220 10% 20%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 10% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 10% 20%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 220 10% 90%;
-    --secondary-foreground: 220 10% 20%;
-    --muted: 220 10% 90%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 160 84% 39%;
-    --accent-foreground: 160 85% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 88%;
-    --input: 220 13% 92%;
-    --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 0 84% 60%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --radius: 0.75rem;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
-  .dark {
-    --background: 220 15% 10%;
-    --foreground: 220 10% 80%;
-    --card: 220 15% 15%;
-    --card-foreground: 220 10% 80%;
-    --popover: 220 15% 15%;
-    --popover-foreground: 220 10% 80%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 220 10% 25%;
-    --secondary-foreground: 220 10% 80%;
-    --muted: 220 10% 25%;
-    --muted-foreground: 220 10% 55%;
-    --accent: 160 84% 39%;
-    --accent-foreground: 160 85% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 25%;
-    --input: 220 10% 25%;
-    --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 0 84% 60%;
-    --chart-5: 27 87% 67%;
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
+}
+
+:root {
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 240 59% 50%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 240 59% 50%;
+  --chart-1: 240 59% 50%;
+  --chart-2: 240 60% 70%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 38 92% 50%;
+  --chart-5: 0 84% 60%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 235 86% 65%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 235 86% 65%;
+  --chart-1: 235 86% 65%;
+  --chart-2: 240 60% 70%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 38 92% 50%;
+  --chart-5: 0 84% 60%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-background/60 backdrop-blur-lg border border-border/50 shadow-sm;
+  }
+
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-lg;
   }
 }
 
@@ -78,6 +137,7 @@
   bottom: 0;
   z-index: 10000;
 }
+
 #driver-highlighted-element-stage {
   position: fixed;
   left: 0;
@@ -86,13 +146,16 @@
   bottom: 0;
   z-index: 9999;
 }
+
 .driver-position-relative {
   position: relative;
 }
+
 .driver-highlighted-element {
   position: absolute;
   background: #fff;
 }
+
 .driver-popover {
   border-radius: 0.5rem;
   position: absolute;
@@ -101,46 +164,56 @@
   max-width: 350px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
 }
+
 .driver-popover.driver-popover-right {
   margin-left: 10px;
 }
+
 .driver-popover.driver-popover-left {
   margin-left: -10px;
 }
+
 .driver-popover.driver-popover-bottom {
   margin-top: 10px;
 }
+
 .driver-popover.driver-popover-top {
   margin-top: -10px;
 }
+
 .driver-popover .driver-popover-arrow {
   position: absolute;
   border: 5px solid transparent;
 }
+
 .driver-popover.driver-popover-bottom .driver-popover-arrow {
   top: 0;
   left: 10px;
   margin-top: -10px;
   border-bottom-color: hsl(var(--popover));
 }
+
 .driver-popover.driver-popover-top .driver-popover-arrow {
   bottom: 0;
   left: 10px;
   margin-bottom: -10px;
   border-top-color: hsl(var(--popover));
 }
+
 .driver-popover.driver-popover-right .driver-popover-arrow {
   left: 0;
   top: 10px;
   margin-left: -10px;
   border-right-color: hsl(var(--popover));
 }
+
 .driver-popover.driver-popover-left .driver-popover-arrow {
   right: 0;
   top: 10px;
   margin-right: -10px;
   border-left-color: hsl(var(--popover));
 }
+
 .driver-popover .driver-popover-title {
   display: block;
   font-size: 19px;
@@ -150,17 +223,21 @@
   line-height: 25px;
   font-weight: bold;
 }
+
 .driver-popover .driver-popover-description {
   padding: 15px 20px;
   font-size: 14px;
   line-height: 20px;
   font-weight: normal;
 }
+
 .driver-popover .driver-popover-footer {
   padding: 10px 20px;
   text-align: right;
-  direction: ltr; /* Ensure footer buttons are LTR */
+  direction: ltr;
+  /* Ensure footer buttons are LTR */
 }
+
 .driver-popover .driver-close-btn {
   background: none;
   border: 0;
@@ -172,17 +249,21 @@
   padding: 5px;
   cursor: pointer;
 }
+
 .driver-popover button {
   border-radius: 0.5rem;
   padding: 6px 12px;
   cursor: pointer;
 }
+
 .driver-popover button:focus {
   outline: none;
 }
+
 .driver-popover button.driver-next-btn {
   margin-left: 5px;
 }
+
 #driver-progress-text {
   position: fixed;
   bottom: 20px;
@@ -199,10 +280,12 @@
   margin-right: 10px;
   margin-left: 0;
 }
+
 [dir="rtl"] .driver-popover.driver-popover-left {
   margin-right: -10px;
   margin-left: 0;
 }
+
 [dir="rtl"] .driver-popover.driver-popover-right .driver-popover-arrow {
   left: auto;
   right: 0;
@@ -211,6 +294,7 @@
   border-right-color: transparent;
   border-left-color: hsl(var(--popover));
 }
+
 [dir="rtl"] .driver-popover.driver-popover-left .driver-popover-arrow {
   right: auto;
   left: 0;
@@ -219,16 +303,19 @@
   border-left-color: transparent;
   border-right-color: hsl(var(--popover));
 }
+
 [dir="rtl"] .driver-popover .driver-popover-footer {
   text-align: left;
 }
+
 [dir="rtl"] .driver-popover button.driver-next-btn {
   margin-left: 0;
   margin-right: 5px;
 }
+
 [dir="rtl"] .driver-popover .driver-close-btn {
-    right: auto;
-    left: 15px;
+  right: auto;
+  left: 15px;
 }
 
 /* Shadcn/UI integration */
@@ -237,27 +324,33 @@
   color: hsl(var(--popover-foreground));
   border: 1px solid hsl(var(--border));
 }
+
 .driver-popover .driver-close-btn {
   color: hsl(var(--muted-foreground));
 }
+
 .driver-popover button {
   background: hsl(var(--primary));
   border-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
 }
+
 .driver-popover button:hover {
   background: hsl(var(--primary) / 0.9);
   border-color: hsl(var(--primary) / 0.9);
 }
+
 .driver-popover button.driver-prev-btn {
   background: hsl(var(--secondary));
   border-color: hsl(var(--secondary));
   color: hsl(var(--secondary-foreground));
 }
+
 .driver-popover button.driver-prev-btn:hover {
   background: hsl(var(--secondary) / 0.8);
   border-color: hsl(var(--secondary) / 0.8);
 }
+
 .driver-popover button.driver-disabled {
   background: hsl(var(--muted));
   border-color: hsl(var(--border));
@@ -265,6 +358,7 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .driver-popover button.driver-disabled:hover {
   background: hsl(var(--muted));
   border-color: hsl(var(--border));

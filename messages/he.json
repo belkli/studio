@@ -1,0 +1,309 @@
+{
+    "Navigation": {
+        "dashboard": "לוח בקרה",
+        "lessons": "שיעורים פנויים",
+        "musicians": "מוזיקאים",
+        "donate": "תרומה",
+        "about": "אודות",
+        "contact": "צור קשר",
+        "login": "כניסה",
+        "register": "הרשמה",
+        "back": "חזרה",
+        "next": "המשך",
+        "submit": "שלח הרשמה"
+    },
+    "HomePage": {
+        "title": "הַרמוֹנְיָה",
+        "heroTitle": "המוזיקה מתחילה כאן",
+        "heroSubtitle": "מערכת ניהול חכמה וחווית למידה מתקדמת לקונסרבטוריונים",
+        "discoverBtn": "גלה את המערכת",
+        "learnMoreBtn": "מידע נוסף",
+        "copyright": "כל הזכויות שמורות.",
+        "privacyPolicy": "מדיניות פרטיות"
+    },
+    "AvailableNow": {
+        "title": "שיעורים פנויים להיום ומחר",
+        "subtitle": "מצאו שיעור מוזיקה במחיר מיוחד! הזדמנות חד-פעמית ללמוד מהמורים הטובים ביותר בהנחות של עד 40%."
+    },
+    "EnrollmentWizard": {
+        "steps": {
+            "role": "סוג רישום",
+            "details": "פרטים אישיים",
+            "musical": "מידע מוזיקלי",
+            "schedule": "זמינות",
+            "matching": "התאמת מורה",
+            "booking": "קביעת שיעור",
+            "package": "בחירת חבילה",
+            "summary": "סיכום ואישור"
+        },
+        "role": {
+            "title": "מי נרשם?",
+            "subtitle": "מלא/י את הפרטים כדי להצטרף להרמוניה.",
+            "parent": "אני רושם/ת את הילד/ה שלי",
+            "self": "אני רושם/ת את עצמי (מעל גיל 13)",
+            "conservatorium": "קונסרבטוריון",
+            "conservatoriumPlaceholder": "חפש קונסרבטוריון..."
+        },
+        "details": {
+            "parentTitle": "פרטי ההורה",
+            "studentTitle": "פרטי התלמיד/ה",
+            "selfTitle": "פרטים אישיים",
+            "firstName": "שם פרטי",
+            "lastName": "שם משפחה",
+            "email": "אימייל",
+            "idNumber": "ת.ז.",
+            "phone": "טלפון נייד",
+            "birthDate": "תאריך לידה",
+            "password": "סיסמה",
+            "school": "בית ספר",
+            "grade": "כיתה"
+        },
+        "toasts": {
+            "errorTitle": "שגיאה",
+            "waitlistTitle": "הצטרפת לרשימת ההמתנה!",
+            "waitlistUserDesc": "נודיע לך כאשר יתפנה מקום.",
+            "waitlistAdminDesc": "{name} נוסף למערכת ולרשימת המתנה.",
+            "successTitle": "ההרשמה נשלחה בהצלחה!",
+            "successUserDesc": "בקשתך נשלחה לאישור מנהל הקונסרבטוריון.",
+            "successAdminDesc": "{name} נוסף למערכת."
+        },
+        "matching": {
+            "loading": "ממליץ על המורים המתאימים ביותר עבורך...",
+            "noTeachersTitle": "לא נמצאו מורים פנויים כרגע",
+            "noTeachersDesc": "כל המורים המתאימים להעדפותיך תפוסים כעת. באפשרותך להצטרף לרשימת ההמתנה ונודיע לך כאשר יתפנה מקום.",
+            "joinWaitlist": "הצטרף לרשימת המתנה",
+            "goBack": "לחילופין, תוכל/י לחזור אחורה ולשנות את העדפות המערכת.",
+            "matchPercentage": "{percent}% התאמה",
+            "whyLearnWith": "למה כדאי ללמוד עם {name}?"
+        },
+        "success": {
+            "adminTitle": "התלמיד נרשם בהצלחה!",
+            "userTitle": "ההרשמה הושלמה בהצלחה!",
+            "adminDesc": "התלמיד נוסף למערכת וניתן לנהל את הפרופיל שלו.",
+            "userDesc": "בקשתך נשלחה למנהל/ת הקונסרבטוריון לאישור. תקבל/י הודעת אימייל כאשר חשבונך יאושר ותוכל/י להתחבר למערכת.",
+            "backToUsers": "חזרה לניהול משתמשים",
+            "backToHome": "חזרה לדף הבית"
+        },
+        "booking": {
+            "title": "קביעת שיעור ראשון",
+            "availableSlots": "שעות פנויות",
+            "noSlots": "לא נמצאו שעות פנויות למורה בתאריך זה.",
+            "loading": "טוען שעות פנויות..."
+        },
+        "admin": {
+            "title": "רישום תלמיד חדש (מנהל מערכת)",
+            "subtitle": "מלא/י את הפרטים כדי לרשום תלמיד חדש.",
+            "enrollSection": "פרטי הרשמה",
+            "submit": "רשם תלמיד"
+        },
+        "package": {
+            "title": "בחירת חבילת לימוד",
+            "placeholder": "בחר חבילה...",
+            "perMonth": "/חודש"
+        },
+        "musical": {
+            "title": "מידע מוזיקלי",
+            "instrument": "כלי נגינה",
+            "instrumentPlaceholder": "בחר כלי נגינה",
+            "level": "רמה נוכחית",
+            "levelPlaceholder": "בחר רמה",
+            "levels": {
+                "Beginner": "מתחיל/ה",
+                "Intermediate": "ביניים",
+                "Advanced": "מתקדם/ת",
+                "Exam": "מועמד/ת לבחינה"
+            },
+            "experience": "ניסיון קודם (אופציונלי)",
+            "experiencePlaceholder": "לדוגמה: 3 שנות פסנתר, ללא רקע בתיאוריה...",
+            "goals": "מטרות ויעדים",
+            "goals_options": {
+                "EXAMS": "בחינות משרד החינוך",
+                "PERFORMANCE": "הופעות ורסיטלים",
+                "ENJOYMENT": "הנאה אישית",
+                "COMPETITION": "תחרויות",
+                "OTHER": "אחר"
+            },
+            "duration": "אורך שיעור",
+            "durationPlaceholder": "בחר אורך שיעור",
+            "minutes": "{min} דקות"
+        },
+        "schedule": {
+            "title": "זמינות",
+            "days": "ימים פנויים",
+            "days_options": {
+                "SUN": "ראשון",
+                "MON": "שני",
+                "TUE": "שלישי",
+                "WED": "רביעי",
+                "THU": "חמישי",
+                "FRI": "שישי"
+            },
+            "times": "זמנים מועדפים",
+            "times_options": {
+                "MORNING": "בוקר (8-13)",
+                "AFTERNOON": "צהריים (13-17)",
+                "EVENING": "ערב (17-21)"
+            },
+            "virtual": "שיעורים וירטואליים",
+            "virtualOptions": {
+                "yes": "כן, אפשרי",
+                "no": "לא, רק פרונטלי",
+                "only": "רק וירטואלי"
+            }
+        },
+        "validation": {
+            "required": "שדה חובה",
+            "invalidEmail": "כתובת אימייל לא תקינה",
+            "invalidPhone": "מספר טלפון לא תקין",
+            "invalidID": "מספר תעודת זהות לא תקין",
+            "tooShort": "חייב להכיל לפחות {min} תווים",
+            "passwordLength": "סיסמה חייבת להכיל לפחות {min} תווים",
+            "date": "יש להזין תאריך תקין",
+            "missingDetails": "פרטים חסרים, לא ניתן להשלים את ההרשמה.",
+            "selectType": "חובה לבחור סוג הרשמה",
+            "selectConservatorium": "חובה לבחור קונסרבטוריון",
+            "selectInstrument": "חובה לבחור כלי נגינה",
+            "selectPackage": "חובה לבחור חבילה"
+        }
+    },
+    "Dashboard": {
+        "header": {
+            "search": "חיפוש...",
+            "notifications": "התראות",
+            "profile": "פרופיל",
+            "settings": "הגדרות",
+            "logout": "התנתק"
+        },
+        "welcome": {
+            "title": "ברוך הבא, {name}",
+            "subtitle": "זהו לוח הבקרה שלך להיום.",
+            "newForm": "טופס חדש"
+        },
+        "overview": {
+            "pending": "אישורים ממתינים",
+            "approved": "טפסים שאושרו",
+            "rejected": "טפסים שנדחו",
+            "total": "סך הכל הגשות"
+        },
+        "recentForms": {
+            "title": "הגשות אחרונות",
+            "viewAll": "כל הטפסים",
+            "studentName": "שם התלמיד/ה",
+            "formType": "סוג הטופס",
+            "status": "סטטוס",
+            "submissionDate": "תאריך הגשה",
+            "actions": "פעולות",
+            "view": "צפה",
+            "descriptions": {
+                "student": "אלו הטפסים האחרונים שהגשת.",
+                "teacher": "אלו הטפסים האחרונים שהוגשו על ידי התלמידים שלך.",
+                "conservatorium_admin": "אלו הטפסים האחרונים שהוגשו בקונסרבטוריון שלך.",
+                "site_admin": "אלו כלל הטפסים האחרונים שהוגשו במערכת.",
+                "ministry_director": "אלו כלל הטפסים האחרונים שאושרו וממתינים לבחינה.",
+                "parent": "אלו הטפסים האחרונים שהוגשו עבור ילדיך.",
+                "default": "להלן הגשות הטפסים האחרונות."
+            }
+        },
+        "status": {
+            "draft": "טיוטה",
+            "pendingTeacher": "ממתין לאישור מורה",
+            "pendingAdmin": "ממתין לאישור מנהל",
+            "approved": "מאושר קונסרבטוריון",
+            "rejected": "נדחה",
+            "revisionRequired": "נדרש תיקון (משרד החינוך)",
+            "finalApproved": "מאושר סופית"
+        },
+        "makeups": {
+            "title": "שיעורי השלמה",
+            "subtitle": "כאן תוכל לראות את יתרת שיעורי ההשלמה שלך ולהזמין שיעור חדש.",
+            "balanceCard": {
+                "title": "יתרת שיעורי השלמה",
+                "description": "זיכויים זמינים לשיעורי השלמה עקב ביטולי מורה/מערכת או ביטול מצידך בהתאם למדיניות.",
+                "unit": "זיכויים"
+            },
+            "bookCard": {
+                "title": "הזמן שיעור השלמה",
+                "description": "השתמש בזיכויים שלך כדי לקבוע שיעור חדש בזמן שנוח לך.",
+                "button": "עבור להזמנת שיעור"
+            },
+            "details": {
+                "title": "פירוט זיכויים",
+                "empty": "אין זיכויים זמינים כרגע.",
+                "table": {
+                    "source": "מקור הזיכוי",
+                    "grantedAt": "תאריך קבלה",
+                    "expiresAt": "תאריך תפוגה",
+                    "status": "סטטוס"
+                },
+                "reasons": {
+                    "TEACHER_CANCELLED": "ביטול מורה",
+                    "ADMIN_CANCELLED": "ביטול מערכתי",
+                    "STUDENT_CANCELLED_NOTICED": "ביטול תלמיד (בזמן)"
+                },
+                "statuses": {
+                    "AVAILABLE": "זמין",
+                    "USED": "נוצל",
+                    "EXPIRED": "פג תוקף"
+                }
+            }
+        },
+        "PendingApproval": {
+            "title": "החשבון ממתין לאישור",
+            "description": "ההרשמה שלך התקבלה בהצלחה! צוות הקונסרבטוריון בוחן כעת את פרטיך.",
+            "steps": {
+                "title": "מה קורה עכשיו?",
+                "review": "צוות המנהלה בודק את טופס הרישום שלך.",
+                "contact": "במידת הצורך, ניצור איתך קשר להשלמת פרטים.",
+                "notify": "תקבל הודעת אישור ברגע שהחשבון יופעל ותוכל להיכנס ללוח הבקרה."
+            },
+            "support": "זקוק לעזרה? צור קשר עם המשרד בטלפון או במייל.",
+            "backToSite": "חזרה לאתר",
+            "logout": "התנתק"
+        }
+    },
+    "Sidebar": {
+        "dashboard": "לוח בקרה",
+        "myForms": "הטפסים שלי",
+        "newForm": "טופס חדש",
+        "approvals": "אישורים",
+        "library": "ספרייה",
+        "users": "משתמשים",
+        "ministry": "אישורי משרד החינוך",
+        "myFamily": "המשפחה שלי",
+        "myProfile": "הפרופיל שלי",
+        "teacherProfile": "פרופיל מורה",
+        "performanceProfile": "פרופיל הופעות",
+        "myAvailability": "הזמינות שלי",
+        "myReports": "הדוחות שלי",
+        "payroll": "תלושי שכר",
+        "schedule": "מערכת שעות",
+        "practiceLog": "יומן אימונים",
+        "progress": "התקדמות",
+        "makeups": "שיעורי השלמה",
+        "aiAssistant": "עוזר תיאום AI",
+        "messages": "הודעות",
+        "formsAndDocs": "טפסים ומסמכים",
+        "notifications": "התראות",
+        "billing": "חיובים ותשלומים",
+        "userManagement": "ניהול משתמשים",
+        "newRegistration": "רישום חדש",
+        "masterSchedule": "מערכת ראשית",
+        "events": "אירועים",
+        "performances": "ניהול הופעות",
+        "rentals": "השאלות כלים",
+        "waitlists": "רשימות המתנה",
+        "substitute": "ניהול מחליפים",
+        "teacherPayroll": "שכר מורים",
+        "announcements": "הכרזות",
+        "reportsAnalytics": "דוחות ואנליטיקה",
+        "formBuilder": "בנאי טפסים",
+        "aiAgents": "סוכני AI",
+        "ministryExport": "ייצוא למשה\"ח",
+        "settings": "הגדרות",
+        "help": "עזרה",
+        "logout": "התנתקות",
+        "logo": "הַרמוֹנְיָה",
+        "noNotifications": "אין התראות חדשות",
+        "viewAll": "הצג את כל ההתראות"
+    }
+}

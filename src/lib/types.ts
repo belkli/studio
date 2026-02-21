@@ -18,23 +18,23 @@ export type Notification = {
 // From SDD-07
 export type Channel = 'IN_APP' | 'EMAIL' | 'SMS' | 'WHATSAPP';
 
-export type NotificationType = 
-    | 'lessonReminders' 
-    | 'lessonCancellation' 
-    | 'makeupCredits' 
-    | 'paymentDue' 
-    | 'formStatusChanges' 
-    | 'teacherMessages' 
-    | 'systemAnnouncements';
+export type NotificationType =
+  | 'lessonReminders'
+  | 'lessonCancellation'
+  | 'makeupCredits'
+  | 'paymentDue'
+  | 'formStatusChanges'
+  | 'teacherMessages'
+  | 'systemAnnouncements';
 
 export type NotificationPreferences = {
-    preferences: Record<NotificationType, Channel[]>;
-    quietHours: {
-        enabled: boolean;
-        startTime: string; // "HH:mm"
-        endTime: string; // "HH:mm"
-    };
-    language: 'HE' | 'EN' | 'AR' | 'RU';
+  preferences: Record<NotificationType, Channel[]>;
+  quietHours: {
+    enabled: boolean;
+    startTime: string; // "HH:mm"
+    endTime: string; // "HH:mm"
+  };
+  language: 'HE' | 'EN' | 'AR' | 'RU';
 }
 
 // From SDD-03
@@ -125,7 +125,7 @@ export type User = {
   parentId?: string;    // Link to parent user
   childIds?: string[];  // Link to child users
   students?: string[]; // For teachers/admins to list their students by ID
-  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' |'י' | 'יא' | 'יב';
+  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' | 'י' | 'יא' | 'יב';
   // Teacher-specific fields from SDD-03 & SDD-13
   bio?: string;
   specialties?: TeacherSpecialty[];
@@ -134,9 +134,9 @@ export type User = {
   maxStudents?: number;
   employmentType?: 'EMPLOYEE' | 'FREELANCE';
   ratePerDuration?: {
-      '30': number;
-      '45': number;
-      '60': number;
+    '30': number;
+    '45': number;
+    '60': number;
   };
   performanceProfile?: PerformanceProfile;
   // Student-specific fields from SDD-09
@@ -145,6 +145,7 @@ export type User = {
   notificationPreferences?: NotificationPreferences;
   achievements?: Achievement[];
   hasSeenWalkthrough?: boolean;
+  isRegistered?: boolean;
 };
 
 export type PricingConfig = {
@@ -244,7 +245,7 @@ export type FormSubmission = {
 
   studentId: string;
   studentName: string;
-  
+
   applicantDetails?: RecitalApplicantDetails;
   schoolDetails?: SchoolDetails;
   instrumentDetails?: MainInstrumentDetails;
@@ -265,11 +266,11 @@ export type FormSubmission = {
   managerNotes?: string;
   calculatedPrice?: number;
   paymentStatus?: 'pending' | 'paid' | 'waived';
-  
+
   signatureUrl?: string;
   signedBy?: string;
   signedAt?: string;
-  
+
   formData?: Record<string, any>;
   formTemplateId?: string;
 
@@ -278,12 +279,33 @@ export type FormSubmission = {
   examType?: string;
   preferredExamDateRange?: string;
   teacherDeclaration?: boolean;
+  instrument?: string;
 };
 
 // --- New Types from SDDs ---
+export type MakeupCredit = {
+  id: string;
+  sourceLessonId: string;
+  studentId: string;
+  grantedAt: string; // ISO Timestamp
+  expiresAt: string; // ISO Timestamp
+  status: 'AVAILABLE' | 'USED' | 'EXPIRED';
+  reason: 'TEACHER_CANCELLED' | 'ADMIN_CANCELLED' | 'STUDENT_CANCELLED_NOTICED';
+};
+
 export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' | 'OTHER';
 
 export type LessonType = 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
+
+export type EmptySlot = {
+  id: string;
+  teacherName: string;
+  instrument: string;
+  startTime: string; // ISO Timestamp
+  durationMinutes: number;
+  promotionalPrice: number;
+  basePrice: number;
+};
 export type SlotStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED_STUDENT_NOTICED' | 'CANCELLED_STUDENT_NO_NOTICE' | 'CANCELLED_TEACHER' | 'CANCELLED_CONSERVATORIUM' | 'NO_SHOW_STUDENT' | 'NO_SHOW_TEACHER';
 
 export type LessonSlot = {
@@ -341,15 +363,15 @@ export type Invoice = {
 };
 
 export type PracticeLog = {
-    id: string;
-    studentId: string;
-    teacherId?: string;
-    date: string; // ISO Date
-    durationMinutes: number;
-    pieces: { title: string; focusArea?: string }[];
-    mood: 'GREAT' | 'OKAY' | 'HARD';
-    studentNote?: string;
-    teacherComment?: string;
+  id: string;
+  studentId: string;
+  teacherId?: string;
+  date: string; // ISO Date
+  durationMinutes: number;
+  pieces: { title: string; focusArea?: string }[];
+  mood: 'GREAT' | 'OKAY' | 'HARD';
+  studentNote?: string;
+  teacherComment?: string;
 };
 
 export type VideoFeedback = {
@@ -371,26 +393,26 @@ export type PracticeVideo = {
 
 
 export type LessonNote = {
-    id: string;
-    lessonSlotId: string;
-    teacherId: string;
-    studentId: string;
-    summary: string;
-    homeworkAssignments: string[];
-    isSharedWithStudent: boolean;
-    isSharedWithParent: boolean;
-    createdAt: string; // ISO Timestamp
+  id: string;
+  lessonSlotId: string;
+  teacherId: string;
+  studentId: string;
+  summary: string;
+  homeworkAssignments: string[];
+  isSharedWithStudent: boolean;
+  isSharedWithParent: boolean;
+  createdAt: string; // ISO Timestamp
 };
 
 export type RepertoireStatus = 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
 
 export type AssignedRepertoire = {
-    id: string;
-    studentId: string;
-    compositionId: string;
-    status: RepertoireStatus;
-    assignedAt: string; // ISO Timestamp
-    completedAt?: string; // ISO Timestamp
+  id: string;
+  studentId: string;
+  compositionId: string;
+  status: RepertoireStatus;
+  assignedAt: string; // ISO Timestamp
+  completedAt?: string; // ISO Timestamp
 };
 
 export type Message = {
@@ -438,38 +460,38 @@ export type Room = {
 export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
 
 export type PayrollSummary = {
-    id: string;
-    teacherId: string;
-    teacherName: string;
-    periodStart: string; // ISO Date string
-    periodEnd: string; // ISO Date string
-    completedLessons: {
-        slotId: string;
-        studentId: string;
-        studentName: string;
-        durationMinutes: number;
-        rate: number;
-        subtotal: number;
-        completedAt: string; // ISO Timestamp
-    }[];
-    totalHours: number;
-    grossPay: number;
-    status: PayrollStatus;
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  periodStart: string; // ISO Date string
+  periodEnd: string; // ISO Date string
+  completedLessons: {
+    slotId: string;
+    studentId: string;
+    studentName: string;
+    durationMinutes: number;
+    rate: number;
+    subtotal: number;
+    completedAt: string; // ISO Timestamp
+  }[];
+  totalHours: number;
+  grossPay: number;
+  status: PayrollStatus;
 };
 
 export type WaitlistStatus = 'WAITING' | 'OFFERED' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED';
 
 export type WaitlistEntry = {
-    id: string;
-    studentId: string;
-    teacherId: string;
-    conservatoriumId: string;
-    instrument: string;
-    preferredDays: DayOfWeek[];
-    preferredTimes: TimeRange[];
-    joinedAt: string; // ISO Timestamp
-    notifiedAt?: string; // ISO Timestamp
-    status: WaitlistStatus;
+  id: string;
+  studentId: string;
+  teacherId: string;
+  conservatoriumId: string;
+  instrument: string;
+  preferredDays: DayOfWeek[];
+  preferredTimes: TimeRange[];
+  joinedAt: string; // ISO Timestamp
+  notifiedAt?: string; // ISO Timestamp
+  status: WaitlistStatus;
 };
 
 export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'dropdown' | 'checkbox';
@@ -484,10 +506,10 @@ export type FormFieldDefinition = {
 };
 
 export type WorkflowStepDefinition = {
-    id: string;
-    stepIndex: number;
-    roleName: string; // e.g., "Teacher Approval"
-    requiredRole: UserRole;
+  id: string;
+  stepIndex: number;
+  roleName: string; // e.g., "Teacher Approval"
+  requiredRole: UserRole;
 };
 
 export type FormTemplate = {

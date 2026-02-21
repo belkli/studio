@@ -17,7 +17,7 @@ interface StepperProps {
 export function Stepper({ steps, currentStep }: StepperProps) {
   return (
     <nav aria-label="Progress">
-      <ol role="list" className="flex items-center">
+      <ol role="list" className="flex items-center" dir="rtl">
         {steps.map((step, stepIdx) => (
           <li
             key={step.id}
@@ -44,7 +44,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                   className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background"
                   aria-current="step"
                 >
-                    <step.icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                  <step.icon className="h-5 w-5 text-primary" aria-hidden="true" />
                   <span className="sr-only">{step.title}</span>
                 </div>
               </>
@@ -56,12 +56,12 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <div
                   className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-background hover:border-gray-400"
                 >
-                    <step.icon className="h-5 w-5 text-gray-500 group-hover:text-gray-900" aria-hidden="true" />
+                  <step.icon className="h-5 w-5 text-gray-500 group-hover:text-gray-900" aria-hidden="true" />
                   <span className="sr-only">{step.title}</span>
                 </div>
               </>
             )}
-             <p className="absolute -bottom-6 w-max right-1/2 translate-x-1/2 text-center text-xs mt-2 font-medium text-muted-foreground">{step.title}</p>
+            <p className="absolute -bottom-6 w-max right-1/2 translate-x-1/2 text-center text-xs mt-2 font-medium text-muted-foreground">{step.title}</p>
           </li>
         ))}
       </ol>

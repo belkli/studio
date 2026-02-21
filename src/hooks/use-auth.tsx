@@ -3,63 +3,63 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { 
-    mockUsers as initialUsers, 
-    mockFormSubmissions as initialForms, 
-    conservatoriums as initialConservatoriums, 
-    mockInvoices as initialInvoices,
-    mockLessons as initialLessons,
-    mockPracticeLogs as initialPracticeLogs,
-    mockAssignedRepertoire as initialRepertoire,
-    mockLessonNotes as initialNotes,
-    mockMessageThreads as initialMessageThreads,
-    mockPackages as initialPackages,
-    mockProgressReports as initialProgressReports,
-    mockAnnouncements as initialAnnouncements,
-    mockPracticeVideos as initialPracticeVideos,
-    compositions as initialCompositions,
-    mockWaitlist as initialWaitlist,
-    mockFormTemplates as initialFormTemplates,
-    mockAuditLog as initialAuditLog,
-    mockEvents as initialEvents,
-    mockInstrumentInventory as initialInstrumentInventory,
-    mockPerformanceBookings as initialPerformanceBookings,
-    type User, 
-    type FormSubmission,
-    type Notification,
-    type Conservatorium,
-    type Package,
-    type LessonSlot,
-    type Invoice,
-    type PracticeLog,
-    type Composition,
-    type AssignedRepertoire,
-    type LessonNote,
-    type RepertoireStatus,
-    type MessageThread,
-    type ProgressReport,
-    type Announcement,
-    type Room,
-    type PayrollSummary,
-    type PayrollStatus,
-    type PracticeVideo,
-    type VideoFeedback,
-    type WaitlistEntry,
-    type WaitlistStatus,
-    type FormTemplate,
-    type NotificationPreferences,
-    type SlotStatus,
-    type AuditLogEntry,
-    type Channel,
-    type Achievement,
-    type AchievementType,
-    type EventProduction,
-    type EventProductionStatus,
-    type PerformanceSlot,
-    type InstrumentInventory,
-    type InstrumentCondition,
-    type PerformanceBooking,
-    type PerformanceBookingStatus,
+import {
+  mockUsers as initialUsers,
+  mockFormSubmissions as initialForms,
+  conservatoriums as initialConservatoriums,
+  mockInvoices as initialInvoices,
+  mockLessons as initialLessons,
+  mockPracticeLogs as initialPracticeLogs,
+  mockAssignedRepertoire as initialRepertoire,
+  mockLessonNotes as initialNotes,
+  mockMessageThreads as initialMessageThreads,
+  mockPackages as initialPackages,
+  mockProgressReports as initialProgressReports,
+  mockAnnouncements as initialAnnouncements,
+  mockPracticeVideos as initialPracticeVideos,
+  compositions as initialCompositions,
+  mockWaitlist as initialWaitlist,
+  mockFormTemplates as initialFormTemplates,
+  mockAuditLog as initialAuditLog,
+  mockEvents as initialEvents,
+  mockInstrumentInventory as initialInstrumentInventory,
+  mockPerformanceBookings as initialPerformanceBookings,
+  type User,
+  type FormSubmission,
+  type Notification,
+  type Conservatorium,
+  type Package,
+  type LessonSlot,
+  type Invoice,
+  type PracticeLog,
+  type Composition,
+  type AssignedRepertoire,
+  type LessonNote,
+  type RepertoireStatus,
+  type MessageThread,
+  type ProgressReport,
+  type Announcement,
+  type Room,
+  type PayrollSummary,
+  type PayrollStatus,
+  type PracticeVideo,
+  type VideoFeedback,
+  type WaitlistEntry,
+  type WaitlistStatus,
+  type FormTemplate,
+  type NotificationPreferences,
+  type SlotStatus,
+  type AuditLogEntry,
+  type Channel,
+  type Achievement,
+  type AchievementType,
+  type EventProduction,
+  type EventProductionStatus,
+  type PerformanceSlot,
+  type InstrumentInventory,
+  type InstrumentCondition,
+  type PerformanceBooking,
+  type PerformanceBookingStatus,
 } from '@/lib/data';
 import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays, addHours, startOfDay, endOfDay } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -110,6 +110,7 @@ interface AuthContextType {
   mockAnnouncements: Announcement[];
   addAnnouncement: (announcement: Partial<Announcement>) => void;
   getMakeupCreditBalance: (studentIds: string[]) => number;
+  getMakeupCreditsDetail: (studentIds: string[]) => MakeupCredit[];
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
   mockPracticeVideos: PracticeVideo[];
@@ -155,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<EventProduction[]>(initialEvents);
   const [instrumentInventory, setInstrumentInventory] = useState<InstrumentInventory[]>(initialInstrumentInventory);
   const [performanceBookings, setPerformanceBookings] = useState<PerformanceBooking[]>(initialPerformanceBookings);
+  const [packages, setPackages] = useState<Package[]>(initialPackages);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
@@ -172,16 +174,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       read: false,
       timestamp: new Date().toISOString(),
     };
-    
-    setUsers(prevUsers => prevUsers.map(u => 
-        u.id === userId
-            ? { ...u, notifications: [newNotification, ...(u.notifications || [])]}
-            : u
+
+    setUsers(prevUsers => prevUsers.map(u =>
+      u.id === userId
+        ? { ...u, notifications: [newNotification, ...(u.notifications || [])] }
+        : u
     ));
-    
-    setUser(prevUser => (prevUser && prevUser.id === userId) 
-        ? { ...prevUser, notifications: [newNotification, ...(prevUser.notifications || [])]} 
-        : prevUser
+
+    setUser(prevUser => (prevUser && prevUser.id === userId)
+      ? { ...prevUser, notifications: [newNotification, ...(prevUser.notifications || [])] }
+      : prevUser
     );
 
     const newLogEntry: AuditLogEntry = {
@@ -199,178 +201,189 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkAndNotify = (userId: string, notificationKey: string, createNotification: () => void) => {
-        const key = `${userId}-${notificationKey}`;
-        if (!notificationsSentOnLoad.current.has(key)) {
-            createNotification();
-            notificationsSentOnLoad.current.add(key);
-        }
+      const key = `${userId}-${notificationKey}`;
+      if (!notificationsSentOnLoad.current.has(key)) {
+        createNotification();
+        notificationsSentOnLoad.current.add(key);
+      }
     };
 
     const now = new Date();
 
     // Check for expiring packages
     initialUsers.forEach(u => {
-        const studentPackage = initialPackages.find(p => p.id === u.packageId);
-        if (studentPackage && studentPackage.validUntil) {
-            const expiryDate = new Date(studentPackage.validUntil);
-            const daysUntilExpiry = differenceInDays(expiryDate, now);
+      const studentPackage = initialPackages.find(p => p.id === u.packageId);
+      if (studentPackage && studentPackage.validUntil) {
+        const expiryDate = new Date(studentPackage.validUntil);
+        const daysUntilExpiry = differenceInDays(expiryDate, now);
 
-            if (daysUntilExpiry > 0 && daysUntilExpiry <= 14) {
-                const userToNotifyId = u.parentId || u.id;
-                checkAndNotify(userToNotifyId, `expiring-package-${u.id}`, () => {
-                    addNotificationAndLog(
-                        userToNotifyId,
-                        'חבילתך עומדת לפוג!',
-                        `נותרו רק ${daysUntilExpiry} ימים עד תום החבילה "${studentPackage.title}".`,
-                        '/dashboard/billing'
-                    );
-                });
-            }
+        if (daysUntilExpiry > 0 && daysUntilExpiry <= 14) {
+          const userToNotifyId = u.parentId || u.id;
+          checkAndNotify(userToNotifyId, `expiring-package-${u.id}`, () => {
+            addNotificationAndLog(
+              userToNotifyId,
+              'חבילתך עומדת לפוג!',
+              `נותרו רק ${daysUntilExpiry} ימים עד תום החבילה "${studentPackage.title}".`,
+              '/dashboard/billing'
+            );
+          });
         }
+      }
     });
 
     // Check for overdue/new invoices
     initialInvoices.forEach(inv => {
-        if (inv.status === 'SENT') {
-            checkAndNotify(inv.payerId, `new-invoice-${inv.id}`, () => {
-                addNotificationAndLog(
-                    inv.payerId,
-                    'חשבונית חדשה הופקה',
-                    `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ זמינה לצפייה ותשלום.`,
-                    '/dashboard/billing'
-                );
-            });
-        }
+      if (inv.status === 'SENT') {
+        checkAndNotify(inv.payerId, `new-invoice-${inv.id}`, () => {
+          addNotificationAndLog(
+            inv.payerId,
+            'חשבונית חדשה הופקה',
+            `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ זמינה לצפייה ותשלום.`,
+            '/dashboard/billing'
+          );
+        });
+      }
 
-        if (inv.status === 'OVERDUE') {
-            checkAndNotify(inv.payerId, `overdue-invoice-${inv.id}`, () => {
-                addNotificationAndLog(
-                    inv.payerId,
-                    'תשלום נדרש: חשבונית בפיגור',
-                    `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
-                    '/dashboard/billing'
-                );
-            });
-        }
+      if (inv.status === 'OVERDUE') {
+        checkAndNotify(inv.payerId, `overdue-invoice-${inv.id}`, () => {
+          addNotificationAndLog(
+            inv.payerId,
+            'תשלום נדרש: חשבונית בפיגור',
+            `חשבונית מספר ${inv.invoiceNumber} על סך ${inv.total}₪ לא שולמה.`,
+            '/dashboard/billing'
+          );
+        });
+      }
     });
-    
+
     // Check for expiring makeup credits
     const studentUsers = initialUsers.filter(u => u.role === 'student' && u.approved);
     studentUsers.forEach(student => {
-        const studentLessons = initialLessons.filter(l => l.studentId === student.id);
-        
-        const grantedCredits = studentLessons.filter(l => 
-            ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
-        ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      const studentLessons = initialLessons.filter(l => l.studentId === student.id);
 
-        const usedCredits = studentLessons.filter(l => l.type === 'MAKEUP').length;
-        const balance = grantedCredits.length - usedCredits;
+      const grantedCredits = studentLessons.filter(l =>
+        ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM', 'CANCELLED_STUDENT_NOTICED'].includes(l.status)
+      ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
-        if (balance > 0) {
-            const earliestCreditLesson = grantedCredits[usedCredits];
-            const MAKEUP_EXPIRY_DAYS = 60;
-            const EXPIRING_SOON_DAYS = 7;
-            const expiryDate = addDays(new Date(earliestCreditLesson.createdAt), MAKEUP_EXPIRY_DAYS);
-            const daysUntilExpiry = differenceInDays(expiryDate, now);
+      const usedCredits = studentLessons.filter(l => l.type === 'MAKEUP').length;
+      const balance = grantedCredits.length - usedCredits;
 
-            if (daysUntilExpiry > 0 && daysUntilExpiry <= EXPIRING_SOON_DAYS) {
-                const userToNotifyId = student.parentId || student.id;
-                checkAndNotify(userToNotifyId, `expiring-makeup-${student.id}`, () => {
-                    addNotificationAndLog(
-                        userToNotifyId,
-                        'זיכוי לשיעור השלמה עומד לפוג',
-                        `יתרת שיעורי ההשלמה שלך (${balance}) תפוג בעוד ${daysUntilExpiry} ימים. מהר/י לקבוע שיעור!`,
-                        '/dashboard/makeups'
-                    );
-                });
-            }
+      if (balance > 0) {
+        const earliestCreditLesson = grantedCredits[usedCredits];
+        const MAKEUP_EXPIRY_DAYS = 60;
+        const EXPIRING_SOON_DAYS = 7;
+        const expiryDate = addDays(new Date(earliestCreditLesson.createdAt), MAKEUP_EXPIRY_DAYS);
+        const daysUntilExpiry = differenceInDays(expiryDate, now);
+
+        if (daysUntilExpiry > 0 && daysUntilExpiry <= EXPIRING_SOON_DAYS) {
+          const userToNotifyId = student.parentId || student.id;
+          checkAndNotify(userToNotifyId, `expiring-makeup-${student.id}`, () => {
+            addNotificationAndLog(
+              userToNotifyId,
+              'זיכוי לשיעור השלמה עומד לפוג',
+              `יתרת שיעורי ההשלמה שלך (${balance}) תפוג בעוד ${daysUntilExpiry} ימים. מהר/י לקבוע שיעור!`,
+              '/dashboard/makeups'
+            );
+          });
         }
+      }
     });
-    
+
     // Check for 24-hour lesson reminders
     const tomorrow = addDays(now, 1);
     const startOfTomorrow = startOfDay(tomorrow);
     const endOfTomorrow = endOfDay(tomorrow);
-    
-    initialLessons.forEach(lesson => {
-        const lessonTime = new Date(lesson.startTime);
-        if (lesson.status === 'SCHEDULED' && isWithinInterval(lessonTime, { start: startOfTomorrow, end: endOfTomorrow })) {
-            const student = initialUsers.find(u => u.id === lesson.studentId);
-            const teacher = initialUsers.find(u => u.id === lesson.teacherId);
-            if (student && teacher) {
-                // Notify student/parent
-                const userToNotifyId = student.parentId || student.id;
-                checkAndNotify(userToNotifyId, `reminder-student-${lesson.id}`, () => {
-                    addNotificationAndLog(
-                        userToNotifyId,
-                        'תזכורת: שיעור מחר',
-                        `שיעור ${lesson.instrument} עם ${teacher.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
-                        '/dashboard/schedule'
-                    );
-                });
 
-                // Notify teacher
-                checkAndNotify(teacher.id, `reminder-teacher-${lesson.id}`, () => {
-                     addNotificationAndLog(
-                        teacher.id,
-                        'תזכורת: שיעור מחר',
-                        `שיעור ${lesson.instrument} עם ${student.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
-                        '/dashboard/schedule'
-                    );
-                });
-            }
+    initialLessons.forEach(lesson => {
+      const lessonTime = new Date(lesson.startTime);
+      if (lesson.status === 'SCHEDULED' && isWithinInterval(lessonTime, { start: startOfTomorrow, end: endOfTomorrow })) {
+        const student = initialUsers.find(u => u.id === lesson.studentId);
+        const teacher = initialUsers.find(u => u.id === lesson.teacherId);
+        if (student && teacher) {
+          // Notify student/parent
+          const userToNotifyId = student.parentId || student.id;
+          checkAndNotify(userToNotifyId, `reminder-student-${lesson.id}`, () => {
+            addNotificationAndLog(
+              userToNotifyId,
+              'תזכורת: שיעור מחר',
+              `שיעור ${lesson.instrument} עם ${teacher.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
+              '/dashboard/schedule'
+            );
+          });
+
+          // Notify teacher
+          checkAndNotify(teacher.id, `reminder-teacher-${lesson.id}`, () => {
+            addNotificationAndLog(
+              teacher.id,
+              'תזכורת: שיעור מחר',
+              `שיעור ${lesson.instrument} עם ${student.name} מתוכנן למחר בשעה ${format(lessonTime, 'HH:mm')}.`,
+              '/dashboard/schedule'
+            );
+          });
         }
+      }
     });
 
   }, [addNotificationAndLog]);
 
   useEffect(() => {
-    const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
-    const now = new Date();
-    const periodStart = startOfMonth(now);
-    const periodEnd = endOfMonth(now);
+    try {
+      const teachers = users.filter(u => u.role === 'teacher' && u.approved && u.ratePerDuration);
+      const now = new Date();
+      const periodStart = startOfMonth(now);
+      const periodEnd = endOfMonth(now);
 
-    const generatedPayrolls = teachers.map(teacher => {
-        const completedLessons = lessons.filter(l => 
-            l.teacherId === teacher.id && 
-            l.status === 'COMPLETED' &&
-            l.attendanceMarkedAt &&
-            isWithinInterval(new Date(l.attendanceMarkedAt), { start: periodStart, end: periodEnd })
+      const generatedPayrolls = teachers.map(teacher => {
+        const completedLessons = lessons.filter(l =>
+          l.teacherId === teacher.id &&
+          l.status === 'COMPLETED' &&
+          l.attendanceMarkedAt &&
+          isWithinInterval(new Date(l.attendanceMarkedAt), { start: periodStart, end: periodEnd })
         );
 
         let grossPay = 0;
         let totalMinutes = 0;
 
         const lessonDetails = completedLessons.map(lesson => {
-            const rate = teacher.ratePerDuration?.[lesson.durationMinutes] || 0;
-            const student = users.find(u => u.id === lesson.studentId);
-            grossPay += rate;
-            totalMinutes += lesson.durationMinutes;
-            return {
-                slotId: lesson.id,
-                studentId: lesson.studentId,
-                studentName: student?.name || 'Unknown',
-                durationMinutes: lesson.durationMinutes,
-                rate: rate, // this is hourly rate, we need to adjust
-                subtotal: rate,
-                completedAt: lesson.attendanceMarkedAt!,
-            }
+          const rate = teacher.ratePerDuration?.[lesson.durationMinutes] || 0;
+          const student = users.find(u => u.id === lesson.studentId);
+          grossPay += rate;
+          totalMinutes += lesson.durationMinutes;
+          return {
+            slotId: lesson.id,
+            studentId: lesson.studentId,
+            studentName: student?.name || 'Unknown',
+            durationMinutes: lesson.durationMinutes,
+            rate: rate, // this is hourly rate, we need to adjust
+            subtotal: rate,
+            completedAt: lesson.attendanceMarkedAt!,
+          }
         });
-        
-        return {
-            id: `payroll-${teacher.id}-${now.toISOString().slice(0, 7)}`,
-            teacherId: teacher.id,
-            teacherName: teacher.name,
-            periodStart: periodStart.toISOString(),
-            periodEnd: periodEnd.toISOString(),
-            completedLessons: lessonDetails,
-            totalHours: totalMinutes / 60,
-            grossPay,
-            status: 'DRAFT' as PayrollStatus,
-        }
-    });
 
-    setPayrolls(generatedPayrolls);
+        return {
+          id: `payroll-${teacher.id}-${now.toISOString().slice(0, 7)}`,
+          teacherId: teacher.id,
+          teacherName: teacher.name,
+          periodStart: periodStart.toISOString(),
+          periodEnd: periodEnd.toISOString(),
+          completedLessons: lessonDetails,
+          totalHours: totalMinutes / 60,
+          grossPay,
+          status: 'DRAFT' as PayrollStatus,
+        }
+      });
+
+      // Only update if the length or total gross pay changed to avoid infinite re-renders or unnecessary state updates
+      setPayrolls(prev => {
+        if (prev.length !== generatedPayrolls.length) return generatedPayrolls;
+        const prevTotal = prev.reduce((sum, p) => sum + p.grossPay, 0);
+        const newTotal = generatedPayrolls.reduce((sum, p) => sum + p.grossPay, 0);
+        return prevTotal !== newTotal ? generatedPayrolls : prev;
+      });
+
+    } catch (error) {
+      console.error("Error generating payrolls:", error);
+    }
   }, [users, lessons]);
 
   const updatePayrollStatus = (payrollId: string, status: PayrollStatus) => {
@@ -400,17 +413,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadUserFromStorage();
   }, [loadUserFromStorage]);
 
-  // Redirect to login if no user and not on a public page
+  // Redirect logic: login, pending-approval, and dashboard
   useEffect(() => {
-    const publicPages = ['/login', '/register', '/', '/available-now', '/musicians', '/donate'];
-    if (!isLoading && !user && !publicPages.some(page => pathname.startsWith(page))) {
-        router.push('/login');
+    const publicPages = ['/login', '/register', '/', '/available-now', '/musicians', '/donate', '/pending-approval'];
+    const isPublicPage = publicPages.some(page => pathname.startsWith(page));
+
+    if (!isLoading) {
+      if (!user) {
+        if (!isPublicPage) {
+          router.push('/login');
+        }
+      } else if (!user.approved) {
+        if (pathname !== '/pending-approval') {
+          router.push('/pending-approval');
+        }
+      } else if (user.approved && pathname === '/pending-approval') {
+        router.push('/dashboard');
+      }
     }
   }, [user, isLoading, pathname, router]);
-  
+
   const login = (email: string): LoginResult => {
     const foundUser = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
-    
+
     if (!foundUser) {
       return { user: null, status: 'not_found' };
     }
@@ -430,7 +455,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     router.push('/login');
   };
-  
+
   const approveUser = (userId: string) => {
     setUsers(prevUsers => prevUsers.map(u => u.id === userId ? { ...u, approved: true, rejectionReason: undefined } : u));
   };
@@ -448,27 +473,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const addUser = (newUser: Partial<User>, isApproved = false): User => {
     const fullNewUser: User = {
-        id: `user-${Date.now()}`,
-        approved: isApproved,
-        role: 'student', // Default role
-        conservatoriumName: '', // Default
-        notifications: [],
-        ...newUser,
+      id: `user-${Date.now()}`,
+      approved: isApproved,
+      role: 'student', // Default role
+      conservatoriumName: '', // Default
+      notifications: [],
+      ...newUser,
     } as User;
     setUsers(prevUsers => [...prevUsers, fullNewUser]);
     return fullNewUser;
-};
-  
+  };
+
   const updateForm = (updatedForm: FormSubmission) => {
     const formIndex = forms.findIndex(f => f.id === updatedForm.id);
     const isNew = formIndex === -1;
-    
+
     if (isNew) {
       setForms(prevForms => [updatedForm, ...prevForms]);
     } else {
       setForms(prevForms => prevForms.map(f => (f.id === updatedForm.id ? { ...f, ...updatedForm } : f)));
     }
-    
+
     if (isNew) {
       if (updatedForm.status === 'ממתין לאישור מורה') {
         const student = users.find(u => u.id === updatedForm.studentId);
@@ -484,7 +509,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       addNotificationAndLog(userToNotifyId, `סטטוס טופס עודכן: ${updatedForm.formType}`, `הסטטוס של הטופס שונה ל: ${updatedForm.status}.`, `/dashboard/forms/${updatedForm.id}`);
     }
   };
-  
+
   const newFeaturesEnabled = React.useMemo(() => {
     if (!user) return false;
     const userConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
@@ -497,14 +522,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
     setAssignedRepertoire(prev => prev.map(rep => {
-        if (rep.id === repertoireId) {
-            const updatedRep: AssignedRepertoire = { ...rep, status };
-            if (status === 'COMPLETED' && !rep.completedAt) {
-                updatedRep.completedAt = new Date().toISOString();
-            }
-            return updatedRep;
+      if (rep.id === repertoireId) {
+        const updatedRep: AssignedRepertoire = { ...rep, status };
+        if (status === 'COMPLETED' && !rep.completedAt) {
+          updatedRep.completedAt = new Date().toISOString();
         }
-        return rep;
+        return updatedRep;
+      }
+      return rep;
     }));
   };
 
@@ -520,21 +545,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } as LessonNote;
     setLessonNotes(prev => [newNote, ...prev]);
   };
-  
+
   const addMessage = (threadId: string, senderId: string, body: string) => {
-      setMessageThreads(prev => prev.map(thread => {
-          if (thread.id === threadId) {
-              return {
-                  ...thread,
-                  messages: [...thread.messages, {
-                      senderId,
-                      body,
-                      sentAt: new Date().toISOString(),
-                  }]
-              }
-          }
-          return thread;
-      }))
+    setMessageThreads(prev => prev.map(thread => {
+      if (thread.id === threadId) {
+        return {
+          ...thread,
+          messages: [...thread.messages, {
+            senderId,
+            body,
+            sentAt: new Date().toISOString(),
+          }]
+        }
+      }
+      return thread;
+    }))
   }
 
   const updateUserPracticeGoal = (studentId: string, goal: number) => {
@@ -543,43 +568,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(prev => prev ? ({ ...prev, weeklyPracticeGoal: goal }) : null);
     }
   };
-  
+
   const addProgressReport = (report: Partial<ProgressReport>) => {
-      const newReport = {
-          id: `report-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          ...report,
-      } as ProgressReport;
-      setProgressReports(prev => [newReport, ...prev]);
+    const newReport = {
+      id: `report-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      ...report,
+    } as ProgressReport;
+    setProgressReports(prev => [newReport, ...prev]);
   };
-  
+
   const addLesson = (newLesson: Partial<LessonSlot>) => {
     const fullLesson: LessonSlot = {
-        id: `lesson-${Date.now()}`,
-        conservatoriumId: user!.conservatoriumId,
-        type: 'ADHOC',
-        status: 'SCHEDULED',
-        isVirtual: false,
-        isCreditConsumed: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        ...newLesson,
+      id: `lesson-${Date.now()}`,
+      conservatoriumId: user!.conservatoriumId,
+      type: 'ADHOC',
+      status: 'SCHEDULED',
+      isVirtual: false,
+      isCreditConsumed: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...newLesson,
     } as LessonSlot;
+
     setLessons(prev => [...prev, fullLesson]);
 
-    const bookingSource = newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF');
-    if (bookingSource === 'ADMIN' || bookingSource === 'TEACHER') {
-        const student = users.find(u => u.id === fullLesson.studentId);
-        const teacher = users.find(u => u.id === fullLesson.teacherId);
-        if (student && teacher) {
-            const userToNotifyId = student.parentId || student.id;
-            addNotificationAndLog(
-                userToNotifyId,
-                'שיעור חדש נקבע עבורך',
-                `המורה ${teacher.name} קבע/ה עבורך שיעור ${fullLesson.instrument} ביום ${format(new Date(fullLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(fullLesson.startTime), 'HH:mm')}.`,
-                '/dashboard/schedule'
-            );
+    // Handle credit consumption if applicable
+    if (fullLesson.studentId) {
+      setPackages(prevPackages => prevPackages.map(pkg => {
+        if (pkg.studentId === fullLesson.studentId && pkg.totalCredits && pkg.usedCredits !== undefined) {
+          if (pkg.usedCredits < pkg.totalCredits) {
+            return { ...pkg, usedCredits: pkg.usedCredits + 1 };
+          }
         }
+        return pkg;
+      }));
+    }
+
+    const bookingSource = newLesson.bookingSource || (user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF');
+    const student = users.find(u => u.id === fullLesson.studentId);
+    const teacher = users.find(u => u.id === fullLesson.teacherId);
+
+    if (student && teacher) {
+      if (bookingSource === 'ADMIN' || bookingSource === 'TEACHER') {
+        const userToNotifyId = student.parentId || student.id;
+        addNotificationAndLog(
+          userToNotifyId,
+          'שיעור חדש נקבע עבורך',
+          `המורה ${teacher.name} קבע/ה עבורך שיעור ${fullLesson.instrument} ביום ${format(new Date(fullLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(fullLesson.startTime), 'HH:mm')}.`,
+          '/dashboard/schedule'
+        );
+      } else {
+        // Booked by Student/Parent
+        // Notify Teacher
+        addNotificationAndLog(
+          teacher.id,
+          'שיעור חדש הוזמן',
+          `${student.name} הזמין/ה שיעור ${fullLesson.instrument} ביום ${format(new Date(fullLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(fullLesson.startTime), 'HH:mm')}.`,
+          '/dashboard/schedule'
+        );
+
+        // Notify Parent/Student (confirmation)
+        const userToNotifyId = student.parentId || student.id;
+        addNotificationAndLog(
+          userToNotifyId,
+          'השיעור נקבע בהצלחה',
+          `שיעור ${fullLesson.instrument} עם ${teacher.name} נקבע בהצלחה.`,
+          '/dashboard/schedule'
+        );
+      }
     }
   };
 
@@ -590,33 +647,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const now = new Date();
         const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-        const newStatus: SlotStatus = hoursUntilLesson > 24 
-            ? 'CANCELLED_STUDENT_NOTICED' 
-            : 'CANCELLED_STUDENT_NO_NOTICE';
-        
+        const newStatus: SlotStatus = hoursUntilLesson > 24
+          ? 'CANCELLED_STUDENT_NOTICED'
+          : 'CANCELLED_STUDENT_NO_NOTICE';
+
         const updatedLesson = { ...lesson, status: newStatus, updatedAt: new Date().toISOString() };
 
-        const student = users.find(u => u.id === lesson.studentId);
-        const teacher = users.find(u => u.id === lesson.teacherId);
-        if (student && teacher) {
+        try {
+          const student = users.find(u => u.id === lesson.studentId);
+          const teacher = users.find(u => u.id === lesson.teacherId);
+
+          if (student && teacher) {
             const lessonTimeStr = `${format(lessonStartTime, 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(lessonStartTime, 'HH:mm')}`;
             if (newStatus === 'CANCELLED_STUDENT_NOTICED') {
-                 addNotificationAndLog(
-                    teacher.id,
-                    'ביטול שיעור',
-                    `${student.name} ביטל/ה את השיעור בתאריך ${lessonTimeStr}. המשבצת פנויה כעת.`,
-                    '/dashboard/schedule'
-                );
+              addNotificationAndLog(
+                teacher.id,
+                'ביטול שיעור',
+                `${student.name} ביטל/ה את השיעור בתאריך ${lessonTimeStr}. המשבצת פנויה כעת.`,
+                '/dashboard/schedule'
+              );
             } else {
-                 addNotificationAndLog(
-                    teacher.id,
-                    'ביטול שיעור מאוחר',
-                    `${student.name} ביטל/ה באיחור את השיעור בתאריך ${lessonTimeStr}.`,
-                    '/dashboard/schedule'
-                );
+              addNotificationAndLog(
+                teacher.id,
+                'ביטול שיעור מאוחר',
+                `${student.name} ביטל/ה באיחור את השיעור בתאריך ${lessonTimeStr}.`,
+                '/dashboard/schedule'
+              );
             }
+          }
+        } catch (error) {
+          console.error("Failed to process notifications for cancelled lesson", error);
         }
-        
+
         return updatedLesson;
       }
       return lesson;
@@ -630,112 +692,120 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         : lesson
     ));
   };
-  
+
   const rescheduleLesson = (lessonId: string, newStartTime: string) => {
     setLessons(prevLessons => prevLessons.map(lesson => {
-        if (lesson.id === lessonId) {
-            const updatedLesson = { ...lesson, startTime: newStartTime, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
-            
-            const student = users.find(u => u.id === lesson.studentId);
-            const teacher = users.find(u => u.id === lesson.teacherId);
-            if (student && teacher) {
-                const userToNotifyId = student.parentId || student.id;
-                const newTimeStr = `${format(new Date(newStartTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(newStartTime), 'HH:mm')}`;
-                
-                addNotificationAndLog(
-                    userToNotifyId,
-                    'שיעור נקבע מחדש',
-                    `השיעור שלך עם ${teacher.name} נקבע מחדש למועד: ${newTimeStr}.`,
-                    '/dashboard/schedule'
-                );
+      if (lesson.id === lessonId) {
+        const updatedLesson = { ...lesson, startTime: newStartTime, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
 
-                addNotificationAndLog(
-                    teacher.id,
-                    'שיעור נקבע מחדש',
-                    `השיעור של ${student.name} נקבע מחדש למועד: ${newTimeStr}.`,
-                    '/dashboard/schedule'
-                );
-            }
+        try {
+          const student = users.find(u => u.id === lesson.studentId);
+          const teacher = users.find(u => u.id === lesson.teacherId);
+          if (student && teacher) {
+            const userToNotifyId = student.parentId || student.id;
+            const newTimeStr = `${format(new Date(newStartTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(newStartTime), 'HH:mm')}`;
 
-            return updatedLesson;
+            addNotificationAndLog(
+              userToNotifyId,
+              'שיעור נקבע מחדש',
+              `השיעור שלך עם ${teacher.name} נקבע מחדש למועד: ${newTimeStr}.`,
+              '/dashboard/schedule'
+            );
+
+            addNotificationAndLog(
+              teacher.id,
+              'שיעור נקבע מחדש',
+              `השיעור של ${student.name} נקבע מחדש למועד: ${newTimeStr}.`,
+              '/dashboard/schedule'
+            );
+          }
+        } catch (error) {
+          console.error("Failed to process notifications for rescheduled lesson", error);
         }
-        return lesson;
+
+        return updatedLesson;
+      }
+      return lesson;
     }));
   };
 
   const reportSickLeave = useCallback((teacherId: string, startDate: Date, endDate: Date): LessonSlot[] => {
     let affectedLessons: LessonSlot[] = [];
     setLessons(prevLessons => {
-        const updatedLessons = prevLessons.map(lesson => {
-            const lessonDate = new Date(lesson.startTime);
-            if (lesson.teacherId === teacherId && 
-                lessonDate >= startDate && 
-                lessonDate <= endDate &&
-                lesson.status === 'SCHEDULED') {
-                
-                const updatedLesson = { 
-                    ...lesson, 
-                    status: 'CANCELLED_TEACHER' as SlotStatus,
-                    updatedAt: new Date().toISOString()
-                };
-                affectedLessons.push(updatedLesson);
-                
-                const student = users.find(u => u.id === lesson.studentId);
-                if (student) {
-                    const notifyUser = users.find(u => u.id === student.parentId) || student;
-                    const teacher = users.find(u => u.id === teacherId);
-                    addNotificationAndLog(
-                        notifyUser.id,
-                        'שיעור בוטל עקב מחלת מורה',
-                        `השיעור של ${student.name} עם ${teacher?.name} בוטל. יתרת שיעורי ההשלמה עודכנה.`,
-                        '/dashboard/makeups'
-                    );
-                }
-                
-                return updatedLesson;
-            }
-            return lesson;
-        });
-        return updatedLessons;
+      const updatedLessons = prevLessons.map(lesson => {
+        const lessonDate = new Date(lesson.startTime);
+        if (lesson.teacherId === teacherId &&
+          lessonDate >= startDate &&
+          lessonDate <= endDate &&
+          lesson.status === 'SCHEDULED') {
+
+          const updatedLesson = {
+            ...lesson,
+            status: 'CANCELLED_TEACHER' as SlotStatus,
+            updatedAt: new Date().toISOString()
+          };
+          affectedLessons.push(updatedLesson);
+
+          const student = users.find(u => u.id === lesson.studentId);
+          if (student) {
+            const notifyUser = users.find(u => u.id === student.parentId) || student;
+            const teacher = users.find(u => u.id === teacherId);
+            addNotificationAndLog(
+              notifyUser.id,
+              'שיעור בוטל עקב מחלת מורה',
+              `השיעור של ${student.name} עם ${teacher?.name} בוטל. יתרת שיעורי ההשלמה עודכנה.`,
+              '/dashboard/makeups'
+            );
+          }
+
+          return updatedLesson;
+        }
+        return lesson;
+      });
+      return updatedLessons;
     });
     return affectedLessons;
   }, [addNotificationAndLog, users]);
 
   const assignSubstitute = (lessonId: string, newTeacherId: string) => {
     setLessons(prevLessons => prevLessons.map(lesson => {
-        if (lesson.id === lessonId) {
-            const updatedLesson = { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
-            
-            const student = users.find(u => u.id === lesson.studentId);
-            const newTeacher = users.find(u => u.id === newTeacherId);
-            if (student && newTeacher) {
-                const userToNotifyId = student.parentId || student.id;
-                const lessonTimeStr = `${format(new Date(updatedLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(updatedLesson.startTime), 'HH:mm')}`;
-                
-                addNotificationAndLog(
-                    userToNotifyId,
-                    'נמצא מורה מחליף לשיעור',
-                    `שיעור ה${lesson.instrument} שלך יתקיים כרגיל עם המורה המחליף/ה ${newTeacher.name} במועד: ${lessonTimeStr}.`,
-                    '/dashboard/schedule'
-                );
+      if (lesson.id === lessonId) {
+        const updatedLesson = { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as const, updatedAt: new Date().toISOString() };
 
-                addNotificationAndLog(
-                    newTeacher.id,
-                    'שיבוץ לשיעור כמחליף/ה',
-                    `שובצת להעביר שיעור ${lesson.instrument} לתלמיד/ה ${student.name} במועד: ${lessonTimeStr}.`,
-                    '/dashboard/schedule'
-                );
-            }
+        try {
+          const student = users.find(u => u.id === lesson.studentId);
+          const newTeacher = users.find(u => u.id === newTeacherId);
+          if (student && newTeacher) {
+            const userToNotifyId = student.parentId || student.id;
+            const lessonTimeStr = `${format(new Date(updatedLesson.startTime), 'EEEE, dd/MM/yy', { locale: he })} בשעה ${format(new Date(updatedLesson.startTime), 'HH:mm')}`;
 
-            return updatedLesson;
+            addNotificationAndLog(
+              userToNotifyId,
+              'נמצא מורה מחליף לשיעור',
+              `שיעור ה${lesson.instrument} שלך יתקיים כרגיל עם המורה המחליף/ה ${newTeacher.name} במועד: ${lessonTimeStr}.`,
+              '/dashboard/schedule'
+            );
+
+            addNotificationAndLog(
+              newTeacher.id,
+              'שיבוץ לשיעור כמחליף/ה',
+              `שובצת להעביר שיעור ${lesson.instrument} לתלמיד/ה ${student.name} במועד: ${lessonTimeStr}.`,
+              '/dashboard/schedule'
+            );
+          }
+        } catch (error) {
+          console.error("Failed to send substitute assignments notifications", error);
         }
-        return lesson;
+
+        return updatedLesson;
+      }
+      return lesson;
     }));
   };
 
   const addPracticeLog = (log: Partial<PracticeLog>) => {
     if (!user) return;
-    
+
     const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
     if (!studentId) return;
 
@@ -743,51 +813,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const teacherId = student?.instruments?.[0]?.teacherName ? users.find(u => u.name === student.instruments![0].teacherName)?.id : undefined;
 
     const newLog: PracticeLog = {
-        id: `plog-${Date.now()}`,
-        studentId: studentId,
-        teacherId: teacherId,
-        ...log,
+      id: `plog-${Date.now()}`,
+      studentId: studentId,
+      teacherId: teacherId,
+      ...log,
     } as PracticeLog;
 
     setPracticeLogs(prev => [newLog, ...prev]);
   };
-  
-   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
-        if (!user) return;
-        const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
-        if (!studentId) return;
 
-        const student = users.find(u => u.id === studentId);
-        const teacherId = student?.instruments?.[0]?.teacherName ? users.find(u => u.name === student.instruments![0].teacherName)?.id : undefined;
-        if (!teacherId) return;
+  const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
+    if (!user) return;
+    const studentId = user.role === 'student' ? user.id : (user.role === 'parent' ? user.childIds?.[0] : undefined);
+    if (!studentId) return;
 
-        const newVideo: PracticeVideo = {
-            id: `vid-${Date.now()}`,
-            studentId,
-            teacherId: teacherId,
-            videoUrl: 'https://placehold.co/600x400.mp4',
-            createdAt: new Date().toISOString(),
-            feedback: [],
-            ...videoData
-        } as PracticeVideo;
-        setPracticeVideos(prev => [newVideo, ...prev]);
-        return newVideo;
-    };
+    const student = users.find(u => u.id === studentId);
+    const teacherId = student?.instruments?.[0]?.teacherName ? users.find(u => u.name === student.instruments![0].teacherName)?.id : undefined;
+    if (!teacherId) return;
 
-    const addVideoFeedback = (videoId: string, comment: string) => {
-        if (!user || user.role !== 'teacher') return;
-        setPracticeVideos(prev => prev.map(video => {
-            if (video.id === videoId) {
-                const newFeedback: VideoFeedback = {
-                    teacherId: user.id,
-                    comment,
-                    createdAt: new Date().toISOString(),
-                };
-                return { ...video, feedback: [...(video.feedback || []), newFeedback] };
-            }
-            return video;
-        }));
-    };
+    const newVideo: PracticeVideo = {
+      id: `vid-${Date.now()}`,
+      studentId,
+      teacherId: teacherId,
+      videoUrl: 'https://placehold.co/600x400.mp4',
+      createdAt: new Date().toISOString(),
+      feedback: [],
+      ...videoData
+    } as PracticeVideo;
+    setPracticeVideos(prev => [newVideo, ...prev]);
+    return newVideo;
+  };
+
+  const addVideoFeedback = (videoId: string, comment: string) => {
+    if (!user || user.role !== 'teacher') return;
+    setPracticeVideos(prev => prev.map(video => {
+      if (video.id === videoId) {
+        const newFeedback: VideoFeedback = {
+          teacherId: user.id,
+          comment,
+          createdAt: new Date().toISOString(),
+        };
+        return { ...video, feedback: [...(video.feedback || []), newFeedback] };
+      }
+      return video;
+    }));
+  };
 
   const addAnnouncement = (announcement: Partial<Announcement>) => {
     if (!user) return;
@@ -799,7 +869,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } as Announcement;
     setAnnouncements(prev => [newAnnouncement, ...prev]);
   };
-  
+
   const assignRepertoire = useCallback((studentId: string, compositionId: string) => {
     const composition = initialCompositions.find(c => c.id === compositionId);
     if (!composition) return;
@@ -816,80 +886,127 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getMakeupCreditBalance = useCallback((studentIds: string[]): number => {
     if (!studentIds.length) return 0;
-    
-    const grantedCredits = lessons.filter(l => 
-        studentIds.includes(l.studentId) && 
-        (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
+
+    const grantedCredits = lessons.filter(l =>
+      studentIds.includes(l.studentId) &&
+      (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
     ).length;
 
-    const usedCredits = lessons.filter(l => 
-        studentIds.includes(l.studentId) && 
-        l.type === 'MAKEUP'
+    const usedCredits = lessons.filter(l =>
+      studentIds.includes(l.studentId) &&
+      l.type === 'MAKEUP'
     ).length;
-    
+
     return grantedCredits - usedCredits;
   }, [lessons]);
 
-  const addToWaitlist = (entry: Partial<WaitlistEntry>) => {
-        const newEntry: WaitlistEntry = {
-            id: `waitlist-${Date.now()}`,
-            status: 'WAITING',
-            joinedAt: new Date().toISOString(),
-            ...entry,
-        } as WaitlistEntry;
-        setWaitlist(prev => [newEntry, ...prev]);
-        return newEntry;
-    };
-    
-    const updateWaitlistStatus = useCallback((entryId: string, status: WaitlistStatus) => {
-        setWaitlist(prev => prev.map(entry => {
-            if (entry.id === entryId) {
-                const updatedEntry = { ...entry, status, notifiedAt: status === 'OFFERED' ? new Date().toISOString() : entry.notifiedAt };
-    
-                if (status === 'OFFERED') {
-                    const student = users.find(u => u.id === entry.studentId);
-                    const teacher = users.find(u => u.id === entry.teacherId);
-                    if (student) {
-                        const userToNotifyId = student.parentId || student.id;
-                        addNotificationAndLog(
-                            userToNotifyId,
-                            'מקום התפנה!',
-                            `התפנה מקום אצל ${teacher?.name || 'המורה המבוקש/ת'}. יש לך 48 שעות להבטיח את המקום.`,
-                            '/dashboard/schedule/book'
-                        );
-                    }
-                }
-                return updatedEntry;
-            }
-            return entry;
-        }));
-    }, [users, addNotificationAndLog]);
+  const getMakeupCreditsDetail = useCallback((studentIds: string[]): MakeupCredit[] => {
+    if (!studentIds.length) return [];
 
-    const addFormTemplate = (template: Partial<FormTemplate>) => {
-        if (!user) return;
-        const newTemplate: FormTemplate = {
-            id: `template-${Date.now()}`,
-            conservatoriumId: user.conservatoriumId,
-            createdAt: new Date().toISOString(),
-            ...template,
-        } as FormTemplate;
-        setFormTemplates(prev => [newTemplate, ...prev]);
-    };
-    
-    const updateNotificationPreferences = (preferences: NotificationPreferences) => {
-        if (user) {
-            updateUser({ ...user, notificationPreferences: preferences });
+    const MAKEUP_EXPIRY_DAYS = 60;
+    const now = new Date();
+
+    const grantingLessons = lessons.filter(l =>
+      studentIds.includes(l.studentId) &&
+      (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
+    ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    const makeupLessons = lessons.filter(l =>
+      studentIds.includes(l.studentId) &&
+      l.type === 'MAKEUP'
+    ).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+
+    // Map granting lessons to credits
+    const credits: MakeupCredit[] = grantingLessons.map((lesson, index) => {
+      const grantedAt = lesson.createdAt;
+      const expiresAt = addDays(new Date(grantedAt), MAKEUP_EXPIRY_DAYS).toISOString();
+      const isExpired = new Date(expiresAt) < now;
+
+      let status: 'AVAILABLE' | 'USED' | 'EXPIRED' = 'AVAILABLE';
+      if (index < makeupLessons.length) {
+        status = 'USED';
+      } else if (isExpired) {
+        status = 'EXPIRED';
+      }
+
+      let reason: MakeupCredit['reason'] = 'TEACHER_CANCELLED';
+      if (lesson.status === 'CANCELLED_CONSERVATORIUM') reason = 'ADMIN_CANCELLED';
+      if (lesson.status === 'CANCELLED_STUDENT_NOTICED') reason = 'STUDENT_CANCELLED_NOTICED';
+
+      return {
+        id: `credit-${lesson.id}`,
+        sourceLessonId: lesson.id,
+        studentId: lesson.studentId,
+        grantedAt,
+        expiresAt,
+        status,
+        reason
+      };
+    });
+
+    return credits.reverse(); // Newest first
+  }, [lessons]);
+
+  const addToWaitlist = (entry: Partial<WaitlistEntry>) => {
+    const newEntry: WaitlistEntry = {
+      id: `waitlist-${Date.now()}`,
+      status: 'WAITING',
+      joinedAt: new Date().toISOString(),
+      ...entry,
+    } as WaitlistEntry;
+    setWaitlist(prev => [newEntry, ...prev]);
+    return newEntry;
+  };
+
+  const updateWaitlistStatus = useCallback((entryId: string, status: WaitlistStatus) => {
+    setWaitlist(prev => prev.map(entry => {
+      if (entry.id === entryId) {
+        const updatedEntry = { ...entry, status, notifiedAt: status === 'OFFERED' ? new Date().toISOString() : entry.notifiedAt };
+
+        if (status === 'OFFERED') {
+          const student = users.find(u => u.id === entry.studentId);
+          const teacher = users.find(u => u.id === entry.teacherId);
+          if (student) {
+            const userToNotifyId = student.parentId || student.id;
+            addNotificationAndLog(
+              userToNotifyId,
+              'מקום התפנה!',
+              `התפנה מקום אצל ${teacher?.name || 'המורה המבוקש/ת'}. יש לך 48 שעות להבטיח את המקום.`,
+              '/dashboard/schedule/book'
+            );
+          }
         }
-    };
-    
+        return updatedEntry;
+      }
+      return entry;
+    }));
+  }, [users, addNotificationAndLog]);
+
+  const addFormTemplate = (template: Partial<FormTemplate>) => {
+    if (!user) return;
+    const newTemplate: FormTemplate = {
+      id: `template-${Date.now()}`,
+      conservatoriumId: user.conservatoriumId,
+      createdAt: new Date().toISOString(),
+      ...template,
+    } as FormTemplate;
+    setFormTemplates(prev => [newTemplate, ...prev]);
+  };
+
+  const updateNotificationPreferences = (preferences: NotificationPreferences) => {
+    if (user) {
+      updateUser({ ...user, notificationPreferences: preferences });
+    }
+  };
+
   const addEvent = (event: Partial<EventProduction>) => {
     if (!user) return;
     const newEvent: EventProduction = {
-        id: `event-${Date.now()}`,
-        conservatoriumId: user.conservatoriumId,
-        status: 'PLANNING',
-        program: [],
-        ...event,
+      id: `event-${Date.now()}`,
+      conservatoriumId: user.conservatoriumId,
+      status: 'PLANNING',
+      program: [],
+      ...event,
     } as EventProduction;
     setEvents(prev => [newEvent, ...prev]);
   };
@@ -922,42 +1039,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     toast({ title: 'משתתף נוסף!', description: `${student.name} נוסף לתוכנית האירוע.` });
   };
-  
+
   const removePerformanceFromEvent = (eventId: string, performanceSlotId: string) => {
     setEvents(prev => prev.map(event => {
-        if (event.id === eventId) {
-            return { ...event, program: event.program.filter(p => p.id !== performanceSlotId) };
-        }
-        return event;
+      if (event.id === eventId) {
+        return { ...event, program: event.program.filter(p => p.id !== performanceSlotId) };
+      }
+      return event;
     }));
     toast({ title: 'משתתף הוסר מהתוכנית.' });
   };
 
   const assignInstrumentToStudent = (instrumentId: string, studentId: string) => {
     setInstrumentInventory(prev => prev.map(inst => {
-        if (inst.id === instrumentId) {
-            toast({ title: 'השאלת כלי בוצעה', description: `${inst.type} ${inst.brand} הושאל לסטודנט.`});
-            return {
-                ...inst,
-                currentRenterId: studentId,
-                rentalStartDate: new Date().toISOString(),
-            }
+      if (inst.id === instrumentId) {
+        toast({ title: 'השאלת כלי בוצעה', description: `${inst.type} ${inst.brand} הושאל לסטודנט.` });
+        return {
+          ...inst,
+          currentRenterId: studentId,
+          rentalStartDate: new Date().toISOString(),
         }
-        return inst;
+      }
+      return inst;
     }));
   };
 
   const returnInstrument = (instrumentId: string) => {
-      setInstrumentInventory(prev => prev.map(inst => {
-        if (inst.id === instrumentId) {
-            toast({ title: 'החזרת כלי בוצעה', description: `${inst.type} ${inst.brand} הוחזר למלאי.`});
-            return {
-                ...inst,
-                currentRenterId: undefined,
-                rentalStartDate: undefined,
-            }
+    setInstrumentInventory(prev => prev.map(inst => {
+      if (inst.id === instrumentId) {
+        toast({ title: 'החזרת כלי בוצעה', description: `${inst.type} ${inst.brand} הוחזר למלאי.` });
+        return {
+          ...inst,
+          currentRenterId: undefined,
+          rentalStartDate: undefined,
         }
-        return inst;
+      }
+      return inst;
     }));
   };
 
@@ -965,67 +1082,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateUser({ ...users.find(u => u.id === userId)!, hasSeenWalkthrough: true });
   }
 
-  const value = { 
-      user, 
-      users, 
-      login, 
-      logout, 
-      isLoading, 
-      approveUser, 
-      rejectUser, 
-      updateUser, 
-      addUser, 
-      mockFormSubmissions: forms, 
-      updateForm, 
-      mockLessons: lessons, 
-      addLesson,
-      cancelLesson,
-      updateLessonStatus,
-      rescheduleLesson,
-      reportSickLeave,
-      assignSubstitute,
-      newFeaturesEnabled, 
-      mockInvoices: initialInvoices, 
-      mockPracticeLogs: practiceLogs, 
-      addPracticeLog,
-      conservatoriums, 
-      updateConservatorium,
-      mockAssignedRepertoire: assignedRepertoire,
-      compositions: initialCompositions,
-      mockLessonNotes: lessonNotes,
-      updateRepertoireStatus,
-      addLessonNote,
-      assignRepertoire,
-      mockMessageThreads: messageThreads,
-      addMessage,
-      mockPackages: initialPackages,
-      updateUserPracticeGoal,
-      mockProgressReports: progressReports,
-      addProgressReport,
-      mockAnnouncements: announcements,
-      addAnnouncement,
-      getMakeupCreditBalance,
-      mockPayrolls: payrolls,
-      updatePayrollStatus,
-      mockPracticeVideos: practiceVideos,
-      addPracticeVideo,
-      addVideoFeedback,
-      mockWaitlist: waitlist,
-      addToWaitlist,
-      updateWaitlistStatus,
-      mockFormTemplates: formTemplates,
-      addFormTemplate,
-      updateNotificationPreferences,
-      mockAuditLog: auditLog,
-      mockEvents: events,
-      addEvent,
-      addPerformanceToEvent,
-      removePerformanceFromEvent,
-      mockInstrumentInventory: instrumentInventory,
-      assignInstrumentToStudent,
-      returnInstrument,
-      mockPerformanceBookings: performanceBookings,
-      markWalkthroughAsSeen,
+  const value = {
+    user,
+    users,
+    login,
+    logout,
+    isLoading,
+    approveUser,
+    rejectUser,
+    updateUser,
+    addUser,
+    mockFormSubmissions: forms,
+    updateForm,
+    mockLessons: lessons,
+    addLesson,
+    cancelLesson,
+    updateLessonStatus,
+    rescheduleLesson,
+    reportSickLeave,
+    assignSubstitute,
+    newFeaturesEnabled,
+    mockInvoices: initialInvoices,
+    mockPracticeLogs: practiceLogs,
+    addPracticeLog,
+    conservatoriums,
+    updateConservatorium,
+    mockAssignedRepertoire: assignedRepertoire,
+    compositions: initialCompositions,
+    mockLessonNotes: lessonNotes,
+    updateRepertoireStatus,
+    addLessonNote,
+    assignRepertoire,
+    mockMessageThreads: messageThreads,
+    addMessage,
+    mockPackages: packages,
+    updateUserPracticeGoal,
+    mockProgressReports: progressReports,
+    addProgressReport,
+    mockAnnouncements: announcements,
+    addAnnouncement,
+    getMakeupCreditBalance,
+    getMakeupCreditsDetail,
+    mockPayrolls: payrolls,
+    updatePayrollStatus,
+    mockPracticeVideos: practiceVideos,
+    addPracticeVideo,
+    addVideoFeedback,
+    mockWaitlist: waitlist,
+    addToWaitlist,
+    updateWaitlistStatus,
+    mockFormTemplates: formTemplates,
+    addFormTemplate,
+    updateNotificationPreferences,
+    mockAuditLog: auditLog,
+    mockEvents: events,
+    addEvent,
+    addPerformanceToEvent,
+    removePerformanceFromEvent,
+    mockInstrumentInventory: instrumentInventory,
+    assignInstrumentToStudent,
+    returnInstrument,
+    mockPerformanceBookings: performanceBookings,
+    markWalkthroughAsSeen,
   };
 
   return (
@@ -1043,4 +1161,3 @@ export function useAuth() {
   return context;
 }
 
-  

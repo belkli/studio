@@ -32,11 +32,11 @@ export default function MinistryDashboard() {
   const filteredForms = useMemo(() => {
     return formsForMinistry.filter(form => {
       const student = users.find(u => u.id === form.studentId);
-      
-      const searchMatch = searchTerm === '' || 
+
+      const searchMatch = searchTerm === '' ||
         form.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         form.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const typeMatch = filters.formType === 'all' || form.formType === filters.formType;
       const conservatoriumMatch = filters.conservatorium === 'all' || form.conservatoriumName === filters.conservatorium;
       const gradeMatch = filters.grade === 'all' || form.grade === filters.grade;
@@ -61,7 +61,8 @@ export default function MinistryDashboard() {
   }
 
   const formTypes = Array.from(new Set(formsForMinistry.map(f => f.formType)));
-  const grades = Array.from(new Set(formsForMinistry.map(f => f.grade).filter(Boolean))).sort();
+  const grades = Array.from(new Set(formsForMinistry.map(f => f.grade).filter(Boolean) as string[])).sort();
+
 
   return (
     <div className="space-y-6">
@@ -86,7 +87,7 @@ export default function MinistryDashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <Select dir="rtl" value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
               <SelectTrigger><SelectValue placeholder="סינון לפי סטטוס" /></SelectTrigger>
               <SelectContent>
@@ -94,7 +95,7 @@ export default function MinistryDashboard() {
                 {ministryViewableStatuses.map(s => <SelectItem key={s} value={s}><StatusBadge status={s} /></SelectItem>)}
               </SelectContent>
             </Select>
-            
+
             <Select dir="rtl" value={filters.formType} onValueChange={(v) => handleFilterChange('formType', v)}>
               <SelectTrigger><SelectValue placeholder="סינון לפי סוג טופס" /></SelectTrigger>
               <SelectContent>
@@ -110,7 +111,7 @@ export default function MinistryDashboard() {
                 {conservatoriums.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
               </SelectContent>
             </Select>
-            
+
             <Select dir="rtl" value={filters.grade} onValueChange={(v) => handleFilterChange('grade', v)}>
               <SelectTrigger><SelectValue placeholder="סינון לפי כיתה" /></SelectTrigger>
               <SelectContent>
@@ -118,7 +119,7 @@ export default function MinistryDashboard() {
                 {grades.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
               </SelectContent>
             </Select>
-            
+
             <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}>
               <SelectTrigger><SelectValue placeholder="סינון לפי כלי" /></SelectTrigger>
               <SelectContent>
@@ -129,48 +130,48 @@ export default function MinistryDashboard() {
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>רשימת טפסים</CardTitle>
         </CardHeader>
         <CardContent>
-           <Table className="w-full">
+          <Table className="w-full">
             <TableHeader>
-                <TableRow>
-                    <TableHead>שם התלמיד/ה</TableHead>
-                    <TableHead>קונסרבטוריון</TableHead>
-                    <TableHead>סוג הטופס</TableHead>
-                    <TableHead>כיתה</TableHead>
-                    <TableHead>סטטוס</TableHead>
-                    <TableHead>תאריך הגשה</TableHead>
-                    <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
-                </TableRow>
+              <TableRow>
+                <TableHead>שם התלמיד/ה</TableHead>
+                <TableHead>קונסרבטוריון</TableHead>
+                <TableHead>סוג הטופס</TableHead>
+                <TableHead>כיתה</TableHead>
+                <TableHead>סטטוס</TableHead>
+                <TableHead>תאריך הגשה</TableHead>
+                <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
-                {filteredForms.length > 0 ? filteredForms.map((form) => (
-                    <TableRow key={form.id}>
-                        <TableCell className="font-medium truncate">{form.studentName}</TableCell>
-                        <TableCell className="truncate">{form.conservatoriumName}</TableCell>
-                        <TableCell className="truncate">{form.formType}</TableCell>
-                        <TableCell className="truncate">{form.grade || '-'}</TableCell>
-                        <TableCell>
-                            <StatusBadge status={form.status} />
-                        </TableCell>
-                        <TableCell>{form.submissionDate}</TableCell>
-                        <TableCell className="text-left">
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/forms/${form.id}`}>צפה וטפל</Link>
-                            </Button>
-                        </TableCell>
-                    </TableRow>
-                )) : (
-                    <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground p-8">לא נמצאו טפסים התואמים את הסינון.</TableCell>
-                    </TableRow>
-                )}
+              {filteredForms.length > 0 ? filteredForms.map((form) => (
+                <TableRow key={form.id}>
+                  <TableCell className="font-medium truncate">{form.studentName}</TableCell>
+                  <TableCell className="truncate">{form.conservatoriumName}</TableCell>
+                  <TableCell className="truncate">{form.formType}</TableCell>
+                  <TableCell className="truncate">{form.grade || '-'}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={form.status} />
+                  </TableCell>
+                  <TableCell>{form.submissionDate}</TableCell>
+                  <TableCell className="text-left">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/dashboard/forms/${form.id}`}>צפה וטפל</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground p-8">לא נמצאו טפסים התואמים את הסינון.</TableCell>
+                </TableRow>
+              )}
             </TableBody>
-        </Table>
+          </Table>
         </CardContent>
       </Card>
 

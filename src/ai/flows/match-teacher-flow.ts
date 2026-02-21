@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview An AI agent for matching students with the best available teacher.
  *
@@ -30,9 +30,10 @@ const TeacherProfileSchema = z.object({
   teachingLanguages: z.array(z.string()).optional(),
 });
 
-const MatchTeacherInputSchema = z.object({
+export const MatchTeacherInputSchema = z.object({
   studentProfile: StudentProfileSchema,
   availableTeachers: z.array(TeacherProfileSchema),
+  locale: z.string().optional(),
 });
 export type MatchTeacherInput = z.infer<typeof MatchTeacherInputSchema>;
 
@@ -55,21 +56,24 @@ export async function matchTeacher(input: MatchTeacherInput): Promise<MatchTeach
 }
 
 function getAgeGroup(birthDate: string): 'Child' | 'Teen' | 'Adult' {
-    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
-    if (age < 13) return 'Child';
-    if (age < 18) return 'Teen';
-    return 'Adult';
+  const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+  if (age < 13) return 'Child';
+  if (age < 18) return 'Teen';
+  return 'Adult';
 }
 
 
 const matchPrompt = ai.definePrompt({
-    name: 'teacherMatchPrompt',
-    input: { schema: z.object({
-        studentProfile: StudentProfileSchema.extend({ ageGroup: z.string() }),
-        availableTeachers: z.array(TeacherProfileSchema)
-    }) },
-    output: { schema: MatchTeacherOutputSchema },
-    prompt: `You are an expert AI assistant for a music conservatorium, specializing in matching students with the most suitable teachers. Your task is to analyze a student's profile and compare it against a list of available teachers to find the best possible matches.
+  name: 'teacherMatchPrompt',
+  input: {
+    schema: z.object({
+      studentProfile: StudentProfileSchema.extend({ ageGroup: z.string() }),
+      availableTeachers: z.array(TeacherProfileSchema),
+      locale: z.string().optional(),
+    })
+  },
+  output: { schema: MatchTeacherOutputSchema },
+  prompt: `You are an expert AI assistant for a music conservatorium, specializing in matching students with the most suitable teachers. Your task is to analyze a student's profile and compare it against a list of available teachers to find the best possible matches.
 
 Return the top 3 matches, scored from 0-100, with clear, concise reasons for each match.
 
@@ -92,7 +96,7 @@ SCORING CRITERIA (weights are suggestions, use your expert judgment):
 3.  **Level Appropriateness (20%):** Does the teacher have experience with the student's level (Beginner, Intermediate, Advanced)?
 4.  **Bio/General Impression (10%):** Does the teacher's bio suggest a teaching philosophy that would resonate with the student's goals (e.g., performance-focused vs. enjoyment-focused)?
 
-For each of the top 3 teachers, provide a score and a 'matchReasons' array containing 2-3 short, human-readable strings explaining WHY they are a good match. The reasons should be in Hebrew. For example: "מתמחה בהכנה לבחינות", "מעולה עם ילדים", "מלמד/ת גם ג'אז ואימפרוביזציה".
+For each of the top 3 teachers, provide a score and a 'matchReasons' array containing 2-3 short, human-readable strings explaining WHY they are a good match. The reasons should be in the following language: {{{locale}}}. For example, if French: "Spécialiste de la préparation aux examens", "Excellent avec les enfants".
 
 Sort the final list by score in descending order.
 `,
@@ -109,13 +113,13 @@ const matchTeacherFlow = ai.defineFlow(
     // In a real application, we would first do a hard filter based on availability, instrument, etc.
     // For this mock, we pass all available teachers to the LLM for scoring.
     const ageGroup = getAgeGroup(input.studentProfile.birthDate);
-    
+
     const { output } = await matchPrompt({
-        ...input,
-        studentProfile: {
-            ...input.studentProfile,
-            ageGroup,
-        }
+      ...input,
+      studentProfile: {
+        ...input.studentProfile,
+        ageGroup,
+      }
     });
     return output!;
   }

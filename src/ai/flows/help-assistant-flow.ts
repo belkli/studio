@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview The AI Help Assistant for Harmonia.
  *
@@ -10,22 +10,22 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-const HelpAssistantInputSchema = z.object({
+export const HelpAssistantInputSchema = z.object({
   question: z.string(),
   userId: z.string(),
   locale: z.string().default('he'),
   conservatoriumId: z.string(),
   // For now, we don't have RAG, so context will be empty.
   // In the future, this would be populated with relevant help articles.
-  context: z.string().optional(), 
+  context: z.string().optional(),
 });
 export type HelpAssistantInput = z.infer<typeof HelpAssistantInputSchema>;
 
-const HelpAssistantResponseSchema = z.object({
+export const HelpAssistantResponseSchema = z.object({
   answer: z.string().describe('The helpful, conversational answer to the user\'s question.'),
   suggestedActions: z.array(z.object({
-      label: z.string(),
-      href: z.string(),
+    label: z.string(),
+    href: z.string(),
   })).optional().describe('Up to 2 suggested action buttons relevant to the answer.'),
 });
 export type HelpAssistantResponse = z.infer<typeof HelpAssistantResponseSchema>;
@@ -35,10 +35,10 @@ export async function askHelpAssistant(input: HelpAssistantInput): Promise<HelpA
 }
 
 const prompt = ai.definePrompt({
-    name: 'helpAssistantPrompt',
-    input: { schema: HelpAssistantInputSchema },
-    output: { schema: HelpAssistantResponseSchema },
-    prompt: `You are a friendly and knowledgeable AI assistant for "Harmonia", a music conservatorium management system. Your name is Harmony.
+  name: 'helpAssistantPrompt',
+  input: { schema: HelpAssistantInputSchema },
+  output: { schema: HelpAssistantResponseSchema },
+  prompt: `You are a friendly and knowledgeable AI assistant for "Harmonia", a music conservatorium management system. Your name is Harmony.
 Your goal is to answer user questions about how to use the system. You must be polite, concise, and helpful. Always respond in Hebrew.
 
 You have been provided with the user's question and some context from our help articles. Use your general knowledge of the system (based on its features like scheduling, billing, forms, practice logs) and the provided context to formulate your answer.

@@ -28,27 +28,27 @@ export function LoginForm() {
       return;
     }
     setLoading(true)
-    
+
     setTimeout(() => { // Simulate network delay
       const { user, status } = login(email);
 
       if (status === 'approved' && user) {
         toast({
-            title: "התחברות מוצלחת",
-            description: `ברוך הבא, ${user.name.split(' ')[0]}!`,
+          title: "התחברות מוצלחת",
+          description: `ברוך הבא, ${user.name.split(' ')[0]}!`,
         });
       } else if (status === 'pending') {
         toast({
-            variant: 'destructive',
-            title: "חשבון ממתין לאישור",
-            description: "חשבונך עדיין לא אושר על ידי מנהל הקונסרבטוריון.",
+          variant: 'destructive',
+          title: "חשבון ממתין לאישור",
+          description: "חשבונך עדיין לא אושר על ידי מנהל הקונסרבטוריון.",
         });
         setLoading(false);
       } else { // status === 'not_found'
         toast({
-            variant: 'destructive',
-            title: "התחברות נכשלה",
-            description: "לא נמצא משתמש עם האימייל שהוזן.",
+          variant: 'destructive',
+          title: "התחברות נכשלה",
+          description: "לא נמצא משתמש עם האימייל שהוזן.",
         });
         setLoading(false);
       }
@@ -59,12 +59,12 @@ export function LoginForm() {
     e.preventDefault()
     setLoading(true)
     setTimeout(() => {
-        toast({
-            title: "קישור קסום נשלח!",
-            description: "בדוק את תיבת הדואר שלך לקבלת הקישור.",
-            variant: "default",
-          })
-        setLoading(false)
+      toast({
+        title: "קישור קסום נשלח!",
+        description: "בדוק את תיבת הדואר שלך לקבלת הקישור.",
+        variant: "default",
+      })
+      setLoading(false)
     }, 1000)
   }
 
@@ -75,7 +75,7 @@ export function LoginForm() {
         <CardDescription>התחבר לחשבונך כדי להמשיך</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="email" className="w-full">
+        <Tabs defaultValue="email" className="w-full" dir="rtl">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="email">אימייל וסיסמה</TabsTrigger>
             <TabsTrigger value="magic">קישור קסום</TabsTrigger>
@@ -84,7 +84,7 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -93,7 +93,7 @@ export function LoginForm() {
                     שכחת סיסמה?
                   </Link>
                 </div>
-                <Input id="password" type="password" required dir="ltr" className="text-left" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "מתחבר..." : "התחבר"}
@@ -104,7 +104,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">אימייל</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required dir="ltr" className="text-left" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="magic-email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "שולח..." : "שלח קישור קסום"}

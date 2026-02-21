@@ -1,0 +1,272 @@
+{
+    "Navigation": {
+        "dashboard": "لوحة التحكم",
+        "lessons": "الدروس المتاحة",
+        "musicians": "الموسيقيون",
+        "donate": "تبرع",
+        "about": "من نحن",
+        "contact": "اتصل بنا",
+        "login": "تسجيل الدخول",
+        "register": "تسجيل",
+        "back": "رجوع",
+        "next": "التالي",
+        "submit": "إرسال التسجيل"
+    },
+    "HomePage": {
+        "title": "هارمونيا",
+        "heroTitle": "الموسيقى تبدأ من هنا",
+        "heroSubtitle": "نظام إدارة ذكي وتجربة تعليمية متقدمة للمعاهد الموسيقية",
+        "discoverBtn": "اكتشف النظام",
+        "learnMoreBtn": "اعرف المزيد",
+        "copyright": "جميع الحقوق محفوظة.",
+        "privacyPolicy": "سياسة الخصوصية"
+    },
+    "AvailableNow": {
+        "title": "الدروس المتاحة اليوم وغدًا",
+        "subtitle": "اعثر على درس موسيقي بسعر مميز! فرصة لمرة واحدة للتعلم من أفضل المعلمين بخصومات تصل إلى 40%."
+    },
+    "EnrollmentWizard": {
+        "steps": {
+            "role": "نوع التسجيل",
+            "details": "البيانات الشخصية",
+            "musical": "المعلومات الموسيقية",
+            "schedule": "التوافر",
+            "matching": "مطابقة المعلم",
+            "booking": "حجز الدرس",
+            "virtual": "الدروس الافتراضية",
+            "virtualOptions": {
+                "yes": "نعم، ممكن",
+                "no": "لا، حضوري فقط",
+                "only": "افتراضي فقط"
+            },
+            "package": "اختر الباقة",
+            "summary": "الملخص والتأكيد"
+        },
+        "role": {
+            "title": "من يقوم بالتسجيل؟",
+            "subtitle": "املأ التفاصيل للانضمام إلى هارمونيا.",
+            "parent": "أقوم بتسجيل طفلي",
+            "self": "أقوم بتسجيل نفسي (فوق 13 سنة)",
+            "conservatorium": "معاهد موسيقية",
+            "conservatoriumPlaceholder": "ابحث عن معهد..."
+        },
+        "common": {
+            "alreadyHaveAccount": "لديك حساب بالفعل؟",
+            "loginHere": "سجل الدخول هنا"
+        },
+        "details": {
+            "parentTitle": "بيانات ولي الأمر",
+            "studentTitle": "بيانات الطالب",
+            "selfTitle": "البيانات الشخصية",
+            "firstName": "الاسم الأول",
+            "lastName": "الاسم الأخير",
+            "email": "البريد الإلكتروني",
+            "idNumber": "رقم الهوية",
+            "phone": "رقم الجوال",
+            "birthDate": "تاريخ الميلاد",
+            "password": "كلمة المرور",
+            "school": "المدرسة",
+            "grade": "الصف الدراسي"
+        },
+        "toasts": {
+            "errorTitle": "خطأ",
+            "waitlistTitle": "تم الانضمام إلى قائمة الانتظار!",
+            "waitlistUserDesc": "سنُبلغك عند توفر مكان.",
+            "waitlistAdminDesc": "تم إضافة {name} إلى النظام وقائمة الانتظار.",
+            "successTitle": "تم إرسال التسجيل بنجاح!",
+            "successUserDesc": "تم إرسال طلبك إلى مدير المعهد للموافقة.",
+            "successAdminDesc": "تم إضافة {name} إلى النظام."
+        },
+        "matching": {
+            "loading": "جاري اقتراح أفضل المعلمين لك...",
+            "noTeachersTitle": "لم يتم العثور على معلمين متاحين",
+            "noTeachersDesc": "جميع المعلمين المتوافقين مع تفضيلاتك مشغولون حاليًا. يمكنك الانضمام إلى قائمة الانتظار وسنخبرك عند توفر مكان.",
+            "joinWaitlist": "الانضمام إلى قائمة الانتظار",
+            "goBack": "بدلاً من ذلك، يمكنك العودة وتغيير التفضيلات.",
+            "matchPercentage": "مطابقة {percent}%",
+            "whyLearnWith": "لماذا تتعلم مع {name}؟"
+        },
+        "success": {
+            "adminTitle": "تم تسجيل الطالب بنجاح!",
+            "userTitle": "تم إكمال التسجيل بنجاح!",
+            "adminDesc": "تم إضافة الطالب إلى النظام ويمكن الآن إدارة ملفه الشخصي.",
+            "userDesc": "تم إرسال طلبك إلى مدير المعهد للموافقة. ستتلقى بريدًا إلكترونيًا عند الموافقة على حسابك ويمكنك تسجيل الدخول.",
+            "backToUsers": "العودة إلى إدارة المستخدمين",
+            "backToHome": "العودة إلى الصفحة الرئيسية"
+        },
+        "booking": {
+            "title": "حجز الدرس الأول",
+            "availableSlots": "الفترات المتاحة",
+            "noSlots": "لم يتم العثور على فترات متاحة لهذا المعلم في هذا التاريخ.",
+            "loading": "جاري تحميل الفترات المتاحة..."
+        },
+        "admin": {
+            "title": "تسجيل طالب جديد (إداري)",
+            "subtitle": "املأ التفاصيل لتسجيل طالب جديد.",
+            "enrollSection": "تفاصيل التسجيل",
+            "submit": "تسجيل الطالب"
+        },
+        "package": {
+            "title": "اختر باقة التعلم",
+            "placeholder": "اختر الباقة...",
+            "perMonth": "/شهر"
+        },
+        "musical": {
+            "title": "المعلومات الموسيقية",
+            "instrument": "الآلة الموسيقية",
+            "instrumentPlaceholder": "اختر الآلة",
+            "level": "المستوى الحالي",
+            "levelPlaceholder": "اختر المستوى",
+            "levels": {
+                "Beginner": "مبتدئ",
+                "Intermediate": "متوسط",
+                "Advanced": "متقدم",
+                "Exam": "مرشح للامتحان"
+            },
+            "experience": "الخبرة السابقة (اختياري)",
+            "experiencePlaceholder": "مثال: 3 سنوات بيانو، بدون خلفية نظرية...",
+            "goals": "الأهداف والغايات",
+            "goals_options": {
+                "EXAMS": "الامتحانات",
+                "PERFORMANCE": "العروض",
+                "ENJOYMENT": "الاستمتاع",
+                "COMPETITION": "المسابقات",
+                "OTHER": "أخرى"
+            },
+            "duration": "مدة الدرس",
+            "durationPlaceholder": "اختر المدة",
+            "minutes": "{min} دقيقة"
+        },
+        "schedule": {
+            "title": "التوافر",
+            "days": "الأيام المتاحة",
+            "days_options": {
+                "SUN": "الأحد",
+                "MON": "الإثنين",
+                "TUE": "الثلاثاء",
+                "WED": "الأربعاء",
+                "THU": "الخميس",
+                "FRI": "الجمعة"
+            },
+            "times": "الأوقات المفضلة",
+            "times_options": {
+                "MORNING": "الصباح (8-13)",
+                "AFTERNOON": "بعد الظهر (13-17)",
+                "EVENING": "المساء (17-21)"
+            },
+            "virtual": "الدروس الافتراضية",
+            "virtualOptions": {
+                "yes": "نعم، ممكن",
+                "no": "لا، حضوري فقط",
+                "only": "افتراضي فقط"
+            }
+        },
+        "validation": {
+            "required": "حقل مطلوب",
+            "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+            "invalidPhone": "رقم هاتف غير صالح",
+            "invalidID": "رقم الهوية غير صالح",
+            "tooShort": "يجب أن يكون {min} أحرف على الأقل",
+            "passwordLength": "يجب أن تكون كلمة المرور {min} أحرف على الأقل",
+            "date": "يرجى إدخال تاريخ صحيح",
+            "missingDetails": "معلومات ناقصة، لا يمكن إكمال التسجيل.",
+            "selectType": "يرجى اختيار نوع التسجيل",
+            "selectConservatorium": "يرجى اختيار المعهد",
+            "selectInstrument": "يرجى اختيار آلة موسيقية",
+            "selectPackage": "يرجى اختيار باقة"
+        }
+    },
+    "Dashboard": {
+        "header": {
+            "search": "بحث...",
+            "notifications": "الإشعارات",
+            "profile": "الملف الشخصي",
+            "settings": "الإعدادات",
+            "logout": "تسجيل الخروج"
+        },
+        "welcome": {
+            "title": "مرحبًا، {name}",
+            "subtitle": "هذه لوحة التحكم الخاصة بك اليوم.",
+            "newForm": "نموذج جديد"
+        },
+        "overview": {
+            "pending": "الموافقات المعلقة",
+            "approved": "النماذج المعتمدة",
+            "rejected": "النماذج المرفوضة",
+            "total": "إجمالي التقديمات"
+        },
+        "recentForms": {
+            "title": "آخر التقديمات",
+            "viewAll": "جميع النماذج",
+            "studentName": "اسم الطالب",
+            "formType": "نوع النموذج",
+            "status": "الحالة",
+            "submissionDate": "تاريخ التقديم",
+            "actions": "الإجراءات",
+            "view": "عرض",
+            "descriptions": {
+                "student": "هذه آخر النماذج التي قمت بتقديمها.",
+                "teacher": "هذه آخر النماذج التي قدمها طلابك.",
+                "conservatorium_admin": "هذه آخر النماذج المقدمة في معهدك.",
+                "site_admin": "هذه كل آخر النماذج المقدمة في النظام.",
+                "ministry_director": "هذه كل النماذج المعتمدة والمعلقة للمراجعة.",
+                "parent": "هذه آخر النماذج المقدمة لأطفالك.",
+                "default": "فيما يلي أحدث تقديمات النماذج."
+            }
+        },
+        "status": {
+            "draft": "مسودة",
+            "pendingTeacher": "بانتظار موافقة المعلم",
+            "pendingAdmin": "بانتظار موافقة الإدارة",
+            "approved": "معتمد من المعهد",
+            "rejected": "مرفوض",
+            "revisionRequired": "مطلوب تعديل (الوزارة)",
+            "finalApproved": "معتمد نهائيًا"
+        }
+    },
+    "Sidebar": {
+        "dashboard": "لوحة التحكم",
+        "myForms": "نماذجي",
+        "newForm": "نموذج جديد",
+        "approvals": "الموافقات",
+        "library": "المكتبة",
+        "users": "المستخدمون",
+        "ministry": "موافقات الوزارة",
+        "myFamily": "عائلتي",
+        "myProfile": "ملفي الشخصي",
+        "teacherProfile": "ملف المعلم",
+        "performanceProfile": "ملف الأداء",
+        "myAvailability": "توافري",
+        "myReports": "تقاريري",
+        "payroll": "كشوف المرتبات",
+        "schedule": "الجدول الزمني",
+        "practiceLog": "سجل التدريب",
+        "progress": "التقدم",
+        "makeups": "دروس التعويض",
+        "aiAssistant": "المساعد الذكي",
+        "messages": "الرسائل",
+        "formsAndDocs": "النماذج والوثائق",
+        "notifications": "الإشعارات",
+        "billing": "الفوترة",
+        "userManagement": "إدارة المستخدمين",
+        "newRegistration": "تسجيل جديد",
+        "masterSchedule": "الجدول الرئيسي",
+        "events": "الفعاليات",
+        "performances": "العروض",
+        "rentals": "التأجير",
+        "waitlists": "قوائم الانتظار",
+        "substitute": "إدارة البديل",
+        "teacherPayroll": "رواتب المعلمين",
+        "announcements": "الإعلانات",
+        "reportsAnalytics": "التقارير والتحليلات",
+        "formBuilder": "منشئ النماذج",
+        "aiAgents": "الوكلاء الذكيون",
+        "ministryExport": "تصدير للوزارة",
+        "settings": "الإعدادات",
+        "help": "المساعدة",
+        "logout": "تسجيل الخروج",
+        "logo": "هارمونيا",
+        "noNotifications": "لا توجد إشعارات جديدة",
+        "viewAll": "عرض كل الإشعارات"
+    }
+}

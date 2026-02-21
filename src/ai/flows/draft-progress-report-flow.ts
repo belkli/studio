@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview An AI agent for drafting student progress reports.
  *
@@ -31,7 +31,7 @@ const RepertoireItemSchema = z.object({
   status: z.string(),
 });
 
-const DraftProgressReportInputSchema = z.object({
+export const DraftProgressReportInputSchema = z.object({
   studentName: z.string(),
   teacherName: z.string(),
   instrument: z.string(),
@@ -53,12 +53,14 @@ export async function draftProgressReport(input: DraftProgressReportInput): Prom
 }
 
 const prompt = ai.definePrompt({
-    name: 'progressReportDraftPrompt',
-    input: { schema: DraftProgressReportInputSchema.extend({
-        repertoireWithDetails: z.array(z.object({ title: z.string(), composer: z.string(), status: z.string() }))
-    }) },
-    output: { schema: DraftProgressReportOutputSchema },
-    prompt: `You are helping a music teacher, {{{teacherName}}}, write a warm, professional end-of-semester progress report for their student, {{{studentName}}}, who plays {{{instrument}}}. The report is for the {{{period}}} period.
+  name: 'progressReportDraftPrompt',
+  input: {
+    schema: DraftProgressReportInputSchema.extend({
+      repertoireWithDetails: z.array(z.object({ title: z.string(), composer: z.string(), status: z.string() }))
+    })
+  },
+  output: { schema: DraftProgressReportOutputSchema },
+  prompt: `You are helping a music teacher, {{{teacherName}}}, write a warm, professional end-of-semester progress report for their student, {{{studentName}}}, who plays {{{instrument}}}. The report is for the {{{period}}} period.
 
 Write the report in Hebrew, using a formal but encouraging tone suitable for both the student and their parents.
 Use the provided data to write specific, personal observations — not generic statements.
@@ -112,17 +114,17 @@ const draftProgressReportFlow = ai.defineFlow(
   },
   async (input) => {
     const repertoireWithDetails = input.repertoire.map(rep => {
-        const composition = compositions.find(c => c.id === rep.compositionId);
-        return {
-            title: composition?.title || 'Unknown Piece',
-            composer: composition?.composer || 'Unknown Composer',
-            status: rep.status,
-        }
+      const composition = compositions.find(c => c.id === rep.compositionId);
+      return {
+        title: composition?.title || 'Unknown Piece',
+        composer: composition?.composer || 'Unknown Composer',
+        status: rep.status,
+      }
     });
 
     const { output } = await prompt({
-        ...input,
-        repertoireWithDetails,
+      ...input,
+      repertoireWithDetails,
     });
     return output!;
   }

@@ -64,6 +64,7 @@ export function AiHelpAssistant() {
             userId: user.id,
             conservatoriumId: user.conservatoriumId,
             question: userQuestion,
+            locale: 'he', // Default locale for the prompt context
         });
 
         const botMessage: Message = { sender: 'bot', text: response.answer, response };
@@ -101,10 +102,10 @@ export function AiHelpAssistant() {
                                     <div className={cn("rounded-lg px-4 py-2 max-w-[85%]", message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
                                         <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                                         {message.sender === 'bot' && message.response?.suggestedActions && (
-                                            <div className="flex gap-2 mt-3 border-t pt-2 border-muted-foreground/20">
+                                            <div className="flex flex-col gap-2 mt-3 border-t pt-3 border-muted-foreground/20">
                                                 {message.response.suggestedActions.map((action, i) => (
-                                                    <Button key={i} size="sm" variant="secondary" asChild>
-                                                        <Link href={action.href}>{action.label}</Link>
+                                                    <Button key={i} size="sm" variant="secondary" asChild className="w-full justify-start text-xs h-8">
+                                                        <Link href={action.href} onClick={() => setIsOpen(false)}>{action.label}</Link>
                                                     </Button>
                                                 ))}
                                             </div>

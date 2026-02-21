@@ -13,11 +13,16 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Bell, LogOut, Search, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { mockUser } from '@/lib/data';
-import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
+import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from '../language-switcher';
 
 export function Header() {
-  const user = mockUser; // In a real app, this would come from the session
+  const t = useTranslations('Dashboard.header');
+  const { user } = useAuth(); // Get user from auth context
+
+  if (!user) return null; // Or show a login button if appropriate for this layout
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -26,42 +31,43 @@ export function Header() {
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="חיפוש..."
+          placeholder={t('search')}
           className="w-full rounded-lg bg-background ps-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
+      <LanguageSwitcher />
       <Button variant="ghost" size="icon" className="rounded-full">
         <Bell className="h-5 w-5" />
-        <span className="sr-only">התראות</span>
+        <span className="sr-only">{t('notifications')}</span>
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
-             <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatarUrl} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.avatarUrl} alt={user.name} />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-           <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings">
-                <User className="ms-2 h-4 w-4" />
-                <span>פרופיל</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings">
-                <Settings className="ms-2 h-4 w-4" />
-                <span>הגדרות</span>
-              </Link>
-            </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">
+              <User className="ms-2 h-4 w-4" />
+              <span>{t('profile')}</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">
+              <Settings className="ms-2 h-4 w-4" />
+              <span>{t('settings')}</span>
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogOut className="ms-2 h-4 w-4" />
-            <span>התנתק</span>
+            <span>{t('logout')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

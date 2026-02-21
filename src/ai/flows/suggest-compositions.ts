@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview A Genkit flow for suggesting musical compositions.
  *
@@ -7,10 +7,10 @@
  * - SuggestCompositionsOutput - The return type for the suggestCompositions function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
-const SuggestCompositionsInputSchema = z.object({
+export const SuggestCompositionsInputSchema = z.object({
   composer: z
     .string()
     .optional()
@@ -62,8 +62,8 @@ export async function suggestCompositions(
 
 const prompt = ai.definePrompt({
   name: 'compositionSuggestionPrompt',
-  input: {schema: SuggestCompositionsInputSchema},
-  output: {schema: SuggestCompositionsOutputSchema},
+  input: { schema: SuggestCompositionsInputSchema },
+  output: { schema: SuggestCompositionsOutputSchema },
   prompt: `אתה קטלוגר ומומחה למוזיקה, בעל ידע נרחב בספריית יצירות מוזיקליות. המשימה שלך היא להציע יצירות מוזיקליות מתאימות על סמך הקריטריונים של המשתמש, עבור רסיטל או תוכנית קונצרט.
 
 קח בחשבון את הפרטים הבאים:
@@ -112,7 +112,7 @@ const suggestCompositionsFlow = ai.defineFlow(
     outputSchema: SuggestCompositionsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

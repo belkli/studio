@@ -1,5 +1,5 @@
 
-'use server';
+
 /**
  * @fileOverview An AI agent for proactively targeting students to fill empty lesson slots.
  *
@@ -12,12 +12,12 @@ import { z } from 'genkit';
 import type { EmptySlot } from '@/lib/types';
 
 const EligibleRecipientSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    instrument: z.string(),
-    pastBookingTimes: z.array(z.string()).describe("e.g., ['Tuesday-16:00', 'Thursday-17:00']"),
-    makeupCreditBalance: z.number(),
-    type: z.enum(['student', 'waitlist']),
+  id: z.string(),
+  name: z.string(),
+  instrument: z.string(),
+  pastBookingTimes: z.array(z.string()).describe("e.g., ['Tuesday-16:00', 'Thursday-17:00']"),
+  makeupCreditBalance: z.number(),
+  type: z.enum(['student', 'waitlist']),
 });
 export type EligibleRecipient = z.infer<typeof EligibleRecipientSchema>;
 
@@ -33,13 +33,13 @@ const EmptySlotSchema = z.object({
 });
 
 
-const TargetSlotsInputSchema = z.object({
+export const TargetSlotsInputSchema = z.object({
   emptySlot: EmptySlotSchema,
   eligibleRecipients: z.array(EligibleRecipientSchema),
 });
 export type TargetSlotsInput = z.infer<typeof TargetSlotsInputSchema>;
 
-const TargetSlotsOutputSchema = z.object({
+export const TargetSlotsOutputSchema = z.object({
   suggestions: z
     .array(
       z.object({
@@ -57,10 +57,10 @@ export async function getTargetedSlots(input: TargetSlotsInput): Promise<TargetS
 }
 
 const prompt = ai.definePrompt({
-    name: 'targetSlotsPrompt',
-    input: { schema: TargetSlotsInputSchema },
-    output: { schema: TargetSlotsOutputSchema },
-    prompt: `You are a savvy marketing assistant for a music conservatorium. Your goal is to find the best student to fill a specific empty lesson slot to maximize booking probability.
+  name: 'targetSlotsPrompt',
+  input: { schema: TargetSlotsInputSchema },
+  output: { schema: TargetSlotsOutputSchema },
+  prompt: `You are a savvy marketing assistant for a music conservatorium. Your goal is to find the best student to fill a specific empty lesson slot to maximize booking probability.
 
 Analyze the empty slot and compare it against the list of eligible recipients. For each recipient, calculate an "affinity score" from 0 to 100 based on the following criteria:
 
@@ -70,7 +70,7 @@ Analyze the empty slot and compare it against the list of eligible recipients. F
 4.  **Waitlist Status:** If the recipient is on a waitlist for this instrument/teacher, add +20.
 5.  **General Proximity:** Is the slot time generally convenient (e.g., after school hours)? Add +10 for peak times.
 
-For the top 3-5 matches, provide a \`personalizationHooks\` array. These should be short, compelling, human-readable strings **in Hebrew** that an admin could use in an outreach message.
+For the top 3-5 matches, provide a 'personalizationHooks' array. These should be short, compelling, human-readable strings **in Hebrew** that an admin could use in an outreach message.
 
 **Examples of good personalization hooks:**
 - "יש לה יתרת שיעור השלמה לניצול"
@@ -102,7 +102,7 @@ const targetSlotsFlow = ai.defineFlow(
   },
   async (input) => {
     if (input.eligibleRecipients.length === 0) {
-        return { suggestions: [] };
+      return { suggestions: [] };
     }
     const { output } = await prompt(input);
     return output!;

@@ -24,12 +24,12 @@ import { SuggestionButton } from './suggestion-button';
 
 
 const compositionSchema = z.object({
-  id: z.string().optional(),
-  composer: z.string().min(1, 'חובה להזין מלחין'),
-  title: z.string().min(1, 'חובה להזין שם יצירה'),
-  duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
-  genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
-  approved: z.boolean().optional(),
+    id: z.string().optional(),
+    composer: z.string().min(1, 'חובה להזין מלחין'),
+    title: z.string().min(1, 'חובה להזין שם יצירה'),
+    duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
+    genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
+    approved: z.boolean().optional(),
 });
 
 
@@ -39,24 +39,24 @@ const emptyComposition = { id: '', composer: '', title: '', genre: '', duration:
 
 
 const formSchema = z.object({
-  academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
-  conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
-  
-  // Event Details
-  eventName: z.string().min(1, 'חובה להזין שם אירוע'),
-  eventDate: z.string().min(1, 'חובה להזין תאריך אירוע'),
-  eventLocation: z.string().min(1, 'חובה להזין מיקום'),
+    academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
+    conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
 
-  // Ensemble Details
-  conductor: z.string().min(1, 'חובה להזין שם מנצח/ת'),
-  accompanist: z.string().optional(),
-  numParticipants: z.coerce.number().min(1, 'חובה להזין מספר משתתפים'),
+    // Event Details
+    eventName: z.string().min(1, 'חובה להזין שם אירוע'),
+    eventDate: z.string().min(1, 'חובה להזין תאריך אירוע'),
+    eventLocation: z.string().min(1, 'חובה להזין מיקום'),
 
-  // Repertoire
-  repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
-  
-  // Logistical Needs
-  logisticalNeeds: z.string().optional(),
+    // Ensemble Details
+    conductor: z.string().min(1, 'חובה להזין שם מנצח/ת'),
+    accompanist: z.string().optional(),
+    numParticipants: z.coerce.number().min(1, 'חובה להזין מספר משתתפים'),
+
+    // Repertoire
+    repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
+
+    // Logistical Needs
+    logisticalNeeds: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -79,22 +79,22 @@ const formatDurationOnBlur = (value: string): string => {
 }
 
 const getEnsembleSizeCategory = (numParticipants: number): 'Small' | 'Medium' | 'Large' => {
-  if (numParticipants <= 10) return 'Small';
-  if (numParticipants <= 20) return 'Medium';
-  return 'Large';
+    if (numParticipants <= 10) return 'Small';
+    if (numParticipants <= 20) return 'Medium';
+    return 'Large';
 };
 
 const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
-  const totalMinutes = totalSeconds / 60;
-  const brackets = [10, 15, 20, 25, 30];
-  for (const bracket of brackets) {
-    if (totalMinutes <= bracket) return bracket;
-  }
-  return 30; // Default to max bracket
+    const totalMinutes = totalSeconds / 60;
+    const brackets = [10, 15, 20, 25, 30];
+    for (const bracket of brackets) {
+        if (totalMinutes <= bracket) return bracket as 10 | 15 | 20 | 25 | 30;
+    }
+    return 30 as 10 | 15 | 20 | 25 | 30; // Default to max bracket
 };
 
 
-const KenesRepertoireItem = ({ index, remove, fields }) => {
+const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
@@ -117,18 +117,18 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
         setCompositionOptions(results);
         setIsLoadingCompositions(false);
     }, 300), [selectedComposer]);
-    
+
     useEffect(() => {
         debouncedComposerSearch('');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComposer]);
-    
-     useEffect(() => {
+
+    useEffect(() => {
         debouncedComposerSearch('');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-     const handleSelectComposition = (id: string) => {
+    const handleSelectComposition = (id: string) => {
         const composition = compositionOptions.find(c => c.id === id);
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
@@ -138,13 +138,13 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
             setValue(`repertoire.${index}.genre`, composition.genre);
             setValue(`repertoire.${index}.approved`, composition.approved);
         } else {
-             setValue(`repertoire.${index}.title`, id);
+            setValue(`repertoire.${index}.title`, id);
         }
     }
 
 
     return (
-         <div className="border rounded-lg relative">
+        <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
                 <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
@@ -154,7 +154,7 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
                 <div className="hidden lg:flex items-center justify-center h-10 font-medium text-muted-foreground">{index + 1}.</div>
-                
+
                 <FormField
                     control={control}
                     name={`repertoire.${index}.composer`}
@@ -188,7 +188,7 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
                     render={({ field: titleField }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>שם היצירה</FormLabel>
-                             <FormControl>
+                            <FormControl>
                                 <Combobox
                                     options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
@@ -204,35 +204,35 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
                     )}
                 />
 
-                <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => ( 
-                    <FormItem> 
-                        <FormLabel>ז'אנר</FormLabel> 
-                        <Select dir="rtl" onValueChange={field.onChange} value={field.value}> 
+                <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>ז'אנר</FormLabel>
+                        <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                                <SelectTrigger><SelectValue placeholder="בחר ז'אנר"/></SelectTrigger>
-                            </FormControl> 
-                            <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> 
-                        </Select> 
-                        <FormMessage /> 
-                    </FormItem> 
+                                <SelectTrigger><SelectValue placeholder="בחר ז'אנר" /></SelectTrigger>
+                            </FormControl>
+                            <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <FormMessage />
+                    </FormItem>
                 )} />
 
-                
-                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => ( 
-                    <FormItem> 
-                        <FormLabel>זמן ביצוע</FormLabel> 
+
+                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>זמן ביצוע</FormLabel>
                         <FormControl>
-                            <Input 
-                                dir='ltr' 
+                            <Input
+                                dir='ltr'
                                 placeholder="MM:SS"
-                                {...field} 
+                                {...field}
                                 onBlur={(e) => field.onChange(formatDurationOnBlur(e.target.value))}
                             />
-                        </FormControl> 
-                        <FormMessage /> 
-                    </FormItem> 
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
                 )} />
-                
+
                 <div className="hidden lg:flex items-center justify-center h-10">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -246,225 +246,226 @@ const KenesRepertoireItem = ({ index, remove, fields }) => {
 
 
 export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCancel }: KenesFormProps) {
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
-      repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
-      conservatoriumName: user.conservatoriumName,
-      eventName: '',
-      eventDate: '',
-      eventLocation: '',
-      conductor: '',
-      accompanist: '',
-      numParticipants: 1,
-      logisticalNeeds: '',
-    },
-  });
+    const form = useForm<FormData>({
+        resolver: zodResolver(formSchema),
+        defaultValues: initialData || {
+            academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
+            repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+            conservatoriumName: user.conservatoriumName,
+            eventName: '',
+            eventDate: '',
+            eventLocation: '',
+            conductor: '',
+            accompanist: '',
+            numParticipants: 1,
+            logisticalNeeds: '',
+        },
+    });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'repertoire',
-  });
-  
-  const { toast } = useToast();
-  const { isDirty } = form.formState;
-  const [saveState, setSaveState] = React.useState<SaveState>('idle');
-  const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'repertoire',
+    });
 
-  const handleSaveDraft = () => {
-    setSaveState('saving');
-    // In a real app, you would make an API call here.
-    setTimeout(() => {
-        // Simulate success
-        setSaveState('success');
-        setLastSaved(new Date());
-        toast({ title: "טיוטה נשמרה!" });
-        form.reset(form.getValues());
-        setTimeout(() => setSaveState('idle'), 3000);
-    }, 1500);
-  };
+    const { toast } = useToast();
+    const { isDirty } = form.formState;
+    const [saveState, setSaveState] = React.useState<SaveState>('idle');
+    const [lastSaved, setLastSaved] = React.useState<Date | null>(null);
 
-  const numParticipants = form.watch('numParticipants');
-  const repertoire = form.watch('repertoire');
-  
-  const totalDurationSeconds = useMemo(() => (repertoire || []).reduce((total, item) => {
-    if (!item?.duration) return total;
-    const [minutes, seconds] = item.duration.split(':').map(Number);
-    if(isNaN(minutes) || isNaN(seconds)) return total;
-    return total + (minutes * 60) + seconds;
-  }, 0), [repertoire]);
-  
-  const totalDurationFormatted = `${String(Math.floor(totalDurationSeconds / 60)).padStart(2, '0')}:${String(totalDurationSeconds % 60).padStart(2, '0')}`;
+    const handleSaveDraft = () => {
+        setSaveState('saving');
+        // In a real app, you would make an API call here.
+        setTimeout(() => {
+            // Simulate success
+            setSaveState('success');
+            setLastSaved(new Date());
+            toast({ title: "טיוטה נשמרה!" });
+            form.reset(form.getValues());
+            setTimeout(() => setSaveState('idle'), 3000);
+        }, 1500);
+    };
 
-  const { tier, ensembleSize, durationMinutes, calculatedPrice } = useMemo(() => {
-    const conservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
-    if (!conservatorium) return { tier: null, ensembleSize: null, durationMinutes: 0, calculatedPrice: 0 };
-    
-    const tier = conservatorium.tier;
-    const sizeCategory = getEnsembleSizeCategory(numParticipants || 1);
-    const durationBracket = getDurationBracket(totalDurationSeconds);
-    const price = priceMatrix[tier]?.[sizeCategory]?.[durationBracket] ?? 0;
+    const numParticipants = form.watch('numParticipants');
+    const repertoire = form.watch('repertoire');
 
-    return {
-        tier,
-        ensembleSize: sizeCategory,
-        durationMinutes: totalDurationSeconds / 60,
-        calculatedPrice: price,
-    }
-  }, [user.conservatoriumId, numParticipants, totalDurationSeconds]);
+    const totalDurationSeconds = useMemo(() => (repertoire || []).reduce((total, item) => {
+        if (!item?.duration) return total;
+        const [minutes, seconds] = item.duration.split(':').map(Number);
+        if (isNaN(minutes) || isNaN(seconds)) return total;
+        return total + (minutes * 60) + seconds;
+    }, 0), [repertoire]);
 
-  const ensembleSizeLabels = {
-    'Small': 'קטנות',
-    'Medium': 'בינוניות',
-    'Large': 'גדולות',
-  };
+    const totalDurationFormatted = `${String(Math.floor(totalDurationSeconds / 60)).padStart(2, '0')}:${String(totalDurationSeconds % 60).padStart(2, '0')}`;
+
+    const { tier, ensembleSize, durationMinutes, calculatedPrice } = useMemo(() => {
+        const conservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
+        if (!conservatorium) return { tier: null, ensembleSize: null, durationMinutes: 0, calculatedPrice: 0 };
+
+        const tier = conservatorium.tier;
+        const sizeCategory = getEnsembleSizeCategory(numParticipants || 1);
+        const durationBracket = getDurationBracket(totalDurationSeconds);
+        const price = priceMatrix[tier]?.[sizeCategory]?.[durationBracket] ?? 0;
+
+        return {
+            tier,
+            ensembleSize: sizeCategory,
+            durationMinutes: totalDurationSeconds / 60,
+            calculatedPrice: price,
+        }
+    }, [user.conservatoriumId, numParticipants, totalDurationSeconds]);
+
+    const ensembleSizeLabels = {
+        'Small': 'קטנות',
+        'Medium': 'בינוניות',
+        'Large': 'גדולות',
+    };
 
 
-  return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
-        {!isEditing && <SaveStatusBar 
-            isDirty={isDirty}
-            saveState={saveState}
-            lastSaved={lastSaved}
-            onSave={handleSaveDraft}
-        />}
+    return (
+        <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8 mt-8">
+                {!isEditing && <SaveStatusBar
+                    isDirty={isDirty}
+                    saveState={saveState}
+                    lastSaved={lastSaved}
+                    onSave={handleSaveDraft}
+                />}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>טופס פרטי משתתף בכנס / אירוע</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <FormField name="academicYear" render={({ field }) => ( <FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-            <FormField name="conservatoriumName" render={({ field }) => ( <FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem> )} />
-          </CardContent>
-        </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>טופס פרטי משתתף בכנס / אירוע</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <FormField name="academicYear" render={({ field }) => (<FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField name="conservatoriumName" render={({ field }) => (<FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
+                    </CardContent>
+                </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>1. פרטי האירוע</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <FormField name="eventName" render={({ field }) => ( <FormItem><FormLabel>שם האירוע</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="eventDate" render={({ field }) => ( <FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="eventLocation" render={({ field }) => ( <FormItem><FormLabel>מיקום</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-            </CardContent>
-        </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>2. פרטי ההרכב</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <FormField name="conductor" render={({ field }) => ( <FormItem><FormLabel>מנצח/ת או מנהל/ת מוזיקלי</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="accompanist" render={({ field }) => ( <FormItem><FormLabel>פסנתרן/ית מלווה (אופציונלי)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-                <FormField name="numParticipants" render={({ field }) => ( <FormItem><FormLabel>מספר משתתפים</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )} />
-            </CardContent>
-        </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>1. פרטי האירוע</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <FormField name="eventName" render={({ field }) => (<FormItem><FormLabel>שם האירוע</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventDate" render={({ field }) => (<FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventLocation" render={({ field }) => (<FormItem><FormLabel>מיקום</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                    </CardContent>
+                </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>3. תוכנית לביצוע</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                {fields.map((field, index) => (
-                     <KenesRepertoireItem 
-                        key={field.id}
-                        index={index} 
-                        remove={remove}
-                        fields={fields}
-                    />
-                ))}
-                </div>
-                <div className="flex items-center gap-4 mt-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => append({ ...emptyComposition })}
-                        disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
-                    >
-                        <PlusCircle className="me-2 h-4 w-4" />
-                        הוסף יצירה
+                <Card>
+                    <CardHeader>
+                        <CardTitle>2. פרטי ההרכב</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <FormField name="conductor" render={({ field }) => (<FormItem><FormLabel>מנצח/ת או מנהל/ת מוזיקלי</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="accompanist" render={({ field }) => (<FormItem><FormLabel>פסנתרן/ית מלווה (אופציונלי)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="numParticipants" render={({ field }) => (<FormItem><FormLabel>מספר משתתפים</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>3. תוכנית לביצוע</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {fields.map((field, index) => (
+                                <KenesRepertoireItem
+                                    key={field.id}
+                                    index={index}
+                                    remove={remove}
+                                    fields={fields}
+                                />
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-4 mt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => append({ ...emptyComposition })}
+                                disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
+                            >
+                                <PlusCircle className="me-2 h-4 w-4" />
+                                הוסף יצירה
+                            </Button>
+                            <SuggestionButton
+                                fields={fields}
+                                append={append as any}
+                                getValues={form.getValues}
+                            />
+
+                        </div>
+                        {fields.length >= MAX_REPERTOIRE_ITEMS && (
+                            <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
+                        )}
+                        <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
+
+                    </CardContent>
+                    <Separator />
+                    <CardFooter className="flex justify-end pt-6">
+                        <div className="text-lg font-bold">
+                            <span>סה"כ זמן ביצוע: </span>
+                            <span>{totalDurationFormatted}</span>
+                        </div>
+                    </CardFooter>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>4. צרכים לוגיסטיים</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <FormField name="logisticalNeeds" render={({ field }) => (<FormItem><FormLabel>מלל חופשי (אופציונלי)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>)} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>5. חישוב עלות</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Notice variant="info">
+                                <NoticeTitle>כיצד העלות מחושבת?</NoticeTitle>
+                                <NoticeDescription>
+                                    המחיר נקבע על פי שלושה גורמים: <strong>סיווג הקונסרבטוריון</strong> (שלב א', ב', או ג'), <strong>גודל ההרכב</strong> (קטן, בינוני, או גדול), ו<strong>משך זמן ההופעה</strong>.
+                                </NoticeDescription>
+                            </Notice>
+                            <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
+                                    <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">גודל הרכב:</span>
+                                    <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)` : '-'}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">משך זמן:</span>
+                                    <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
+                                </div>
+                                <Separator />
+                                <div className="flex justify-between text-lg font-bold">
+                                    <span>סה״כ לתשלום:</span>
+                                    <span>{calculatedPrice} ₪</span>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <div className="flex justify-end gap-4">
+                    {isEditing && onCancel && (
+                        <Button type="button" variant="ghost" onClick={onCancel}>
+                            ביטול
+                        </Button>
+                    )}
+                    <Button type="submit">
+                        <Send className="me-2 h-4 w-4" />
+                        {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
                     </Button>
-                    <SuggestionButton 
-                        fields={fields} 
-                        append={append}
-                        getValues={form.getValues}
-                    />
                 </div>
-                {fields.length >= MAX_REPERTOIRE_ITEMS && (
-                    <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
-                )}
-                 <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
-
-            </CardContent>
-            <Separator />
-            <CardFooter className="flex justify-end pt-6">
-                <div className="text-lg font-bold">
-                    <span>סה"כ זמן ביצוע: </span>
-                    <span>{totalDurationFormatted}</span>
-                </div>
-            </CardFooter>
-        </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>4. צרכים לוגיסטיים</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <FormField name="logisticalNeeds" render={({ field }) => ( <FormItem><FormLabel>מלל חופשי (אופציונלי)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem> )} />
-            </CardContent>
-        </Card>
-
-         <Card>
-            <CardHeader>
-                <CardTitle>5. חישוב עלות</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <Notice variant="info">
-                        <NoticeTitle>כיצד העלות מחושבת?</NoticeTitle>
-                        <NoticeDescription>
-                            המחיר נקבע על פי שלושה גורמים: <strong>סיווג הקונסרבטוריון</strong> (שלב א', ב', או ג'), <strong>גודל ההרכב</strong> (קטן, בינוני, או גדול), ו<strong>משך זמן ההופעה</strong>.
-                        </NoticeDescription>
-                    </Notice>
-                    <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
-                            <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">גודל הרכב:</span>
-                            <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)`: '-'}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">משך זמן:</span>
-                            <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
-                        </div>
-                        <Separator />
-                        <div className="flex justify-between text-lg font-bold">
-                            <span>סה״כ לתשלום:</span>
-                            <span>{calculatedPrice} ₪</span>
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-
-        <div className="flex justify-end gap-4">
-             {isEditing && onCancel && (
-                <Button type="button" variant="ghost" onClick={onCancel}>
-                    ביטול
-                </Button>
-            )}
-            <Button type="submit">
-                <Send className="me-2 h-4 w-4" />
-                {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
-            </Button>
-        </div>
-      </form>
-    </FormProvider>
-  );
+            </form>
+        </FormProvider>
+    );
 }

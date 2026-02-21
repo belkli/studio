@@ -11,9 +11,11 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
 import StudentProfilePage from "./profile/page";
+import { useTranslations } from 'next-intl';
 
 
 export default function DashboardPage() {
+    const t = useTranslations('Dashboard.welcome');
     const { user, newFeaturesEnabled, isLoading } = useAuth();
     const router = useRouter();
 
@@ -47,7 +49,7 @@ export default function DashboardPage() {
             </div>
         );
     }
-    
+
     if (newFeaturesEnabled) {
         if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
             return <AdminCommandCenter />;
@@ -57,7 +59,7 @@ export default function DashboardPage() {
         }
         // Fallback for student/parent if redirect hasn't happened yet
         if (user.role === 'student' || user.role === 'parent') {
-             return <StudentProfilePage />;
+            return <StudentProfilePage />;
         }
     }
 
@@ -66,14 +68,14 @@ export default function DashboardPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">ברוך הבא, {user.name.split(' ')[0]}</h1>
-                    <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
+                    <h1 className="text-2xl font-bold">{t('title', { name: user.name.split(' ')[0] })}</h1>
+                    <p className="text-muted-foreground">{t('subtitle')}</p>
                 </div>
-                 {user.role !== 'ministry_director' && (
+                {user.role !== 'ministry_director' && (
                     <Button asChild>
                         <Link href="/dashboard/forms/new">
                             <PlusCircle className="me-2 h-4 w-4" />
-                            טופס חדש
+                            {t('newForm')}
                         </Link>
                     </Button>
                 )}

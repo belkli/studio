@@ -1,11 +1,11 @@
 'use client';
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
-import { BadgeCheck, Calendar, Check, Guitar, Heart, Music, Shield, SlidersHorizontal, Users, Briefcase } from "lucide-react";
+import { BadgeCheck, Briefcase, Calendar, Check, Guitar, Heart, Music, Shield, SlidersHorizontal, Users } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { User } from "@/lib/types";
 import { Stepper } from "@/components/ui/stepper";
@@ -36,7 +36,7 @@ const MusicianCard = ({ musician }: { musician: User }) => {
         <Card>
             <CardHeader className="flex-row items-center gap-4">
                 <Avatar className="h-16 w-16">
-                     {image ? <AvatarImage src={image.imageUrl} alt={musician.name} /> : <AvatarImage src={musician.avatarUrl} alt={musician.name} />}
+                    {image ? <AvatarImage src={image.imageUrl} alt={musician.name} /> : <AvatarImage src={musician.avatarUrl} alt={musician.name} />}
                     <AvatarFallback>{musician.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -46,7 +46,7 @@ const MusicianCard = ({ musician }: { musician: User }) => {
             </CardHeader>
             <CardContent>
                 <p className="text-sm text-muted-foreground line-clamp-2">{musician.performanceProfile?.performanceBio}</p>
-                 <Button variant="link" className="p-0 mt-2">צפה בפרופיל המלא</Button>
+                <Button variant="link" className="p-0 mt-2">צפה בפרופיל המלא</Button>
             </CardContent>
         </Card>
     )
@@ -55,10 +55,10 @@ const MusicianCard = ({ musician }: { musician: User }) => {
 export function MusiciansForHire() {
     const { users } = useAuth();
     const heroImage = PlaceHolderImages.find(img => img.id === 'musicians-hero');
-    
-    const performers = useMemo(() => 
+
+    const performers = useMemo(() =>
         users.filter(u => u.role === 'teacher' && u.performanceProfile?.isOptedIn && u.performanceProfile?.adminApproved)
-    , [users]);
+        , [users]);
 
     const quoteSteps = [
         { id: 'event', title: 'פרטי אירוע' },
@@ -91,7 +91,7 @@ export function MusiciansForHire() {
                     </Button>
                 </div>
             </section>
-            
+
             <section className="py-12 md:py-20 bg-muted/30">
                 <div className="container px-4 md:px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
@@ -114,50 +114,50 @@ export function MusiciansForHire() {
                 </div>
             </section>
 
-             <section className="py-12 md:py-20">
+            <section className="py-12 md:py-20">
                 <div className="container px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">מוזיקה לכל אירוע</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">בחרו את סוג האירוע שלכם כדי להתחיל.</p>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <OccasionTile imageId="event-wedding" title="חתונה" icon={<Heart className="text-destructive"/>} />
-                        <OccasionTile imageId="event-corporate" title="אירוע עסקי" icon={<Briefcase className="text-blue-500"/>} />
-                        <OccasionTile imageId="event-private" title="מסיבה פרטית" icon={<Users className="text-green-500"/>} />
+                        <OccasionTile imageId="event-wedding" title="חתונה" icon={<Heart className="text-destructive" />} />
+                        <OccasionTile imageId="event-corporate" title="אירוע עסקי" icon={<Briefcase className="text-blue-500" />} />
+                        <OccasionTile imageId="event-private" title="מסיבה פרטית" icon={<Users className="text-green-500" />} />
                     </div>
                 </div>
             </section>
 
             <section id="quote-configurator" className="py-12 md:py-24 bg-muted/30">
-                 <div className="container px-4 md:px-6">
-                     <div className="text-center space-y-4 mb-12">
+                <div className="container px-4 md:px-6">
+                    <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">הצעת מחיר מיידית</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">ענו על מספר שאלות קצרות וקבלו הצעת מחיר ראשונית על המקום.</p>
                     </div>
-                     <Card className="max-w-4xl mx-auto">
+                    <Card className="max-w-4xl mx-auto">
                         <CardHeader>
-                            <Stepper currentStep={currentStep} steps={quoteSteps.map(s=>({id: s.id, title: s.title, icon: Music}))}/>
+                            <Stepper currentStep={currentStep} steps={quoteSteps.map(s => ({ id: s.id, title: s.title, icon: Music }))} />
                         </CardHeader>
                         <CardContent>
                             {currentStep === 0 && (
                                 <div className="space-y-4 grid md:grid-cols-2 gap-6">
-                                     <div className="space-y-2"><Label>סוג אירוע</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר סוג אירוע..."/></SelectTrigger><SelectContent><SelectItem value="wedding">חתונה</SelectItem><SelectItem value="corporate">אירוע עסקי</SelectItem><SelectItem value="private">מסיבה פרטית</SelectItem></SelectContent></Select></div>
-                                     <div className="space-y-2"><Label>תאריך האירוע</Label><Input type="date" /></div>
-                                     <div className="space-y-2"><Label>מיקום</Label><Input placeholder="עיר או כתובת מלאה..." /></div>
-                                     <div className="space-y-2"><Label>משך ההופעה (בשעות)</Label><Input type="number" defaultValue={2} /></div>
+                                    <div className="space-y-2"><Label>סוג אירוע</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר סוג אירוע..." /></SelectTrigger><SelectContent><SelectItem value="wedding">חתונה</SelectItem><SelectItem value="corporate">אירוע עסקי</SelectItem><SelectItem value="private">מסיבה פרטית</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>תאריך האירוע</Label><Input type="date" /></div>
+                                    <div className="space-y-2"><Label>מיקום</Label><Input placeholder="עיר או כתובת מלאה..." /></div>
+                                    <div className="space-y-2"><Label>משך ההופעה (בשעות)</Label><Input type="number" defaultValue={2} /></div>
                                 </div>
                             )}
-                             {currentStep === 1 && (
+                            {currentStep === 1 && (
                                 <div className="space-y-4 grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2"><Label>גודל הרכב</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר גודל הרכב..."/></SelectTrigger><SelectContent><SelectItem value="solo">סולו (1)</SelectItem><SelectItem value="duo">דואט (2)</SelectItem><SelectItem value="trio">טריו (3)</SelectItem><SelectItem value="quartet">רביעייה (4)</SelectItem></SelectContent></Select></div>
-                                    <div className="space-y-2"><Label>ז'אנר מוזיקלי</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר ז'אנר..."/></SelectTrigger><SelectContent><SelectItem value="classical">קלאסי</SelectItem><SelectItem value="jazz">ג'אז</SelectItem><SelectItem value="israeli">ישראלי</SelectItem><SelectItem value="pop">פופ/קל</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>גודל הרכב</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר גודל הרכב..." /></SelectTrigger><SelectContent><SelectItem value="solo">סולו (1)</SelectItem><SelectItem value="duo">דואט (2)</SelectItem><SelectItem value="trio">טריו (3)</SelectItem><SelectItem value="quartet">רביעייה (4)</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>ז'אנר מוזיקלי</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder="בחר ז'אנר..." /></SelectTrigger><SelectContent><SelectItem value="classical">קלאסי</SelectItem><SelectItem value="jazz">ג'אז</SelectItem><SelectItem value="israeli">ישראלי</SelectItem><SelectItem value="pop">פופ/קל</SelectItem></SelectContent></Select></div>
                                     <div className="md:col-span-2 space-y-2">
                                         <Label>בקשות מיוחדות (אופציונלי)</Label>
                                         <Textarea placeholder="שירים ספציפיים, אווירה רצויה, וכו'..." />
                                     </div>
                                 </div>
                             )}
-                             {currentStep === 2 && (
+                            {currentStep === 2 && (
                                 <div className="text-center space-y-4 p-8">
                                     <p className="text-muted-foreground">הצעת מחיר מוערכת עבורכם:</p>
                                     <p className="text-5xl font-bold">₪2,800</p>
@@ -167,21 +167,21 @@ export function MusiciansForHire() {
                             )}
                         </CardContent>
                         <CardFooter className="flex justify-between">
-                            <Button variant="outline" onClick={() => setCurrentStep(s => Math.max(0, s-1))} disabled={currentStep === 0}>הקודם</Button>
-                            <Button onClick={() => setCurrentStep(s => Math.min(s+1, quoteSteps.length -1))} disabled={currentStep === quoteSteps.length -1}>הבא</Button>
+                            <Button variant="outline" onClick={() => setCurrentStep(s => Math.max(0, s - 1))} disabled={currentStep === 0}>הקודם</Button>
+                            <Button onClick={() => setCurrentStep(s => Math.min(s + 1, quoteSteps.length - 1))} disabled={currentStep === quoteSteps.length - 1}>הבא</Button>
                         </CardFooter>
-                     </Card>
-                 </div>
+                    </Card>
+                </div>
             </section>
-            
+
             <section className="py-12 md:py-20">
                 <div className="container px-4 md:px-6">
-                     <div className="text-center space-y-4 mb-12">
+                    <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">המוזיקאים שלנו</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">הצצה קטנה אל חלק מהנגנים המוכשרים שתוכלו להזמין.</p>
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {performers.slice(0,3).map(p => <MusicianCard key={p.id} musician={p} />)}
+                        {performers.slice(0, 3).map(p => <MusicianCard key={p.id} musician={p} />)}
                     </div>
                 </div>
             </section>

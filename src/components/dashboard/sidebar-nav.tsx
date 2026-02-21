@@ -16,105 +16,107 @@ import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, Plus
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
+import { useTranslations } from 'next-intl';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import type { Notification, UserRole } from '@/lib/types';
 
 
-const legacyLinks = [
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
-    { href: '/dashboard/forms', label: 'הטפסים שלי', icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/forms/new', label: 'טופס חדש', icon: PlusCircle, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/library', label: 'ספרייה', icon: Book, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/users', label: 'משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, roles: ['ministry_director'] },
-];
-
-const harmoniaLinks = [
-    // --- Dashboards ---
-    { href: '/dashboard', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-dashboard-admin' },
-    { href: '/dashboard/teacher', label: 'לוח בקרה', icon: LayoutDashboard, roles: ['teacher'], id: 'nav-dashboard-teacher' },
-    { href: '/dashboard/family', label: 'המשפחה שלי', icon: Users, roles: ['parent'], id: 'nav-family-hub' },
-    { href: '/dashboard/profile', label: 'הפרופיל שלי', icon: UserCircle, roles: ['student'], id: 'nav-profile' },
-
-    // --- Teacher Section ---
-    { href: '/dashboard/teacher/profile', label: 'פרופיל מורה', icon: UserCircle, roles: ['teacher'] },
-    { href: '/dashboard/teacher/performance-profile', label: 'פרופיל הופעות', icon: Music, roles: ['teacher'] },
-    { href: '/dashboard/teacher/availability', label: 'הזמינות שלי', icon: Calendar, roles: ['teacher'], id: 'nav-availability' },
-    { href: '/dashboard/teacher/reports', label: 'הדוחות שלי', icon: LineChart, roles: ['teacher'] },
-    { href: '/dashboard/teacher/payroll', label: 'תלושי שכר', icon: Banknote, roles: ['teacher'] },
-    
-    // --- Student & Parent Section ---
-    { href: '/dashboard/schedule', label: 'מערכת שעות', icon: Calendar, roles: ['student', 'parent', 'teacher'], id: 'nav-schedule' },
-    { href: '/dashboard/practice', label: 'יומן אימונים', icon: PencilRuler, roles: ['student', 'parent'], id: 'nav-practice' },
-    { href: '/dashboard/progress', label: 'התקדמות', icon: BarChart3, roles: ['student', 'parent'] },
-    { href: '/dashboard/makeups', label: 'שיעורי השלמה', icon: Coins, roles: ['student', 'parent'] },
-    { href: '/dashboard/ai-reschedule', label: 'עוזר תיאום AI', icon: MessageCircleQuestion, roles: ['student', 'parent']},
-
-    // --- Shared Features ---
-    { href: '/dashboard/messages', label: 'הודעות', icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-messages' },
-    { href: '/dashboard/forms', label: 'טפסים ומסמכים', icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'], id: 'nav-forms' },
-    { href: '/dashboard/notifications', label: 'התראות', icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-notifications' },
-    { href: '/dashboard/billing', label: 'חיובים ותשלומים', icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'], id: 'nav-billing' },
-    
-    // --- Admin Section ---
-    { href: '/dashboard/approvals', label: 'אישורים', icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-approvals' },
-    { href: '/dashboard/users', label: 'ניהול משתמשים', icon: User, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-users' },
-    { href: '/dashboard/enroll', label: 'רישום חדש', icon: UserPlus, roles: ['conservatorium_admin', 'site_admin']},
-    { href: '/dashboard/master-schedule', label: 'מערכת ראשית', icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
-    { href: '/dashboard/events', label: 'אירועים', icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/performances', label: 'ניהול הופעות', icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/rentals', label: 'השאלות כלים', icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/waitlists', label: 'רשימות המתנה', icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/makeups', label: 'ניהול השלמות', icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/substitute', label: 'ניהול מחליפים', icon: UserCheck, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/payroll', label: 'שכר מורים', icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/notifications/log', label: 'יומן התראות', icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/announcements', label: 'הכרזות', icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/reports', label: 'דוחות ואנליטיקה', icon: LineChart, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-reports' },
-    { href: '/dashboard/admin/form-builder', label: 'בנאי טפסים', icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/ai', label: 'סוכני AI', icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/ministry-export', label: 'ייצוא למשה"ח', icon: Download, roles: ['conservatorium_admin', 'site_admin'] },
-    
-    // --- Ministry Section ---
-    { href: '/dashboard/ministry', label: 'אישורי משרד החינוך', icon: Building, roles: ['ministry_director'] },
-];
-
 const NotificationItem = ({ notification }: { notification: Notification }) => (
-    <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
-        <Link href={notification.link}>
-            <div className="flex-shrink-0 mt-1">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="flex-grow">
-                <p className="font-semibold text-sm">{notification.title}</p>
-                <p className="text-xs text-muted-foreground">{notification.message}</p>
-                <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {notification.timestamp}
-                </div>
-            </div>
-        </Link>
-    </DropdownMenuItem>
+  <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
+    <Link href={notification.link}>
+      <div className="flex-shrink-0 mt-1">
+        <Bell className="h-4 w-4 text-muted-foreground" />
+      </div>
+      <div className="flex-grow">
+        <p className="font-semibold text-sm">{notification.title}</p>
+        <p className="text-xs text-muted-foreground">{notification.message}</p>
+        <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          {notification.timestamp}
+        </div>
+      </div>
+    </Link>
+  </DropdownMenuItem>
 );
 
 
 export function SidebarNav() {
+  const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
 
   if (!user) {
     return null; // Or a loading spinner
   }
-  
+
+  const legacyLinks = [
+    { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
+    { href: '/dashboard/forms', label: t('myForms'), icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/forms/new', label: t('newForm'), icon: PlusCircle, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/approvals', label: t('approvals'), icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/library', label: t('library'), icon: Book, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/users', label: t('users'), icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ministry', label: t('ministry'), icon: Building, roles: ['ministry_director'] },
+  ];
+
+  const harmoniaLinks = [
+    // --- Dashboards ---
+    { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-dashboard-admin' },
+    { href: '/dashboard/teacher', label: t('dashboard'), icon: LayoutDashboard, roles: ['teacher'], id: 'nav-dashboard-teacher' },
+    { href: '/dashboard/family', label: t('myFamily'), icon: Users, roles: ['parent'], id: 'nav-family-hub' },
+    { href: '/dashboard/profile', label: t('myProfile'), icon: UserCircle, roles: ['student'], id: 'nav-profile' },
+
+    // --- Teacher Section ---
+    { href: '/dashboard/teacher/profile', label: t('teacherProfile'), icon: UserCircle, roles: ['teacher'] },
+    { href: '/dashboard/teacher/performance-profile', label: t('performanceProfile'), icon: Music, roles: ['teacher'] },
+    { href: '/dashboard/teacher/availability', label: t('myAvailability'), icon: Calendar, roles: ['teacher'], id: 'nav-availability' },
+    { href: '/dashboard/teacher/reports', label: t('myReports'), icon: LineChart, roles: ['teacher'] },
+    { href: '/dashboard/teacher/payroll', label: t('payroll'), icon: Banknote, roles: ['teacher'] },
+
+    // --- Student & Parent Section ---
+    { href: '/dashboard/schedule', label: t('schedule'), icon: Calendar, roles: ['student', 'parent', 'teacher'], id: 'nav-schedule' },
+    { href: '/dashboard/practice', label: t('practiceLog'), icon: PencilRuler, roles: ['student', 'parent'], id: 'nav-practice' },
+    { href: '/dashboard/progress', label: t('progress'), icon: BarChart3, roles: ['student', 'parent'] },
+    { href: '/dashboard/makeups', label: t('makeups'), icon: Coins, roles: ['student', 'parent'] },
+    { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: MessageCircleQuestion, roles: ['student', 'parent'] },
+
+    // --- Shared Features ---
+    { href: '/dashboard/messages', label: t('messages'), icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-messages' },
+    { href: '/dashboard/forms', label: t('formsAndDocs'), icon: FileText, roles: ['student', 'parent', 'teacher', 'conservatorium_admin'], id: 'nav-forms' },
+    { href: '/dashboard/notifications', label: t('notifications'), icon: Bell, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-notifications' },
+    { href: '/dashboard/billing', label: t('billing'), icon: DollarSign, roles: ['student', 'parent', 'conservatorium_admin'], id: 'nav-billing' },
+
+    // --- Admin Section ---
+    { href: '/dashboard/approvals', label: t('approvals'), icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-approvals' },
+    { href: '/dashboard/users', label: t('userManagement'), icon: User, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-users' },
+    { href: '/dashboard/enroll', label: t('newRegistration'), icon: UserPlus, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/master-schedule', label: t('masterSchedule'), icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
+    { href: '/dashboard/events', label: t('events'), icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/performances', label: t('performances'), icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/rentals', label: t('rentals'), icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/waitlists', label: t('waitlists'), icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/makeups', label: t('makeups'), icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/substitute', label: t('substitute'), icon: UserCheck, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/payroll', label: t('teacherPayroll'), icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/notifications/log', label: t('notifications'), icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/announcements', label: t('announcements'), icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/reports', label: t('reportsAnalytics'), icon: LineChart, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-reports' },
+    { href: '/dashboard/admin/form-builder', label: t('formBuilder'), icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ai', label: t('aiAgents'), icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/ministry-export', label: t('ministryExport'), icon: Download, roles: ['conservatorium_admin', 'site_admin'] },
+
+    // --- Ministry Section ---
+    { href: '/dashboard/ministry', label: t('ministry'), icon: Building, roles: ['ministry_director'] },
+  ];
+
   const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
 
   const handleNotificationsOpen = () => {
     if (unreadCount > 0 && user.notifications) {
       const updatedUser = {
         ...user,
-        notifications: user.notifications.map(n => ({...n, read: true}))
+        notifications: user.notifications.map(n => ({ ...n, read: true }))
       };
       updateUser(updatedUser);
     }
@@ -128,7 +130,7 @@ export function SidebarNav() {
       <SidebarHeader>
         <div className="flex items-center gap-2 p-2">
           <Icons.logo className="w-6 h-6 text-primary" />
-          <span className="text-lg font-semibold">הַרמוֹנְיָה</span>
+          <span className="text-lg font-semibold">{t('logo')}</span>
         </div>
       </SidebarHeader>
       <SidebarSeparator />
@@ -137,88 +139,86 @@ export function SidebarNav() {
           {links.map((link) => {
             const userCanView = link.roles.includes(userRole);
             if (!userCanView) {
-                return null;
+              return null;
             }
 
             const isActive = pathname === link.href || (link.href !== '/dashboard' && link.href !== '/dashboard/teacher' && pathname.startsWith(link.href));
 
             return (
-                <SidebarMenuItem key={link.href}>
-                  <Link href={link.href} passHref>
-                    <SidebarMenuButton
-                      id={link.id}
-                      isActive={isActive}
-                      tooltip={link.label}
-                    >
-                      <link.icon />
-                      <span>{link.label}</span>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
+              <SidebarMenuItem key={link.href}>
+                <Link href={link.href} passHref>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                  >
+                    <link.icon />
+                    <span>{link.label}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
             )
           })}
         </SidebarMenu>
       </SidebarContent>
-      
+
       <SidebarFooter>
         <div className="flex items-center justify-between p-2 group-data-[collapsible=icon]:justify-center">
-            <Avatar className="h-9 w-9">
-                <AvatarImage src={user.avatarUrl} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            
-            <DropdownMenu onOpenChange={(open) => open && handleNotificationsOpen()}>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative rounded-full group-data-[collapsible=icon]:hidden">
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                        <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                            {unreadCount}
-                        </span>
-                    )}
-                    <span className="sr-only">התראות</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>התראות</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {user.notifications && user.notifications.length > 0 ? (
-                    user.notifications.slice(0, 5).map(notif => <NotificationItem key={notif.id} notification={notif} />)
-                ) : (
-                    <p className="p-4 text-sm text-center text-muted-foreground">אין התראות חדשות</p>
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user.avatarUrl} alt={user.name} />
+            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+
+          <DropdownMenu onOpenChange={(open) => open && handleNotificationsOpen()}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative rounded-full group-data-[collapsible=icon]:hidden">
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                    {unreadCount}
+                  </span>
                 )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild className="flex items-center justify-center cursor-pointer text-sm text-primary hover:text-primary">
-                    <Link href="/dashboard/notifications">
-                        הצג את כל ההתראות
-                    </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <span className="sr-only">{t('notifications')}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel>{t('notifications')}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {user.notifications && user.notifications.length > 0 ? (
+                user.notifications.slice(0, 5).map(notif => <NotificationItem key={notif.id} notification={notif} />)
+              ) : (
+                <p className="p-4 text-sm text-center text-muted-foreground">{t('noNotifications')}</p>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild className="flex items-center justify-center cursor-pointer text-sm text-primary hover:text-primary">
+                <Link href="/dashboard/notifications">
+                  {t('viewAll')}
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        
+
         <SidebarSeparator />
         <SidebarMenu>
-            <SidebarMenuItem>
-                <Link href="/dashboard/settings" passHref>
-                    <SidebarMenuButton id="nav-settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip="הגדרות">
-                        <Settings />
-                        <span>הגדרות</span>
-                    </SidebarMenuButton>
-                </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <Button variant="ghost" className="w-full justify-start gap-2 p-2 text-sm" tooltip="עזרה" id="help-button">
-                    <MessageCircleQuestion/>
-                    <span>עזרה</span>
-                </Button>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-                <SidebarMenuButton tooltip="התנתקות" onClick={logout}>
-                    <LogOut />
-                    <span>התנתקות</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
+          <SidebarMenuItem>
+            <Link href="/dashboard/settings" passHref>
+              <SidebarMenuButton id="nav-settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip={t('settings')}>
+                <Settings />
+                <span>{t('settings')}</span>
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <Button variant="ghost" className="w-full justify-start gap-2 p-2 text-sm" id="help-button">
+              <MessageCircleQuestion />
+              <span>{t('help')}</span>
+            </Button>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={logout}>
+              <LogOut />
+              <span>{t('logout')}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </>

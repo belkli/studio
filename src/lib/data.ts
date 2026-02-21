@@ -7,57 +7,57 @@ const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
 // Generate Conservatoriums from the JSON file
 export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => {
-  const isHodHasharon = admin.location === 'הוד השרון';
-  return {
-    id: `cons-${admin.id}`,
-    name: admin.location, // Using location as the conservatorium name
-    tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
-    stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
-    // Enable new features for "הוד השרון" for demonstration purposes
-    newFeaturesEnabled: isHodHasharon, 
-    aiAgentsConfig: isHodHasharon ? {
-        "matchmaker-agent": true,
-        "composition-suggester": true,
-        "reschedule-agent": false,
-        "progress-report-agent": false,
-        "admin-alerts-agent": true,
-        "lead-nurture-agent": false,
-    } : undefined,
-    pricingConfig: isHodHasharon ? {
-        baseRatePerLesson: {
-            '30': 80,
-            '45': 100,
-            '60': 120,
-        },
-        discounts: {
-            pack5: 5, // percentage
-            pack10: 10,
-            yearly: 15,
-            sibling: 10,
-        },
-        adHocPremium: 15, // percentage
-        trialPrice: 50,
-    } : undefined,
-  };
+    const isHodHasharon = admin.location === 'הוד השרון';
+    return {
+        id: `cons-${admin.id}`,
+        name: admin.organization ? `${admin.location} (${admin.organization})` : admin.location, // Include organization for better identification
+        tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
+        stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
+        // Enable new features for "הוד השרון" for demonstration purposes
+        newFeaturesEnabled: isHodHasharon,
+        aiAgentsConfig: isHodHasharon ? {
+            "matchmaker-agent": true,
+            "composition-suggester": true,
+            "reschedule-agent": false,
+            "progress-report-agent": false,
+            "admin-alerts-agent": true,
+            "lead-nurture-agent": false,
+        } : undefined,
+        pricingConfig: isHodHasharon ? {
+            baseRatePerLesson: {
+                '30': 80,
+                '45': 100,
+                '60': 120,
+            },
+            discounts: {
+                pack5: 5, // percentage
+                pack10: 10,
+                yearly: 15,
+                sibling: 10,
+            },
+            adHocPremium: 15, // percentage
+            trialPrice: 50,
+        } : undefined,
+    };
 });
 
 export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
-  A: { Small: { 10: 10, 15: 15, 20: 20, 25: 25, 30: 30 }, Medium: { 10: 15, 15: 20, 20: 25, 25: 30, 30: 35 }, Large: { 10: 20, 15: 25, 20: 30, 25: 35, 30: 40 }, },
-  B: { Small: { 10: 12, 15: 16, 20: 22, 25: 27, 30: 32 }, Medium: { 10: 16, 15: 22, 20: 27, 25: 32, 30: 37 }, Large: { 10: 22, 15: 27, 20: 32, 25: 37, 30: 42 }, },
-  C: { Small: { 10: 13, 15: 18, 20: 23, 25: 28, 30: 33 }, Medium: { 10: 18, 15: 23, 20: 28, 25: 33, 30: 38 }, Large: { 10: 23, 15: 28, 20: 33, 25: 38, 30: 43 }, },
+    A: { Small: { 10: 10, 15: 15, 20: 20, 25: 25, 30: 30 }, Medium: { 10: 15, 15: 20, 20: 25, 25: 30, 30: 35 }, Large: { 10: 20, 15: 25, 20: 30, 25: 35, 30: 40 }, },
+    B: { Small: { 10: 12, 15: 16, 20: 22, 25: 27, 30: 32 }, Medium: { 10: 16, 15: 22, 20: 27, 25: 32, 30: 37 }, Large: { 10: 22, 15: 27, 20: 32, 25: 37, 30: 42 }, },
+    C: { Small: { 10: 13, 15: 18, 20: 23, 25: 28, 30: 33 }, Medium: { 10: 18, 15: 23, 20: 28, 25: 33, 30: 38 }, Large: { 10: 23, 15: 28, 20: 33, 25: 38, 30: 43 }, },
 };
 
 export const instruments = ['פסנתר', 'כינור', 'צ\'לו', 'גיטרה', 'חליל צד', 'קלרינט', 'סקסופון', 'תופים', 'שירה'];
 export const genres = ['קלאסי', 'ג\'אז', 'קל', 'ישראלי', 'פופ', 'רוק', 'עממי', 'בארוק', 'רומנטי', 'אימפרסיוניסטי', 'מודרני'];
 export const teacherSpecialties = [
-    {id: 'EXAM_PREP', label: 'הכנה לבחינות'},
-    {id: 'EARLY_CHILDHOOD', label: 'גיל הרך'},
-    {id: 'PERFORMANCE', label: 'הכנה להופעות'},
-    {id: 'JAZZ', label: 'ג׳אז ואימפרוביזציה'},
-    {id: 'THEORY', label: 'תאוריה וקומפוזיציה'},
-    {id: 'SPECIAL_NEEDS', label: 'צרכים מיוחדים'},
-    {id: 'BEGINNER_ADULTS', label: 'מתחילים מבוגרים'},
-    {id: 'ENSEMBLE', label: 'הדרכת הרכבים'},
+    { id: 'EXAM_PREP', label: 'הכנה לבחינות' },
+    { id: 'EARLY_CHILDHOOD', label: 'גיל הרך' },
+    { id: 'PERFORMANCE', label: 'הכנה להופעות' },
+    { id: 'JAZZ', label: 'ג׳אז ואימפרוביזציה' },
+    { id: 'THEORY', label: 'תאוריה וקומפוזיציה' },
+    { id: 'SPECIAL_NEEDS', label: 'צרכים מיוחדים' },
+    { id: 'BEGINNER_ADULTS', label: 'מתחילים מבוגרים' },
+    { id: 'ENSEMBLE', label: 'הדרכת הרכבים' },
 ];
 export const performanceGenres: { id: PerformanceGenre, label: string }[] = [
     { id: 'CLASSICAL', label: 'קלאסי' },
@@ -67,10 +67,10 @@ export const performanceGenres: { id: PerformanceGenre, label: string }[] = [
     { id: 'POPULAR', label: 'פופ/רוק' },
     { id: 'LITURGICAL', label: 'ליטורגי' },
 ];
-export const languages = [{id: 'HE', label: 'עברית'}, {id: 'EN', label: 'אנגלית'}, {id: 'AR', label: 'ערבית'}, {id: 'RU', label: 'רוסית'}];
+export const languages = [{ id: 'HE', label: 'עברית' }, { id: 'EN', label: 'אנגלית' }, { id: 'AR', label: 'ערבית' }, { id: 'RU', label: 'רוסית' }];
 
 export const schools = [
-  { symbol: '44570001', name: 'תיכון הדרים, הוד השרון' }, { symbol: '12345678', name: 'תיכון חדש, תל אביב' }, { symbol: '87654321', name: 'תיכון הראשונים, הרצליה' }, { symbol: '11223344', name: 'בית ספר לאמנויות, ירושלים' }, { symbol: '22334455', name: 'תיכון אלון, רמת השרון' }, { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
+    { symbol: '44570001', name: 'תיכון הדרים, הוד השרון' }, { symbol: '12345678', name: 'תיכון חדש, תל אביב' }, { symbol: '87654321', name: 'תיכון הראשונים, הרצליה' }, { symbol: '11223344', name: 'בית ספר לאמנויות, ירושלים' }, { symbol: '22334455', name: 'תיכון אלון, רמת השרון' }, { symbol: '99887766', name: 'תיכון קלעי, גבעתיים' },
 ];
 
 export const examLevels = ['בגרות (יחידה 1)', 'בגרות (5 יחידות)', 'אקדמאי', 'אחר'];
@@ -85,8 +85,9 @@ export const compositions: Composition[] = (rawCompositions as any[]).map((item:
     genre: item['תקופה'] || 'לא ידוע',
     instrument: item['כלי'] || undefined,
     approved: item['מאושר כיצירה מרכזית'] === 'כן',
-    source: 'seed',
+    source: 'seed' as const,
 })).filter(c => c.composer && c.title);
+
 
 // --- Mock Achievements (SDD-14B) ---
 const mockAchievements: Achievement[] = [
@@ -127,7 +128,7 @@ const thirteenYearsAgoDateString = thirteenYearsAgo.toISOString().split('T')[0];
 
 
 const studentUser: User = {
-  id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [ { instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 }, ], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
+    id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [{ instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },], approved: true, notifications: studentNotifications, parentId: 'parent-user-1', weeklyPracticeGoal: 120, packageId: 'pkg-monthly', achievements: mockAchievements,
 };
 
 const parentUser: User = {
@@ -135,25 +136,25 @@ const parentUser: User = {
 }
 
 const noaLevi: User = {
-  id: 'student-user-noa', name: 'נועה לוי', email: parentUser.email, role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student-noa', idNumber: '333444555', birthDate: thirteenYearsAgoDateString, city: 'הוד השרון', gender: 'נקבה', grade: 'ז', approved: true, notifications: [], parentId: 'parent-user-1', packageId: 'pkg-5', instruments: [{ instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 1 }]
+    id: 'student-user-noa', name: 'נועה לוי', email: parentUser.email, role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student-noa', idNumber: '333444555', birthDate: thirteenYearsAgoDateString, city: 'הוד השרון', gender: 'נקבה', grade: 'ז', approved: true, notifications: [], parentId: 'parent-user-1', packageId: 'pkg-5', instruments: [{ instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 1 }]
 };
 
 
 const studentUser2: User = {
-  id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [ { instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 }, ], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
+    id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [{ instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },], approved: true, notifications: [], weeklyPracticeGoal: 150, packageId: 'pkg-10'
 };
 
 const disengagedStudent: User = {
-  id: 'student-user-3', name: 'מאיה כהן', email: 'disengaged@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student3', idNumber: '333333333', approved: true, notifications: [], parentId: 'parent-user-2', instruments: [{ instrument: 'צ\'לו', teacherName: 'מרים כהן', yearsOfStudy: 1 }], weeklyPracticeGoal: 90, maxStudents: 20
+    id: 'student-user-3', name: 'מאיה כהן', email: 'disengaged@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student3', idNumber: '333333333', approved: true, notifications: [], parentId: 'parent-user-2', instruments: [{ instrument: 'צ\'לו', teacherName: 'מרים כהן', yearsOfStudy: 1 }], weeklyPracticeGoal: 90, maxStudents: 20
 };
 
 
 const otherStudent: User = {
-    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [ { instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 }, ], approved: true, notifications: [],
+    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [{ instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },], approved: true, notifications: [],
 };
 
 const pendingTeacher: User = {
-  id: 'pending-teacher-1', name: 'ישראל ישראלי', email: 'pending.teacher@example.com', role: 'teacher', conservatoriumId: 'cons-1', conservatoriumName: 'קונסרבטוריון הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher', approved: false, notifications: [],
+    id: 'pending-teacher-1', name: 'ישראל ישראלי', email: 'pending.teacher@example.com', role: 'teacher', conservatoriumId: 'cons-1', conservatoriumName: 'קונסרבטוריון הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher', approved: false, notifications: [],
 };
 
 export const mockTeachers: Partial<User>[] = [
@@ -171,7 +172,7 @@ export const mockTeachers: Partial<User>[] = [
             headline: 'פסנתרנית קונצרטים ומוזיקאית קאמרית',
             performanceBio: 'זוכת תחרויות ובעלת ניסיון רב בהופעות באירועים פרטיים ורשמיים. רפרטואר רחב, מקלאסי ועד ג\'אז קל.',
             performanceGenres: ['CLASSICAL', 'JAZZ', 'FILM_MUSIC'],
-            videoLinks: [{title: 'Chopin Nocturne', url: 'https://youtube.com'}]
+            videoLinks: [{ title: 'Chopin Nocturne', url: 'https://youtube.com' }]
         }
     },
     {
@@ -242,36 +243,36 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
 
 
 export const siteAdminUser: User = {
-  id: 'site-admin-user-1', name: 'דנה המנהלת', email: 'site.admin@example.com', role: 'site_admin', conservatoriumId: 'global', conservatoriumName: 'מנהל מערכת', avatarUrl: 'https://i.pravatar.cc/150?u=site-admin', idNumber: '999999999', phone: '054-9999999', approved: true, notifications: siteAdminNotifications,
+    id: 'site-admin-user-1', name: 'דנה המנהלת', email: 'site.admin@example.com', role: 'site_admin', conservatoriumId: 'global', conservatoriumName: 'מנהל מערכת', avatarUrl: 'https://i.pravatar.cc/150?u=site-admin', idNumber: '999999999', phone: '054-9999999', approved: true, notifications: siteAdminNotifications,
 };
 
 export const ministryDirectorUser: User = {
-  id: 'ministry-director-user-1', name: 'יעקב הלוי', email: 'ministry.director@example.com', role: 'ministry_director', conservatoriumId: 'ministry', conservatoriumName: 'משרד החינוך', avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director', idNumber: '123456789', phone: '052-1234567', approved: true, notifications: [],
+    id: 'ministry-director-user-1', name: 'יעקב הלוי', email: 'ministry.director@example.com', role: 'ministry_director', conservatoriumId: 'ministry', conservatoriumName: 'משרד החינוך', avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director', idNumber: '123456789', phone: '052-1234567', approved: true, notifications: [],
 };
 
 export const mockUsers: User[] = [
-  studentUser,
-  studentUser2,
-  disengagedStudent,
-  teacherUser,
-  teacherUser2,
-  teacherUser3,
-  otherStudent,
-  noaLevi,
-  pendingTeacher,
-  siteAdminUser,
-  ministryDirectorUser,
-  parentUser,
-  ...conservatoriumAdminUsers
-].filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i); // Remove duplicates
+    studentUser,
+    studentUser2,
+    disengagedStudent,
+    teacherUser,
+    teacherUser2,
+    teacherUser3,
+    otherStudent,
+    noaLevi,
+    pendingTeacher,
+    siteAdminUser,
+    ministryDirectorUser,
+    parentUser,
+    ...conservatoriumAdminUsers
+].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i); // Remove duplicates
 
 export const mockFormSubmissions: FormSubmission[] = [
-  { id: 'form-101', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יב', studentId: studentUser.id, studentName: studentUser.name, status: 'ממתין לאישור מנהל', submissionDate: '2024-05-20', totalDuration: '12:30', repertoire: [ { id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '05:00', genre: 'רומנטי' }, { id: 'beethoven-fur-elise', composer: 'לודוויג ואן בטהובן', title: 'לאליזה (Für Elise)', duration: '03:00', genre: 'קלאסי' }, ], conservatoriumName: studentUser.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', applicantDetails: { birthDate: studentUser.birthDate, city: studentUser.city, gender: studentUser.gender, phone: studentUser.phone }, schoolDetails: { schoolName: studentUser.schoolName, hasMusicMajor: true, isMajorParticipant: true, plansTheoryExam: true }, teacherDetails: { name: studentUser.instruments?.[0]?.teacherName, yearsWithTeacher: studentUser.instruments?.[0]?.yearsOfStudy, }, instrumentDetails: {instrument: studentUser.instruments?.[0].instrument, yearsOfStudy: studentUser.instruments?.[0].yearsOfStudy} },
-  { id: 'form-102', formType: 'כנס / אירוע', studentId: studentUser2.id, studentName: studentUser2.name, status: 'מאושר סופית', submissionDate: '2024-05-18', totalDuration: '08:15', repertoire: [ { id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', duration: '08:15', genre: 'קלאסי' }, ], conservatoriumName: studentUser2.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', signedAt: '2024-05-19', calculatedPrice: 10, paymentStatus: 'paid', },
-  { id: 'form-103', formType: 'מבחן שלב', studentId: otherStudent.id, studentName: otherStudent.name, status: 'טיוטה', submissionDate: '2024-05-21', totalDuration: '04:00', repertoire: [ { id: 'comp-clementi', composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' }, ], conservatoriumName: otherStudent.conservatoriumName, },
-  { id: 'form-104', formType: 'רסיטל בגרות', academicYear: 'תשפ"ג', grade: 'יא', studentId: 'user-7', studentName: 'רבקה גולן', status: 'נדחה', teacherComment: 'נא לבחור יצירה נוספת מהתקופה הרומנטית.', submissionDate: '2024-05-15', totalDuration: '09:00', repertoire: [ { id: 'comp-haydn', composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' }, ], conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה', },
-  { id: 'form-105', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יא', studentId: studentUser2.id, studentName: studentUser2.name, status: 'נדרש תיקון', ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.', submissionDate: '2024-05-23', totalDuration: '21:00', repertoire: [ { id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', duration: '05:45', genre: 'קלאסי' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' }, { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', duration: '15:00', genre: 'קלאסי' } ], conservatoriumName: studentUser2.conservatoriumName, applicantDetails: { birthDate: studentUser2.birthDate, city: studentUser2.city, gender: studentUser2.gender, phone: studentUser2.phone }, schoolDetails: { schoolName: studentUser2.schoolName, hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: true }, teacherDetails: { name: teacherUser.name, }, instrumentDetails: {instrument: studentUser2.instruments?.[0].instrument, yearsOfStudy: studentUser2.instruments?.[0].yearsOfStudy} },
-  { id: 'form-106', formType: 'בקשה להשאלת כלי נגינה', formTemplateId: 'template-1', studentId: studentUser.id, studentName: studentUser.name, conservatoriumName: studentUser.conservatoriumName, conservatoriumId: studentUser.conservatoriumId, status: 'ממתין לאישור מנהל', submissionDate: '2024-07-20', totalDuration: '00:00', repertoire: [], formData: { 'field-1': 'הכינור שלי נשלח לתיקון ויחזור רק בעוד כשבועיים. אני זקוק/ה לכלי חלופי כדי להמשיך להתאמן לקראת הרסיטל.', 'field-2': '2024-07-22', 'field-3': 'כינור', 'field-4': true, } }
+    { id: 'form-101', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יב', studentId: studentUser.id, studentName: studentUser.name, status: 'ממתין לאישור מנהל', submissionDate: '2024-05-20', totalDuration: '12:30', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '05:00', genre: 'רומנטי' }, { id: 'beethoven-fur-elise', composer: 'לודוויג ואן בטהובן', title: 'לאליזה (Für Elise)', duration: '03:00', genre: 'קלאסי' },], conservatoriumName: studentUser.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', applicantDetails: { birthDate: studentUser.birthDate, city: studentUser.city, gender: studentUser.gender, phone: studentUser.phone }, schoolDetails: { schoolName: studentUser.schoolName, hasMusicMajor: true, isMajorParticipant: true, plansTheoryExam: true }, teacherDetails: { name: studentUser.instruments?.[0]?.teacherName, yearsWithTeacher: studentUser.instruments?.[0]?.yearsOfStudy, }, instrumentDetails: { instrument: studentUser.instruments?.[0].instrument, yearsOfStudy: studentUser.instruments?.[0].yearsOfStudy } },
+    { id: 'form-102', formType: 'כנס / אירוע', studentId: studentUser2.id, studentName: studentUser2.name, status: 'מאושר סופית', submissionDate: '2024-05-18', totalDuration: '08:15', repertoire: [{ id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', duration: '08:15', genre: 'קלאסי' },], conservatoriumName: studentUser2.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', signedAt: '2024-05-19', calculatedPrice: 10, paymentStatus: 'paid', },
+    { id: 'form-103', formType: 'מבחן שלב', studentId: otherStudent.id, studentName: otherStudent.name, status: 'טיוטה', submissionDate: '2024-05-21', totalDuration: '04:00', repertoire: [{ id: 'comp-clementi', composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' },], conservatoriumName: otherStudent.conservatoriumName, },
+    { id: 'form-104', formType: 'רסיטל בגרות', academicYear: 'תשפ"ג', grade: 'יא', studentId: 'user-7', studentName: 'רבקה גולן', status: 'נדחה', teacherComment: 'נא לבחור יצירה נוספת מהתקופה הרומנטית.', submissionDate: '2024-05-15', totalDuration: '09:00', repertoire: [{ id: 'comp-haydn', composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },], conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה', },
+    { id: 'form-105', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יא', studentId: studentUser2.id, studentName: studentUser2.name, status: 'נדרש תיקון', ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.', submissionDate: '2024-05-23', totalDuration: '21:00', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', duration: '05:45', genre: 'קלאסי' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' }, { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', duration: '15:00', genre: 'קלאסי' }], conservatoriumName: studentUser2.conservatoriumName, applicantDetails: { birthDate: studentUser2.birthDate, city: studentUser2.city, gender: studentUser2.gender, phone: studentUser2.phone }, schoolDetails: { schoolName: studentUser2.schoolName, hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: true }, teacherDetails: { name: teacherUser.name, }, instrumentDetails: { instrument: studentUser2.instruments?.[0].instrument, yearsOfStudy: studentUser2.instruments?.[0].yearsOfStudy } },
+    { id: 'form-106', formType: 'בקשה להשאלת כלי נגינה', formTemplateId: 'template-1', studentId: studentUser.id, studentName: studentUser.name, conservatoriumName: studentUser.conservatoriumName, conservatoriumId: studentUser.conservatoriumId, status: 'ממתין לאישור מנהל', submissionDate: '2024-07-20', totalDuration: '00:00', repertoire: [], formData: { 'field-1': 'הכינור שלי נשלח לתיקון ויחזור רק בעוד כשבועיים. אני זקוק/ה לכלי חלופי כדי להמשיך להתאמן לקראת הרסיטל.', 'field-2': '2024-07-22', 'field-3': 'כינור', 'field-4': true, } }
 ];
 
 const tenDaysFromNow = addDays(new Date(), 10).toISOString().split('T')[0];
@@ -294,47 +295,53 @@ export const mockRooms: Room[] = [
 ];
 
 export const mockLessons: LessonSlot[] = [
-  { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: addDays(new Date(), 2).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: addDays(new Date(), 3).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { id: 'lesson-d2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: addDays(new Date(), 2).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', isVirtual: false, roomId: 'room-102', isCreditConsumed: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: addDays(new Date(), 3).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'SCHEDULED', bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-102', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-4', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 60, type: 'RECURRING', status: 'COMPLETED', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-101', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-d1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-d2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-3', instrument: 'צ\'לו', startTime: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'NO_SHOW_STUDENT', attendanceMarkedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), bookingSource: 'ADMIN', roomId: 'room-202', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), updatedAt: new Date().toISOString() },
+    // Credits for Ariel
+    { id: 'lesson-cancel-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 70)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_TEACHER', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 71)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-cancel-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_CONSERVATORIUM', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 31)).toISOString(), updatedAt: new Date().toISOString() },
+    { id: 'lesson-cancel-3', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(), durationMinutes: 45, type: 'RECURRING', status: 'CANCELLED_STUDENT_NOTICED', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: new Date(new Date().setDate(new Date().getDate() - 11)).toISOString(), updatedAt: new Date().toISOString() },
+    // Used credit
+    { id: 'lesson-makeup-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), durationMinutes: 45, type: 'MAKEUP', status: 'COMPLETED', bookingSource: 'STUDENT_SELF', isVirtual: false, isCreditConsumed: false, createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(), updatedAt: new Date().toISOString() },
 ];
 
 export const mockInvoices: Invoice[] = [
-  {
-    id: 'inv-1',
-    invoiceNumber: '2024-05-001',
-    conservatoriumId: 'cons-15',
-    payerId: 'parent-user-1',
-    lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - מאי 2024', total: 560 }],
-    total: 560,
-    status: 'PAID',
-    dueDate: '2024-05-01',
-    paidAt: '2024-05-01',
-  },
-  {
-    id: 'inv-2',
-    invoiceNumber: '2024-06-001',
-    conservatoriumId: 'cons-15',
-    payerId: 'parent-user-1',
-    lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - יוני 2024', total: 560 }],
-    total: 560,
-    status: 'PAID',
-    dueDate: '2024-06-01',
-    paidAt: '2024-06-01',
-  },
     {
-    id: 'inv-3',
-    invoiceNumber: '2024-07-001',
-    conservatoriumId: 'cons-15',
-    payerId: 'parent-user-1',
-    lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - יולי 2024', total: 560 }],
-    total: 560,
-    status: 'OVERDUE',
-    dueDate: '2024-07-01',
-  },
+        id: 'inv-1',
+        invoiceNumber: '2024-05-001',
+        conservatoriumId: 'cons-15',
+        payerId: 'parent-user-1',
+        lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - מאי 2024', total: 560 }],
+        total: 560,
+        status: 'PAID',
+        dueDate: '2024-05-01',
+        paidAt: '2024-05-01',
+    },
+    {
+        id: 'inv-2',
+        invoiceNumber: '2024-06-001',
+        conservatoriumId: 'cons-15',
+        payerId: 'parent-user-1',
+        lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - יוני 2024', total: 560 }],
+        total: 560,
+        status: 'PAID',
+        dueDate: '2024-06-01',
+        paidAt: '2024-06-01',
+    },
+    {
+        id: 'inv-3',
+        invoiceNumber: '2024-07-001',
+        conservatoriumId: 'cons-15',
+        payerId: 'parent-user-1',
+        lineItems: [{ description: 'מנוי חודשי - פסנתר (אריאל) - יולי 2024', total: 560 }],
+        total: 560,
+        status: 'OVERDUE',
+        dueDate: '2024-07-01',
+    },
 ];
 
 export const mockPracticeLogs: PracticeLog[] = [
@@ -366,7 +373,7 @@ export const mockPracticeLogs: PracticeLog[] = [
         mood: 'HARD',
         studentNote: 'היה לי קשה עם המעבר בתיבה 24.'
     },
-     {
+    {
         id: 'pl-4',
         studentId: 'student-user-1',
         teacherId: 'teacher-user-1',
@@ -375,7 +382,7 @@ export const mockPracticeLogs: PracticeLog[] = [
         pieces: [{ title: 'אטיוד של שופן' }],
         mood: 'OKAY',
     },
-     {
+    {
         id: 'pl-5',
         studentId: 'student-user-1',
         teacherId: 'teacher-user-1',
@@ -384,7 +391,7 @@ export const mockPracticeLogs: PracticeLog[] = [
         pieces: [{ title: 'סונטה של מוצרט' }],
         mood: 'GREAT',
     },
-     {
+    {
         id: 'pl-6',
         studentId: 'student-user-2',
         teacherId: 'teacher-user-1',
@@ -393,13 +400,13 @@ export const mockPracticeLogs: PracticeLog[] = [
         pieces: [{ title: 'קונצ\'רטו של ברוך' }],
         mood: 'GREAT',
     },
-     {
+    {
         id: 'pl-7',
         studentId: 'student-user-2',
         teacherId: 'teacher-user-1',
         date: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
         durationMinutes: 50,
-        pieces: [{ title: 'קונצ\'רטו של ברוך' }, {title: 'פרטיטה של באך'}],
+        pieces: [{ title: 'קונצ\'רטו של ברוך' }, { title: 'פרטיטה של באך' }],
         mood: 'OKAY',
         studentNote: 'האינטונציה קצת בעייתית בפרק השני.'
     },
@@ -412,22 +419,22 @@ export const mockAssignedRepertoire: AssignedRepertoire[] = [
 ];
 
 export const mockLessonNotes: LessonNote[] = [
-    { 
-        id: 'note-1', 
-        lessonSlotId: 'lesson-3', 
-        teacherId: 'teacher-user-1', 
-        studentId: 'student-user-1', 
+    {
+        id: 'note-1',
+        lessonSlotId: 'lesson-3',
+        teacherId: 'teacher-user-1',
+        studentId: 'student-user-1',
         summary: 'עבדנו על דינמיקה בפרלוד של באך. יש לשים לב למעברים בין פורטה לפיאנו.',
         homeworkAssignments: ['לתרגל את תיבות 1-16 בידיים נפרדות', 'להקשיב להקלטה של גלן גולד'],
         isSharedWithStudent: true,
         isSharedWithParent: true,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString()
     },
-    { 
-        id: 'note-2', 
+    {
+        id: 'note-2',
         lessonSlotId: 'lesson-1-past',
-        teacherId: 'teacher-user-1', 
-        studentId: 'student-user-1', 
+        teacherId: 'teacher-user-1',
+        studentId: 'student-user-1',
         summary: 'התקדמות יפה בנוקטורן של שופן. יש לעבוד על אצבוע מדויק יותר בתיבות 20-25.',
         homeworkAssignments: ['לנגן את הנוקטורן 5 פעמים ברצף ללא טעויות', 'להאזין לביצוע של ארתור רובינשטיין'],
         isSharedWithStudent: true,
@@ -441,23 +448,23 @@ export const mockMessageThreads: MessageThread[] = [
         id: 'thread-1',
         participants: ['teacher-user-1', 'student-user-1'],
         messages: [
-            { senderId: 'teacher-user-1', body: 'היי אריאל, אל תשכח לתרגל את המעבר בתיבה 24 לקראת השיעור הבא.', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString()},
-            { senderId: 'student-user-1', body: 'בסדר גמור, מרים. אני עובד על זה!', sentAt: new Date().toISOString()},
+            { senderId: 'teacher-user-1', body: 'היי אריאל, אל תשכח לתרגל את המעבר בתיבה 24 לקראת השיעור הבא.', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() },
+            { senderId: 'student-user-1', body: 'בסדר גמור, מרים. אני עובד על זה!', sentAt: new Date().toISOString() },
         ]
     },
     {
         id: 'thread-2',
         participants: ['teacher-user-1', 'student-user-2'],
         messages: [
-            { senderId: 'teacher-user-1', body: 'תמר, תוכלי להביא את התווים של הפרטיטה של באך לשיעור ביום שלישי?', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString()},
+            { senderId: 'teacher-user-1', body: 'תמר, תוכלי להביא את התווים של הפרטיטה של באך לשיעור ביום שלישי?', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString() },
         ]
     },
     {
         id: 'thread-3',
         participants: ['teacher-user-1', 'parent-user-1'],
         messages: [
-            { senderId: 'parent-user-1', body: 'היי מרים, רציתי לשאול לגבי אפשרות להעביר את השיעור של אריאל בשבוע הבא מיום שלישי לחמישי.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString()},
-            { senderId: 'teacher-user-1', body: 'היי דני, בטח. בוא נבדוק זמינות. אשלח לך אופציות בהמשך היום.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString()},
+            { senderId: 'parent-user-1', body: 'היי מרים, רציתי לשאול לגבי אפשרות להעביר את השיעור של אריאל בשבוע הבא מיום שלישי לחמישי.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString() },
+            { senderId: 'teacher-user-1', body: 'היי דני, בטח. בוא נבדוק זמינות. אשלח לך אופציות בהמשך היום.', sentAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString() },
         ]
     }
 ];
@@ -465,23 +472,23 @@ export const mockMessageThreads: MessageThread[] = [
 export const mockProgressReports: ProgressReport[] = [];
 
 export const mockFormTemplates: FormTemplate[] = [
-  {
-    id: 'template-1',
-    conservatoriumId: 'cons-15', // 'הוד השרון'
-    title: 'בקשה להשאלת כלי נגינה',
-    description: 'טופס להגשת בקשה להשאלה של כלי נגינה מהמלאי של הקונסרבטוריון.',
-    fields: [
-      { id: 'field-1', label: 'סיבת הבקשה', type: 'textarea', required: true, placeholder: 'לדוגמה: הכלי שלי בתיקון, צורך בכלי שני...' },
-      { id: 'field-2', label: 'תאריך התחלה רצוי', type: 'date', required: true },
-      { id: 'field-3', label: 'סוג הכלי המבוקש', type: 'dropdown', required: true, options: 'כינור,צ\'לו,גיטרה,חליל,קלרינט' },
-      { id: 'field-4', label: 'קראתי ואני מאשר/ת את תנאי ההשאלה', type: 'checkbox', required: true },
-    ],
-    workflow: [
-      { id: 'wf-1', stepIndex: 0, roleName: 'אישור מורה', requiredRole: 'teacher' },
-      { id: 'wf-2', stepIndex: 1, roleName: 'אישור מנהל מלאי', requiredRole: 'conservatorium_admin' },
-    ],
-    createdAt: new Date().toISOString(),
-  }
+    {
+        id: 'template-1',
+        conservatoriumId: 'cons-15', // 'הוד השרון'
+        title: 'בקשה להשאלת כלי נגינה',
+        description: 'טופס להגשת בקשה להשאלה של כלי נגינה מהמלאי של הקונסרבטוריון.',
+        fields: [
+            { id: 'field-1', label: 'סיבת הבקשה', type: 'textarea', required: true, placeholder: 'לדוגמה: הכלי שלי בתיקון, צורך בכלי שני...' },
+            { id: 'field-2', label: 'תאריך התחלה רצוי', type: 'date', required: true },
+            { id: 'field-3', label: 'סוג הכלי המבוקש', type: 'dropdown', required: true, options: 'כינור,צ\'לו,גיטרה,חליל,קלרינט' },
+            { id: 'field-4', label: 'קראתי ואני מאשר/ת את תנאי ההשאלה', type: 'checkbox', required: true },
+        ],
+        workflow: [
+            { id: 'wf-1', stepIndex: 0, roleName: 'אישור מורה', requiredRole: 'teacher' },
+            { id: 'wf-2', stepIndex: 1, roleName: 'אישור מנהל מלאי', requiredRole: 'conservatorium_admin' },
+        ],
+        createdAt: new Date().toISOString(),
+    }
 ];
 
 export const mockAuditLog: AuditLogEntry[] = [];
@@ -549,8 +556,8 @@ export const mockEvents: EventProduction[] = [
         isPublic: true,
         ticketPrice: 25,
         program: [
-            { id: 'ps-1', studentId: 'student-user-1', studentName: 'אריאל לוי', compositionTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', composer: 'שופן', duration: '05:00'},
-            { id: 'ps-2', studentId: 'student-user-2', studentName: 'תמר ישראלי', compositionTitle: 'קונצ\'רטו לכינור מס\' 1', composer: 'ברוך', duration: '08:30'},
+            { id: 'ps-1', studentId: 'student-user-1', studentName: 'אריאל לוי', compositionTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', composer: 'שופן', duration: '05:00' },
+            { id: 'ps-2', studentId: 'student-user-2', studentName: 'תמר ישראלי', compositionTitle: 'קונצ\'רטו לכינור מס\' 1', composer: 'ברוך', duration: '08:30' },
         ]
     },
     {
@@ -613,6 +620,7 @@ export const mockPerformanceBookings: PerformanceBooking[] = [
         eventDate: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
         eventTime: '19:00',
         eventDurationHours: 3,
+        eventLocation: 'מרכז כנסים, תל אביב',
         status: 'INQUIRY_RECEIVED',
         totalQuote: 3500,
         depositAmount: 1750,
@@ -629,6 +637,7 @@ export const mockPerformanceBookings: PerformanceBooking[] = [
         eventDate: new Date(new Date().setDate(new Date().getDate() + 45)).toISOString(),
         eventTime: '20:00',
         eventDurationHours: 4,
+        eventLocation: 'מתחם האירועים כוכב הימים, הרצליה',
         status: 'QUOTE_SENT',
         assignedMusicians: [
             { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' }
@@ -648,8 +657,9 @@ export const mockPerformanceBookings: PerformanceBooking[] = [
         eventDate: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString(),
         eventTime: '18:00',
         eventDurationHours: 2,
+        eventLocation: 'גן העיר, הוד השרון',
         status: 'BOOKING_CONFIRMED',
-         assignedMusicians: [
+        assignedMusicians: [
             { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' },
             { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'חליל צד' }
         ],

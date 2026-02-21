@@ -1,4 +1,4 @@
-'use server';
+
 /**
  * @fileOverview An AI agent for handling lesson rescheduling requests conversationally.
  *
@@ -23,7 +23,7 @@ const AvailabilitySlotSchema = z.object({
   endTime: z.string(),
 });
 
-const RescheduleRequestInputSchema = z.object({
+export const RescheduleRequestInputSchema = z.object({
   userId: z.string(),
   userMessage: z.string(),
   upcomingLessons: z.array(LessonSchema),
@@ -53,7 +53,7 @@ const ProposedChangeSchema = z.union([
   }),
 ]);
 
-const RescheduleResponseSchema = z.object({
+export const RescheduleResponseSchema = z.object({
   responseText: z.string().describe('The natural language response to show to the user.'),
   actionType: z.enum(['CONFIRMATION_NEEDED', 'CLARIFICATION', 'ESCALATION', 'INFO_PROVIDED']),
   proposedChange: ProposedChangeSchema.optional(),
@@ -68,10 +68,10 @@ export async function handleRescheduleRequest(
 
 
 const prompt = ai.definePrompt({
-    name: 'rescheduleConciergePrompt',
-    input: { schema: RescheduleRequestInputSchema },
-    output: { schema: RescheduleResponseSchema },
-    prompt: `You are a helpful and friendly AI assistant for a music conservatorium named Harmonia. Your goal is to help students reschedule or cancel lessons conversationally based on their messages.
+  name: 'rescheduleConciergePrompt',
+  input: { schema: RescheduleRequestInputSchema },
+  output: { schema: RescheduleResponseSchema },
+  prompt: `You are a helpful and friendly AI assistant for a music conservatorium named Harmonia. Your goal is to help students reschedule or cancel lessons conversationally based on their messages.
 
 Current Time: {{{currentTime}}}
 
@@ -130,12 +130,12 @@ const rescheduleConciergeFlow = ai.defineFlow(
   async (input) => {
     // Add logic to sort availability and filter past slots if needed.
     const sortedAvailability = input.teacherAvailability
-        .filter(slot => isBefore(parseISO(input.currentTime), parseISO(slot)))
-        .sort((a,b) => parseISO(a).getTime() - parseISO(b).getTime());
+      .filter(slot => isBefore(parseISO(input.currentTime), parseISO(slot)))
+      .sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     const { output } = await prompt({
-        ...input,
-        teacherAvailability: sortedAvailability,
+      ...input,
+      teacherAvailability: sortedAvailability,
     });
     return output!;
   }

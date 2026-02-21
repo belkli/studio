@@ -47,10 +47,10 @@ export default function FormDetailsPage() {
     const searchParams = useSearchParams();
     const formId = params.id;
     const { toast } = useToast();
-    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } from useAuth();
-    
+    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
+
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
-    
+
     const { isTeacherApproval, isAdminFinalApproval, isMinistryApproval, isRevisable } = useMemo(() => {
         if (!user || !form) {
             return { isTeacherApproval: false, isAdminFinalApproval: false, isMinistryApproval: false, isRevisable: false };
@@ -62,7 +62,7 @@ export default function FormDetailsPage() {
             isRevisable: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'נדרש תיקון',
         }
     }, [user, form]);
-    
+
     const [isEditing, setIsEditing] = useState(() => searchParams.get('edit') === 'true' && isRevisable);
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
     const [isMinistryRejectionDialogOpen, setMinistryRejectionDialogOpen] = useState(false);
@@ -72,11 +72,11 @@ export default function FormDetailsPage() {
     if (!form) {
         notFound();
     }
-    
+
     if (!user) {
         return null;
     }
-    
+
     const formUser = mockUsers.find(u => u.id === form.studentId);
     const customFormTemplate = form.formTemplateId ? mockFormTemplates.find(t => t.id === form.formTemplateId) : undefined;
 
@@ -85,7 +85,7 @@ export default function FormDetailsPage() {
         const doc = new jsPDF();
         const pageHeight = doc.internal.pageSize.height;
         const pageWidth = doc.internal.pageSize.width;
-        
+
         const rtl = (text) => text ? text.split('').reverse().join('') : '';
 
         // Header
@@ -95,7 +95,7 @@ export default function FormDetailsPage() {
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.text(rtl(`שנת לימודים: ${form.academicYear}`), pageWidth / 2, 28, { align: 'center' });
-        
+
         let lastY = 40;
 
         const addSection = (title, body) => {
@@ -112,28 +112,28 @@ export default function FormDetailsPage() {
         };
 
         if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
-             addSection("פרטי התלמיד/ה", [
+            addSection("פרטי התלמיד/ה", [
                 [rtl(form.studentName), rtl('שם מלא')],
                 [formUser?.idNumber, rtl('ת.ז.')],
                 [form.applicantDetails?.birthDate, rtl('תאריך לידה')],
                 [rtl(form.applicantDetails?.city), rtl('עיר מגורים')],
                 [form.applicantDetails?.phone, rtl('טלפון')],
                 [formUser?.email, rtl('דוא"ל')],
-             ]);
+            ]);
         }
         if (form.formType === 'רסיטל בגרות') {
-              addSection("פרטי בית ספר", [
+            addSection("פרטי בית ספר", [
                 [rtl(form.schoolDetails?.schoolName), rtl('בית ספר')],
                 [rtl(form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא'), rtl('מגמת מוזיקה')],
                 [rtl(form.schoolDetails?.isMajorParticipant ? 'כן' : 'לא'), rtl('משתתף במגמה')],
-              ]);
+            ]);
         }
-        
+
         if (form.formType === 'הרשמה לבחינה') {
-             addSection("פרטי הבחינה", [
+            addSection("פרטי הבחינה", [
                 [rtl(form.examLevel), rtl('רמת בחינה')],
                 [rtl(form.examType), rtl('סוג בחינה')],
-             ]);
+            ]);
         }
 
         addSection("רפרטואר", form.repertoire.map(p => [
@@ -143,7 +143,7 @@ export default function FormDetailsPage() {
             rtl(p.composer)
         ]));
         doc.setFont('helvetica', 'bold');
-        doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY -10, { align: 'left' });
+        doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY - 10, { align: 'left' });
 
 
         if (form.signatureUrl) {
@@ -153,9 +153,9 @@ export default function FormDetailsPage() {
 
         const conservatorium = conservatoriums.find(c => c.name === form.conservatoriumName);
         if (conservatorium?.stampUrl) {
-            doc.setGState(new (doc as any).GState({opacity: 0.8}));
+            doc.setGState(new (doc as any).GState({ opacity: 0.8 }));
             doc.addImage(conservatorium.stampUrl, 'PNG', 20, pageHeight - 60, 30, 30);
-            doc.setGState(new (doc as any).GState({opacity: 1}));
+            doc.setGState(new (doc as any).GState({ opacity: 1 }));
         }
 
         doc.save(`form_${form.id}.pdf`);
@@ -167,13 +167,13 @@ export default function FormDetailsPage() {
         updateForm(updatedForm);
         toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
     }
-    
+
     const handleTeacherReject = () => {
         const updatedForm = { ...form, status: 'נדחה' };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
-    
+
     const handleAdminReject = () => {
         const updatedForm = { ...form, status: 'נדחה' };
         updateForm(updatedForm);
@@ -192,11 +192,11 @@ export default function FormDetailsPage() {
         const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
         const updatedForm = { ...form, status: 'מאושר', signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
         updateForm(updatedForm);
-        
+
         toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
         setSignatureDialogOpen(false);
     }
-    
+
     const handleMinistryFinalApprove = () => {
         const updatedForm = { ...form, status: 'מאושר סופית' };
         updateForm(updatedForm);
@@ -210,20 +210,20 @@ export default function FormDetailsPage() {
         toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
         setMinistryRejectionReason("");
     }
-    
+
     const handleResubmit = (data: Partial<FormSubmission>) => {
         const totalDuration = (data.repertoire || []).reduce((total, item) => {
             if (!item?.duration) return total;
             const [minutes, seconds] = item.duration.split(':').map(Number);
-            if(isNaN(minutes) || isNaN(seconds)) return total;
+            if (isNaN(minutes) || isNaN(seconds)) return total;
             return total + (minutes * 60) + seconds;
         }, 0);
 
         const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
 
-        const updatedForm = { 
-            ...form, 
-            ...data, 
+        const updatedForm = {
+            ...form,
+            ...data,
             totalDuration: totalDurationFormatted,
             status: 'מאושר', // Send back for ministry approval
             ministryComment: undefined,
@@ -258,7 +258,7 @@ export default function FormDetailsPage() {
                 </li>
             );
         } else if (['ממתין לאישור מנהל', 'מאושר', 'מאושר סופית', 'נדרש תיקון', 'נדחה'].includes(form.status)) {
-             history.push(
+            history.push(
                 <li key="teacher-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
@@ -288,9 +288,9 @@ export default function FormDetailsPage() {
                 </li>
             );
         }
-        
+
         if (form.status === 'נדרש תיקון') {
-             history.push(
+            history.push(
                 <li key="ministry-rejected" className="flex items-start gap-3">
                     <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center"><ShieldAlert size={14} /></div>
                     <div>
@@ -299,7 +299,7 @@ export default function FormDetailsPage() {
                 </li>
             );
         } else if (form.status === 'מאושר סופית') {
-             history.push(
+            history.push(
                 <li key="ministry-approved" className="flex items-start gap-3">
                     <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center"><CircleCheckBig size={14} /></div>
                     <div>
@@ -311,7 +311,7 @@ export default function FormDetailsPage() {
 
 
         if (form.status === 'נדחה') {
-             history.push(
+            history.push(
                 <li key="rejected" className="flex items-start gap-3">
                     <div className="bg-red-100 text-red-700 rounded-full h-6 w-6 flex items-center justify-center"><ThumbsDown size={14} /></div>
                     <div>
@@ -335,27 +335,27 @@ export default function FormDetailsPage() {
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">
-                  {isRevisable && (
-                    <Button onClick={() => setIsEditing(true)}>
-                      <Edit className="ms-2 h-4 w-4" />
-                      תקן ושלח מחדש
-                    </Button>
-                  )}
-                  {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
-                    <Button onClick={() => generatePdf(form)} variant="outline">
-                        <Download className="ms-2 h-4 w-4" />
-                        הורד PDF
-                    </Button>
-                  )}
-                  <StatusBadge status={form.status} />
+                    {isRevisable && (
+                        <Button onClick={() => setIsEditing(true)}>
+                            <Edit className="ms-2 h-4 w-4" />
+                            תקן ושלח מחדש
+                        </Button>
+                    )}
+                    {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
+                        <Button onClick={() => generatePdf(form)} variant="outline">
+                            <Download className="ms-2 h-4 w-4" />
+                            הורד PDF
+                        </Button>
+                    )}
+                    <StatusBadge status={form.status} />
                 </div>
             </div>
-            
+
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
 
                     {isEditing ? (
-                         <div className="space-y-6">
+                        <div className="space-y-6">
                             {form.formType === 'רסיטל בגרות' && formUser && (
                                 <RecitalForm
                                     user={user}
@@ -375,7 +375,7 @@ export default function FormDetailsPage() {
                                     onCancel={() => setIsEditing(false)}
                                 />
                             )}
-                             {form.formType === 'הרשמה לבחינה' && formUser && (
+                            {form.formType === 'הרשמה לבחינה' && formUser && (
                                 <ExamRegistrationForm
                                     user={user}
                                     student={formUser}
@@ -385,7 +385,7 @@ export default function FormDetailsPage() {
                                     onCancel={() => setIsEditing(false)}
                                 />
                             )}
-                         </div>
+                        </div>
                     ) : (
                         <>
                             <Card>
@@ -396,13 +396,13 @@ export default function FormDetailsPage() {
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
-                            
+
                             {customFormTemplate && form.formData && (
                                 <DetailsCard title="פרטי הטופס" columns={1}>
                                     {customFormTemplate.fields.map(field => {
                                         const value = form.formData[field.id];
                                         if (value === undefined || value === null) return null;
-                                        
+
                                         let displayValue = String(value);
                                         if (field.type === 'checkbox') {
                                             displayValue = value ? 'כן' : 'לא';
@@ -415,7 +415,7 @@ export default function FormDetailsPage() {
                                 </DetailsCard>
                             )}
 
-                             {(form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') && (
+                            {(form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') && (
                                 <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
                                     <DetailItem label="שם מלא" value={form.studentName} />
                                     <DetailItem label="ת.ז." value={formUser?.idNumber} />
@@ -425,53 +425,53 @@ export default function FormDetailsPage() {
                                     <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
                                     <DetailItem label="אימייל" value={formUser?.email} />
                                 </DetailsCard>
-                             )}
+                            )}
 
 
                             {form.formType === 'רסיטל בגרות' && (
                                 <>
-                                     <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
+                                    <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
                                         <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
                                         <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
                                         <DetailItem label="האם משתתף/ת במגמה?" value={form.schoolDetails?.isMajorParticipant ? "כן" : "לא"} />
-                                     </DetailsCard>
+                                    </DetailsCard>
                                     <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
                                             <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
-                                             <DetailItem label="כלי נגינה / שירה" value={form.instrumentDetails?.instrument} />
-                                             <DetailItem label="סך שנות לימוד בכלי" value={form.instrumentDetails?.yearsOfStudy} />
+                                            <DetailItem label="כלי נגינה / שירה" value={form.instrumentDetails?.instrument} />
+                                            <DetailItem label="סך שנות לימוד בכלי" value={form.instrumentDetails?.yearsOfStudy} />
                                         </div>
-                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
-                                             <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
+                                        <div className="space-y-4 rounded-lg bg-muted/30 p-4">
+                                            <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
                                             <DetailItem label="שם המורה" value={form.teacherDetails?.name} />
                                             <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
                                         </div>
                                     </DetailsCard>
                                 </>
                             )}
-                             {form.formType === 'כנס / אירוע' && (
+                            {form.formType === 'כנס / אירוע' && (
                                 <>
-                                <DetailsCard title="1. פרטי האירוע" columns={3}>
-                                    <DetailItem label="שם האירוע" value={form.eventName} />
-                                    <DetailItem label="תאריך" value={form.eventDate} />
-                                    <DetailItem label="מיקום" value={form.eventLocation} />
-                                </DetailsCard>
-                                <DetailsCard title="2. פרטי ההרכב" columns={3}>
-                                    <DetailItem label="מנצח/ת" value={form.conductor} />
-                                    <DetailItem label="מלווה" value={form.accompanist} />
-                                    <DetailItem label="מספר משתתפים" value={form.numParticipants} />
-                                </DetailsCard>
+                                    <DetailsCard title="1. פרטי האירוע" columns={3}>
+                                        <DetailItem label="שם האירוע" value={form.eventName} />
+                                        <DetailItem label="תאריך" value={form.eventDate} />
+                                        <DetailItem label="מיקום" value={form.eventLocation} />
+                                    </DetailsCard>
+                                    <DetailsCard title="2. פרטי ההרכב" columns={3}>
+                                        <DetailItem label="מנצח/ת" value={form.conductor} />
+                                        <DetailItem label="מלווה" value={form.accompanist} />
+                                        <DetailItem label="מספר משתתפים" value={form.numParticipants} />
+                                    </DetailsCard>
                                 </>
                             )}
 
-                             {form.formType === 'הרשמה לבחינה' && (
+                            {form.formType === 'הרשמה לבחינה' && (
                                 <DetailsCard title="פרטי בחינה" columns={3}>
                                     <DetailItem label="רמת בחינה" value={form.examLevel} />
                                     <DetailItem label="סוג בחינה" value={form.examType} />
                                     <DetailItem label="טווח תאריכים מועדף" value={form.preferredExamDateRange} />
                                 </DetailsCard>
-                             )}
-                            
+                            )}
+
                             {form.repertoire.length > 0 && (
                                 <Card>
                                     <CardHeader>
@@ -507,7 +507,7 @@ export default function FormDetailsPage() {
                             )}
 
                             {isTeacherApproval && (
-                                 <Card>
+                                <Card>
                                     <CardHeader>
                                         <CardTitle>פעולות (מורה)</CardTitle>
                                     </CardHeader>
@@ -520,7 +520,7 @@ export default function FormDetailsPage() {
                                     </CardContent>
                                 </Card>
                             )}
-        
+
                             {isAdminFinalApproval && (
                                 <Card>
                                     <CardHeader>
@@ -535,9 +535,9 @@ export default function FormDetailsPage() {
                                     </CardContent>
                                 </Card>
                             )}
-        
+
                             {isMinistryApproval && (
-                                 <Card>
+                                <Card>
                                     <CardHeader>
                                         <CardTitle>פעולות (משרד החינוך)</CardTitle>
                                     </CardHeader>
@@ -564,12 +564,12 @@ export default function FormDetailsPage() {
                             </div>
                         </CardHeader>
                     </Card>
-                     <Card>
+                    <Card>
                         <CardHeader>
                             <CardTitle>היסטוריית אישורים</CardTitle>
                         </CardHeader>
                         <CardContent>
-                           {renderApprovalHistory()}
+                            {renderApprovalHistory()}
                         </CardContent>
                     </Card>
                     {form.teacherComment && (
@@ -582,7 +582,7 @@ export default function FormDetailsPage() {
                             </CardContent>
                         </Card>
                     )}
-                     {form.ministryComment && (
+                    {form.ministryComment && (
                         <Card className="border-purple-300 bg-purple-50/50">
                             <CardHeader>
                                 <CardTitle className="text-purple-800">הערת משרד החינוך</CardTitle>
@@ -594,7 +594,7 @@ export default function FormDetailsPage() {
                     )}
                     {form.signatureUrl && (
                         <Card>
-                             <CardHeader>
+                            <CardHeader>
                                 <CardTitle>חתימה דיגיטלית</CardTitle>
                             </CardHeader>
                             <CardContent className='flex justify-center items-center p-4 border-dashed border-2 rounded-lg bg-muted/50'>
@@ -614,7 +614,7 @@ export default function FormDetailsPage() {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="relative w-full aspect-[3/1] rounded-lg border bg-background">
-                         <SignatureCanvas
+                        <SignatureCanvas
                             ref={sigPadRef}
                             penColor='black'
                             canvasProps={{ className: 'w-full h-full' }}
@@ -630,7 +630,7 @@ export default function FormDetailsPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-            
+
             <AlertDialog open={isMinistryRejectionDialogOpen} onOpenChange={setMinistryRejectionDialogOpen}>
                 <AlertDialogContent dir="rtl">
                     <AlertDialogHeader>
@@ -639,7 +639,7 @@ export default function FormDetailsPage() {
                             נא לפרט את הסיבה להחזרת הטופס לתיקונים. ההערה תוצג למנהל הקונסרבטוריון.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <Textarea 
+                    <Textarea
                         placeholder="פרט את הסיבות כאן..."
                         value={ministryRejectionReason}
                         onChange={(e) => setMinistryRejectionReason(e.target.value)}

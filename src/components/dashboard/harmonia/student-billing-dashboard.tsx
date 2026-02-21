@@ -15,30 +15,35 @@ import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 
 
 export function StudentBillingDashboard() {
-    const { user, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
+    const { user, users, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
     if (!user) return null;
-    
+
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
         return [user.id, ...(user.childIds || [])];
     }, [user]);
 
     const userInvoices = mockInvoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
-    
+
     const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
 
 
     const currentPackage = useMemo(() => {
-        const studentForPackage = user.role === 'student' ? user : (user.childIds ? user.childIds[0] : null);
+        let studentForPackage: typeof user | undefined;
+        if (user.role === 'student') {
+            studentForPackage = user;
+        } else if (user.childIds && user.childIds.length > 0) {
+            studentForPackage = users.find((u: any) => u.id === user.childIds![0]);
+        }
         if (!studentForPackage) return null;
-        
-        const pkg = mockPackages.find(p => p.id === studentForPackage.packageId);
+
+        const pkg = mockPackages.find(p => p.id === studentForPackage!.packageId);
         if (!pkg) return null;
-        
+
         let creditsRemaining: number | undefined;
         if (pkg.totalCredits) {
-             const lessonsUsed = mockLessons.filter(l => l.studentId === studentForPackage.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
-             creditsRemaining = pkg.totalCredits - lessonsUsed;
+            const lessonsUsed = mockLessons.filter(l => l.studentId === studentForPackage!.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
+            creditsRemaining = pkg.totalCredits - lessonsUsed;
         }
 
         let nextBillingDate: string | undefined = undefined;
@@ -51,7 +56,8 @@ export function StudentBillingDashboard() {
             creditsRemaining,
             nextBillingDate,
         };
-    }, [mockPackages, user, mockLessons]);
+    }, [mockPackages, user, mockLessons, users]);
+
 
     const expiringPackageInfo = useMemo(() => {
         if (!currentPackage || !currentPackage.validUntil) return null;
@@ -76,7 +82,7 @@ export function StudentBillingDashboard() {
                     <AlertTriangle className="absolute left-4 top-4 h-5 w-5" />
                     <NoticeTitle>תוקף החבילה שלך עומד לפוג!</NoticeTitle>
                     <NoticeDescription>
-                        נותרו {expiringPackageInfo.days} ימים עד שהחבילה שלך תפוג בתאריך {expiringPackageInfo.date}. 
+                        נותרו {expiringPackageInfo.days} ימים עד שהחבילה שלך תפוג בתאריך {expiringPackageInfo.date}.
                         <Button variant="link" className="p-0 text-red-800 dark:text-red-300">לחץ כאן כדי לחדש ולשמור על מקומך.</Button>
                     </NoticeDescription>
                 </Notice>
@@ -85,11 +91,11 @@ export function StudentBillingDashboard() {
                 <Card className="lg:col-span-2">
                     <CardHeader>
                         <div className="flex justify-between items-start">
-                             <div>
-                                <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary"/> סטטוס חבילה</CardTitle>
+                            <div>
+                                <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> סטטוס חבילה</CardTitle>
                                 <CardDescription className="pt-1">{currentPackage?.title || 'אין חבילה פעילה'}</CardDescription>
                             </div>
-                             <Button variant="outline" size="sm">שדרג חבילה</Button>
+                            <Button variant="outline" size="sm">שדרג חבילה</Button>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -104,22 +110,22 @@ export function StudentBillingDashboard() {
                         ) : currentPackage ? (
                             <div className="text-muted-foreground text-sm">מנוי חודשי ללא הגבלת שיעורים.</div>
                         ) : (
-                             <div className="text-muted-foreground text-sm">לא משויכת חבילה.</div>
+                            <div className="text-muted-foreground text-sm">לא משויכת חבילה.</div>
                         )}
-                         <div className="flex justify-between text-sm pt-2 border-t">
-                            <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4"/>
-                            {currentPackage?.nextBillingDate ? 'חיוב הבא' : (currentPackage?.validUntil ? 'תוקף חבילה' : 'סטטוס')}</span>
+                        <div className="flex justify-between text-sm pt-2 border-t">
+                            <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4" />
+                                {currentPackage?.nextBillingDate ? 'חיוב הבא' : (currentPackage?.validUntil ? 'תוקף חבילה' : 'סטטוס')}</span>
                             <span className="font-semibold">
-                                {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString('he-IL')} (${currentPackage.price} ₪)` 
-                                : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString('he-IL') : 'פעיל')}
+                                {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString('he-IL')} (${currentPackage.price} ₪)`
+                                    : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString('he-IL') : 'פעיל')}
                             </span>
                         </div>
                     </CardContent>
                 </Card>
-                
+
                 <Card className="flex flex-col">
-                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent"/> שיעורי השלמה</CardTitle>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent" /> שיעורי השלמה</CardTitle>
                         <CardDescription>זיכויים זמינים עקב ביטולים.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col items-center justify-center">
@@ -127,15 +133,15 @@ export function StudentBillingDashboard() {
                         <p className="text-sm text-muted-foreground mt-1">זיכויים</p>
                     </CardContent>
                     <CardFooter>
-                         <Button variant="secondary" className="w-full" asChild>
+                        <Button variant="secondary" className="w-full" asChild>
                             <Link href="/dashboard/makeups">
                                 עבור לניהול שיעורי השלמה
                             </Link>
-                         </Button>
+                        </Button>
                     </CardFooter>
                 </Card>
             </div>
-             <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2">
                     <CardHeader>
                         <CardTitle>היסטוריית חיובים</CardTitle>
@@ -163,7 +169,7 @@ export function StudentBillingDashboard() {
                                         <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{invoice.status === 'PAID' ? 'שולם' : (invoice.status === 'OVERDUE' ? 'בפיגור' : 'ממתין')}</Badge></TableCell>
                                         <TableCell className="text-left">
                                             <Button variant="ghost" size="icon">
-                                                <Download className="h-4 w-4"/>
+                                                <Download className="h-4 w-4" />
                                                 <span className="sr-only">הורד חשבונית</span>
                                             </Button>
                                         </TableCell>
@@ -178,7 +184,7 @@ export function StudentBillingDashboard() {
                     <CardHeader className="p-0 pb-4">
                         <CardTitle>ניהול מנוי</CardTitle>
                     </CardHeader>
-                     <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
+                    <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
                         <Button className="w-full">נהל אמצעי תשלום</Button>
                         <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />השהיית מנוי</Button>
                         <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>

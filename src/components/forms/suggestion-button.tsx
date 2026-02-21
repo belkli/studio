@@ -10,9 +10,10 @@ import type { Composition } from '@/lib/types';
 
 type SuggestionButtonProps = {
   fields: any[];
-  append: (value: Partial<Composition> | Partial<Composition>[], options?: any) => void;
+  append: (value: any, options?: any) => void;
   getValues: () => any;
 };
+
 
 export function SuggestionButton({ fields, append, getValues }: SuggestionButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,15 +32,15 @@ export function SuggestionButton({ fields, append, getValues }: SuggestionButton
         existingCompositions: existingCompositions,
         context: `Student in grade ${currentValues.grade}. The program should be balanced for a recital.`
       });
-      
+
       if (suggestions && suggestions.length > 0) {
         const newCompositions = suggestions.map(s => ({
-            composer: s.composer,
-            title: s.title,
-            duration: s.duration,
-            genre: s.genre,
+          composer: s.composer,
+          title: s.title,
+          duration: s.duration,
+          genre: s.genre,
         }));
-        
+
         append(newCompositions);
 
         toast({

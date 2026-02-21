@@ -47,7 +47,7 @@ export function Combobox({
   const [open, setOpen] = React.useState(false)
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -64,13 +64,18 @@ export function Combobox({
           <ChevronsUpDown className="ms-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-        <Command filter={filter ? undefined : () => 1}>
-          <CommandInput 
-            placeholder={searchPlaceholder} 
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        dir="rtl"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <Command filter={filter ? undefined : () => 1} dir="rtl">
+          <CommandInput
+            placeholder={searchPlaceholder}
             onValueChange={onInputChange}
           />
-          <CommandList onMouseDown={(e) => e.preventDefault()}>
+          <CommandList>
             {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">טוען...</div>}
             {!isLoading && <CommandEmpty>{notFoundMessage}</CommandEmpty>}
             <CommandGroup>
