@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +9,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, X, Send, Bot, User as UserIcon, Loader2 } from 'lucide-react';
 import { getAiHelpResponse } from '@/app/actions';
 import { useAuth } from '@/hooks/use-auth';
-import { Link } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type Message = {
     role: 'user' | 'assistant';
@@ -18,16 +21,66 @@ type Message = {
 
 export function HelpAssistantFAB() {
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            role: 'assistant',
-            content: 'שלום! אני הרמוניה, העוזרת החכמה שלך. איך אפשר לעזור היום?',
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputData, setInputData] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const { user } = useAuth();
+    const pathname = usePathname();
+
+    const suggestedQuestions = useMemo(() => {
+        const defaultQuestions = [
+            'איך מבטלים שיעור?',
+            'איפה אני רואה את יתרת שיעורי ההשלמה שלי?',
+            'איך מגישים טופס רסיטל?',
+            'כיצד אני מעדכן את הזמינות שלי? (למורים)',
+        ];
+
+        if (pathname.includes('/dashboard/schedule')) {
+            return [
+                'איך אני מזמין שיעור השלמה?',
+                'האם אפשר לבטל שיעור מהשבוע הבא?',
+                'מהי מדיניות הביטולים של הקונסרבטוריון?',
+                'כיצד אוכל לסנכרן את היומן שלי?'
+            ];
+        }
+        if (pathname.includes('/dashboard/billing')) {
+            return [
+                'איפה אני מוצא את החשבוניות שלי?',
+                'איך מעדכנים פרטי אשראי?',
+                'מתי החיוב הבא שלי צפוי?',
+                'איך עובדת הנחת אחים?'
+            ];
+        }
+        if (pathname.includes('/dashboard/forms')) {
+            return [
+                'כמה זמן לוקח לאשר טופס רסיטל?',
+                'הטופס שלי נדחה, מה עושים?',
+                'איך אני מוריד עותק PDF של טופס מאושר?',
+                'מי צריך לאשר את הטופס שלי?'
+            ];
+        }
+        if (pathname.includes('/dashboard/admin')) {
+             return [
+                'איך אני מאשר הרשמה של תלמיד חדש?',
+                'איפה אני מגדיר את מחירי החבילות?',
+                'איך אני שולח הכרזה לכל ההורים?',
+                'איפה אני רואה דוחות כספיים?'
+            ];
+        }
+        return defaultQuestions;
+    }, [pathname]);
+
+    useEffect(() => {
+        if (isOpen && messages.length === 0) {
+            setMessages([
+                {
+                    role: 'assistant',
+                    content: 'שלום! אני הרמוניה, העוזרת החכמה שלך. איך אפשר לעזור היום?',
+                },
+            ]);
+        }
+    }, [isOpen, messages]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -35,19 +88,19 @@ export function HelpAssistantFAB() {
         }
     }, [messages]);
 
-    const handleSend = async () => {
-        if (!inputData.trim()) return;
+    const handleSend = useCallback(async (question?: string) => {
+        const userQuestion = question || inputData;
+        if (!userQuestion.trim() || !user) return;
 
-        const question = inputData.trim();
         setInputData('');
-        setMessages((prev) => [...prev, { role: 'user', content: question }]);
+        setMessages((prev) => [...prev, { role: 'user', content: userQuestion }]);
         setIsLoading(true);
 
         try {
             const response = await getAiHelpResponse({
-                question,
-                userId: user?.id || 'anonymous',
-                conservatoriumId: user?.conservatoriumId || 'demo',
+                question: userQuestion,
+                userId: user.id,
+                conservatoriumId: user.conservatoriumId,
                 locale: 'he',
             });
 
@@ -70,7 +123,7 @@ export function HelpAssistantFAB() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [inputData, user]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -146,6 +199,18 @@ export function HelpAssistantFAB() {
                                         </div>
                                     </div>
                                 )}
+                                 {messages.length <= 1 && !isLoading && (
+                                    <div className="pt-4">
+                                        <p className="text-sm font-medium mb-2">הצעות:</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            {suggestedQuestions.map(q => (
+                                                <Button key={q} variant="outline" size="sm" className="h-auto text-wrap justify-start" onClick={() => handleSend(q)}>
+                                                    {q}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </ScrollArea>
                     </CardContent>
@@ -160,7 +225,7 @@ export function HelpAssistantFAB() {
                                 dir="auto"
                                 disabled={isLoading}
                             />
-                            <Button size="icon" onClick={handleSend} disabled={isLoading || !inputData.trim()} className="shrink-0 rounded-full">
+                            <Button size="icon" onClick={() => handleSend()} disabled={isLoading || !inputData.trim()} className="shrink-0 rounded-full">
                                 <Send className="w-4 h-4 rtl:-scale-x-100" />
                             </Button>
                         </div>
