@@ -93,7 +93,7 @@ export function DonationLandingPage() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <StudentStoryCard imageId="student-story-1" name="מיה" age={14} instrument="כינור" story="מיה מגיעה ממשפחה חד-הורית. המלגה מאפשרת לה להמשיך ולהתכונן לבחינות משרד החינוך. המורה שלה אומרת שיש לה פוטנציאל אמיתי לקריירה מוזיקלית." />
                         <StudentStoryCard imageId="student-story-2" name="יוסף" age={16} instrument="פסנתר" story="יוסף עלה לארץ לפני שנתיים ומתמודד עם קשיי קליטה. המוזיקה היא המפלט שלו. בזכות המלגה, הוא יכול להמשיך לנגן ולפתח את הכישרון הייחודי שלו." />
-                        <StudentStoryCard imageId="student-story-3" name="ליאן" age={11} instrument="חליל צד" story="ליאן מתגוררת בפריפריה והנגישות לשיעורים איכותיים מוגבלת. התרומה שלך תאפשר לה להמשיך להגיע לשיעורים בקונסרבטוריון ולהגשים חלום." />
+                        <StudentStoryCard imageId="student-story-3" name="ליאן" age={11} instrument="חליל צד" story="ליאן מתגוררת בפריפריה והנגישות לשיעורים איכותיות מוגבלת. התרומה שלך תאפשר לה להמשיך להגיע לשיעורים בקונסרבטוריון ולהגשים חלום." />
                     </div>
                 </div>
             </section>
