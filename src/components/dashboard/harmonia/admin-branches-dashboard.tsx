@@ -6,12 +6,17 @@ import type { Branch } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle, Building2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Building2, Edit } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useTranslations } from 'next-intl';
+import { BranchEditDialog } from './branch-edit-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export function AdminBranchesDashboard() {
-    const { user, mockBranches, addBranch, conservatoriums } = useAuth();
+    const { user, mockBranches, addBranch, updateBranch, conservatoriums } = useAuth();
+    const { toast } = useToast();
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
     const conservatoriumBranches = useMemo(() => {
         if (!user) return [];
@@ -19,12 +24,31 @@ export function AdminBranchesDashboard() {
         return mockBranches.filter(b => b.conservatoriumId === user.conservatoriumId);
     }, [user, mockBranches]);
     
-    // For now, add button is a placeholder
-    const handleAddBranch = () => {
-      console.log("Add new branch clicked");
+    const handleAddClick = () => {
+      setEditingBranch(null);
+      setIsDialogOpen(true);
+    };
+
+    const handleEditClick = (branch: Branch) => {
+      setEditingBranch(branch);
+      setIsDialogOpen(true);
+    };
+    
+    const handleSaveBranch = (data: { name: string; address: string }, branchId?: string) => {
+      if (branchId) {
+        // Editing existing branch
+        updateBranch({ ...data, id: branchId, conservatoriumId: editingBranch!.conservatoriumId });
+        toast({ title: 'הסניף עודכן בהצלחה' });
+      } else {
+        // Adding new branch
+        addBranch({ ...data, conservatoriumId: user!.conservatoriumId });
+        toast({ title: 'סניף חדש נוסף' });
+      }
+      setIsDialogOpen(false);
     };
 
     return (
+      <>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
@@ -33,7 +57,7 @@ export function AdminBranchesDashboard() {
                         {conservatoriumBranches.length} סניפים מוגדרים במערכת.
                     </CardDescription>
                 </div>
-                <Button onClick={handleAddBranch}>
+                <Button onClick={handleAddClick}>
                     <PlusCircle className="me-2 h-4 w-4" />
                     הוסף סניף חדש
                 </Button>
@@ -67,7 +91,10 @@ export function AdminBranchesDashboard() {
                                             <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
-                                            <DropdownMenuItem>ערוך</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleEditClick(branch)}>
+                                                <Edit className="w-4 h-4 me-2" />
+                                                ערוך
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem className="text-destructive">מחק</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -78,5 +105,12 @@ export function AdminBranchesDashboard() {
                 </Table>
             </CardContent>
         </Card>
+        <BranchEditDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          branch={editingBranch}
+          onSave={handleSaveBranch}
+        />
+      </>
     );
 }

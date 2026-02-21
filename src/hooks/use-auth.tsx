@@ -71,6 +71,8 @@ interface AuthContextType {
   addOpenDayAppointment: (appointmentData: Partial<OpenDayAppointment>) => void;
   markWalkthroughAsSeen: (userId: string) => void;
   addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
+  addBranch: (branchData: Partial<Branch>) => void;
+  updateBranch: (branchData: Branch) => void;
   newFeaturesEnabled: boolean;
   isLoading: boolean;
 }
@@ -98,6 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockScholarshipApplications, setMockScholarshipApplications] = useState<ScholarshipApplication[]>(initialMockData.mockScholarshipApplications);
   const [mockOpenDayEvents, setMockOpenDayEvents] = useState<OpenDayEvent[]>(initialMockData.mockOpenDayEvents);
   const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>(initialMockData.mockOpenDayAppointments);
+  const [mockBranches, setMockBranches] = useState<Branch[]>(initialMockData.mockBranches);
 
 
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
@@ -626,6 +629,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUsers(prev => [...prev, newUser]);
     return newUser;
   };
+  
+  const addBranch = (branchData: Partial<Branch>) => {
+    const newBranch: Branch = {
+      id: `branch-${Date.now()}`,
+      ...branchData
+    } as Branch;
+    setMockBranches(prev => [...prev, newBranch]);
+  };
+
+  const updateBranch = (updatedBranch: Branch) => {
+    setMockBranches(prev => prev.map(b => b.id === updatedBranch.id ? updatedBranch : b));
+  };
 
 
   return (
@@ -652,7 +667,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockOpenDayEvents,
       mockOpenDayAppointments,
       conservatoriums,
-      mockBranches: initialMockData.mockBranches,
+      mockBranches,
       login,
       logout,
       approveUser,
@@ -694,6 +709,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       addOpenDayAppointment,
       markWalkthroughAsSeen,
       addUser,
+      addBranch,
+      updateBranch,
     }}>
       {children}
     </AuthContext.Provider>
