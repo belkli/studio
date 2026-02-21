@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AssignMusicianDialog } from './assign-musician-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 
 const pipelineStages: { id: PerformanceBookingStatus; title: string }[] = [
@@ -56,7 +57,8 @@ const BookingCard = ({ booking, onAssignClick }: { booking: PerformanceBooking; 
 );
 
 export function PerformanceBookingDashboard() {
-    const { mockPerformanceBookings, user } = useAuth();
+    const { mockPerformanceBookings, user, assignMusiciansToPerformance } = useAuth();
+    const { toast } = useToast();
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<PerformanceBooking | null>(null);
 
@@ -77,6 +79,14 @@ export function PerformanceBookingDashboard() {
         setSelectedBooking(booking);
         setAssignDialogOpen(true);
     };
+    
+    const handleAssignConfirm = (bookingId: string, musicianIds: string[]) => {
+        assignMusiciansToPerformance(bookingId, musicianIds);
+        toast({
+          title: 'המוזיקאים שובצו בהצלחה!',
+          description: `${musicianIds.length} מוזיקאים שובצו לאירוע.`,
+        });
+      };
 
     return (
         <>
@@ -102,6 +112,7 @@ export function PerformanceBookingDashboard() {
                 booking={selectedBooking} 
                 open={assignDialogOpen} 
                 onOpenChange={setAssignDialogOpen}
+                onConfirm={handleAssignConfirm}
             />
         </>
     );

@@ -1,5 +1,6 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,17 +9,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking, User } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
 
 interface AssignMusicianDialogProps {
   booking: PerformanceBooking | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onConfirm: (bookingId: string, musicianIds: string[]) => void;
 }
 
-export function AssignMusicianDialog({ booking, open, onOpenChange }: AssignMusicianDialogProps) {
-  const { users, assignMusiciansToPerformance } = useAuth();
-  const { toast } = useToast();
+export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }: AssignMusicianDialogProps) {
+  const { users } = useAuth();
   const [selectedMusicianIds, setSelectedMusicianIds] = useState<string[]>([]);
 
   const performers = useMemo(() => 
@@ -26,7 +26,7 @@ export function AssignMusicianDialog({ booking, open, onOpenChange }: AssignMusi
   , [users]);
 
   // When dialog opens, pre-select already assigned musicians
-  React.useEffect(() => {
+  useEffect(() => {
     if (booking?.assignedMusicians) {
       setSelectedMusicianIds(booking.assignedMusicians.map(m => m.userId));
     } else {
@@ -42,12 +42,7 @@ export function AssignMusicianDialog({ booking, open, onOpenChange }: AssignMusi
 
   const handleConfirm = () => {
     if (!booking) return;
-    
-    assignMusiciansToPerformance(booking.id, selectedMusicianIds);
-    toast({
-      title: 'המוזיקאים שובצו בהצלחה!',
-      description: `${selectedMusicianIds.length} מוזיקאים שובצו לאירוע "${booking.eventName}".`,
-    });
+    onConfirm(booking.id, selectedMusicianIds);
     onOpenChange(false);
   };
 

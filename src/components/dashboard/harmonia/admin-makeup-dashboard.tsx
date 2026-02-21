@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, CalendarPlus, Coins } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import Link from 'next/link';
+import type { WaitlistStatus } from '@/lib/types';
+
 
 interface StudentMakeupBalance {
     student: User;
