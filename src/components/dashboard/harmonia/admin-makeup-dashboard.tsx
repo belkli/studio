@@ -12,9 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Clock, CalendarPlus, Coins } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
-import Link from 'next/link';
-import type { WaitlistStatus } from '@/lib/types';
-
 
 interface StudentMakeupBalance {
     student: User;
@@ -27,27 +24,28 @@ const MAKEUP_EXPIRY_DAYS = 60;
 const EXPIRING_SOON_DAYS = 7;
 
 export function AdminMakeupDashboard() {
-    const { users, mockLessons } = useAuth();
+    const { users, mockLessons, getMakeupCreditBalance } = useAuth();
     
     const makeupBalances = useMemo(() => {
         const studentUsers = users.filter(u => u.role === 'student' && u.approved);
         const balances: StudentMakeupBalance[] = [];
 
         studentUsers.forEach(student => {
-            const grantedLessons = mockLessons.filter(l => 
-                l.studentId === student.id && 
-                (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
-            ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-            const usedCredits = mockLessons.filter(l => 
-                l.studentId === student.id && 
-                l.type === 'MAKEUP'
-            ).length;
-
-            const balance = grantedLessons.length - usedCredits;
+            const studentIds = [student.id];
+            const balance = getMakeupCreditBalance(studentIds);
 
             if (balance > 0) {
-                const earliestCreditLesson = grantedLessons[usedCredits]; // The first unused credit
+                 const grantedLessons = mockLessons.filter(l => 
+                    l.studentId === student.id && 
+                    (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
+                ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+                const usedCredits = mockLessons.filter(l => 
+                    l.studentId === student.id && 
+                    l.type === 'MAKEUP'
+                ).length;
+
+                const earliestCreditLesson = grantedLessons[usedCredits];
                 const teacher = users.find(u => u.id === earliestCreditLesson?.teacherId);
 
                 balances.push({
@@ -59,7 +57,7 @@ export function AdminMakeupDashboard() {
             }
         });
         return balances;
-    }, [users, mockLessons]);
+    }, [users, mockLessons, getMakeupCreditBalance]);
 
     const expiringSoonBalances = useMemo(() => {
         const now = new Date();
