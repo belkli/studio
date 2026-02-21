@@ -51,6 +51,7 @@ import {
   type SlotStatus,
   type AuditLogEntry,
   type Channel,
+  type NotificationPreferences,
   type Achievement,
   type AchievementType,
   type EventProduction,
@@ -61,7 +62,7 @@ import {
   type PerformanceBooking,
   type PerformanceBookingStatus,
 } from '@/lib/data';
-import { startOfMonth, endOfMonth, isWithinInterval, differenceInDays, format, addDays, addHours, startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay, isWithinInterval, differenceInDays, format, addDays, addHours, startOfWeek } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useToast } from './use-toast';
 
@@ -198,6 +199,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setAuditLog(prev => [newLogEntry, ...prev]);
   }, []);
+
+  const awardAchievement = useCallback((studentId: string, type: AchievementType) => {
+    setUsers(prevUsers => {
+        const student = prevUsers.find(u => u.id === studentId);
+        if (!student) return prevUsers;
+        
+        // Simple check to prevent duplicate achievements of the same type for now
+        if (student.achievements?.some(a => a.type === type)) {
+            if (!['PRACTICE_STREAK_7', 'PRACTICE_STREAK_30'].includes(type)) { // Allow streaks to be awarded again after some time (not implemented)
+                return prevUsers;
+            }
+        }
+    
+        let newAchievement: Achievement | null = null;
+        switch(type) {
+            case 'PIECE_COMPLETED':
+                newAchievement = {
+                    id: `ach-comp-${Date.now()}`,
+                    type: 'PIECE_COMPLETED',
+                    title: 'יצירה הושלמה!',
+                    description: 'כל הכבוד על סיום יצירה מהרפרטואר.',
+                    achievedAt: new Date().toISOString(),
+                };
+                break;
+            case 'PRACTICE_STREAK_7':
+                newAchievement = {
+                    id: `ach-streak7-${Date.now()}`,
+                    type: 'PRACTICE_STREAK_7',
+                    title: 'רצף אימונים של 7 ימים!',
+                    description: 'התמדה היא המפתח להצלחה. כל הכבוד!',
+                    achievedAt: new Date().toISOString(),
+                };
+                break;
+        }
+
+        if (newAchievement) {
+            const userToNotifyId = student.parentId || student.id;
+            addNotificationAndLog(
+                userToNotifyId,
+                'הישג חדש!',
+                `כל הכבוד! ${student.name.split(' ')[0]} פתח/ה את ההישג: ${newAchievement.title}`,
+                '/dashboard/profile'
+            );
+            toast({
+                title: "🎉 הישג חדש נפתח!",
+                description: newAchievement.title,
+            });
+
+            return prevUsers.map(u => 
+                u.id === studentId 
+                ? { ...u, achievements: [newAchievement, ...(u.achievements || [])] }
+                : u
+            );
+        }
+        return prevUsers;
+    });
+}, [addNotificationAndLog, toast]);
 
   useEffect(() => {
     const checkAndNotify = (userId: string, notificationKey: string, createNotification: () => void) => {
@@ -526,6 +584,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const updatedRep: AssignedRepertoire = { ...rep, status };
         if (status === 'COMPLETED' && !rep.completedAt) {
           updatedRep.completedAt = new Date().toISOString();
+          awardAchievement(rep.studentId, 'PIECE_COMPLETED');
         }
         return updatedRep;
       }
@@ -819,7 +878,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ...log,
     } as PracticeLog;
 
-    setPracticeLogs(prev => [newLog, ...prev]);
+    const updatedPracticeLogs = [newLog, ...practiceLogs];
+    setPracticeLogs(updatedPracticeLogs);
+
+    // Check for practice streak
+    const studentLogs = updatedPracticeLogs.filter(l => l.studentId === studentId);
+    const logDates = [...new Set(studentLogs.map(l => new Date(l.date.split('T')[0]).getTime()))].sort((a, b) => b - a);
+
+    let streak = 0;
+    if (logDates.length > 0) {
+      const today = startOfDay(new Date());
+      const yesterday = startOfDay(addDays(today, -1));
+
+      if (logDates[0] === today.getTime() || logDates[0] === yesterday.getTime()) {
+        streak = 1;
+        for (let i = 0; i < logDates.length - 1; i++) {
+          const diffDays = differenceInDays(new Date(logDates[i]), new Date(logDates[i + 1]));
+          if (diffDays === 1) {
+            streak++;
+          } else if (diffDays > 1) {
+            break;
+          }
+        }
+      }
+    }
+
+    if (streak === 7) {
+      awardAchievement(studentId, 'PRACTICE_STREAK_7');
+    }
   };
 
   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
@@ -1160,4 +1246,3 @@ export function useAuth() {
   }
   return context;
 }
-

@@ -114,8 +114,6 @@ type AchievementType =
   | 'EXAM_PASSED'                // Ministry exam passed
   | 'FIRST_RECITAL'              // first public performance
   | 'YEARS_ENROLLED_1'          // 1 year anniversary
-  | 'YEARS_ENROLLED_3'
-  | 'YEARS_ENROLLED_5'
   | 'ENSEMBLE_DEBUT'             // first ensemble/group performance
   | 'TEACHER_NOMINATED'          // teacher nominates for exceptional progress
 ```
@@ -128,7 +126,17 @@ When an achievement is earned:
 - Certificate added to the student's achievement portfolio
 - Portfolio is shareable (opt-in): a personal public URL with all achievements
 
-### B.4 Teacher Nomination
+### B.4 Shareable Portfolio Page (Future)
+
+When a student opts-in, the system will generate a public, shareable URL (e.g., `harmonia.app/portfolio/student-name`). This page will be visually appealing, designed to be shared with family, friends, or for college applications.
+
+**Design Philosophy:**
+*   **Clean & Professional:** The page will have a minimalist design, focusing on the student's accomplishments.
+*   **Visual Milestones:** Achievements will be displayed as a timeline with icons and dates.
+*   **Print-Friendly:** The layout will be optimized for printing as a formal record of achievement.
+*   **Print-Friendly:** The layout will be optimized for printing as a formal record of achievement.
+
+### B.5 Teacher Nomination
 
 Teachers can nominate students for "Exceptional Progress" certificates with a short comment. These require admin approval and carry more weight than automatic achievements. This gives teachers a meaningful way to recognize effort beyond measurable metrics.
 
