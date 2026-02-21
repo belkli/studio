@@ -41,6 +41,13 @@ import {
 } from '@/ai/flows/help-assistant-flow';
 import { HelpAssistantInputSchema } from '@/ai/flows/help-assistant-flow';
 
+import {
+  getTargetedSlots,
+  type TargetSlotsInput,
+  type TargetSlotsOutput,
+} from '@/ai/flows/target-empty-slots-flow';
+import { TargetSlotsInputSchema } from '@/ai/flows/target-empty-slots-flow';
+
 // Schemas for non-Genkit actions
 const SearchComposersSchema = z.string();
 const SearchCompositionsSchema = z.object({
@@ -117,5 +124,12 @@ export const getAiHelpResponse = withAuth(
   HelpAssistantInputSchema,
   async (input: HelpAssistantInput): Promise<HelpAssistantResponse> => {
     return await askHelpAssistant(input);
+  }
+);
+
+export const getTargetedSlotSuggestions = withAuth(
+  TargetSlotsInputSchema,
+  async (input: TargetSlotsInput): Promise<TargetSlotsOutput> => {
+    return await getTargetedSlots(input);
   }
 );
