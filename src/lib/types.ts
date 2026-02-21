@@ -624,7 +624,6 @@ export type PerformanceBooking = {
   eventType: string;
   eventDate: string; // ISO Date
   eventTime: string; // "HH:mm"
-  eventLocation: string;
   totalQuote: number;
   assignedMusicians?: { userId: string, name: string, instrument: string }[];
 };

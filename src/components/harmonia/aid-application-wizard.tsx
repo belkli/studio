@@ -7,16 +7,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Stepper } from '@/components/ui/stepper'; // Assuming Stepper exists, if not we build a simple one or use steps
 import { FileUp, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
 
 export function AidApplicationWizard() {
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDone, setIsDone] = useState(false);
     const { toast } = useToast();
+    const { addScholarshipApplication } = useAuth();
 
     const handleNext = () => setStep((s) => Math.min(s + 1, 3));
     const handleBack = () => setStep((s) => Math.max(s - 1, 1));
@@ -26,6 +28,9 @@ export function AidApplicationWizard() {
         setIsSubmitting(true);
         // Simulate API call
         setTimeout(() => {
+            // In a real app, you would gather form data here.
+            addScholarshipApplication({});
+            
             setIsSubmitting(false);
             setIsDone(true);
             toast({
@@ -53,6 +58,12 @@ export function AidApplicationWizard() {
             </Card>
         );
     }
+    
+    const stepperSteps = [
+        { id: 'details', title: 'פרטים ורקע' },
+        { id: 'financial', title: 'נימוקים ומסמכים' },
+        { id: 'submit', title: 'הגשה' }
+    ];
 
     return (
         <Card className="w-full max-w-2xl mx-auto shadow-sm">
@@ -65,11 +76,16 @@ export function AidApplicationWizard() {
             <CardContent>
                 <div className="flex justify-between mb-8 relative">
                     <div className="absolute top-1/2 left-0 right-0 h-1 bg-muted -z-10 -translate-y-1/2 rounded-full" />
-                    <div className={`absolute top-1/2 right-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300 ${step === 1 ? 'w-0' : step === 2 ? 'w-1/2' : 'w-full'}`} />
+                    <div className={cn("absolute top-1/2 right-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300", 
+                        step === 1 ? 'w-0' : step === 2 ? 'w-1/2' : 'w-full'
+                    )} />
 
-                    {[1, 2, 3].map((num) => (
-                        <div key={num} className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold border-4 transition-colors ${step >= num ? 'bg-primary border-primary text-primary-foreground' : 'bg-background border-muted text-muted-foreground'}`}>
-                            {num}
+                    {stepperSteps.map((s, index) => (
+                        <div key={s.id} className="flex flex-col items-center z-10">
+                            <div className={cn("w-10 h-10 rounded-full flex items-center justify-center font-semibold border-4 transition-colors", step >= index + 1 ? 'bg-primary border-primary text-primary-foreground' : 'bg-background border-muted text-muted-foreground')}>
+                                {index + 1}
+                            </div>
+                            <p className="text-xs mt-2 font-medium text-muted-foreground">{s.title}</p>
                         </div>
                     ))}
                 </div>
