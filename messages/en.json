@@ -4,6 +4,7 @@
         "lessons": "Available Lessons",
         "musicians": "Musicians",
         "donate": "Donate",
+        "openDay": "Open Day",
         "about": "About",
         "contact": "Contact",
         "login": "Login",
@@ -24,6 +25,112 @@
     "AvailableNow": {
         "title": "Available lessons for today and tomorrow",
         "subtitle": "Find a music lesson at a special price! A one-time opportunity to learn from the best teachers at discounts of up to 40%."
+    },
+    "OpenDay": {
+        "heroTitle": "Conservatory Open Day",
+        "heroSubtitle": "Come meet the teachers, try new instruments, and hear our students perform. A musical experience for the whole family!",
+        "registerNow": "Register for a meet-and-greet",
+        "featuresTitle": "What awaits you at the Open Day?",
+        "feature1Title": "Meet the Teachers",
+        "feature1Desc": "An opportunity to get to know our leading pedagogical team, ask questions, and receive personal guidance.",
+        "feature2Title": "Try Instruments",
+        "feature2Desc": "Children can touch, feel, and play a variety of musical instruments with the guidance of our teachers.",
+        "feature3Title": "Live Performances",
+        "feature3Desc": "Watch our talented students showcase what they've learned in short concerts throughout the day.",
+        "formTitle": "Open Day Registration",
+        "formSubtitle": "Book a personal introductory meeting. The number of spots is limited.",
+        "registrationDetails": "Registration Details",
+        "familyName": "Family Name",
+        "parentEmail": "Parent's Email",
+        "parentPhone": "Parent's Phone",
+        "childName": "Child's Name",
+        "childAge": "Child's Age",
+        "instrumentInterest": "Instrument of Interest",
+        "selectInstrument": "Select instrument...",
+        "selectTime": "Choose Arrival Time",
+        "noSlots": "All spots are taken. Try another date.",
+        "submit": "Confirm Registration",
+        "successTitle": "Registration Received!",
+        "successDesc": "Thank you for registering for the Open Day. A confirmation and further details have been sent to your email. We look forward to seeing you!",
+        "backToHome": "Back to Homepage"
+    },
+    "AdminOpenDay": {
+        "title": "Open Day Management",
+        "subtitle": "Track attendees and manage appointments for the Open Day event.",
+        "appointmentTime": "Appointment Time",
+        "familyName": "Family Name",
+        "childName": "Child's Name",
+        "instrumentInterest": "Instrument of Interest",
+        "contactDetails": "Contact Details",
+        "status": "Status",
+        "noAppointments": "No families have registered yet.",
+        "statuses": {
+            "SCHEDULED": "Scheduled",
+            "ATTENDED": "Attended",
+            "NO_SHOW": "No-Show"
+        }
+    },
+    "MusiciansForHire": {
+        "heroTitle": "Professional Musicians for Unforgettable Events",
+        "heroSubtitle": "All musicians from [Conservatory Name] — vetted, reliable, and fully insured.",
+        "getQuote": "Get an Instant Quote",
+        "features": {
+            "experienced": "Experienced & Vetted",
+            "experiencedDesc": "Every musician is a professional teacher or advanced student from our conservatory.",
+            "backup": "Backup Guarantee",
+            "backupDesc": "If a musician cancels, we provide a replacement of equal or superior caliber, guaranteed.",
+            "professional": "Professional Management",
+            "professionalDesc": "We handle all logistics, from booking to payment, for a seamless experience."
+        },
+        "occasionsTitle": "Music for Every Occasion",
+        "occasionsSubtitle": "From intimate ceremonies to large corporate events, we provide the perfect soundtrack.",
+        "occasion": {
+            "wedding": "Weddings",
+            "corporate": "Corporate Events",
+            "private": "Private Parties"
+        },
+        "configuratorTitle": "Get an Instant Quote",
+        "configuratorSubtitle": "Configure your event needs and get a real-time price estimate instantly.",
+        "steps": {
+            "event": "Event Details",
+            "music": "Music Needs",
+            "quote": "Your Quote"
+        },
+        "form": {
+            "eventType": "Event Type",
+            "eventPlaceholder": "Select event type...",
+            "date": "Date",
+            "location": "Location",
+            "locationPlaceholder": "e.g., Tel Aviv",
+            "duration": "Duration (hours)",
+            "ensembleSize": "Ensemble Size",
+            "ensemblePlaceholder": "Select size...",
+            "ensemble": {
+                "solo": "Solo (1 musician)",
+                "duo": "Duo (2 musicians)",
+                "trio": "Trio (3 musicians)",
+                "quartet": "Quartet (4 musicians)"
+            },
+            "genre": "Genre",
+            "genrePlaceholder": "Select genre...",
+            "genres": {
+                "classical": "Classical",
+                "jazz": "Jazz",
+                "israeli": "Israeli",
+                "pop": "Pop"
+            },
+            "requests": "Special Requests",
+            "requestsPlaceholder": "Specific songs, special arrangements, etc.",
+            "previous": "Previous",
+            "next": "Next",
+            "quoteTitle": "Your Estimated Quote",
+            "quotePrice": "₪{price}",
+            "quoteDetails": "{ensemble} for {duration} hours",
+            "submitRequest": "Submit Booking Request"
+        },
+        "musiciansTitle": "Meet Our Musicians",
+        "musiciansSubtitle": "A selection of our finest teachers and advanced students available for events.",
+        "viewProfile": "View Profile"
     },
     "EnrollmentWizard": {
         "steps": {
@@ -174,6 +281,19 @@
             "selectConservatorium": "Please select a conservatory",
             "selectInstrument": "Please select an instrument",
             "selectPackage": "Please select a package"
+        },
+        "summary": {
+            "title": "Summary",
+            "studentName": "Student Name",
+            "parentName": "Parent Name",
+            "email": "Email",
+            "instrument": "Instrument",
+            "teacher": "Teacher",
+            "package": "Package",
+            "firstLesson": "First Lesson",
+            "price": "Price",
+            "notSelected": "Not Selected",
+            "later": "To be scheduled later"
         }
     },
     "Dashboard": {
@@ -299,6 +419,7 @@
         "newRegistration": "New Registration",
         "masterSchedule": "Master Schedule",
         "events": "Events",
+        "manageOpenDay": "Open Day Management",
         "performances": "Performances",
         "rentals": "Rentals",
         "waitlists": "Waitlists",

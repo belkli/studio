@@ -70,6 +70,7 @@ interface AuthContextType {
   addScholarshipApplication: (applicationData: Partial<ScholarshipApplication>) => void;
   addOpenDayAppointment: (appointmentData: Partial<OpenDayAppointment>) => void;
   markWalkthroughAsSeen: (userId: string) => void;
+  addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
   newFeaturesEnabled: boolean;
   isLoading: boolean;
 }
@@ -609,6 +610,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addUser = (userData: Partial<User>, isAdminFlow = false): User => {
+    const newUser: User = {
+      id: `user-${Date.now()}`,
+      approved: isAdminFlow, // Admins auto-approve
+      avatarUrl: 'https://i.pravatar.cc/150?u=' + Date.now(),
+      ...userData,
+    } as User;
+    setUsers(prev => [...prev, newUser]);
+    return newUser;
+  };
+
 
   return (
     <AuthContext.Provider value={{
@@ -624,7 +636,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockLessonNotes,
       mockMessageThreads,
       mockProgressReports,
-      mockAnnouncements,
+      mockAnnouncements: initialMockData.mockAnnouncements,
       mockFormTemplates,
       mockAuditLog,
       mockEvents,
@@ -675,6 +687,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       addScholarshipApplication,
       addOpenDayAppointment,
       markWalkthroughAsSeen,
+      addUser,
     }}>
       {children}
     </AuthContext.Provider>

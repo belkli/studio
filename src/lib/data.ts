@@ -574,5 +574,18 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
 
 export const mockPerformanceBookings: PerformanceBooking[] = [];
 export const mockScholarshipApplications: ScholarshipApplication[] = [];
-export const mockOpenDayEvents: OpenDayEvent[] = [];
+export const mockOpenDayEvents: OpenDayEvent[] = [
+    {
+        id: 'open-day-1',
+        conservatoriumId: 'cons-15', // הוד השרון
+        name: 'יום פתוח בקונסרבטוריון הוד השרון',
+        description: 'בואו להכיר את המורים, לנסות כלי נגינה חדשים ולשמוע את תלמידינו. חוויה מוזיקלית לכל המשפחה!',
+        date: addDays(new Date(), 20).toISOString().split('T')[0], // In 20 days
+        startTime: '10:00',
+        endTime: '14:00',
+        appointmentDuration: 20, // 20 minutes per appointment
+        isActive: true,
+    },
+];
+
 export const mockOpenDayAppointments: OpenDayAppointment[] = [];

@@ -19,6 +19,7 @@ export default function Home() {
           <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">{tNav('lessons')}</Link>
           <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
           <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
+          <Link href="/open-day" className="text-sm font-medium hover:underline underline-offset-4">{tNav('openDay')}</Link>
           <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
         </nav>
         <div className="flex-grow" />
