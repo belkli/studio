@@ -19,7 +19,7 @@ export default function DonatePage() {
                  <nav className="hidden md:flex gap-4 sm:gap-6 mx-6">
                     <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">{tNav('lessons')}</Link>
                     <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
-                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
+                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4 text-primary">{tNav('donate')}</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('contact')}</Link>
                 </nav>

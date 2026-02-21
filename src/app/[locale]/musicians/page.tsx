@@ -18,7 +18,7 @@ export default function MusiciansPage() {
                 </Link>
                 <nav className="hidden md:flex gap-4 sm:gap-6 mx-6">
                     <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">{tNav('lessons')}</Link>
-                    <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
+                    <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4 text-primary">{tNav('musicians')}</Link>
                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('contact')}</Link>
@@ -34,7 +34,7 @@ export default function MusiciansPage() {
                     </Button>
                 </div>
             </header>
-            <main className="flex-1">
+            <main className="flex-1 pt-14">
                 <MusiciansForHire />
             </main>
             <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">

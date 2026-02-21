@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking, User } from '@/lib/types';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface AssignMusicianDialogProps {
   booking: PerformanceBooking | null;
@@ -57,26 +58,29 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
         </DialogHeader>
         <ScrollArea className="max-h-80 my-4">
           <div className="space-y-2 p-1">
-            {performers.map(performer => (
-              <div
-                key={performer.id}
-                className="flex items-center gap-3 p-2 rounded-md border"
-              >
-                <Checkbox
-                  id={`musician-${performer.id}`}
-                  checked={selectedMusicianIds.includes(performer.id)}
-                  onCheckedChange={() => handleToggleMusician(performer.id)}
-                />
-                <Avatar className="h-9 w-9">
-                    <AvatarImage src={performer.avatarUrl} />
-                    <AvatarFallback>{performer.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                    <Label htmlFor={`musician-${performer.id}`} className="font-medium cursor-pointer">{performer.name}</Label>
-                    <p className="text-xs text-muted-foreground">{performer.instruments?.map(i => i.instrument).join(', ')}</p>
+            {performers.map(performer => {
+              const image = PlaceHolderImages.find(img => img.id === performer.avatarUrl)
+              return (
+                <div
+                  key={performer.id}
+                  className="flex items-center gap-3 p-2 rounded-md border"
+                >
+                  <Checkbox
+                    id={`musician-${performer.id}`}
+                    checked={selectedMusicianIds.includes(performer.id)}
+                    onCheckedChange={() => handleToggleMusician(performer.id)}
+                  />
+                  <Avatar className="h-9 w-9">
+                      <AvatarImage src={image?.imageUrl || performer.avatarUrl} />
+                      <AvatarFallback>{performer.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                      <Label htmlFor={`musician-${performer.id}`} className="font-medium cursor-pointer">{performer.name}</Label>
+                      <p className="text-xs text-muted-foreground">{performer.instruments?.map(i => i.instrument).join(', ')}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </ScrollArea>
         <DialogFooter>

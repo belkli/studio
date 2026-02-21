@@ -21,6 +21,8 @@ export default function OpenDayPage() {
                     <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
                     <Link href="/open-day" className="text-sm font-medium hover:underline underline-offset-4 text-primary">{tNav('openDay') || 'יום פתוח'}</Link>
+                    <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
+                    <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('contact')}</Link>
                 </nav>
                 <div className="flex-grow" />
                 <div className="flex items-center gap-2">

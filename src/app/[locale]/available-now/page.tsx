@@ -18,7 +18,7 @@ export default function AvailableNowPage() {
                     <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
                 </Link>
                 <nav className="hidden md:flex gap-4 sm:gap-6 mx-6">
-                    <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4">{tNav('lessons')}</Link>
+                    <Link href="/available-now" className="text-sm font-medium hover:underline underline-offset-4 text-primary">{tNav('lessons')}</Link>
                     <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
                     <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
                     <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
