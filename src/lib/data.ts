@@ -501,6 +501,7 @@ export const mockFormTemplates: FormTemplate[] = [
 ];
 
 export const mockAuditLog: AuditLogEntry[] = [];
+export const mockAnnouncements: Announcement[] = [];
 
 export const mockEvents: EventProduction[] = [
     {
@@ -569,163 +570,10 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
     }
 ];
 
-export const mockPerformanceBookings: PerformanceBooking[] = [
-    {
-        id: 'perf-booking-1',
-        conservatoriumId: 'cons-15',
-        clientName: 'חברת הייטק בע"מ',
-        clientEmail: 'events@hightech.co.il',
-        clientPhone: '052-1234567',
-        eventName: 'אירוע חברה שנתי',
-        eventType: 'Corporate Event',
-        eventDate: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
-        eventTime: '19:00',
-        eventDurationHours: 3,
-        eventLocation: 'מרכז כנסים, תל אביב',
-        status: 'INQUIRY_RECEIVED',
-        totalQuote: 3500,
-        depositAmount: 1750,
-        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-    },
-    {
-        id: 'perf-booking-2',
-        conservatoriumId: 'cons-15',
-        clientName: 'משפחת כהן',
-        clientEmail: 'cohen.family@email.com',
-        clientPhone: '054-7654321',
-        eventName: 'חתונה של דנה ואבי',
-        eventType: 'Wedding Reception',
-        eventDate: new Date(new Date().setDate(new Date().getDate() + 45)).toISOString(),
-        eventTime: '20:00',
-        eventDurationHours: 4,
-        eventLocation: 'מתחם האירועים כוכב הימים, הרצליה',
-        status: 'QUOTE_SENT',
-        assignedMusicians: [
-            { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' }
-        ],
-        totalQuote: 2800,
-        depositAmount: 1400,
-        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    },
-    {
-        id: 'perf-booking-3',
-        conservatoriumId: 'cons-15',
-        clientName: 'עיריית הוד השרון',
-        clientEmail: 'culture@hod-hasharon.muni.il',
-        clientPhone: '09-1234567',
-        eventName: 'קבלת פנים חגיגית',
-        eventType: 'Concert & Cultural Event',
-        eventDate: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString(),
-        eventTime: '18:00',
-        eventDurationHours: 2,
-        eventLocation: 'גן העיר, הוד השרון',
-        status: 'BOOKING_CONFIRMED',
-        assignedMusicians: [
-            { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' },
-            { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'חליל צד' }
-        ],
-        totalQuote: 2200,
-        depositAmount: 1100,
-        inquiryReceivedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
-    }
-];
-
-export const mockScholarshipApplications: ScholarshipApplication[] = [
-    {
-        id: 'schol-app-1',
-        studentId: 'student-user-2',
-        studentName: 'תמר ישראלי',
-        instrument: 'כינור',
-        conservatoriumId: 'cons-15',
-        academicYear: 'תשפ"ה',
-        type: 'FINANCIAL_AID',
-        documents: [],
-        selfDeclaration: { householdSize: 4, isSingleParent: false, isNewImmigrant: false, isDisabled: false },
-        requestedDiscountPercent: 50,
-        status: 'SUBMITTED',
-        priorityScore: 75,
-        submittedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    },
-    {
-        id: 'schol-app-2',
-        studentId: 'student-user-3',
-        studentName: 'מאיה כהן',
-        instrument: 'צ\'לו',
-        conservatoriumId: 'cons-15',
-        academicYear: 'תשפ"ה',
-        type: 'MERIT_SCHOLARSHIP',
-        documents: [],
-        selfDeclaration: { householdSize: 5, isSingleParent: true, isNewImmigrant: false, isDisabled: false },
-        requestedDiscountPercent: 100,
-        status: 'UNDER_REVIEW',
-        priorityScore: 92,
-        submittedAt: new Date(new Date().setDate(new Date().getDate() - 12)).toISOString(),
-    }
-];
-
-export const mockAnnouncements: Announcement[] = [
-    {
-        id: 'ann-1',
-        conservatoriumId: 'cons-15',
-        title: 'חופשת פסח - עדכון',
-        body: 'הקונסרבטוריון יהיה סגור לרגל חופשת הפסח בין התאריכים 22.04 ועד 29.04. הלימודים יתחדשו ב-30.04. חג שמח!',
-        targetAudience: 'ALL',
-        channels: ['IN_APP', 'EMAIL'],
-        sentAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    },
-    {
-        id: 'ann-2',
-        conservatoriumId: 'cons-15',
-        title: 'הרשמה לרסיטל סוף שנה',
-        body: 'ההרשמה לרסיטל סוף השנה נפתחה! יש להגיש טפסי רסיטל עד לתאריך 15.05. לפרטים נוספים, פנו למורים.',
-        targetAudience: 'STUDENTS',
-        channels: ['IN_APP'],
-        sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-    },
-];
-
-export const mockOpenDayEvents: OpenDayEvent[] = [
-    {
-        id: 'open-day-hod-hasharon-2024',
-        conservatoriumId: 'cons-15',
-        name: 'יום פתוח בקונסרבטוריון הוד השרון',
-        date: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0], // A month from now
-        startTime: '10:00',
-        endTime: '14:00',
-        appointmentDuration: 20, // minutes
-        description: 'בואו להכיר את המורים, לנסות כלים שונים ולהתרשם מהאווירה המוזיקלית שלנו. הירשמו לפגישת היכרות אישית!',
-        isActive: true,
-    }
-];
-
-export const mockOpenDayAppointments: OpenDayAppointment[] = [
-    {
-        id: 'appt-1',
-        eventId: 'open-day-hod-hasharon-2024',
-        familyName: 'כהן',
-        parentEmail: 'cohen@email.com',
-        parentPhone: '050-1234567',
-        childName: 'אורי',
-        childAge: 8,
-        instrumentInterest: 'פסנתר',
-        appointmentTime: setMinutes(setHours(new Date(mockOpenDayEvents[0].date), 10), 0).toISOString(),
-        status: 'SCHEDULED',
-        registeredAt: new Date().toISOString(),
-    },
-    {
-        id: 'appt-2',
-        eventId: 'open-day-hod-hasharon-2024',
-        familyName: 'לוי',
-        parentEmail: 'levi@email.com',
-        parentPhone: '052-8765432',
-        childName: 'מאיה',
-        childAge: 10,
-        instrumentInterest: 'כינור',
-        appointmentTime: setMinutes(setHours(new Date(mockOpenDayEvents[0].date), 10), 20).toISOString(),
-        status: 'SCHEDULED',
-        registeredAt: new Date().toISOString(),
-    },
-];
+export const mockPerformanceBookings: PerformanceBooking[] = [];
+export const mockScholarshipApplications: ScholarshipApplication[] = [];
+export const mockOpenDayEvents: OpenDayEvent[] = [];
+export const mockOpenDayAppointments: OpenDayAppointment[] = [];
 
 
 export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus, type ScholarshipApplication, type OpenDayEvent, type OpenDayAppointment, type Branch };

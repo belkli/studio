@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, MessageThread, ProgressReport, Announcement, FormTemplate, AuditLogEntry, EventProduction, InstrumentInventory, PerformanceBooking, ScholarshipApplication, OpenDayAppointment, OpenDayEvent, PerformanceBookingStatus, SlotStatus, RepertoireStatus } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
@@ -31,6 +31,7 @@ interface AuthContextType {
   mockOpenDayEvents: OpenDayEvent[];
   mockOpenDayAppointments: OpenDayAppointment[];
   conservatoriums: Conservatorium[];
+  mockBranches: Branch[];
   login: (email: string) => { user: User | null; status: 'approved' | 'pending' | 'not_found' };
   logout: () => void;
   approveUser: (userId: string) => void;
@@ -620,7 +621,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockLessonNotes,
       mockMessageThreads,
       mockProgressReports,
-      mockAnnouncements,
+      mockAnnouncements: initialMockData.mockAnnouncements,
       mockFormTemplates,
       mockAuditLog,
       mockEvents,
@@ -630,6 +631,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockOpenDayEvents,
       mockOpenDayAppointments,
       conservatoriums,
+      mockBranches: initialMockData.mockBranches,
       login,
       logout,
       approveUser,
@@ -683,3 +685,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+    

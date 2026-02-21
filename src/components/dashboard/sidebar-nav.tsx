@@ -80,6 +80,7 @@ export function SidebarNav() {
     { href: '/dashboard/progress', label: t('progress'), icon: BarChart3, roles: ['student', 'parent'] },
     { href: '/dashboard/makeups', label: t('makeups'), icon: Coins, roles: ['student', 'parent'] },
     { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: MessageCircleQuestion, roles: ['student', 'parent'] },
+    { href: '/dashboard/apply-for-aid', label: 'בקשת מלגה', icon: ShieldQuestion, roles: ['student', 'parent'] },
 
     // --- Shared Features ---
     { href: '/dashboard/messages', label: t('messages'), icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-messages' },
@@ -93,7 +94,7 @@ export function SidebarNav() {
     { href: '/dashboard/enroll', label: t('newRegistration'), icon: UserPlus, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/master-schedule', label: t('masterSchedule'), icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
     { href: '/dashboard/events', label: t('events'), icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/branches', label: t('branches'), icon: Building2, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/branches', label: 'ניהול סניפים', icon: Building2, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/performances', label: t('performances'), icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/rentals', label: t('rentals'), icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: t('waitlists'), icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
@@ -101,7 +102,7 @@ export function SidebarNav() {
     { href: '/dashboard/admin/substitute', label: t('substitute'), icon: UserCheck, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/payroll', label: t('teacherPayroll'), icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/scholarships', label: 'ניהול מלגות', icon: HandCoins, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/notifications/log', label: t('notifications'), icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/notifications/log', label: 'יומן התראות', icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/announcements', label: t('announcements'), icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/reports', label: t('reportsAnalytics'), icon: LineChart, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-reports' },
     { href: '/dashboard/admin/form-builder', label: t('formBuilder'), icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
@@ -226,3 +227,4 @@ export function SidebarNav() {
     </>
   );
 }
+```
