@@ -96,7 +96,7 @@ export function SidebarNav() {
     { href: '/dashboard/master-schedule', label: t('masterSchedule'), icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
     { href: '/dashboard/events', label: t('events'), icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/open-day', label: t('manageOpenDay'), icon: CalendarCheck2, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/branches', label: 'ניהול סניפים', icon: Building2, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/branches', label: t('branches'), icon: Building2, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/performances', label: t('performances'), icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/rentals', label: t('rentals'), icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: t('waitlists'), icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
