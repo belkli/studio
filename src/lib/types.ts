@@ -175,6 +175,15 @@ export type PricingConfig = {
   trialPrice: number;
 };
 
+export type CancellationPolicy = {
+  studentNoticeHoursRequired: number;
+  studentCancellationCredit: 'FULL' | 'NONE'; // For on-time cancellations
+  studentLateCancelCredit: 'FULL' | 'NONE';   // For late cancellations
+  noShowCredit: 'NONE'; // Usually NONE
+  makeupCreditExpiryDays: number;
+  maxMakeupsPerTerm: number;
+};
+
 export type Conservatorium = {
   id: string;
   name: string;
@@ -183,6 +192,7 @@ export type Conservatorium = {
   newFeaturesEnabled?: boolean;
   aiAgentsConfig?: Record<string, boolean>;
   pricingConfig?: PricingConfig;
+  cancellationPolicy?: CancellationPolicy;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';

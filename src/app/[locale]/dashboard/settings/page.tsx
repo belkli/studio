@@ -83,6 +83,7 @@ export default function SettingsPage() {
                     <CardContent className="flex flex-wrap gap-2">
                         <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">ניהול תכונות</Link></Button>
                         <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">הגדרות תמחור</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">מדיניות ביטולים</Link></Button>
                         <Button asChild variant="outline"><Link href="/dashboard/ai">ניהול סוכני AI</Link></Button>
                     </CardContent>
                 </Card>

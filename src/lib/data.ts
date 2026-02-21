@@ -40,6 +40,14 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
             adHocPremium: 15, // percentage
             trialPrice: 50,
         } : undefined,
+        cancellationPolicy: isHodHasharon ? {
+            studentNoticeHoursRequired: 24,
+            studentCancellationCredit: 'FULL',
+            studentLateCancelCredit: 'NONE',
+            noShowCredit: 'NONE',
+            makeupCreditExpiryDays: 60,
+            maxMakeupsPerTerm: 4,
+        } : undefined,
     };
 });
 

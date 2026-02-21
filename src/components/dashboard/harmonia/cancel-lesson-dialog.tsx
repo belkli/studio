@@ -10,6 +10,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import type { LessonSlot } from "@/lib/types";
+import { useAuth } from "@/hooks/use-auth";
 
 interface CancelLessonDialogProps {
     lesson: LessonSlot | null;
@@ -19,19 +20,25 @@ interface CancelLessonDialogProps {
 }
 
 export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: CancelLessonDialogProps) {
+    const { conservatoriums } = useAuth();
+
     if (!lesson) return null;
+    
+    const conservatorium = conservatoriums.find(c => c.id === lesson.conservatoriumId);
+    const policy = conservatorium?.cancellationPolicy;
+    const noticeHours = policy?.studentNoticeHoursRequired ?? 24;
 
     const lessonStartTime = new Date(lesson.startTime);
     const now = new Date();
     const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-    const hasNotice = hoursUntilLesson > 24; // Mock policy
+    const hasNotice = hoursUntilLesson > noticeHours;
 
     const title = `ביטול שיעור ${lesson.instrument}`;
     const description = `האם לבטל את השיעור בתאריך ${lessonStartTime.toLocaleDateString('he-IL')} בשעה ${lessonStartTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}?`;
 
     const policyMessage = hasNotice
-        ? "מכיוון שהביטול מתבצע יותר מ-24 שעות לפני השיעור, תזוכה/י בשיעור השלמה."
-        : "שימו לב: מכיוון שהביטול מתבצע פחות מ-24 שעות לפני השיעור, לא יינתן זיכוי על פי מדיניות הקונסרבטוריון.";
+        ? `מכיוון שהביטול מתבצע יותר מ-${noticeHours} שעות לפני השיעור, תזוכה/י בשיעור השלמה.`
+        : `שימו לב: מכיוון שהביטול מתבצע פחות מ-${noticeHours} שעות לפני השיעור, לא יינתן זיכוי על פי מדיניות הקונסרבטוריון.`;
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
