@@ -669,3 +669,30 @@ export type ScholarshipApplication = {
   submittedAt: string; // ISO Timestamp
   reviewedAt?: string; // ISO Timestamp
 };
+
+// From SDD-14E: Open Day Manager
+export type OpenDayAppointment = {
+  id: string;
+  eventId: string;
+  familyName: string;
+  parentEmail: string;
+  parentPhone: string;
+  childName: string;
+  childAge: number;
+  instrumentInterest: string;
+  appointmentTime: string; // ISO Timestamp
+  status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
+  registeredAt: string; // ISO Timestamp
+};
+
+export type OpenDayEvent = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  date: string; // ISO Date
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+  appointmentDuration: number; // in minutes
+  description: string;
+  isActive: boolean;
+};

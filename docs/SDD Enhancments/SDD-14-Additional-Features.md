@@ -250,6 +250,16 @@ The annual open day is the conservatorium's highest-converting acquisition event
 - Day 7: "Meet [teacher name], who would love to teach [child name]..." (personalized with teacher bio and video)
 - Day 21: "We still have a spot open. Enrollment closes [date]..." (scarcity, if true)
 
+### E.6 Visual Design Philosophy
+
+The public Open Day registration page (`/open-day`) must be welcoming, vibrant, and designed to convert interest into a tangible visit. It should not feel like a dry registration form, but like an invitation to a special event. Key elements include:
+
+*   **Warm and Inviting Imagery:** Use high-quality photos or videos of teachers interacting with students, close-ups of instruments, and shots of the conservatorium's facilities that make it look like a creative and nurturing environment.
+*   **Clear Value Proposition:** Immediately communicate what a family will gain from attending: "Meet our teachers," "Try a new instrument," "See our students perform."
+*   **Simple, Low-Friction Registration:** The appointment scheduling should be the centerpiece of the page—a simple, interactive calendar that makes booking a time slot effortless.
+*   **Social Proof:** Include testimonials from current parents or short clips of student performances to build excitement and credibility.
+*   **Mobile-First Design:** The entire registration flow must be seamless on a mobile device, as many parents will likely register from their phones.
+
 ---
 
 ## Feature F: Multi-Branch Conservatorium Support
