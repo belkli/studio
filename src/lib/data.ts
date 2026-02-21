@@ -498,6 +498,31 @@ export const mockMessageThreads: MessageThread[] = [
     }
 ];
 
+export const mockWaitlist: WaitlistEntry[] = [
+    {
+        id: 'wait-1',
+        studentId: 'student-user-noa',
+        teacherId: 'teacher-user-1',
+        conservatoriumId: 'cons-15',
+        instrument: 'פסנתר',
+        preferredDays: ['MON', 'WED'],
+        preferredTimes: ['AFTERNOON'],
+        joinedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
+        status: 'WAITING',
+    },
+    {
+        id: 'wait-2',
+        studentId: 'other-student-1',
+        teacherId: 'teacher-user-3',
+        conservatoriumId: 'cons-12',
+        instrument: 'גיטרה',
+        preferredDays: ['TUE', 'THU'],
+        preferredTimes: ['EVENING'],
+        joinedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+        status: 'OFFERED',
+        notifiedAt: new Date().toISOString(),
+    }
+];
 export const mockProgressReports: ProgressReport[] = [];
 export const mockAnnouncements: Announcement[] = [];
 
