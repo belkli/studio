@@ -576,6 +576,3 @@ export const mockPerformanceBookings: PerformanceBooking[] = [];
 export const mockScholarshipApplications: ScholarshipApplication[] = [];
 export const mockOpenDayEvents: OpenDayEvent[] = [];
 export const mockOpenDayAppointments: OpenDayAppointment[] = [];
-
-
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus, type ScholarshipApplication, type OpenDayEvent, type OpenDayAppointment, type Branch };
