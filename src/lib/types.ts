@@ -613,6 +613,9 @@ export type PerformanceBooking = {
   totalQuote: number;
   depositAmount: number;
   inquiryReceivedAt: string; // ISO Timestamp
+  ensembleSize: 'Solo' | 'Duo' | 'Trio' | 'Quartet';
+  instrumentation: string;
+  repertoireType: 'Standard' | 'Custom';
 };
 
 // From SDD-17
