@@ -212,15 +212,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addPracticeLog = (logData: Partial<PracticeLog>) => {
-    if (!user) return;
+    if (!logData.studentId) return;
+    const student = users.find(u => u.id === logData.studentId);
+    if (!student) return;
+
     const newLog: PracticeLog = {
       id: `pl-${Date.now()}`,
-      studentId: user.id, // Assuming student is logging
-      teacherId: user.instruments?.[0].teacherName,
+      studentId: logData.studentId,
+      teacherId: student.instruments?.[0]?.teacherName,
       ...logData
     } as PracticeLog;
     setMockPracticeLogs(prev => [...prev, newLog]);
-    checkAndAwardPracticeStreak(user.id, [...mockPracticeLogs, newLog]);
+    checkAndAwardPracticeStreak(logData.studentId, [...mockPracticeLogs, newLog]);
   };
 
   const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
@@ -685,5 +688,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-    

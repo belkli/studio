@@ -12,11 +12,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useToast } from "@/hooks/use-toast";
 import { ThumbsUp, Meh, Frown } from "lucide-react";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { User } from '@/lib/types';
+
 
 const practiceLogSchema = z.object({
+  studentId: z.string().optional(),
   date: z.string().min(1, "יש לבחור תאריך."),
   durationMinutes: z.number().min(5, "אימון חייב להיות לפחות 5 דקות."),
   pieces: z.string().optional(),
@@ -30,20 +34,38 @@ type PracticeLogFormData = z.infer<typeof practiceLogSchema>;
 
 export function PracticeLogForm() {
   const { toast } = useToast();
-  const { addPracticeLog } = useAuth();
+  const { user, users, addPracticeLog } = useAuth();
   const router = useRouter();
 
   const form = useForm<PracticeLogFormData>({
     resolver: zodResolver(practiceLogSchema),
     defaultValues: {
+      studentId: user?.role === 'student' ? user.id : undefined,
       date: new Date().toISOString().split("T")[0],
       durationMinutes: 30,
     },
   });
 
+  const children = useMemo(() => {
+    if (user?.role !== 'parent' || !user.childIds) return [];
+    return user.childIds.map(id => users.find(u => u.id === id)).filter(Boolean) as User[];
+  }, [user, users]);
+
   const onSubmit = (data: PracticeLogFormData) => {
+    const studentIdForLog = user?.role === 'parent' ? data.studentId : user?.id;
+
+    if (!studentIdForLog) {
+      toast({
+        title: 'שגיאה',
+        description: 'יש לבחור עבור מי לרשום את האימון.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const practiceData = {
         ...data,
+        studentId: studentIdForLog,
         pieces: data.pieces ? data.pieces.split(',').map(p => ({ title: p.trim() })) : [],
     };
     addPracticeLog(practiceData);
@@ -63,6 +85,26 @@ export function PracticeLogForm() {
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <CardContent className="space-y-6">
+            {user?.role === 'parent' && (
+              <FormField
+                control={form.control}
+                name="studentId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>רישום אימון עבור</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                      <FormControl>
+                        <SelectTrigger><SelectValue placeholder="בחר/י ילד/ה..." /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {children.map(child => <SelectItem key={child.id} value={child.id}>{child.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="date"
