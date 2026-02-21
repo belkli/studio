@@ -3,25 +3,34 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { HandCoins, Users, Banknote, Search, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { HandCoins, Users, Banknote, Search, CheckCircle2, XCircle, Clock, Hourglass } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/use-auth';
+import type { ScholarshipApplication, ApplicationStatus } from '@/lib/types';
 
-const mockApplications = [
-    { id: 'APP-001', student: 'אורי לוי', instrument: 'פסנתר', requested: 2500, status: 'pending', date: '2024-05-12' },
-    { id: 'APP-002', student: 'נועה כהן', instrument: 'כינור', requested: 1800, status: 'approved', date: '2024-05-10' },
-    { id: 'APP-003', student: 'איתי שפירא', instrument: 'תופים', requested: 3000, status: 'rejected', date: '2024-05-08' },
-    { id: 'APP-004', student: 'מאיה גולן', instrument: 'פיתוח קול', requested: 1500, status: 'pending', date: '2024-05-15' },
-];
+const statusConfig: Record<ApplicationStatus, { label: string; icon: React.ElementType, className: string }> = {
+    DRAFT: { label: 'טיוטה', icon: Clock, className: 'bg-gray-100 text-gray-800' },
+    SUBMITTED: { label: 'הוגשה', icon: Hourglass, className: 'bg-blue-100 text-blue-800' },
+    DOCUMENTS_PENDING: { label: 'ממתין למסמכים', icon: Clock, className: 'bg-yellow-100 text-yellow-800' },
+    UNDER_REVIEW: { label: 'בבדיקה', icon: Hourglass, className: 'bg-yellow-100 text-yellow-800' },
+    APPROVED: { label: 'אושר', icon: CheckCircle2, className: 'bg-green-100 text-green-800' },
+    PARTIALLY_APPROVED: { label: 'אושר חלקית', icon: CheckCircle2, className: 'bg-green-100 text-green-800' },
+    WAITLISTED: { label: 'רשימת המתנה', icon: Clock, className: 'bg-purple-100 text-purple-800' },
+    REJECTED: { label: 'נדחה', icon: XCircle, className: 'bg-red-100 text-red-800' },
+    EXPIRED: { label: 'פג תוקף', icon: XCircle, className: 'bg-gray-100 text-gray-800' },
+};
 
-const mockDonors = [
-    { id: 'DON-1', name: 'משפחת אריאלי', amount: 50000, date: '2024-01-10', recurring: true },
-    { id: 'DON-2', name: 'תורם אנונימי', amount: 15000, date: '2024-03-22', recurring: false },
-    { id: 'DON-3', name: 'קרן ירושלים', amount: 120000, date: '2023-11-05', recurring: true },
-];
 
 export default function AdminScholarshipsPage() {
+    const { user, mockScholarshipApplications } = useAuth();
+    
+    if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
+        return <p>אין לך הרשאה לצפות בעמוד זה.</p>
+    }
+
+    const applications = mockScholarshipApplications.filter(app => app.conservatoriumId === user.conservatoriumId);
+
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-7xl mx-auto">
             <div className="flex items-center justify-between space-y-2 mb-8">
@@ -62,106 +71,63 @@ export default function AdminScholarshipsPage() {
                         <Users className="h-4 w-4 text-amber-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">5</div>
+                        <div className="text-2xl font-bold">{applications.filter(a => a.status === 'SUBMITTED').length}</div>
                         <p className="text-xs text-muted-foreground">סך דרישה: ₪12,000</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <Tabs defaultValue="applications" className="space-y-4" dir="rtl">
-                <TabsList>
-                    <TabsTrigger value="applications">בקשות למלגה</TabsTrigger>
-                    <TabsTrigger value="donors">חברי הקרן ותורמים</TabsTrigger>
-                </TabsList>
-                <TabsContent value="applications" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>בקשות ממתינות ופעילות</CardTitle>
-                            <CardDescription>
-                                נהל את בקשות המלגה שהוגשו על ידי תלמידים. לחץ על בקשה לצפייה במסמכים המצורפים ונימוקי הבקשה.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center py-4 gap-2">
-                                <Input placeholder="חפש שם תלמיד..." className="max-w-sm" />
-                                <Button variant="secondary" size="icon"><Search className="h-4 w-4" /></Button>
-                            </div>
-                            <div className="rounded-md border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="text-right">מזהה בקשה</TableHead>
-                                            <TableHead className="text-right">תלמיד</TableHead>
-                                            <TableHead className="text-right">כלי נגינה</TableHead>
-                                            <TableHead className="text-right">תאריך הגשה</TableHead>
-                                            <TableHead className="text-right">סכום מבוקש</TableHead>
-                                            <TableHead className="text-right">סטטוס</TableHead>
-                                            <TableHead className="text-right">פעולות</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {mockApplications.map((app) => (
-                                            <TableRow key={app.id}>
-                                                <TableCell className="font-medium">{app.id}</TableCell>
-                                                <TableCell>{app.student}</TableCell>
-                                                <TableCell>{app.instrument}</TableCell>
-                                                <TableCell>{new Date(app.date).toLocaleDateString('he-IL')}</TableCell>
-                                                <TableCell>₪{app.requested}</TableCell>
-                                                <TableCell>
-                                                    {app.status === 'pending' && <Badge variant="outline" className="text-amber-600 bg-amber-50 border-amber-200"><Clock className="w-3 h-3 me-1" /> ממתין לועדה</Badge>}
-                                                    {app.status === 'approved' && <Badge variant="outline" className="text-emerald-600 bg-emerald-50 border-emerald-200"><CheckCircle2 className="w-3 h-3 me-1" /> מאושר</Badge>}
-                                                    {app.status === 'rejected' && <Badge variant="destructive" className="bg-destructive/10 text-destructive border-transparent"><XCircle className="w-3 h-3 me-1" /> נדחה</Badge>}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button variant="ghost" size="sm">צפה בתיק</Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="donors" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>רשימת תורמים</CardTitle>
-                            <CardDescription>
-                                היסטוריית תרומות לקופת המלגות, הפקת קבלות ומכתבי הוקרה.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="rounded-md border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="text-right">שם התורם / חברה</TableHead>
-                                            <TableHead className="text-right">סכום</TableHead>
-                                            <TableHead className="text-right">תאריך</TableHead>
-                                            <TableHead className="text-right">סוג</TableHead>
-                                            <TableHead className="text-right">מכתב תודה</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {mockDonors.map((donor) => (
-                                            <TableRow key={donor.id}>
-                                                <TableCell className="font-medium">{donor.name}</TableCell>
-                                                <TableCell className="text-emerald-600 font-semibold">₪{donor.amount.toLocaleString()}</TableCell>
-                                                <TableCell>{new Date(donor.date).toLocaleDateString('he-IL')}</TableCell>
-                                                <TableCell>{donor.recurring ? <Badge variant="secondary">הוראת קבע</Badge> : <Badge variant="outline">חד-פעמי</Badge>}</TableCell>
-                                                <TableCell>
-                                                    <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">שלח הוקרה</Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
+            <Card>
+                <CardHeader>
+                    <CardTitle>בקשות למלגה</CardTitle>
+                    <CardDescription>
+                        נהל את בקשות המלגה שהוגשו על ידי תלמידים. לחץ על בקשה לצפייה במסמכים המצורפים ונימוקי הבקשה.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center py-4 gap-2">
+                        <Input placeholder="חפש שם תלמיד..." className="max-w-sm" />
+                        <Button variant="secondary" size="icon"><Search className="h-4 w-4" /></Button>
+                    </div>
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="text-right">תלמיד</TableHead>
+                                    <TableHead className="text-right">כלי נגינה</TableHead>
+                                    <TableHead className="text-right">תאריך הגשה</TableHead>
+                                    <TableHead className="text-right">ניקוד עדיפות</TableHead>
+                                    <TableHead className="text-right">סטטוס</TableHead>
+                                    <TableHead className="text-right">פעולות</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {applications.map((app) => {
+                                    const StatusIcon = statusConfig[app.status]?.icon || Clock;
+                                    return (
+                                    <TableRow key={app.id}>
+                                        <TableCell className="font-medium">{app.studentName}</TableCell>
+                                        <TableCell>{app.instrument}</TableCell>
+                                        <TableCell>{new Date(app.submittedAt).toLocaleDateString('he-IL')}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className="font-mono">{app.priorityScore}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                             <Badge variant="outline" className={statusConfig[app.status].className}>
+                                                <StatusIcon className="w-3 h-3 me-1.5" />
+                                                {statusConfig[app.status].label}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button variant="ghost" size="sm">צפה בבקשה</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )})}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

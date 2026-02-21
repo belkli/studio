@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, HandCoins, CalendarPlus as OpenDayIcon } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, HandCoins, OpenDayIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
