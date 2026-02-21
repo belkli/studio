@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
@@ -39,7 +38,7 @@ interface AuthContextType {
   updateForm: (updatedForm: FormSubmission) => void;
   updateUser: (updatedUser: User) => void;
   addLesson: (lessonData: Partial<LessonSlot>) => void;
-  cancelLesson: (lessonId: string) => void;
+  cancelLesson: (lessonId: string, withNotice: boolean) => void;
   rescheduleLesson: (lessonId: string, newStartTime: string) => void;
   getMakeupCreditBalance: (studentIds: string[]) => number;
   getMakeupCreditsDetail: (studentIds: string[]) => any[];
@@ -180,8 +179,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } as LessonSlot;
     setMockLessons(prev => [...prev, newLesson]);
   };
-  const cancelLesson = (lessonId: string) => {
-    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: 'CANCELLED_STUDENT_NOTICED' } : l));
+  const cancelLesson = (lessonId: string, withNotice: boolean) => {
+    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: withNotice ? 'CANCELLED_STUDENT_NOTICED' : 'CANCELLED_STUDENT_NO_NOTICE' } : l));
   };
   const rescheduleLesson = (lessonId: string, newStartTime: string) => {
     setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, startTime: newStartTime } : l));
@@ -684,5 +683,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-    

@@ -96,8 +96,13 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
 
     const handleConfirmCancel = () => {
         if (lessonToCancel) {
-            cancelLesson(lessonToCancel.id);
-            toast({ title: "השיעור בוטל" });
+            const lessonStartTime = new Date(lessonToCancel.startTime);
+            const now = new Date();
+            const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+            const hasNotice = hoursUntilLesson > 24;
+            
+            cancelLesson(lessonToCancel.id, hasNotice);
+            toast({ title: "השיעור בוטל", description: hasNotice ? "זיכוי לשיעור השלמה נוסף לחשבונך." : "לא ניתן זיכוי על פי מדיניות הביטולים." });
             setLessonToCancel(null);
             setSelectedLesson(null);
         }
