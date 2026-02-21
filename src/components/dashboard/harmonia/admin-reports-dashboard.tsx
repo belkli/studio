@@ -4,10 +4,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FinancialReports } from "./reports/financial-reports";
 import { OperationalReports } from "./reports/operational-reports";
 import { AcademicReports } from "./reports/academic-reports";
+import { useTranslations } from "next-intl";
 
 export function AdminReportsDashboard() {
+    const t = useTranslations('Sidebar');
     return (
-        <Tabs defaultValue="financial">
+        <Tabs defaultValue="financial" dir="rtl">
             <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="financial">דוחות פיננסיים</TabsTrigger>
                 <TabsTrigger value="operational">דוחות תפעוליים</TabsTrigger>

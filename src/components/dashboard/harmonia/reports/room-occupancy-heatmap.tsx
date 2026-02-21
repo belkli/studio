@@ -56,7 +56,7 @@ export function RoomOccupancyHeatmap() {
         return 'full';
     };
 
-    const occupancyColors: Record<ReturnType<typeof getOccupancyLevel>, string> = {
+    const occupancyColors: Record<ReturnType<typeof getOccupancyLevel, string> = {
         none: 'bg-muted/20 hover:bg-muted/40',
         low: 'bg-green-200 dark:bg-green-900/50 hover:bg-green-300',
         medium: 'bg-yellow-200 dark:bg-yellow-800/50 hover:bg-yellow-300',
