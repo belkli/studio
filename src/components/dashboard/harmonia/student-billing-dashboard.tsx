@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle } from "lucide-react";
+import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -180,16 +180,29 @@ export function StudentBillingDashboard() {
                         </Table>
                     </CardContent>
                 </Card>
-                <Card className="flex flex-col justify-center p-6 bg-muted/30">
-                    <CardHeader className="p-0 pb-4">
-                        <CardTitle>ניהול מנוי</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
-                        <Button className="w-full">נהל אמצעי תשלום</Button>
-                        <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />השהיית מנוי</Button>
-                        <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>
-                    </CardContent>
-                </Card>
+                <div className="space-y-6">
+                    <Card className="flex flex-col justify-center p-6">
+                        <CardHeader className="p-0 pb-4">
+                            <CardTitle>ניהול מנוי</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
+                            <Button className="w-full">נהל אמצעי תשלום</Button>
+                            <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />השהיית מנוי</Button>
+                            <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><ShieldQuestion className="h-5 w-5 text-purple-500" /> מלגות וסיוע כלכלי</CardTitle>
+                            <CardDescription>זקוק/ה לסיוע בתשלום שכר הלימוד? ניתן להגיש בקשה למלגה.</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                            <Button asChild className="w-full" variant="secondary">
+                                <Link href="/dashboard/apply-for-aid">הגש בקשה למלגה</Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
             </div>
         </div>
     );

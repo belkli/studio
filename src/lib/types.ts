@@ -611,3 +611,58 @@ export type PerformanceBooking = {
   depositAmount: number;
   inquiryReceivedAt: string; // ISO Timestamp
 };
+
+// From SDD-17
+export type ApplicationStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'DOCUMENTS_PENDING'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'PARTIALLY_APPROVED'
+  | 'WAITLISTED'
+  | 'REJECTED'
+  | 'EXPIRED';
+
+export type DocumentType =
+  | 'INCOME_CERTIFICATE'
+  | 'SINGLE_PARENT_CERTIFICATE'
+  | 'NEW_IMMIGRANT_CERTIFICATE'
+  | 'DISABILITY_CERTIFICATE'
+  | 'SOCIAL_WORKER_LETTER'
+  | 'NATIONAL_INSURANCE_BENEFIT'
+  | 'TEACHER_RECOMMENDATION'
+  | 'EXAM_CERTIFICATE'
+  | 'COMPETITION_AWARD';
+
+export type ScholarshipApplication = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  instrument: string;
+  conservatoriumId: string;
+  academicYear: string;
+  type: 'FINANCIAL_AID' | 'MERIT_SCHOLARSHIP' | 'COMBINED';
+  documents: {
+    type: DocumentType;
+    fileName: string;
+    fileUrl: string;
+    uploadedAt: string; // ISO Timestamp
+  }[];
+  teacherEndorsement?: string;
+  selfDeclaration: {
+    householdSize: number;
+    monthlyIncome?: number;
+    isSingleParent: boolean;
+    isNewImmigrant: boolean;
+    isDisabled: boolean;
+    additionalContext?: string;
+  };
+  requestedDiscountPercent: number;
+  status: ApplicationStatus;
+  priorityScore: number;
+  committeeNotes?: string;
+  awardedDiscountPercent?: number;
+  submittedAt: string; // ISO Timestamp
+  reviewedAt?: string; // ISO Timestamp
+};
