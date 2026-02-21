@@ -1,7 +1,8 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus } from './types';
+
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, OpenDayEvent, OpenDayAppointment } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
-import { addDays } from 'date-fns';
+import { addDays, setHours, setMinutes } from 'date-fns';
 
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
@@ -669,5 +670,81 @@ export const mockPerformanceBookings: PerformanceBooking[] = [
     }
 ];
 
+export const mockScholarshipApplications: ScholarshipApplication[] = [
+    {
+        id: 'schol-app-1',
+        studentId: 'student-user-2',
+        studentName: 'תמר ישראלי',
+        instrument: 'כינור',
+        conservatoriumId: 'cons-15',
+        academicYear: 'תשפ"ה',
+        type: 'FINANCIAL_AID',
+        documents: [],
+        selfDeclaration: { householdSize: 4, isSingleParent: false, isNewImmigrant: false, isDisabled: false },
+        requestedDiscountPercent: 50,
+        status: 'SUBMITTED',
+        priorityScore: 75,
+        submittedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    },
+    {
+        id: 'schol-app-2',
+        studentId: 'student-user-3',
+        studentName: 'מאיה כהן',
+        instrument: 'צ\'לו',
+        conservatoriumId: 'cons-15',
+        academicYear: 'תשפ"ה',
+        type: 'MERIT_SCHOLARSHIP',
+        documents: [],
+        selfDeclaration: { householdSize: 5, isSingleParent: true, isNewImmigrant: false, isDisabled: false },
+        requestedDiscountPercent: 100,
+        status: 'UNDER_REVIEW',
+        priorityScore: 92,
+        submittedAt: new Date(new Date().setDate(new Date().getDate() - 12)).toISOString(),
+    }
+];
 
-export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus };
+export const mockOpenDayEvents: OpenDayEvent[] = [
+    {
+        id: 'open-day-hod-hasharon-2024',
+        conservatoriumId: 'cons-15',
+        name: 'יום פתוח בקונסרבטוריון הוד השרון',
+        date: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0], // A month from now
+        startTime: '10:00',
+        endTime: '14:00',
+        appointmentDuration: 20, // minutes
+        description: 'בואו להכיר את המורים, לנסות כלים שונים ולהתרשם מהאווירה המוזיקלית שלנו. הירשמו לפגישת היכרות אישית!',
+        isActive: true,
+    }
+];
+
+export const mockOpenDayAppointments: OpenDayAppointment[] = [
+    {
+        id: 'appt-1',
+        eventId: 'open-day-hod-hasharon-2024',
+        familyName: 'כהן',
+        parentEmail: 'cohen@email.com',
+        parentPhone: '050-1234567',
+        childName: 'אורי',
+        childAge: 8,
+        instrumentInterest: 'פסנתר',
+        appointmentTime: setMinutes(setHours(new Date(mockOpenDayEvents[0].date), 10), 0).toISOString(),
+        status: 'SCHEDULED',
+        registeredAt: new Date().toISOString(),
+    },
+    {
+        id: 'appt-2',
+        eventId: 'open-day-hod-hasharon-2024',
+        familyName: 'לוי',
+        parentEmail: 'levi@email.com',
+        parentPhone: '052-8765432',
+        childName: 'מאיה',
+        childAge: 10,
+        instrumentInterest: 'כינור',
+        appointmentTime: setMinutes(setHours(new Date(mockOpenDayEvents[0].date), 10), 20).toISOString(),
+        status: 'SCHEDULED',
+        registeredAt: new Date().toISOString(),
+    },
+];
+
+
+export { type User, type FormSubmission, type Notification, type Conservatorium, type Package, type LessonSlot, type Invoice, type PracticeLog, type Composition, type AssignedRepertoire, type LessonNote, type RepertoireStatus, type MessageThread, type ProgressReport, type Announcement, type Room, type PayrollSummary, type PracticeVideo, type WaitlistEntry, type FormTemplate, type AuditLogEntry, type SlotStatus, type Channel, type NotificationPreferences, type Achievement, type AchievementType, type EventProduction, type EventProductionStatus, type PerformanceSlot, type InstrumentInventory, type InstrumentCondition, type PerformanceGenre, type EnsembleRole, type PerformanceBooking, type PerformanceBookingStatus, type OpenDayEvent, type OpenDayAppointment };

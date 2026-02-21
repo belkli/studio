@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking, PerformanceBookingStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, UserPlus, Send, DollarSign } from 'lucide-react';
+import { MoreHorizontal, UserPlus, Send, DollarSign, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -23,11 +23,12 @@ const pipelineStages: { id: PerformanceBookingStatus; title: string }[] = [
     { id: 'EVENT_COMPLETED', title: 'הסתיים' },
 ];
 
-const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPaid }: { 
+const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPaid, onConfirmBooking }: { 
     booking: PerformanceBooking; 
     onAssignClick: () => void;
     onSendQuoteClick: () => void;
     onMarkDepositPaid: () => void; 
+    onConfirmBooking: () => void;
 }) => (
     <Card className="mb-4">
         <CardHeader className="p-4">
@@ -57,6 +58,12 @@ const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPa
                              <DropdownMenuItem onClick={onMarkDepositPaid}>
                                 <DollarSign className="w-4 h-4 me-2 text-green-500" />
                                 סמן פיקדון שולם
+                            </DropdownMenuItem>
+                        )}
+                        {booking.status === 'DEPOSIT_PAID' && (
+                             <DropdownMenuItem onClick={onConfirmBooking}>
+                                <CheckCircle2 className="w-4 h-4 me-2 text-indigo-500" />
+                                אשר הזמנה סופית
                             </DropdownMenuItem>
                         )}
                     </DropdownMenuContent>
@@ -127,6 +134,14 @@ export function PerformanceBookingDashboard() {
           description: `ההזמנה עבור "${booking.eventName}" עודכנה.`,
         });
     };
+    
+    const handleConfirmBooking = (booking: PerformanceBooking) => {
+        updatePerformanceBookingStatus(booking.id, 'BOOKING_CONFIRMED');
+        toast({
+          title: 'ההזמנה אושרה',
+          description: `ההזמנה עבור "${booking.eventName}" אושרה סופית.`,
+        });
+    };
 
     return (
         <>
@@ -143,6 +158,7 @@ export function PerformanceBookingDashboard() {
                                         onAssignClick={() => handleAssignClick(booking)}
                                         onSendQuoteClick={() => handleSendQuoteClick(booking)}
                                         onMarkDepositPaid={() => handleMarkDepositPaid(booking)}
+                                        onConfirmBooking={() => handleConfirmBooking(booking)}
                                     />
                                 ))
                             ) : (
