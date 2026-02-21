@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { driver, type DriveStep } from 'driver.js';
-import { useAuth } from './use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import type { UserRole } from '@/lib/types';
 
 const studentSteps: DriveStep[] = [
@@ -53,8 +53,7 @@ const stepsConfig: Record<UserRole, DriveStep[]> = {
     ministry_director: [],
 };
 
-
-export function useWalkthrough() {
+export function WalkthroughManager() {
     const { user, markWalkthroughAsSeen } = useAuth();
     
     useEffect(() => {
@@ -85,4 +84,6 @@ export function useWalkthrough() {
 
         return () => clearTimeout(timer);
     }, [user, markWalkthroughAsSeen]);
+
+    return null;
 }

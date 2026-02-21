@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { driver, type DriveStep } from 'driver.js';
-import { useAuth } from './use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import type { UserRole } from '@/lib/types';
 
 const studentSteps: DriveStep[] = [
