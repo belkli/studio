@@ -210,5 +210,3 @@ export function AcademicReports() {
         </div>
     );
 }
-
-    
