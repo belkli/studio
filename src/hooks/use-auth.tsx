@@ -212,6 +212,103 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }))
   };
 
+  const awardAchievement = (studentId: string, type: AchievementType) => {
+    const student = users.find(u => u.id === studentId);
+    if (!student) return;
+
+    let newAchievement: Achievement | null = null;
+    const existingAchievement = student.achievements?.find(a => a.type === type);
+
+    switch(type) {
+        case 'PIECE_COMPLETED':
+            if (existingAchievement) return; // For demo, only award once
+            newAchievement = {
+                id: `ach-${Date.now()}`,
+                type,
+                title: 'יצירה ראשונה הושלמה!',
+                description: 'כל הכבוד על סיום יצירה חדשה.',
+                achievedAt: new Date().toISOString(),
+            };
+            break;
+        case 'PRACTICE_STREAK_7':
+            if (existingAchievement) return; // Don't re-award for now
+            newAchievement = {
+                id: `ach-${Date.now()}`,
+                type,
+                title: 'רצף אימונים של 7 ימים!',
+                description: 'התמדה היא המפתח להצלחה. כל הכבוד!',
+                achievedAt: new Date().toISOString(),
+            };
+            break;
+    }
+
+    if (newAchievement) {
+        setUsers(prev => prev.map(u => u.id === studentId ? {
+            ...u,
+            achievements: [...(u.achievements || []), newAchievement!]
+        } : u));
+        
+        if (user?.id === studentId) {
+             const updatedUser = { ...user, achievements: [...(user.achievements || []), newAchievement!] };
+             setUser(updatedUser);
+             localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
+        }
+
+        const newNotification: Notification = {
+            id: `notif-${Date.now()}`,
+            title: `🏆 הישג חדש: ${newAchievement.title}`,
+            message: newAchievement.description,
+            timestamp: new Date().toISOString(),
+            link: '/dashboard/profile',
+            read: false
+        };
+
+        const addNotificationToUser = (userId: string) => {
+             setUsers(prev => prev.map(u => u.id === userId ? {
+                ...u,
+                notifications: [newNotification, ...(u.notifications || [])],
+            } : u));
+        };
+        
+        addNotificationToUser(studentId);
+        if (student.parentId) {
+            addNotificationToUser(student.parentId);
+        }
+        
+        toast({
+            title: newAchievement.title,
+            description: newAchievement.description,
+        });
+    }
+  };
+
+  const checkAndAwardPracticeStreak = (studentId: string, allLogs: PracticeLog[]) => {
+      const studentLogs = allLogs.filter(log => log.studentId === studentId);
+      const logDates = [...new Set(studentLogs.map(log => startOfDay(new Date(log.date)).getTime()))].sort((a,b) => b-a);
+      
+      if(logDates.length < 7) return;
+
+      let streak = 0;
+      const today = startOfDay(new Date());
+      const yesterday = startOfDay(addDays(new Date(), -1));
+
+      if (logDates[0] === today.getTime() || logDates[0] === yesterday.getTime()) {
+           streak = 1;
+           for (let i = 0; i < logDates.length - 1; i++) {
+              const diff = differenceInCalendarDays(logDates[i], logDates[i+1]);
+              if (diff === 1) {
+                  streak++;
+              } else {
+                  break;
+              }
+           }
+      }
+
+      if (streak >= 7) {
+          awardAchievement(studentId, 'PRACTICE_STREAK_7');
+      }
+  };
+
   const addPracticeLog = (logData: Partial<PracticeLog>) => {
     if (!logData.studentId) return;
     const student = users.find(u => u.id === logData.studentId);
@@ -220,13 +317,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const newLog: PracticeLog = {
       id: `pl-${Date.now()}`,
       studentId: logData.studentId,
-      teacherId: student.instruments?.[0]?.teacherName,
+      teacherId: student.instruments?.[0]?.teacherId,
       ...logData
     } as PracticeLog;
-    setMockPracticeLogs(prev => [...prev, newLog]);
-    checkAndAwardPracticeStreak(logData.studentId, [...mockPracticeLogs, newLog]);
+    const updatedLogs = [...mockPracticeLogs, newLog];
+    setMockPracticeLogs(updatedLogs);
+    checkAndAwardPracticeStreak(logData.studentId, updatedLogs);
   };
-
+  
   const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
     setMockAssignedRepertoire(prev =>
       prev.map(rep => {
@@ -509,98 +607,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockOpenDayAppointments(prev => [...prev, newAppointment]);
   };
 
-  const awardAchievement = (studentId: string, type: AchievementType) => {
-    const student = users.find(u => u.id === studentId);
-    if (!student) return;
-
-    let newAchievement: Achievement | null = null;
-    const existingAchievement = student.achievements?.find(a => a.type === type);
-
-    switch(type) {
-        case 'PIECE_COMPLETED':
-            if (existingAchievement) return; // For now, only award once
-            newAchievement = {
-                id: `ach-${Date.now()}`,
-                type,
-                title: 'יצירה ראשונה הושלמה!',
-                description: 'כל הכבוד על סיום יצירה חדשה.',
-                achievedAt: new Date().toISOString(),
-            };
-            break;
-        case 'PRACTICE_STREAK_7':
-            if (existingAchievement) return; // Don't re-award for now
-            newAchievement = {
-                id: `ach-${Date.now()}`,
-                type,
-                title: 'רצף אימונים של 7 ימים!',
-                description: 'התמדה היא המפתח להצלחה. כל הכבוד!',
-                achievedAt: new Date().toISOString(),
-            };
-            break;
-    }
-
-    if (newAchievement) {
-        setUsers(prev => prev.map(u => u.id === studentId ? {
-            ...u,
-            achievements: [...(u.achievements || []), newAchievement!]
-        } : u));
-
-        // Create notification
-        const newNotification: Notification = {
-            id: `notif-${Date.now()}`,
-            title: `🏆 הישג חדש: ${newAchievement.title}`,
-            message: newAchievement.description,
-            timestamp: new Date().toISOString(),
-            link: '/dashboard/profile',
-            read: false
-        };
-
-        const addNotificationToUser = (userId: string) => {
-             setUsers(prev => prev.map(u => u.id === userId ? {
-                ...u,
-                notifications: [newNotification, ...(u.notifications || [])],
-            } : u));
-        };
-        
-        addNotificationToUser(studentId);
-        if (student.parentId) {
-            addNotificationToUser(student.parentId);
-        }
-        
-        toast({
-            title: newAchievement.title,
-            description: newAchievement.description,
-        });
-    }
-  };
-
-  const checkAndAwardPracticeStreak = (studentId: string, allLogs: PracticeLog[]) => {
-      const studentLogs = allLogs.filter(log => log.studentId === studentId);
-      const logDates = [...new Set(studentLogs.map(log => startOfDay(new Date(log.date)).getTime()))].sort((a,b) => b-a);
-      
-      if(logDates.length < 7) return;
-
-      let streak = 0;
-      const today = startOfDay(new Date());
-      const yesterday = startOfDay(addDays(new Date(), -1));
-
-      if (logDates[0] === today.getTime() || logDates[0] === yesterday.getTime()) {
-           streak = 1;
-           for (let i = 0; i < logDates.length - 1; i++) {
-              const diff = differenceInCalendarDays(logDates[i], logDates[i+1]);
-              if (diff === 1) {
-                  streak++;
-              } else {
-                  break;
-              }
-           }
-      }
-
-      if (streak >= 7) {
-          awardAchievement(studentId, 'PRACTICE_STREAK_7');
-      }
-  };
-  
   const markWalkthroughAsSeen = (userId: string) => {
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, hasSeenWalkthrough: true } : u));
     if (user?.id === userId) {
