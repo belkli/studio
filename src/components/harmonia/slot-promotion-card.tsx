@@ -3,17 +3,47 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Clock, Music, Tag } from "lucide-react";
+import { ArrowLeft, Clock, Music, Share2, Tag } from "lucide-react";
 import Link from 'next/link';
 import { format } from "date-fns";
 import { he } from 'date-fns/locale';
 import type { EmptySlot } from "./available-slots-marketplace";
+import { useToast } from "@/hooks/use-toast";
 
 interface SlotPromotionCardProps {
     slot: EmptySlot;
 }
 
 export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
+    const { toast } = useToast();
+
+    const handleShare = async () => {
+        const shareData = {
+            title: `שיעור מוזיקה פנוי!`,
+            text: `מצאתי שיעור ${slot.instrument} פנוי עם ${slot.teacher.name} במחיר מיוחד של ₪${slot.promotionalPrice}!`,
+            url: window.location.href,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // Fallback for desktop
+                await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                toast({
+                    title: "הקישור הועתק!",
+                    description: "תוכל/י לשתף אותו עם חברים.",
+                });
+            }
+        } catch (error) {
+            console.error('Error sharing:', error);
+            toast({
+                variant: 'destructive',
+                title: "שגיאה בשיתוף",
+                description: "לא ניתן היה לשתף את הקישור.",
+            });
+        }
+    };
+
     return (
         <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center gap-4">
@@ -46,12 +76,18 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                     <span className="text-sm text-muted-foreground line-through ms-2">₪{slot.basePrice}</span>
                     <span className="text-sm font-bold text-green-600 ms-2">({slot.discount}% הנחה)</span>
                 </div>
-                <Button asChild className="w-full">
-                    <Link href="/register">
-                        הזמן עכשיו
-                        <ArrowLeft className="ms-2 h-4 w-4" />
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button asChild className="w-full">
+                        <Link href="/register">
+                            הזמן עכשיו
+                            <ArrowLeft className="ms-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={handleShare}>
+                        <Share2 className="h-4 w-4" />
+                        <span className="sr-only">שתף</span>
+                    </Button>
+                </div>
             </CardFooter>
         </Card>
     );

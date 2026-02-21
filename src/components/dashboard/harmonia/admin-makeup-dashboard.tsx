@@ -10,7 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CalendarPlus } from 'lucide-react';
+import { Clock, CalendarPlus, Coins } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import Link from 'next/link';
 
 interface StudentMakeupBalance {
     student: User;
@@ -113,8 +115,12 @@ export function AdminMakeupDashboard() {
                     )
                 }) : (
                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground p-8">
-                           לא נמצאו יתרות שיעורי השלמה.
+                        <TableCell colSpan={5} className="p-0">
+                           <EmptyState
+                                icon={Coins}
+                                title="אין יתרות להצגה"
+                                description="נראה שכל התלמידים מנצלים את שיעורי ההשלמה שלהם בזמן."
+                           />
                         </TableCell>
                     </TableRow>
                 )}
