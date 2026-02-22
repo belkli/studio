@@ -1,4 +1,5 @@
 
+
 {
     "Navigation": {
         "dashboard": "Dashboard",
@@ -498,21 +499,6 @@
     },
     "Reports": {
         "teachers": "Teacher Reports"
-    },
-    "EventPage": {
-        "recitalSubtitle": "Join us for a special concert showcasing our talented students.",
-        "concertSubtitle": "An evening of fine music with our best performers.",
-        "programTitle": "Event Program",
-        "programSubtitle": "The repertoire to be performed by our young artists.",
-        "detailsTitle": "Event Details",
-        "ticketingTitle": "Purchase Tickets",
-        "performer": "Performer",
-        "programNotFinal": "The full program will be published soon.",
-        "totalPrice": "Total Price",
-        "freeAdmission": "Admission is free",
-        "bookTickets": "Book Tickets",
-        "bookingSuccessTitle": "Booking Complete!",
-        "bookingSuccessDesc": "{count, plural, one {One ticket has been booked. A confirmation has been sent to your email.} other {# tickets have been booked. A confirmation has been sent to your email.}}"
     },
     "HelpAssistant": {
         "title": "Harmonia AI Assistant",

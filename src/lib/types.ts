@@ -675,5 +675,3 @@ export type EmptySlot = {
   promotionalPrice: number;
   discount: number;
 };
-
-    

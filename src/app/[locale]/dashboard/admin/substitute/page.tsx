@@ -1,17 +1,20 @@
+
 'use client';
 
 import { SubstituteAssignmentPanel } from "@/components/dashboard/harmonia/substitute-assignment-panel";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "next-intl";
 
 export default function SubstituteManagementPage() {
     const { user } = useAuth();
+    const t = useTranslations('Sidebar');
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     if (!isAdmin) {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold">ניהול מורים מחליפים</h1>
+                    <h1 className="text-2xl font-bold">{t('substitute')}</h1>
                     <p className="text-muted-foreground">אין לך הרשאה לצפות בעמוד זה.</p>
                 </div>
             </div>
@@ -21,7 +24,7 @@ export default function SubstituteManagementPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">ניהול מורים מחליפים</h1>
+                <h1 className="text-2xl font-bold">{t('substitute')}</h1>
                 <p className="text-muted-foreground">נהל שיבוץ מורים מחליפים עבור שיעורים שבוטלו עקב היעדרות מורה.</p>
             </div>
             <SubstituteAssignmentPanel />

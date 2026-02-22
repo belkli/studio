@@ -1,3 +1,4 @@
+
 {
     "Navigation": {
         "dashboard": "לוח בקרה",
@@ -492,21 +493,6 @@
     "Reports": {
         "teachers": "דוחות מורים"
     },
-    "EventPage": {
-        "recitalSubtitle": "הצטרפו אלינו לקונצרט מיוחד המציג את תלמידינו המוכשרים.",
-        "concertSubtitle": "ערב של מוזיקה משובחת עם מיטב המבצעים שלנו.",
-        "programTitle": "תוכנית האירוע",
-        "programSubtitle": "הרפרטואר שיבוצע על ידי אמנינו הצעירים.",
-        "detailsTitle": "פרטי האירוע",
-        "ticketingTitle": "רכישת כרטיסים",
-        "performer": "מבצע/ת",
-        "programNotFinal": "התוכניה המלאה תפורסם בקרוב.",
-        "totalPrice": "סך הכל לתשלום",
-        "freeAdmission": "הכניסה חופשית",
-        "bookTickets": "הזמן כרטיסים",
-        "bookingSuccessTitle": "ההזמנה הושלמה!",
-        "bookingSuccessDesc": "{count, plural, one {כרטיס אחד הוזמן. אישור נשלח למייל.} other {# כרטיסים הוזמנו. אישור נשלח למייל.}}"
-    },
     "HelpAssistant": {
         "title": "עוזר AI של הרמוניה",
         "description": "שאל אותי כל דבר על המערכת, ואעשה כמיטב יכולתי לעזור.",
@@ -516,4 +502,3 @@
         "errorMessage": "אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר."
     }
 }
-

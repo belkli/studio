@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AdminMakeupDashboard } from "@/components/dashboard/harmonia/admin-makeup-dashboard";
