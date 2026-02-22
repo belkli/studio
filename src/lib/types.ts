@@ -1,5 +1,4 @@
 
-
 import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
@@ -104,6 +103,15 @@ export type PerformanceProfile = {
   ensembleRoles?: EnsembleRole[];
 };
 
+export type PaymentMethod = {
+  id: string;
+  type: 'CreditCard';
+  last4: string;
+  expiryMonth: number;
+  expiryYear: number;
+  isPrimary: boolean;
+};
+
 export type User = {
   id: string;
   name: string;
@@ -152,6 +160,7 @@ export type User = {
   achievements?: Achievement[];
   hasSeenWalkthrough?: boolean;
   isRegistered?: boolean;
+  paymentMethods?: PaymentMethod[];
 };
 
 export type PricingConfig = {
@@ -675,3 +684,4 @@ export type EmptySlot = {
   promotionalPrice: number;
   discount: number;
 };
+
