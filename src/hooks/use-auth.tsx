@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from '@/lib/types';
@@ -230,19 +229,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let newAchievement: Achievement | null = null;
     const existingAchievement = student.achievements?.find(a => a.type === type);
 
+    // For some achievements, we might only want to award them once.
+    if (existingAchievement && (type === 'YEARS_ENROLLED_1' || type === 'FIRST_RECITAL' || type === 'PIECE_COMPLETED')) return;
+
     switch(type) {
         case 'PIECE_COMPLETED':
-            if (existingAchievement) return; // For demo, only award once
             newAchievement = {
                 id: `ach-${Date.now()}`,
                 type,
-                title: 'יצירה ראשונה הושלמה!',
+                title: 'יצירה הושלמה!',
                 description: 'כל הכבוד על סיום יצירה חדשה.',
                 achievedAt: new Date().toISOString(),
             };
             break;
         case 'PRACTICE_STREAK_7':
-            if (existingAchievement) return; // Don't re-award for now
+             if (existingAchievement) return; // Don't re-award for now
             newAchievement = {
                 id: `ach-${Date.now()}`,
                 type,
@@ -319,6 +320,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           awardAchievement(studentId, 'PRACTICE_STREAK_7');
       }
   };
+
 
   const addPracticeLog = (logData: Partial<PracticeLog>) => {
     if (!logData.studentId) return;
@@ -639,6 +641,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: `user-${Date.now()}`,
       approved: isAdminFlow, // Admins auto-approve
       avatarUrl: 'https://i.pravatar.cc/150?u=' + Date.now(),
+      achievements: [],
       ...userData,
     } as User;
     setUsers(prev => [...prev, newUser]);

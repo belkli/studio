@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, Medal, CalendarCheck2 } from "lucide-react";
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2 } from "lucide-react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +26,7 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
         case 'PRACTICE_STREAK_30':
             return <Flame className="h-6 w-6 text-orange-500" />;
         case 'PIECE_COMPLETED':
-            return <Medal className="h-6 w-6 text-yellow-500" />;
+            return <Trophy className="h-6 w-6 text-yellow-500" />;
         case 'YEARS_ENROLLED_1':
             return <CalendarCheck2 className="h-6 w-6 text-blue-500" />;
         default:
