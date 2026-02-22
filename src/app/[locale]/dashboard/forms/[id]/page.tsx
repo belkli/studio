@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { mockUsers, conservatoriums, examLevels, examTypes } from '@/lib/data';
@@ -45,7 +44,7 @@ const DetailItem = ({ label, value }: { label: string, value: React.ReactNode })
 export default function FormDetailsPage() {
     const params = useParams();
     const searchParams = useSearchParams();
-    const formId = params.id;
+    const formId = params.id as string;
     const { toast } = useToast();
     const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
 
@@ -81,12 +80,12 @@ export default function FormDetailsPage() {
     const customFormTemplate = form.formTemplateId ? mockFormTemplates.find(t => t.id === form.formTemplateId) : undefined;
 
 
-    const generatePdf = (form) => {
+    const generatePdf = (form: FormSubmission) => {
         const doc = new jsPDF();
         const pageHeight = doc.internal.pageSize.height;
         const pageWidth = doc.internal.pageSize.width;
 
-        const rtl = (text) => text ? text.split('').reverse().join('') : '';
+        const rtl = (text: string | number) => text ? String(text).split('').reverse().join('') : '';
 
         // Header
         doc.setFont('helvetica', 'bold');
@@ -94,16 +93,16 @@ export default function FormDetailsPage() {
         doc.text(rtl(form.formType), pageWidth / 2, 20, { align: 'center' });
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
-        doc.text(rtl(`שנת לימודים: ${form.academicYear}`), pageWidth / 2, 28, { align: 'center' });
+        doc.text(rtl(`שנת לימודים: ${form.academicYear || new Date().getFullYear()}`), pageWidth / 2, 28, { align: 'center' });
 
         let lastY = 40;
 
-        const addSection = (title, body) => {
+        const addSection = (title: string, body: (string | number | undefined)[][]) => {
             doc.setFont('helvetica', 'bold');
             doc.text(rtl(title), pageWidth - 15, lastY, { align: 'right' });
             autoTable(doc, {
                 startY: lastY + 5,
-                body,
+                body: body.map(row => row.map(cell => rtl(cell || ''))),
                 theme: 'grid',
                 styles: { halign: 'right', font: 'helvetica' },
                 columnStyles: { 1: { halign: 'left' } },
@@ -111,39 +110,49 @@ export default function FormDetailsPage() {
             lastY = (doc as any).lastAutoTable.finalY + 10;
         };
 
-        if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
-            addSection("פרטי התלמיד/ה", [
-                [rtl(form.studentName), rtl('שם מלא')],
-                [formUser?.idNumber, rtl('ת.ז.')],
-                [form.applicantDetails?.birthDate, rtl('תאריך לידה')],
-                [rtl(form.applicantDetails?.city), rtl('עיר מגורים')],
-                [form.applicantDetails?.phone, rtl('טלפון')],
-                [formUser?.email, rtl('דוא"ל')],
+        if (customFormTemplate && form.formData) {
+             const body = customFormTemplate.fields.map(field => [
+                String(form.formData![field.id] || ''),
+                field.label
             ]);
-        }
-        if (form.formType === 'רסיטל בגרות') {
-            addSection("פרטי בית ספר", [
-                [rtl(form.schoolDetails?.schoolName), rtl('בית ספר')],
-                [rtl(form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא'), rtl('מגמת מוזיקה')],
-                [rtl(form.schoolDetails?.isMajorParticipant ? 'כן' : 'לא'), rtl('משתתף במגמה')],
-            ]);
-        }
+            addSection(rtl("פרטי הטופס"), body as any);
+        } else {
+             if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
+                addSection("פרטי התלמיד/ה", [
+                    [form.studentName, 'שם מלא'],
+                    [formUser?.idNumber, 'ת.ז.'],
+                    [form.applicantDetails?.birthDate, 'תאריך לידה'],
+                    [form.applicantDetails?.city, 'עיר מגורים'],
+                    [form.applicantDetails?.phone, 'טלפון'],
+                    [formUser?.email, 'דוא"ל'],
+                ]);
+            }
+            if (form.formType === 'רסיטל בגרות') {
+                addSection("פרטי בית ספר", [
+                    [form.schoolDetails?.schoolName, 'בית ספר'],
+                    [form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא', 'מגמת מוזיקה'],
+                    [form.schoolDetails?.isMajorParticipant ? 'כן' : 'לא', 'משתתף במגמה'],
+                ]);
+            }
 
-        if (form.formType === 'הרשמה לבחינה') {
-            addSection("פרטי הבחינה", [
-                [rtl(form.examLevel), rtl('רמת בחינה')],
-                [rtl(form.examType), rtl('סוג בחינה')],
-            ]);
-        }
+            if (form.formType === 'הרשמה לבחינה') {
+                addSection("פרטי הבחינה", [
+                    [form.examLevel, 'רמת בחינה'],
+                    [form.examType, 'סוג בחינה'],
+                ]);
+            }
 
-        addSection("רפרטואר", form.repertoire.map(p => [
-            p.duration,
-            rtl(p.genre),
-            rtl(p.title),
-            rtl(p.composer)
-        ]));
-        doc.setFont('helvetica', 'bold');
-        doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY - 10, { align: 'left' });
+            if (form.repertoire && form.repertoire.length > 0) {
+                 addSection("רפרטואר", form.repertoire.map(p => [
+                    p.duration,
+                    p.genre,
+                    p.title,
+                    p.composer
+                ]) as any);
+                doc.setFont('helvetica', 'bold');
+                doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY - 10, { align: 'left' });
+            }
+        }
 
 
         if (form.signatureUrl) {
@@ -163,19 +172,19 @@ export default function FormDetailsPage() {
 
 
     const handleTeacherApprove = () => {
-        const updatedForm = { ...form, status: 'ממתין לאישור מנהל' };
+        const updatedForm = { ...form, status: 'ממתין לאישור מנהל' as FormStatus };
         updateForm(updatedForm);
         toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
     }
 
     const handleTeacherReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' };
+        const updatedForm = { ...form, status: 'נדחה' as FormStatus };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
 
     const handleAdminReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' };
+        const updatedForm = { ...form, status: 'נדחה' as FormStatus };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
@@ -190,7 +199,7 @@ export default function FormDetailsPage() {
             return;
         }
         const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
-        const updatedForm = { ...form, status: 'מאושר', signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
+        const updatedForm = { ...form, status: 'מאושר' as FormStatus, signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
         updateForm(updatedForm);
 
         toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
@@ -198,13 +207,13 @@ export default function FormDetailsPage() {
     }
 
     const handleMinistryFinalApprove = () => {
-        const updatedForm = { ...form, status: 'מאושר סופית' };
+        const updatedForm = { ...form, status: 'מאושר סופית' as FormStatus };
         updateForm(updatedForm);
         toast({ title: "הטופס אושר סופית", description: `הטופס של ${form.studentName} אושר סופית על ידי משרד החינוך.` });
     }
 
     const handleMinistryRequestChanges = () => {
-        const updatedForm = { ...form, status: 'נדרש תיקון', ministryComment: ministryRejectionReason };
+        const updatedForm = { ...form, status: 'נדרש תיקון' as FormStatus, ministryComment: ministryRejectionReason };
         updateForm(updatedForm);
         setMinistryRejectionDialogOpen(false);
         toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
@@ -221,7 +230,7 @@ export default function FormDetailsPage() {
 
         const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
 
-        const updatedForm = {
+        const updatedForm: FormSubmission = {
             ...form,
             ...data,
             totalDuration: totalDurationFormatted,
@@ -400,7 +409,7 @@ export default function FormDetailsPage() {
                             {customFormTemplate && form.formData && (
                                 <DetailsCard title="פרטי הטופס" columns={1}>
                                     {customFormTemplate.fields.map(field => {
-                                        const value = form.formData[field.id];
+                                        const value = form.formData![field.id];
                                         if (value === undefined || value === null) return null;
 
                                         let displayValue = String(value);
