@@ -1,3 +1,4 @@
+
 'use client';
 
 import { TeacherPayrollView } from "@/components/dashboard/harmonia/teacher-payroll-view";
