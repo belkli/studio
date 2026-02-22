@@ -70,6 +70,3 @@ export default function AvailableNowPage() {
         </div>
     );
 }
-
-
-    

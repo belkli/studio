@@ -89,6 +89,12 @@
       "description": "A friendly teacher smiling in a music room environment.",
       "imageUrl": "https://images.unsplash.com/photo-1579269483394-463332808a95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtdXNpYyUyMHRlYWNoZXJ8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "music teacher"
+    },
+    {
+      "id": "available-now-hero",
+      "description": "Dynamic shot of a musician playing an instrument, with a sense of urgency and opportunity.",
+      "imageUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxndWl0YXJpc3QlMjBvbiUyMHN0YWdlfGVufDB8fHx8MTc3MTg2Mzk2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "musician stage"
     }
   ]
 }

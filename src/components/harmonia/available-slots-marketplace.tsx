@@ -162,4 +162,3 @@ export function AvailableSlotsMarketplace() {
         </div>
     );
 }
-
