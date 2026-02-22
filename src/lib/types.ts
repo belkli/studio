@@ -609,3 +609,80 @@ export type InstrumentInventory = {
   rentalStartDate?: string; // ISO Date string
   expectedReturnDate?: string; // ISO Date string
 };
+
+// SDD-13: Musicians for Hire
+export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED' | 'CANCELLED';
+
+export type PerformanceBooking = {
+  id: string;
+  conservatoriumId: string;
+  eventName: string;
+  eventType: string;
+  eventDate: string; // ISO Date
+  eventTime: string; // HH:mm
+  eventLocation: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  ensembleSize: string;
+  genre: string;
+  totalQuote: number;
+  status: PerformanceBookingStatus;
+  inquiryReceivedAt: string; // ISO Timestamp
+  assignedMusicians?: {
+    userId: string;
+    name: string;
+    instrument: string;
+  }[];
+};
+
+// SDD-17: Scholarship & Donations
+export type ApplicationStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'DOCUMENTS_PENDING'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'PARTIALLY_APPROVED'
+  | 'WAITLISTED'
+  | 'REJECTED'
+  | 'EXPIRED';
+
+export type ScholarshipApplication = {
+    id: string;
+    studentId: string;
+    studentName: string;
+    instrument: string;
+    conservatoriumId: string;
+    academicYear: string;
+    status: ApplicationStatus;
+    submittedAt: string; // ISO Timestamp
+    priorityScore: number;
+};
+
+export type OpenDayEvent = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  date: string; // ISO Date
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
+  appointmentDuration: number; // in minutes
+  isActive: boolean;
+};
+
+export type OpenDayAppointmentStatus = 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
+
+export type OpenDayAppointment = {
+  id: string;
+  eventId: string;
+  familyName: string;
+  parentEmail: string;
+  parentPhone: string;
+  childName: string;
+  childAge: number;
+  instrumentInterest: string;
+  appointmentTime: string; // ISO Timestamp
+  status: OpenDayAppointmentStatus;
+  registeredAt: string; // ISO Timestamp
+};

@@ -524,6 +524,26 @@ export const mockWaitlist: WaitlistEntry[] = [
         notifiedAt: new Date().toISOString(),
     }
 ];
+
+export const mockPracticeVideos: PracticeVideo[] = [
+    {
+        id: 'pv-1',
+        studentId: 'student-user-1',
+        teacherId: 'teacher-user-1',
+        repertoireTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2',
+        videoUrl: 'https://placehold.co/600x400.mp4',
+        studentNote: 'אני לא בטוח לגבי הדינמיקה בתיבות 12-16, אשמח למשוב.',
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+        feedback: [
+            {
+                teacherId: 'teacher-user-1',
+                comment: 'הדינמיקה נשמעת טוב! נסה להדגיש קצת יותר את הקרשנדו לקראת סוף הקטע.',
+                createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+            }
+        ]
+    }
+];
+
 export const mockProgressReports: ProgressReport[] = [];
 export const mockAnnouncements: Announcement[] = [];
 
