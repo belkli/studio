@@ -13,7 +13,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, HandCoins, Building2, CalendarCheck2 } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -102,17 +102,13 @@ export function SidebarNav() {
     { href: '/dashboard/enroll', label: t('newRegistration'), icon: UserPlus, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/master-schedule', label: t('masterSchedule'), icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
     { href: '/dashboard/events', label: t('events'), icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/open-day', label: t('manageOpenDay'), icon: CalendarCheck2, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/branches', label: t('branches'), icon: Building2, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/performances', label: t('performances'), icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/rentals', label: t('rentals'), icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: t('waitlists'), icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/makeups', label: t('adminMakeups'), icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/substitute', label: t('substitute'), icon: UserCheck, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/payroll', label: t('teacherPayroll'), icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/scholarships', label: 'ניהול מלגות', icon: HandCoins, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/announcements', label: t('announcements'), icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
-    { href: '/dashboard/admin/notifications/log', label: t('notificationsLog'), icon: ListCollapse, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/reports', label: t('reportsAnalytics'), icon: LineChart, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-reports' },
     { href: '/dashboard/admin/form-builder', label: t('formBuilder'), icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/ai', label: t('aiAgents'), icon: BrainCircuit, roles: ['conservatorium_admin', 'site_admin'] },

@@ -104,13 +104,6 @@ export type PerformanceProfile = {
   ensembleRoles?: EnsembleRole[];
 };
 
-export type Branch = {
-  id: string;
-  conservatoriumId: string;
-  name: string;
-  address: string;
-};
-
 export type User = {
   id: string;
   name: string;
@@ -351,22 +344,6 @@ export type MakeupCredit = {
 export type StudentGoal = 'EXAMS' | 'PERFORMANCE' | 'ENJOYMENT' | 'COMPETITION' | 'OTHER';
 
 export type LessonType = 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
-
-export type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
-export type SlotDemandLevel = 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND';
-
-export type EmptySlot = {
-    id: string;
-    teacher: User;
-    instrument: string;
-    startTime: Date;
-    durationMinutes: number;
-    urgency: SlotUrgency;
-    demandLevel: SlotDemandLevel;
-    basePrice: number;
-    promotionalPrice: number;
-    discount: number;
-};
 export type SlotStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED_STUDENT_NOTICED' | 'CANCELLED_STUDENT_NO_NOTICE' | 'CANCELLED_TEACHER' | 'CANCELLED_CONSERVATORIUM' | 'NO_SHOW_STUDENT' | 'NO_SHOW_TEACHER';
 
 export type LessonSlot = {
@@ -436,36 +413,6 @@ export type PracticeLog = {
   teacherComment?: string;
 };
 
-export type VideoFeedback = {
-  teacherId: string;
-  comment: string;
-  createdAt: string; // ISO Timestamp
-};
-
-export type PracticeVideo = {
-  id: string;
-  studentId: string;
-  teacherId: string;
-  repertoireTitle: string;
-  videoUrl: string;
-  studentNote?: string;
-  createdAt: string; // ISO Timestamp
-  feedback?: VideoFeedback[];
-};
-
-
-export type LessonNote = {
-  id: string;
-  lessonSlotId: string;
-  teacherId: string;
-  studentId: string;
-  summary: string;
-  homeworkAssignments: string[];
-  isSharedWithStudent: boolean;
-  isSharedWithParent: boolean;
-  createdAt: string; // ISO Timestamp
-};
-
 export type RepertoireStatus = 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
 
 export type AssignedRepertoire = {
@@ -475,6 +422,18 @@ export type AssignedRepertoire = {
   status: RepertoireStatus;
   assignedAt: string; // ISO Timestamp
   completedAt?: string; // ISO Timestamp
+};
+
+export type LessonNote = {
+  id: string;
+  lessonSlotId: string;
+  teacherId: string;
+  studentId: string;
+  summary: string;
+  homeworkAssignments?: string[];
+  isSharedWithStudent: boolean;
+  isSharedWithParent: boolean;
+  createdAt: string; // ISO Timestamp
 };
 
 export type Message = {
@@ -515,8 +474,6 @@ export type Announcement = {
 export type Room = {
   id: string;
   name: string;
-  instruments?: string[];
-  capacity?: number;
   branchId?: string;
 };
 
@@ -581,12 +538,6 @@ export type PerformanceSlot = {
   duration: string; // MM:SS
 };
 
-export type SoundCheckSlot = {
-  performanceId: string; // Links to the PerformanceSlot id
-  startTime: string; // "HH:mm"
-  durationMinutes: number;
-};
-
 export type EventProduction = {
   id: string;
   conservatoriumId: string;
@@ -597,101 +548,4 @@ export type EventProduction = {
   startTime: string; // "HH:mm"
   status: EventProductionStatus;
   program: PerformanceSlot[];
-  isPublic: boolean;
-  ticketPrice: number;
-  branchId?: string;
-  dressRehearsalDate?: string;
-  soundCheckSchedule?: SoundCheckSlot[];
-};
-
-// From SDD-14G: Instrument Rental Management
-export type InstrumentCondition = 'NEW' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR';
-
-export type InstrumentInventory = {
-  id: string;
-  conservatoriumId: string;
-  type: string; // Instrument type, e.g. 'כינור'
-  brand: string;
-  serialNumber: string;
-  condition: InstrumentCondition;
-  rentalRatePerMonth: number;
-  currentRenterId?: string;
-  rentalStartDate?: string; // ISO Date string
-  expectedReturnDate?: string; // ISO Date string
-};
-// SDD-13: Musicians for Hire
-export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED' | 'CANCELLED';
-
-export type PerformanceBooking = {
-  id: string;
-  conservatoriumId: string;
-  eventName: string;
-  eventType: string;
-  eventDate: string; // ISO Date
-  eventTime: string; // HH:mm
-  eventLocation: string;
-  clientName: string;
-  clientEmail: string;
-  clientPhone: string;
-  ensembleSize: string;
-  genre: string;
-  totalQuote: number;
-  status: PerformanceBookingStatus;
-  inquiryReceivedAt: string; // ISO Timestamp
-  assignedMusicians?: {
-    userId: string;
-    name: string;
-    instrument: string;
-  }[];
-};
-
-// SDD-17: Scholarship & Donations
-export type ApplicationStatus =
-  | 'DRAFT'
-  | 'SUBMITTED'
-  | 'DOCUMENTS_PENDING'
-  | 'UNDER_REVIEW'
-  | 'APPROVED'
-  | 'PARTIALLY_APPROVED'
-  | 'WAITLISTED'
-  | 'REJECTED'
-  | 'EXPIRED';
-
-export type ScholarshipApplication = {
-    id: string;
-    studentId: string;
-    studentName: string;
-    instrument: string;
-    conservatoriumId: string;
-    academicYear: string;
-    status: ApplicationStatus;
-    submittedAt: string; // ISO Timestamp
-    priorityScore: number;
-};
-
-export type OpenDayEvent = {
-  id: string;
-  conservatoriumId: string;
-  name: string;
-  date: string; // ISO Date
-  startTime: string; // HH:mm
-  endTime: string; // HH:mm
-  appointmentDuration: number; // in minutes
-  isActive: boolean;
-};
-
-export type OpenDayAppointmentStatus = 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
-
-export type OpenDayAppointment = {
-  id: string;
-  eventId: string;
-  familyName: string;
-  parentEmail: string;
-  parentPhone: string;
-  childName: string;
-  childAge: number;
-  instrumentInterest: string;
-  appointmentTime: string; // ISO Timestamp
-  status: OpenDayAppointmentStatus;
-  registeredAt: string; // ISO Timestamp
 };
