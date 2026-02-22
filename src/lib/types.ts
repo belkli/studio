@@ -305,6 +305,36 @@ export type FormSubmission = {
   instrument?: string;
 };
 
+// From SDD-08: Dynamic Form Builder
+export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'dropdown' | 'checkbox';
+
+export type FormFieldDefinition = {
+  id: string;
+  label: string;
+  type: FormFieldType;
+  required: boolean;
+  placeholder?: string;
+  options?: string; // Comma-separated values for dropdown
+};
+
+export type WorkflowStepDefinition = {
+  id: string;
+  stepIndex: number;
+  roleName: string; // e.g., "Teacher Approval"
+  requiredRole: UserRole;
+};
+
+export type FormTemplate = {
+  id: string;
+  conservatoriumId: string;
+  title: string;
+  description: string;
+  fields: FormFieldDefinition[];
+  workflow: WorkflowStepDefinition[];
+  createdAt: string; // ISO Timestamp
+};
+
+
 // --- New Types from SDDs ---
 export type MakeupCreditReason = 'TEACHER_CANCELLED' | 'ADMIN_CANCELLED' | 'STUDENT_CANCELLED_NOTICED';
 
@@ -525,34 +555,6 @@ export type WaitlistEntry = {
   joinedAt: string; // ISO Timestamp
   notifiedAt?: string; // ISO Timestamp
   status: WaitlistStatus;
-};
-
-export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'dropdown' | 'checkbox';
-
-export type FormFieldDefinition = {
-  id: string;
-  label: string;
-  type: FormFieldType;
-  required: boolean;
-  placeholder?: string;
-  options?: string; // Comma-separated values for dropdown
-};
-
-export type WorkflowStepDefinition = {
-  id: string;
-  stepIndex: number;
-  roleName: string; // e.g., "Teacher Approval"
-  requiredRole: UserRole;
-};
-
-export type FormTemplate = {
-  id: string;
-  conservatoriumId: string;
-  title: string;
-  description: string;
-  fields: FormFieldDefinition[];
-  workflow: WorkflowStepDefinition[];
-  createdAt: string; // ISO Timestamp
 };
 
 export type AuditLogEntry = {
