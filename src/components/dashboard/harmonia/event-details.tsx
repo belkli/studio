@@ -16,6 +16,9 @@ import type { EventProductionStatus } from '@/lib/types';
 import { AssignPerformerDialog } from './assign-performer-dialog';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 
 const statusConfig: Record<EventProductionStatus, { label: string; className: string }> = {
@@ -29,11 +32,13 @@ const statusConfig: Record<EventProductionStatus, { label: string; className: st
 export function EventDetails() {
     const params = useParams();
     const eventId = params.id as string;
-    const { mockEvents, removePerformanceFromEvent } = useAuth();
+    const { user, mockEvents, removePerformanceFromEvent, updateEventStatus } = useAuth();
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+    const { toast } = useToast();
 
     const event = useMemo(() => mockEvents.find(e => e.id === eventId), [mockEvents, eventId]);
-    
+    const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
+
     const handlePrintProgram = () => {
         if (!event) return;
         const doc = new jsPDF();
@@ -93,6 +98,15 @@ export function EventDetails() {
         doc.save(`${event.name}_program.pdf`);
     };
 
+    const handleStatusChange = (status: EventProductionStatus) => {
+        if (!event) return;
+        updateEventStatus(event.id, status);
+        toast({
+            title: "סטטוס האירוע עודכן",
+            description: `האירוע "${event.name}" עודכן לסטטוס: ${statusConfig[status].label}`,
+        });
+    };
+
     if (!event) {
         notFound();
     }
@@ -107,7 +121,20 @@ export function EventDetails() {
                     </Link>
                 </Button>
                 <div className="flex items-center gap-2">
-                    <Badge className={statusConfig[event.status].className}>{statusConfig[event.status].label}</Badge>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                           <Badge className={cn("cursor-pointer", statusConfig[event.status].className)}>{statusConfig[event.status].label}</Badge>
+                        </DropdownMenuTrigger>
+                        {isAdmin && (
+                            <DropdownMenuContent>
+                                {(Object.keys(statusConfig) as EventProductionStatus[]).map((s) => (
+                                    <DropdownMenuItem key={s} onClick={() => handleStatusChange(s)}>
+                                        {statusConfig[s].label}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        )}
+                    </DropdownMenu>
                     <Button variant="outline"><Edit className="ms-2 h-4 w-4"/>ערוך פרטי אירוע</Button>
                 </div>
             </div>

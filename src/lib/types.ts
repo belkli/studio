@@ -126,6 +126,7 @@ export type User = {
   schoolName?: string;
   schoolSymbol?: string;
   birthDate?: string;
+  enrollmentDate?: string;
   gender?: 'זכר' | 'נקבה';
   city?: string;
   phone?: string;
@@ -760,4 +761,5 @@ export type OpenDayAppointment = {
   status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
   registeredAt: string; // ISO Timestamp
 };
+
 
