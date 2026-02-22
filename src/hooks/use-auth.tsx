@@ -368,15 +368,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockLessonNotes(prev => [newNote, ...prev]);
   };
 
-  const updateUserPracticeGoal = (studentId: string, goal: number) => {
+  const updateUserPracticeGoal = (studentId: string, practiceGoal: number) => {
     const student = users.find(u => u.id === studentId);
-    if (!student) return;
-    
-    setUsers(prev => prev.map(u => u.id === studentId ? { ...u, weeklyPracticeGoal: goal } : u));
-    toast({
-        title: "יעד אימון עודכן",
-        description: `יעד האימון השבועי של ${student.name} עודכן ל-${goal} דקות.`,
-    });
+    if (student) {
+        updateUser({ ...student, weeklyPracticeGoal: practiceGoal });
+        toast({
+            title: "יעד אימון עודכן",
+            description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
+        });
+    }
   };
   
   const addProgressReport = (reportData: Partial<ProgressReport>) => {

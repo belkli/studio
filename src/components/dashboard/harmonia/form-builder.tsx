@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, PlusCircle, GripVertical } from 'lucide-react';
 import type { FormTemplate, UserRole } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 const fieldSchema = z.object({
   label: z.string().min(1, "Label is required"),
@@ -54,6 +55,7 @@ const roleOptions: { value: UserRole; label: string }[] = [
 export function FormBuilder() {
     const { addFormTemplate } = useAuth();
     const { toast } = useToast();
+    const router = useRouter();
     
     const form = useForm<FormBuilderData>({
         resolver: zodResolver(formBuilderSchema),
@@ -72,15 +74,15 @@ export function FormBuilder() {
         addFormTemplate({
             title: data.title,
             description: data.description,
-            fields: data.fields.map((f, i) => ({ ...f, id: `field-${i}` })),
-            workflow: data.workflow.map((w, i) => ({ ...w, id: `wf-${i}`, stepIndex: i })),
+            fields: data.fields.map((f, i) => ({ ...f, id: `field-${Date.now()}-${i}` })),
+            workflow: data.workflow.map((w, i) => ({ ...w, id: `wf-${Date.now()}-${i}`, stepIndex: i })),
         } as Partial<FormTemplate>);
 
         toast({
             title: "תבנית טופס נשמרה!",
             description: `התבנית "${data.title}" זמינה כעת ליצירה.`,
         });
-        form.reset();
+        router.push('/dashboard/forms/new');
     };
 
     return (
