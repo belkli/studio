@@ -488,6 +488,12 @@
         "noNotifications": "No new notifications",
         "viewAll": "View all notifications"
     },
+    "MessagesPage": {
+        "title": "Messages",
+        "subtitle": "Communicate with students, parents, and teachers.",
+        "selectConversation": "Select a conversation to start",
+        "typeMessage": "Type a message..."
+    },
     "Reports": {
         "teachers": "Teacher Reports"
     }

@@ -482,6 +482,12 @@
         "noNotifications": "אין התראות חדשות",
         "viewAll": "הצג את כל ההתראות"
     },
+    "MessagesPage": {
+        "title": "הודעות",
+        "subtitle": "תקשר עם תלמידים, הורים ומורים.",
+        "selectConversation": "בחר שיחה כדי להתחיל",
+        "typeMessage": "כתוב הודעה..."
+    },
     "Reports": {
         "teachers": "דוחות מורים"
     }

@@ -10,8 +10,10 @@ import { Send, Paperclip } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MessageThread, User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslations } from 'next-intl';
 
 export function MessagingInterface() {
+  const t = useTranslations('MessagesPage');
   const { user, users, mockMessageThreads, addMessage } = useAuth();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -126,13 +128,19 @@ export function MessagingInterface() {
                       <p className="text-sm">{message.body}</p>
                        <p className="text-xs opacity-70 mt-1 text-right">{new Date(message.sentAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
+                     {message.senderId === user.id && user && (
+                        <Avatar className="h-6 w-6">
+                            <AvatarImage src={user.avatarUrl} />
+                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                    )}
                   </div>
                 ))}
               </div>
             </ScrollArea>
             <div className="p-4 border-t flex items-center gap-2">
               <Textarea
-                placeholder="כתוב הודעה..."
+                placeholder={t('typeMessage')}
                 className="flex-1"
                 rows={1}
                 value={newMessage}
@@ -154,7 +162,7 @@ export function MessagingInterface() {
           </>
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            בחר שיחה כדי להתחיל
+            {t('selectConversation')}
           </div>
         )}
       </div>
