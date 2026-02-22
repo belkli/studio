@@ -15,6 +15,7 @@ import { he } from 'date-fns/locale';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
+import { Separator } from '@/components/ui/separator';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center text-center gap-4">
