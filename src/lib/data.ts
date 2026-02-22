@@ -109,6 +109,13 @@ export const mockBranches: Branch[] = [
 // --- Mock Achievements (SDD-14B) ---
 export const mockAchievements: Achievement[] = [
     {
+        id: 'ach-1',
+        type: 'YEARS_ENROLLED_1',
+        title: 'שנה בהרמוניה!',
+        description: 'כל הכבוד על שנה שלמה של התמדה ולימודים.',
+        achievedAt: new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString(),
+    },
+    {
         id: 'ach-2',
         type: 'PIECE_COMPLETED',
         title: 'יצירה ראשונה הושלמה!',
@@ -609,7 +616,37 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
     }
 ];
 
-export const mockPerformanceBookings: PerformanceBooking[] = [];
+export const mockPerformanceBookings: PerformanceBooking[] = [
+  {
+    id: 'perf-1',
+    conservatoriumId: 'cons-15',
+    status: 'INQUIRY_RECEIVED',
+    inquiryReceivedAt: new Date().toISOString(),
+    clientName: 'חברת הייטק בע"מ',
+    clientEmail: 'events@hightech.com',
+    clientPhone: '052-1234567',
+    eventName: 'אירוע חברה שנתי',
+    eventType: 'Corporate',
+    eventDate: addDays(new Date(), 30).toISOString(),
+    eventTime: '20:00',
+    totalQuote: 2800,
+  },
+  {
+    id: 'perf-2',
+    conservatoriumId: 'cons-15',
+    status: 'MUSICIANS_CONFIRMED',
+    inquiryReceivedAt: addDays(new Date(), -2).toISOString(),
+    clientName: 'משפחת כהן',
+    clientEmail: 'cohen@family.com',
+    clientPhone: '050-7654321',
+    eventName: 'חתונה',
+    eventType: 'Wedding',
+    totalQuote: 4500,
+    assignedMusicians: [
+        { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' }
+    ]
+  },
+];
 export const mockScholarshipApplications: ScholarshipApplication[] = [];
 export const mockOpenDayEvents: OpenDayEvent[] = [
     {
