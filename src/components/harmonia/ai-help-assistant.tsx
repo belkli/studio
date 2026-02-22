@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { usePathname } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
 
 interface Message {
@@ -21,7 +22,8 @@ interface Message {
     response?: HelpAssistantResponse;
 }
 
-export function HelpAssistantFAB() {
+export function AiHelpAssistant() {
+    const t = useTranslations('HelpAssistant');
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
@@ -83,10 +85,10 @@ export function HelpAssistantFAB() {
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             setMessages([
-                { sender: 'bot', text: 'שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?' }
+                { sender: 'bot', text: t('welcomeMessage') }
             ]);
         }
-    }, [isOpen, messages]);
+    }, [isOpen, messages, t]);
 
     useEffect(() => {
         if (scrollAreaRef.current) {
@@ -117,11 +119,11 @@ export function HelpAssistantFAB() {
             const botMessage: Message = { sender: 'bot', text: response.answer, response };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-             setMessages(prev => [...prev, { sender: 'bot', text: 'אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר.' }]);
+             setMessages(prev => [...prev, { sender: 'bot', text: t('errorMessage') }]);
         } finally {
             setIsLoading(false);
         }
-    }, [input, user]);
+    }, [input, user, t]);
 
     if (!user || !user.approved) return null;
 
@@ -141,10 +143,10 @@ export function HelpAssistantFAB() {
                     <SheetHeader className="p-6 pb-4">
                         <SheetTitle className="flex items-center gap-2 text-xl">
                             <Bot />
-                            עוזר AI של הרמוניה
+                            {t('title')}
                         </SheetTitle>
                         <SheetDescription>
-                            שאל אותי כל דבר על המערכת, ואעשה כמיטב יכולתי לעזור.
+                            {t('description')}
                         </SheetDescription>
                     </SheetHeader>
                     <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
@@ -175,7 +177,7 @@ export function HelpAssistantFAB() {
                             )}
                             {messages.length <= 1 && !isLoading && (
                                 <div className="pt-4">
-                                    <p className="text-sm font-medium mb-2">הצעות:</p>
+                                    <p className="text-sm font-medium mb-2">{t('suggestionsTitle')}</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         {suggestedQuestions.map(q => (
                                             <Button key={q} variant="outline" size="sm" className="h-auto text-wrap justify-start" onClick={() => handleSendMessage(q)}>
@@ -193,7 +195,7 @@ export function HelpAssistantFAB() {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                                placeholder="שאל אותי משהו..."
+                                placeholder={t('placeholder')}
                                 className="pe-12"
                                 disabled={isLoading}
                             />

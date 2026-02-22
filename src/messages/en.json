@@ -513,5 +513,13 @@
         "bookTickets": "Book Tickets",
         "bookingSuccessTitle": "Booking Complete!",
         "bookingSuccessDesc": "{count, plural, one {One ticket has been booked. A confirmation has been sent to your email.} other {# tickets have been booked. A confirmation has been sent to your email.}}"
+    },
+    "HelpAssistant": {
+        "title": "Harmonia AI Assistant",
+        "description": "Ask me anything about the system, and I'll do my best to help.",
+        "placeholder": "Ask me something...",
+        "suggestionsTitle": "Suggestions:",
+        "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
+        "errorMessage": "I'm sorry, an error occurred. Please try again later."
     }
 }

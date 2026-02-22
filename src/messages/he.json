@@ -507,5 +507,13 @@
         "bookTickets": "הזמן כרטיסים",
         "bookingSuccessTitle": "ההזמנה הושלמה!",
         "bookingSuccessDesc": "{count, plural, one {כרטיס אחד הוזמן. אישור נשלח למייל.} other {# כרטיסים הוזמנו. אישור נשלח למייל.}}"
+    },
+    "HelpAssistant": {
+        "title": "עוזר AI של הרמוניה",
+        "description": "שאל אותי כל דבר על המערכת, ואעשה כמיטב יכולתי לעזור.",
+        "placeholder": "שאל אותי משהו...",
+        "suggestionsTitle": "הצעות:",
+        "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?",
+        "errorMessage": "אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר."
     }
 }

@@ -7,7 +7,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
-import { HelpAssistantFAB } from '@/components/harmonia/help-assistant-fab';
+import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
+import { WalkthroughManager } from '@/components/dashboard/walkthrough-manager';
 
 export const metadata: Metadata = {
   title: 'הַרמוֹנְיָה',
@@ -45,7 +46,8 @@ export default async function RootLayout({
           <AuthProvider>
             {children}
             <Toaster />
-            <HelpAssistantFAB />
+            <AiHelpAssistant />
+            <WalkthroughManager />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>
