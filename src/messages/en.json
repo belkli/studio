@@ -1,0 +1,500 @@
+{
+    "Navigation": {
+        "dashboard": "Dashboard",
+        "lessons": "Available Lessons",
+        "musicians": "Musicians",
+        "donate": "Donate",
+        "openDay": "Open Day",
+        "about": "About",
+        "contact": "Contact",
+        "login": "Login",
+        "register": "Register",
+        "back": "Back",
+        "next": "Next",
+        "submit": "Submit Registration"
+    },
+    "HomePage": {
+        "title": "Harmonia",
+        "heroTitle": "The music starts here",
+        "heroSubtitle": "Smart management system and advanced learning experience for music conservatories",
+        "discoverBtn": "Discover system",
+        "learnMoreBtn": "Learn more",
+        "copyright": "All rights reserved.",
+        "privacyPolicy": "Privacy Policy"
+    },
+    "AvailableNow": {
+        "title": "Available lessons for today and tomorrow",
+        "subtitle": "Find a music lesson at a special price! A one-time opportunity to learn from the best teachers at discounts of up to 40%."
+    },
+    "OpenDay": {
+        "heroTitle": "Conservatory Open Day",
+        "heroSubtitle": "Come meet the teachers, try new instruments, and hear our students perform. A musical experience for the whole family!",
+        "registerNow": "Register for a meet-and-greet",
+        "featuresTitle": "What awaits you at the Open Day?",
+        "feature1Title": "Meet the Teachers",
+        "feature1Desc": "An opportunity to get to know our leading pedagogical team, ask questions, and receive personal guidance.",
+        "feature2Title": "Try Instruments",
+        "feature2Desc": "Children can touch, feel, and play a variety of musical instruments with the guidance of our teachers.",
+        "feature3Title": "Live Performances",
+        "feature3Desc": "Watch our talented students showcase what they've learned in short concerts throughout the day.",
+        "formTitle": "Open Day Registration",
+        "formSubtitle": "Book a personal introductory meeting. The number of spots is limited.",
+        "registrationDetails": "Registration Details",
+        "familyName": "Family Name",
+        "parentEmail": "Parent's Email",
+        "parentPhone": "Parent's Phone",
+        "childName": "Child's Name",
+        "childAge": "Child's Age",
+        "instrumentInterest": "Instrument of Interest",
+        "selectInstrument": "Select instrument...",
+        "selectTime": "Choose Arrival Time",
+        "noSlots": "All spots are taken. Try another date.",
+        "submit": "Confirm Registration",
+        "successTitle": "Registration Received!",
+        "successDesc": "Thank you for registering for the Open Day. A confirmation and further details have been sent to your email. We look forward to seeing you!",
+        "backToHome": "Back to Homepage"
+    },
+    "AdminOpenDay": {
+        "title": "Open Day Management",
+        "subtitle": "Track attendees and manage appointments for the Open Day event.",
+        "appointmentTime": "Appointment Time",
+        "familyName": "Family Name",
+        "childName": "Child's Name",
+        "instrumentInterest": "Instrument of Interest",
+        "contactDetails": "Contact Details",
+        "status": "Status",
+        "noAppointments": "No families have registered yet.",
+        "statuses": {
+            "SCHEDULED": "Scheduled",
+            "ATTENDED": "Attended",
+            "NO_SHOW": "No-Show"
+        }
+    },
+    "MusiciansForHire": {
+        "heroTitle": "Professional Musicians for Unforgettable Events",
+        "heroSubtitle": "All musicians from [Conservatory Name] — vetted, reliable, and fully insured.",
+        "getQuote": "Get an Instant Quote",
+        "features": {
+            "experienced": "Experienced & Vetted",
+            "experiencedDesc": "Every musician is a professional teacher or advanced student from our conservatory.",
+            "backup": "Backup Guarantee",
+            "backupDesc": "If a musician cancels, we provide a replacement of equal or superior caliber, guaranteed.",
+            "professional": "Professional Management",
+            "professionalDesc": "We handle all logistics, from booking to payment, for a seamless experience."
+        },
+        "occasionsTitle": "Music for Every Occasion",
+        "occasionsSubtitle": "From intimate ceremonies to large corporate events, we provide the perfect soundtrack.",
+        "occasion": {
+            "wedding": "Weddings",
+            "corporate": "Corporate Events",
+            "private": "Private Parties"
+        },
+        "configuratorTitle": "Get an Instant Quote",
+        "configuratorSubtitle": "Configure your event needs and get a real-time price estimate instantly.",
+        "steps": {
+            "event": "Event Details",
+            "music": "Music Needs",
+            "quote": "Your Quote"
+        },
+        "form": {
+            "eventType": "Event Type",
+            "eventPlaceholder": "Select event type...",
+            "date": "Date",
+            "location": "Location",
+            "locationPlaceholder": "e.g., Tel Aviv",
+            "duration": "Duration (hours)",
+            "ensembleSize": "Ensemble Size",
+            "ensemblePlaceholder": "Select size...",
+            "ensemble": {
+                "solo": "Solo (1 musician)",
+                "duo": "Duo (2 musicians)",
+                "trio": "Trio (3 musicians)",
+                "quartet": "Quartet (4 musicians)"
+            },
+            "genre": "Genre",
+            "genrePlaceholder": "Select genre...",
+            "genres": {
+                "classical": "Classical",
+                "jazz": "Jazz",
+                "israeli": "Israeli",
+                "pop": "Pop"
+            },
+            "requests": "Special Requests",
+            "requestsPlaceholder": "Specific songs, special arrangements, etc.",
+            "previous": "Previous",
+            "next": "Next",
+            "quoteTitle": "Your Estimated Quote",
+            "quotePrice": "₪{price}",
+            "quoteDetails": "{ensemble} for {duration} hours",
+            "submitRequest": "Submit Booking Request"
+        },
+        "musiciansTitle": "Meet Our Musicians",
+        "musiciansSubtitle": "A selection of our finest teachers and advanced students available for events.",
+        "viewProfile": "View Profile"
+    },
+    "DonatePage": {
+      "heroTitle": "Because music is not just for those who can afford it",
+      "heroSubtitle": "Every donation, large or small, allows a talented child with financial difficulties to continue their musical journey. Together, we can give them a future.",
+      "donateNow": "Donate Now",
+      "impact": {
+        "donations": "Donations Received",
+        "students": "Students Supported This Year",
+        "scholarships": "Value of Scholarships Awarded",
+        "coverage": "Average Tuition Coverage"
+      },
+      "storiesTitle": "Their Stories, Our Opportunity",
+      "storiesSubtitle": "Behind every number is a story. Meet some of the students whose lives your donation can change.",
+      "story1Name": "Maya",
+      "story1Age": 14,
+      "story1Instrument": "Violin",
+      "story1Text": "Maya comes from a single-parent family. The scholarship allows her to continue preparing for the Ministry of Education exams. Her teacher says she has real potential for a musical career.",
+      "donateTo": "Donate to {name}",
+      "story2Name": "Yosef",
+      "story2Age": 16,
+      "story2Instrument": "Piano",
+      "story2Text": "Yosef immigrated two years ago and faces integration challenges. Music is his refuge. Thanks to the scholarship, he can continue to play and develop his unique talent.",
+      "story3Name": "Lian",
+      "story3Age": 11,
+      "story3Instrument": "Flute",
+      "story3Text": "Lian lives in the periphery, and access to quality lessons is limited. Your donation will allow her to continue attending lessons at the conservatory and fulfill her dream.",
+      "donateFormTitle": "Make a Donation Today",
+      "donateFormSubtitle": "All donations are tax-deductible under Section 46. 100% of your donation goes directly to student scholarships.",
+      "howItHelpsTitle": "How Your Donation Helps",
+      "help1": "Funds two private lessons for a student.",
+      "help2": "Covers almost a full month of studies.",
+      "help3": "Funds an entire semester of music lessons.",
+      "selectAmount": "Select donation amount",
+      "other": "Other",
+      "frequency": "Frequency",
+      "frequencyOnce": "One-time donation",
+      "frequencyMonthly": "Monthly donation",
+      "frequencyYearly": "Yearly donation",
+      "dedication": "Dedication (Optional)",
+      "dedicationPlaceholder": "In honor of / In memory of...",
+      "receiptDetails": "Details for Tax Receipt (Section 46)",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Yisrael Yisraeli",
+      "idNumber": "ID Number",
+      "idNumberPlaceholder": "Required for tax credit",
+      "email": "Email",
+      "emailPlaceholder": "For receipt delivery",
+      "anonymous": "I prefer to remain anonymous (no receipt)",
+      "submitButton": "Donate ₪{amount}"
+    },
+    "EnrollmentWizard": {
+        "steps": {
+            "role": "Registration Type",
+            "details": "Personal Details",
+            "musical": "Musical Info",
+            "schedule": "Availability",
+            "matching": "Teacher Match",
+            "booking": "Book Lesson",
+            "virtual": "Virtual Lessons",
+            "virtualOptions": {
+                "yes": "Yes, possible",
+                "no": "No, in-person only",
+                "only": "Virtual only"
+            },
+            "package": "Select Package",
+            "summary": "Summary & Confirmation"
+        },
+        "role": {
+            "title": "Who is registering?",
+            "subtitle": "Fill in the details to join Harmonia.",
+            "parent": "I am registering my child",
+            "self": "I am registering myself (over 13)",
+            "conservatorium": "Conservatory",
+            "conservatoriumPlaceholder": "Search conservatory..."
+        },
+        "common": {
+            "alreadyHaveAccount": "Already have an account?",
+            "loginHere": "Login here"
+        },
+        "details": {
+            "parentTitle": "Parent Details",
+            "studentTitle": "Student Details",
+            "selfTitle": "Personal Details",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "email": "Email",
+            "idNumber": "ID Number",
+            "phone": "Mobile Phone",
+            "birthDate": "Birth Date",
+            "password": "Password",
+            "school": "School",
+            "grade": "Grade"
+        },
+        "toasts": {
+            "errorTitle": "Error",
+            "waitlistTitle": "Joined the waitlist!",
+            "waitlistUserDesc": "We'll notify you when a spot opens up.",
+            "waitlistAdminDesc": "{name} added to the system and waitlist.",
+            "successTitle": "Registration sent successfully!",
+            "successUserDesc": "Your request has been sent to the conservatory manager for approval.",
+            "successAdminDesc": "{name} added to the system."
+        },
+        "matching": {
+            "loading": "Recommending the best teachers for you...",
+            "noTeachersTitle": "No available teachers found",
+            "noTeachersDesc": "All teachers matching your preferences are currently busy. You can join the waitlist and we'll notify you when a spot opens up.",
+            "joinWaitlist": "Join Waitlist",
+            "goBack": "Alternatively, you can go back and change your preferences.",
+            "matchPercentage": "{percent}% match",
+            "whyLearnWith": "Why learn with {name}?"
+        },
+        "success": {
+            "adminTitle": "Student registered successfully!",
+            "userTitle": "Registration completed successfully!",
+            "adminDesc": "The student has been added to the system and their profile can now be managed.",
+            "userDesc": "Your request has been sent to the conservatory manager for approval. You will receive an email when your account is approved and you can log in to the system.",
+            "backToUsers": "Back to User Management",
+            "backToHome": "Back to Home"
+        },
+        "booking": {
+            "title": "Book First Lesson",
+            "availableSlots": "Available Slots",
+            "noSlots": "No available slots found for this teacher on this date.",
+            "loading": "Loading available slots..."
+        },
+        "admin": {
+            "title": "New Student Registration (Admin)",
+            "subtitle": "Fill in the details to register a new student.",
+            "enrollSection": "Registration Details",
+            "submit": "Register Student"
+        },
+        "package": {
+            "title": "Select Learning Package",
+            "placeholder": "Select package...",
+            "perMonth": "/month"
+        },
+        "musical": {
+            "title": "Musical Info",
+            "instrument": "Instrument",
+            "instrumentPlaceholder": "Select instrument",
+            "level": "Current Level",
+            "levelPlaceholder": "Select level",
+            "levels": {
+                "Beginner": "Beginner",
+                "Intermediate": "Intermediate",
+                "Advanced": "Advanced",
+                "Exam": "Exam Candidate"
+            },
+            "experience": "Previous Experience (Optional)",
+            "experiencePlaceholder": "Example: 3 years piano, no theory background...",
+            "goals": "Goals & Objectives",
+            "goals_options": {
+                "EXAMS": "Exams",
+                "PERFORMANCE": "Performance",
+                "ENJOYMENT": "Enjoyment",
+                "COMPETITION": "Competition",
+                "OTHER": "Other"
+            },
+            "duration": "Lesson Duration",
+            "durationPlaceholder": "Select duration",
+            "minutes": "{min} minutes"
+        },
+        "schedule": {
+            "title": "Availability",
+            "days": "Available Days",
+            "days_options": {
+                "SUN": "Sunday",
+                "MON": "Monday",
+                "TUE": "Tuesday",
+                "WED": "Wednesday",
+                "THU": "Thursday",
+                "FRI": "Friday"
+            },
+            "times": "Preferred Times",
+            "times_options": {
+                "MORNING": "Morning (8-13)",
+                "AFTERNOON": "Afternoon (13-17)",
+                "EVENING": "Evening (17-21)"
+            },
+            "virtual": "Virtual Lessons",
+            "virtualOptions": {
+                "yes": "Yes, possible",
+                "no": "No, in-person only",
+                "only": "Virtual only"
+            }
+        },
+        "validation": {
+            "required": "Required field",
+            "invalidEmail": "Invalid email address",
+            "invalidPhone": "Invalid phone number",
+            "invalidID": "Invalid ID number",
+            "tooShort": "Must be at least {min} characters",
+            "passwordLength": "Password must be at least {min} characters",
+            "date": "Please enter a valid date",
+            "missingDetails": "Missing details, cannot complete registration.",
+            "selectType": "Please select a registration type",
+            "selectConservatorium": "Please select a conservatory",
+            "selectInstrument": "Please select an instrument",
+            "selectPackage": "Please select a package"
+        },
+        "summary": {
+            "title": "Summary",
+            "studentName": "Student Name",
+            "parentName": "Parent Name",
+            "email": "Email",
+            "instrument": "Instrument",
+            "teacher": "Teacher",
+            "package": "Package",
+            "firstLesson": "First Lesson",
+            "price": "Price",
+            "notSelected": "Not Selected",
+            "later": "To be scheduled later"
+        }
+    },
+    "Dashboard": {
+        "header": {
+            "search": "Search...",
+            "notifications": "Notifications",
+            "profile": "Profile",
+            "settings": "Settings",
+            "logout": "Logout"
+        },
+        "welcome": {
+            "title": "Welcome, {name}",
+            "subtitle": "This is your dashboard for today.",
+            "newForm": "New Form"
+        },
+        "overview": {
+            "pending": "Pending Approvals",
+            "approved": "Approved Forms",
+            "rejected": "Rejected Forms",
+            "total": "Total Submissions"
+        },
+        "recentForms": {
+            "title": "Recent Submissions",
+            "viewAll": "All Forms",
+            "studentName": "Student Name",
+            "formType": "Form Type",
+            "status": "Status",
+            "submissionDate": "Submission Date",
+            "actions": "Actions",
+            "view": "View",
+            "descriptions": {
+                "student": "These are the last forms you submitted.",
+                "teacher": "These are the last forms submitted by your students.",
+                "conservatorium_admin": "These are the last forms submitted in your conservatory.",
+                "site_admin": "These are all the last forms submitted in the system.",
+                "ministry_director": "These are all the last forms approved and pending review.",
+                "parent": "These are the last forms submitted for your children.",
+                "default": "Below are the latest form submissions."
+            }
+        },
+        "status": {
+            "draft": "Draft",
+            "pendingTeacher": "Pending Teacher Approval",
+            "pendingAdmin": "Pending Admin Approval",
+            "approved": "Conservatory Approved",
+            "rejected": "Rejected",
+            "revisionRequired": "Revision Required (Ministry)",
+            "finalApproved": "Final Approved"
+        },
+        "makeups": {
+            "title": "Makeup Lessons",
+            "subtitle": "Here you can see your makeup lesson balance and book a new lesson.",
+            "balanceCard": {
+                "title": "Makeup Lesson Balance",
+                "description": "Available credits for makeup lessons due to teacher/system cancellations or your cancellations according to policy.",
+                "unit": "Credits"
+            },
+            "bookCard": {
+                "title": "Book a Makeup Lesson",
+                "description": "Use your credits to schedule a new lesson at a time that suits you.",
+                "button": "Go to booking"
+            },
+            "details": {
+                "title": "Credit Details",
+                "empty": "No credits available at the moment.",
+                "table": {
+                    "source": "Credit Source",
+                    "grantedAt": "Date Granted",
+                    "expiresAt": "Expiry Date",
+                    "status": "Status"
+                },
+                "reasons": {
+                    "TEACHER_CANCELLED": "Teacher Cancellation",
+                    "ADMIN_CANCELLED": "System Cancellation",
+                    "STUDENT_CANCELLED_NOTICED": "Student Cancellation (On time)"
+                },
+                "statuses": {
+                    "AVAILABLE": "Available",
+                    "USED": "Used",
+                    "EXPIRED": "Expired"
+                }
+            }
+        },
+        "PendingApproval": {
+            "title": "Account Pending Approval",
+            "description": "Your registration has been successfully received! The conservatory team is currently reviewing your details.",
+            "steps": {
+                "title": "What happens next?",
+                "review": "The administration team is reviewing your registration form.",
+                "contact": "If necessary, we will contact you for additional information.",
+                "notify": "You will receive a confirmation message as soon as your account is activated and you can access the dashboard."
+            },
+            "support": "Need help? Contact the office by phone or email.",
+            "backToSite": "Back to Home",
+            "logout": "Logout"
+        }
+    },
+    "Sidebar": {
+        "dashboard": "Dashboard",
+        "myForms": "My Forms",
+        "newForm": "New Form",
+        "approvals": "Approvals",
+        "library": "Library",
+        "users": "Users",
+        "ministry": "Ministry Approvals",
+        "myFamily": "My Family",
+        "myProfile": "My Profile",
+        "teacherProfile": "Teacher Profile",
+        "performanceProfile": "Performance Profile",
+        "myAvailability": "My Availability",
+        "myReports": "My Reports",
+        "payroll": "Payroll",
+        "schedule": "Schedule",
+        "practiceLog": "Practice Log",
+        "progress": "Progress",
+        "makeups": "Makeups",
+        "aiAssistant": "AI Assistant",
+        "messages": "Messages",
+        "formsAndDocs": "Forms & Docs",
+        "notifications": "Notifications",
+        "billing": "Billing",
+        "userManagement": "User Management",
+        "newRegistration": "New Registration",
+        "masterSchedule": "Master Schedule",
+        "events": "Events",
+        "manageOpenDay": "Open Day Management",
+        "branches": "Branches",
+        "performances": "Performances",
+        "rentals": "Rentals",
+        "waitlists": "Waitlists",
+        "adminMakeups": "Makeup Management",
+        "substitute": "Substitute Management",
+        "teacherPayroll": "Teacher Payroll",
+        "announcements": "Announcements",
+        "reportsAnalytics": "Reports & Analytics",
+        "formBuilder": "Form Builder",
+        "aiAgents": "AI Agents",
+        "ministryExport": "Ministry Export",
+        "settings": "Settings",
+        "help": "Help",
+        "logout": "Logout",
+        "logo": "Harmonia",
+        "noNotifications": "No new notifications",
+        "viewAll": "View all notifications"
+    },
+    "MessagesPage": {
+        "title": "Messages",
+        "subtitle": "Communicate with students, parents, and teachers.",
+        "selectConversation": "Select a conversation to start",
+        "typeMessage": "Type a message..."
+    },
+    "Reports": {
+        "teachers": "Teacher Reports"
+    }
+}
