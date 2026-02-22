@@ -1,5 +1,4 @@
 
-
 import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
