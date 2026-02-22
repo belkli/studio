@@ -45,6 +45,12 @@ export function SidebarNav() {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
+  
+  const handleHelpClick = () => {
+    if (typeof (window as any).openHelpAssistant === 'function') {
+        (window as any).openHelpAssistant();
+    }
+  };
 
   if (!user) {
     return null; // Or a loading spinner
@@ -212,8 +218,7 @@ export function SidebarNav() {
             </Link>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            {/* The FAB is now the primary help trigger */}
-            <SidebarMenuButton id="sidebar-help-button">
+            <SidebarMenuButton id="sidebar-help-button" onClick={handleHelpClick}>
               <MessageCircleQuestion />
               <span>{t('help')}</span>
             </SidebarMenuButton>

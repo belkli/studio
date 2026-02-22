@@ -1,32 +1,41 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Bot, User as UserIcon, Loader2 } from 'lucide-react';
+import { Bot, Loader2, MessageCircleQuestion, Send, User as UserIcon } from 'lucide-react';
 import { getAiHelpResponse } from '@/app/actions';
+import type { HelpAssistantResponse } from '@/ai/flows/help-assistant-flow';
 import { useAuth } from '@/hooks/use-auth';
-import { Link, usePathname } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Link from 'next/link';
+import { usePathname } from '@/i18n/routing';
 
-type Message = {
-    role: 'user' | 'assistant';
-    content: string;
-    actions?: { label: string; href: string }[];
-};
+
+interface Message {
+    sender: 'user' | 'bot';
+    text: string;
+    response?: HelpAssistantResponse;
+}
 
 export function HelpAssistantFAB() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [inputData, setInputData] = useState('');
+    const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const scrollRef = useRef<HTMLDivElement>(null);
     const { user } = useAuth();
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
+
+    useEffect(() => {
+        (window as any).openHelpAssistant = () => setIsOpen(true);
+        return () => {
+            delete (window as any).openHelpAssistant;
+        };
+    }, []);
 
     const suggestedQuestions = useMemo(() => {
         const defaultQuestions = [
@@ -74,175 +83,133 @@ export function HelpAssistantFAB() {
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             setMessages([
-                {
-                    role: 'assistant',
-                    content: 'שלום! אני הרמוניה, העוזרת החכמה שלך. איך אפשר לעזור היום?',
-                },
+                { sender: 'bot', text: 'שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?' }
             ]);
         }
     }, [isOpen, messages]);
 
     useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        if (scrollAreaRef.current) {
+            const viewport = scrollAreaRef.current.querySelector('div');
+            if (viewport) {
+                viewport.scrollTop = viewport.scrollHeight;
+            }
         }
     }, [messages]);
 
-    const handleSend = useCallback(async (question?: string) => {
-        const userQuestion = question || inputData;
+    const handleSendMessage = useCallback(async (question?: string) => {
+        const userQuestion = question || input;
         if (!userQuestion.trim() || !user) return;
 
-        setInputData('');
-        setMessages((prev) => [...prev, { role: 'user', content: userQuestion }]);
+        const userMessage: Message = { sender: 'user', text: userQuestion };
+        setMessages(prev => [...prev, userMessage]);
+        setInput('');
         setIsLoading(true);
 
         try {
             const response = await getAiHelpResponse({
-                question: userQuestion,
                 userId: user.id,
                 conservatoriumId: user.conservatoriumId,
-                locale: 'he',
+                question: userQuestion,
+                locale: 'he', // Default locale for the prompt context
             });
 
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: 'assistant',
-                    content: response.answer,
-                    actions: response.suggestedActions,
-                },
-            ]);
+            const botMessage: Message = { sender: 'bot', text: response.answer, response };
+            setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: 'assistant',
-                    content: 'מצטערת, אירעה שגיאה. אנא נסה שוב מאוחר יותר.',
-                },
-            ]);
+             setMessages(prev => [...prev, { sender: 'bot', text: 'אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר.' }]);
         } finally {
             setIsLoading(false);
         }
-    }, [inputData, user]);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
+    }, [input, user]);
 
     if (!user || !user.approved) return null;
 
     return (
-        <div className="fixed bottom-6 end-6 z-50 flex flex-col items-end">
-            {isOpen && (
-                <Card className="mb-4 w-80 sm:w-96 shadow-2xl border-primary/20 backdrop-blur-md bg-background/95 glass animate-in slide-in-from-bottom-5">
-                    <CardHeader className="bg-primary text-primary-foreground rounded-t-xl py-4 flex flex-row items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Bot className="w-5 h-5" />
-                            <CardTitle className="text-lg">הרמוניה - עזרה חכמה</CardTitle>
+        <>
+            <Button
+                id="help-button"
+                className="fixed bottom-6 end-6 h-14 w-14 rounded-full shadow-lg"
+                size="icon"
+                onClick={() => setIsOpen(true)}
+            >
+                <MessageCircleQuestion className="h-7 w-7" />
+                <span className="sr-only">פתח עוזר AI</span>
+            </Button>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetContent className="flex flex-col p-0" side="left">
+                    <SheetHeader className="p-6 pb-4">
+                        <SheetTitle className="flex items-center gap-2 text-xl">
+                            <Bot />
+                            עוזר AI של הרמוניה
+                        </SheetTitle>
+                        <SheetDescription>
+                            שאל אותי כל דבר על המערכת, ואעשה כמיטב יכולתי לעזור.
+                        </SheetDescription>
+                    </SheetHeader>
+                    <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
+                        <div className="space-y-4 py-4">
+                            {messages.map((message, index) => (
+                                <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' ? 'justify-end' : 'justify-start')}>
+                                    {message.sender === 'bot' && <Avatar className="h-8 w-8"><AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback></Avatar>}
+                                    <div className={cn("rounded-lg px-4 py-2 max-w-[85%]", message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                        <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                                        {message.sender === 'bot' && message.response?.suggestedActions && (
+                                            <div className="flex flex-col gap-2 mt-3 border-t pt-3 border-muted-foreground/20">
+                                                {message.response.suggestedActions.map((action, i) => (
+                                                    <Button key={i} size="sm" variant="secondary" asChild className="w-full justify-start text-xs h-8">
+                                                        <Link href={action.href} onClick={() => setIsOpen(false)}>{action.label}</Link>
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {message.sender === 'user' && user && <Avatar className="h-8 w-8"><AvatarImage src={user.avatarUrl} /><AvatarFallback>{user.name.charAt(0)}</AvatarFallback></Avatar>}
+                                </div>
+                            ))}
+                            {isLoading && (
+                                <div className="flex items-start gap-3 justify-start">
+                                    <Avatar className="h-8 w-8"><AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback></Avatar>
+                                    <div className="rounded-lg px-4 py-2 bg-muted"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+                                </div>
+                            )}
+                            {messages.length <= 1 && !isLoading && (
+                                <div className="pt-4">
+                                    <p className="text-sm font-medium mb-2">הצעות:</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        {suggestedQuestions.map(q => (
+                                            <Button key={q} variant="outline" size="sm" className="h-auto text-wrap justify-start" onClick={() => handleSendMessage(q)}>
+                                                {q}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-primary-foreground hover:bg-primary/80 -me-2"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <X className="w-4 h-4" />
-                        </Button>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <ScrollArea className="h-80 p-4" ref={scrollRef}>
-                            <div className="space-y-4">
-                                {messages.map((msg, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={`flex items-start gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                                            }`}
-                                    >
-                                        <div
-                                            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user'
-                                                    ? 'bg-secondary text-secondary-foreground'
-                                                    : 'bg-primary/10 text-primary'
-                                                }`}
-                                        >
-                                            {msg.role === 'user' ? <UserIcon className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-                                        </div>
-                                        <div
-                                            className={`text-sm px-4 py-2 rounded-2xl max-w-[80%] shadow-sm ${msg.role === 'user'
-                                                    ? 'bg-primary text-primary-foreground rounded-tl-sm'
-                                                    : 'bg-muted rounded-tr-sm whitespace-pre-line'
-                                                }`}
-                                        >
-                                            {msg.content}
-                                            {msg.actions && msg.actions.length > 0 && (
-                                                <div className="flex flex-col gap-2 mt-3 p-2 bg-background/50 rounded-md">
-                                                    {msg.actions.map((action, aIdx) => (
-                                                        <Button key={aIdx} variant="outline" size="sm" asChild className="w-full text-xs h-8">
-                                                            <Link href={action.href} onClick={() => setIsOpen(false)}>
-                                                                {action.label}
-                                                            </Link>
-                                                        </Button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                                {isLoading && (
-                                    <div className="flex items-start gap-3 flex-row">
-                                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                                            <Bot className="w-4 h-4" />
-                                        </div>
-                                        <div className="text-sm px-4 py-3 rounded-2xl bg-muted rounded-tr-sm flex items-center gap-2">
-                                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                                            <span className="text-muted-foreground">מקלידה...</span>
-                                        </div>
-                                    </div>
-                                )}
-                                 {messages.length <= 1 && !isLoading && (
-                                    <div className="pt-4">
-                                        <p className="text-sm font-medium mb-2">הצעות:</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            {suggestedQuestions.map(q => (
-                                                <Button key={q} variant="outline" size="sm" className="h-auto text-wrap justify-start" onClick={() => handleSend(q)}>
-                                                    {q}
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </ScrollArea>
-                    </CardContent>
-                    <CardFooter className="p-3 border-t bg-card rounded-b-xl">
-                        <div className="flex w-full items-center gap-2">
+                    </ScrollArea>
+                    <div className="p-4 border-t bg-background">
+                        <div className="relative">
                             <Input
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                                 placeholder="שאל אותי משהו..."
-                                value={inputData}
-                                onChange={(e) => setInputData(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                className="bg-background"
-                                dir="auto"
+                                className="pe-12"
                                 disabled={isLoading}
                             />
-                            <Button size="icon" onClick={() => handleSend()} disabled={isLoading || !inputData.trim()} className="shrink-0 rounded-full">
-                                <Send className="w-4 h-4 rtl:-scale-x-100" />
+                            <Button
+                                type="submit"
+                                size="icon"
+                                className="absolute left-1.5 top-1/2 -translate-y-1/2 h-7 w-7"
+                                onClick={() => handleSendMessage()}
+                                disabled={isLoading || !input.trim()}
+                            >
+                                <Send className="h-4 w-4" />
                             </Button>
                         </div>
-                    </CardFooter>
-                </Card>
-            )}
-
-            {/* Primary Floating Action Button */}
-            <Button
-                size="icon"
-                onClick={() => setIsOpen(!isOpen)}
-                className={`w-14 h-14 rounded-full shadow-2xl transition-transform duration-300 hover:scale-110 ${isOpen ? 'rotate-90 bg-secondary text-secondary-foreground hover:bg-secondary/80' : 'bg-primary text-primary-foreground'}`}
-            >
-                {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-            </Button>
-        </div>
+                    </div>
+                </SheetContent>
+            </Sheet>
+        </>
     );
 }
