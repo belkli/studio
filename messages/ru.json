@@ -487,5 +487,8 @@
         "logo": "Harmonia",
         "noNotifications": "Нет новых уведомлений",
         "viewAll": "Посмотреть все уведомления"
+    },
+    "Reports": {
+        "teachers": "Отчеты преподавателей"
     }
 }

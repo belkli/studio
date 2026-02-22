@@ -487,5 +487,8 @@
         "logo": "Harmonia",
         "noNotifications": "No new notifications",
         "viewAll": "View all notifications"
+    },
+    "Reports": {
+        "teachers": "Teacher Reports"
     }
 }
