@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, Channel, NotificationPreferences, PerformanceGenre, EnsembleRole, Branch, OpenDayEvent, OpenDayAppointment } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -72,6 +72,15 @@ export const compositions: Composition[] = (rawCompositions as any[]).map((item:
     source: 'seed' as const,
 })).filter(c => c.composer && c.title);
 
+export const mockRooms: Room[] = [
+    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1' },
+    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1' },
+    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1' },
+    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2' },
+    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2' },
+    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3' },
+    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3' },
+];
 
 const studentNotifications: Notification[] = [];
 const teacherNotifications: Notification[] = [];
@@ -156,7 +165,7 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
             conservatoriumId: 'cons-15',
             conservatoriumName: 'הוד השרון',
             avatarUrl: 'https://i.pravatar.cc/150?u=cons-admin15',
-            idNumber: `admin-id-15`,
+            idNumber: `admin-id-${admin.id}`,
             phone: '052-4619363',
             students: [studentUser.id, studentUser2.id],
             approved: true,
