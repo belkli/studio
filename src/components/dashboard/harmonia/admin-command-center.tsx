@@ -2,16 +2,34 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FilePlus, Megaphone } from "lucide-react";
+import { PlusCircle, FilePlus, Megaphone, UserPlus, FileCheck, Banknote, Coins } from "lucide-react";
 import Link from "next/link";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";
 import { RecentAnnouncementsCard } from "./recent-announcements-card";
 import { AiAlertsCard } from "./ai-alerts-card";
+import { useMemo } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export function AdminCommandCenter() {
-    const { user } = useAuth();
+    const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
     
+    const stats = useMemo(() => {
+        if (!user) return { pendingUsers: 0, pendingForms: 0, draftPayrolls: 0 };
+        
+        const pendingUsers = users.filter(u => u.conservatoriumId === user.conservatoriumId && !u.approved).length;
+
+        const pendingForms = mockFormSubmissions.filter(f => 
+            f.conservatoriumId === user.conservatoriumId && 
+            (f.status === 'ממתין לאישור מנהל' || f.status === 'נדרש תיקון')
+        ).length;
+        
+        const draftPayrolls = mockPayrolls.filter(p => p.status === 'DRAFT').length;
+
+        return { pendingUsers, pendingForms, draftPayrolls };
+    }, [user, users, mockFormSubmissions, mockPayrolls]);
+
     if (!user) return null;
 
     return (
@@ -21,29 +39,48 @@ export function AdminCommandCenter() {
                     <h1 className="text-2xl font-bold">ברוכה הבאה, {user.name.split(' ')[0]}</h1>
                     <p className="text-muted-foreground">זהו מרכז הבקרה שלך עבור {user.conservatoriumName || 'הקונסרבטוריון'}.</p>
                 </div>
-                 <div className="flex items-center gap-2">
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/announcements">
-                            <Megaphone className="me-2 h-4 w-4" />
-                            שלח הכרזה
-                        </Link>
-                    </Button>
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/forms/new">
-                            <FilePlus className="me-2 h-4 w-4" />
-                            טופס חדש
-                        </Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/dashboard/enroll">
-                            <PlusCircle className="me-2 h-4 w-4" />
-                            רשום תלמיד חדש
-                        </Link>
-                    </Button>
-                </div>
             </div>
             
             <KeyMetricsBar />
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>פעולות מהירות</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <Button variant="outline" className="flex-col h-24 relative" asChild>
+                        <Link href="/dashboard/users?tab=pending">
+                            <UserPlus className="h-6 w-6 mb-2" />
+                            <span>אשר הרשמות</span>
+                            {stats.pendingUsers > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingUsers}</Badge>}
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="flex-col h-24 relative" asChild>
+                        <Link href="/dashboard/approvals">
+                             <FileCheck className="h-6 w-6 mb-2" />
+                            <span>בדוק טפסים</span>
+                            {stats.pendingForms > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingForms}</Badge>}
+                        </Link>
+                    </Button>
+                     <Button variant="outline" className="flex-col h-24 relative" asChild>
+                        <Link href="/dashboard/admin/payroll">
+                            <Banknote className="h-6 w-6 mb-2" />
+                            <span>צפה בטיוטות שכר</span>
+                             {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -right-2">{stats.draftPayrolls}</Badge>}
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="flex-col h-24" asChild>
+                         <Link href="/dashboard/announcements">
+                            <Megaphone className="h-6 w-6 mb-2" />
+                            <span>שלח הכרזה</span>
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="flex-col h-24" disabled>
+                        <Coins className="h-6 w-6 mb-2" />
+                        <span>הנפק זיכוי ידני</span>
+                    </Button>
+                </CardContent>
+            </Card>
 
             <div className="grid lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">

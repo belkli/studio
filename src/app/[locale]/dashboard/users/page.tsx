@@ -1,7 +1,7 @@
-// @ts-nocheck
+{// @ts-nocheck
 'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { isValidIsraeliID } from "@/lib/utils";
+import { useSearchParams } from 'next/navigation';
 
 
 const roleTranslations: Record<UserRole, string> = {
@@ -50,6 +51,8 @@ type EditUserFormData = z.infer<typeof editUserSchema>;
 
 export default function UsersPage() {
     const { user: currentUser, users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
+    const searchParams = useSearchParams();
+    const defaultTab = searchParams.get('tab') || 'approved';
     
     const [searchTerm, setSearchTerm] = useState('');
     const [instrumentFilter, setInstrumentFilter] = useState('all');
@@ -163,7 +166,7 @@ export default function UsersPage() {
                 <p className="text-muted-foreground text-right">נהל משתמשים, הרשאות ובקשות הצטרפות.</p>
             </div>
 
-            <Tabs defaultValue="approved">
+            <Tabs defaultValue={defaultTab}>
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="pending">
                         ממתינים לאישור
