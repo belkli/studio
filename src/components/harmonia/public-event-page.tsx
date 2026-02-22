@@ -10,7 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Calendar, Clock, MapPin, Ticket, Minus, Plus, Users, Music } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { useTranslations } from 'next-intl';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 
@@ -18,7 +17,6 @@ export function PublicEventPage() {
     const params = useParams();
     const eventId = params.id as string;
     const { mockEvents } = useAuth();
-    const t = useTranslations('EventPage');
     const { toast } = useToast();
     const [ticketCount, setTicketCount] = useState(1);
 
@@ -31,8 +29,8 @@ export function PublicEventPage() {
     
     const handleTicketPurchase = () => {
         toast({
-            title: t('bookingSuccessTitle'),
-            description: t('bookingSuccessDesc', { count: ticketCount }),
+            title: 'ההזמנה הושלמה!',
+            description: `${ticketCount} כרטיסים הוזמנו. אישור נשלח למייל.`,
         });
     };
 
@@ -43,7 +41,7 @@ export function PublicEventPage() {
                 <div className="relative z-10 p-4 space-y-4">
                     <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{event.name}</h1>
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">
-                        {event.type === 'RECITAL' ? t('recitalSubtitle') : t('concertSubtitle')}
+                        {event.type === 'RECITAL' ? 'הצטרפו אלינו לקונצרט מיוחד המציג את תלמידינו המוכשרים.' : 'ערב של מוזיקה משובחת עם מיטב המבצעים שלנו.'}
                     </p>
                 </div>
             </section>
@@ -53,8 +51,8 @@ export function PublicEventPage() {
                     <div className="lg:col-span-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('programTitle')}</CardTitle>
-                                <CardDescription>{t('programSubtitle')}</CardDescription>
+                                <CardTitle>תוכנית האירוע</CardTitle>
+                                <CardDescription>הרפרטואר שיבוצע על ידי אמנינו הצעירים.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {event.program.length > 0 ? (
@@ -67,13 +65,13 @@ export function PublicEventPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-sm font-medium">{perf.studentName}</p>
-                                                    <p className="text-xs text-muted-foreground">{t('performer')}</p>
+                                                    <p className="text-xs text-muted-foreground">מבצע/ת</p>
                                                 </div>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-muted-foreground text-center py-8">{t('programNotFinal')}</p>
+                                    <p className="text-muted-foreground text-center py-8">התוכניה המלאה תפורסם בקרוב.</p>
                                 )}
                             </CardContent>
                         </Card>
@@ -81,7 +79,7 @@ export function PublicEventPage() {
                      <div className="lg:col-span-1 space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('detailsTitle')}</CardTitle>
+                                <CardTitle>פרטי האירוע</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
                                 <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-muted-foreground" /><span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })}</span></div>
@@ -91,7 +89,7 @@ export function PublicEventPage() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('ticketingTitle')}</CardTitle>
+                                <CardTitle>רכישת כרטיסים</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {event.ticketPrice > 0 ? (
@@ -103,17 +101,17 @@ export function PublicEventPage() {
                                         </div>
                                         <Separator />
                                         <div className="text-center">
-                                            <p className="text-sm text-muted-foreground">{t('totalPrice')}</p>
+                                            <p className="text-sm text-muted-foreground">סה"כ לתשלום</p>
                                             <p className="text-3xl font-bold">₪{event.ticketPrice * ticketCount}</p>
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="text-center font-medium text-lg">{t('freeAdmission')}</p>
+                                    <p className="text-center font-medium text-lg">הכניסה חופשית</p>
                                 )}
                             </CardContent>
                             <CardFooter>
                                 <Button className="w-full" size="lg" onClick={handleTicketPurchase}>
-                                    <Ticket className="me-2 h-5 w-5" /> {t('bookTickets')}
+                                    <Ticket className="me-2 h-5 w-5" /> הזמן כרטיסים
                                 </Button>
                             </CardFooter>
                         </Card>
