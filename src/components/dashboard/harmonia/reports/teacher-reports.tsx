@@ -34,7 +34,7 @@ export function TeacherReports() {
             const studentsWhoPracticed = new Set(
                 mockPracticeLogs.filter(log => {
                     const logDate = new Date(log.date);
-                    return isWithinInterval(logDate, { start, end }) && assignedStudents.includes(log.studentId);
+                    return isWithinInterval(logDate, {start, end}) && assignedStudents.includes(log.studentId);
                 }).map(log => log.studentId)
             );
             const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
