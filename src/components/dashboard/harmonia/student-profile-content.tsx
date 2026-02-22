@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement } from "@/lib/types";
+import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement, LessonNote } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
@@ -207,6 +207,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             </Button>
                         </CardContent>
                     </Card>
+
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2"><Pencil /> הערות מהמורה</CardTitle>
@@ -214,7 +215,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <CardContent className="space-y-4">
                             {userNotes.length > 0 ? userNotes.slice(0, 2).map(note => (
                                 <div key={note.id} className="text-sm border-b pb-3 last:border-b-0 last:pb-0">
-                                    <p className="text-muted-foreground text-xs">{new Date(note.createdAt).toLocaleDateString('he-IL', { day: 'numeric', month: 'long' })}</p>
+                                    <p className="text-muted-foreground text-xs">{formatDistanceToNow(new Date(note.createdAt), { addSuffix: true, locale: he })}</p>
                                     <p className="mt-1">{note.summary}</p>
                                     {note.homeworkAssignments && note.homeworkAssignments.length > 0 && (
                                         <ul className="mt-2 text-xs list-disc list-inside text-muted-foreground marker:text-primary/50">
