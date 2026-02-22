@@ -219,13 +219,13 @@ export function SidebarNav() {
             </Link>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton id="sidebar-help-button" onClick={handleHelpClick}>
+            <SidebarMenuButton id="sidebar-help-button" onClick={handleHelpClick} tooltip={t('help')}>
               <MessageCircleQuestion />
               <span>{t('help')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout}>
+            <SidebarMenuButton onClick={logout} tooltip={t('logout')}>
               <LogOut />
               <span>{t('logout')}</span>
             </SidebarMenuButton>

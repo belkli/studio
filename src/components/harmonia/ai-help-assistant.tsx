@@ -64,7 +64,7 @@ export function AiHelpAssistant() {
             ];
         }
         if (pathname.includes('/dashboard/forms')) {
-            return [
+             return [
                 'כמה זמן לוקח לאשר טופס רסיטל?',
                 'הטופס שלי נדחה, מה עושים?',
                 'איך אני מוריד עותק PDF של טופס מאושר?',
