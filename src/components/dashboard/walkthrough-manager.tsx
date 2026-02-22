@@ -12,7 +12,7 @@ const studentSteps: DriveStep[] = [
   { element: '#nav-forms', popover: { title: 'טפסים ומסמכים', description: 'הגש/י טפסים לרסיטלים, בחינות ועוד, ועקוב/עקבי אחר סטטוס האישור שלהם.', side: 'left', align: 'start' } },
   { element: '#nav-messages', popover: { title: 'הודעות', description: 'שלח/י הודעות ישירות למורה שלך מכאן.', side: 'left', align: 'start' } },
   { element: '#nav-notifications', popover: { title: 'התראות', description: 'כל העדכונים מהמערכת - על שיעורים, טפסים, ותשלומים - יופיעו כאן.', side: 'left', align: 'start' } },
-  { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'בכל שאלה - לחץ/י על כפתור העזרה! עוזר ה-AI שלנו זמין 24/7.', side: 'top', align: 'center' } },
+  { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'בכל שאלה - לחץ/י על כפתור העזרה! עוזר ה-AI שלנו זמין 24/7.', side: 'top', align: 'center' } },
 ];
 
 const parentSteps: DriveStep[] = [
@@ -21,7 +21,7 @@ const parentSteps: DriveStep[] = [
     { element: '#nav-billing', popover: { title: 'חיובים ותשלומים', description: 'כאן תמצאי חשבוניות ותוכלי לעדכן אמצעי תשלום.', side: 'left', align: 'start' } },
     { element: '#nav-notifications', popover: { title: 'העדפות התראות', description: 'בחרי איך לקבל עדכונים - SMS, WhatsApp, או אימייל.', side: 'left', align: 'start' } },
     { popover: { title: 'סיכום שבועי', description: 'בנוסף, כל שבוע תקבל/י סיכום למייל על מה שקרה בשיעורים של ילדיך.', side: 'top' } },
-    { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'יש שאלות? לחץ/י על העזרה בכל רגע.', side: 'top', align: 'center' } },
+    { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'יש שאלות? לחץ/י על העזרה בכל רגע.', side: 'top', align: 'center' } },
 ];
 
 const teacherSteps: DriveStep[] = [
@@ -32,7 +32,7 @@ const teacherSteps: DriveStep[] = [
     { element: '#nav-approvals', popover: { title: 'תור אישורים', description: 'כאן יחכו לך טפסים שהתלמידים הגישו וממתינים לאישורך.', side: 'left', align: 'start' } },
     { element: '#nav-notifications', popover: { title: 'מרכז התראות', description: 'עקוב אחר כל ההתראות על בקשות תלמידים ועדכוני מערכת.', side: 'left', align: 'start' } },
     { element: '#sick-leave-button', popover: { title: 'דיווח מחלה', description: 'אם אתה חולה, לחץ כאן - המערכת תבטל את השיעורים ותודיע לכולם אוטומטית.', side: 'top', align: 'end' } },
-    { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'סיור זה זמין שוב מהגדרות. לשאלות נוספות, השתמש בעוזר ה-AI.', side: 'top', align: 'center' } },
+    { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'סיור זה זמין שוב מהגדרות. לשאלות נוספות, השתמש בעוזר ה-AI.', side: 'top', align: 'center' } },
 ];
 
 const adminSteps: DriveStep[] = [
