@@ -496,5 +496,20 @@
     },
     "Reports": {
         "teachers": "تقارير المعلمين"
+    },
+    "EventPage": {
+        "recitalSubtitle": "انضم إلينا في حفل موسيقي خاص يعرض طلابنا الموهובين.",
+        "concertSubtitle": "أمسية من الموسيقى الراقية مع أفضل فنانينا.",
+        "programTitle": "برنامج الحدث",
+        "programSubtitle": "الريبرتوار الذي سيؤديه فنانونا الشباب.",
+        "detailsTitle": "تفاصيل الحدث",
+        "ticketingTitle": "شراء التذاكر",
+        "performer": "عازف/ة",
+        "programNotFinal": "سيتم نشر البرنامج الكامل قريبا.",
+        "totalPrice": "السعر الإجمالي",
+        "freeAdmission": "الدخول مجاني",
+        "bookTickets": "حجز التذاكر",
+        "bookingSuccessTitle": "اكتمل الحجز!",
+        "bookingSuccessDesc": "{count, plural, one {تم حجز تذكرة واحدة. تم إرسال تأكيد إلى بريدك الإلكتروني.} other {تم حجز # تذاكر. تم إرسال تأكيد إلى بريدك الإلكتروني.}}"
     }
 }
