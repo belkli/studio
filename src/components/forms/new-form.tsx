@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { User, FormSubmission } from '@/lib/types';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { RecitalForm } from './recital-form';
-import { KenesForm } from './kenes-form';
-import { ExamRegistrationForm } from './exam-registration-form';
-import { DynamicForm } from './dynamic-form'; // Import new component
+import { RecitalForm } from '@/components/forms/recital-form';
+import { KenesForm } from '@/components/forms/kenes-form';
+import { ExamRegistrationForm } from '@/components/forms/exam-registration-form';
+import { DynamicForm } from '@/components/forms/dynamic-form'; // Import new component
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 
