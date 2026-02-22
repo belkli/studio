@@ -1,4 +1,5 @@
 
+
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -13,7 +14,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, CalendarPlus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -102,6 +103,8 @@ export function SidebarNav() {
     { href: '/dashboard/enroll', label: t('newRegistration'), icon: UserPlus, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/master-schedule', label: t('masterSchedule'), icon: Calendar, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-master-schedule' },
     { href: '/dashboard/events', label: t('events'), icon: Presentation, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/open-day', label: t('manageOpenDay'), icon: CalendarPlus, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/branches', label: t('branches'), icon: Building, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/performances', label: t('performances'), icon: Music, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/rentals', label: t('rentals'), icon: GanttChartSquare, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/waitlists', label: t('waitlists'), icon: ListChecks, roles: ['conservatorium_admin', 'site_admin'] },
@@ -232,3 +235,5 @@ export function SidebarNav() {
     </>
   );
 }
+
+    

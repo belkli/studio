@@ -526,7 +526,6 @@ export type AuditLogEntry = {
   errorMessage?: string;
 };
 
-// From SDD-14A: Event Production Manager
 export type EventProductionStatus = 'PLANNING' | 'OPEN_REGISTRATION' | 'CLOSED' | 'COMPLETED';
 
 export type PerformanceSlot = {
@@ -548,4 +547,133 @@ export type EventProduction = {
   startTime: string; // "HH:mm"
   status: EventProductionStatus;
   program: PerformanceSlot[];
+  isPublic?: boolean;
+  ticketPrice?: number;
+  dressRehearsalDate?: string;
+  soundCheckSchedule?: {
+    performanceId: string;
+    startTime: string;
+    durationMinutes: number;
+  }[];
 };
+
+export type InstrumentCondition = 'NEW' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR';
+
+export type InstrumentInventory = {
+  id: string;
+  conservatoriumId: string;
+  type: string;
+  brand: string;
+  serialNumber: string;
+  condition: InstrumentCondition;
+  rentalRatePerMonth: number;
+  currentRenterId?: string;
+  rentalStartDate?: string;
+};
+
+export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
+
+export type PerformanceBooking = {
+  id: string;
+  conservatoriumId: string;
+  status: PerformanceBookingStatus;
+  inquiryReceivedAt: string; // ISO Timestamp
+  eventName: string;
+  eventType: string;
+  eventDate: string; // ISO Date string
+  eventTime: string; // HH:mm
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  totalQuote: number;
+  assignedMusicians?: {
+    userId: string;
+    name: string;
+    instrument: string;
+  }[];
+};
+
+export type ApplicationStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'DOCUMENTS_PENDING'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'PARTIALLY_APPROVED'
+  | 'WAITLISTED'
+  | 'REJECTED'
+  | 'EXPIRED';
+
+export type ScholarshipApplication = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  instrument: string;
+  conservatoriumId: string;
+  academicYear: string;
+  status: ApplicationStatus;
+  submittedAt: string; // ISO Timestamp
+  priorityScore: number;
+};
+
+export type OpenDayEvent = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  date: string; // ISO Date
+  startTime: string; // HH:mm
+  endTime: string; // HH:mm
+  appointmentDuration: number; // in minutes
+  isActive: boolean;
+};
+
+export type OpenDayAppointment = {
+  id: string;
+  eventId: string;
+  familyName: string;
+  parentEmail: string;
+  parentPhone: string;
+  childName: string;
+  childAge: number;
+  instrumentInterest: string;
+  appointmentTime: string; // ISO Timestamp
+  status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
+  registeredAt: string; // ISO Timestamp
+};
+
+export type Branch = {
+  id: string;
+  conservatoriumId: string;
+  name: string;
+  address: string;
+};
+
+export type PracticeVideo = {
+  id: string;
+  studentId: string;
+  teacherId: string;
+  repertoireTitle: string;
+  videoUrl: string;
+  studentNote?: string;
+  createdAt: string; // ISO Timestamp
+  feedback?: {
+    teacherId: string;
+    comment: string;
+    createdAt: string; // ISO Timestamp
+  }[];
+};
+
+export type EmptySlot = {
+  id: string;
+  teacher: User;
+  instrument: string;
+  startTime: Date;
+  durationMinutes: number;
+  urgency: 'SAME_DAY' | 'TOMORROW';
+  demandLevel: 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND';
+  basePrice: number;
+  promotionalPrice: number;
+  discount: number;
+};
+
+    

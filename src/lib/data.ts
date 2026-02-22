@@ -1,4 +1,4 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, Channel, NotificationPreferences, PerformanceGenre, EnsembleRole, Branch } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, Channel, NotificationPreferences, PerformanceGenre, EnsembleRole, Branch, OpenDayEvent, OpenDayAppointment } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -223,8 +223,33 @@ export const mockEvents: EventProduction[] = [];
 export const mockInstrumentInventory: InstrumentInventory[] = [];
 export const mockPerformanceBookings: PerformanceBooking[] = [];
 export const mockScholarshipApplications: any[] = [];
-export const mockOpenDayEvents: any[] = [];
-export const mockOpenDayAppointments: any[] = [];
+export const mockOpenDayEvents: OpenDayEvent[] = [
+    {
+        id: 'open-day-1',
+        conservatoriumId: 'cons-15',
+        name: 'יום פתוח אביב 2024',
+        date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
+        startTime: '10:00',
+        endTime: '14:00',
+        appointmentDuration: 20,
+        isActive: true,
+    }
+];
+export const mockOpenDayAppointments: OpenDayAppointment[] = [
+    {
+        id: 'oda-1',
+        eventId: 'open-day-1',
+        familyName: 'כהן',
+        parentEmail: 'cohen@email.com',
+        parentPhone: '050-1234567',
+        childName: 'אורי',
+        childAge: 8,
+        instrumentInterest: 'פסנתר',
+        appointmentTime: new Date(new Date().setDate(new Date().getDate() + 14)).setHours(10, 20, 0, 0).toString(),
+        status: 'SCHEDULED',
+        registeredAt: new Date().toISOString(),
+    }
+];
 export const mockBranches: Branch[] = [
     {
         id: 'branch-1',
@@ -248,3 +273,6 @@ export const mockBranches: Branch[] = [
 export const mockWaitlist: WaitlistEntry[] = [];
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
+
+
+    
