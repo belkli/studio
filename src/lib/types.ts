@@ -604,7 +604,6 @@ export type EventProduction = {
   soundCheckSchedule?: SoundCheckSlot[];
 };
 
-
 // From SDD-14G: Instrument Rental Management
 export type InstrumentCondition = 'NEW' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR';
 
@@ -620,7 +619,6 @@ export type InstrumentInventory = {
   rentalStartDate?: string; // ISO Date string
   expectedReturnDate?: string; // ISO Date string
 };
-
 // SDD-13: Musicians for Hire
 export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED' | 'CANCELLED';
 
