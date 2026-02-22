@@ -13,7 +13,10 @@ import { cn } from '@/lib/utils';
 import { LessonDetailDialog } from './lesson-detail-dialog';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval, isSameDay } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { ArrowLeft, ArrowRight, Calendar as CalendarIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
+import Link from 'next/link';
 
 interface ScheduleCalendarProps {
     lessons: LessonSlot[];

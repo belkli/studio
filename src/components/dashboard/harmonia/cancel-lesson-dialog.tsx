@@ -42,7 +42,7 @@ export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: Ca
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
+            <AlertDialogContent dir="rtl">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>
