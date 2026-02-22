@@ -279,7 +279,7 @@ export const mockUsers: User[] = [
 
 export const mockFormSubmissions: FormSubmission[] = [
     { id: 'form-101', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יב', studentId: studentUser.id, studentName: studentUser.name, status: 'ממתין לאישור מנהל', submissionDate: '2024-05-20', totalDuration: '12:30', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '05:00', genre: 'רומנטי' }, { id: 'beethoven-fur-elise', composer: 'לודוויג ואן בטהובן', title: 'לאליזה (Für Elise)', duration: '03:00', genre: 'קלאסי' },], conservatoriumName: studentUser.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', applicantDetails: { birthDate: studentUser.birthDate, city: studentUser.city, gender: studentUser.gender, phone: studentUser.phone }, schoolDetails: { schoolName: studentUser.schoolName, hasMusicMajor: true, isMajorParticipant: true, plansTheoryExam: true }, teacherDetails: { name: studentUser.instruments?.[0]?.teacherName, yearsWithTeacher: studentUser.instruments?.[0]?.yearsOfStudy, }, instrumentDetails: { instrument: studentUser.instruments?.[0].instrument, yearsOfStudy: studentUser.instruments?.[0].yearsOfStudy } },
-    { id: 'form-102', formType: 'כנס / אירוע', studentId: studentUser2.id, studentName: studentUser2.name, status: 'מאושר סופית', submissionDate: '2024-05-18', totalDuration: '08:15', repertoire: [{ id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', duration: '08:15', genre: 'קלאסי' },], conservatoriumName: studentUser2.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVHhe7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', signedAt: '2024-05-19', calculatedPrice: 10, paymentStatus: 'paid', },
+    { id: 'form-102', formType: 'כנס / אירוע', studentId: studentUser2.id, studentName: studentUser2.name, status: 'מאושר סופית', submissionDate: '2024-05-18', totalDuration: '08:15', repertoire: [{ id: 'mozart-sonata-16', composer: 'וולפגנג אמדאוס מוצרט', title: 'סונאטה לפסנתר מס\' 16 בדו מז\'ור, ק. 545 "סונאטה פשוטה"', duration: '08:15', genre: 'קלאסי' },], conservatoriumName: studentUser2.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', signatureUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARnSURBVOgN7dRBDQAgEMCw9/6/9EIBCa9A1c2AAdgbCxRYgQUGLMCgAgUWGLCAgQoUWGDCAgYqUGCBBQYswKACBRYYsICBCgRXYAEGFigwAYMKFFhgwAICJlBgAQGLAahAgQUWGLCAgQoUWGDCAgYq0HwBDK+xMv2+4DEAAAAASUVORK5CYII=', signedAt: '2024-05-19', calculatedPrice: 10, paymentStatus: 'paid', },
     { id: 'form-103', formType: 'מבחן שלב', studentId: otherStudent.id, studentName: otherStudent.name, status: 'טיוטה', submissionDate: '2024-05-21', totalDuration: '04:00', repertoire: [{ id: 'comp-clementi', composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 1', duration: '04:00', genre: 'קלאסי' },], conservatoriumName: otherStudent.conservatoriumName, },
     { id: 'form-104', formType: 'רסיטל בגרות', academicYear: 'תשפ"ג', grade: 'יא', studentId: 'user-7', studentName: 'רבקה גולן', status: 'נדחה', teacherComment: 'נא לבחור יצירה נוספת מהתקופה הרומנטית.', submissionDate: '2024-05-15', totalDuration: '09:00', repertoire: [{ id: 'comp-haydn', composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },], conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה', },
     { id: 'form-105', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יא', studentId: studentUser2.id, studentName: studentUser2.name, status: 'נדרש תיקון', ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.', submissionDate: '2024-05-23', totalDuration: '21:00', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', duration: '05:45', genre: 'קלאסי' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' }, { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', duration: '15:00', genre: 'קלאסי' }], conservatoriumName: studentUser2.conservatoriumName, applicantDetails: { birthDate: studentUser2.birthDate, city: studentUser2.city, gender: studentUser2.gender, phone: studentUser2.phone }, schoolDetails: { schoolName: studentUser2.schoolName, hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: true }, teacherDetails: { name: teacherUser.name, }, instrumentDetails: { instrument: studentUser2.instruments?.[0].instrument, yearsOfStudy: studentUser2.instruments?.[0].yearsOfStudy } },
@@ -499,50 +499,6 @@ export const mockMessageThreads: MessageThread[] = [
     }
 ];
 
-export const mockWaitlist: WaitlistEntry[] = [
-    {
-        id: 'wait-1',
-        studentId: 'student-user-noa',
-        teacherId: 'teacher-user-1',
-        conservatoriumId: 'cons-15',
-        instrument: 'פסנתר',
-        preferredDays: ['MON', 'WED'],
-        preferredTimes: ['AFTERNOON'],
-        joinedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
-        status: 'WAITING',
-    },
-    {
-        id: 'wait-2',
-        studentId: 'other-student-1',
-        teacherId: 'teacher-user-3',
-        conservatoriumId: 'cons-12',
-        instrument: 'גיטרה',
-        preferredDays: ['TUE', 'THU'],
-        preferredTimes: ['EVENING'],
-        joinedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-        status: 'OFFERED',
-        notifiedAt: new Date().toISOString(),
-    }
-];
-
-export const mockPracticeVideos: PracticeVideo[] = [
-    {
-        id: 'pv-1',
-        studentId: 'student-user-1',
-        teacherId: 'teacher-user-1',
-        repertoireTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2',
-        videoUrl: 'https://placehold.co/600x400.mp4',
-        studentNote: 'אני לא בטוח לגבי הדינמיקה בתיבות 12-16, אשמח למשוב.',
-        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-        feedback: [
-            {
-                teacherId: 'teacher-user-1',
-                comment: 'הדינמיקה נשמעת טוב! נסה להדגיש קצת יותר את הקרשנדו לקראת סוף הקטע.',
-                createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-            }
-        ]
-    }
-];
 
 export const mockProgressReports: ProgressReport[] = [];
 export const mockAnnouncements: Announcement[] = [];
@@ -698,4 +654,114 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
     status: 'SCHEDULED',
     registeredAt: new Date().toISOString(),
   }
+];
+
+export const mockPracticeVideos: PracticeVideo[] = [
+    {
+        id: 'pv-1',
+        studentId: 'student-user-1',
+        teacherId: 'teacher-user-1',
+        repertoireTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2',
+        videoUrl: 'https://placehold.co/600x400.mp4',
+        studentNote: 'אני לא בטוח לגבי הדינמיקה בתיבות 12-16, אשמח למשוב.',
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+        feedback: [
+            {
+                teacherId: 'teacher-user-1',
+                comment: 'הדינמיקה נשמעת טוב! נסה להדגיש קצת יותר את הקרשנדו לקראת סוף הקטע.',
+                createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+            }
+        ]
+    }
+];
+
+export const mockWaitlist: WaitlistEntry[] = [
+    {
+        id: 'wait-1',
+        studentId: 'student-user-noa',
+        teacherId: 'teacher-user-1',
+        conservatoriumId: 'cons-15',
+        instrument: 'פסנתר',
+        preferredDays: ['MON', 'WED'],
+        preferredTimes: ['AFTERNOON'],
+        joinedAt: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString(),
+        status: 'WAITING',
+    },
+    {
+        id: 'wait-2',
+        studentId: 'other-student-1',
+        teacherId: 'teacher-user-3',
+        conservatoriumId: 'cons-12',
+        instrument: 'גיטרה',
+        preferredDays: ['TUE', 'THU'],
+        preferredTimes: ['EVENING'],
+        joinedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+        status: 'OFFERED',
+        notifiedAt: new Date().toISOString(),
+    }
+];
+
+export const mockPayrolls: PayrollSummary[] = [
+    {
+        id: 'payroll-1',
+        teacherId: 'teacher-user-1',
+        teacherName: 'מרים כהן',
+        periodStart: '2024-07-01T00:00:00.000Z',
+        periodEnd: '2024-07-31T23:59:59.999Z',
+        completedLessons: [
+            {
+                slotId: 'lesson-3',
+                studentId: 'student-user-1',
+                studentName: 'אריאל לוי',
+                durationMinutes: 45,
+                rate: 120,
+                subtotal: 90,
+                completedAt: '2024-07-15T10:00:00.000Z'
+            },
+            {
+                slotId: 'lesson-4',
+                studentId: 'student-user-2',
+                studentName: 'תמר ישראלי',
+                durationMinutes: 60,
+                rate: 120,
+                subtotal: 120,
+                completedAt: '2024-07-16T11:00:00.000Z'
+            }
+        ],
+        totalHours: 1.75,
+        grossPay: 210,
+        status: 'DRAFT'
+    },
+    {
+        id: 'payroll-2',
+        teacherId: 'teacher-user-2',
+        teacherName: 'דוד המלך',
+        periodStart: '2024-07-01T00:00:00.000Z',
+        periodEnd: '2024-07-31T23:59:59.999Z',
+        completedLessons: [],
+        totalHours: 0,
+        grossPay: 0,
+        status: 'DRAFT'
+    },
+     {
+        id: 'payroll-3',
+        teacherId: 'teacher-user-1',
+        teacherName: 'מרים כהן',
+        periodStart: '2024-06-01T00:00:00.000Z',
+        periodEnd: '2024-06-30T23:59:59.999Z',
+        completedLessons: [
+             {
+                slotId: 'lesson-makeup-1',
+                studentId: 'student-user-1',
+                studentName: 'אריאל לוי',
+                durationMinutes: 45,
+                rate: 120,
+                subtotal: 90,
+                completedAt: '2024-06-20T10:00:00.000Z'
+            }
+        ],
+        totalHours: 0.75,
+        grossPay: 90,
+        status: 'PAID'
+    }
 ];
