@@ -65,7 +65,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
   const handleSendPromotions = () => {
     toast({
         title: "ההצעות נשלחו!",
-        description": "הודעות SMS מותאמות אישית נשלחו לתלמידים המוצעים."
+        description: "הודעות SMS מותאמות אישית נשלחו לתלמידים המוצעים."
     });
     onOpenChange(false);
   }
@@ -129,4 +129,3 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
     </Dialog>
   );
 }
-
