@@ -19,6 +19,7 @@ import 'jspdf-autotable';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { SoundCheckScheduler } from './sound-check-scheduler';
 
 
 const statusConfig: Record<EventProductionStatus, { label: string; className: string }> = {
@@ -32,7 +33,7 @@ const statusConfig: Record<EventProductionStatus, { label: string; className: st
 export function EventDetails() {
     const params = useParams();
     const eventId = params.id as string;
-    const { user, mockEvents, removePerformanceFromEvent, updateEventStatus } = useAuth();
+    const { user, mockEvents, removePerformanceFromEvent, updateEventStatus, updateEvent } = useAuth();
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
     const { toast } = useToast();
 
@@ -151,56 +152,63 @@ export function EventDetails() {
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <CardTitle>תוכנית האירוע ({event.program.length} משתתפים)</CardTitle>
-                        <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setIsAssignDialogOpen(true)}>
-                                <UserPlus className="ms-2 h-4 w-4"/>הוסף משתתף
-                            </Button>
-                             <Button variant="outline" onClick={handlePrintProgram}>
-                                <Printer className="ms-2 h-4 w-4"/>הדפס תוכניה
-                            </Button>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>#</TableHead>
-                                <TableHead>מבצע/ת</TableHead>
-                                <TableHead>יצירה</TableHead>
-                                <TableHead>מלחין</TableHead>
-                                <TableHead>משך</TableHead>
-                                <TableHead className="text-left">פעולות</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {event.program.length > 0 ? event.program.map((item, index) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>{index + 1}</TableCell>
-                                    <TableCell className="font-medium">{item.studentName}</TableCell>
-                                    <TableCell>{item.compositionTitle}</TableCell>
-                                    <TableCell>{item.composer}</TableCell>
-                                    <TableCell className="font-mono">{item.duration}</TableCell>
-                                    <TableCell className="text-left">
-                                        <Button variant="ghost" size="icon" onClick={() => removePerformanceFromEvent(event.id, item.id)}>
-                                            <Trash2 className="h-4 w-4 text-destructive" />
-                                            <span className="sr-only">הסר</span>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )) : (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="h-24 text-center">טרם שובצו משתתפים לתוכנית.</TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            <div className="grid lg:grid-cols-3 gap-6">
+                 <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <CardTitle>תוכנית האירוע ({event.program.length} משתתפים)</CardTitle>
+                                <div className="flex gap-2">
+                                    <Button variant="outline" onClick={() => setIsAssignDialogOpen(true)}>
+                                        <UserPlus className="ms-2 h-4 w-4"/>הוסף משתתף
+                                    </Button>
+                                     <Button variant="outline" onClick={handlePrintProgram}>
+                                        <Printer className="ms-2 h-4 w-4"/>הדפס תוכניה
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>#</TableHead>
+                                        <TableHead>מבצע/ת</TableHead>
+                                        <TableHead>יצירה</TableHead>
+                                        <TableHead>מלחין</TableHead>
+                                        <TableHead>משך</TableHead>
+                                        <TableHead className="text-left">פעולות</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {event.program.length > 0 ? event.program.map((item, index) => (
+                                        <TableRow key={item.id}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell className="font-medium">{item.studentName}</TableCell>
+                                            <TableCell>{item.compositionTitle}</TableCell>
+                                            <TableCell>{item.composer}</TableCell>
+                                            <TableCell className="font-mono">{item.duration}</TableCell>
+                                            <TableCell className="text-left">
+                                                <Button variant="ghost" size="icon" onClick={() => removePerformanceFromEvent(event.id, item.id)}>
+                                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                                    <span className="sr-only">הסר</span>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    )) : (
+                                        <TableRow>
+                                            <TableCell colSpan={6} className="h-24 text-center">טרם שובצו משתתפים לתוכנית.</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                 </div>
+                 <div className="lg:col-span-1">
+                     <SoundCheckScheduler event={event} onUpdate={updateEvent} />
+                 </div>
+            </div>
             <AssignPerformerDialog
                 eventId={event.id}
                 open={isAssignDialogOpen}

@@ -1,4 +1,5 @@
 
+
 import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
@@ -578,6 +579,12 @@ export type PerformanceSlot = {
   duration: string; // MM:SS
 };
 
+export type SoundCheckSlot = {
+  performanceId: string; // Links to the PerformanceSlot id
+  startTime: string; // "HH:mm"
+  durationMinutes: number;
+};
+
 export type EventProduction = {
   id: string;
   conservatoriumId: string;
@@ -591,7 +598,10 @@ export type EventProduction = {
   isPublic: boolean;
   ticketPrice: number;
   branchId?: string;
+  dressRehearsalDate?: string;
+  soundCheckSchedule?: SoundCheckSlot[];
 };
+
 
 // From SDD-14G: Instrument Rental Management
 export type InstrumentCondition = 'NEW' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR';

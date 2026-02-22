@@ -1,4 +1,5 @@
 
+
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
@@ -539,6 +540,11 @@ export const mockEvents: EventProduction[] = [
         program: [
             { id: 'ps-1', studentId: 'student-user-1', studentName: 'אריאל לוי', compositionTitle: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', composer: 'שופן', duration: '05:00' },
             { id: 'ps-2', studentId: 'student-user-2', studentName: 'תמר ישראלי', compositionTitle: 'קונצ\'רטו לכינור מס\' 1', composer: 'ברוך', duration: '08:30' },
+        ],
+        dressRehearsalDate: new Date(new Date().setMonth(new Date().getMonth() + 1, new Date(new Date().setMonth(new Date().getMonth() + 1)).getDate() - 1)).toISOString(),
+        soundCheckSchedule: [
+            { performanceId: 'ps-1', startTime: '17:00', durationMinutes: 15 },
+            { performanceId: 'ps-2', startTime: '17:15', durationMinutes: 20 },
         ]
     },
     {
