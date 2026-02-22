@@ -12,7 +12,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, CalendarPlus, UserCog } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCheck, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, CalendarPlus, UserCog, HandCoins } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -109,6 +109,7 @@ export function SidebarNav() {
     { href: '/dashboard/admin/makeups', label: t('adminMakeups'), icon: Coins, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/substitute', label: t('substitute'), icon: UserCog, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/admin/payroll', label: t('teacherPayroll'), icon: Banknote, roles: ['conservatorium_admin', 'site_admin'] },
+    { href: '/dashboard/admin/scholarships', label: 'ניהול קרן מלגות', icon: HandCoins, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/announcements', label: t('announcements'), icon: Megaphone, roles: ['conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/reports', label: t('reportsAnalytics'), icon: LineChart, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-reports' },
     { href: '/dashboard/admin/form-builder', label: t('formBuilder'), icon: PencilRuler, roles: ['conservatorium_admin', 'site_admin'] },
