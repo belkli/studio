@@ -20,7 +20,8 @@ import { useTranslations } from 'next-intl';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import type { Notification, UserRole } from '@/lib/types';
-
+import { formatDistanceToNow } from 'date-fns';
+import { he } from 'date-fns/locale';
 
 const NotificationItem = ({ notification }: { notification: Notification }) => (
   <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
@@ -30,10 +31,10 @@ const NotificationItem = ({ notification }: { notification: Notification }) => (
       </div>
       <div className="flex-grow">
         <p className="font-semibold text-sm">{notification.title}</p>
-        <p className="text-xs text-muted-foreground">{notification.message}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
         <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
           <Clock className="h-3 w-3" />
-          {notification.timestamp}
+          {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true, locale: he })}
         </div>
       </div>
     </Link>
@@ -155,7 +156,7 @@ export function SidebarNav() {
             const isActive = pathname === link.href || (link.href !== '/dashboard' && link.href !== '/dashboard/teacher' && pathname.startsWith(link.href));
 
             return (
-              <SidebarMenuItem key={link.href}>
+              <SidebarMenuItem key={link.href} id={link.id}>
                 <Link href={link.href} passHref>
                   <SidebarMenuButton
                     isActive={isActive}
