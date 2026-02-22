@@ -405,7 +405,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const assignSubstitute = (lessonId: string, newTeacherId: string) => {
     setMockLessons(prev => prev.map(lesson =>
       lesson.id === lessonId
-        ? { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' }
+        ? { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as SlotStatus }
         : lesson
     ));
   };
@@ -420,8 +420,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         lessonDate >= from &&
         lessonDate <= to
       ) {
-        cancelledLessons.push(lesson);
-        return { ...lesson, status: 'CANCELLED_TEACHER' };
+        const updatedLesson = { ...lesson, status: 'CANCELLED_TEACHER' as SlotStatus };
+        cancelledLessons.push(updatedLesson);
+        return updatedLesson;
       }
       return lesson;
     }));

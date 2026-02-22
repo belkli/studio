@@ -228,7 +228,7 @@
             "errorTitle": "خطأ",
             "waitlistTitle": "تم الانضمام إلى قائمة الانتظار!",
             "waitlistUserDesc": "سنُبلغك عند توفر مكان.",
-            "waitlistAdminDesc": "تم إضافة {name} إلى النظام وقائمة الانتظार.",
+            "waitlistAdminDesc": "تم إضافة {name} إلى النظام وقائمة الانتظار.",
             "successTitle": "تم إرسال التسجيل بنجاح!",
             "successUserDesc": "تم إرسال طلبك إلى مدير المعهد للموافقة.",
             "successAdminDesc": "تم إضافة {name} إلى النظام."

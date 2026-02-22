@@ -75,7 +75,7 @@
         "heroSubtitle": "All musicians from [Conservatory Name] — vetted, reliable, and fully insured.",
         "getQuote": "Get an Instant Quote",
         "features": {
-            "experienced": "Experienced &amp; Vetted",
+            "experienced": "Experienced & Vetted",
             "experiencedDesc": "Every musician is a professional teacher or advanced student from our conservatory.",
             "backup": "Backup Guarantee",
             "backupDesc": "If a musician cancels, we provide a replacement of equal or superior caliber, guaranteed.",
@@ -196,7 +196,7 @@
                 "only": "Virtual only"
             },
             "package": "Select Package",
-            "summary": "Summary &amp; Confirmation"
+            "summary": "Summary & Confirmation"
         },
         "role": {
             "title": "Who is registering?",
@@ -281,7 +281,7 @@
             },
             "experience": "Previous Experience (Optional)",
             "experiencePlaceholder": "Example: 3 years piano, no theory background...",
-            "goals": "Goals &amp; Objectives",
+            "goals": "Goals & Objectives",
             "goals_options": {
                 "EXAMS": "Exams",
                 "PERFORMANCE": "Performance",
@@ -461,7 +461,7 @@
         "makeups": "Makeups",
         "aiAssistant": "AI Assistant",
         "messages": "Messages",
-        "formsAndDocs": "Forms &amp; Docs",
+        "formsAndDocs": "Forms & Docs",
         "notifications": "Notifications",
         "billing": "Billing",
         "userManagement": "User Management",
@@ -477,7 +477,7 @@
         "substitute": "Substitute Management",
         "teacherPayroll": "Teacher Payroll",
         "announcements": "Announcements",
-        "reportsAnalytics": "Reports &amp; Analytics",
+        "reportsAnalytics": "Reports & Analytics",
         "formBuilder": "Form Builder",
         "aiAgents": "AI Agents",
         "ministryExport": "Ministry Export",
