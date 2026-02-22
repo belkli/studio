@@ -1,20 +1,20 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useAuth } from '@/hooks/use-auth';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Calendar, Clock, Guitar, Lightbulb, Mic, Music, Piano, Users, Violin } from 'lucide-react';
+import { Calendar, Clock, Guitar, Music, Users, CheckCircle2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { instruments } from '@/lib/data';
-import { format, add, setHours, setMinutes, isBefore, isSameDay } from 'date-fns';
+import { format, add, setHours, setMinutes, isBefore } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
     <div className="flex flex-col items-center text-center gap-4">
@@ -31,6 +31,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 
 export function OpenDayLandingPage() {
     const { mockOpenDayEvents, mockOpenDayAppointments, addOpenDayAppointment } = useAuth();
+    const t = useTranslations('OpenDay');
     const { toast } = useToast();
     const heroImage = PlaceHolderImages.find(img => img.id === 'open-day-hero');
 
@@ -94,12 +95,10 @@ export function OpenDayLandingPage() {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
                         <CheckCircle2 className="w-8 h-8 text-primary" />
                     </div>
-                    <h2 className="text-2xl font-bold">הרשמתכם התקבלה!</h2>
-                    <p className="text-muted-foreground max-w-md">
-                        תודה על הרשמתכם ליום הפתוח. אישור ופרטים נוספים נשלחו למייל שהזנתם. נשמח לראות אתכם!
-                    </p>
+                    <h2 className="text-2xl font-bold">{t('successTitle')}</h2>
+                    <p className="text-muted-foreground max-w-md">{t('successDesc')}</p>
                     <Button className="mt-4" onClick={() => window.location.href = '/'}>
-                        חזרה לדף הבית
+                        {t('backToHome')}
                     </Button>
                 </CardContent>
             </Card>
@@ -111,19 +110,27 @@ export function OpenDayLandingPage() {
             <section className="relative w-full h-[60vh] flex items-center justify-center text-center text-white bg-slate-800">
                 {heroImage && <Image src={heroImage.imageUrl} alt={heroImage.description} layout="fill" objectFit="cover" className="z-0 brightness-50" data-ai-hint={heroImage.imageHint} priority />}
                 <div className="relative z-10 p-4 space-y-4">
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{activeEvent.name}</h1>
-                    <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">{activeEvent.description}</p>
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{t('heroTitle')}</h1>
+                    <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">{t('heroSubtitle')}</p>
                     <p className="font-semibold text-xl bg-primary/20 backdrop-blur-sm rounded-full px-4 py-1 inline-block">
                         {format(new Date(activeEvent.date), 'EEEE, dd MMMM yyyy', { locale: he })}
                     </p>
+                    <div className="pt-4">
+                        <Button size="lg" asChild>
+                           <a href="#register">{t('registerNow')}</a>
+                        </Button>
+                    </div>
                 </div>
             </section>
             <section className="py-12 md:py-20 bg-muted/30">
                 <div className="container px-4 md:px-6">
+                     <div className="text-center space-y-4 mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold">{t('featuresTitle')}</h2>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                        <FeatureCard icon={<Users className="h-8 w-8 text-primary" />} title="פגשו את המורים" description="הזדמנות להכיר את הצוות הפדגוגי המוביל שלנו, לשאול שאלות ולקבל הכוונה אישית." />
-                        <FeatureCard icon={<Guitar className="h-8 w-8 text-primary" />} title="התנסות בכלים" description="הילדים יוכלו לגעת, להרגיש ולנגן במגוון כלי נגינה בליווי והדרכה של מורינו." />
-                        <FeatureCard icon={<Music className="h-8 w-8 text-primary" />} title="הופעות חיות" description="צפו בתלמידים המוכשרים שלנו מציגים את מה שלמדו בקונצרטים קצרים לאורך היום." />
+                        <FeatureCard icon={<Users className="h-8 w-8 text-primary" />} title={t('feature1Title')} description={t('feature1Desc')} />
+                        <FeatureCard icon={<Guitar className="h-8 w-8 text-primary" />} title={t('feature2Title')} description={t('feature2Desc')} />
+                        <FeatureCard icon={<Music className="h-8 w-8 text-primary" />} title={t('feature3Title')} description={t('feature3Desc')} />
                     </div>
                 </div>
             </section>
@@ -131,29 +138,29 @@ export function OpenDayLandingPage() {
             <section className="py-12 md:py-24" id="register">
                 <div className="container px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold">הרשמה ליום הפתוח</h2>
-                        <p className="max-w-2xl mx-auto text-muted-foreground">שריינו לעצמכם פגישת היכרות אישית. מספר המקומות מוגבל.</p>
+                        <h2 className="text-3xl md:text-4xl font-bold">{t('formTitle')}</h2>
+                        <p className="max-w-2xl mx-auto text-muted-foreground">{t('formSubtitle')}</p>
                     </div>
 
                     <Card className="max-w-4xl mx-auto">
                         <form onSubmit={handleSubmit}>
                             <CardContent className="p-6 grid md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
-                                    <h3 className="font-semibold text-lg">פרטי רישום</h3>
+                                    <h3 className="font-semibold text-lg">{t('registrationDetails')}</h3>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label htmlFor="familyName">שם משפחה</Label><Input id="familyName" name="familyName" required /></div>
-                                        <div className="space-y-2"><Label htmlFor="parentEmail">אימייל הורה</Label><Input id="parentEmail" name="parentEmail" type="email" required /></div>
+                                        <div className="space-y-2"><Label htmlFor="familyName">{t('familyName')}</Label><Input id="familyName" name="familyName" required /></div>
+                                        <div className="space-y-2"><Label htmlFor="parentEmail">{t('parentEmail')}</Label><Input id="parentEmail" name="parentEmail" type="email" required /></div>
                                     </div>
-                                    <div className="space-y-2"><Label htmlFor="parentPhone">טלפון נייד</Label><Input id="parentPhone" name="parentPhone" type="tel" required /></div>
+                                    <div className="space-y-2"><Label htmlFor="parentPhone">{t('parentPhone')}</Label><Input id="parentPhone" name="parentPhone" type="tel" required /></div>
                                     <Separator />
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label htmlFor="childName">שם הילד/ה</Label><Input id="childName" name="childName" required /></div>
-                                        <div className="space-y-2"><Label htmlFor="childAge">גיל הילד/ה</Label><Input id="childAge" name="childAge" type="number" required /></div>
+                                        <div className="space-y-2"><Label htmlFor="childName">{t('childName')}</Label><Input id="childName" name="childName" required /></div>
+                                        <div className="space-y-2"><Label htmlFor="childAge">{t('childAge')}</Label><Input id="childAge" name="childAge" type="number" required /></div>
                                     </div>
-                                    <div className="space-y-2"><Label htmlFor="instrumentInterest">כלי נגינה מעניין</Label><Select name="instrumentInterest" required><SelectTrigger><SelectValue placeholder="בחר/י כלי..." /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
+                                    <div className="space-y-2"><Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label><Select name="instrumentInterest" required><SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
                                 </div>
                                 <div className="space-y-6">
-                                    <h3 className="font-semibold text-lg">בחירת שעת הגעה</h3>
+                                    <h3 className="font-semibold text-lg">{t('selectTime')}</h3>
                                     <RadioGroup value={selectedTime} onValueChange={setSelectedTime} className="max-h-96 overflow-y-auto p-1 border rounded-md">
                                         {availableSlots.length > 0 ? availableSlots.map(slot => (
                                             <Label key={slot} htmlFor={slot} className="flex items-center p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
@@ -161,12 +168,12 @@ export function OpenDayLandingPage() {
                                                 <Clock className="w-4 h-4 me-3" />
                                                 <span className="font-mono text-lg">{format(new Date(slot), 'HH:mm')}</span>
                                             </Label>
-                                        )) : <p className="text-center p-8 text-muted-foreground">כל המקומות תפוסים. נסו מועד אחר.</p>}
+                                        )) : <p className="text-center p-8 text-muted-foreground">{t('noSlots')}</p>}
                                     </RadioGroup>
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Button type="submit" size="lg" className="w-full">אשרו הרשמה</Button>
+                                <Button type="submit" size="lg" className="w-full">{t('submit')}</Button>
                             </CardFooter>
                         </form>
                     </Card>
