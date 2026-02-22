@@ -2,10 +2,15 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, UserX, CalendarClock, CreditCard, Bell, ArrowLeft } from "lucide-react";
+import { Bell, ArrowLeft, TrendingUp } from "lucide-react";
 import Link from 'next/link';
-import { useAdminAlerts } from '@/hooks/use-admin-alerts';
+import { useAdminAlerts, type AdminAlert } from '@/hooks/use-admin-alerts';
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import type { EmptySlot } from "@/lib/types";
+import { PromoteSlotDialog } from "./promote-slot-dialog";
+import { useRouter } from "next/navigation";
+
 
 const SEVERITY_STYLES: { [key: string]: string } = {
     critical: 'border-red-500/50 bg-red-50/50 dark:bg-red-950/30',
@@ -22,8 +27,19 @@ const SEVERITY_ICONS: { [key: string]: string } = {
 
 export function AiAlertsCard() {
     const alerts = useAdminAlerts();
+    const router = useRouter();
+    const [promoteSlot, setPromoteSlot] = useState<EmptySlot | null>(null);
+
+    const handleActionClick = (alert: AdminAlert) => {
+        if (alert.actionLink === '#promote-slot' && alert.data) {
+            setPromoteSlot(alert.data);
+        } else {
+            router.push(alert.actionLink);
+        }
+    };
 
     return (
+        <>
         <Card className="h-full flex flex-col">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -42,7 +58,9 @@ export function AiAlertsCard() {
                                 <h4 className="font-semibold text-sm">{alert.title}</h4>
                                 <p className="text-xs text-muted-foreground">{alert.description}</p>
                                 <Button variant="link" size="sm" asChild className="p-0 h-auto mt-1 text-xs">
-                                    <Link href={alert.actionLink}>{alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3"/></Link>
+                                     <button onClick={() => handleActionClick(alert)} className="flex items-center">
+                                        {alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3"/>
+                                     </button>
                                 </Button>
                              </div>
                         </div>
@@ -60,5 +78,11 @@ export function AiAlertsCard() {
                 </CardFooter>
             )}
         </Card>
+        <PromoteSlotDialog 
+            slot={promoteSlot}
+            open={!!promoteSlot}
+            onOpenChange={() => setPromoteSlot(null)}
+        />
+        </>
     )
 }

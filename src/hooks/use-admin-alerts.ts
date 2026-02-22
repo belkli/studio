@@ -1,8 +1,10 @@
 'use client';
 import { useMemo } from 'react';
 import { useAuth } from './use-auth';
-import { Users, UserX, CalendarClock, CreditCard } from "lucide-react";
-import { subDays, isFuture } from 'date-fns';
+import { Users, UserX, CalendarClock, CreditCard, TrendingUp } from "lucide-react";
+import { subDays, isFuture, addDays, getDay, isSameDay, setHours, isAfter } from 'date-fns';
+import type { EmptySlot, DayOfWeek, User } from '@/lib/types';
+
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 
@@ -14,6 +16,20 @@ export interface AdminAlert {
     description: string;
     actionLink: string;
     actionLabel: string;
+    data?: any;
+}
+
+function getDemandLevel(date: Date): 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND' {
+    const hour = date.getHours();
+    const day = date.getDay(); // Sunday - 0, Saturday - 6
+
+    if (hour >= 15 && hour < 19 && day >= 0 && day <= 4) { // Sun-Thu afternoon
+        return 'HIGH_DEMAND';
+    }
+    if (day === 5 || hour < 13) { // Friday or mornings
+        return 'LOW_DEMAND';
+    }
+    return 'MEDIUM_DEMAND';
 }
 
 export function useAdminAlerts(): AdminAlert[] {
@@ -111,6 +127,65 @@ export function useAdminAlerts(): AdminAlert[] {
                 description: `${lessonsNeedingSub.length} שיעורים בוטלו עקב היעדרות מורה ודורשים שיבוץ מורה מחליף.`,
                 actionLink: '/dashboard/admin/substitute',
                 actionLabel: 'שבץ מורים מחליפים',
+            });
+        }
+        
+        // Alert 6: Smart Slot Filling
+        const availableTeachers = users.filter(u => u.role === 'teacher' && u.availability);
+        const today = new Date();
+        const tomorrow = addDays(today, 1);
+        const potentialSlots: EmptySlot[] = [];
+
+        availableTeachers.forEach(teacher => {
+            const teacherInstruments = teacher.instruments?.map(i => i.instrument) || [];
+            [today, tomorrow].forEach(date => {
+                const dayOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][getDay(date)] as DayOfWeek;
+                const availability = teacher.availability?.find(a => a.dayOfWeek === dayOfWeek);
+                if (!availability) return;
+
+                for (let hour = parseInt(availability.startTime); hour < parseInt(availability.endTime); hour++) {
+                    const slotTime = setHours(date, hour);
+                    if (!isAfter(slotTime, new Date())) continue;
+
+                    const isBooked = mockLessons.some(l => 
+                        l.teacherId === teacher.id && 
+                        isSameDay(new Date(l.startTime), date) && 
+                        new Date(l.startTime).getHours() === hour
+                    );
+
+                    if (!isBooked) {
+                        const demandLevel = getDemandLevel(slotTime);
+                        if (demandLevel === 'HIGH_DEMAND') {
+                             potentialSlots.push({
+                                id: `${teacher.id}-${date.toISOString()}-${hour}`,
+                                teacher: teacher,
+                                instrument: teacherInstruments[0] || 'שיעור', // Fallback
+                                startTime: slotTime,
+                                durationMinutes: 45, // default
+                                basePrice: 120, // mock
+                                promotionalPrice: 100, // mock
+                                discount: 15, // mock
+                                urgency: isSameDay(date, today) ? 'SAME_DAY' : 'TOMORROW',
+                                demandLevel,
+                            });
+                        }
+                    }
+                }
+            });
+        });
+        
+        const slotToPromote = potentialSlots.sort((a,b) => a.startTime.getTime() - b.startTime.getTime())[0];
+        
+        if (slotToPromote) {
+             allAlerts.push({
+                id: `promote-slot-${slotToPromote.id}`,
+                severity: 'info',
+                icon: TrendingUp,
+                title: `הזדמנות למילוי חלון פנוי`,
+                description: `שיעור ${slotToPromote.instrument} עם ${slotToPromote.teacher.name} ביום ${format(slotToPromote.startTime, 'EEEE')} פנוי.`,
+                actionLink: '#promote-slot',
+                actionLabel: 'קדם שיעור',
+                data: slotToPromote,
             });
         }
 
