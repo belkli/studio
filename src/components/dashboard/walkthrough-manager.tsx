@@ -19,7 +19,7 @@ const parentSteps: DriveStep[] = [
     { element: '#nav-family-hub', popover: { title: 'מרכז המשפחה', description: 'זהו מרכז הבקרה שלך - כאן תראי את כל ילדיך במקום אחד.', side: 'left', align: 'start' } },
     { element: '#child-card-0', popover: { title: 'כרטיס ילד', description: 'כאן מוצג סיכום שבועי של הפעילות של ילדך. לחץ/י על "פרופיל מלא" כדי לראות את כל הפרטים.', side: 'bottom', align: 'start' } },
     { element: '#nav-billing', popover: { title: 'חיובים ותשלומים', description: 'כאן תמצאי חשבוניות ותוכלי לעדכן אמצעי תשלום.', side: 'left', align: 'start' } },
-    { element: '#nav-notifications', popover: { title: 'העדפות התראות', description: 'בחרי איך לקבל עדכונים - SMS, WhatsApp, או אימייל. כל העדכונים יופיעו כאן.', side: 'left', align: 'start' } },
+    { element: '#nav-notifications', popover: { title: 'העדפות התראות', description: 'בחרי איך לקבל עדכונים - SMS, WhatsApp, או אימייל.', side: 'left', align: 'start' } },
     { popover: { title: 'סיכום שבועי', description: 'בנוסף, כל שבוע תקבל/י סיכום למייל על מה שקרה בשיעורים של ילדיך.', side: 'top' } },
     { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'יש שאלות? לחץ/י על העזרה בכל רגע.', side: 'top', align: 'center' } },
 ];
