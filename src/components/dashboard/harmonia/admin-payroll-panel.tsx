@@ -10,10 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Check, Send, Download } from 'lucide-react';
+import { Check, Send, Download, Banknote } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { EmptyState } from '@/components/ui/empty-state';
 
 const statusTranslations: Record<PayrollStatus, string> = {
     DRAFT: 'טיוטה',
@@ -84,7 +85,14 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
     }
 
     if (payrolls.length === 0) {
-        return <p className="text-center text-muted-foreground p-8">אין דוחות שכר להצגה.</p>
+        return (
+            <EmptyState
+                icon={Banknote}
+                title="אין דוחות שכר"
+                description="לא קיימים דוחות שכר במצב זה."
+                className="py-12"
+            />
+        );
     }
 
     return (

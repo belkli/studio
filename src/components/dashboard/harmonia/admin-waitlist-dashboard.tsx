@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Send, Trash2 } from 'lucide-react';
+import { Send, Trash2, ListChecks } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -21,7 +21,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { EmptyState } from '@/components/ui/empty-state';
 
 const statusConfig: Record<WaitlistStatus, { label: string; className: string }> = {
     WAITING: { label: 'ממתין', className: 'bg-blue-100 text-blue-800' },
@@ -87,8 +88,13 @@ export function AdminWaitlistDashboard() {
                     <TableBody>
                         {waitlist.length === 0 ? (
                              <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
-                                    רשימת ההמתנה ריקה.
+                                <TableCell colSpan={6} className="p-0">
+                                   <EmptyState
+                                        icon={ListChecks}
+                                        title="רשימת ההמתנה ריקה"
+                                        description="אין כרגע תלמידים הממתינים לשיבוץ."
+                                        className="py-12"
+                                   />
                                 </TableCell>
                             </TableRow>
                         ) : (

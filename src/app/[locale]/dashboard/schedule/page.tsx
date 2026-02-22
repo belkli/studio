@@ -5,6 +5,7 @@ import { PlusCircle, Calendar } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { ScheduleCalendar } from "@/components/dashboard/harmonia/schedule-calendar";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function SchedulePage() {
     const { user, mockLessons } = useAuth();
@@ -53,10 +54,19 @@ export default function SchedulePage() {
             {weekLessons.length > 0 ? (
                 <ScheduleCalendar lessons={weekLessons} />
             ) : (
-                <div className="text-center text-muted-foreground py-16 border-dashed border-2 rounded-lg">
-                    <Calendar className="mx-auto h-12 w-12" />
-                    <p className="mt-4">אין שיעורים מתוכננים לשבוע הקרוב.</p>
-                </div>
+                <EmptyState
+                    icon={Calendar}
+                    title="אין שיעורים מתוכננים"
+                    description="מערכת השעות שלך לשבוע הקרוב ריקה. אפשר להזמין שיעור חדש."
+                    action={
+                        <Button asChild>
+                            <Link href="/dashboard/schedule/book">
+                                <PlusCircle className="ms-2 h-4 w-4" />
+                                הזמן שיעור חדש
+                            </Link>
+                        </Button>
+                    }
+                />
             )}
         </div>
     );

@@ -11,6 +11,7 @@ import { he } from 'date-fns/locale';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';
+import { EmptyState } from '@/components/ui/empty-state';
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
     return (
@@ -93,12 +94,12 @@ export default function NotificationsPage() {
                                 <NotificationItem key={notification.id} notification={notification} />
                              ))
                         ) : (
-                            <div className="text-center text-muted-foreground py-16">
-                                <Bell className="mx-auto h-12 w-12" />
-                                <p className="mt-4">
-                                    {currentTab === 'unread' ? 'אין התראות שלא נקראו.' : 'אין התראות להצגה.'}
-                                </p>
-                            </div>
+                            <EmptyState
+                                icon={Bell}
+                                title={currentTab === 'unread' ? 'אין התראות חדשות' : 'אין התראות להצגה'}
+                                description={currentTab === 'unread' ? 'כל ההתראות שלך מעודכנות.' : 'כאשר יהיו עדכונים חדשים, הם יופיעו כאן.'}
+                                className="py-12"
+                            />
                         )}
                     </div>
                 </CardContent>
