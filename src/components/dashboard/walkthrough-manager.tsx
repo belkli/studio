@@ -20,7 +20,7 @@ const parentSteps: DriveStep[] = [
     { element: '#nav-billing', popover: { title: 'חיובים ותשלומים', description: 'כאן תמצאי חשבוניות ותוכלי לעדכן אמצעי תשלום.', side: 'left', align: 'start' } },
     { element: '#nav-notifications', popover: { title: 'העדפות התראות', description: 'בחרי איך לקבל עדכונים - SMS, WhatsApp, או אימייל.', side: 'left', align: 'start' } },
     { popover: { title: 'סיכום שבועי', description: 'בנוסף, כל שבוע תקבל/י סיכום למייל על מה שקרה בשיעורים של ילדיך.', side: 'top' } },
-    { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'יש שאלות? לחץ/י על העזרה בכל רגע.', side: 'top', align: 'start' } },
+    { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'יש שאלות? לחץ/י על העזרה בכל רגע.', side: 'top', align: 'start' } },
 ];
 
 const teacherSteps: DriveStep[] = [
@@ -30,7 +30,7 @@ const teacherSteps: DriveStep[] = [
     { element: '#student-roster-card', popover: { title: 'רשימת התלמידים', description: 'צפה בכל התלמידים שלך וגש במהירות לפרופיל המלא שלהם.', side: 'bottom', align: 'start' } },
     { element: '#nav-approvals', popover: { title: 'תור אישורים', description: 'כאן יחכו לך טפסים שהתלמידים הגישו וממתינים לאישורך.', side: 'left', align: 'start' } },
     { element: '#sick-leave-button', popover: { title: 'דיווח מחלה', description: 'אם אתה חולה, לחץ כאן - המערכת תבטל את השיעורים ותודיע לכולם אוטומטית.', side: 'top', align: 'end' } },
-    { element: '#sidebar-help-button', popover: { title: 'צריך עזרה?', description: 'סיור זה זמין שוב מהגדרות. לשאלות נוספות, השתמש בעוזר ה-AI.', side: 'top', align: 'start' } },
+    { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'סיור זה זמין שוב מהגדרות. לשאלות נוספות, השתמש בעוזר ה-AI.', side: 'top', align: 'start' } },
 ];
 
 const adminSteps: DriveStep[] = [
