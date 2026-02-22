@@ -1,7 +1,7 @@
 
 'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/i18n/routing';
+import { Link } from '@/i18n/routing';
 
 import {
   SidebarContent,

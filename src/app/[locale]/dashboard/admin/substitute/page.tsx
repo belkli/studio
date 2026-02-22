@@ -1,4 +1,3 @@
-
 'use client';
 
 import { SubstituteAssignmentPanel } from "@/components/dashboard/harmonia/substitute-assignment-panel";

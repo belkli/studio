@@ -8,6 +8,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { EmptyState } from '@/components/ui/empty-state';
+import { UserCog } from 'lucide-react';
 
 interface AffectedLesson extends LessonSlot {
     originalTeacher?: User;
@@ -18,8 +20,6 @@ interface AffectedLesson extends LessonSlot {
 export function SubstituteAssignmentPanel() {
     const { users, mockLessons, assignSubstitute } = useAuth();
     const { toast } = useToast();
-    const [selectedSubstitute, setSelectedSubstitute] = useState<Record<string, string>>({});
-
 
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
         const teachers = users.filter(u => u.role === 'teacher');
@@ -109,9 +109,14 @@ export function SubstituteAssignmentPanel() {
                     </TableHeader>
                     <TableBody>
                         {lessonsNeedingSub.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center">
-                                    כל הכבוד, אין שיעורים פתוחים!
+                             <TableRow>
+                                <TableCell colSpan={5} className="p-0">
+                                   <EmptyState
+                                        icon={UserCog}
+                                        title="אין שיעורים לשיבוץ"
+                                        description="לא נמצאו שיעורים שבוטלו על ידי מורים ודורשים שיבוץ מחליף."
+                                        className="py-12"
+                                   />
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -146,5 +151,5 @@ export function SubstituteAssignmentPanel() {
                 </Table>
             </CardContent>
         </Card>
-    )
+    );
 }

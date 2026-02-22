@@ -11,8 +11,7 @@ import type { HelpAssistantResponse } from '@/ai/flows/help-assistant-flow';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
-import { usePathname } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 
@@ -207,6 +206,11 @@ export function AiHelpAssistant() {
                                 disabled={isLoading || !input.trim()}
                             >
                                 <Send className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <div className="text-center mt-2">
+                            <Button variant="link" size="sm" asChild>
+                                <Link href="/help" onClick={() => setIsOpen(false)}>עבור למרכז העזרה המלא</Link>
                             </Button>
                         </div>
                     </div>
