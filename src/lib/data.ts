@@ -74,15 +74,6 @@ export const compositions: Composition[] = (rawCompositions as any[]).map((item:
     source: 'seed' as const,
 })).filter(c => c.composer && c.title);
 
-export const mockRooms: Room[] = [
-    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1' },
-    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1' },
-    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1' },
-    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2' },
-    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2' },
-    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3' },
-    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3' },
-];
 export const mockBranches: Branch[] = [
     {
         id: 'branch-1',
@@ -102,6 +93,16 @@ export const mockBranches: Branch[] = [
         name: 'מתנ"ס קהילתיים',
         address: 'רחוב רמב"ם 10, גבעתיים'
     }
+];
+
+export const mockRooms: Room[] = [
+    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1' },
+    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1' },
+    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1' },
+    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2' },
+    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2' },
+    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3' },
+    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3' },
 ];
 
 const studentNotifications: Notification[] = [];
@@ -242,7 +243,11 @@ export const mockFormSubmissions: FormSubmission[] = [
     { id: 'form-105', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יא', studentId: studentUser2.id, studentName: studentUser2.name, status: 'נדרש תיקון', ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.', submissionDate: '2024-05-23', totalDuration: '21:00', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', duration: '05:45', genre: 'קלאסי' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' }, { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', duration: '15:00', genre: 'קלאסי' }], conservatoriumName: studentUser2.conservatoriumName, applicantDetails: { birthDate: studentUser2.birthDate, city: studentUser2.city, gender: studentUser2.gender, phone: studentUser2.phone }, schoolDetails: { schoolName: studentUser2.schoolName, hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: true }, teacherDetails: { name: teacherUser.name, }, instrumentDetails: { instrument: studentUser2.instruments?.[0].instrument, yearsOfStudy: studentUser2.instruments?.[0].yearsOfStudy } },
 ];
 export const mockPackages: Package[] = [];
-export const mockLessons: LessonSlot[] = [];
+export const mockLessons: LessonSlot[] = [
+    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(16,0,0,0).toString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false },
+    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() + 2)).setHours(17,0,0,0).toString(), durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-1' },
+    { id: 'lesson-3', conservatoriumId: 'cons-12', teacherId: 'teacher-user-3', studentId: 'other-student-1', instrument: 'גיטרה', startTime: new Date(new Date().setDate(new Date().getDate() + 3)).setHours(15,0,0,0).toString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'ADMIN', roomId: 'room-5', isVirtual: true, meetingLink: 'https://zoom.us/j/1234567890', status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-2' },
+];
 export const mockInvoices: Invoice[] = [];
 export const mockPracticeLogs: PracticeLog[] = [];
 export const mockAssignedRepertoire: AssignedRepertoire[] = [];
@@ -287,4 +292,3 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 export const mockWaitlist: WaitlistEntry[] = [];
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
-
