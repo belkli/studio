@@ -31,15 +31,15 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                 await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
                 toast({
                     title: "הקישור הועתק!",
-                    description": "תוכל/י לשתף אותו עם חברים.",
+                    description: "תוכל/י לשתף אותו עם חברים.",
                 });
             }
         } catch (error) {
             console.error('Error sharing:', error);
             toast({
-                variant": 'destructive',
+                variant: 'destructive',
                 title: "שגיאה בשיתוף",
-                description": "לא ניתן היה לשתף את הקישור.",
+                description: "לא ניתן היה לשתף את הקישור.",
             });
         }
     };
@@ -92,4 +92,3 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
         </Card>
     );
 }
-
