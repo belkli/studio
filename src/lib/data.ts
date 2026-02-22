@@ -617,49 +617,65 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
 ];
 
 export const mockPerformanceBookings: PerformanceBooking[] = [
-  {
-    id: 'perf-1',
-    conservatoriumId: 'cons-15',
-    status: 'INQUIRY_RECEIVED',
-    inquiryReceivedAt: new Date().toISOString(),
-    clientName: 'חברת הייטק בע"מ',
-    clientEmail: 'events@hightech.com',
-    clientPhone: '052-1234567',
-    eventName: 'אירוע חברה שנתי',
-    eventType: 'Corporate',
-    eventDate: addDays(new Date(), 30).toISOString(),
-    eventTime: '20:00',
-    totalQuote: 2800,
-  },
-  {
-    id: 'perf-2',
-    conservatoriumId: 'cons-15',
-    status: 'MUSICIANS_CONFIRMED',
-    inquiryReceivedAt: addDays(new Date(), -2).toISOString(),
-    clientName: 'משפחת כהן',
-    clientEmail: 'cohen@family.com',
-    clientPhone: '050-7654321',
-    eventName: 'חתונה',
-    eventType: 'Wedding',
-    totalQuote: 4500,
-    assignedMusicians: [
-        { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' }
-    ]
-  },
-];
-export const mockScholarshipApplications: ScholarshipApplication[] = [];
-export const mockOpenDayEvents: OpenDayEvent[] = [
     {
-        id: 'open-day-1',
-        conservatoriumId: 'cons-15', // הוד השרון
-        name: 'יום פתוח בקונסרבטוריון הוד השרון',
-        description: 'בואו להכיר את המורים, לנסות כלי נגינה חדשים ולשמוע את תלמידינו. חוויה מוזיקלית לכל המשפחה!',
-        date: addDays(new Date(), 20).toISOString().split('T')[0], // In 20 days
-        startTime: '10:00',
-        endTime: '14:00',
-        appointmentDuration: 20, // 20 minutes per appointment
-        isActive: true,
+        id: 'perf-1',
+        conservatoriumId: 'cons-15',
+        eventName: 'חתונה - משפחת כהן',
+        eventType: 'חתונה',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        eventTime: '19:30',
+        eventLocation: 'אולמי "הדריה", הרצליה',
+        clientName: 'יוסי כהן',
+        clientEmail: 'yossi@cohen.com',
+        clientPhone: '052-1234567',
+        ensembleSize: 'דואט (2 נגנים)',
+        genre: 'קלאסי',
+        totalQuote: 2800,
+        status: 'INQUIRY_RECEIVED',
+        inquiryReceivedAt: new Date().toISOString(),
+        assignedMusicians: [],
     },
 ];
 
-export const mockOpenDayAppointments: OpenDayAppointment[] = [];
+export const mockScholarshipApplications: ScholarshipApplication[] = [
+  {
+    id: `schol-app-1`,
+    studentId: 'student-user-2',
+    studentName: 'תמר ישראלי',
+    instrument: 'כינור',
+    conservatoriumId: 'cons-15',
+    academicYear: 'תשפ"ה',
+    status: 'SUBMITTED',
+    submittedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    priorityScore: 75,
+  }
+];
+
+export const mockOpenDayEvents: OpenDayEvent[] = [
+  {
+    id: 'open-day-event-1',
+    conservatoriumId: 'cons-15',
+    name: 'יום פתוח אביב 2024',
+    date: addDays(new Date(), 14).toISOString(),
+    startTime: '10:00',
+    endTime: '14:00',
+    appointmentDuration: 20,
+    isActive: true,
+  }
+];
+
+export const mockOpenDayAppointments: OpenDayAppointment[] = [
+  {
+    id: 'open-day-appt-1',
+    eventId: 'open-day-event-1',
+    familyName: 'לוי',
+    parentEmail: 'levi.fam@email.com',
+    parentPhone: '050-1234567',
+    childName: 'איתי',
+    childAge: 8,
+    instrumentInterest: 'פסנתר',
+    appointmentTime: setMinutes(setHours(addDays(new Date(), 14), 10), 0).toISOString(),
+    status: 'SCHEDULED',
+    registeredAt: new Date().toISOString(),
+  }
+];
