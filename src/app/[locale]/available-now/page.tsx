@@ -46,7 +46,7 @@ export default function AvailableNowPage() {
                         <Image
                             src={heroImage.imageUrl}
                             alt={heroImage.description}
-                            layout="fill"
+                            fill
                             objectFit="cover"
                             className="z-0 opacity-20"
                             data-ai-hint={heroImage.imageHint}

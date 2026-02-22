@@ -4,6 +4,7 @@ import { useAuth } from './use-auth';
 import { Users, UserX, CalendarClock, CreditCard, TrendingUp } from "lucide-react";
 import { subDays, isFuture, addDays, getDay, isSameDay, setHours, isAfter } from 'date-fns';
 import type { EmptySlot, DayOfWeek, User } from '@/lib/types';
+import { format } from 'date-fns';
 
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';

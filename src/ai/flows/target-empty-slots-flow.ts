@@ -65,7 +65,7 @@ const prompt = ai.definePrompt({
 Analyze the empty slot and compare it against the list of eligible recipients. For each recipient, calculate an "affinity score" from 0 to 100 based on the following criteria:
 
 1.  **Instrument Match (Crucial):** Must be an exact match. If not, the score is 0.
-2.  **Makeup Credit Balance (High Priority):** Students with makeup credits are prime candidates. Add +40 to the score if their balance is > 0.
+2.  **Makeup Credit Balance (High Priority):** Students with makeup credits are prime candidates. Add +40 to the score if their balance > 0.
 3.  **Past Booking Patterns:** Does the slot's day and time match their historical bookings? Add +30 for a strong match.
 4.  **Waitlist Status:** If the recipient is on a waitlist for this instrument/teacher, add +20.
 5.  **General Proximity:** Is the slot time generally convenient (e.g., after school hours)? Add +10 for peak times.

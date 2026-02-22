@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import type { EmptySlot, User } from '@/lib/types';
-import { getTargetedSlots } from '@/app/actions';
+import { getTargetedSlotSuggestions } from '@/app/actions';
 import type { TargetSlotsOutput } from '@/ai/flows/target-empty-slots-flow';
 import { Loader2, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +33,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
         setIsLoading(true);
         const eligibleRecipients = users.filter(u => u.role === 'student' && u.instruments?.some(i => i.instrument === slot.instrument));
 
-        const result = await getTargetedSlots({
+        const result = await getTargetedSlotSuggestions({
           emptySlot: {
             id: slot.id,
             teacherName: slot.teacher.name,
