@@ -1,3 +1,4 @@
+
 'use client';
 import { MessagingInterface } from "@/components/dashboard/harmonia/messaging-interface";
 import { useTranslations } from "next-intl";

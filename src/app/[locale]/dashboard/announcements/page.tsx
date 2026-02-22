@@ -1,3 +1,4 @@
+
 import { AnnouncementComposer } from "@/components/dashboard/harmonia/announcement-composer";
 
 export default function AnnouncementsPage() {
