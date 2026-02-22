@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote, ProgressReport } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { generateProgressReport } from '@/app/actions';
+import { draftProgressReport } from '@/app/actions';
 import { AssignRepertoireDialog } from '@/components/dashboard/harmonia/assign-repertoire-dialog';
 import { MultimediaFeedbackCard } from '@/components/dashboard/harmonia/multimedia-feedback-card';
 
@@ -179,12 +179,12 @@ export default function TeacherStudentProfilePage() {
             teacherName: teacher.name,
             instrument: student.instruments?.[0]?.instrument || 'כלי נגינה',
             period: 'סמסטר אביב 2024',
-            practiceLogs: studentLogs,
-            lessonNotes: studentNotes,
-            repertoire: studentRepertoire,
+            practiceLogs: studentLogs.map(l => ({...l, date: l.date.split('T')[0]})),
+            lessonNotes: studentNotes.map(n => ({createdAt: n.createdAt.split('T')[0], summary: n.summary, homeworkAssignments: n.homeworkAssignments})),
+            repertoire: studentRepertoire.map(r => ({compositionId: r.compositionId, status: r.status})),
         };
 
-        const result = await generateProgressReport(input);
+        const result = await draftProgressReport(input);
         setReportDraft(result.reportText);
         setIsDrafting(false);
     };
