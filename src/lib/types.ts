@@ -760,3 +760,4 @@ export type OpenDayAppointment = {
   status: 'SCHEDULED' | 'ATTENDED' | 'NO_SHOW';
   registeredAt: string; // ISO Timestamp
 };
+
