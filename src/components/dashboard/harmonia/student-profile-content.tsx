@@ -3,14 +3,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2 } from "lucide-react";
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement, LessonNote } from "@/lib/types";
-import { formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 const statusTranslations: Record<RepertoireStatus, string> = {
@@ -35,7 +35,7 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 };
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
-    const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes } = useAuth();
+    const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
     
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
     const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === student.id), [mockAssignedRepertoire, student.id]);
@@ -87,6 +87,15 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
 
         return { totalMinutesThisWeek: totalMinutes, weeklyGoal, streak: currentStreak };
     }, [userLogs, student.weeklyPracticeGoal]);
+
+    const upcomingLessons = useMemo(() => {
+        if (!student) return [];
+        const now = new Date();
+        return mockLessons
+            .filter(l => l.studentId === student.id && new Date(l.startTime) >= now && l.status === 'SCHEDULED')
+            .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+            .slice(0, 3); // show next 3
+    }, [mockLessons, student]);
 
     return (
         <>
@@ -186,6 +195,30 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                     </CardContent>
                 </Card>
                 <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><CalendarIcon /> שיעורים קרובים</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {upcomingLessons.length > 0 ? upcomingLessons.map(lesson => (
+                                <div key={lesson.id} className="flex items-start gap-3 text-sm">
+                                    <div className="flex-shrink-0 flex flex-col items-center justify-center bg-muted w-12 h-12 rounded-md">
+                                        <span className="text-xs font-bold uppercase text-red-600">{format(new Date(lesson.startTime), 'MMM', { locale: he })}</span>
+                                        <span className="text-lg font-bold">{format(new Date(lesson.startTime), 'dd')}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-semibold">{lesson.instrument}</p>
+                                        <p className="text-xs text-muted-foreground">{format(new Date(lesson.startTime), 'EEEE, HH:mm', { locale: he })}</p>
+                                    </div>
+                                </div>
+                            )) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">אין שיעורים מתוכננים.</p>
+                            )}
+                             <Button variant="outline" className="w-full" asChild>
+                                <Link href="/dashboard/schedule">למערכת השעות המלאה</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
