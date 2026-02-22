@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PerformanceBookingDashboard } from "@/components/dashboard/harmonia/performance-booking-dashboard";

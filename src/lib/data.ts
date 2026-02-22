@@ -1,4 +1,5 @@
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from './types';
+
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -126,7 +127,7 @@ const pendingTeacher: User = {
 
 export const mockTeachers: Partial<User>[] = [
     {
-        id: 'teacher-user-1', name: 'מרים כהן', email: 'teacher@example.com',
+        id: 'teacher-user-1', name: 'מרים כהן', email: 'teacher@example.com', avatarUrl: 'musician-miriam',
         bio: 'מורה לפסנתר וכינור עם 15 שנות ניסיון, מתמחה בהכנה לרסיטלים ובחינות בגרות. בוגרת האקדמיה למוסיקה בירושלים. מאמינה בגישה אישית ומעצימה לכל תלמיד.',
         specialties: ['EXAM_PREP', 'PERFORMANCE', 'BEGINNER_ADULTS'],
         teachingLanguages: ['HE', 'EN'],
@@ -143,7 +144,7 @@ export const mockTeachers: Partial<User>[] = [
         }
     },
     {
-        id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com',
+        id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com', avatarUrl: 'musician-david',
         bio: 'נשפן וירטואוז, מומחה בחליל צד, סקסופון וקלרינט. מתמחה בג\'אז ואימפרוביזציה, ומעביר סדנאות אמן ברחבי הארץ. מביא אנרגיה ייחודית לשיעורים.',
         specialties: ['JAZZ', 'ENSEMBLE', 'PERFORMANCE'],
         teachingLanguages: ['HE', 'RU'],
@@ -155,7 +156,7 @@ export const mockTeachers: Partial<User>[] = [
         }
     },
     {
-        id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com',
+        id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com', avatarUrl: 'musician-galit',
         bio: 'גיטריסטית ומורה, מתמחה בעבודה עם ילדים ונוער. בעלת ניסיון רב עם צרכים מיוחדים ופיתוח יצירתיות דרך המוזיקה.',
         specialties: ['EARLY_CHILDHOOD', 'SPECIAL_NEEDS', 'THEORY'],
         teachingLanguages: ['HE'],
@@ -170,9 +171,9 @@ export const mockTeachers: Partial<User>[] = [
     },
 ];
 
-const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id], approved: true, notifications: teacherNotifications, achievements: [], } as User;
-const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=teacher2', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], maxStudents: 15, achievements: [], } as User;
-const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=teacher3', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18, achievements: [], } as User;
+const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id], approved: true, notifications: teacherNotifications, achievements: [], } as User;
+const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], maxStudents: 15, achievements: [], } as User;
+const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18, achievements: [], } as User;
 
 // Generate Conservatorium Admins from the JSON file, adding the logged-in user for "הוד השרון"
 const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
@@ -285,6 +286,3 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 export const mockWaitlist: WaitlistEntry[] = [];
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
-
-
-    

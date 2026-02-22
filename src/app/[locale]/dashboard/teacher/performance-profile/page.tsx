@@ -1,3 +1,4 @@
+
 import { PerformanceProfileEditor } from "@/components/dashboard/harmonia/performance-profile-editor";
 import { useTranslations } from "next-intl";
 
