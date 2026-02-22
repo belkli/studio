@@ -1,5 +1,3 @@
-
-
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceGenre, EnsembleRole, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
@@ -522,7 +520,12 @@ export const mockFormTemplates: FormTemplate[] = [
     }
 ];
 
-export const mockAuditLog: AuditLogEntry[] = [];
+export const mockAuditLog: AuditLogEntry[] = [
+    { id: 'log-1', notificationId: 'ann-1', userId: 'student-user-1', channel: 'EMAIL', status: 'DELIVERED', sentAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), title: 'תזכורת: רסיטל סוף שנה', body: 'אל תשכחו להירשם לרסיטל האביב!' },
+    { id: 'log-2', notificationId: 'lesson-reminder-1', userId: 'student-user-2', channel: 'SMS', status: 'DELIVERED', sentAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), title: 'תזכורת שיעור', body: 'שיעור הכינור שלך מחר בשעה 16:00.' },
+    { id: 'log-3', notificationId: 'invoice-1', userId: 'parent-user-1', channel: 'EMAIL', status: 'FAILED', sentAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), title: 'חשבונית חדשה', body: 'החשבונית שלך לחודש יולי מוכנה לצפייה.', errorMessage: 'Invalid email address' },
+    { id: 'log-4', notificationId: 'form-approval-1', userId: 'teacher-user-1', channel: 'IN_APP', status: 'DELIVERED', sentAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), title: 'טופס אושר', body: 'הטופס של אריאל לוי עבר לאישור מנהל.' },
+];
 
 export const mockEvents: EventProduction[] = [
     {
