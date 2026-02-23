@@ -500,5 +500,29 @@
         "suggestionsTitle": "הצעות:",
         "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?",
         "errorMessage": "אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר."
+    },
+    "AlumniPage": {
+        "title": "רשת בוגרים",
+        "subtitle": "התחברו מחדש עם חברים, מורים והקונסרבטוריון.",
+        "directoryTitle": "ספר הבוגרים",
+        "directorySubtitle": "מצאו בוגרים אחרים וצרו איתם קשר.",
+        "graduated": "בוגר {year}, {instrument}",
+        "masterclassesTitle": "כיתות אמן בלעדיות לבוגרים",
+        "masterclassesSubtitle": "שפרו את כישוריכם ולמדו מהטובים בתחום.",
+        "instructor": "מנחה: {name}",
+        "date": "תאריך: {date, date, long}",
+        "registerButton": "הירשם עכשיו"
+    },
+    "PaymentSettings": {
+        "updateMethodTitle": "עדכון אמצעי תשלום",
+        "updateMethodDesc": "אנא הכנס את פרטי כרטיס האשראי החדש שלך.",
+        "cardHolder": "שם בעל הכרטיס",
+        "cardNumber": "מספר כרטיס",
+        "expiryDate": "תאריך תפוגה",
+        "cvc": "CVC",
+        "cancel": "ביטול",
+        "saveButton": "שמור כרטיס"
     }
 }
+
+    
