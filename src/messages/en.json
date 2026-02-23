@@ -1,4 +1,3 @@
-
 {
     "Navigation": {
         "dashboard": "Dashboard",
@@ -506,5 +505,28 @@
         "suggestionsTitle": "Suggestions:",
         "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
         "errorMessage": "I'm sorry, an error occurred. Please try again later."
+    },
+    "AlumniPage": {
+        "title": "Alumni Network",
+        "subtitle": "Reconnect with friends, teachers, and the conservatory.",
+        "directoryTitle": "Alumni Directory",
+        "directorySubtitle": "Find and connect with fellow graduates.",
+        "graduated": "Graduated {year}, {instrument}",
+        "masterclassesTitle": "Exclusive Alumni Masterclasses",
+        "masterclassesSubtitle": "Hone your skills and learn from the best in the field.",
+        "instructor": "Instructor: {name}",
+        "date": "Date: {date, date, long}",
+        "registerButton": "Register Now"
+    },
+    "PaymentSettings": {
+        "updateMethodTitle": "Update Payment Method",
+        "updateMethodDesc": "Please enter your new credit card details.",
+        "cardHolder": "Cardholder Name",
+        "cardNumber": "Card Number",
+        "expiryDate": "Expiry Date",
+        "cvc": "CVC",
+        "cancel": "Cancel",
+        "saveButton": "Save Card"
     }
 }
+    
