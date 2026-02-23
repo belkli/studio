@@ -506,5 +506,27 @@
         "suggestionsTitle": "Предложения:",
         "welcomeMessage": "Здравствуйте! Я Гармони, ваш ИИ-помощник. Чем могу помочь вам сегодня?",
         "errorMessage": "Извините, произошла ошибка. Пожалуйста, попробуйте позже."
+    },
+    "AlumniPage": {
+        "title": "Сеть выпускников",
+        "subtitle": "Снова на связи с друзьями, преподавателями и консерваторией.",
+        "directoryTitle": "Справочник выпускников",
+        "directorySubtitle": "Найдите и свяжитесь с другими выпускниками.",
+        "graduated": "Выпуск {year}, {instrument}",
+        "masterclassesTitle": "Эксклюзивные мастер-классы для выпускников",
+        "masterclassesSubtitle": "Совершенствуйте свои навыки и учитесь у лучших в индустрии.",
+        "instructor": "Преподаватель: {name}",
+        "date": "Дата: {date, date, long}",
+        "registerButton": "Зарегистрироваться"
+    },
+    "PaymentSettings": {
+        "updateMethodTitle": "Обновить способ оплаты",
+        "updateMethodDesc": "Пожалуйста, введите данные вашей новой кредитной карты.",
+        "cardHolder": "Имя владельца карты",
+        "cardNumber": "Номер карты",
+        "expiryDate": "Срок действия",
+        "cvc": "CVC",
+        "cancel": "Отмена",
+        "saveButton": "Сохранить карту"
     }
 }

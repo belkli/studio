@@ -86,6 +86,7 @@ export function SidebarNav() {
     { href: '/dashboard/schedule', label: t('schedule'), icon: Calendar, roles: ['student', 'parent', 'teacher'], id: 'nav-schedule' },
     { href: '/dashboard/practice', label: t('practiceLog'), icon: PencilRuler, roles: ['student', 'parent'], id: 'nav-practice' },
     { href: '/dashboard/progress', label: t('progress'), icon: BarChart3, roles: ['student', 'parent'] },
+    { href: '/dashboard/practice/coach', label: 'מאמן AI', icon: BrainCircuit, roles: ['student', 'parent'] },
     { href: '/dashboard/makeups', label: t('makeups'), icon: Coins, roles: ['student', 'parent'] },
     { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: BrainCircuit, roles: ['student', 'parent'] },
     { href: '/dashboard/apply-for-aid', label: 'בקשת מלגה', icon: ShieldQuestion, roles: ['student', 'parent'] },

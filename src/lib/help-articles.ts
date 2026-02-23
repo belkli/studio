@@ -1,3 +1,4 @@
+
 export interface HelpArticle {
     id: string;
     category: string;
@@ -60,6 +61,33 @@ You can use makeup credits to book a new lesson at your convenience via the **Ma
 3.  Fill out all the required details about your repertoire. You can search for compositions in our library.
 4.  Once you are done, click "Submit for Teacher Approval".
 5.  Your teacher will review the form. Once they approve it, it will be sent to the conservatory administration for final approval. You can track the status on the "Forms & Docs" page.
+        `
+    },
+    {
+        id: 'teacher-availability',
+        category: 'For Teachers',
+        title: 'Setting Your Availability',
+        content: `
+## Setting Your Weekly Availability
+
+1.  Navigate to the **My Availability** page from your sidebar.
+2.  You will see a weekly grid. Click on any empty time slot to mark it as "available". Click again to mark it as "unavailable".
+3.  Your changes are not saved automatically. When you are finished, click the "Save Changes" button.
+4.  Your updated availability will be immediately visible to students seeking to book lessons.
+        `
+    },
+    {
+        id: 'admin-approving-users',
+        category: 'For Admins',
+        title: 'Approving New Registrations',
+        content: `
+## Approving New Users
+
+1.  From your Admin Dashboard, go to the **User Management** page.
+2.  Click on the "Pending Approval" tab.
+3.  You will see a list of all users who have registered but are awaiting approval.
+4.  You can review their details and click the **Approve** (green check) or **Reject** (red X) button for each user.
+5.  Once approved, the user will receive an email notification and will be able to log in to the system.
         `
     }
 ];
