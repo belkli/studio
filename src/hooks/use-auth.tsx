@@ -1,13 +1,21 @@
-
+/**
+ * @fileoverview This is the central authentication and state management provider for the Harmonia application.
+ * It uses React Context to provide user authentication status, user data, and all mock data
+ * for the application's features. It also contains the functions to manipulate this mock data,
+ * simulating a backend API. In a production application, these functions would make API calls
+ * to a real backend service like Firebase.
+ */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
 import { add, differenceInCalendarDays, startOfDay } from 'date-fns';
 
-
+/**
+ * Defines the shape of the authentication context, including all state and action dispatchers.
+ */
 interface AuthContextType {
   user: User | null;
   users: User[];
@@ -74,18 +82,27 @@ interface AuthContextType {
   addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
   addBranch: (branchData: Partial<Branch>) => void;
   updateBranch: (branchData: Branch) => void;
+  updateNotificationPreferences: (preferences: NotificationPreferences) => void;
+  updateUserPaymentMethod: (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => void;
   newFeaturesEnabled: boolean;
   isLoading: boolean;
   assignRepertoire: (studentId: string, compositionId: string) => void;
   mockWaitlist: WaitlistEntry[];
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
+  updateEvent: (event: EventProduction) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+/**
+ * The main provider component that wraps the application.
+ * It initializes and manages all application state, simulating a full backend.
+ */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  // State for the currently logged-in user
   const [user, setUser] = useState<User | null>(null);
+  // State for all mock data sets
   const [users, setUsers] = useState<User[]>(initialMockData.mockUsers);
   const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>(initialMockData.mockFormSubmissions);
   const [mockLessons, setMockLessons] = useState<LessonSlot[]>(initialMockData.mockLessons);
@@ -109,12 +126,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>(initialMockData.mockPracticeVideos);
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>(initialMockData.mockWaitlist);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
-
-
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
   const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
-  const pathname = usePathname();
   const { toast } = useToast();
 
   const newFeaturesEnabled = useMemo(() => {
@@ -123,6 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return currentConservatorium?.newFeaturesEnabled || false;
   }, [user, conservatoriums]);
 
+  // On initial load, check for a user in localStorage to persist login state.
   useEffect(() => {
     const storedUser = localStorage.getItem('harmonia-user');
     if (storedUser) {
@@ -131,6 +147,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, []);
 
+  /**
+   * Simulates user login.
+   * @param email The email to log in with.
+   * @returns An object with the user and their approval status.
+   */
   const login = (email: string): { user: User | null; status: 'approved' | 'pending' | 'not_found' } => {
     const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (foundUser) {
@@ -147,11 +168,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { user: null, status: 'not_found' };
   };
 
+  /**
+   * Logs the user out by clearing state and localStorage.
+   */
   const logout = () => {
     localStorage.removeItem('harmonia-user');
     setUser(null);
     router.push('/login');
   };
+
+  // --- Data Manipulation Functions ---
+  // These functions simulate backend operations by directly manipulating the state.
 
   const approveUser = (userId: string) => {
     setUsers(prevUsers => prevUsers.map(u => u.id === userId ? { ...u, approved: true } : u));
@@ -171,6 +198,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
   };
+  
+  const updateUserPaymentMethod = (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => {
+    if (!user) return;
+    const newPaymentMethod: PaymentMethod = {
+      id: `pm-${Date.now()}`,
+      type: 'CreditCard',
+      last4: paymentData.last4,
+      expiryMonth: paymentData.expiryMonth,
+      expiryYear: paymentData.expiryYear,
+      isPrimary: true,
+    };
+    
+    // In a real app, you'd only update the primary or add a new one. Here we replace all.
+    const updatedUser: User = {
+      ...user,
+      paymentMethods: [newPaymentMethod],
+    };
+    updateUser(updatedUser);
+  };
+
 
   const updateUser = (updatedUser: User) => {
     const updatedUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u);
@@ -180,21 +227,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
     }
   };
+  
+   const updateNotificationPreferences = (preferences: NotificationPreferences) => {
+    if (!user) return;
+    const updatedUser = { ...user, notificationPreferences: preferences };
+    updateUser(updatedUser);
+  };
+
   const addLesson = (lessonData: Partial<LessonSlot>) => {
     const newLesson: LessonSlot = {
       id: `lesson-${Date.now()}`,
       conservatoriumId: user!.conservatoriumId,
       status: 'SCHEDULED',
-      isCreditConsumed: false, // will be handled by a backend process
+      isCreditConsumed: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       ...lessonData
     } as LessonSlot;
     setMockLessons(prev => [...prev, newLesson]);
   };
+
   const cancelLesson = (lessonId: string, withNotice: boolean) => {
     setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: withNotice ? 'CANCELLED_STUDENT_NOTICED' : 'CANCELLED_STUDENT_NO_NOTICE' } : l));
   };
+
   const rescheduleLesson = (lessonId: string, newStartTime: string) => {
     setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, startTime: newStartTime } : l));
   };
@@ -210,7 +266,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const getMakeupCreditsDetail = (studentIds: string[]) => {
     if (!studentIds.length) return [];
-    const now = new Date();
     return mockLessons.filter(l =>
       studentIds.includes(l.studentId) &&
       (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
@@ -219,7 +274,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       reason: l.status,
       grantedAt: l.createdAt,
       expiresAt: addDays(new Date(l.createdAt), 60).toISOString(),
-      status: 'AVAILABLE' // Mock status
+      status: 'AVAILABLE'
     }))
   };
 
@@ -227,71 +282,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const student = users.find(u => u.id === studentId);
     if (!student) return;
 
-    let newAchievement: Achievement | null = null;
-    const existingAchievement = student.achievements?.find(a => a.type === type);
+    const hasExisting = student.achievements?.some(a => a.type === type);
+    // Prevent re-awarding certain types of achievements
+    if (hasExisting && ['YEARS_ENROLLED_1', 'FIRST_RECITAL'].includes(type)) return;
+    
+    // For streaks, we might want to update, not just add. For now, we'll keep it simple.
+    if (hasExisting && type === 'PRACTICE_STREAK_7') return;
 
-    // For some achievements, we might only want to award them once.
-    if (existingAchievement && (type === 'YEARS_ENROLLED_1' || type === 'FIRST_RECITAL' || type === 'PIECE_COMPLETED')) return;
+    let newAchievement: Achievement | null = null;
 
     switch(type) {
         case 'PIECE_COMPLETED':
-            newAchievement = {
-                id: `ach-${Date.now()}`,
-                type,
-                title: 'יצירה הושלמה!',
-                description: 'כל הכבוד על סיום יצירה חדשה.',
-                achievedAt: new Date().toISOString(),
-            };
+            newAchievement = { id: `ach-${Date.now()}`, type, title: 'יצירה הושלמה!', description: 'כל הכבוד על סיום יצירה חדשה.', achievedAt: new Date().toISOString() };
             break;
         case 'PRACTICE_STREAK_7':
-             if (existingAchievement) return; // Don't re-award for now
-            newAchievement = {
-                id: `ach-${Date.now()}`,
-                type,
-                title: 'רצף אימונים של 7 ימים!',
-                description: 'התמדה היא המפתח להצלחה. כל הכבוד!',
-                achievedAt: new Date().toISOString(),
-            };
+            newAchievement = { id: `ach-${Date.now()}`, type, title: 'רצף אימונים של 7 ימים!', description: 'התמדה היא המפתח להצלחה. כל הכבוד!', achievedAt: new Date().toISOString() };
             break;
     }
 
     if (newAchievement) {
-        setUsers(prev => prev.map(u => u.id === studentId ? {
-            ...u,
-            achievements: [...(u.achievements || []), newAchievement!]
-        } : u));
-        
-        if (user?.id === studentId) {
-             const updatedUser = { ...user, achievements: [...(user.achievements || []), newAchievement!] };
-             setUser(updatedUser);
-             localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
-        }
-
-        const newNotification: Notification = {
-            id: `notif-${Date.now()}`,
-            title: `🏆 הישג חדש: ${newAchievement.title}`,
-            message: newAchievement.description,
-            timestamp: new Date().toISOString(),
-            link: '/dashboard/profile',
-            read: false
-        };
-
-        const addNotificationToUser = (userId: string) => {
-             setUsers(prev => prev.map(u => u.id === userId ? {
-                ...u,
-                notifications: [newNotification, ...(u.notifications || [])],
-            } : u));
-        };
-        
-        addNotificationToUser(studentId);
-        if (student.parentId) {
-            addNotificationToUser(student.parentId);
-        }
-        
-        toast({
-            title: newAchievement.title,
-            description: newAchievement.description,
-        });
+        updateUser({ ...student, achievements: [...(student.achievements || []), newAchievement] });
+        toast({ title: newAchievement.title, description: newAchievement.description });
     }
   };
 
@@ -375,10 +386,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const student = users.find(u => u.id === studentId);
     if (student) {
         updateUser({ ...student, weeklyPracticeGoal: practiceGoal });
-        toast({
-            title: "יעד אימון עודכן",
-            description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
-        });
     }
   };
   
@@ -394,7 +401,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const addMessage = (threadId: string, senderId: string, body: string) => {
     setMockMessageThreads(prev => prev.map(thread => {
       if (thread.id === threadId) {
-        const newMessage: Message = { senderId, body, sentAt: new Date().toISOString() };
+        const newMessage = { senderId, body, sentAt: new Date().toISOString() };
         return { ...thread, messages: [...thread.messages, newMessage] };
       }
       return thread;
@@ -484,6 +491,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } as EventProduction;
     setMockEvents(prev => [newEvent, ...prev]);
   };
+  
+   const updateEvent = (updatedEvent: EventProduction) => {
+    setMockEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
+  };
+  
   const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
     const student = users.find(u => u.id === studentId);
     const repertoireItem = initialMockData.mockAssignedRepertoire.find(r => r.id === repertoireId);
@@ -748,14 +760,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       addUser,
       addBranch,
       updateBranch,
+      updateNotificationPreferences,
+      updateUserPaymentMethod,
       assignRepertoire,
       updatePayrollStatus,
+      updateEvent
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+/**
+ * Custom hook to access the AuthContext.
+ * @returns The authentication context.
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

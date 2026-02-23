@@ -1,0 +1,164 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents any user of the system, including students, parents, teachers, and administrators.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the user." },
+        "name": { "type": "string", "description": "Full name of the user." },
+        "email": { "type": "string", "format": "email", "description": "Email address for login and communication." },
+        "role": { "type": "string", "enum": ["student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director"] },
+        "conservatoriumId": { "type": "string", "description": "ID of the conservatory they belong to." },
+        "branchId": { "type": "string", "description": "ID of the specific branch they are associated with." },
+        "approved": { "type": "boolean", "description": "Whether the user's registration has been approved by an admin." },
+        "dateOfBirth": { "type": "string", "format": "date", "description": "User's date of birth, used for age-gate logic." },
+        "parentId": { "type": "string", "description": "For child accounts, the ID of the parent user." },
+        "childIds": { "type": "array", "items": { "type": "string" }, "description": "For parent accounts, a list of their children's user IDs." },
+        "packageId": { "type": "string", "description": "ID of the student's current lesson package." },
+        "weeklyPracticeGoal": { "type": "number", "description": "Weekly practice goal in minutes, set by the teacher." }
+      },
+      "required": ["id", "name", "email", "role", "conservatoriumId", "approved"]
+    },
+    "LessonSlot": {
+      "title": "Lesson Slot",
+      "description": "A single scheduled lesson, either one-time or part of a recurring series.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "instrument": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "durationMinutes": { "type": "number", "enum": [30, 45, 60] },
+        "type": { "type": "string", "enum": ["RECURRING", "MAKEUP", "TRIAL", "ADHOC", "GROUP"] },
+        "status": { "type": "string", "enum": ["SCHEDULED", "COMPLETED", "CANCELLED_STUDENT_NOTICED", "CANCELLED_STUDENT_NO_NOTICE", "CANCELLED_TEACHER", "NO_SHOW_STUDENT"] },
+        "roomId": { "type": "string" },
+        "branchId": { "type": "string" },
+        "isVirtual": { "type": "boolean" }
+      },
+      "required": ["id", "teacherId", "studentId", "instrument", "startTime", "durationMinutes", "type", "status"]
+    },
+    "Package": {
+      "title": "Lesson Package",
+      "description": "A purchasable package of lessons, such as a monthly subscription or a pack of 10 lessons.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "type": { "type": "string", "enum": ["MONTHLY", "TRIAL", "PACK_5", "PACK_10", "YEARLY"] },
+        "totalCredits": { "type": "number" },
+        "usedCredits": { "type": "number" },
+        "price": { "type": "number" },
+        "paymentStatus": { "type": "string", "enum": ["PAID", "PENDING", "FAILED"] },
+        "validUntil": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "studentId", "type", "price"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "A financial document representing a charge to a user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "payerId": { "type": "string" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["DRAFT", "SENT", "PAID", "OVERDUE", "CANCELLED"] },
+        "dueDate": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "payerId", "total", "status", "dueDate"]
+    },
+    "FormSubmission": {
+      "title": "Form Submission",
+      "description": "A record of any form submitted through the system, e.g., recital application.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "formType": { "type": "string" },
+        "status": { "type": "string", "enum": ["טיוטה", "ממתין לאישור מורה", "ממתין לאישור מנהל", "מאושר", "נדחה", "נדרש תיקון", "מאושר סופית"] },
+        "submissionDate": { "type": "string", "format": "date" },
+        "totalDuration": { "type": "string" }
+      },
+      "required": ["id", "studentId", "formType", "status", "submissionDate"]
+    },
+    "PracticeLog": {
+        "title": "Practice Log",
+        "description": "A log entry from a student detailing a practice session.",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "studentId": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "durationMinutes": { "type": "number" },
+            "mood": { "type": "string", "enum": ["GREAT", "OKAY", "HARD"] }
+        },
+        "required": ["id", "studentId", "date", "durationMinutes", "mood"]
+    },
+    "EventProduction": {
+        "title": "Event Production",
+        "description": "Represents a conservatory-managed event like a recital or concert.",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "type": { "type": "string", "enum": ["RECITAL", "CONCERT", "EXAM_PERFORMANCE", "OPEN_DAY"] },
+            "eventDate": { "type": "string", "format": "date" },
+            "venue": { "type": "string" },
+            "status": { "type": "string", "enum": ["PLANNING", "OPEN_REGISTRATION", "CLOSED", "COMPLETED"] }
+        },
+        "required": ["id", "name", "type", "eventDate", "status"]
+    },
+     "Announcement": {
+        "title": "Announcement",
+        "description": "A broadcast message sent by an administrator.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "conservatoriumId": { "type": "string" },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "targetAudience": { "type": "string", "enum": ["ALL", "STUDENTS", "PARENTS", "TEACHERS"] },
+          "sentAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "conservatoriumId", "title", "body", "sentAt"]
+      }
+  },
+  "auth": {
+    "providers": ["EMAIL_PASSWORD", "GOOGLE"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores all user profiles, regardless of role."
+    },
+    "/conservatoriums/{conservatoriumId}/lessons/{lessonId}": {
+      "schema": { "$ref": "#/entities/LessonSlot" },
+      "description": "All scheduled lessons for a specific conservatory."
+    },
+    "/conservatoriums/{conservatoriumId}/forms/{formId}": {
+      "schema": { "$ref": "#/entities/FormSubmission" },
+      "description": "All submitted recital, conference, and custom forms."
+    },
+    "/conservatoriums/{conservatoriumId}/invoices/{invoiceId}": {
+      "schema": { "$ref": "#/entities/Invoice" },
+      "description": "Billing invoices for the conservatory."
+    },
+    "/conservatoriums/{conservatoriumId}/packages/{packageId}": {
+      "schema": { "$ref": "#/entities/Package" },
+      "description": "Lesson packages offered by the conservatory."
+    },
+    "/conservatoriums/{conservatoriumId}/practiceLogs/{logId}": {
+        "schema": { "$ref": "#/entities/PracticeLog" },
+        "description": "Student practice logs for a conservatory."
+    },
+    "/conservatoriums/{conservatoriumId}/events/{eventId}": {
+        "schema": { "$ref": "#/entities/EventProduction" },
+        "description": "Managed events like recitals and concerts."
+    },
+    "/conservatoriums/{conservatoriumId}/announcements/{announcementId}": {
+        "schema": { "$ref": "#/entities/Announcement" },
+        "description": "Broadcast announcements for a conservatory."
+    }
+  }
+}
