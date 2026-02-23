@@ -1,5 +1,11 @@
 // @ts-nocheck
 'use server';
+/**
+ * @fileoverview Server Actions for the Harmonia application.
+ * This file centralizes all server-side functions that can be called from client components.
+ * It uses a higher-order function `withAuth` to ensure that all actions are authenticated
+ * and their inputs are validated using Zod schemas, providing a secure and robust API layer.
+ */
 
 import type { Composition } from '@/lib/types';
 import { compositions as allCompositions } from '@/lib/data';
@@ -67,6 +73,11 @@ const SearchCompositionsSchema = z.object({
 
 // Secure Server Actions wrapped with Authentication & Zod Validation
 
+/**
+ * Invokes the Genkit AI flow to get intelligent composition suggestions.
+ * @param input - The criteria for suggestions (instrument, genre, existing pieces, etc.).
+ * @returns A promise that resolves to an array of suggested compositions.
+ */
 export const getCompositionSuggestions = withAuth(
   SuggestCompositionsInputSchema,
   async (input: SuggestCompositionsInput): Promise<SuggestCompositionsOutput['suggestions']> => {
@@ -75,6 +86,11 @@ export const getCompositionSuggestions = withAuth(
   }
 );
 
+/**
+ * Searches the mock database for composers matching a query string.
+ * @param query - The search query for the composer's name.
+ * @returns A promise that resolves to an array of matching composer names.
+ */
 export const searchComposers = withAuth(
   SearchComposersSchema,
   async (query: string): Promise<string[]> => {
@@ -88,6 +104,14 @@ export const searchComposers = withAuth(
   }
 );
 
+/**
+ * Searches the mock database for compositions matching a query and optional filters.
+ * @param {object} params - The search parameters.
+ * @param {string} params.query - The search query for title or composer.
+ * @param {string} [params.composer] - An optional composer to filter by.
+ * @param {string} [params.instrument] - An optional instrument to filter by.
+ * @returns A promise that resolves to an array of matching Composition objects.
+ */
 export const searchCompositions = withAuth(
   SearchCompositionsSchema,
   async ({ query, composer, instrument }: z.infer<typeof SearchCompositionsSchema>): Promise<Composition[]> => {
@@ -107,6 +131,11 @@ export const searchCompositions = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to match a student with suitable teachers.
+ * @param input - The student's profile and list of available teachers.
+ * @returns A promise that resolves to an object containing the top teacher matches.
+ */
 export const getTeacherMatches = withAuth(
   MatchTeacherInputSchema,
   async (input: MatchTeacherInput): Promise<MatchTeacherOutput> => {
@@ -114,6 +143,11 @@ export const getTeacherMatches = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to draft a student's progress report.
+ * @param input - The student's data, including practice logs, notes, and repertoire.
+ * @returns A promise that resolves to the drafted report text in Markdown.
+ */
 export const generateProgressReport = withAuth(
   DraftProgressReportInputSchema,
   async (input: DraftProgressReportInput): Promise<DraftProgressReportOutput> => {
@@ -121,6 +155,11 @@ export const generateProgressReport = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to handle a natural language rescheduling request.
+ * @param input - The user's message and scheduling context (upcoming lessons, availability).
+ * @returns A promise that resolves to a conversational response and a proposed action.
+ */
 export const processNlpRescheduleRequest = withAuth(
   RescheduleRequestInputSchema,
   async (input: RescheduleRequestInput): Promise<RescheduleResponse> => {
@@ -128,6 +167,11 @@ export const processNlpRescheduleRequest = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to get a response from the help assistant.
+ * @param input - The user's question and context.
+ * @returns A promise that resolves to a helpful answer and suggested actions.
+ */
 export const getAiHelpResponse = withAuth(
   HelpAssistantInputSchema,
   async (input: HelpAssistantInput): Promise<HelpAssistantResponse> => {
@@ -135,6 +179,11 @@ export const getAiHelpResponse = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to find the best students to target for an empty lesson slot.
+ * @param input - The details of the empty slot and a list of eligible recipients.
+ * @returns A promise that resolves to a list of targeted suggestions.
+ */
 export const getTargetedSlotSuggestions = withAuth(
   TargetSlotsInputSchema,
   async (input: TargetSlotsInput): Promise<TargetSlotsOutput> => {
@@ -142,6 +191,11 @@ export const getTargetedSlotSuggestions = withAuth(
   }
 );
 
+/**
+ * Invokes the Genkit AI flow to generate a personalized follow-up message for an enrollment lead.
+ * @param input - Context from the trial lesson (student, teacher, instrument, notes).
+ * @returns A promise that resolves to the generated follow-up message.
+ */
 export const generateNurtureMessage = withAuth(
   NurtureLeadInputSchema,
   async (input: NurtureLeadInput): Promise<NurtureLeadOutput> => {

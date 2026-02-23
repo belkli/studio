@@ -1,4 +1,9 @@
-
+/**
+ * @fileoverview The main sidebar navigation component for the dashboard.
+ * It dynamically renders navigation links based on the logged-in user's role
+ * and the status of the `newFeaturesEnabled` flag. This allows for a tailored
+ * user experience and progressive feature rollout.
+ */
 'use client';
 import { usePathname } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
@@ -24,6 +29,9 @@ import type { Notification, UserRole } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 
+/**
+ * A component to display a single notification item in the dropdown menu.
+ */
 const NotificationItem = ({ notification }: { notification: Notification }) => (
   <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
     <Link href={notification.link}>
@@ -48,6 +56,10 @@ export function SidebarNav() {
   const pathname = usePathname();
   const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
   
+  /**
+   * Opens the AI Help Assistant via a global function attached to the window object.
+   * This is a simple event-bus-like mechanism for cross-component communication.
+   */
   const handleHelpClick = () => {
     if (typeof (window as any).openHelpAssistant === 'function') {
         (window as any).openHelpAssistant();
@@ -57,6 +69,10 @@ export function SidebarNav() {
   if (!user) {
     return null; // Or a loading spinner
   }
+
+  // --- Link Definitions ---
+  // The application has two sets of navigation links: legacy and new (Harmonia).
+  // The `newFeaturesEnabled` flag determines which set is rendered.
 
   const legacyLinks = [
     { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
@@ -126,6 +142,9 @@ export function SidebarNav() {
 
   const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
 
+  /**
+   * Marks all notifications as read when the notification dropdown is opened.
+   */
   const handleNotificationsOpen = () => {
     if (unreadCount > 0 && user.notifications) {
       const updatedUser = {
@@ -151,11 +170,13 @@ export function SidebarNav() {
       <SidebarContent>
         <SidebarMenu>
           {links.map((link) => {
+            // Determine if the current user's role is allowed to see this link
             const userCanView = link.roles.includes(userRole);
             if (!userCanView) {
               return null;
             }
 
+            // Determine if the link should be styled as "active"
             const isActive = pathname === link.href || (link.href !== '/dashboard' && link.href !== '/dashboard/teacher' && pathname.startsWith(link.href));
 
             return (

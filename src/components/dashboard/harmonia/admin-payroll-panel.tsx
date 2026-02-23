@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Admin-facing dashboard for managing teacher payroll.
+ * This component displays all payroll summaries, organized into tabs by their status (Draft, Approved, Paid).
+ * It allows administrators to review, approve, and mark payrolls as paid, streamlining the entire monthly process.
+ */
 'use client';
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
@@ -22,6 +27,11 @@ const statusTranslations: Record<PayrollStatus, string> = {
     PAID: 'שולם',
 };
 
+/**
+ * Renders a table of payroll summaries within an accordion.
+ * Each item can be expanded to show a detailed list of completed lessons.
+ * Provides actions (Approve, Mark as Paid, Export) based on the payroll status.
+ */
 const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
     const { updatePayrollStatus } = useAuth();
     const { toast } = useToast();
@@ -35,12 +45,17 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         toast({ title: `השכר של ${teacherName} סומן כ"שולם"`});
     }
 
+    /**
+     * Generates and downloads a PDF summary for a specific payroll period.
+     * @param payroll The payroll summary object.
+     */
     const handleExport = (payroll: PayrollSummary) => {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.width;
         
         const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
 
+        // PDF Header
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(20);
         doc.text(rtl(`דוח שכר - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
@@ -50,6 +65,7 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         doc.text(rtl(`תקופה: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
         doc.text(rtl(`סטטוס: ${statusTranslations[payroll.status]}`), pageWidth - 15, 42, { align: 'right' });
         
+        // Table of completed lessons
         const head = [[rtl('סכום'), rtl('תעריף'), rtl('משך (דקות)'), rtl('תלמיד/ה'), rtl('תאריך')]];
         const body = payroll.completedLessons.map(lesson => [
             rtl(`₪${lesson.subtotal.toFixed(2)}`),
@@ -65,7 +81,7 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
             body: body,
             styles: {
                 halign: 'right',
-                font: 'helvetica',
+                font: 'helvetica', // NOTE: jsPDF default fonts lack Hebrew support. A real app would need to embed a font.
             },
             headStyles: {
                 fillColor: [41, 128, 185],
@@ -76,6 +92,7 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         
         const finalY = (doc as any).lastAutoTable.finalY;
 
+        // Totals
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
         doc.text(rtl(`שעות סה"כ: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
@@ -173,7 +190,10 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
     );
 }
 
-
+/**
+ * Main component for the admin payroll panel. It organizes payrolls into a tabbed interface
+ * based on their status, allowing for a clear and manageable workflow.
+ */
 export function AdminPayrollPanel() {
     const { mockPayrolls } = useAuth();
     
