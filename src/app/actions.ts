@@ -48,6 +48,14 @@ import {
 } from '@/ai/flows/target-empty-slots-flow';
 import { TargetSlotsInputSchema } from '@/ai/flows/target-empty-slots-flow';
 
+import {
+  nurtureLead,
+  type NurtureLeadInput,
+  type NurtureLeadOutput,
+} from '@/ai/flows/nurture-lead-flow';
+import { NurtureLeadInputSchema } from '@/ai/flows/nurture-lead-flow';
+
+
 // Schemas for non-Genkit actions
 const SearchComposersSchema = z.string();
 const SearchCompositionsSchema = z.object({
@@ -131,5 +139,12 @@ export const getTargetedSlotSuggestions = withAuth(
   TargetSlotsInputSchema,
   async (input: TargetSlotsInput): Promise<TargetSlotsOutput> => {
     return await getTargetedSlots(input);
+  }
+);
+
+export const generateNurtureMessage = withAuth(
+  NurtureLeadInputSchema,
+  async (input: NurtureLeadInput): Promise<NurtureLeadOutput> => {
+    return await nurtureLead(input);
   }
 );
