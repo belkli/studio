@@ -1,5 +1,4 @@
 
-
 'use client';
 import { usePathname } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
@@ -14,7 +13,7 @@ import {
   SidebarFooter
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCog, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, CalendarPlus, HandCoins } from 'lucide-react';
+import { Book, FileText, LayoutDashboard, Settings, User, BadgeCheck, Bell, PlusCircle, LogOut, Mail, Clock, Building, Calendar, DollarSign, Users, LineChart, Bot, FilePlus, PencilRuler, MessagesSquare, BarChart3, BrainCircuit, UserCircle, Megaphone, UserPlus, Download, Coins, UserCog, Banknote, ListChecks, MessageCircleQuestion, ListCollapse, Presentation, GanttChartSquare, Music, ShieldQuestion, CalendarPlus, HandCoins, GraduationCap } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -90,6 +89,8 @@ export function SidebarNav() {
     { href: '/dashboard/makeups', label: t('makeups'), icon: Coins, roles: ['student', 'parent'] },
     { href: '/dashboard/ai-reschedule', label: t('aiAssistant'), icon: BrainCircuit, roles: ['student', 'parent'] },
     { href: '/dashboard/apply-for-aid', label: 'בקשת מלגה', icon: ShieldQuestion, roles: ['student', 'parent'] },
+    { href: '/dashboard/alumni', label: 'רשת בוגרים', icon: GraduationCap, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'] },
+
 
     // --- Shared Features ---
     { href: '/dashboard/messages', label: t('messages'), icon: MessagesSquare, roles: ['student', 'parent', 'teacher', 'conservatorium_admin', 'site_admin'], id: 'nav-messages' },
