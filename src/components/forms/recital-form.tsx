@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -41,7 +41,7 @@ const recitalFormSchema = z.object({
     studentId: z.string(),
     studentName: z.string(),
     academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
-    grade: z.string().min(1, 'חובה לבחור כיתה'),
+    grade: z.enum(['י', 'יא', 'יב'], { message: 'חובה לבחור כיתה' }),
 
     applicantDetails: z.object({
         city: z.string().optional(),
@@ -120,12 +120,12 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
         if (selectedComposer) {
             debouncedCompositionSearch('');
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComposer]);
-    
+
     useEffect(() => {
         debouncedComposerSearch('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSelectComposition = (id: string) => {
@@ -268,7 +268,7 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
     return (
         <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="space-y-8 mt-8">
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>פרטי התלמיד/ה והמורה</CardTitle>
                     </CardHeader>
@@ -276,7 +276,7 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                         <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>שם התלמיד/ה</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
                         <FormItem> <FormLabel>ת.ז.</FormLabel><Input value={student.idNumber} disabled /></FormItem>
                         <FormItem> <FormLabel>שם המורה</FormLabel><Input value={student.instruments?.[0]?.teacherName} disabled /></FormItem>
-                         <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>כיתה</FormLabel> <FormControl><Input {...field} disabled /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>כיתה</FormLabel> <FormControl><Input {...field} disabled /></FormControl> <FormMessage /> </FormItem>)} />
                     </CardContent>
                 </Card>
 
@@ -296,7 +296,7 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                             ))}
                         </div>
                         <div className="flex items-center gap-4 mt-4">
-                             <Button type="button" variant="outline" onClick={() => append({ ...emptyComposition })} disabled={fields.length >= MAX_REPERTOIRE_ITEMS} >
+                            <Button type="button" variant="outline" onClick={() => append({ ...emptyComposition })} disabled={fields.length >= MAX_REPERTOIRE_ITEMS} >
                                 <PlusCircle className="me-2 h-4 w-4" />
                                 הוסף יצירה
                             </Button>
@@ -305,7 +305,7 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                 </Card>
 
                 <div className="flex justify-end gap-4">
-                     {isEditing && onCancel && (
+                    {isEditing && onCancel && (
                         <Button type="button" variant="ghost" onClick={onCancel}>
                             ביטול
                         </Button>

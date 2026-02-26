@@ -16,4 +16,6 @@ export default function ApplyForAidPage() {
             </div>
 
             <AidApplicationWizard />
-        
+        </div>
+    );
+}

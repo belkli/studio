@@ -1,4 +1,4 @@
-{// @ts-nocheck
+// @ts-nocheck
 'use client';
 
 import { useMemo, useState, useEffect } from "react";
@@ -53,12 +53,12 @@ export default function UsersPage() {
     const { user: currentUser, users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const searchParams = useSearchParams();
     const defaultTab = searchParams.get('tab') || 'approved';
-    
+
     const [searchTerm, setSearchTerm] = useState('');
     const [instrumentFilter, setInstrumentFilter] = useState('all');
     const [teacherFilter, setTeacherFilter] = useState('all');
     const [gradeFilter, setGradeFilter] = useState('all');
-    
+
     const [rejectionReason, setRejectionReason] = useState('');
     const [selectedUserToReject, setSelectedUserToReject] = useState<User | null>(null);
     const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -72,7 +72,7 @@ export default function UsersPage() {
         if (currentUser.role === 'site_admin') {
             baseUsers = users.filter(user => user.id !== currentUser.id);
         } else if (currentUser.role === 'conservatorium_admin') {
-            baseUsers = users.filter(user => 
+            baseUsers = users.filter(user =>
                 user.conservatoriumId === currentUser.conservatoriumId && user.id !== currentUser.id && user.role !== 'site_admin'
             );
         } else {
@@ -102,7 +102,7 @@ export default function UsersPage() {
             availableGrades: Array.from(grades).sort(),
         }
     }, [currentUser, users]);
-    
+
     const filteredApprovedUsers = useMemo(() => {
         if (!approvedUsers) return [];
         return approvedUsers.filter(user => {
@@ -114,7 +114,7 @@ export default function UsersPage() {
             return searchMatch && instrumentMatch && teacherMatch && gradeMatch;
         });
     }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter, newFeaturesEnabled]);
-    
+
     const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student') && newFeaturesEnabled;
 
     if (!currentUser) {
@@ -138,9 +138,9 @@ export default function UsersPage() {
     const handleUpdateUser = (updatedData: EditUserFormData) => {
         if (!editingUser) return;
         const { toast } = useToast();
-        
-        const finalUpdatedUser: User = { 
-            ...editingUser, 
+
+        const finalUpdatedUser: User = {
+            ...editingUser,
             ...updatedData,
         };
 
@@ -148,7 +148,7 @@ export default function UsersPage() {
         toast({ title: 'משתמש עודכן', description: `פרטיו של ${finalUpdatedUser.name} עודכנו בהצלחה.` });
         setEditingUser(null);
     }
-    
+
     const confirmReject = () => {
         if (selectedUserToReject) {
             const { toast } = useToast();
@@ -158,7 +158,7 @@ export default function UsersPage() {
             setRejectionReason('');
         }
     };
-    
+
     return (
         <div className="space-y-6">
             <div>
@@ -172,21 +172,21 @@ export default function UsersPage() {
                         ממתינים לאישור
                         {pendingUsers.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{pendingUsers.length}</span>}
                     </TabsTrigger>
-                     <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
+                    <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="approved" className="mt-6">
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-right">
-                                {currentUser.role === 'site_admin' 
+                                {currentUser.role === 'site_admin'
                                     ? 'כלל המשתמשים'
                                     : `משתמשים ב${currentUser.conservatoriumName}`
                                 }
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                             <div className="flex flex-col md:flex-row gap-4 mb-6">
+                            <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
                                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full rounded-lg bg-background pr-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
@@ -216,7 +216,7 @@ export default function UsersPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
-            
+
             <AlertDialog open={!!selectedUserToReject} onOpenChange={(isOpen) => !isOpen && setSelectedUserToReject(null)}>
                 <AlertDialogContent dir="rtl">
                     <AlertDialogHeader>
@@ -253,13 +253,13 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
     const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
 
     const handleEdit = (user: User) => {
-        if(canEdit) {
+        if (canEdit) {
             onEdit(user);
         } else {
             toast({ title: 'אין הרשאה', description: 'אין לך הרשאה לערוך משתמש זה.' });
         }
     };
-    
+
     if (users.length === 0) {
         return <p className="text-center text-muted-foreground pt-8">לא נמצאו משתמשים התואמים את החיפוש.</p>;
     }
@@ -350,7 +350,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
             instruments: user.instruments || [],
         },
     });
-    
+
     const canChangeRole = currentUser.role === 'site_admin' || (currentUser.role === 'conservatorium_admin' && user.role !== 'conservatorium_admin');
     const canEditSeniority = currentUser.role === 'conservatorium_admin';
 
@@ -359,12 +359,12 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
         <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">
-                    <FormField name="name" render={({ field }) => ( <FormItem> <FormLabel>שם מלא</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                    <FormField name="email" render={({ field }) => ( <FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                    <FormField name="idNumber" render={({ field }) => ( <FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
-                    <FormField name="phone" render={({ field }) => ( <FormItem> <FormLabel>נייד</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
+                    <FormField name="name" render={({ field }) => (<FormItem> <FormLabel>שם מלא</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="idNumber" render={({ field }) => (<FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="phone" render={({ field }) => (<FormItem> <FormLabel>נייד</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 </div>
-                
+
                 <FormField
                     control={form.control}
                     name="role"
@@ -387,7 +387,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     )}
                 />
                 {form.watch('role') === 'student' && (
-                     <div className="space-y-4 pt-4 mt-4 border-t">
+                    <div className="space-y-4 pt-4 mt-4 border-t">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
@@ -398,7 +398,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                                         <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="בחר כיתה"/>
+                                                    <SelectValue placeholder="בחר כיתה" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
