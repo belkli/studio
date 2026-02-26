@@ -60,26 +60,32 @@ export function OpenDayAdminDashboard() {
                         ) : (
                             appointments.map(appt => {
                                 const StatusIcon = statusConfig[appt.status].icon;
+                                const appointmentDate = new Date(appt.appointmentTime);
+                                const isValidDate = !isNaN(appointmentDate.getTime());
+
                                 return (
-                                <TableRow key={appt.id}>
-                                    <TableCell className="font-mono font-semibold">{format(new Date(appt.appointmentTime), 'HH:mm')}</TableCell>
-                                    <TableCell className="font-medium">{appt.familyName}</TableCell>
-                                    <TableCell>{appt.childName} ({t('childAge', {age: appt.childAge})})</TableCell>
-                                    <TableCell>{appt.instrumentInterest}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col">
-                                            <span>{appt.parentPhone}</span>
-                                            <span className="text-xs text-muted-foreground">{appt.parentEmail}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className={statusConfig[appt.status].className}>
-                                            <StatusIcon className="h-3 w-3 me-1.5" />
-                                            {statusConfig[appt.status].label}
-                                        </Badge>
-                                    </TableCell>
-                                </TableRow>
-                            )})
+                                    <TableRow key={appt.id}>
+                                        <TableCell className="font-mono font-semibold">
+                                            {isValidDate ? format(appointmentDate, 'HH:mm') : '??:??'}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{appt.familyName}</TableCell>
+                                        <TableCell>{appt.childName} ({t('childAge', { age: appt.childAge })})</TableCell>
+                                        <TableCell>{appt.instrumentInterest}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col">
+                                                <span>{appt.parentPhone}</span>
+                                                <span className="text-xs text-muted-foreground">{appt.parentEmail}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className={statusConfig[appt.status].className}>
+                                                <StatusIcon className="h-3 w-3 me-1.5" />
+                                                {statusConfig[appt.status].label}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
                         )}
                     </TableBody>
                 </Table>

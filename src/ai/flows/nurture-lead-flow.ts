@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview An AI agent for nurturing enrollment leads after a trial lesson.
  *

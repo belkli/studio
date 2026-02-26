@@ -55,14 +55,14 @@ export function SidebarNav() {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
-  
+
   /**
    * Opens the AI Help Assistant via a global function attached to the window object.
    * This is a simple event-bus-like mechanism for cross-component communication.
    */
   const handleHelpClick = () => {
     if (typeof (window as any).openHelpAssistant === 'function') {
-        (window as any).openHelpAssistant();
+      (window as any).openHelpAssistant();
     }
   };
 
@@ -74,7 +74,15 @@ export function SidebarNav() {
   // The application has two sets of navigation links: legacy and new (Harmonia).
   // The `newFeaturesEnabled` flag determines which set is rendered.
 
-  const legacyLinks = [
+  type LinkItem = {
+    href: string;
+    label: string;
+    icon: any;
+    roles: string[];
+    id?: string;
+  };
+
+  const legacyLinks: LinkItem[] = [
     { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
     { href: '/dashboard/forms', label: t('myForms'), icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
     { href: '/dashboard/forms/new', label: t('newForm'), icon: PlusCircle, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
@@ -84,7 +92,7 @@ export function SidebarNav() {
     { href: '/dashboard/ministry', label: t('ministry'), icon: Building, roles: ['ministry_director'] },
   ];
 
-  const harmoniaLinks = [
+  const harmoniaLinks: LinkItem[] = [
     // --- Dashboards ---
     { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['conservatorium_admin', 'site_admin'], id: 'nav-dashboard-admin' },
     { href: '/dashboard/teacher', label: t('dashboard'), icon: LayoutDashboard, roles: ['teacher'], id: 'nav-dashboard-teacher' },

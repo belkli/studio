@@ -1,0 +1,90 @@
+// Harmonia Firebase Storage Security Rules
+// SDD-P7 (Security Architect) — Privacy-first storage access
+// CRITICAL: Student recordings are PII of minors under Israeli PDPPA
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Sheet Music PDFs ──
+    // Readable by enrolled students and their teachers
+    match /conservatoriums/{cid}/sheetMusic/{compositionId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true;
+      allow write: if request.auth != null
+                   && request.auth.token.conservatoriumId == cid
+                   && request.auth.token.role in ['conservatorium_admin', 'teacher'];
+    }
+
+    // ── Student Feedback (Teacher-uploaded audio/video) ──
+    // CRITICAL: Recordings of minors — maximum restriction
+    match /conservatoriums/{cid}/feedback/{studentId}/{logId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true
+                  && (request.auth.uid == studentId
+                      || request.auth.token.role == 'conservatorium_admin'
+                      || request.auth.token.role == 'teacher');
+      allow write: if request.auth != null
+                   && request.auth.token.conservatoriumId == cid
+                   && request.auth.token.role == 'teacher';
+    }
+
+    // ── Practice Videos (Student-uploaded) ──
+    match /conservatoriums/{cid}/practiceVideos/{studentId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true
+                  && (request.auth.uid == studentId
+                      || request.auth.token.role in ['conservatorium_admin', 'teacher']);
+      allow write: if request.auth != null
+                   && request.auth.token.approved == true
+                   && request.auth.uid == studentId
+                   && request.resource.size < 500 * 1024 * 1024; // 500MB max
+    }
+
+    // ── Invoice PDFs ──
+    match /conservatoriums/{cid}/invoices/{invoiceId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true
+                  && (request.auth.token.role == 'conservatorium_admin'
+                      || request.auth.token.role == 'parent');
+      allow write: if false; // Cloud Functions only
+    }
+
+    // ── Signed Agreements (instrument checkout) ──
+    match /conservatoriums/{cid}/agreements/{checkoutId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true
+                  && request.auth.token.role in ['conservatorium_admin', 'parent'];
+      allow write: if false; // Cloud Functions only
+    }
+
+    // ── Digital Signatures (form signatures) ──
+    match /conservatoriums/{cid}/signatures/{formId}/{file} {
+      allow read: if request.auth != null
+                  && request.auth.token.conservatoriumId == cid
+                  && request.auth.token.approved == true;
+      allow write: if request.auth != null
+                   && request.auth.token.approved == true
+                   && request.resource.size < 1 * 1024 * 1024 // 1MB max for signature images
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // ── Profile Photos ──
+    match /users/{userId}/avatar/{file} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024 // 5MB max
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Block all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

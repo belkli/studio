@@ -11,10 +11,11 @@ import { useTranslations } from 'next-intl';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { he, en, ru, ar } from 'date-fns/locale';
+import { he, enUS, ru, ar } from 'date-fns/locale';
 import { useParams } from 'next/navigation';
+import type { Locale } from 'date-fns';
 
-const localesArr: { [key: string]: Locale } = { he, en, ru, ar };
+const localesArr: { [key: string]: Locale } = { he, en: enUS, ru, ar };
 
 export default function MakeupsPage() {
     const { user, getMakeupCreditBalance, getMakeupCreditsDetail } = useAuth();

@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview The AI Help Assistant for Harmonia.
  *
@@ -7,10 +6,8 @@
  * - HelpAssistantResponse - The return type for the function.
  */
 
-'use server';
-
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 export const HelpAssistantInputSchema = z.object({
   question: z.string(),
@@ -49,8 +46,8 @@ export async function askHelpAssistant(
 
 const prompt = ai.definePrompt({
   name: 'helpAssistantPrompt',
-  input: {schema: HelpAssistantInputSchema},
-  output: {schema: HelpAssistantResponseSchema},
+  input: { schema: HelpAssistantInputSchema },
+  output: { schema: HelpAssistantResponseSchema },
   prompt: `You are a friendly and knowledgeable AI assistant for "Harmonia", a music conservatorium management system. Your name is Harmony.
 Your goal is to answer user questions about how to use the system. You must be polite, concise, and helpful. Always respond in the user's requested locale: {{{locale}}}.
 
@@ -99,7 +96,7 @@ const helpAssistantFlow = ai.defineFlow(
   async input => {
     // In a real implementation with RAG, we would first search for relevant articles
     // and populate the 'context' field for the prompt. For now, it's empty.
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

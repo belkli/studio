@@ -16,7 +16,7 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
         stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
         // Enable new features for "הוד השרון" for demonstration purposes
         newFeaturesEnabled: isHodHasharon,
-         aiAgentsConfig: isHodHasharon ? {
+        aiAgentsConfig: isHodHasharon ? {
             "matchmaker-agent": true,
             "composition-suggester": true,
             "reschedule-agent": false,
@@ -244,9 +244,9 @@ export const mockFormSubmissions: FormSubmission[] = [
 ];
 export const mockPackages: Package[] = [];
 export const mockLessons: LessonSlot[] = [
-    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(16,0,0,0).toString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false },
-    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date().setDate(new Date().getDate() + 2)).setHours(17,0,0,0).toString(), durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-1' },
-    { id: 'lesson-3', conservatoriumId: 'cons-12', teacherId: 'teacher-user-3', studentId: 'other-student-1', instrument: 'גיטרה', startTime: new Date(new Date().setDate(new Date().getDate() + 3)).setHours(15,0,0,0).toString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'ADMIN', roomId: 'room-5', isVirtual: true, meetingLink: 'https://zoom.us/j/1234567890', status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-2' },
+    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 1)).setHours(16, 0, 0, 0)).toISOString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false },
+    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 2)).setHours(17, 0, 0, 0)).toISOString(), durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-1' },
+    { id: 'lesson-3', conservatoriumId: 'cons-12', teacherId: 'teacher-user-3', studentId: 'other-student-1', instrument: 'גיטרה', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 3)).setHours(15, 0, 0, 0)).toISOString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'ADMIN', roomId: 'room-5', isVirtual: true, meetingLink: 'https://zoom.us/j/1234567890', status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-2' },
 ];
 export const mockInvoices: Invoice[] = [];
 export const mockPracticeLogs: PracticeLog[] = [];
@@ -283,7 +283,7 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
         childName: 'אורי',
         childAge: 8,
         instrumentInterest: 'פסנתר',
-        appointmentTime: new Date(new Date().setDate(new Date().getDate() + 14)).setHours(10, 20, 0, 0).toString(),
+        appointmentTime: new Date(new Date(new Date().setDate(new Date().getDate() + 14)).setHours(10, 20, 0, 0)).toISOString(),
         status: 'SCHEDULED',
         registeredAt: new Date().toISOString(),
     }

@@ -7,11 +7,11 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
-import { add, differenceInCalendarDays, startOfDay } from 'date-fns';
+import { add, differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
 
 /**
  * Defines the shape of the authentication context, including all state and action dispatchers.
@@ -69,7 +69,7 @@ interface AuthContextType {
   addEvent: (eventData: Partial<EventProduction>) => void;
   addPerformanceToEvent: (eventId: string, studentId: string, repertoireId: string) => void;
   removePerformanceFromEvent: (eventId: string, performanceId: string) => void;
-  assignInstrumentToStudent: (instrumentId: string, studentId: string) => void;
+  assignInstrumentToStudent: (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => void;
   returnInstrument: (instrumentId: string) => void;
   addPracticeVideo: (videoData: Partial<PracticeVideo>) => void;
   addVideoFeedback: (videoId: string, comment: string) => void;
@@ -198,7 +198,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     });
   };
-  
+
   const updateUserPaymentMethod = (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => {
     if (!user) return;
     const newPaymentMethod: PaymentMethod = {
@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       expiryYear: paymentData.expiryYear,
       isPrimary: true,
     };
-    
+
     // In a real app, you'd only update the primary or add a new one. Here we replace all.
     const updatedUser: User = {
       ...user,
@@ -227,8 +227,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
     }
   };
-  
-   const updateNotificationPreferences = (preferences: NotificationPreferences) => {
+
+  const updateNotificationPreferences = (preferences: NotificationPreferences) => {
     if (!user) return;
     const updatedUser = { ...user, notificationPreferences: preferences };
     updateUser(updatedUser);
@@ -285,52 +285,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const hasExisting = student.achievements?.some(a => a.type === type);
     // Prevent re-awarding certain types of achievements
     if (hasExisting && ['YEARS_ENROLLED_1', 'FIRST_RECITAL'].includes(type)) return;
-    
+
     // For streaks, we might want to update, not just add. For now, we'll keep it simple.
     if (hasExisting && type === 'PRACTICE_STREAK_7') return;
 
     let newAchievement: Achievement | null = null;
 
-    switch(type) {
-        case 'PIECE_COMPLETED':
-            newAchievement = { id: `ach-${Date.now()}`, type, title: 'יצירה הושלמה!', description: 'כל הכבוד על סיום יצירה חדשה.', achievedAt: new Date().toISOString() };
-            break;
-        case 'PRACTICE_STREAK_7':
-            newAchievement = { id: `ach-${Date.now()}`, type, title: 'רצף אימונים של 7 ימים!', description: 'התמדה היא המפתח להצלחה. כל הכבוד!', achievedAt: new Date().toISOString() };
-            break;
+    switch (type) {
+      case 'PIECE_COMPLETED':
+        newAchievement = { id: `ach-${Date.now()}`, type, title: 'יצירה הושלמה!', titleHe: 'יצירה הושלמה!', description: 'כל הכבוד על סיום יצירה חדשה.', icon: '🎵', points: 75, achievedAt: new Date().toISOString() };
+        break;
+      case 'PRACTICE_STREAK_7':
+        newAchievement = { id: `ach-${Date.now()}`, type, title: 'רצף אימונים של 7 ימים!', titleHe: 'רצף אימונים של 7 ימים!', description: 'התמדה היא המפתח להצלחה. כל הכבוד!', icon: '🔥', points: 50, achievedAt: new Date().toISOString() };
+        break;
     }
 
     if (newAchievement) {
-        updateUser({ ...student, achievements: [...(student.achievements || []), newAchievement] });
-        toast({ title: newAchievement.title, description: newAchievement.description });
+      updateUser({ ...student, achievements: [...(student.achievements || []), newAchievement] });
+      toast({ title: newAchievement.title, description: newAchievement.description });
     }
   };
 
   const checkAndAwardPracticeStreak = (studentId: string, allLogs: PracticeLog[]) => {
-      const studentLogs = allLogs.filter(log => log.studentId === studentId);
-      const logDates = [...new Set(studentLogs.map(log => startOfDay(new Date(log.date)).getTime()))].sort((a,b) => b-a);
-      
-      if(logDates.length < 7) return;
+    const studentLogs = allLogs.filter(log => log.studentId === studentId);
+    const logDates = [...new Set(studentLogs.map(log => startOfDay(new Date(log.date)).getTime()))].sort((a, b) => b - a);
 
-      let streak = 0;
-      const today = startOfDay(new Date());
-      const yesterday = startOfDay(addDays(new Date(), -1));
+    if (logDates.length < 7) return;
 
-      if (logDates[0] === today.getTime() || logDates[0] === yesterday.getTime()) {
-           streak = 1;
-           for (let i = 0; i < logDates.length - 1; i++) {
-              const diff = differenceInCalendarDays(logDates[i], logDates[i+1]);
-              if (diff === 1) {
-                  streak++;
-              } else {
-                  break;
-              }
-           }
+    let streak = 0;
+    const today = startOfDay(new Date());
+    const yesterday = startOfDay(addDays(new Date(), -1));
+
+    if (logDates[0] === today.getTime() || logDates[0] === yesterday.getTime()) {
+      streak = 1;
+      for (let i = 0; i < logDates.length - 1; i++) {
+        const diff = differenceInCalendarDays(logDates[i], logDates[i + 1]);
+        if (diff === 1) {
+          streak++;
+        } else {
+          break;
+        }
       }
+    }
 
-      if (streak >= 7) {
-          awardAchievement(studentId, 'PRACTICE_STREAK_7');
-      }
+    if (streak >= 7) {
+      awardAchievement(studentId, 'PRACTICE_STREAK_7');
+    }
   };
 
 
@@ -342,14 +342,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const newLog: PracticeLog = {
       id: `pl-${Date.now()}`,
       studentId: logData.studentId,
-      teacherId: student.instruments?.[0]?.teacherId,
+      teacherId: student.instruments?.[0]?.teacherName ? users.find(t => t.name === student.instruments![0].teacherName)?.id : undefined,
       ...logData
     } as PracticeLog;
     const updatedLogs = [...mockPracticeLogs, newLog];
     setMockPracticeLogs(updatedLogs);
     checkAndAwardPracticeStreak(logData.studentId, updatedLogs);
   };
-  
+
   const updateRepertoireStatus = (repertoireId: string, status: RepertoireStatus) => {
     setMockAssignedRepertoire(prev =>
       prev.map(rep => {
@@ -385,10 +385,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const updateUserPracticeGoal = (studentId: string, practiceGoal: number) => {
     const student = users.find(u => u.id === studentId);
     if (student) {
-        updateUser({ ...student, weeklyPracticeGoal: practiceGoal });
+      updateUser({ ...student, weeklyPracticeGoal: practiceGoal });
     }
   };
-  
+
   const addProgressReport = (reportData: Partial<ProgressReport>) => {
     const newReport: ProgressReport = {
       id: `report-${Date.now()}`,
@@ -491,11 +491,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } as EventProduction;
     setMockEvents(prev => [newEvent, ...prev]);
   };
-  
-   const updateEvent = (updatedEvent: EventProduction) => {
+
+  const updateEvent = (updatedEvent: EventProduction) => {
     setMockEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
   };
-  
+
   const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
     const student = users.find(u => u.id === studentId);
     const repertoireItem = initialMockData.mockAssignedRepertoire.find(r => r.id === repertoireId);
@@ -531,10 +531,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     toast({ title: 'הביצוע הוסר מהתוכנית' });
   };
 
-  const assignInstrumentToStudent = (instrumentId: string, studentId: string) => {
+  const assignInstrumentToStudent = (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
       inst.id === instrumentId
-        ? { ...inst, currentRenterId: studentId, rentalStartDate: new Date().toISOString() }
+        ? {
+          ...inst,
+          currentRenterId: studentId,
+          rentalStartDate: new Date().toISOString(),
+          currentCheckout: checkoutDetails ? {
+            studentId,
+            checkedOutAt: new Date().toISOString(),
+            expectedReturnDate: checkoutDetails.expectedReturnDate,
+            parentSignatureUrl: checkoutDetails.parentSignatureUrl,
+            depositAmount: checkoutDetails.depositAmount
+          } : undefined
+        }
         : inst
     ));
     toast({ title: 'הכלי הושאל בהצלחה' });
@@ -542,7 +553,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const returnInstrument = (instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
       inst.id === instrumentId
-        ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined }
+        ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
         : inst
     ));
     toast({ title: 'הכלי הוחזר למלאי' });
@@ -551,7 +562,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return;
     const studentId = user.role === 'student' ? user.id : user.childIds?.[0];
     const student = users.find(u => u.id === studentId);
-    const teacherId = student?.instruments?.[0]?.teacherName ? users.find(t => t.name === student.instruments[0].teacherName)?.id : undefined;
+    const teacherName = student?.instruments?.[0]?.teacherName;
+    const teacherId = teacherName ? users.find(t => t.name === teacherName)?.id : undefined;
     if (!studentId || !teacherId) return;
 
     const newVideo: PracticeVideo = {
@@ -591,7 +603,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
     );
   };
-  
+
   const updatePerformanceBookingStatus = (bookingId: string, status: PerformanceBookingStatus) => {
     setMockPerformanceBookings(prev =>
       prev.map(booking =>
@@ -660,7 +672,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUsers(prev => [...prev, newUser]);
     return newUser;
   };
-  
+
   const addBranch = (branchData: Partial<Branch>) => {
     const newBranch: Branch = {
       id: `branch-${Date.now()}`,
@@ -672,14 +684,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const updateBranch = (updatedBranch: Branch) => {
     setMockBranches(prev => prev.map(b => b.id === updatedBranch.id ? updatedBranch : b));
   };
-  
+
   const assignRepertoire = (studentId: string, compositionId: string) => {
     const newRepertoire: AssignedRepertoire = {
-        id: `rep-${Date.now()}`,
-        studentId,
-        compositionId,
-        status: 'LEARNING',
-        assignedAt: new Date().toISOString(),
+      id: `rep-${Date.now()}`,
+      studentId,
+      compositionId,
+      status: 'LEARNING',
+      assignedAt: new Date().toISOString(),
     };
     setMockAssignedRepertoire(prev => [...prev, newRepertoire]);
   };

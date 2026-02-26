@@ -1,0 +1,133 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "lessonSlots",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "teacherId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "startTime",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "lessonSlots",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "studentId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "startTime",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "lessonSlots",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "teacherId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "startTime",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "practiceLogs",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "studentId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "date",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "makeupCredits",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "studentId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "expiresAt",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "invoices",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "payerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "dueDate",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "formSubmissions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "conservatoriumId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "submissionDate",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "teacherExceptions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "teacherId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "dateFrom",
+                    "order": "ASCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}
