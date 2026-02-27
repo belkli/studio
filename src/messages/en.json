@@ -802,12 +802,35 @@
         "special": {
             "title": "Special Pricing",
             "trial": "Trial Lesson Price",
-            "adHoc": "Ad-Hoc Lesson Premium"
+            "ad-hoc": "Ad-Hoc Lesson Premium"
         },
         "save": "Save Changes",
         "comparison": {
             "title": "Branch Rate Comparison",
             "description": "View pricing of other conservatoriums for comparison and alignment.",
+            "nameMin": "Branch name must be at least {min} characters.",
+            "addressMin": "Address must be at least {min} characters."
+        }
+    },
+    "Branches": {
+        "title": "Branch Management",
+        "description": "{count} active branches in the system.",
+        "addNew": "Add New Branch",
+        "branchName": "Branch Name",
+        "address": "Address",
+        "conservatorium": "Conservatory",
+        "actions": "Actions",
+        "successUpdate": "Branch updated successfully",
+        "successAdd": "New branch added successfully",
+        "editTitle": "Edit Branch",
+        "addTitle": "Add New Branch",
+        "editDesc": "Update the branch details below.",
+        "addDesc": "Enter the details for the new branch.",
+        "fullAddress": "Full Address",
+        "namePlaceholder": "e.g. North Branch",
+        "addressPlaceholder": "e.g. 15 Hacalaniot St, Petah Tikva",
+        "saveBranch": "Save Branch",
+        "validation": {
             "nameMin": "Branch name must be at least {min} characters.",
             "addressMin": "Address must be at least {min} characters."
         }

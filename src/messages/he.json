@@ -538,12 +538,192 @@
     },
     "PaymentSettings": {
         "updateMethodTitle": "עדכון אמצעי תשלום",
-        "updateMethodDesc": "אנא הכנס את פרטי כרטיס האשראי החדש שלך.",
+        "updateMethodDesc": "אנא הכנס את פרטי כרטיس האשראי החדש שלך.",
         "cardHolder": "שם בעל הכרטיס",
         "cardNumber": "מספר כרטיס",
         "expiryDate": "תאריך תפוגה",
         "cvc": "CVC",
         "cancel": "ביטול",
         "saveButton": "שמור כרטיס"
+    },
+    "BillingPage": {
+        "adminTitle": "לוח בקרה פיננסי",
+        "studentTitle": "חיובים ותשלומים",
+        "adminSubtitle": "ניהול גבייה ותשלומים של הקונסרבטוריון.",
+        "studentSubtitle": "צפייה בחיובים, חשבוניות ועדכון אמצעי תשלום."
+    },
+    "PricingPage": {
+        "title": "הגדרות תמחור",
+        "subtitle": "ניהול תעריפי שיעורים, הנחות ותוספות עבור הקונסרבטוריון שלך."
+    },
+    "PricingSettings": {
+        "success": "הגדרות התמחור עודכנו בהצלחה!",
+        "validation": {
+            "positive": "המחיר חייב להיות חיובי",
+            "percent": "ההנחה חייבת להיות בין 0 ל-100"
+        },
+        "baseRates": {
+            "title": "תעריפי בסיס לשיעורים",
+            "description": "קבע את מחיר הבסיס לשיעור בודד לפי משך זמן.",
+            "min30": "שיעור 30 דקות",
+            "min45": "שיעור 45 דקות",
+            "min60": "שיעור 60 דקות"
+        },
+        "discounts": {
+            "title": "הנחות על חבילות",
+            "description": "הגדר אחוזי הנחה עבור חבילות וזכאויות אחרות.",
+            "pack5": "הנחה על חבילת 5",
+            "pack10": "הנחה על חבילת 10",
+            "yearly": "הנחה שנתית",
+            "sibling": "הנחת אחים"
+        },
+        "special": {
+            "title": "תמחור מיוחד",
+            "trial": "מחיר שיעור ניסיון",
+            "adHoc": "תוספת לשיעור חד-פעמי"
+        },
+        "save": "שמור שינויים",
+        "comparison": {
+            "title": "השוואת תעריפי שלוחות",
+            "description": "צפייה בתמחור של קונסרבטוריונים אחרים לצורך השוואה והתאמה.",
+            "branch": "קונסרבטוריון",
+            "min30": "30 דק'",
+            "min45": "45 דק'",
+            "min60": "60 דק'",
+            "pack5": "הנחת חבילת 5",
+            "yearly": "הנחה שנתית"
+        }
+    },
+    "Branches": {
+        "title": "ניהול סניפים",
+        "description": "{count} סניפים פעילים במערכת.",
+        "addNew": "הוסף סניף חדש",
+        "branchName": "שם הסניף",
+        "address": "כתובת",
+        "conservatorium": "קונסרבטוריון",
+        "actions": "פעולות",
+        "successUpdate": "הסניף עודכן בהצלחה",
+        "successAdd": "סניף חדש נוסף בהצלחה",
+        "editTitle": "עריכת סניף",
+        "addTitle": "הוספת סניף חדש",
+        "editDesc": "עדכן את פרטי הסניף להלן.",
+        "addDesc": "הזן את פרטי הסניף החדש.",
+        "fullAddress": "כתובת מלאה",
+        "namePlaceholder": "לדוגמה: שלוחה צפונית",
+        "addressPlaceholder": "לדוגמה: רחוב הכלניות 15, פתח תקווה",
+        "saveBranch": "שמור סניף",
+        "validation": {
+            "nameMin": "שם הסניף חייב להכיל לפחות {min} תווים.",
+            "addressMin": "הכתובת חייבת להכיל לפחות {min} תווים."
+        }
+    },
+    "Waitlist": {
+        "title": "רשימת ממתינים פעילה",
+        "description": "תלמידים הממתינים למקום פנוי, מסודרים לפי תאריך הצטרפות.",
+        "student": "תלמיד/ה",
+        "requestedTeacher": "מורה מבוקש",
+        "instrument": "כלי נגינה",
+        "joinedDate": "תאריך הצטרפות",
+        "status": "סטטוס",
+        "actions": "פעולות",
+        "emptyTitle": "רשימת ההמתנה ריקה",
+        "emptyDesc": "אין כרגע תלמידים הממתינים לשיבוץ.",
+        "sendOffer": "שלח הצעה",
+        "remove": "הסר",
+        "offerSent": "הצעה נשלחה",
+        "offerSentDesc": "הודעת SMS נשלחה אל {name} עם הצעה למקום פנוי.",
+        "removed": "הוסר מרשימת ההמתנה",
+        "removeTitle": "הסרת ממתין",
+        "removeConfirm": "האם להסיר את {name} מרשימת ההמתנה? פעולה זו אינה הפיכה.",
+        "confirmRemove": "כן, הסר",
+        "unknown": "לא ידוע",
+        "statuses": {
+            "WAITING": "ממתין",
+            "OFFERED": "הוצע מקום",
+            "ACCEPTED": "שובץ",
+            "DECLINED": "דחה הצעה",
+            "EXPIRED": "פג תוקף"
+        }
+    },
+    "Payroll": {
+        "drafts": "טיוטות",
+        "pendingPayment": "ממתין לתשלום",
+        "paid": "שולם",
+        "draftTitle": "דוחות שכר בטיוטה",
+        "draftDesc": "דוחות שכר שנוצרו אוטומטית וממתינים לבדיקה ואישור שלך.",
+        "approvedTitle": "דוחות שאושרו",
+        "approvedDesc": "דוחות אלו אושרו על ידך וממתינים לביצוע התשלום.",
+        "paidTitle": "דוחות ששולמו",
+        "paidDesc": "היסטוריית דוחות שכר ששולמו החודש.",
+        "exportHilan": "ייצוא לחילן/מירב",
+        "exportPast": "ייצוא נתוני עבר",
+        "noDataExport": "אין נתונים לייצוא",
+        "hilanSuccess": "קובץ חילן/מירב יוצר בהצלחה",
+        "teacherApproveSuccess": "השכר של {name} אושר",
+        "teacherPaidSuccess": "השכר של {name} סומן כ\"שולם\"",
+        "hours": "שעות",
+        "grossPay": "שכר ברוטו",
+        "approve": "אשר",
+        "markAsPaid": "סמן כשולם",
+        "export": "יצא",
+        "lessonDetails": "פירוט שיעורים ({count})",
+        "emptyTitle": "אין דוחות שכר",
+        "emptyDesc": "לא קיימים דוחות שכר במצב זה.",
+        "pdf": {
+            "title": "דוח שכר",
+            "period": "תקופה",
+            "status": "סטטוס",
+            "amount": "סכום",
+            "rate": "תעריף",
+            "duration": "משך (דקות)",
+            "student": "תלמיד/ה",
+            "date": "תאריך",
+            "totalHours": "שעות סה\"כ",
+            "grossPay": "שכר ברוטו"
+        },
+        "csv": {
+            "employeeId": "מספר עובד",
+            "employeeName": "שם עובד",
+            "workHours": "שעות עבודה",
+            "grossPay": "שכר ברוטו",
+            "periodStart": "תחילת מחזור",
+            "periodEnd": "סוף מחזור",
+            "hilanCode": "קוד רכיב"
+        }
+    },
+    "Ministry": {
+        "successApprove": "הטופס אושר בהצלחה",
+        "successReject": "הטופס נדחה",
+        "successNeedsChanges": "נשלחה בקשה לתיקונים",
+        "formTypes": {
+            "EXAM_REGISTRATION": "רישום למבחן שלב",
+            "COMPOSITION_SUBMISSION": "הגשת יצירה מקורית",
+            "RECITAL": "אישור תוכנית רסיטל",
+            "SCHOLARSHIP": "בקשת מלגה"
+        },
+        "inboxTitle": "תיבת אישורים",
+        "pending": "ממתינים ({count})",
+        "processed": "טופלו ({count})",
+        "urgent": "דחוף",
+        "emptyInbox": "אין טפסים הממתינים לאישור פיקוח.",
+        "approved": "אושר",
+        "rejected": "נדחה",
+        "returned": "הוחזר לתיקונים",
+        "submittedDate": "הוגש ב:",
+        "currentStatus": "סטטוס קובע:",
+        "submissionDetails": "פרטי הגשה",
+        "attachments": "מסמכים מצורפים",
+        "signatures": "חתימות",
+        "teacher": "מורה",
+        "manager": "מנהל קונסרבטוריון",
+        "digitallySigned": "נחתם דיגיטלית ב-{date}",
+        "cancelRejection": "דרישה לתיקונים / דחייה",
+        "ministryApprove": "אשר טופס",
+        "rejectionReasonLabel": "סיבת הדחייה / דרישה לתיקונים:",
+        "rejectionPlaceholder": "לדוגמה: נא לצרף את התווים בפורמט PDF...",
+        "submitReturn": "שלח לתיקונים",
+        "submitReject": "דחייה סופית",
+        "emptyStateTitle": "תיבת הפניות של הפיקוח",
+        "emptyStateDesc": "כאן ירוכזו כל הטפסים והבקשות הדורשים טיפול של משרד החינוך."
     }
 }
