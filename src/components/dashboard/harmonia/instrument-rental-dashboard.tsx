@@ -13,8 +13,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, formatDistanceToNow, addYears } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Hand, Undo2 } from 'lucide-react';
+import { Hand, Undo2, Plus, Edit, Trash2, MoreVertical } from 'lucide-react';
 import { SignatureCanvas } from '@/components/forms/SignatureCanvas';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -123,10 +125,80 @@ function RentInstrumentDialog({
   );
 }
 
+function InstrumentFormDialog({
+  instrument,
+  open,
+  onOpenChange,
+  onSave,
+}: {
+  instrument?: InstrumentInventory;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (data: Partial<InstrumentInventory>) => void;
+}) {
+  const [type, setType] = useState(instrument?.type || '');
+  const [brand, setBrand] = useState(instrument?.brand || '');
+  const [serialNumber, setSerialNumber] = useState(instrument?.serialNumber || '');
+  const [condition, setCondition] = useState<InstrumentCondition>(instrument?.condition || 'GOOD');
+
+  // Reset form when opened or instrument changes
+  useEffect(() => {
+    if (open) {
+      setType(instrument?.type || '');
+      setBrand(instrument?.brand || '');
+      setSerialNumber(instrument?.serialNumber || '');
+      setCondition(instrument?.condition || 'GOOD');
+    }
+  }, [open, instrument]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent dir="rtl">
+        <DialogHeader>
+          <DialogTitle>{instrument ? 'עריכת כלי' : 'הוספת כלי חדש'}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>סוג כלי</Label>
+            <Input value={type} onChange={e => setType(e.target.value)} placeholder="לדוגמה: כינור, קלידים..." />
+          </div>
+          <div className="space-y-2">
+            <Label>מותג/יצרן</Label>
+            <Input value={brand} onChange={e => setBrand(e.target.value)} placeholder="לדוגמה: Yamaha" />
+          </div>
+          <div className="space-y-2">
+            <Label>מספר סידורי</Label>
+            <Input value={serialNumber} onChange={e => setSerialNumber(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>מצב</Label>
+            <Select dir="rtl" value={condition} onValueChange={(val: InstrumentCondition) => setCondition(val)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {Object.entries(conditionConfig).map(([key, config]) => (
+                  <SelectItem key={key} value={key}>{config.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
+          <Button onClick={() => {
+            onSave({ type, brand, serialNumber, condition });
+            onOpenChange(false);
+          }} disabled={!type || !brand}>{instrument ? 'שמור שינויים' : 'הוסף כלי'}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function InstrumentRentalDashboard() {
-  const { users, mockInstrumentInventory, assignInstrumentToStudent, returnInstrument } = useAuth();
+  const { users, mockInstrumentInventory, assignInstrumentToStudent, returnInstrument, addInstrument, updateInstrument, deleteInstrument } = useAuth();
   const [instrumentToRent, setInstrumentToRent] = useState<InstrumentInventory | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingInst, setEditingInst] = useState<InstrumentInventory | undefined>(undefined);
 
   const { available, rented } = useMemo(() => {
     const available = mockInstrumentInventory.filter(inst => !inst.currentRenterId);
@@ -143,7 +215,13 @@ export function InstrumentRentalDashboard() {
         </TabsList>
         <Card className="mt-4">
           <TabsContent value="available" className="m-0">
-            <CardHeader><CardTitle>כלים זמינים להשאלה</CardTitle></CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>כלים זמינים להשאלה</CardTitle>
+              <Button onClick={() => { setEditingInst(undefined); setIsFormOpen(true); }}>
+                <Plus className="me-2 h-4 w-4" />
+                הוספת כלי
+              </Button>
+            </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
@@ -162,7 +240,18 @@ export function InstrumentRentalDashboard() {
                       <TableCell>{inst.brand}</TableCell>
                       <TableCell className="font-mono">{inst.serialNumber}</TableCell>
                       <TableCell><Badge className={conditionConfig[inst.condition].className}>{conditionConfig[inst.condition].label}</Badge></TableCell>
-                      <TableCell className="text-left"><Button size="sm" onClick={() => setInstrumentToRent(inst)}><Hand className="ms-2 h-4 w-4" />השאלה</Button></TableCell>
+                      <TableCell className="text-left flex items-center justify-end gap-2">
+                        <Button size="sm" onClick={() => setInstrumentToRent(inst)}><Hand className="ms-2 h-4 w-4" />השאלה</Button>
+                        <DropdownMenu dir="rtl">
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => { setEditingInst(inst); setIsFormOpen(true); }}><Edit className="me-2 h-4 w-4" /> עריכה</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => { if (confirm('האם אתה בטוח שברצונך למחוק כלי זה?')) deleteInstrument(inst.id); }}><Trash2 className="me-2 h-4 w-4" /> מחיקה</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
                     </TableRow>
                   ))}
                   {available.length === 0 && <TableRow><TableCell colSpan={5} className="h-24 text-center">אין כלים זמינים במלאי.</TableCell></TableRow>}
@@ -211,6 +300,19 @@ export function InstrumentRentalDashboard() {
         open={!!instrumentToRent}
         onOpenChange={() => setInstrumentToRent(null)}
         onConfirm={assignInstrumentToStudent}
+      />
+
+      <InstrumentFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        instrument={editingInst}
+        onSave={(data) => {
+          if (editingInst) {
+            updateInstrument(editingInst.id, data);
+          } else {
+            addInstrument(data);
+          }
+        }}
       />
     </>
   );

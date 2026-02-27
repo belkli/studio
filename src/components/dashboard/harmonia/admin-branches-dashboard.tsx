@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal, PlusCircle, Building2, Edit } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { BranchEditDialog } from './branch-edit-dialog';
+import { RoomManagementDialog } from './room-management-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
 
@@ -21,6 +22,7 @@ export function AdminBranchesDashboard() {
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
+    const [managingRoomsBranch, setManagingRoomsBranch] = useState<Branch | null>(null);
 
     const conservatoriumBranches = useMemo(() => {
         if (!user) return [];
@@ -99,6 +101,10 @@ export function AdminBranchesDashboard() {
                                                     <Edit className="w-4 h-4 me-2" />
                                                     {tCommon('edit')}
                                                 </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setManagingRoomsBranch(branch)}>
+                                                    <Building2 className="w-4 h-4 me-2" />
+                                                    ניהול חדרים
+                                                </DropdownMenuItem>
                                                 <DropdownMenuItem className="text-destructive">{tCommon('delete')}</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -114,6 +120,11 @@ export function AdminBranchesDashboard() {
                 onOpenChange={setIsDialogOpen}
                 branch={editingBranch}
                 onSave={handleSaveBranch}
+            />
+            <RoomManagementDialog
+                open={!!managingRoomsBranch}
+                onOpenChange={(open) => { if (!open) setManagingRoomsBranch(null); }}
+                branch={managingRoomsBranch}
             />
         </>
     );

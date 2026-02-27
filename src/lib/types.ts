@@ -227,15 +227,84 @@ export type CancellationPolicy = {
   maxMakeupsPerTerm: number;
 };
 
+// --- Public-facing conservatorium profile supporting types ---
+export type SocialMediaLinks = {
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+  tiktok?: string;
+  whatsapp?: string;
+};
+
+export type ConservatoriumDepartment = {
+  name: string;
+  nameEn?: string;
+  headTeacher?: string;
+  link?: string;
+  photoUrl?: string;
+};
+
+export type ConservatoriumStaffMember = {
+  name: string;
+  role?: string;
+  bio?: string;
+  photoUrl?: string;
+};
+
+/** A teacher's opt-in public profile shown in the conservatorium directory */
+export type TeacherDirectoryProfile = {
+  id: string;
+  name: string;
+  role?: string;
+  bio?: string;
+  photoUrl?: string;
+  instruments?: string[];
+};
+
+export type ConservatoriumLocation = {
+  city: string;
+  cityEn?: string;
+  address?: string;
+  coordinates?: { lat: number; lng: number };
+  branches?: string[]; // Location-level branch descriptions
+};
+
+export type ConservatoriumBranchInfo = {
+  name: string;
+  address?: string;
+  tel?: string;
+  email?: string;
+  manager?: string;
+};
+
 export type Conservatorium = {
   id: string;
   name: string;
+  nameEn?: string;
   tier: 'A' | 'B' | 'C';
   stampUrl?: string;
   newFeaturesEnabled?: boolean;
   aiAgentsConfig?: Record<string, boolean>;
   pricingConfig?: PricingConfig;
   cancellationPolicy?: CancellationPolicy;
+  // --- Public profile fields (admin-editable, displayed on About/Contact pages) ---
+  about?: string;
+  email?: string;
+  secondaryEmail?: string;
+  tel?: string;
+  officialSite?: string;
+  openingHours?: string;
+  foundedYear?: number;
+  location?: ConservatoriumLocation;
+  manager?: ConservatoriumStaffMember;
+  pedagogicalCoordinator?: ConservatoriumStaffMember;
+  departments?: ConservatoriumDepartment[];
+  branchesInfo?: ConservatoriumBranchInfo[];
+  teachers?: TeacherDirectoryProfile[];
+  programs?: string[];
+  ensembles?: string[];
+  socialMedia?: SocialMediaLinks;
+  photoUrls?: string[];
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
@@ -592,6 +661,10 @@ export type Room = {
   id: string;
   name: string;
   branchId?: string;
+  capacity?: number;
+  equipment?: string[];
+  description?: string;
+  photoUrl?: string;
 };
 
 export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';

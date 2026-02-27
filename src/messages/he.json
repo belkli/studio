@@ -15,6 +15,7 @@
         "submit": "שלח הרשמה"
     },
     "Common": {
+        "name": "שם",
         "save": "שמור",
         "cancel": "ביטול",
         "saving": "שומר...",
@@ -713,7 +714,12 @@
         "logout": "התנתקות",
         "logo": "הַרמוֹנְיָה",
         "noNotifications": "אין התראות חדשות",
-        "viewAll": "הצג את כל ההתראות"
+        "viewAll": "הצג את כל ההתראות",
+        "alumni": "בוגרי הקונסרבטוריון",
+        "manageScholarships": "ניהול מלגות",
+        "aiCoach": "מאמן אישי (AI)",
+        "scholarships": "מלגות",
+        "conservatoriumProfile": "פרופיל קונסרבטוריון"
     },
     "MessagesPage": {
         "title": "הודעות",
@@ -730,7 +736,9 @@
         "placeholder": "שאל אותי משהו...",
         "suggestionsTitle": "הצעות:",
         "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?",
-        "errorMessage": "אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר."
+        "errorMessage": "אני מצטער, אירעה שגיאה. אנא נסה שוב מאוחר יותר.",
+        "openAssistant": "פתח עוזר AI",
+        "goToHelpCenter": "עבור למרכז העזרה המלא"
     },
     "AlumniPage": {
         "title": "רשת בוגרים",
@@ -745,6 +753,9 @@
         "registerButton": "הירשם עכשיו",
         "addAlumnus": "הוספת בוגר",
         "editAlumnus": "עריכת בוגר",
+        "alumnusAdded": "הבוגר נוסף בהצלחה.",
+        "alumnusUpdated": "פרטי הבוגר עודכנו בהצלחה.",
+        "alumnusDeleted": "הבוגר נמחק בהצלחה.",
         "form": {
             "name": "שם מלא",
             "namePlaceholder": "הכנס שם",
@@ -944,5 +955,41 @@
         "submitReject": "דחייה סופית",
         "emptyStateTitle": "תיבת הפניות של הפיקוח",
         "emptyStateDesc": "כאן ירוכזו כל הטפסים והבקשות הדורשים טיפול של משרד החינוך."
+    },
+    "SettingsPage": {
+        "title": "הגדרות",
+        "subtitle": "ניהול הגדרות המערכת והעדפות החשבון שלך.",
+        "profile": {
+            "title": "מידע פרופיל",
+            "description": "עדכן את פרטי הפרופיל שלך.",
+            "name": "שם",
+            "email": "אימייל",
+            "save": "שמור פרופיל",
+            "success": "הפרופיל נשמר",
+            "successDesc": "הפרופיל שלך עודכן בהצלחה."
+        },
+        "password": {
+            "title": "עדכון סיסמה",
+            "description": "שנה את הסיסמה שלך.",
+            "current": "סיסמה נוכחית",
+            "new": "סיסמה חדשה",
+            "update": "עדכן סיסמה",
+            "success": "הסיסמה עודכנה",
+            "successDesc": "הסיסמה שלך שונתה בהצלחה."
+        },
+        "conservatorium": {
+            "title": "הגדרות קונסרבטוריון",
+            "description": "ניהול תכונות אינטגרציה.",
+            "manageFeatures": "ניהול פרופיל",
+            "pricing": "הגדרות תמחור",
+            "cancellation": "מדיניות ביטולים",
+            "manageAI": "ניהול תכונות AI"
+        },
+        "notifications": {
+            "title": "העדפות התראות",
+            "description": "בחר על מה ברצונך לקבל התראה.",
+            "prompt": "הגדר כיצד תקבל התראות.",
+            "manage": "ניהול התראות"
+        }
     }
 }

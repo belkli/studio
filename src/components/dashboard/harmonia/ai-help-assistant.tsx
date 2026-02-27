@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface Message {
     sender: 'user' | 'bot';
@@ -35,6 +35,7 @@ export function AiHelpAssistant() {
     const { user } = useAuth();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const locale = useLocale();
+    const t = useTranslations('HelpAssistant');
 
     useEffect(() => {
         if (isOpen && messages.length === 0) {
@@ -83,7 +84,7 @@ export function AiHelpAssistant() {
                 onClick={() => setIsOpen(true)}
             >
                 <MessageCircleQuestion className="h-7 w-7" />
-                <span className="sr-only">פתח עוזר AI</span>
+                <span className="sr-only">{t('openAssistant')}</span>
             </Button>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetContent className="flex flex-col p-0" side="left">

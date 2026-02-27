@@ -1,20 +1,72 @@
 
-
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
+import rawConservatoriums from '../../docs/Conservatoriums/conservatoriums.json';
 
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
-// Generate Conservatoriums from the JSON file
+// Build a lookup map from scraped data by numeric id
+const scrapedById: Record<number, any> = {};
+(rawConservatoriums as any[]).forEach((c: any) => { scrapedById[c.id] = c; });
+
+// Generate Conservatoriums from the JSON file, enriched with scraped profile data
 export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => {
     const isHodHasharon = admin.location === 'הוד השרון';
+    const scraped: any = scrapedById[admin.id] || {};
+
+    // Map scraped departments
+    const departments = scraped.departments?.map((d: any) => ({
+        name: d.name,
+        headTeacher: d.head,
+        link: d.link,
+        photoUrl: d.photo,
+    }));
+
+    // Map scraped teachers
+    const teachers = scraped.teachers?.map((t: any, i: number) => ({
+        id: `teacher-dir-${admin.id}-${i}`,
+        name: t.name,
+        role: t.role,
+        photoUrl: t.photo_url,
+    }));
+
+    // Map scraped branches
+    const branchesInfo = scraped.branches?.map((b: any) => ({
+        name: b.name,
+        address: b.address,
+        tel: b.tel,
+        email: b.email,
+        manager: b.manager,
+    }));
+
+    // Map location
+    const location = scraped.location ? {
+        city: scraped.location.city || scraped.city || admin.location,
+        cityEn: scraped.city_en,
+        address: scraped.location.address,
+        coordinates: scraped.location.coordinates,
+        branches: scraped.location.branches,
+    } : {
+        city: admin.location,
+    };
+
+    // Map manager from scraped (richer) or admin data
+    const manager = scraped.manager ? {
+        name: scraped.manager.name || admin.manager_name,
+        role: scraped.manager.role,
+        bio: scraped.manager.bio,
+        photoUrl: scraped.manager.photo_url,
+    } : {
+        name: admin.manager_name,
+    };
+
     return {
         id: `cons-${admin.id}`,
-        name: admin.organization ? `${admin.location} (${admin.organization})` : admin.location, // Include organization for better identification
-        tier: tierCycle[index % 3], // Cycle through tiers A, B, C for variety
+        name: scraped.name || (admin.organization ? `${admin.location} (${admin.organization})` : admin.location),
+        nameEn: scraped.name_en,
+        tier: tierCycle[index % 3],
         stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
-        // Enable new features for "הוד השרון" for demonstration purposes
         newFeaturesEnabled: isHodHasharon,
         aiAgentsConfig: isHodHasharon ? {
             "matchmaker-agent": true,
@@ -24,8 +76,37 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
             "admin-alerts-agent": false,
             "lead-nurture-agent": false,
         } : undefined,
+        // Public profile
+        about: scraped.about,
+        email: scraped.email || admin.email?.split(';')[0].trim(),
+        secondaryEmail: scraped.secondary_email,
+        tel: scraped.tel || admin.office_phone,
+        officialSite: scraped.official_site,
+        openingHours: scraped.opening_hours,
+        location,
+        manager,
+        pedagogicalCoordinator: scraped.pedagogical_coordinator ? {
+            name: scraped.pedagogical_coordinator.name,
+            role: scraped.pedagogical_coordinator.role,
+            bio: scraped.pedagogical_coordinator.bio,
+            photoUrl: scraped.pedagogical_coordinator.photo_url,
+        } : undefined,
+        departments,
+        branchesInfo,
+        teachers,
+        programs: scraped.programs,
+        ensembles: scraped.ensembles,
+        socialMedia: scraped.social_media ? {
+            facebook: scraped.social_media.facebook,
+            instagram: scraped.social_media.instagram,
+            youtube: scraped.social_media.youtube,
+            tiktok: scraped.social_media.tiktok,
+            whatsapp: scraped.social_media.whatsapp,
+        } : undefined,
+        photoUrls: scraped.photos?.length > 0 ? scraped.photos : undefined,
     };
 });
+
 
 export const priceMatrix: Record<string, Record<string, Record<number, number>>> = {
     A: { Small: { 10: 10, 15: 15, 20: 20, 25: 25, 30: 30 }, Medium: { 10: 15, 15: 20, 20: 25, 25: 30, 30: 35 }, Large: { 10: 20, 15: 25, 20: 30, 25: 35, 30: 40 }, },
@@ -96,13 +177,13 @@ export const mockBranches: Branch[] = [
 ];
 
 export const mockRooms: Room[] = [
-    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1' },
-    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1' },
-    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1' },
-    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2' },
-    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2' },
-    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3' },
-    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3' },
+    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1', capacity: 2, equipment: ['פסנתר כנף Yamaha', 'סטנד תווים'], description: 'חדר מרווח המתאים לשיעורי פסנתר ו-2 תלמידים.', photoUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2070&auto=format&fit=crop' },
+    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1', capacity: 2, equipment: ['סטנד תווים', 'מראה'], description: 'מיועד לשיעורים פרטניים.' },
+    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1', capacity: 50, equipment: ['פסנתר כנף Steinway', 'מערכת הגברה'], description: 'אולם מיני קונצרטים לתלמידים.' },
+    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2', capacity: 15, equipment: ['לוח מחיק', 'פסנתר חשמלי', 'מקרן'], description: 'כיתה לימודית לשיעורי תיאוריה והרכבים קטנים.' },
+    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2', capacity: 3, equipment: ['מגברי גיטרה', 'כסאות נגנים'], description: 'חדר לשיעורי גיטרה קלאסית וחשמלית.' },
+    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3', capacity: 5, equipment: ['סטנדים לתווים', 'חומרי בידוד אקוסטי'], description: 'חדר ייעודי לכלי נשיפה מתכתיים ומעץ.' },
+    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3', capacity: 2, equipment: ['כסא צ\'לן מותאם', 'סטנד תווים כפול'], description: 'חדר אימון וקבלת תלמידים.' },
 ];
 
 const studentNotifications: Notification[] = [];
@@ -373,3 +454,36 @@ export const mockMasterclasses: Masterclass[] = [
         price: 300,
     }
 ];
+
+export const initialMockData = {
+    mockUsers,
+    mockFormSubmissions,
+    mockLessons,
+    mockPackages,
+    mockInvoices,
+    mockPracticeLogs,
+    mockAssignedRepertoire,
+    mockLessonNotes,
+    mockMessageThreads,
+    mockProgressReports,
+    mockAnnouncements,
+    mockFormTemplates,
+    mockAuditLog,
+    mockEvents,
+    mockInstrumentInventory,
+    mockPerformanceBookings,
+    mockScholarshipApplications,
+    mockOpenDayEvents,
+    mockOpenDayAppointments,
+    mockBranches,
+    mockPracticeVideos,
+    mockAlumni,
+    mockMasterclasses,
+    mockWaitlist,
+    mockPayrolls,
+    mockMakeupCredits,
+    mockRepertoire,
+    mockRooms,
+    compositions,
+    conservatoriums,
+};

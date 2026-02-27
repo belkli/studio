@@ -75,6 +75,9 @@ interface AuthContextType {
   removePerformanceFromEvent: (eventId: string, performanceId: string) => void;
   assignInstrumentToStudent: (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => void;
   returnInstrument: (instrumentId: string) => void;
+  addInstrument: (instrumentData: Partial<InstrumentInventory>) => void;
+  updateInstrument: (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => void;
+  deleteInstrument: (instrumentId: string) => void;
   addPracticeVideo: (videoData: Partial<PracticeVideo>) => void;
   addVideoFeedback: (videoId: string, comment: string) => void;
   assignMusiciansToPerformance: (bookingId: string, musicianIds: string[]) => void;
@@ -86,6 +89,10 @@ interface AuthContextType {
   addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
   addBranch: (branchData: Partial<Branch>) => void;
   updateBranch: (branchData: Branch) => void;
+  mockRooms: Room[];
+  addRoom: (roomData: Partial<Room>) => void;
+  updateRoom: (roomId: string, roomData: Partial<Room>) => void;
+  deleteRoom: (roomId: string) => void;
   updateNotificationPreferences: (preferences: NotificationPreferences) => void;
   updateUserPaymentMethod: (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => void;
   newFeaturesEnabled: boolean;
@@ -135,6 +142,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
   const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>(initialMockData.mockMakeupCredits || []);
   const [mockRepertoire, setMockRepertoire] = useState<Composition[]>(initialMockData.mockRepertoire || initialMockData.compositions);
+  const [mockRooms, setMockRooms] = useState<Room[]>(initialMockData.mockRooms);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -571,6 +579,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     ));
     toast({ title: 'הכלי הוחזר למלאי' });
   };
+
+  const addInstrument = (instrumentData: Partial<InstrumentInventory>) => {
+    const newInstrument: InstrumentInventory = {
+      id: `inst-${Date.now()}`,
+      conservatoriumId: user?.conservatoriumId || 'cons-1',
+      condition: 'GOOD',
+      ...instrumentData,
+    } as InstrumentInventory;
+    setMockInstrumentInventory(prev => [...prev, newInstrument]);
+    toast({ title: 'הכלי התווסף למלאי בהצלחה' });
+  };
+
+  const updateInstrument = (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => {
+    setMockInstrumentInventory(prev => prev.map(inst =>
+      inst.id === instrumentId ? { ...inst, ...instrumentData } : inst
+    ));
+    toast({ title: 'פרטי הכלי עודכנו בהצלחה' });
+  };
+
+  const deleteInstrument = (instrumentId: string) => {
+    setMockInstrumentInventory(prev => prev.filter(inst => inst.id !== instrumentId));
+    toast({ title: 'הכלי נמחק מהמלאי' });
+  };
   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
     if (!user) return;
     const studentId = user.role === 'student' ? user.id : user.childIds?.[0];
@@ -698,6 +729,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockBranches(prev => prev.map(b => b.id === updatedBranch.id ? updatedBranch : b));
   };
 
+  const addRoom = (roomData: Partial<Room>) => {
+    const newRoom: Room = {
+      id: `room-${Date.now()}`,
+      ...roomData
+    } as Room;
+    setMockRooms(prev => [...prev, newRoom]);
+    toast({ title: 'החדר נוסף בהצלחה' });
+  };
+
+  const updateRoom = (roomId: string, roomData: Partial<Room>) => {
+    setMockRooms(prev => prev.map(r => r.id === roomId ? { ...r, ...roomData } : r));
+    toast({ title: 'פרטי החדר עודכנו' });
+  };
+
+  const deleteRoom = (roomId: string) => {
+    setMockRooms(prev => prev.filter(r => r.id !== roomId));
+    toast({ title: 'החדר נמחק' });
+  };
+
   const assignRepertoire = (studentId: string, compositionId: string) => {
     const newRepertoire: AssignedRepertoire = {
       id: `rep-${Date.now()}`,
@@ -778,6 +828,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       removePerformanceFromEvent,
       assignInstrumentToStudent,
       returnInstrument,
+      addInstrument,
+      updateInstrument,
+      deleteInstrument,
       addPracticeVideo,
       addVideoFeedback,
       assignMusiciansToPerformance,
@@ -789,6 +842,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       addUser,
       addBranch,
       updateBranch,
+      mockRooms,
+      addRoom,
+      updateRoom,
+      deleteRoom,
       updateNotificationPreferences,
       updateUserPaymentMethod,
       assignRepertoire,

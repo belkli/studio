@@ -83,17 +83,22 @@ export default function SettingsPage() {
                 </CardContent>
             </Card>
 
-            {isAdmin && newFeaturesEnabled && (
+            {isAdmin && (
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('conservatorium.title')}</CardTitle>
                         <CardDescription>{t('conservatorium.description')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">{t('conservatorium.manageFeatures')}</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">{t('conservatorium.pricing')}</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">{t('conservatorium.cancellation')}</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/ai">{t('conservatorium.manageAI')}</Link></Button>
+                        <Button asChild variant="default"><Link href="/dashboard/settings/conservatorium/profile">{t('conservatorium.publicProfile')}</Link></Button>
+                        {newFeaturesEnabled && (
+                            <>
+                                <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">{t('conservatorium.manageFeatures')}</Link></Button>
+                                <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">{t('conservatorium.pricing')}</Link></Button>
+                                <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">{t('conservatorium.cancellation')}</Link></Button>
+                                <Button asChild variant="outline"><Link href="/dashboard/ai">{t('conservatorium.manageAI')}</Link></Button>
+                            </>
+                        )}
                     </CardContent>
                 </Card>
             )}

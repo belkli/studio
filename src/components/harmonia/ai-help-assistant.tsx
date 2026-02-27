@@ -136,7 +136,7 @@ export function AiHelpAssistant() {
                 onClick={() => setIsOpen(true)}
             >
                 <MessageCircleQuestion className="h-7 w-7" />
-                <span className="sr-only">פתח עוזר AI</span>
+                <span className="sr-only">{t('openAssistant')}</span>
             </Button>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetContent className="flex flex-col p-0" side="left">
@@ -211,7 +211,7 @@ export function AiHelpAssistant() {
                         </div>
                         <div className="text-center mt-2">
                             <Button variant="link" size="sm" asChild>
-                                <Link href="/help" onClick={() => setIsOpen(false)}>עבור למרכז העזרה המלא</Link>
+                                <Link href="/help" onClick={() => setIsOpen(false)}>{t('goToHelpCenter')}</Link>
                             </Button>
                         </div>
                     </div>

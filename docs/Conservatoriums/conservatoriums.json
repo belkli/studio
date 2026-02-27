@@ -114,8 +114,8 @@
         "location": {
             "city": "אשכול גב מערבי",
             "coordinates": {
-                "lat": 31.3500,
-                "lng": 34.5500
+                "lat": 31.35,
+                "lng": 34.55
             }
         },
         "photos": []
@@ -134,8 +134,8 @@
         "location": {
             "city": "אשכול גב מערבי",
             "coordinates": {
-                "lat": 31.3500,
-                "lng": 34.5500
+                "lat": 31.35,
+                "lng": 34.55
             }
         },
         "photos": []
@@ -233,7 +233,7 @@
             "city": "באר שבע",
             "address": "דרך המשחררים 10, באר שבע",
             "coordinates": {
-                "lat": 31.2530,
+                "lat": 31.253,
                 "lng": 34.7915
             }
         },
@@ -254,7 +254,7 @@
             "city": "בית שמש",
             "coordinates": {
                 "lat": 31.7516,
-                "lng": 34.9880
+                "lng": 34.988
             }
         },
         "photos": []
@@ -274,7 +274,7 @@
             "city": "בית שמש",
             "coordinates": {
                 "lat": 31.7516,
-                "lng": 34.9880
+                "lng": 34.988
             }
         },
         "photos": []
@@ -293,8 +293,8 @@
         "location": {
             "city": "בלוט",
             "coordinates": {
-                "lat": 31.8000,
-                "lng": 34.9500
+                "lat": 31.8,
+                "lng": 34.95
             }
         },
         "photos": []
@@ -374,8 +374,8 @@
         "location": {
             "city": "הגליל העליון",
             "coordinates": {
-                "lat": 33.0500,
-                "lng": 35.5000
+                "lat": 33.05,
+                "lng": 35.5
             }
         },
         "photos": []
@@ -579,16 +579,16 @@
         "location": {
             "city": "הערבה",
             "coordinates": {
-                "lat": 30.3600,
-                "lng": 35.1200
+                "lat": 30.36,
+                "lng": 35.12
             }
         },
         "photos": []
     },
     {
         "id": 17,
-        "name": "קונסרבטוריון הרצליה - מרכז המוסיקה",
-        "name_en": "Herzliya Music Center",
+        "name": "קונסרבטוריון מערב הרצליה | מרכז תאו",
+        "name_en": "West Herzliya Conservatory - Tao Center",
         "city": "הרצליה",
         "city_en": "Herzliya",
         "email": "dudi@music-herzliya.co.il",
@@ -599,8 +599,8 @@
             "role": "מנהל מוסיקלי ראשי",
             "bio": "מנצח ופסנתרן. מנהל מוסיקלי של 4 תזמורות סימפוניות. מנצח על תזמורות מובילות בארץ ובחו\"ל."
         },
-        "official_site": "https://www.music-herzliya.com/",
-        "about": "מרכז המוסיקה מוביל את כל התכנים המוסיקליים בחינוך ובתרבות בהרצליה. פועל בשלוש שלוחות.",
+        "official_site": "https://teo.org.il/conservatory/",
+        "about": "הקונסרבטוריון שפעל במשך שנים בחטיבת הביניים סמדר עבר למרכז תאו החדש והמשודרג. מציע שיעורי מוזיקה פרטניים, הרכבים ולהקות, תיאוריה, הפקה מוזיקלית, קונצרטים וסדנאות אמן. חינוך מוסיקלי מותאם אישית לכל ילד.",
         "branches": [
             {
                 "name": "שלוחת רביבים (יד התשעה)",
@@ -626,49 +626,226 @@
         ],
         "departments": [
             {
-                "name": "פסנתר"
+                "name": "כלי קשת",
+                "teachers": [
+                    {
+                        "name": "דניאל תנחלסון",
+                        "role": "ויולה ורכז המחלקה"
+                    },
+                    {
+                        "name": "קורל קנליס",
+                        "role": "כינור וויולה"
+                    },
+                    {
+                        "name": "פולינה בורשטיין",
+                        "role": "צ'לו"
+                    },
+                    {
+                        "name": "בן דנציג",
+                        "role": "קונטרבס"
+                    }
+                ]
             },
             {
-                "name": "כלי נשיפה"
+                "name": "כלי נשיפה",
+                "teachers": [
+                    {
+                        "name": "מיכל בית הלחמי",
+                        "role": "קלרינט ורכזת המחלקה"
+                    },
+                    {
+                        "name": "ארז כהן",
+                        "role": "מנצח תזמורת כלי נשיפה"
+                    },
+                    {
+                        "name": "עדן אהרון",
+                        "role": "חצוצרה"
+                    },
+                    {
+                        "name": "ניצן אלעזר",
+                        "role": "קלרינט"
+                    },
+                    {
+                        "name": "שי וסנר",
+                        "role": "חליל"
+                    },
+                    {
+                        "name": "קובי שם טוב",
+                        "role": "סקסופון"
+                    },
+                    {
+                        "name": "חגי בר-טל",
+                        "role": "סקסופון"
+                    },
+                    {
+                        "name": "מיכל פלדמן",
+                        "role": "טרומבון"
+                    }
+                ]
             },
             {
-                "name": "כלי קשת"
+                "name": "פיתוח קול",
+                "teachers": [
+                    {
+                        "name": "שירה שיש ברעם",
+                        "role": "רכזת המחלקה ופיתוח קול"
+                    },
+                    {
+                        "name": "דבורה בנאסולי",
+                        "role": "פיתוח קול"
+                    },
+                    {
+                        "name": "שרה בנאסולי",
+                        "role": "פיתוח קול"
+                    },
+                    {
+                        "name": "ליהי מטטוב",
+                        "role": "פיתוח קול"
+                    }
+                ]
             },
             {
-                "name": "גיטרה"
+                "name": "גיטרה וגיטרה בס",
+                "teachers": [
+                    {
+                        "name": "בן דנציג",
+                        "role": "גיטרה, גיטרה בס, קונטרבס ורכז המחלקה"
+                    },
+                    {
+                        "name": "רועי רגב",
+                        "role": "גיטרה והרמוניה על צוואר הגיטרה"
+                    },
+                    {
+                        "name": "גדי קפלן",
+                        "role": "גיטרה ורכז מגמת המוזיקה בסמדר"
+                    },
+                    {
+                        "name": "איב גלולה",
+                        "role": "גיטרה וגיטרה בס"
+                    },
+                    {
+                        "name": "עומר פורשטט",
+                        "role": "גיטרה"
+                    }
+                ]
             },
             {
-                "name": "קומפוזיציה"
+                "name": "פסנתר",
+                "teachers": [
+                    {
+                        "name": "רוני בר-גורליק",
+                        "role": "פסנתר ורכזת המחלקה"
+                    },
+                    {
+                        "name": "רונית בורדו",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "אריאל הלוי",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "דריה זלטין",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "חן בן שושן",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "טמיר קדם",
+                        "role": "פסנתר ג'אז"
+                    },
+                    {
+                        "name": "ציפי בן שפר",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "יואב ליכטנברג",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "אדוה אברך",
+                        "role": "פסנתר"
+                    },
+                    {
+                        "name": "שי-לי פלדי",
+                        "role": "פסנתר ג'אז ומוסיקה קלה"
+                    }
+                ]
             },
             {
-                "name": "תיאוריה"
+                "name": "תופים וכלי הקשה",
+                "teachers": [
+                    {
+                        "name": "גון אמיר",
+                        "role": "רכז המחלקה"
+                    },
+                    {
+                        "name": "אודי קראוס",
+                        "role": "מערכת תופים"
+                    },
+                    {
+                        "name": "הנרי ורד",
+                        "role": "מערכת תופים"
+                    }
+                ]
+            },
+            {
+                "name": "טרום כלי",
+                "note": "לגילאי 3-5, פיתוח שמיעה, קוארדינציה, יכולות מוטוריות וחברתיות"
+            },
+            {
+                "name": "הפקה ומוזיקה אלקטרונית",
+                "description": "מסלול הפקה מוזיקלית במחשב: קצב, באס, הרמוניה, מלודיה/שירה, אווירה. תוכנות DAW, מידי, אודיו, סאונד."
             }
         ],
         "ensembles": [
-            "תזמורת קאמרית",
-            "תזמורת נשיפה (3 רמות)",
-            "ביג בנד",
-            "תזמורת השרון",
-            "מקהלות (לי-רון, זמר לך, יחדיו)"
+            {
+                "name": "תזמורת עתודה של כלי קשת",
+                "note": "תלמידים מתקדמים משתלבים בתזמורת הצעירה והייצוגית של הרצליה"
+            },
+            {
+                "name": "תזמורת כלי הנשיפה העירונית",
+                "conductor": "ארז כהן"
+            },
+            {
+                "name": "להקות ג'אז ומוזיקה קלה",
+                "youtube": "https://www.youtube.com/channel/UCiBdpwtLKQ1JrNu5owQAqsA"
+            }
         ],
         "programs": [
+            "שיעורים פרטניים - התאמה אישית",
+            "שיעורי תיאוריה קבוצתיים (כלולים ללא תוספת עלות)",
             "בית ספר מנגן",
-            "מגמות מוסיקה"
+            "קונצרטים: כיתתי, מחלקתי, סיום, מצטיינים",
+            "במה פתוחה (פעם בחודש)",
+            "סדנאות אמן לתלמידים וקהל רחב",
+            "מגמת מוסיקה בחטיבת ביניים סמדר"
         ],
         "social_media": {
-            "facebook": "https://www.facebook.com/herzliyamusiccenter",
-            "instagram": "https://www.instagram.com/music_herzliya/",
-            "youtube": "https://www.youtube.com/@musicHerzliya",
-            "tiktok": "https://www.tiktok.com/@music_herzliya"
+            "facebook": "https://www.facebook.com/",
+            "instagram": "https://www.instagram.com/",
+            "whatsapp": ""
         },
         "location": {
+            "address": "וינגייט 168, הרצליה",
             "city": "הרצליה",
+            "opening_hours": "א'-ה': 09:00-20:00, ו': 09:00-13:00 (משרד)",
             "coordinates": {
-                "lat": 32.1663,
-                "lng": 34.8435
+                "lat": 32.165,
+                "lng": 34.849
             }
         },
-        "photos": []
+        "photos": [
+            "https://teo.org.il/wp-content/uploads/2020/03/23782-1024x683.jpg",
+            "https://teo.org.il/wp-content/uploads/2020/03/MG_0979-scaled-e1583670910478-1024x1024.jpg"
+        ],
+        "contact": {
+            "tel": "09-9778800",
+            "email": "teo.herzliya@gmail.com",
+            "address": "וינגייט 168, הרצליה 4675765"
+        }
     },
     {
         "id": 18,
@@ -685,8 +862,8 @@
         "location": {
             "city": "זכרון יעקב",
             "coordinates": {
-                "lat": 32.5700,
-                "lng": 34.9500
+                "lat": 32.57,
+                "lng": 34.95
             }
         },
         "photos": []
@@ -746,8 +923,8 @@
         "location": {
             "city": "חוף הכרמל",
             "coordinates": {
-                "lat": 32.6500,
-                "lng": 34.9500
+                "lat": 32.65,
+                "lng": 34.95
             }
         },
         "photos": []
@@ -808,7 +985,7 @@
         "location": {
             "city": "טבריה",
             "coordinates": {
-                "lat": 32.7940,
+                "lat": 32.794,
                 "lng": 35.5308
             }
         },
@@ -828,7 +1005,7 @@
         "location": {
             "city": "טבריה",
             "coordinates": {
-                "lat": 32.7940,
+                "lat": 32.794,
                 "lng": 35.5308
             }
         },
@@ -1030,8 +1207,8 @@
         "location": {
             "city": "יפו",
             "coordinates": {
-                "lat": 32.0500,
-                "lng": 34.7500
+                "lat": 32.05,
+                "lng": 34.75
             }
         },
         "photos": []
@@ -1058,44 +1235,90 @@
     },
     {
         "id": 36,
-        "name": "קונסרבטוריון כפר סבא א",
-        "name_en": "Kfar Saba Conservatory A",
+        "name": "הקונסרבטוריון למוסיקה ולמחול, כפר סבא",
+        "name_en": "Kfar Saba Conservatory for Music and Dance",
         "city": "כפר סבא",
         "city_en": "Kfar Saba",
         "email": "music@mkty.co.il",
         "tel": "09-8985111",
         "manager_email": "054-7299982",
-        "official_site": null,
-        "about": "קונסרבטוריון עירוני כפר סבא.",
+        "official_site": "https://www.kfar-saba.muni.il/",
+        "about": "קונסרבטוריון המוסיקה והמחול של כפר סבא ממוקם ברח' ירושלים 35, קרית ספיר. מציע חינוך מוסיקלי ולימודי מחול לכל הגילאים. מוסד מוכר ע\"י משרד החינוך.",
         "location": {
+            "address": "רחוב ירושלים 35, קרית ספיר, כפר סבא",
             "city": "כפר סבא",
+            "opening_hours": {
+                "phone": "ימים א-ד, 10:00-12:00",
+                "public_hours": "ימים א'-ד', 15:00-18:00"
+            },
             "coordinates": {
-                "lat": 32.1759,
-                "lng": 34.9088
+                "lat": 32.1748,
+                "lng": 34.9071
             }
         },
-        "photos": []
+        "photos": [],
+        "programs": [
+            "לימודי מוסיקה - כל הגילאים",
+            "לימודי מחול",
+            "בית ספר מנגן",
+            "בגרות 5 יח\"ל",
+            "הרשמה לשנת הלימודים תשפ\"ו פתוחה"
+        ],
+        "social_media": {
+            "facebook": "",
+            "instagram": ""
+        },
+        "contact": {
+            "tel": "09-7640740",
+            "tel2": "09-7640741",
+            "fax": "09-7640742",
+            "email": "conservatory@ksaba.co.il",
+            "address": "רח' ירושלים 35, קרית ספיר, כפר-סבא"
+        }
     },
     {
         "id": 37,
-        "name": "קונסרבטוריון כפר סבא ב",
-        "name_en": "Kfar Saba Conservatory B",
+        "name": "הקונסרבטוריון למוסיקה ולמחול, כפר סבא",
+        "name_en": "Kfar Saba Conservatory for Music and Dance",
         "city": "כפר סבא",
         "city_en": "Kfar Saba",
         "email": "cfereh@ksaba.co.il",
         "secondary_email": "SimchaT@ksaba.co.il",
-        "tel": null,
+        "tel": "09-7640740",
         "manager_email": "09-7640740",
-        "official_site": "https://www.ksaba.co.il/",
-        "about": "חברת מוסיקה עירונית כפר סבא.",
+        "official_site": "https://www.kfar-saba.muni.il/",
+        "about": "קונסרבטוריון המוסיקה והמחול של כפר סבא ממוקם ברח' ירושלים 35, קרית ספיר. מציע חינוך מוסיקלי ולימודי מחול לכל הגילאים. מוסד מוכר ע\"י משרד החינוך.",
         "location": {
+            "address": "רחוב ירושלים 35, קרית ספיר, כפר סבא",
             "city": "כפר סבא",
+            "opening_hours": {
+                "phone": "ימים א-ד, 10:00-12:00",
+                "public_hours": "ימים א'-ד', 15:00-18:00"
+            },
             "coordinates": {
-                "lat": 32.1759,
-                "lng": 34.9088
+                "lat": 32.1748,
+                "lng": 34.9071
             }
         },
-        "photos": []
+        "photos": [],
+        "programs": [
+            "לימודי מוסיקה - כל הגילאים",
+            "לימודי מחול",
+            "בית ספר מנגן",
+            "בגרות 5 יח\"ל",
+            "הרשמה לשנת הלימודים תשפ\"ו פתוחה"
+        ],
+        "social_media": {
+            "facebook": "",
+            "instagram": ""
+        },
+        "contact": {
+            "tel": "09-7640740",
+            "tel2": "09-7640741",
+            "fax": "09-7640742",
+            "email": "conservatory@ksaba.co.il",
+            "address": "רח' ירושלים 35, קרית ספיר, כפר-סבא"
+        }
     },
     {
         "id": 38,
@@ -1111,7 +1334,7 @@
         "location": {
             "city": "כרמיאל",
             "coordinates": {
-                "lat": 32.9160,
+                "lat": 32.916,
                 "lng": 35.2972
             }
         },
@@ -1131,8 +1354,8 @@
         "location": {
             "city": "לב השרון",
             "coordinates": {
-                "lat": 32.3300,
-                "lng": 34.9200
+                "lat": 32.33,
+                "lng": 34.92
             }
         },
         "photos": []
@@ -1151,8 +1374,8 @@
         "location": {
             "city": "תבור",
             "coordinates": {
-                "lat": 32.6900,
-                "lng": 35.4300
+                "lat": 32.69,
+                "lng": 35.43
             }
         },
         "photos": []
@@ -1191,8 +1414,8 @@
         "location": {
             "city": "מרום הגליל",
             "coordinates": {
-                "lat": 33.0500,
-                "lng": 35.5000
+                "lat": 33.05,
+                "lng": 35.5
             }
         },
         "photos": []
@@ -1211,8 +1434,8 @@
         "location": {
             "city": "מסד",
             "coordinates": {
-                "lat": 32.5800,
-                "lng": 35.0200
+                "lat": 32.58,
+                "lng": 35.02
             }
         },
         "photos": []
@@ -1232,8 +1455,8 @@
         "location": {
             "city": "מטה יהודה",
             "coordinates": {
-                "lat": 31.7100,
-                "lng": 35.0200
+                "lat": 31.71,
+                "lng": 35.02
             }
         },
         "photos": []
@@ -1293,7 +1516,7 @@
         "location": {
             "city": "מעלות-תרשיחא",
             "coordinates": {
-                "lat": 33.0150,
+                "lat": 33.015,
                 "lng": 35.2706
             }
         },
@@ -1313,8 +1536,8 @@
         "location": {
             "city": "מטה אשר",
             "coordinates": {
-                "lat": 33.0000,
-                "lng": 35.1500
+                "lat": 33.0,
+                "lng": 35.15
             }
         },
         "photos": []
@@ -1333,8 +1556,8 @@
         "location": {
             "city": "מרום הגליל",
             "coordinates": {
-                "lat": 33.0500,
-                "lng": 35.5000
+                "lat": 33.05,
+                "lng": 35.5
             }
         },
         "photos": []
@@ -1353,8 +1576,8 @@
         "location": {
             "city": "מרחבים",
             "coordinates": {
-                "lat": 31.2800,
-                "lng": 34.6500
+                "lat": 31.28,
+                "lng": 34.65
             }
         },
         "photos": []
@@ -1373,8 +1596,8 @@
         "location": {
             "city": "מישגב",
             "coordinates": {
-                "lat": 32.8900,
-                "lng": 35.2400
+                "lat": 32.89,
+                "lng": 35.24
             }
         },
         "photos": []
@@ -1455,51 +1678,177 @@
             "city": "נס ציונה",
             "coordinates": {
                 "lat": 31.9303,
-                "lng": 34.7980
+                "lng": 34.798
             }
         },
         "photos": []
     },
     {
         "id": 56,
-        "name": "קונסרבטוריון נתניה א",
-        "name_en": "Netanya Conservatory A",
+        "name": "הקונסרבטוריון העירוני נתניה",
+        "name_en": "Netanya Municipal Conservatory",
         "city": "נתניה",
         "city_en": "Netanya",
         "email": "arif@netanya-culture.org.il",
         "tel": "09-8308800",
         "manager_email": "056-6221892",
-        "official_site": "https://netanya-culture.org.il/",
-        "about": "קונסרבטוריון עירוני נתניה.",
+        "official_site": "https://www.netanya-culture.co.il/",
+        "about": "הקונסרבטוריון העירוני נתניה מופעל תחת מסגרת היכל התרבות העירוני. מנהל תוכנית בתי ספר מנגן בנתניה מ-2003. מונה כ-40 מורים. כולל תזמורת ייצוגית, מקהלת ניצן (תוכנית מצוינות עם משכנות שאננים), תזמורת לאומית לכלי נשיפה לנוער, ומרכז כלי הקשה \"טרמולו\". שלוחה בקריית השרון.",
         "location": {
+            "address": "רחוב רזיאל 4, נתניה (היכל התרבות)",
             "city": "נתניה",
             "coordinates": {
-                "lat": 32.3226,
-                "lng": 34.8530
-            }
+                "lat": 32.3215,
+                "lng": 34.8532
+            },
+            "branches": [
+                {
+                    "name": "שלוחת קריית השרון",
+                    "address": "נתניה מזרח"
+                }
+            ]
         },
-        "photos": []
+        "photos": [],
+        "departments": [
+            {
+                "name": "מחלקה ווקאלית",
+                "head": "ויטה גורביץ'",
+                "note": "תלמידים התקבלו ללהקות צבאיות"
+            },
+            {
+                "name": "מרכז כלי ההקשה טרמולו",
+                "head": "תומר יריב",
+                "note": "מרכז ייחודי, יועץ משרד החינוך, מכשיר מצטיינים מכל הארץ"
+            },
+            {
+                "name": "כלי נשיפה",
+                "note": "כולל חצוצרה, קרן יער, חליל, טובה"
+            },
+            {
+                "name": "כלי קשת",
+                "note": "כינור, ויולה, צ'לו"
+            }
+        ],
+        "manager": {
+            "name": "אורי רייסנר",
+            "role": "מנהל הקונסרבטוריון העירוני ומנצח התזמורת הייצוגית",
+            "bio": "מורה לקרן יער ומנצח תזמורות נשיפה. החל עבודתו בקונסרבטוריון ב-2001. ניהל בתי ספר מנגן ותזמורות צעירות, מנהל קונסרבטוריון כ-5 שנים. צוות מורים: ~40.",
+            "former_manager": "מוטי מירון"
+        },
+        "ensembles": [
+            {
+                "name": "תזמורת הנוער הייצוגית",
+                "conductor": "אורי רייסנר"
+            },
+            {
+                "name": "מקהלת ניצן",
+                "note": "תכנית מצוינות עם משכנות שאננים"
+            },
+            {
+                "name": "תזמורת הלאומית לכלי נשיפה לנוער"
+            }
+        ],
+        "programs": [
+            "בית ספר מנגן (מ-2003, מרחיב ל-25+ בתי ספר)",
+            "בגרות רסיטל 5 יח\"ל",
+            "תוכנית מצוינות בשיתוף משכנות שאננים ירושלים",
+            "מרכז טרמולו לכלי הקשה",
+            "כנס ארצי לכלי הקשה (מתקיים בנתניה)"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/",
+            "instagram": ""
+        },
+        "contact": {
+            "tel": "09-8308800",
+            "fax": "09-8617555",
+            "email": "cons@netanya-culture.co.il",
+            "address": "רח' רזיאל 4, נתניה"
+        }
     },
     {
         "id": 57,
-        "name": "קונסרבטוריון נתניה ב",
-        "name_en": "Netanya Conservatory B",
+        "name": "הקונסרבטוריון העירוני נתניה",
+        "name_en": "Netanya Municipal Conservatory",
         "city": "נתניה",
         "city_en": "Netanya",
         "email": "rika.lubin@gmail.com",
         "secondary_email": "SchwartznetaI@gmail.com",
         "tel": "04-9956152",
         "manager_email": "050-4706000",
-        "official_site": null,
-        "about": "ענף נוסף של הקונסרבטוריון בנתניה.",
+        "official_site": "https://www.netanya-culture.co.il/",
+        "about": "הקונסרבטוריון העירוני נתניה מופעל תחת מסגרת היכל התרבות העירוני. מנהל תוכנית בתי ספר מנגן בנתניה מ-2003. מונה כ-40 מורים. כולל תזמורת ייצוגית, מקהלת ניצן (תוכנית מצוינות עם משכנות שאננים), תזמורת לאומית לכלי נשיפה לנוער, ומרכז כלי הקשה \"טרמולו\". שלוחה בקריית השרון.",
         "location": {
+            "address": "רחוב רזיאל 4, נתניה (היכל התרבות)",
             "city": "נתניה",
             "coordinates": {
-                "lat": 32.3226,
-                "lng": 34.8530
-            }
+                "lat": 32.3215,
+                "lng": 34.8532
+            },
+            "branches": [
+                {
+                    "name": "שלוחת קריית השרון",
+                    "address": "נתניה מזרח"
+                }
+            ]
         },
-        "photos": []
+        "photos": [],
+        "departments": [
+            {
+                "name": "מחלקה ווקאלית",
+                "head": "ויטה גורביץ'",
+                "note": "תלמידים התקבלו ללהקות צבאיות"
+            },
+            {
+                "name": "מרכז כלי ההקשה טרמולו",
+                "head": "תומר יריב",
+                "note": "מרכז ייחודי, יועץ משרד החינוך, מכשיר מצטיינים מכל הארץ"
+            },
+            {
+                "name": "כלי נשיפה",
+                "note": "כולל חצוצרה, קרן יער, חליל, טובה"
+            },
+            {
+                "name": "כלי קשת",
+                "note": "כינור, ויולה, צ'לו"
+            }
+        ],
+        "manager": {
+            "name": "אורי רייסנר",
+            "role": "מנהל הקונסרבטוריון העירוני ומנצח התזמורת הייצוגית",
+            "bio": "מורה לקרן יער ומנצח תזמורות נשיפה. החל עבודתו בקונסרבטוריון ב-2001. ניהל בתי ספר מנגן ותזמורות צעירות, מנהל קונסרבטוריון כ-5 שנים. צוות מורים: ~40.",
+            "former_manager": "מוטי מירון"
+        },
+        "ensembles": [
+            {
+                "name": "תזמורת הנוער הייצוגית",
+                "conductor": "אורי רייסנר"
+            },
+            {
+                "name": "מקהלת ניצן",
+                "note": "תכנית מצוינות עם משכנות שאננים"
+            },
+            {
+                "name": "תזמורת הלאומית לכלי נשיפה לנוער"
+            }
+        ],
+        "programs": [
+            "בית ספר מנגן (מ-2003, מרחיב ל-25+ בתי ספר)",
+            "בגרות רסיטל 5 יח\"ל",
+            "תוכנית מצוינות בשיתוף משכנות שאננים ירושלים",
+            "מרכז טרמולו לכלי הקשה",
+            "כנס ארצי לכלי הקשה (מתקיים בנתניה)"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/",
+            "instagram": ""
+        },
+        "contact": {
+            "tel": "09-8308800",
+            "fax": "09-8617555",
+            "email": "cons@netanya-culture.co.il",
+            "address": "רח' רזיאל 4, נתניה"
+        }
     },
     {
         "id": 58,
@@ -1515,8 +1864,8 @@
         "location": {
             "city": "עמק הירדן",
             "coordinates": {
-                "lat": 32.7000,
-                "lng": 35.5700
+                "lat": 32.7,
+                "lng": 35.57
             }
         },
         "photos": []
@@ -1535,8 +1884,8 @@
         "location": {
             "city": "עמק יזרעאל",
             "coordinates": {
-                "lat": 32.6000,
-                "lng": 35.2800
+                "lat": 32.6,
+                "lng": 35.28
             }
         },
         "photos": []
@@ -1555,8 +1904,8 @@
         "location": {
             "city": "עמק יזרעאל",
             "coordinates": {
-                "lat": 32.6000,
-                "lng": 35.2800
+                "lat": 32.6,
+                "lng": 35.28
             }
         },
         "photos": []
@@ -1583,8 +1932,8 @@
     },
     {
         "id": 62,
-        "name": "קונסרבטוריון פתח תקווה",
-        "name_en": "Petah Tikva Conservatory",
+        "name": "קונסרבטוריון עירוני פתח תקווה ע\"ש יוסף אחרון",
+        "name_en": "Petah Tikva Municipal Conservatory (Joseph Achron)",
         "city": "פתח תקווה",
         "city_en": "Petah Tikva",
         "email": "shlomitm@ptikva.org.il",
@@ -1592,16 +1941,85 @@
         "tel": "03-9286700",
         "manager_email": "053-3214173",
         "official_site": "https://www.mcpt.co.il/",
-        "about": "קונסרבטוריון עירוני פתח תקווה, אחד הגדולים במרכז הארץ.",
+        "about": "הקונסרבטוריון העירוני בפתח תקוה ע\"ש יוסף אחרון אשר פועל תחת מינהל החינוך בעיר, הוקם בשנת 1950 והוא אחד המוסדות המובילים בארץ בתחום החינוך המוסיקלי המקצועי. הקונסרבטוריון מהווה מרכז מוסיקלי חינוכי, היוצר אקלים תרבותי-חברתי ייחודי. הלימודים משלבים לימודי נגינה במגוון כלים בהוראה יחידנית, לימודי תיאוריה וספרות המוסיקה, נגינה בהרכבים קאמריים, בתזמורת ושירה במקהלה.",
         "location": {
+            "address": "רחוב מבצע יפתח 15 א', פתח תקווה",
             "city": "פתח תקווה",
-            "address": "השיריון 1, פתח תקווה",
             "coordinates": {
-                "lat": 32.0840,
-                "lng": 34.8879
+                "lat": 32.0893,
+                "lng": 34.8866
             }
         },
-        "photos": []
+        "photos": [],
+        "departments": [
+            {
+                "name": "כלי נשיפה",
+                "instruments": [
+                    "אבוב",
+                    "בסון",
+                    "בריטון",
+                    "חליל-צד",
+                    "חלילית",
+                    "חצוצרה",
+                    "טובה",
+                    "טרומבון",
+                    "סקסופון",
+                    "קלרינט",
+                    "קרן יער"
+                ]
+            },
+            {
+                "name": "כלי קשת",
+                "instruments": [
+                    "כינור",
+                    "ויולה",
+                    "צ'לו",
+                    "קונטרבס"
+                ]
+            },
+            {
+                "name": "פסנתר",
+                "head": "חיים גוטלר מללחי",
+                "link": "https://www.mcpt.co.il/education_programs/piano/"
+            }
+        ],
+        "manager": {
+            "name": "ד\"ר מאיר צרויה",
+            "role": "מנהל הקונסרבטוריון",
+            "bio": "מנהל ומוביל את הקונסרבטוריון למצוינות כבר מעל לעשור. דוגל בראש ובראשונה ברמה מקצועית גבוהה, הכרה בערכו העצמי של כל תלמיד, מיצוי הכישרון האישי שלו."
+        },
+        "founded": 1950,
+        "students": "~550 תלמידי קונסרבטוריון + ~600 בית ספר מנגן",
+        "ensembles": [
+            {
+                "name": "תזמורת כלי הנשיפה הייצוגית",
+                "conductor": "מיכאל דלמן",
+                "founded": 1960,
+                "note": "מנצח מ-1982"
+            },
+            {
+                "name": "מקהלת הקנטבילה",
+                "conductor": "שלומית מדר לוי",
+                "founded": 1988
+            }
+        ],
+        "programs": [
+            "נגינה פרטנית",
+            "תיאוריה וספרות המוסיקה",
+            "נגינה בהרכבים קאמריים",
+            "בגרות רסיטל 5 יח\"ל"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/",
+            "instagram": ""
+        },
+        "contact": {
+            "tel": "03-9286700",
+            "fax": "03-6775319",
+            "email": "diklash@ptikva.org.il"
+        },
+        "about_page": "https://www.mcpt.co.il/about/",
+        "teachers_page": "https://www.mcpt.co.il/"
     },
     {
         "id": 63,
@@ -1618,8 +2036,8 @@
         "location": {
             "city": "קדומים",
             "coordinates": {
-                "lat": 32.2800,
-                "lng": 35.1500
+                "lat": 32.28,
+                "lng": 35.15
             }
         },
         "photos": []
@@ -1659,31 +2077,313 @@
             "city": "קצרין",
             "coordinates": {
                 "lat": 32.9999,
-                "lng": 35.6920
+                "lng": 35.692
             }
         },
         "photos": []
     },
     {
         "id": 66,
-        "name": "קונסרבטוריון קריית אונו",
-        "name_en": "Kiryat Ono Conservatory",
+        "name": "קונסרבטוריון קריית אונו ע\"ש אהרון אלקלעי",
+        "name_en": "Kiryat Ono Conservatory (Aaron Alkalai)",
         "city": "קריית אונו",
         "city_en": "Kiryat Ono",
         "email": "bararmon@onomusic.org",
         "tel": "03-8353328",
         "manager_email": "052-2440894",
-        "official_site": "https://www.k-ono.org.il/",
-        "about": "קונסרבטוריון קריית אונו, ידוע בתזמורות כלי הנשיפה ומחלקת הג'אז.",
+        "official_site": "https://www.onomusic.org/",
+        "about": "הקונסרבטוריון בקריית אונו הוא מקום למפגש ראשוני עם חינוך מוזיקלי ובית לצמוח בו. מציעים גישה מטפחת, סקרנית ויצירתית ללימוד מקצועות המוזיקה דרך כלי הנגינה השונים, השתתפות בהרכבים, הפקה מוזיקלית, ותורת המוזיקה. הקונסרבטוריון מופעל ע\"י העמותה לחינוך מוזיקלי בקריית אונו (ע\"ר), ח\"פ: 58-036-420-6.",
         "location": {
+            "address": "רחבת לורדייל לייקס (קריית התרבות), צה\"ל 104, קריית אונו",
             "city": "קריית אונו",
-            "address": "המייסדים 5, קריית אונו",
+            "opening_hours": "א'-ה', 13:00-19:00",
             "coordinates": {
-                "lat": 32.0627,
-                "lng": 34.8578
+                "lat": 32.0548,
+                "lng": 34.8556
             }
         },
-        "photos": []
+        "photos": [],
+        "manager": {
+            "name": "בר ערמון",
+            "role": "מנהל הקונסרבטוריון",
+            "photo_url": "https://static.wixstatic.com/media/3a428b_7288fa4a704043e7a6f005dd215653fd~mv2.jpg/v1/crop/x_97,y_0,w_1776,h_1776/fill/w_176,h_176,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/85_edited.jpg"
+        },
+        "founded": 1962,
+        "ensembles": [
+            {
+                "name": "תזמורת הנוער הייצוגית",
+                "note": "כ-40 נגנים, הופיעה בבית הלבן",
+                "conductor": "גיא פדר"
+            },
+            {
+                "name": "תזמורת הבוגרים",
+                "founded": 1979
+            },
+            {
+                "name": "ביג בנד",
+                "conductor": "גיא פדר"
+            },
+            {
+                "name": "מקהלות",
+                "conductor": "חן שלו"
+            }
+        ],
+        "programs": [
+            "נגינה פרטנית",
+            "השתתפות בהרכבים",
+            "הפקה מוזיקלית",
+            "תורת המוסיקה",
+            "מסלולי לימוד למבוגרים",
+            "בית ספר מנגן",
+            "לימודים לקבוצות מיוחדות",
+            "בגרות רסיטל 5 יח\"ל",
+            "סיורים בחו\"ל (בולגריה, איטליה, גרמניה, ארה\"ב)"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/onomusiccons",
+            "instagram": "https://www.instagram.com/ono_music_cons/",
+            "youtube": "https://www.youtube.com/channel/UChXQRL2WXy1jBrUUNRrFIFw"
+        },
+        "contact": {
+            "tel": "03-6353328",
+            "email": "office@onomusic.org"
+        },
+        "about_page": "https://www.onomusic.org/about",
+        "teachers_page": "https://www.onomusic.org/teachers",
+        "teachers": [
+            {
+                "name": "בר ערמון",
+                "role": "מנהל הקונסרבטוריון",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_7288fa4a704043e7a6f005dd215653fd~mv2.jpg/v1/crop/x_97,y_0,w_1776,h_1776/fill/w_176,h_176,al_c,q_80,enc_avif/85_edited.jpg"
+            },
+            {
+                "name": "לורה בורלא ששון",
+                "role": "ויולה וכינור",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_62b103f97aee4decb8394cae5067576c~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/28%20(3)_edited_edited.jpg"
+            },
+            {
+                "name": "שריג הזנפלד",
+                "role": "קלרינט",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_3d73f9d07a6740bdb381cfb04bed613b~mv2.jpg/v1/crop/x_0,y_122,w_2003,h_2067/fill/w_176,h_182,al_c,q_80,enc_avif/22_3_edited.jpg"
+            },
+            {
+                "name": "אדוה חדידה",
+                "role": "קלרינט",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_cce729711f8f4fabb3570ec8ba9ebb46~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/25_3%2520(1)_edited.jpg"
+            },
+            {
+                "name": "רועי צאיג",
+                "role": "גיטרה",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_aaa6c24db450432aa1d9114c99a90cca~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/53_edited_edited.jpg"
+            },
+            {
+                "name": "דפנה רביד",
+                "role": "כינור",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_09faf272546449b7ba5e7623a6a83687~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/27_3_edited.jpg"
+            },
+            {
+                "name": "ניב עופר",
+                "role": "טרומבון",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_c3f571511b4e47bd95026d607cb17bb2~mv2.jpg/v1/crop/x_0,y_465,w_2003,h_2070/fill/w_176,h_182,al_c,q_80,enc_avif/29_1_edited.jpg"
+            },
+            {
+                "name": "מריאנה גליקמן",
+                "role": "אורגנית",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_25fadef728df4fdf99f8a2555ab76354~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/11_3_edited.jpg"
+            },
+            {
+                "name": "חיים מזר",
+                "role": "טובה",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_faed373029a545f89bbfbf842b1c7366~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/15_3_edited.jpg"
+            },
+            {
+                "name": "ניר פישקין",
+                "role": "בריטון וטרומבון",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_2ef70f2ac9164d30bc9be842f4bda99b~mv2.png/v1/fill/w_176,h_182,al_c,q_85,enc_avif/298696770_1048990335843228_5596559905577286962_n.png"
+            },
+            {
+                "name": "תומר כהן",
+                "role": "גיטרה חשמלית",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_7af09cd1448d44369c4c6ec2974c45e5~mv2.jpg/v1/crop/x_201,y_0,w_1599,h_1652/fill/w_176,h_182,al_c,q_80,enc_avif/DSCF5726_edited.jpg"
+            },
+            {
+                "name": "דנה כהן שריון",
+                "role": "קלרינט",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_ae834b8360d54b3fa7b000498ed08703~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/88_edited.jpg"
+            },
+            {
+                "name": "דורט פלורנטין",
+                "role": "חליליות",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_192b0341e4b749b2a9301c4e17a25907~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/5_3_edited.jpg"
+            },
+            {
+                "name": "רות צרי",
+                "role": "פסנתר",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_58a1da86acfa48ec99151d9094c22078~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/10_1_edited.jpg"
+            },
+            {
+                "name": "נדב פרידמן",
+                "role": "כלי הקשה",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_6dc6891885da4c0fb5a8d94d759671c5~mv2.jpg/v1/crop/x_279,y_0,w_1442,h_1490/fill/w_176,h_182,al_c,q_80,enc_avif/_1%D7%AA%D7%A6%D7%9C%D7%95%D7%9E%D7%99%20%D7%9E%D7%95%D7%A8%D7%99%D7%9D0475_edited.jpg"
+            },
+            {
+                "name": "גונן רוזנברג",
+                "role": "תופים וכלי הקשה",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_ff5021181442423babda25469afba454~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/24_edited.jpg"
+            },
+            {
+                "name": "יאנה וישנבצקי",
+                "role": "פיתוח קול ופסנתר"
+            },
+            {
+                "name": "איוונה קיש",
+                "role": "תאוריה ופיתוח שמיעה",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_d5e6f319ace54dc0bab630b1498d1d2e~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/4_3_edited.jpg"
+            },
+            {
+                "name": "אירינה וישנבצקי",
+                "role": "פסנתר",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_8292cf673c3d44b6bbad295985f0b752~mv2.jpg/v1/crop/x_0,y_250,w_1080,h_1116/fill/w_176,h_182,al_c,q_80,enc_avif/9_1_edited.jpg"
+            },
+            {
+                "name": "אבנר חנני",
+                "role": "פסנתר",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_28efec23dd2f4b719541b5156b29f133~mv2.jpg/v1/fill/w_176,h_182,al_c,q_80,enc_avif/49_edited.jpg"
+            },
+            {
+                "name": "עידו אסא",
+                "role": "תופים",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_5b6774d8e6294246b353a3b9bf482a8f~mv2.jpg/v1/crop/x_93,y_0,w_1814,h_1874/fill/w_176,h_182,al_c,q_80,enc_avif/104_edited.jpg"
+            },
+            {
+                "name": "יותם ברק",
+                "role": "סקסופון",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_59468b8f17734a02b38f3d1de0c2f207~mv2.jpg/v1/crop/x_94,y_0,w_1813,h_1873/fill/w_176,h_182,al_c,q_80,enc_avif/79_edited.jpg"
+            },
+            {
+                "name": "אולה בינדר",
+                "role": "פיתוח קול",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_302274a43f7145b380e22f736f0baf0e~mv2.jpg/v1/crop/x_0,y_250,w_1080,h_1116/fill/w_176,h_182,al_c,q_80,enc_avif/13_2_edited.jpg"
+            },
+            {
+                "name": "אליאנה לובנברג",
+                "role": "כינור וויולה",
+                "photo_url": "https://static.wixstatic.com/media/e5ff77_5a0fb170b4f64c4e908cad643011e180~mv2.png/v1/fill/w_176,h_182,al_c,q_85,enc_avif/16_1.png"
+            },
+            {
+                "name": "ניר ערמון",
+                "role": "סקסופון",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_f55209bd11954f82b58de82639b368d8~mv2.jpg/v1/crop/x_67,y_0,w_1867,h_1929/fill/w_176,h_182,al_c,q_80,enc_avif/72_edited.jpg"
+            },
+            {
+                "name": "דניאל אדג'יאשווילי",
+                "role": "כינור",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_494c5f816d634155a1039cf7e2aaf161~mv2.jpg/v1/crop/x_159,y_0,w_1683,h_1739/fill/w_176,h_182,al_c,q_80,enc_avif/80_edited.jpg"
+            },
+            {
+                "name": "נועה שירוון",
+                "role": "חלילית",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_4e2440d5ed104667ad3d265155c0e115~mv2.jpg/v1/crop/x_299,y_0,w_1401,h_1448/fill/w_176,h_182,al_c,q_80,enc_avif/60_edited.jpg"
+            },
+            {
+                "name": "אלון מלניק",
+                "role": "מנצח תזמורת",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_45b2c44947e342e2b67a837020cb9b39~mv2.jpg/v1/crop/x_291,y_0,w_1419,h_1466/fill/w_176,h_182,al_c,q_80,enc_avif/63_edited.jpg"
+            },
+            {
+                "name": "ליאור מישל וירוט",
+                "role": "אבוב",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_dd3e1472562c4157aa83ba8ab69e5d6b~mv2.jpg/v1/crop/x_334,y_0,w_1333,h_1377/fill/w_176,h_182,al_c,q_80,enc_avif/34_edited.jpg"
+            },
+            {
+                "name": "מעיין זיטמן-פורת",
+                "role": "פיתוח קול",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_af30550657b445b285a38805fa977bc9~mv2.jpg/v1/crop/x_355,y_0,w_1289,h_1332/fill/w_176,h_182,al_c,q_80,enc_avif/39_edited.jpg"
+            },
+            {
+                "name": "איתמר ציון",
+                "role": "פסנתר",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_4b50ee76df7f4aa7b4c594a6aa804d75~mv2.jpg/v1/crop/x_159,y_0,w_1517,h_1568/fill/w_176,h_182,al_c,q_80,enc_avif/41_edited_edited.jpg"
+            },
+            {
+                "name": "תמר דויטש",
+                "role": "צ'לו",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_0fa4f2f103784ca89866f5a9b8436838~mv2.jpg/v1/crop/x_261,y_0,w_1479,h_1528/fill/w_176,h_182,al_c,q_80,enc_avif/66_edited.jpg"
+            },
+            {
+                "name": "חנן בכר",
+                "role": "מלווה בפסנתר",
+                "photo_url": "https://static.wixstatic.com/media/3a428b_7d33aed5dd2b42ff8fd4b0ef104e254f~mv2.jpg/v1/crop/x_205,y_0,w_1589,h_1642/fill/w_176,h_182,al_c,q_80,enc_avif/58_edited.jpg"
+            },
+            {
+                "name": "עמרי לנדה",
+                "role": "הפקה מוזיקלית"
+            },
+            {
+                "name": "דור סמוכה",
+                "role": "גיטרה בס"
+            },
+            {
+                "name": "שאלי הרשקו",
+                "role": "טרומבון"
+            },
+            {
+                "name": "חן שלו",
+                "role": "מנצחת מקהלות"
+            },
+            {
+                "name": "דן ורון",
+                "role": "חצוצרה"
+            },
+            {
+                "name": "צביקי מורן",
+                "role": "קרן יער"
+            },
+            {
+                "name": "אסנת ברנר-סיון",
+                "role": "קרן יער"
+            },
+            {
+                "name": "מריצ'ל לורנס",
+                "role": "צ'לו"
+            },
+            {
+                "name": "מילה ספוז'ניקוב סמרה",
+                "role": "מלווה בפסנתר"
+            },
+            {
+                "name": "יוליה דולוב",
+                "role": "ליווי פסנתר"
+            },
+            {
+                "name": "אולגה סנדרסקייה",
+                "role": "פיתוח קול"
+            },
+            {
+                "name": "רז ארנון",
+                "role": "כלי הקשה ותופים"
+            },
+            {
+                "name": "אילנה וינוקור",
+                "role": "אורגנית"
+            },
+            {
+                "name": "דניאלה ברקוביץ'",
+                "role": "חליל צד"
+            },
+            {
+                "name": "מרי אידה ברשינסקי",
+                "role": "פסנתר"
+            },
+            {
+                "name": "עדן גיאת",
+                "role": "פסנתר"
+            },
+            {
+                "name": "רחל אילת",
+                "role": "חליל צד"
+            }
+        ]
     },
     {
         "id": 67,
@@ -1759,7 +2459,7 @@
         "location": {
             "city": "קריית ים",
             "coordinates": {
-                "lat": 32.8540,
+                "lat": 32.854,
                 "lng": 35.0648
             }
         },
@@ -1819,7 +2519,7 @@
         "location": {
             "city": "ראשון לציון",
             "coordinates": {
-                "lat": 31.9730,
+                "lat": 31.973,
                 "lng": 34.7895
             }
         },
@@ -1867,8 +2567,8 @@
     },
     {
         "id": 76,
-        "name": "קונסרבטוריון רמת גן ע\"ש נעמי שמר",
-        "name_en": "Ramat Gan Conservatory – Naomi Shemer",
+        "name": "קונסרבטוריון רמת גן | המרכז העירוני למוזיקה",
+        "name_en": "Ramat Gan Municipal Music Center",
         "city": "רמת גן",
         "city_en": "Ramat Gan",
         "email": "michaela.bh@gmail.com",
@@ -1879,88 +2579,92 @@
         "about": "המרכז העירוני למוזיקה רמת גן ע\"ש נעמי שמר. פועל בפיקוח משרד החינוך, מציע לתושבים בכל הגילאים מגוון פעילויות: תזמורות, מקהלות, הרכבים קאמריים, שעורי תאוריה, הלחנה ואלתור.",
         "departments": [
             {
-                "name": "כלי נשיפה",
-                "link": "https://www.ramatganmusic.com/department/wind-instruments"
+                "name": "מחלקת פסנתר",
+                "link": "https://www.ramatganmusic.com/piano"
             },
             {
-                "name": "כלי מקלדת",
-                "link": "https://www.ramatganmusic.com/department/keyboard-tool"
+                "name": "מחלקת כינור",
+                "link": "https://www.ramatganmusic.com/violin"
             },
             {
-                "name": "כלי קשת",
-                "link": "https://www.ramatganmusic.com/department/bow-instruments"
+                "name": "מחלקת ויולה",
+                "link": "https://www.ramatganmusic.com/viola"
             },
             {
-                "name": "ניצוח",
-                "link": "https://www.ramatganmusic.com/department/conducting"
+                "name": "מחלקת צ'לו",
+                "link": "https://www.ramatganmusic.com/cello"
             },
             {
-                "name": "כלי פריטה (גיטרה)",
-                "link": "https://www.ramatganmusic.com/department/string-instrument"
+                "name": "מחלקת גיטרה",
+                "link": "https://www.ramatganmusic.com/guitar"
             },
             {
-                "name": "מחלקה ווקאלית",
-                "link": "https://www.ramatganmusic.com/department/vocal-department"
+                "name": "מחלקת קלרינט",
+                "link": "https://www.ramatganmusic.com/clarinet"
             },
             {
-                "name": "כלי הקשה",
-                "link": "https://www.ramatganmusic.com/department/percussions"
+                "name": "מחלקת חליל",
+                "link": "https://www.ramatganmusic.com/flute"
             },
             {
-                "name": "תאוריה",
-                "link": "https://www.ramatganmusic.com/department/theory"
+                "name": "מחלקת סקסופון",
+                "link": "https://www.ramatganmusic.com/saxophone"
             },
             {
-                "name": "הלחנה ואלתור",
-                "link": "https://www.ramatganmusic.com/department/composition-and-improvisation"
+                "name": "מחלקת חצוצרה",
+                "link": "https://www.ramatganmusic.com/trumpet"
             },
             {
-                "name": "הרכבים קאמריים",
-                "link": "https://www.ramatganmusic.com/department/chamber-compositions"
+                "name": "מחלקת תופים וכלי הקשה",
+                "link": "https://www.ramatganmusic.com/percussion"
             },
             {
-                "name": "תזמורות",
-                "link": "https://www.ramatganmusic.com/department/orchestras"
+                "name": "מחלקת פיתוח קול",
+                "link": "https://www.ramatganmusic.com/voice"
             },
             {
-                "name": "DJ ואולפן הקלטות",
-                "link": "https://www.ramatganmusic.com/department/musicproduction"
+                "name": "מחלקת ג'אז",
+                "link": "https://www.ramatganmusic.com/jazz"
             },
             {
-                "name": "טרום כלי",
-                "link": "https://www.ramatganmusic.com/department/begining"
+                "name": "מחלקת מוסיקה אלקטרונית",
+                "link": "https://www.ramatganmusic.com/electronic"
             },
             {
-                "name": "מחלקה אתנית",
-                "link": "https://www.ramatganmusic.com/department/ethnic"
+                "name": "מחלקת תיאוריה",
+                "link": "https://www.ramatganmusic.com/theory"
             }
         ],
         "programs": [
             "בית ספר מנגן (25 בתי ספר)",
             "מוסיקה לכל גיל",
-            "שיעורי אורגנית/גיטרה בבי\"ס"
+            "בגרות רסיטל 5 יח\"ל"
         ],
         "teachers_page": "https://www.ramatganmusic.com/teachers",
         "social_media": {
-            "facebook": "https://www.facebook.com/musicramatgan",
-            "instagram": "https://www.instagram.com/ramatganconservatorium/",
-            "youtube": "https://www.youtube.com/channel/UC6oHYj4u3L3xOwFR7NhDUVg",
-            "tiktok": "https://www.tiktok.com/@ramatganconservatory"
+            "facebook": "https://www.facebook.com/ramatganmusic",
+            "instagram": "https://www.instagram.com/ramatganmusic/",
+            "youtube": "https://www.youtube.com/",
+            "tiktok": "https://www.tiktok.com/"
         },
         "location": {
+            "address": "רחוב רש\"י 5, מגדל גרונר, קומה מינוס 3, רמת גן",
             "city": "רמת גן",
-            "address": "רש\"י 5, מגדל גרונר, קומה מינוס 3, רמת גן 52111",
+            "opening_hours": "א'-ה' 09:00-19:00",
             "coordinates": {
-                "lat": 32.0691,
-                "lng": 34.8238
+                "lat": 32.0681,
+                "lng": 34.8236
             }
         },
         "opening_hours": "א'-ה' 09:00-19:00",
         "photos": [
-            "https://i.ytimg.com/vi/oP2mas-Dp3Y/maxresdefault.jpg",
-            "https://i.ytimg.com/vi/_RiYGubY75A/maxresdefault.jpg",
-            "https://static.wixstatic.com/media/005c54_966bd6c7e3db4cfc9135491b8e33db55f000.jpg/v1/fill/w_160,h_90,al_c,q_80/005c54_966bd6c7e3db4cfc9135491b8e33db55f000.jpg"
-        ]
+            "https://i.ytimg.com/vi/oP2mas-Dp3Y/maxresdefault.jpg"
+        ],
+        "contact": {
+            "tel": "03-6706620",
+            "email": "info@ramatganmusic.com",
+            "address": "רש\"י 5, מגדל גרונר, קומה מינוס 3, רמת גן"
+        }
     },
     {
         "id": 77,
@@ -1985,24 +2689,149 @@
     },
     {
         "id": 78,
-        "name": "קונסרבטוריון רעננה",
-        "name_en": "Ra'anana Conservatory",
+        "name": "מרכז פיס למוסיקה רעננה",
+        "name_en": "Pais Music Center Raanana",
         "city": "רעננה",
-        "city_en": "Ra'anana",
+        "city_en": "Raanana",
         "email": "limora@raanana.muni.il",
         "secondary_email": "raananamusiccenter@gmail.com",
         "tel": "03-7711330",
         "manager_email": "052-8197173",
-        "official_site": null,
-        "about": "קונסרבטוריון עירוני רעננה.",
+        "official_site": "https://www.raananamusic.com/",
+        "about": "מרכז פיס למוסיקה רעננה הוקם בשנת 1989 והינו המרכז ללימודי מוסיקה ברמה הגבוהה ביותר בעיר. מטרת המרכז לקדם את החינוך המוסיקלי על כל מרכיביו: נגינה בכלי, האזנה לקונצרטים, שאיפה למצויינות, פיתוח היצירתיות, שיפור הביטחון העצמי ולימוד מיומנויות עמידה על במה. מוסמך ע\"י ABRSM (לונדון) לביצוע מבחני הערכה.",
         "location": {
+            "address": "רחוב עציון 48, רעננה",
             "city": "רעננה",
+            "opening_hours": "א'-ה': 11:00-22:00, ו': 09:00-14:00",
             "coordinates": {
-                "lat": 32.1851,
-                "lng": 34.8702
+                "lat": 32.1859,
+                "lng": 34.8709
             }
         },
-        "photos": []
+        "photos": [
+            "https://www.raananamusic.com/uploads/3/0/6/5/3065118/raananamusic-new-header-4_1.jpeg"
+        ],
+        "departments": [
+            {
+                "name": "מנצחי תזמורות ומקהלות",
+                "link": "https://www.raananamusic.com/conductors.html"
+            },
+            {
+                "name": "תורת המוסיקה",
+                "link": "https://www.raananamusic.com/theory-dept.html"
+            },
+            {
+                "name": "פסנתר",
+                "link": "https://www.raananamusic.com/piano-dept.html"
+            },
+            {
+                "name": "גיטרה",
+                "link": "https://www.raananamusic.com/guitar-dept.html"
+            },
+            {
+                "name": "כלי נשיפה עץ",
+                "link": "https://www.raananamusic.com/woodwind-dept.html"
+            },
+            {
+                "name": "כלי נשיפה מתכת",
+                "link": "https://www.raananamusic.com/brass-dept.html"
+            },
+            {
+                "name": "כלי קשת",
+                "link": "https://www.raananamusic.com/string-dept.html"
+            },
+            {
+                "name": "סקסופון",
+                "link": "https://www.raananamusic.com/saxophone-dept.html"
+            },
+            {
+                "name": "תופים וכלי הקשה",
+                "link": "https://www.raananamusic.com/percussion-dept.html",
+                "head": "מיכל רהט (רכזת מ-2008, מורה מ-2000)"
+            },
+            {
+                "name": "שירה",
+                "link": "https://www.raananamusic.com/vocal-dept.html"
+            },
+            {
+                "name": "מחקר ופיתוח",
+                "link": "https://www.raananamusic.com/research-dept.html"
+            }
+        ],
+        "founded": 1989,
+        "ensembles": [
+            {
+                "name": "התזמורת הסימפונית",
+                "link": "https://www.raananamusic.com/symphony-orchestra.html"
+            },
+            {
+                "name": "תזמורת הנוער",
+                "link": "https://www.raananamusic.com/concert-band.html"
+            },
+            {
+                "name": "תזמורת כלי קשת",
+                "link": "https://www.raananamusic.com/string-orchestra.html"
+            },
+            {
+                "name": "המקהלה העירונית הייצוגית",
+                "link": "https://www.raananamusic.com/city-choir.html",
+                "musical_director": "רני גולן (מ-2010)"
+            },
+            {
+                "name": "הרכבים",
+                "link": "https://www.raananamusic.com/ensembles.html"
+            }
+        ],
+        "programs": [
+            {
+                "name": "תלמים - מסלול מצטיינים",
+                "link": "https://www.raananamusic.com/tlamim.html",
+                "classical_director": "גיא פורת",
+                "jazz_director": "עמית פרידמן",
+                "note": "בגרות 5 יח\"ל, פתוח לתלמידי כל ישובי האזור"
+            },
+            {
+                "name": "פסטיבל קשת ערן",
+                "link": "https://www.raananamusic.com/keshet-eran.html"
+            },
+            {
+                "name": "מח' מחוננים ומצטיינים",
+                "link": "https://www.raananamusic.com/solanei-hamahar.html"
+            },
+            {
+                "name": "צפור, לאן את נוסעת?",
+                "link": "https://www.raananamusic.com/tzipor.html"
+            },
+            {
+                "name": "מגמת מוסיקה - חטיבת אלון",
+                "link": "https://www.raananamusic.com/alon-registration.html"
+            },
+            {
+                "name": "מגמת מוסיקה - חטיבת רימון",
+                "link": "https://www.raananamusic.com/rimon-registration.html"
+            },
+            {
+                "name": "הפקה מוסיקלית",
+                "link": "https://www.raananamusic.com/1492150815111492-15021493150514971511150014971514.html"
+            },
+            {
+                "name": "ABRSM - מבחני הערכה בינלאומיים",
+                "note": "מוסד מוביל בישראל לשיטות ABRSM"
+            }
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/raananamusic",
+            "instagram": "https://www.instagram.com/raananamusic/"
+        },
+        "contact": {
+            "tel": [
+                "09-771-1330",
+                "09-774-0559"
+            ],
+            "fax": "09-774-1288",
+            "address": "רחוב עציון 48, רעננה 4356324",
+            "director_email": "limor@raananamusic.com"
+        }
     },
     {
         "id": 79,
@@ -2038,8 +2867,8 @@
         "location": {
             "city": "שומרון",
             "coordinates": {
-                "lat": 32.1000,
-                "lng": 35.0500
+                "lat": 32.1,
+                "lng": 35.05
             }
         },
         "photos": []
@@ -2066,8 +2895,8 @@
     },
     {
         "id": 82,
-        "name": "הקונסרבטוריון הישראלי למוסיקה ע\"ש לין ותד אריסון - תל אביב",
-        "name_en": "The Israeli Conservatory of Music, Tel Aviv (Arisson)",
+        "name": "הקונסרבטוריון הישראלי למוסיקה, תל אביב",
+        "name_en": "Israel Conservatory of Music, Tel Aviv (ICM)",
         "city": "תל אביב",
         "city_en": "Tel Aviv",
         "email": "info@icm.org.il",
@@ -2093,14 +2922,14 @@
             "role": "מנהל מחלקת הג'אז"
         },
         "official_site": "https://www.icm.org.il/",
-        "about": "הקונסרבטוריון הישראלי למוסיקה ע\"ש לין ותד אריסון - מרכז מוביל למוסיקה קלאסית וג'אז, הוקם בשנת 1946. מארח את המרכז למוסיקה קאמרית עם סדרות קונצרטים שנתיות.",
-        "about_page": "https://www.icm.org.il/about-us/",
+        "about": "הקונסרבטוריון הישראלי למוסיקה, תל אביב, נוסד ב-1946 ומונה למעלה מ-1000 תלמידים. ממוקם ברחוב לואי מרשל 25, תל אביב. מוסד מוביל בחינוך מוסיקלי המשלב לימודים קלאסיים, ג'אז, מוסיקה עתיקה, קומפוזיציה ולימודי מבוגרים.",
+        "about_page": "https://www.icm.org.il/about/",
         "team_page": "https://www.icm.org.il/management-and-team/",
         "teachers_page": "https://www.icm.org.il/teachers/",
         "departments": [
             {
                 "name": "טרום כלי",
-                "link": "https://www.icm.org.il/education_programs/pre-instrumental/"
+                "link": "https://www.icm.org.il/education_programs/pre-instrument/"
             },
             {
                 "name": "פסנתר",
@@ -2108,55 +2937,72 @@
             },
             {
                 "name": "כלי מיתר",
-                "link": "https://www.icm.org.il/education_programs/string/"
+                "link": "https://www.icm.org.il/education_programs/strings/"
             },
             {
                 "name": "כלי נשיפה והקשה",
-                "link": "https://www.icm.org.il/education_programs/wind/"
+                "link": "https://www.icm.org.il/education_programs/winds-percussion/"
             },
             {
                 "name": "מוסיקה עתיקה",
-                "link": "https://www.icm.org.il/education_programs/early-music/"
+                "link": "https://www.icm.org.il/education_programs/early-music/",
+                "artistic_director": "דרורה ברוק"
             },
             {
                 "name": "המחלקה הווקאלית",
                 "link": "https://www.icm.org.il/education_programs/voice/"
             },
             {
-                "name": "לימודים עיוניים ותאוריה",
+                "name": "המחלקה ללימודים עיוניים ותאוריה",
                 "link": "https://www.icm.org.il/education_programs/theory/"
             },
             {
-                "name": "מסלול קומפוזיציה",
+                "name": "קומפוזיציה",
                 "link": "https://www.icm.org.il/education_programs/composition/"
             },
             {
-                "name": "מרכז לימודי ג'אז",
-                "link": "https://www.icm.org.il/education_programs/center-for-jazz-studies/"
+                "name": "המרכז ללימודי ג'אז",
+                "link": "https://www.icm.org.il/education_programs/jazz/",
+                "directors": [
+                    "מתן צ'פניצקי",
+                    "קובי סלומון"
+                ]
             },
             {
                 "name": "מסלול לימודי מבוגרים",
                 "link": "https://www.icm.org.il/education_programs/adult-music-studies/"
             },
             {
-                "name": "תזמורות, מקהלות והרכבים קאמריים",
-                "link": "https://www.icm.org.il/education_programs/ensembles/"
+                "name": "המרכז למוסיקה קאמרית",
+                "link": "https://www.icm.org.il/chamber-music-center/",
+                "director": "ד\"ר רז בנימיני"
             }
         ],
         "programs": [
-            "תכנית ג'אז בשיתוף הניו-סקול ניו-יורק",
-            "המרכז למוסיקה קאמרית",
-            "מקהלת בת קול",
-            "צליל מכוון (ילדים בסיכון)",
-            "מנגנים ברצף",
-            "תכניות בינלאומיות"
+            "תכנית ג'אז בשיתוף הניו-סקול ניו-יורק (תואר אקדמי)",
+            "בגרות רסיטל 5 יח\"ל",
+            "מסלול לימודי מבוגרים - שיעורים פרטניים + חבילות",
+            "מוסיקה קאמרית למבוגרים",
+            "תוכניות קהילה",
+            "תוכניות בינלאומיות"
         ],
         "ensembles": [
-            "תזמורת כלי קשת צעירה",
-            "תזמורת מעבר לקשת",
-            "כ-15 הרכבים קאמריים",
-            "מקהלת בת קול",
-            "תזמורת הג'אז הישראלית"
+            {
+                "name": "תזמורות קאמריות",
+                "link": "https://www.icm.org.il/education_programs/ensembles/"
+            },
+            {
+                "name": "מקהלת בת קול",
+                "link": "https://www.icm.org.il/"
+            },
+            {
+                "name": "הרכבי ג'אז",
+                "link": "https://www.icm.org.il/education_programs/jazz/"
+            },
+            {
+                "name": "הרכבי בארוק",
+                "artistic_director": "דרורה ברוק"
+            }
         ],
         "halls": [
             {
@@ -2169,12 +3015,13 @@
             }
         ],
         "social_media": {
-            "facebook": "https://www.facebook.com/ICMtelaviv",
-            "instagram": "https://www.instagram.com/icm_telaviv/"
+            "facebook": "https://www.facebook.com/icmtelaviv",
+            "instagram": "https://www.instagram.com/icmtelaviv/"
         },
         "location": {
+            "address": "רחוב לואי מרשל 25, תל אביב",
             "city": "תל אביב",
-            "address": "לואי מרשל 25, ת.ד. 21502, תל אביב 6200003",
+            "opening_hours": "א'-ה' 11:00-19:00",
             "coordinates": {
                 "lat": 32.0853,
                 "lng": 34.7818
@@ -2182,12 +3029,14 @@
         },
         "opening_hours": "א'-ה' 11:00-19:00",
         "photos": [
-            "https://www.icm.org.il/wp-content/uploads/2025/03/%D7%90%D7%A8%D7%99%D7%94-%D7%95%D7%A8%D7%93%D7%99-%D7%A2%D7%9D-%D7%A4%D7%A1%D7%A0%D7%AA%D7%A8-768x431.jpg",
-            "https://www.icm.org.il/wp-content/uploads/2025/04/Harp-Closup.jpg",
-            "https://www.icm.org.il/wp-content/uploads/2024/07/%D7%9E%D7%A7%D7%94%D7%9C%D7%AA-%D7%91%D7%AA-%D7%A7%D7%95%D7%9C-%D7%9E%D7%95%D7%96%D7%90%D7%95%D7%9F-%D7%AA%D7%9C-%D7%90%D7%91%D7%99%D7%91-%D7%97%D7%AA%D7%95%D7%9A-768x346.jpg",
-            "https://www.icm.org.il/wp-content/uploads/2024/08/Jazz-Concert-2-768x513.jpg",
-            "https://www.icm.org.il/wp-content/uploads/2025/08/%D7%91%D7%90%D7%A8%D7%95%D7%A7-%D7%AA%D7%9C-%D7%90%D7%91%D7%99%D7%91-2026-03-768x432.jpg"
-        ]
+            "https://www.icm.org.il/wp-content/uploads/2025/03/אריה-ורדי-עם-פסנתר-768x431.jpg"
+        ],
+        "founded": 1946,
+        "contact": {
+            "tel": "03-6203311",
+            "email": "info@icm.org.il",
+            "address": "לואי מרשל 25, תל אביב"
+        }
     },
     {
         "id": 83,
@@ -2274,7 +3123,7 @@
         "location": {
             "city": "כרמיאל",
             "coordinates": {
-                "lat": 32.9160,
+                "lat": 32.916,
                 "lng": 35.2972
             }
         },

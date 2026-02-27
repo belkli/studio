@@ -14,6 +14,7 @@
         "submit": "Submit Registration"
     },
     "Common": {
+        "name": "Name",
         "save": "Save",
         "cancel": "Cancel",
         "saving": "Saving...",
@@ -712,7 +713,12 @@
         "logout": "Logout",
         "logo": "Harmonia",
         "noNotifications": "No new notifications",
-        "viewAll": "View all notifications"
+        "viewAll": "View all notifications",
+        "alumni": "Alumni",
+        "manageScholarships": "Manage Scholarships",
+        "aiCoach": "AI Coach",
+        "scholarships": "Scholarships",
+        "conservatoriumProfile": "Conservatory Profile"
     },
     "MessagesPage": {
         "title": "Messages",
@@ -729,7 +735,9 @@
         "placeholder": "Ask me something...",
         "suggestionsTitle": "Suggestions:",
         "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
-        "errorMessage": "I'm sorry, an error occurred. Please try again later."
+        "errorMessage": "I'm sorry, an error occurred. Please try again later.",
+        "openAssistant": "Open AI Assistant",
+        "goToHelpCenter": "Go to full help center"
     },
     "AlumniPage": {
         "title": "Alumni Network",
@@ -744,6 +752,9 @@
         "registerButton": "Register Now",
         "addAlumnus": "Add Alumnus",
         "editAlumnus": "Edit Alumnus",
+        "alumnusAdded": "Alumnus added successfully.",
+        "alumnusUpdated": "Alumnus updated successfully.",
+        "alumnusDeleted": "Alumnus deleted successfully.",
         "form": {
             "name": "Full Name",
             "namePlaceholder": "Enter name",
@@ -943,5 +954,41 @@
         "submitReject": "Final Reject",
         "emptyStateTitle": "Ministry Inbox",
         "emptyStateDesc": "Forms and requests from conservatories requiring Ministry action will appear here."
+    },
+    "SettingsPage": {
+        "title": "Settings",
+        "subtitle": "Manage your system settings along with your account settings.",
+        "profile": {
+            "title": "Profile Information",
+            "description": "Update your profile details.",
+            "name": "Name",
+            "email": "Email",
+            "save": "Save Profile",
+            "success": "Profile saved",
+            "successDesc": "Your profile has been updated successfully."
+        },
+        "password": {
+            "title": "Update Password",
+            "description": "Change your password.",
+            "current": "Current Password",
+            "new": "New Password",
+            "update": "Update Password",
+            "success": "Password updated",
+            "successDesc": "Your password has been changed successfully."
+        },
+        "conservatorium": {
+            "title": "Conservatory Settings",
+            "description": "Manage conservatory features and integrations.",
+            "manageFeatures": "Manage Profile",
+            "pricing": "Pricing Settings",
+            "cancellation": "Cancellation Policy",
+            "manageAI": "Manage AI Features"
+        },
+        "notifications": {
+            "title": "Notification Preferences",
+            "description": "Choose what you want to be notified about.",
+            "prompt": "Configure how you receive alerts.",
+            "manage": "Manage Notifications"
+        }
     }
 }
