@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link, usePathname } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 
 interface Message {
@@ -30,6 +30,7 @@ export function AiHelpAssistant() {
     const { user } = useAuth();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
+    const locale = useLocale();
 
     useEffect(() => {
         (window as any).openHelpAssistant = () => setIsOpen(true);
@@ -63,7 +64,7 @@ export function AiHelpAssistant() {
             ];
         }
         if (pathname.includes('/dashboard/forms')) {
-             return [
+            return [
                 'כמה זמן לוקח לאשר טופס רסיטל?',
                 'הטופס שלי נדחה, מה עושים?',
                 'איך אני מוריד עותק PDF של טופס מאושר?',
@@ -71,7 +72,7 @@ export function AiHelpAssistant() {
             ];
         }
         if (pathname.includes('/dashboard/admin')) {
-             return [
+            return [
                 'איך אני מאשר הרשמה של תלמיד חדש?',
                 'איפה אני מגדיר את מחירי החבילות?',
                 'איך אני שולח הכרזה לכל ההורים?',
@@ -112,13 +113,13 @@ export function AiHelpAssistant() {
                 userId: user.id,
                 conservatoriumId: user.conservatoriumId,
                 question: userQuestion,
-                locale: 'he', // Default locale for the prompt context
+                locale: locale,
             });
 
             const botMessage: Message = { sender: 'bot', text: response.answer, response };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-             setMessages(prev => [...prev, { sender: 'bot', text: t('errorMessage') }]);
+            setMessages(prev => [...prev, { sender: 'bot', text: t('errorMessage') }]);
         } finally {
             setIsLoading(false);
         }

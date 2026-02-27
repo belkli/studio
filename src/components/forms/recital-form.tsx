@@ -43,7 +43,7 @@ const getRecitalFormSchema = (t: any) => z.object({
     studentName: z.string(),
     academicYear: z.string().min(1, t('validation.requiredAcademicYear')),
     grade: z.enum(['י', 'יא', 'יב'], {
-        errorMap: () => ({ message: t('validation.requiredGrade') })
+        message: t('validation.requiredGrade')
     }),
 
     applicantDetails: z.object({
@@ -282,11 +282,11 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>{t('studentName')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
                         <FormItem> <FormLabel>{t('idNumber')}</FormLabel><Input value={student.idNumber} disabled /></FormItem>
-                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>{t('grade')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>{t('grade')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
 
-                        <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (<FormItem> <FormLabel>{t('city')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (<FormItem> <FormLabel>{t('gender')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (<FormItem> <FormLabel>{t('city')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (<FormItem> <FormLabel>{t('gender')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                     </CardContent>
                 </Card>
 
@@ -295,9 +295,9 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                         <CardTitle>{t('schoolDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField control={form.control as any} name="schoolDetails.schoolName" render={({ field }) => (<FormItem> <FormLabel>{t('schoolName')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="schoolDetails.hasMusicMajor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={!isEditing} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('hasMusicMajor')}</FormLabel></div> </FormItem>)} />
-                        <FormField control={form.control as any} name="schoolDetails.isMajorParticipant" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={!isEditing} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('isMajorParticipant')}</FormLabel></div> </FormItem>)} />
+                        <FormField control={form.control as any} name="schoolDetails.schoolName" render={({ field }) => (<FormItem> <FormLabel>{t('schoolName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="schoolDetails.hasMusicMajor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('hasMusicMajor')}</FormLabel></div> </FormItem>)} />
+                        <FormField control={form.control as any} name="schoolDetails.isMajorParticipant" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('isMajorParticipant')}</FormLabel></div> </FormItem>)} />
                     </CardContent>
                 </Card>
 
@@ -306,9 +306,9 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                         <CardTitle>{t('instrumentDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField control={form.control as any} name="instrumentDetails.instrument" render={({ field }) => (<FormItem> <FormLabel>{t('instrument')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="instrumentDetails.yearsOfStudy" render={({ field }) => (<FormItem> <FormLabel>{t('yearsOfStudy')}</FormLabel> <FormControl><Input type="number" {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="teacherDetails.yearsWithTeacher" render={({ field }) => (<FormItem> <FormLabel>{t('yearsWithTeacher')}</FormLabel> <FormControl><Input type="number" {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="instrumentDetails.instrument" render={({ field }) => (<FormItem> <FormLabel>{t('instrument')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="instrumentDetails.yearsOfStudy" render={({ field }) => (<FormItem> <FormLabel>{t('yearsOfStudy')}</FormLabel> <FormControl><Input type="number" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="teacherDetails.yearsWithTeacher" render={({ field }) => (<FormItem> <FormLabel>{t('yearsWithTeacher')}</FormLabel> <FormControl><Input type="number" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                         <FormItem> <FormLabel>{t('teacherName')}</FormLabel><Input value={student.instruments?.[0]?.teacherName} disabled /></FormItem>
                     </CardContent>
                 </Card>

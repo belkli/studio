@@ -162,7 +162,7 @@ export function NewForm() {
   }
 
   const canSelectStudent = user.role !== 'student';
-  const canSelectFormType = user.role !== 'student';
+  const canSelectFormType = true;
 
   const renderForm = () => {
     if (!selectedFormType) {

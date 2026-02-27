@@ -6,16 +6,46 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
+import type { FormStatus } from "@/lib/types";
 
 export default function FormsPage() {
     const t = useTranslations('FormsPage');
+    const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Role-aware subtitle
+    const getSubtitle = () => {
+        if (!user) return t('subtitle');
+        switch (user.role) {
+            case 'student': return t('subtitleStudent');
+            case 'parent': return t('subtitleParent');
+            case 'teacher': return t('subtitleTeacher');
+            default: return t('subtitle');
+        }
+    };
+
+    // Show New Form button only for students and teachers who can create forms
+    const canCreateForm = user?.role === 'student' || user?.role === 'teacher';
+
+    const pendingStatuses: FormStatus[] = ['ממתין לאישור מורה', 'ממתין לאישור מנהל', 'נדרש תיקון'];
+    const approvedStatuses: FormStatus[] = ['מאושר', 'מאושר סופית'];
+    const draftStatuses: FormStatus[] = ['טיוטה'];
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold">{t('title')}</h1>
-                <p className="text-muted-foreground">{t('subtitle')}</p>
+            <div className="flex items-start justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold">{t('title')}</h1>
+                    <p className="text-muted-foreground">{getSubtitle()}</p>
+                </div>
+                {canCreateForm && (
+                    <Button asChild>
+                        <Link href="/dashboard/forms/new">{t('newForm')}</Link>
+                    </Button>
+                )}
             </div>
 
             <Tabs defaultValue="all">
@@ -42,19 +72,19 @@ export default function FormsPage() {
                 </TabsContent>
                 <TabsContent value="pending" className="pt-4">
                     <FormsList
-                        statusFilter={['ממתין לאישור מורה', 'ממתין לאישור מנהל', 'נדרש תיקון']}
+                        statusFilter={pendingStatuses}
                         searchQuery={searchQuery}
                     />
                 </TabsContent>
                 <TabsContent value="approved" className="pt-4">
                     <FormsList
-                        statusFilter={['מאושר', 'מאושר סופית']}
+                        statusFilter={approvedStatuses}
                         searchQuery={searchQuery}
                     />
                 </TabsContent>
                 <TabsContent value="drafts" className="pt-4">
                     <FormsList
-                        statusFilter={['טיוטה']}
+                        statusFilter={draftStatuses}
                         searchQuery={searchQuery}
                     />
                 </TabsContent>

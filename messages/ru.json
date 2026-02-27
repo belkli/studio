@@ -541,6 +541,14 @@
         "registerButton": "Зарегистрироваться сейчас",
         "addAlumnus": "Добавить выпускника",
         "editAlumnus": "Редактировать выпускника",
+        "deleteAlumnus": "Удалить выпускника",
+        "deleteConfirm": "Вы уверены, что хотите удалить этого выпускника из справочника?",
+        "noAlumni": "Выпускников не найдено.",
+        "managementTitle": "Управление выпускниками",
+        "managementSubtitle": "Добавляйте, редактируйте и управляйте справочником выпускников вашей консерватории.",
+        "alumnusAdded": "Выпускник добавлен в справочник.",
+        "alumnusUpdated": "Данные выпускника обновлены.",
+        "alumnusDeleted": "Выпускник удален из справочника.",
         "form": {
             "name": "Полное имя",
             "namePlaceholder": "Введите имя",
@@ -552,7 +560,10 @@
             "achievements": "Достижения",
             "achievementsPlaceholder": "Заметные награды, роли и т. д.",
             "avatarUrl": "URL аватара",
-            "avatarDescription": "Ссылка на файл изображения (например: https://...)"
+            "avatarDescription": "Ссылка на файл изображения (например: https://...)",
+            "isPublic": "Показывать публично на странице О нас",
+            "save": "Сохранить",
+            "cancel": "Отмена"
         }
     },
     "PaymentSettings": {
@@ -568,6 +579,10 @@
     "FormsPage": {
         "title": "Управление формами",
         "subtitle": "Просматривайте, фильтруйте и управляйте всеми формами.",
+        "subtitleStudent": "Просматривайте и управляйте поданными вами формами.",
+        "subtitleTeacher": "Просматривайте и управляйте формами, поданными вашими учениками.",
+        "subtitleParent": "Просматривайте и управляйте формами, поданными за ваших детей.",
+        "newForm": "Новая форма",
         "searchPlaceholder": "Поиск...",
         "tabs": {
             "all": "Все",
@@ -704,6 +719,58 @@
             "maxRepertoire": "Можно добавить не более {max} произведений"
         }
     },
+    "RecitalForm": {
+        "studentDetails": "Applicant Personal Details",
+        "studentName": "Full Name",
+        "idNumber": "ID Number",
+        "grade": "Grade",
+        "city": "City of Residence",
+        "phone": "Mobile Phone",
+        "gender": "Gender",
+        "schoolDetails": "High School Details",
+        "schoolName": "School Name",
+        "hasMusicMajor": "Is there a music major?",
+        "isMajorParticipant": "Participates in major?",
+        "instrumentDetails": "Instrument Study Details",
+        "instrument": "Instrument / Voice",
+        "yearsOfStudy": "Total years of study",
+        "yearsWithTeacher": "Years with current teacher",
+        "teacherName": "Teacher Name",
+        "repertoire": "Performance Program",
+        "addComposition": "Add Composition",
+        "cancel": "Cancel",
+        "resubmit": "Resubmit for Approval",
+        "submit": "Submit for Approval",
+        "compositionItem": "Composition #{index}",
+        "deleteItem": "Delete Composition",
+        "composer": "Composer",
+        "selectComposer": "Select composer...",
+        "compositionTitle": "Composition Title",
+        "selectComposition": "Select title...",
+        "genre": "Genre",
+        "selectGenre": "Select genre",
+        "duration": "Duration",
+        "validation": {
+            "requiredComposer": "Composer is required",
+            "requiredTitle": "Title is required",
+            "invalidDuration": "Invalid format (MM:SS)",
+            "requiredGenre": "Genre is required",
+            "requiredAcademicYear": "Academic year is required",
+            "requiredInstrument": "Instrument is required",
+            "requiredGrade": "Grade is required",
+            "minRepertoire": "At least one composition is required",
+            "maxRepertoire": "Up to {max} compositions allowed"
+        }
+    },
+    "SuggestionButton": {
+        "successTitle": "Suggestions added!",
+        "successDesc": "{length} new pieces added to the list.",
+        "noSuggestionsTitle": "No suggestions found",
+        "noSuggestionsDesc": "We couldn't find suitable suggestions. Try changing the form details.",
+        "errorTitle": "Error",
+        "errorDesc": "An error occurred while getting suggestions.",
+        "buttonText": "Get AI Suggestions"
+    },
     "Common": {
         "saveStatusBar": {
             "saving": "Сохранение...",
@@ -711,7 +778,43 @@
             "savedAt": "Сохранено в {time}",
             "unsavedChanges": "Несохраненные изменения",
             "saveDraft": "Сохранить черновик"
-        }
+        },
+        "edit": "Редактировать",
+        "delete": "Удалить",
+        "cancel": "Отмена",
+        "save": "Сохранить",
+        "confirm": "Подтвердить",
+        "loading": "Загрузка...",
+        "noData": "Данные не найдены.",
+        "actions": "Действия",
+        "search": "Поиск...",
+        "filter": "Фильтр",
+        "close": "Закрыть",
+        "add": "Добавить",
+        "view": "Просмотр",
+        "back": "Назад",
+        "submit": "Отправить",
+        "yes": "Да",
+        "no": "Нет",
+        "success": "Успех",
+        "error": "Ошибка",
+        "saveFailed": "Не удалось сохранить. Попробуйте еще раз.",
+        "deleteFailed": "Не удалось удалить. Попробуйте еще раз.",
+        "confirmDelete": "Вы уверены, что хотите удалить эту запись? Это действие необратимо."
+    },
+    "BillingPage": {
+        "adminTitle": "Финансовая панель",
+        "adminSubtitle": "Обзор доходов, счетов и финансовых данных.",
+        "studentTitle": "Оплата и счета",
+        "studentSubtitle": "Просматривайте и управляйте своими пакетами, начислениями, счетами и платежами."
+    },
+    "PricingPage": {
+        "title": "Настройки тарифов",
+        "subtitle": "Управляйте пакетами регистрации и тарифами для вашей консерватории.",
+        "backToSettings": "Вернуться к настройкам",
+        "otherConservatoriumsTitle": "Тарифы других консерваторий",
+        "otherConservatoriumsSubtitle": "Просмотр тарифов других консерваторий для согласования.",
+        "conservatoriumLabel": "Консерватория"
     },
     "MessagesPage": {
         "title": "Сообщения",

@@ -541,6 +541,14 @@
         "registerButton": "سجل الآن",
         "addAlumnus": "إضافة خريج",
         "editAlumnus": "تعديل خريج",
+        "deleteAlumnus": "حذف خريج",
+        "deleteConfirm": "هل أنت متأكد أنك تريد إزالة هذا الخريج من الدليل؟",
+        "noAlumni": "لم يتم العثور على خريجين.",
+        "managementTitle": "إدارة الخريجين",
+        "managementSubtitle": "أضف وعدّل وأدر دليل خريجي معهدك.",
+        "alumnusAdded": "تمت إضافة الخريج إلى الدليل.",
+        "alumnusUpdated": "تم تحديث تفاصيل الخريج.",
+        "alumnusDeleted": "تمت إزالة الخريج من الدليل.",
         "form": {
             "name": "الاسم الكامل",
             "namePlaceholder": "أدخل الاسم",
@@ -552,7 +560,10 @@
             "achievements": "الإنجازات",
             "achievementsPlaceholder": "جوائز بارزة، أدوار، إلخ.",
             "avatarUrl": "رابط الصورة الشخصية",
-            "avatarDescription": "رابط لملف صورة (مثال: https://...)"
+            "avatarDescription": "رابط لملف صورة (مثال: https://...)",
+            "isPublic": "اعرض بشكل علني في صفحة من نحن",
+            "save": "حفظ",
+            "cancel": "إلغاء"
         }
     },
     "PaymentSettings": {
@@ -568,6 +579,10 @@
     "FormsPage": {
         "title": "إدارة النماذج",
         "subtitle": "عرض وتصفية وإدارة جميع النماذج.",
+        "subtitleStudent": "عرض وإدارة النماذج التي قدمتها.",
+        "subtitleTeacher": "عرض وإدارة النماذج التي قدمها طلابك.",
+        "subtitleParent": "عرض وإدارة النماذج التي قدمت لأطفالك.",
+        "newForm": "نموذج جديد",
         "searchPlaceholder": "بحث...",
         "tabs": {
             "all": "الكل",
@@ -705,6 +720,58 @@
             "maxRepertoire": "يمكنك إضافة ما يصل إلى {max} مقطوعات"
         }
     },
+    "RecitalForm": {
+        "studentDetails": "Applicant Personal Details",
+        "studentName": "Full Name",
+        "idNumber": "ID Number",
+        "grade": "Grade",
+        "city": "City of Residence",
+        "phone": "Mobile Phone",
+        "gender": "Gender",
+        "schoolDetails": "High School Details",
+        "schoolName": "School Name",
+        "hasMusicMajor": "Is there a music major?",
+        "isMajorParticipant": "Participates in major?",
+        "instrumentDetails": "Instrument Study Details",
+        "instrument": "Instrument / Voice",
+        "yearsOfStudy": "Total years of study",
+        "yearsWithTeacher": "Years with current teacher",
+        "teacherName": "Teacher Name",
+        "repertoire": "Performance Program",
+        "addComposition": "Add Composition",
+        "cancel": "Cancel",
+        "resubmit": "Resubmit for Approval",
+        "submit": "Submit for Approval",
+        "compositionItem": "Composition #{index}",
+        "deleteItem": "Delete Composition",
+        "composer": "Composer",
+        "selectComposer": "Select composer...",
+        "compositionTitle": "Composition Title",
+        "selectComposition": "Select title...",
+        "genre": "Genre",
+        "selectGenre": "Select genre",
+        "duration": "Duration",
+        "validation": {
+            "requiredComposer": "Composer is required",
+            "requiredTitle": "Title is required",
+            "invalidDuration": "Invalid format (MM:SS)",
+            "requiredGenre": "Genre is required",
+            "requiredAcademicYear": "Academic year is required",
+            "requiredInstrument": "Instrument is required",
+            "requiredGrade": "Grade is required",
+            "minRepertoire": "At least one composition is required",
+            "maxRepertoire": "Up to {max} compositions allowed"
+        }
+    },
+    "SuggestionButton": {
+        "successTitle": "Suggestions added!",
+        "successDesc": "{length} new pieces added to the list.",
+        "noSuggestionsTitle": "No suggestions found",
+        "noSuggestionsDesc": "We couldn't find suitable suggestions. Try changing the form details.",
+        "errorTitle": "Error",
+        "errorDesc": "An error occurred while getting suggestions.",
+        "buttonText": "Get AI Suggestions"
+    },
     "Common": {
         "saveStatusBar": {
             "saving": "جاري الحفظ...",
@@ -712,7 +779,43 @@
             "savedAt": "تم الحفظ في {time}",
             "unsavedChanges": "تغييرات غير محفوظة",
             "saveDraft": "حفظ مسودة"
-        }
+        },
+        "edit": "تعديل",
+        "delete": "حذف",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "confirm": "تأكيد",
+        "loading": "جاري التحميل...",
+        "noData": "لم يتم العثور على بيانات.",
+        "actions": "الإجراءات",
+        "search": "بحث...",
+        "filter": "تصفية",
+        "close": "إغلاق",
+        "add": "إضافة",
+        "view": "عرض",
+        "back": "رجوع",
+        "submit": "إرسال",
+        "yes": "نعم",
+        "no": "لا",
+        "success": "نجاح",
+        "error": "خطأ",
+        "saveFailed": "فشل الحفظ. حاول مرة أخرى.",
+        "deleteFailed": "فشل الحذف. حاول مرة أخرى.",
+        "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "BillingPage": {
+        "adminTitle": "لوحة التحكم المالية",
+        "adminSubtitle": "نظرة عامة على الإيرادات والفواتير والبيانات المالية.",
+        "studentTitle": "الفوترة والمدفوعات",
+        "studentSubtitle": "عرض وإدارة باقاتك ورسومك وفواتيرك ومدفوعاتك."
+    },
+    "PricingPage": {
+        "title": "إعدادات التسعير",
+        "subtitle": "إدارة باقات التسجيل والأسعار للمعهد الخاص بك.",
+        "backToSettings": "العودة إلى الإعدادات",
+        "otherConservatoriumsTitle": "أسعار المعاهد الأخرى",
+        "otherConservatoriumsSubtitle": "عرض أسعار المعاهد الأخرى لأغراض التوافق.",
+        "conservatoriumLabel": "المعهد"
     },
     "MessagesPage": {
         "title": "الرسائل",

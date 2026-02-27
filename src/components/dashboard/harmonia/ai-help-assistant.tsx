@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 interface Message {
     sender: 'user' | 'bot';
@@ -33,6 +34,7 @@ export function AiHelpAssistant() {
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const locale = useLocale();
 
     useEffect(() => {
         if (isOpen && messages.length === 0) {
@@ -64,7 +66,7 @@ export function AiHelpAssistant() {
             userId: user.id,
             conservatoriumId: user.conservatoriumId,
             question: userQuestion,
-            locale: 'he', // Default locale for the prompt context
+            locale: locale,
         });
 
         const botMessage: Message = { sender: 'bot', text: response.answer, response };

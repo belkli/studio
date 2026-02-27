@@ -455,6 +455,7 @@
             "upcomingPerformancesDesc": "Recitals and concerts involving your students.",
             "noUpcomingPerformances": "No upcoming performances scheduled.",
             "viewAllApprovals": "All Approvals",
+            "viewAll": "View All",
             "myStudents": "My Students ({count})",
             "myStudentsDesc": "Manage your students, track their progress, and communicate with them.",
             "nextLesson": "Next Lesson:",
@@ -594,7 +595,33 @@
         "masterclassesSubtitle": "Improve your skills and learn from the best in the field.",
         "instructor": "Instructor: {name}",
         "date": "Date: {date, date, long}",
-        "registerButton": "Register Now"
+        "registerButton": "Register Now",
+        "addAlumnus": "Add Alumnus",
+        "editAlumnus": "Edit Alumnus",
+        "deleteAlumnus": "Delete Alumnus",
+        "deleteConfirm": "Are you sure you want to remove this alumnus from the directory?",
+        "noAlumni": "No alumni found.",
+        "managementTitle": "Alumni Management",
+        "managementSubtitle": "Add, edit, and manage the alumni directory for your conservatory.",
+        "alumnusAdded": "Graduate added to the directory.",
+        "alumnusUpdated": "Graduate details updated.",
+        "alumnusDeleted": "Graduate removed from the directory.",
+        "form": {
+            "name": "Full Name",
+            "namePlaceholder": "Enter name",
+            "graduationYear": "Graduation Year",
+            "instrument": "Instrument",
+            "instrumentPlaceholder": "Select instrument",
+            "currentRole": "Current Role",
+            "rolePlaceholder": "e.g. Professional Pianist",
+            "achievements": "Achievements",
+            "achievementsPlaceholder": "Notable awards, roles, etc.",
+            "avatarUrl": "Avatar URL",
+            "avatarDescription": "Link to an image file (e.g. https://...)",
+            "isPublic": "Show publicly on About page",
+            "save": "Save",
+            "cancel": "Cancel"
+        }
     },
     "PaymentSettings": {
         "updateMethodTitle": "Update Payment Method",
@@ -605,26 +632,6 @@
         "cvc": "CVC",
         "cancel": "Cancel",
         "saveButton": "Save Card"
-    },
-    "FormsPage": {
-        "title": "Form Management",
-        "subtitle": "View, filter, and manage all forms.",
-        "searchPlaceholder": "Search...",
-        "tabs": {
-            "all": "All",
-            "pending": "Pending",
-            "approved": "Approved",
-            "drafts": "Drafts"
-        },
-        "noForms": "No forms found.",
-        "table": {
-            "studentName": "Student Name",
-            "formType": "Form Type",
-            "status": "Status",
-            "submissionDate": "Submission Date",
-            "actions": "Actions",
-            "view": "View"
-        }
     },
     "NewForm": {
         "title": "Create New Form",
@@ -746,6 +753,58 @@
             "maxRepertoire": "Up to {max} compositions can be added"
         }
     },
+    "RecitalForm": {
+        "studentDetails": "Applicant Personal Details",
+        "studentName": "Full Name",
+        "idNumber": "ID Number",
+        "grade": "Grade",
+        "city": "City of Residence",
+        "phone": "Mobile Phone",
+        "gender": "Gender",
+        "schoolDetails": "High School Details",
+        "schoolName": "School Name",
+        "hasMusicMajor": "Is there a music major?",
+        "isMajorParticipant": "Participates in major?",
+        "instrumentDetails": "Instrument Study Details",
+        "instrument": "Instrument / Voice",
+        "yearsOfStudy": "Total years of study",
+        "yearsWithTeacher": "Years with current teacher",
+        "teacherName": "Teacher Name",
+        "repertoire": "Performance Program",
+        "addComposition": "Add Composition",
+        "cancel": "Cancel",
+        "resubmit": "Resubmit for Approval",
+        "submit": "Submit for Approval",
+        "compositionItem": "Composition #{index}",
+        "deleteItem": "Delete Composition",
+        "composer": "Composer",
+        "selectComposer": "Select composer...",
+        "compositionTitle": "Composition Title",
+        "selectComposition": "Select title...",
+        "genre": "Genre",
+        "selectGenre": "Select genre",
+        "duration": "Duration",
+        "validation": {
+            "requiredComposer": "Composer is required",
+            "requiredTitle": "Title is required",
+            "invalidDuration": "Invalid format (MM:SS)",
+            "requiredGenre": "Genre is required",
+            "requiredAcademicYear": "Academic year is required",
+            "requiredInstrument": "Instrument is required",
+            "requiredGrade": "Grade is required",
+            "minRepertoire": "At least one composition is required",
+            "maxRepertoire": "Up to {max} compositions allowed"
+        }
+    },
+    "SuggestionButton": {
+        "successTitle": "Suggestions added!",
+        "successDesc": "{length} new pieces added to the list.",
+        "noSuggestionsTitle": "No suggestions found",
+        "noSuggestionsDesc": "We couldn't find suitable suggestions. Try changing the form details.",
+        "errorTitle": "Error",
+        "errorDesc": "An error occurred while getting suggestions.",
+        "buttonText": "Get AI Suggestions"
+    },
     "Common": {
         "saveStatusBar": {
             "saving": "Saving...",
@@ -753,6 +812,66 @@
             "savedAt": "Saved at {time}",
             "unsavedChanges": "Unsaved changes",
             "saveDraft": "Save Draft"
-        }
+        },
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "confirm": "Confirm",
+        "loading": "Loading...",
+        "noData": "No records found.",
+        "actions": "Actions",
+        "search": "Search...",
+        "filter": "Filter",
+        "close": "Close",
+        "add": "Add",
+        "view": "View",
+        "back": "Back",
+        "submit": "Submit",
+        "yes": "Yes",
+        "no": "No",
+        "success": "Success",
+        "error": "Error",
+        "saveFailed": "Failed to save. Please try again.",
+        "deleteFailed": "Failed to delete. Please try again.",
+        "confirmDelete": "Are you sure you want to delete this record? This action cannot be undone."
+    },
+    "BillingPage": {
+        "adminTitle": "Financial Dashboard",
+        "adminSubtitle": "Overview of revenues, invoices, and financial data.",
+        "studentTitle": "Billing & Payments",
+        "studentSubtitle": "View and manage your packages, charges, invoices, and payments."
+    },
+    "PricingPage": {
+        "title": "Pricing Settings",
+        "subtitle": "Manage enrollment packages and pricing for your conservatory.",
+        "backToSettings": "Back to Settings",
+        "otherConservatoriumsTitle": "Other Conservatoriums' Pricing",
+        "otherConservatoriumsSubtitle": "View pricing from other conservatoriums for market alignment.",
+        "conservatoriumLabel": "Conservatory"
+    },
+    "FormsPage": {
+        "title": "Forms Management",
+        "subtitle": "View, filter, and manage all forms.",
+        "subtitleStudent": "View and manage your submitted forms.",
+        "subtitleTeacher": "View and manage forms submitted by your students.",
+        "subtitleParent": "View and manage forms submitted for your children.",
+        "newForm": "New Form",
+        "searchPlaceholder": "Search...",
+        "tabs": {
+            "all": "All",
+            "pending": "Pending",
+            "approved": "Approved",
+            "drafts": "Drafts"
+        },
+        "table": {
+            "studentName": "Student Name",
+            "formType": "Form Type",
+            "status": "Status",
+            "submissionDate": "Submission Date",
+            "actions": "Actions",
+            "view": "View"
+        },
+        "noForms": "No forms found matching the criteria."
     }
 }

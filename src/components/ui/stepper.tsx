@@ -1,12 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Check, type LucideIcon } from "lucide-react";
+import { Check, CircleDot, type LucideIcon } from "lucide-react";
 
 interface Step {
   id: string;
   title: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
 }
 
 interface StepperProps {
@@ -44,7 +44,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                   className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background"
                   aria-current="step"
                 >
-                  <step.icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                  {step.icon ? <step.icon className="h-5 w-5 text-primary" aria-hidden="true" /> : <CircleDot className="h-5 w-5 text-primary" aria-hidden="true" />}
                   <span className="sr-only">{step.title}</span>
                 </div>
               </>
@@ -56,7 +56,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <div
                   className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-background hover:border-gray-400"
                 >
-                  <step.icon className="h-5 w-5 text-gray-500 group-hover:text-gray-900" aria-hidden="true" />
+                  {step.icon ? <step.icon className="h-5 w-5 text-gray-500 group-hover:text-gray-900" aria-hidden="true" /> : <CircleDot className="h-5 w-5 text-gray-500 group-hover:text-gray-900" aria-hidden="true" />}
                   <span className="sr-only">{step.title}</span>
                 </div>
               </>

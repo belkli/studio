@@ -8,7 +8,7 @@ import { getCompositionSuggestions } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import type { Composition } from '@/lib/types';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type SuggestionButtonProps = {
   fields: any[];
@@ -21,6 +21,7 @@ export function SuggestionButton({ fields, append, getValues }: SuggestionButton
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const locale = useLocale();
+  const t = useTranslations('SuggestionButton');
 
   const handleGetSuggestions = async () => {
     setIsLoading(true);
@@ -50,22 +51,22 @@ export function SuggestionButton({ fields, append, getValues }: SuggestionButton
         append(newCompositions);
 
         toast({
-          title: 'הצעות נוספו!',
-          description: `${suggestions.length} יצירות חדשות נוספו לרשימה.`,
+          title: t('successTitle'),
+          description: t('successDesc', { length: suggestions.length.toString() }),
         });
       } else {
         toast({
           variant: 'destructive',
-          title: 'לא נמצאו הצעות',
-          description: 'לא הצלחנו למצוא הצעות מתאימות. נסה/י לשנות את פרטי הטופס.',
+          title: t('noSuggestionsTitle'),
+          description: t('noSuggestionsDesc'),
         });
       }
     } catch (error) {
       console.error("Failed to get suggestions:", error);
       toast({
         variant: 'destructive',
-        title: 'שגיאה',
-        description: 'אירעה שגיאה בעת קבלת ההצעות.',
+        title: t('errorTitle'),
+        description: t('errorDesc'),
       });
     } finally {
       setIsLoading(false);
@@ -84,7 +85,7 @@ export function SuggestionButton({ fields, append, getValues }: SuggestionButton
       ) : (
         <Sparkles className="me-2 h-4 w-4 text-yellow-500" />
       )}
-      קבל הצעות AI
+      {t('buttonText')}
     </Button>
   );
 }

@@ -447,6 +447,7 @@
             "upcomingPerformancesDesc": "רסיטלים וקונצרטים בהשתתפות תלמידיך.",
             "noUpcomingPerformances": "אין הופעות קרובות מתוכננות.",
             "viewAllApprovals": "לכל האישורים",
+            "viewAll": "הצג הכל",
             "myStudents": "התלמידים שלי ({count})",
             "myStudentsDesc": "נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.",
             "nextLesson": "השיעור הבא:",
@@ -586,7 +587,33 @@
         "masterclassesSubtitle": "שפרו את כישוריכם ולמדו מהטובים בתחום.",
         "instructor": "מנחה: {name}",
         "date": "תאריך: {date, date, long}",
-        "registerButton": "הירשם עכשיו"
+        "registerButton": "הירשם עכשיו",
+        "addAlumnus": "הוסף בוגר",
+        "editAlumnus": "ערוך בוגר",
+        "deleteAlumnus": "מחק בוגר",
+        "deleteConfirm": "האם אתה בטוח שברצונך להסיר את הבוגר מהספר?",
+        "noAlumni": "לא נמצאו בוגרים.",
+        "managementTitle": "ניהול בוגרים",
+        "managementSubtitle": "הוסף, ערוך ונהל את ספר הבוגרים של הקונסרבטוריון.",
+        "alumnusAdded": "בוגר נוסף לספר.",
+        "alumnusUpdated": "פרטי הבוגר עודכנו.",
+        "alumnusDeleted": "בוגר הוסר מהספר.",
+        "form": {
+            "name": "שם מלא",
+            "namePlaceholder": "הכנס שם",
+            "graduationYear": "שנת סיום",
+            "instrument": "כלי נגינה",
+            "instrumentPlaceholder": "בחר כלי",
+            "currentRole": "תפקיד נוכחי",
+            "rolePlaceholder": "לדוגמה: פסנתרן מקצועי",
+            "achievements": "הישגים",
+            "achievementsPlaceholder": "פרסים, תפקידים בולטים, וכד'.",
+            "avatarUrl": "קישור לתמונה",
+            "avatarDescription": "קישור לקובץ תמונה (לדוגמה: https://...)",
+            "isPublic": "הצג באופן ציבורי בדף אודות",
+            "save": "שמור",
+            "cancel": "ביטול"
+        }
     },
     "PaymentSettings": {
         "updateMethodTitle": "עדכון אמצעי תשלום",
@@ -601,6 +628,10 @@
     "FormsPage": {
         "title": "ניהול טפסים",
         "subtitle": "צפה, סנן ונהל את כל הטפסים.",
+        "subtitleStudent": "צפה ונהל את הטפסים שהגשת.",
+        "subtitleTeacher": "צפה ונהל טפסים שהוגשו על ידי תלמידיך.",
+        "subtitleParent": "צפה ונהל טפסים שהוגשו עבור ילדיך.",
+        "newForm": "טופס חדש",
         "searchPlaceholder": "חיפוש...",
         "tabs": {
             "all": "הכל",
@@ -738,6 +769,58 @@
             "maxRepertoire": "ניתן להוסיף עד {max} יצירות"
         }
     },
+    "RecitalForm": {
+        "studentDetails": "פרטים אישיים של המועמד/ת",
+        "studentName": "שם מלא",
+        "idNumber": "ת.ז.",
+        "grade": "כיתה",
+        "city": "עיר מגורים",
+        "phone": "טלפון נייד",
+        "gender": "מין",
+        "schoolDetails": "פרטי בית ספר תיכון",
+        "schoolName": "בית ספר",
+        "hasMusicMajor": "האם קיימת מגמת מוזיקה?",
+        "isMajorParticipant": "האם משתתף/ת במגמה?",
+        "instrumentDetails": "פרטי לימוד בכלי",
+        "instrument": "כלי נגינה / שירה",
+        "yearsOfStudy": "סך שנות לימוד בכלי",
+        "yearsWithTeacher": "סך שנות לימוד עם המורה",
+        "teacherName": "שם המורה",
+        "repertoire": "תוכנית לביצוע",
+        "addComposition": "הוסף יצירה",
+        "cancel": "ביטול",
+        "resubmit": "שלח מחדש לאישור",
+        "submit": "הגש לאישור",
+        "compositionItem": "יצירה #{index}",
+        "deleteItem": "מחק יצירה",
+        "composer": "מלחין",
+        "selectComposer": "בחר מלחין...",
+        "compositionTitle": "שם היצירה",
+        "selectComposition": "בחר יצירה...",
+        "genre": "ז'אנר",
+        "selectGenre": "בחר ז'אנר",
+        "duration": "זמן ביצוע",
+        "validation": {
+            "requiredComposer": "חובה להזין מלחין",
+            "requiredTitle": "חובה להזין שם יצירה",
+            "invalidDuration": "פורמט לא תקין (MM:SS)",
+            "requiredGenre": "חובה לבחור ז'אנר",
+            "requiredAcademicYear": "חובה לבחור שנת לימודים",
+            "requiredInstrument": "חובה לבחור כלי נגינה",
+            "requiredGrade": "חובה לבחור כיתה",
+            "minRepertoire": "חובה להוסיף לפחות יצירה אחת",
+            "maxRepertoire": "ניתן להוסיף עד {max} יצירות"
+        }
+    },
+    "SuggestionButton": {
+        "successTitle": "הצעות נוספו!",
+        "successDesc": "{length} יצירות חדשות נוספו לרשימה.",
+        "noSuggestionsTitle": "לא נמצאו הצעות",
+        "noSuggestionsDesc": "לא הצלחנו למצוא הצעות מתאימות. נסה/י לשנות את פרטי הטופס.",
+        "errorTitle": "שגיאה",
+        "errorDesc": "אירעה שגיאה בעת קבלת ההצעות.",
+        "buttonText": "קבל הצעות AI"
+    },
     "Common": {
         "saveStatusBar": {
             "saving": "שומר...",
@@ -745,6 +828,42 @@
             "savedAt": "נשמר ב-{time}",
             "unsavedChanges": "שינויים לא נשמרו",
             "saveDraft": "שמור טיוטה"
-        }
+        },
+        "edit": "ערוך",
+        "delete": "מחק",
+        "cancel": "ביטול",
+        "save": "שמור",
+        "confirm": "אשר",
+        "loading": "טוען...",
+        "noData": "לא נמצאו רשומות.",
+        "actions": "פעולות",
+        "search": "חיפוש...",
+        "filter": "סנן",
+        "close": "סגור",
+        "add": "הוסף",
+        "view": "צפה",
+        "back": "חזרה",
+        "submit": "שלח",
+        "yes": "כן",
+        "no": "לא",
+        "success": "הצלחה",
+        "error": "שגיאה",
+        "saveFailed": "השמירה נכשלה. נסה שוב.",
+        "deleteFailed": "המחיקה נכשלה. נסה שוב.",
+        "confirmDelete": "האם אתה בטוח שברצונך למחוק רשומה זו? פעולה זו אינה הפיכה."
+    },
+    "BillingPage": {
+        "adminTitle": "דשבורד פיננסי",
+        "adminSubtitle": "סקירה כללית של הכנסות, חשבוניות ונתונים פיננסיים.",
+        "studentTitle": "חיובים ותשלומים",
+        "studentSubtitle": "צפה ונהל את החבילות, החיובים, החשבוניות והתשלומים שלך."
+    },
+    "PricingPage": {
+        "title": "הגדרות תמחור",
+        "subtitle": "נהל חבילות רישום ותמחור עבור הקונסרבטוריון שלך.",
+        "backToSettings": "חזרה להגדרות",
+        "otherConservatoriumsTitle": "תמחור קונסרבטוריונים אחרים",
+        "otherConservatoriumsSubtitle": "צפה בתמחור של קונסרבטוריונים אחרים לצורך יישור קו.",
+        "conservatoriumLabel": "קונסרבטוריון"
     }
 }

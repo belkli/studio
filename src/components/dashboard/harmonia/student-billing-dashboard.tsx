@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import Link from 'next/link';
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
@@ -27,22 +27,32 @@ export function StudentBillingDashboard() {
 
     const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
 
+    const studentChildren = useMemo(() => {
+        if (!user) return [];
+        if (user.role === 'student') return [user];
+        if (user.childIds && user.childIds.length > 0) {
+            return users.filter((u: any) => user.childIds!.includes(u.id));
+        }
+        return [];
+    }, [user, users]);
+
+    const [selectedStudentId, setSelectedStudentId] = useState<string | undefined>(
+        studentChildren.length > 0 ? studentChildren[0].id : undefined
+    );
+
+    const activeStudent = useMemo(() => {
+        return studentChildren.find(s => s.id === selectedStudentId) || studentChildren[0];
+    }, [studentChildren, selectedStudentId]);
 
     const currentPackage = useMemo(() => {
-        let studentForPackage: typeof user | undefined;
-        if (user.role === 'student') {
-            studentForPackage = user;
-        } else if (user.childIds && user.childIds.length > 0) {
-            studentForPackage = users.find((u: any) => u.id === user.childIds![0]);
-        }
-        if (!studentForPackage) return null;
+        if (!activeStudent) return null;
 
-        const pkg = mockPackages.find(p => p.id === studentForPackage!.packageId);
+        const pkg = mockPackages.find(p => p.id === activeStudent.packageId);
         if (!pkg) return null;
 
         let creditsRemaining: number | undefined;
         if (pkg.totalCredits) {
-            const lessonsUsed = mockLessons.filter(l => l.studentId === studentForPackage!.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
+            const lessonsUsed = mockLessons.filter(l => l.studentId === activeStudent.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
             creditsRemaining = pkg.totalCredits - lessonsUsed;
         }
 
@@ -77,6 +87,20 @@ export function StudentBillingDashboard() {
 
     return (
         <div className="space-y-6">
+            {user.role === 'parent' && studentChildren.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                    {studentChildren.map(child => (
+                        <Button
+                            key={child.id}
+                            variant={selectedStudentId === child.id ? 'default' : 'outline'}
+                            onClick={() => setSelectedStudentId(child.id)}
+                            className="whitespace-nowrap rounded-full"
+                        >
+                            {child.name}
+                        </Button>
+                    ))}
+                </div>
+            )}
             {expiringPackageInfo && (
                 <Notice variant="critical">
                     <AlertTriangle className="absolute left-4 top-4 h-5 w-5" />
@@ -92,7 +116,9 @@ export function StudentBillingDashboard() {
                     <CardHeader>
                         <div className="flex justify-between items-start">
                             <div>
-                                <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> סטטוס חבילה</CardTitle>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Package className="h-5 w-5 text-primary" /> סטטוס חבילה {activeStudent?.name ? `(${activeStudent.name})` : ''}
+                                </CardTitle>
                                 <CardDescription className="pt-1">{currentPackage?.title || 'אין חבילה פעילה'}</CardDescription>
                             </div>
                             <Button variant="outline" size="sm">שדרג חבילה</Button>
@@ -183,15 +209,18 @@ export function StudentBillingDashboard() {
                 <div className="space-y-6">
                     <Card className="flex flex-col justify-center p-6">
                         <CardHeader className="p-0 pb-4">
-                            <CardTitle>ניהול מנוי</CardTitle>
+                            <CardTitle>ניהול מנוי {activeStudent?.name ? `(${activeStudent.name})` : ''}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
                             <Button className="w-full">נהל אמצעי תשלום</Button>
                             <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />השהיית מנוי</Button>
-                            <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>
+                            <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={() => {
+                                // Added onClick handler to demonstrate action per child
+                                alert(`ביטול מנוי עבור ${activeStudent?.name || 'התלמיד'}`);
+                            }}><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>
                         </CardContent>
                     </Card>
-                     <Card>
+                    <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2"><ShieldQuestion className="h-5 w-5 text-purple-500" /> מלגות וסיוע כלכלי</CardTitle>
                             <CardDescription>זקוק/ה לסיוע בתשלום שכר הלימוד? ניתן להגיש בקשה למלגה.</CardDescription>
