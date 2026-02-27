@@ -3,15 +3,17 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock, Music } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { User, PracticeLog, Package, LessonSlot, SlotStatus } from "@/lib/types";
+import type { User, PracticeLog, Package, LessonSlot, SlotStatus, EventProduction } from "@/lib/types";
+import { mockEvents } from "@/lib/data";
 import { format } from "date-fns";
 import { he } from 'date-fns/locale';
 import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { SickLeaveModal } from "./sick-leave-modal";
 
@@ -19,6 +21,8 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
     const isPast = new Date(lesson.startTime) < new Date();
     const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
     const isCompleted = lesson.status === 'COMPLETED';
+
+    const t = useTranslations("Dashboard.Teacher");
 
     const attendanceButtons = (
         <>
@@ -29,7 +33,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
                             <CheckCircle className="h-4 w-4 text-green-500" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>סמן נוכחות</p></TooltipContent>
+                    <TooltipContent><p>{t('markAttendance')}</p></TooltipContent>
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger asChild>
@@ -37,15 +41,15 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
                             <XCircle className="h-4 w-4 text-red-500" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>סמן אי-הגעה (ללא הודעה)</p></TooltipContent>
+                    <TooltipContent><p>{t('markNoShow')}</p></TooltipContent>
                 </Tooltip>
-                 <Tooltip>
+                <Tooltip>
                     <TooltipTrigger asChild>
                         <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'CANCELLED_STUDENT_NOTICED')}>
                             <Clock className="h-4 w-4 text-orange-500" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>סמן היעדרות (עם הודעה)</p></TooltipContent>
+                    <TooltipContent><p>{t('markAbsence')}</p></TooltipContent>
                 </Tooltip>
             </TooltipProvider>
         </>
@@ -53,7 +57,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
 
     return (
         <div className="flex items-center gap-4 p-3 rounded-lg border">
-            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit'})}</span>
+            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span>
             <Avatar>
                 <AvatarImage src={student?.avatarUrl} />
                 <AvatarFallback>{student?.name.charAt(0)}</AvatarFallback>
@@ -66,9 +70,9 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
             </div>
             <div className="flex gap-2">
                 {!isPast && !isCancelled && !isCompleted && attendanceButtons}
-                {isCancelled && <Badge variant="destructive">{lesson.status === 'NO_SHOW_STUDENT' ? 'לא הגיע' : 'בוטל'}</Badge>}
-                {isCompleted && <Badge>הושלם</Badge>}
-                {isPast && !isCompleted && !isCancelled && <Badge variant="secondary">ממתין לסימון</Badge>}
+                {isCancelled && <Badge variant="destructive">{lesson.status === 'NO_SHOW_STUDENT' ? t('noShow') : t('cancelled')}</Badge>}
+                {isCompleted && <Badge>{t('completed')}</Badge>}
+                {isPast && !isCompleted && !isCancelled && <Badge variant="secondary">{t('waitingForMark')}</Badge>}
             </div>
         </div>
     );
@@ -76,7 +80,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
 
 
 function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[], lessons: LessonSlot[], id?: string }) {
-    
+
     const weeklyPractice = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -92,19 +96,21 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
     }, [practiceLogs]);
 
     const studentPackage = mockPackages.find(p => p.id === student.packageId);
-    
+
     const nextLesson = useMemo(() => {
         const now = new Date();
         return lessons
             .filter(l => l.studentId === student.id && new Date(l.startTime) >= now)
-            .sort((a,b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
-            [0];
+            .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+        [0];
     }, [lessons, student.id]);
+
+    const t = useTranslations("Dashboard.Teacher");
 
     return (
         <Card id={id} className="flex flex-col">
             <CardHeader className="flex flex-row items-center gap-4">
-                 <Avatar className="h-12 w-12">
+                <Avatar className="h-12 w-12">
                     <AvatarImage src={student.avatarUrl} alt={student.name} />
                     <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -115,36 +121,36 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
             </CardHeader>
             <CardContent className="space-y-3 text-sm flex-grow">
                 <div>
-                    <p className="font-semibold">השיעור הבא:</p>
+                    <p className="font-semibold">{t('nextLesson')}</p>
                     {nextLesson ? (
                         <p className="text-muted-foreground">{format(new Date(nextLesson.startTime), "EEEE, dd/MM 'בשעה' HH:mm", { locale: he })} ({nextLesson.instrument})</p>
                     ) : (
-                        <p className="text-muted-foreground">אין שיעור קרוב</p>
+                        <p className="text-muted-foreground">{t('noNextLesson')}</p>
                     )}
                 </div>
                 <div>
-                    <p className="font-semibold">סטטוס חבילה:</p>
-                    <p className="text-muted-foreground">{studentPackage?.title || 'לא שויכה חבילה'}</p>
+                    <p className="font-semibold">{t('packageStatus')}</p>
+                    <p className="text-muted-foreground">{studentPackage?.title || t('notAssigned')}</p>
                 </div>
                 <div>
-                    <p className="font-semibold">התקדמות אימון:</p>
+                    <p className="font-semibold">{t('practiceProgress')}</p>
                     {weeklyPractice > 0 ? (
-                        <p className="text-muted-foreground">התאמן/ה {weeklyPractice} דקות השבוע</p>
+                        <p className="text-muted-foreground">{t('minutesPracticed', { min: weeklyPractice })}</p>
                     ) : (
-                        <p className="text-muted-foreground text-orange-600">לא דווח אימון השבוע</p>
+                        <p className="text-muted-foreground text-orange-600">{t('noPractice')}</p>
                     )}
                 </div>
-                 <div className="flex gap-2 pt-2">
+                <div className="flex gap-2 pt-2">
                     <Button variant="outline" size="sm" className="flex-1" asChild>
-                       <Link href={`/dashboard/teacher/student/${student.id}`}>
+                        <Link href={`/dashboard/teacher/student/${student.id}`}>
                             <ArrowLeft className="ms-2 h-4 w-4" />
-                           פרופיל מלא
-                       </Link>
+                            {t('fullProfile')}
+                        </Link>
                     </Button>
-                     <Button variant="ghost" size="icon" asChild>
-                        <Link href="/dashboard/messages" title="שלח הודעה">
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link href="/dashboard/messages" title={t('sendMessage')}>
                             <MessageSquare className="h-4 w-4" />
-                            <span className="sr-only">שלח הודעה</span>
+                            <span className="sr-only">{t('sendMessage')}</span>
                         </Link>
                     </Button>
                 </div>
@@ -159,117 +165,161 @@ export function TeacherDashboard() {
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
 
     if (!user) return null;
-    
+
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
 
     const today = new Date();
-    const todayLessons = mockLessons.filter(lesson => 
-        lesson.teacherId === user.id && 
+    const todayLessons = mockLessons.filter(lesson =>
+        lesson.teacherId === user.id &&
         new Date(lesson.startTime).toDateString() === today.toDateString()
     ).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
     const pendingApprovals = useMemo(() => {
-        return mockFormSubmissions.filter(form => 
+        return mockFormSubmissions.filter(form =>
             form.status === 'ממתין לאישור מורה' &&
             user.students?.includes(form.studentId)
         )
     }, [mockFormSubmissions, user.students]);
 
+    const t = useTranslations("Dashboard.Teacher");
+
     const handleAttendance = (lessonId: string, status: SlotStatus) => {
         updateLessonStatus(lessonId, status);
         toast({
-            title: "הנוכחות סומנה",
-            description: `סטטוס השיעור עודכן.`
+            title: t('attendanceMarked'),
+            description: t('lessonUpdated')
         });
     };
 
 
+    const teacherPerformances = useMemo(() => {
+        return mockEvents.filter(event =>
+            event.program.some(slot => assignedStudents.some(s => s.id === slot.studentId))
+        );
+    }, [assignedStudents]);
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 p-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">ברוך הבא, {user.name.split(' ')[0]}</h1>
-                    <p className="text-muted-foreground">זהו לוח הבקרה שלך להיום.</p>
+                    <h1 className="text-2xl font-bold">{t('welcomeTitle', { name: user.name.split(' ')[0] })}</h1>
+                    <p className="text-muted-foreground">{t('welcomeSubtitle')}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button id="sick-leave-button" variant="destructive" onClick={() => setIsSickLeaveModalOpen(true)}>
                         <XCircle className="ms-2 h-4 w-4" />
-                        דיווח מחלה / היעדרות
+                        {t('sickLeave')}
                     </Button>
                     <Button variant="outline" asChild>
                         <Link href="/dashboard/forms/new">
                             <PlusCircle className="ms-2 h-4 w-4" />
-                            טופס חדש
+                            {t('newForm')}
                         </Link>
                     </Button>
-                     <Button variant="secondary" asChild>
-                        <Link href="/dashboard/teacher/availability">נהל זמינות</Link>
+                    <Button variant="secondary" asChild>
+                        <Link href="/dashboard/teacher/availability">{t('manageAvailability')}</Link>
                     </Button>
                 </div>
             </div>
-            
-            <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                    <Card id="today-lessons-card">
-                        <CardHeader>
-                            <CardTitle>השיעורים להיום</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                           {todayLessons.length > 0 ? todayLessons.map(lesson => (
-                                <TodaysLessonCard 
-                                    key={lesson.id} 
-                                    lesson={lesson} 
-                                    student={users.find(u => u.id === lesson.studentId)}
-                                    onAttendance={handleAttendance}
-                                />
-                           )) : (
-                                <p className="text-center text-muted-foreground py-8">אין שיעורים מתוכננים להיום.</p>
-                           )}
-                        </CardContent>
-                    </Card>
-                </div>
 
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>אישורים ממתינים ({pendingApprovals.length})</CardTitle>
-                            <CardDescription>הטפסים האחרונים שהוגשו וממתינים לאישורך.</CardDescription>
+            <div className="grid lg:grid-cols-3 gap-6">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    <Card className="col-span-4">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-xl font-bold">{t('todaysLessons')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                             <div className="space-y-3">
-                                {pendingApprovals.length > 0 ? pendingApprovals.slice(0, 3).map(form => {
-                                    const student = users.find(u => u.id === form.studentId);
-                                    return (
-                                        <div key={form.id} className="flex items-center gap-3">
-                                            <Avatar>
-                                                <AvatarImage src={student?.avatarUrl} />
-                                                <AvatarFallback>{form.studentName.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <p className="text-sm font-medium">{form.studentName}</p>
-                                                <p className="text-xs text-muted-foreground">{form.formType}</p>
-                                            </div>
-                                            <Button size="sm" variant="outline" className="me-auto" asChild><Link href={`/dashboard/forms/${form.id}`}>צפה</Link></Button>
-                                        </div>
-                                    )
-                                }) : (
-                                    <p className="text-muted-foreground text-center py-4">אין טפסים הממתינים לאישורך.</p>
+                            <div className="space-y-4">
+                                {todayLessons.length > 0 ? (
+                                    todayLessons.map((lesson) => (
+                                        <TodaysLessonCard key={lesson.id} lesson={lesson} student={assignedStudents.find(s => s.id === lesson.studentId)} onAttendance={handleAttendance} />
+                                    ))
+                                ) : (
+                                    <p className="text-muted-foreground py-4 text-center">{t('noLessons')}</p>
                                 )}
                             </div>
                         </CardContent>
-                        {pendingApprovals.length > 0 && 
-                            <CardFooter>
-                                <Button variant="secondary" className="w-full" asChild><Link href="/dashboard/approvals">לכל האישורים</Link></Button>
-                            </CardFooter>
-                        }
                     </Card>
+
+                    <div className="col-span-3 space-y-4">
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between py-2">
+                                <div>
+                                    <CardTitle className="text-lg font-bold">
+                                        {t('pendingApprovals', { count: pendingApprovals.length })}
+                                    </CardTitle>
+                                    <CardDescription>{t('pendingApprovalsDesc')}</CardDescription>
+                                </div>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href="/dashboard/forms?status=pending">{t('viewAllApprovals')}</Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {pendingApprovals.length > 0 ? (
+                                        pendingApprovals.slice(0, 3).map((form) => {
+                                            const student = users.find(u => u.id === form.studentId);
+                                            return (
+                                                <div key={form.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                                                    <div className="grid gap-1">
+                                                        <p className="font-medium">{form.studentName}</p>
+                                                        <p className="text-xs text-muted-foreground">{form.formType} - {form.submissionDate}</p>
+                                                    </div>
+                                                    <Button size="sm" variant="ghost" asChild>
+                                                        <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
+                                                    </Button>
+                                                </div>
+                                            )
+                                        })
+                                    ) : (
+                                        <p className="text-muted-foreground py-4 text-center">{t('noPendingApprovals')}</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between py-2">
+                                <div>
+                                    <CardTitle className="text-lg font-bold">
+                                        {t('upcomingPerformances')}
+                                    </CardTitle>
+                                    <CardDescription>{t('upcomingPerformancesDesc')}</CardDescription>
+                                </div>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href="/dashboard/performances">{t('viewAll')}</Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {teacherPerformances.length > 0 ? (
+                                        teacherPerformances.slice(0, 3).map((event) => (
+                                            <div key={event.id} className="flex items-center gap-3 border-b pb-2 last:border-0 last:pb-0">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                                    <Music className="h-5 w-5" />
+                                                </div>
+                                                <div className="grid gap-1">
+                                                    <p className="font-medium">{event.name}</p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {event.eventDate} | {event.startTime} | {event.venue}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-muted-foreground py-4 text-center">{t('noUpcomingPerformances')}</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
-            
+
             <Card>
                 <CardHeader>
-                    <CardTitle>התלמידים שלי ({assignedStudents.length})</CardTitle>
-                    <CardDescription>נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.</CardDescription>
+                    <CardTitle>{t('myStudents', { count: assignedStudents.length })}</CardTitle>
+                    <CardDescription>{t('myStudentsDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {assignedStudents.map((student, index) => <StudentRosterCard key={student.id} id={index === 0 ? "student-roster-card" : undefined} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}

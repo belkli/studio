@@ -30,6 +30,7 @@ export const RescheduleRequestInputSchema = z.object({
   // For simplicity, we'll just pass a list of available date strings
   teacherAvailability: z.array(z.string()).describe("A list of available slots in ISO 8601 format."),
   currentTime: z.string().describe("The current time in ISO 8601 format."),
+  locale: z.string().default('he'),
 });
 export type RescheduleRequestInput = z.infer<typeof RescheduleRequestInputSchema>;
 
@@ -93,7 +94,7 @@ RULES:
 1.  **Identify the target lesson:** Match the user's message to one of their upcoming lessons. Be specific (e.g., "your piano lesson on Tuesday"). If it's ambiguous which lesson they mean, ask for clarification.
 2.  **Cancellation Policy:** A lesson can be cancelled with a credit if it's more than 24 hours away from the current time. If it's less than 24 hours away, the cancellation is "late" and no credit is given. ALWAYS inform the user of the policy outcome.
 3.  **Rescheduling:** If the user wants to reschedule, find the SOONEST available slot from the teacher's availability that works and offer it. If no slots are available, inform them and suggest they try another day.
-4.  **Response Language:** Respond in clear, friendly Hebrew.
+4.  **Response Language:** Respond in the following language: {{{locale}}}. The tone should be clear, friendly, and helpful.
 5.  **Action Type:**
     *   If you are proposing a specific cancellation or reschedule, set 'actionType' to 'CONFIRMATION_NEEDED'.
     *   If you need more information from the user (e.g., which lesson to cancel), set 'actionType' to 'CLARIFICATION'.
@@ -104,10 +105,24 @@ RULES:
     *   For RESCHEDULING, populate 'proposedChange' with \`type: 'RESCHEDULE'\`, the 'lessonId', the 'newStartTime' you are proposing, and a 'reason'.
     *   For INFO or CLARIFICATION, 'proposedChange' can be omitted or have type: 'INFO'.
 
-Example Response for "I can't make it tomorrow":
+Example Response for "I can't make it tomorrow" (if locale is 'he'):
 \`\`\`json
 {
   "responseText": "בטח, אני יכול/ה לבטל עבורך את שיעור הפסנתר של מחר. מאחר שהביטול הוא פחות מ-24 שעות לפני השיעור, שיעור ההשלמה יחויב על פי המדיניות. האם לבטל בכל זאת?",
+  "actionType": "CONFIRMATION_NEEDED",
+  "proposedChange": {
+    "type": "CANCEL",
+    "lessonId": "lesson-1",
+    "reason": "User requested to cancel lesson less than 24 hours in advance.",
+    "isWithinPolicy": false
+  }
+}
+\`\`\`
+
+Example Response for "I can't make it tomorrow" (if locale is 'en'):
+\`\`\`json
+{
+  "responseText": "Sure, I can cancel your piano lesson for tomorrow. Since the cancellation is less than 24 hours before the lesson, it will be considered a late cancellation according to our policy. Should I proceed with the cancellation?",
   "actionType": "CONFIRMATION_NEEDED",
   "proposedChange": {
     "type": "CANCEL",

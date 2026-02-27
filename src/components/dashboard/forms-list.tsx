@@ -1,29 +1,63 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { mockFormSubmissions } from "@/lib/data";
 import type { FormStatus } from "@/lib/types";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { StatusBadge } from "../ui/status-badge";
+import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "next-intl";
 
 
-export function FormsList({ statusFilter }: { statusFilter?: FormStatus[] }) {
-    const forms = statusFilter 
-        ? mockFormSubmissions.filter(form => statusFilter.includes(form.status))
-        : mockFormSubmissions;
+export function FormsList({
+    statusFilter,
+    searchQuery
+}: {
+    statusFilter?: FormStatus[],
+    searchQuery?: string
+}) {
+    const t = useTranslations('FormsPage');
+    const { user, mockFormSubmissions } = useAuth();
+    let forms = user ? mockFormSubmissions : [];
+
+    // ... filtering unchanged ...
+    if (user) {
+        if (user.role === 'student') {
+            forms = forms.filter(f => f.studentId === user.id);
+        } else if (user.role === 'parent') {
+            forms = forms.filter(f => user.childIds?.includes(f.studentId));
+        } else if (user.role === 'teacher') {
+            forms = forms.filter(f => user.students?.includes(f.studentId));
+        } else if (user.role === 'conservatorium_admin') {
+            forms = forms.filter(f => f.conservatoriumId === user.conservatoriumId);
+        }
+    }
+
+    if (statusFilter) {
+        forms = forms.filter(form => statusFilter.includes(form.status));
+    }
+
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        forms = forms.filter(form =>
+            form.studentName.toLowerCase().includes(query) ||
+            form.formType.toLowerCase().includes(query)
+        );
+    }
 
     if (forms.length === 0) {
-        return <p className="p-4 text-muted-foreground text-center">לא נמצאו טפסים.</p>
+        return <p className="p-4 text-muted-foreground text-center">{t('noForms')}</p>
     }
 
     return (
         <Table className="w-full">
             <TableHeader>
                 <TableRow>
-                    <TableHead>שם התלמיד/ה</TableHead>
-                    <TableHead>סוג הטופס</TableHead>
-                    <TableHead>סטטוס</TableHead>
-                    <TableHead>תאריך הגשה</TableHead>
-                    <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
+                    <TableHead>{t('table.studentName')}</TableHead>
+                    <TableHead>{t('table.formType')}</TableHead>
+                    <TableHead>{t('table.status')}</TableHead>
+                    <TableHead>{t('table.submissionDate')}</TableHead>
+                    <TableHead className="text-left"><span className="sr-only">{t('table.actions')}</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -37,7 +71,7 @@ export function FormsList({ statusFilter }: { statusFilter?: FormStatus[] }) {
                         <TableCell>{form.submissionDate}</TableCell>
                         <TableCell className="text-left">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/forms/${form.id}`}>צפה</Link>
+                                <Link href={`/dashboard/forms/${form.id}`}>{t('table.view')}</Link>
                             </Button>
                         </TableCell>
                     </TableRow>

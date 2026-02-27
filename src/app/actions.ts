@@ -27,7 +27,7 @@ import {
 import { MatchTeacherInputSchema } from '@/ai/flows/match-teacher-flow';
 
 import {
-  draftProgressReport,
+  draftProgressReport as invokeDraftProgressReport,
   type DraftProgressReportInput,
   type DraftProgressReportOutput,
 } from '@/ai/flows/draft-progress-report-flow';
@@ -69,6 +69,18 @@ const SearchCompositionsSchema = z.object({
   composer: z.string().optional(),
   instrument: z.string().optional(),
 });
+
+const AlumnusSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2),
+  avatarUrl: z.string().optional(),
+  graduationYear: z.number().int().min(1900).max(new Date().getFullYear()),
+  instrument: z.string().min(2),
+  currentRole: z.string().min(2),
+  achievements: z.string().optional(),
+});
+
+const DeleteAlumnusSchema = z.string();
 
 
 // Secure Server Actions wrapped with Authentication & Zod Validation
@@ -148,10 +160,10 @@ export const getTeacherMatches = withAuth(
  * @param input - The student's data, including practice logs, notes, and repertoire.
  * @returns A promise that resolves to the drafted report text in Markdown.
  */
-export const generateProgressReport = withAuth(
+export const draftProgressReport = withAuth(
   DraftProgressReportInputSchema,
   async (input: DraftProgressReportInput): Promise<DraftProgressReportOutput> => {
-    return await draftProgressReport(input);
+    return await invokeDraftProgressReport(input);
   }
 );
 
@@ -200,5 +212,35 @@ export const generateNurtureMessage = withAuth(
   NurtureLeadInputSchema,
   async (input: NurtureLeadInput): Promise<NurtureLeadOutput> => {
     return await nurtureLead(input);
+  }
+);
+
+/**
+ * Saves (creates or updates) an alumnus record.
+ * @param alumnus - The alumnus data to save.
+ * @returns A promise that resolves to the saved Alumnus object.
+ */
+export const saveAlumnus = withAuth(
+  AlumnusSchema,
+  async (alumnus: z.infer<typeof AlumnusSchema>) => {
+    // In a real app, this would perform a database operation.
+    // For now, we simulate a successful save.
+    console.log('Saving alumnus:', alumnus);
+    return { ...alumnus, id: alumnus.id || `alumni-${Math.random().toString(36).substr(2, 9)}` };
+  }
+);
+
+/**
+ * Deletes an alumnus record by ID.
+ * @param id - The ID of the alumnus to delete.
+ * @returns A promise that resolves when the deletion is complete.
+ */
+export const deleteAlumnus = withAuth(
+  DeleteAlumnusSchema,
+  async (id: string) => {
+    // In a real app, this would perform a database operation.
+    // For now, we simulate a successful deletion.
+    console.log('Deleting alumnus with ID:', id);
+    return { success: true };
   }
 );

@@ -7,7 +7,7 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
@@ -39,6 +39,8 @@ interface AuthContextType {
   mockOpenDayEvents: OpenDayEvent[];
   mockOpenDayAppointments: OpenDayAppointment[];
   mockPracticeVideos: PracticeVideo[];
+  mockAlumni: Alumnus[];
+  mockMasterclasses: Masterclass[];
   conservatoriums: Conservatorium[];
   mockBranches: Branch[];
   login: (email: string) => { user: User | null; status: 'approved' | 'pending' | 'not_found' };
@@ -124,6 +126,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>(initialMockData.mockOpenDayAppointments);
   const [mockBranches, setMockBranches] = useState<Branch[]>(initialMockData.mockBranches);
   const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>(initialMockData.mockPracticeVideos);
+  const [mockAlumni, setMockAlumni] = useState<Alumnus[]>(initialMockData.mockAlumni);
+  const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>(initialMockData.mockMasterclasses);
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>(initialMockData.mockWaitlist);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
@@ -725,6 +729,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockOpenDayEvents,
       mockOpenDayAppointments,
       mockPracticeVideos,
+      mockAlumni,
+      mockMasterclasses,
       conservatoriums,
       mockBranches,
       mockWaitlist,

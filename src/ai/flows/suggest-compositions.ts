@@ -11,6 +11,10 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 export const SuggestCompositionsInputSchema = z.object({
+  locale: z
+    .string()
+    .optional()
+    .describe('The language locale to respond in. E.g. "he", "en", "ru", "ar". Default is "he".'),
   composer: z
     .string()
     .optional()
@@ -64,41 +68,36 @@ const prompt = ai.definePrompt({
   name: 'compositionSuggestionPrompt',
   input: { schema: SuggestCompositionsInputSchema },
   output: { schema: SuggestCompositionsOutputSchema },
-  prompt: `אתה קטלוגר ומומחה למוזיקה, בעל ידע נרחב בספריית יצירות מוזיקליות. המשימה שלך היא להציע יצירות מוזיקליות מתאימות על סמך הקריטריונים של המשתמש, עבור רסיטל או תוכנית קונצרט.
+  prompt: `You are a music expert and cataloger with extensive knowledge of musical compositions. Your task is to suggest appropriate musical compositions based on the user's criteria, for a recital or concert program.
 
-קח בחשבון את הפרטים הבאים:
-{{#if composer}}מלחין: {{{composer}}}{{/if}}
-{{#if instrument}}כלי נגינה: {{{instrument}}}{{/if}}
-{{#if genre}}ז'אנר: {{{genre}}}{{/if}}
-{{#if context}}הקשר/העדפות נוספות (לדוגמה, מטרות התלמיד, רמת קושי, אווירה): {{{context}}}{{/if}}
-{{#if existingCompositions}}הימנע מהצעת היצירות הבאות (כבר נבחרו): {{{existingCompositions}}}{{/if}}
+Please respond in the following language locale: {{#if locale}}{{{locale}}}{{else}}he{{/if}}. Provide all text such as titles, genres, and composers in this language if possible, or keep original names if more appropriate.
 
-אנא הצע 3-5 יצירות שונות המתאימות לקריטריונים. אם ההקשר מרמז על בניית תוכנית מלאה, נסה להציע רפרטואר מאוזן (לדוגמה, יצירה מהירה, יצירה איטית, יצירה וירטואוזית).
+Consider the following details:
+{{#if composer}}Composer: {{{composer}}}{{/if}}
+{{#if instrument}}Instrument: {{{instrument}}}{{/if}}
+{{#if genre}}Genre: {{{genre}}}{{/if}}
+{{#if context}}Context/Additional Preferences: {{{context}}}{{/if}}
+{{#if existingCompositions}}Avoid suggesting the following pieces (already selected): {{{existingCompositions}}}{{/if}}
 
-עבור כל הצעה, ציין את המלחין, הכותרת, משך הזמן בפורמט MM:SS (הערך במידת הצורך), והז'אנר.
-בנוסף, אם היצירה היא ברשות הציבור, חפש וספק קישור (URL) לדף היצירה באתר IMSLP בשדה 'imslpUrl'.
+Please suggest 3-5 different compositions that fit the criteria. If the context implies building a full program, try to suggest a balanced repertoire (e.g., a fast piece, a slow piece, a virtuosic piece).
 
-ודא שההצעות מגוונות אך רלוונטיות. תעדף יצירות ידועות ומתאימות לרסיטלים או קונצרטים.
+For each suggestion, provide the composer, title, duration in MM:SS format (estimate if necessary), and genre.
+Additionally, if the piece is in the public domain, find and provide a URL to the composition's page on IMSLP in the 'imslpUrl' field.
 
-דוגמת פורמט פלט (JSON):
-אני רוצה רק את ה-JSON בפלט, ושום טקסט אחר לפני או אחרי.
+Ensure the suggestions are diverse yet relevant. Prioritize well-known and recital-appropriate pieces.
+
+Example JSON output format:
+I want ONLY the JSON output, with NO other text before or after.
 
 \`\`\`json
 {
   "suggestions": [
     {
-      "composer": "יוהאן סבסטיאן באך",
-      "title": "פרלוד ופוגה בדו מז'ור (מתוך הפסנתר המושווה, ספר א')",
+      "composer": "Johann Sebastian Bach",
+      "title": "Prelude and Fugue in C major, BWV 846",
       "duration": "03:30",
-      "genre": "בארוק",
+      "genre": "Baroque",
       "imslpUrl": "https://imslp.org/wiki/Das_wohltemperirte_Clavier,_BWV_846-893_(Bach,_Johann_Sebastian)"
-    },
-    {
-      "composer": "פרדריק שופן",
-      "title": "נוקטורן במי במול מז'ור, אופ. 9 מס' 2",
-      "duration": "04:00",
-      "genre": "רומנטי",
-      "imslpUrl": "https://imslp.org/wiki/Nocturnes,_Op.9_(Chopin,_Fr%C3%A9d%C3%A9ric)"
     }
   ]
 }

@@ -22,35 +22,36 @@ import { examLevels, examTypes, genres } from '@/lib/data';
 import { Checkbox } from '../ui/checkbox';
 
 
-const compositionSchema = z.object({
+import { useTranslations } from 'next-intl';
+
+
+const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
-    composer: z.string().min(1, 'חובה להזין מלחין'),
-    title: z.string().min(1, 'חובה להזין שם יצירה'),
-    duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
-    genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
+    composer: z.string().min(1, t('validation.requiredComposer')),
+    title: z.string().min(1, t('validation.requiredTitle')),
+    duration: z.string().regex(/^\d{2}:\d{2}$/, t('validation.invalidDuration')),
+    genre: z.string().min(1, t('validation.requiredGenre')),
     approved: z.boolean().optional(),
 });
 
 
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
-const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
-
-const formSchema = z.object({
+const getFormSchema = (t: any) => z.object({
     studentId: z.string(),
     studentName: z.string(),
-    instrument: z.string().min(1, "חובה לבחור כלי נגינה"),
-    examLevel: z.string().min(1, "חובה לבחור רמת בחינה."),
-    examType: z.string().min(1, "חובה לבחור סוג בחינה."),
+    instrument: z.string().min(1, t('validation.requiredInstrument')),
+    examLevel: z.string().min(1, t('validation.requiredLevel')),
+    examType: z.string().min(1, t('validation.requiredType')),
     preferredExamDateRange: z.string().optional(),
-    repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
+    repertoire: z.array(getCompositionSchema(t)).min(MIN_REPERTOIRE_ITEMS, t('validation.minRepertoire')).max(MAX_REPERTOIRE_ITEMS, t('validation.maxRepertoire', { max: MAX_REPERTOIRE_ITEMS })),
     teacherDeclaration: z.boolean().refine(val => val === true, {
-        message: "חובה לאשר את הצהרת המורה.",
+        message: t('validation.requiredDeclaration'),
     }),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
 interface ExamRegistrationFormProps {
     user: User;
@@ -62,6 +63,7 @@ interface ExamRegistrationFormProps {
 }
 
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
+    const t = useTranslations('ExamRegistrationForm');
     const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
@@ -110,10 +112,10 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     return (
         <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
-                <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
+                <span className="font-medium text-muted-foreground">{t('compositionItem', { index: index + 1 })}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                     <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">מחק יצירה</span>
+                    <span className="sr-only">{t('deleteItem')}</span>
                 </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
@@ -124,7 +126,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                     name={`repertoire.${index}.composer`}
                     render={({ field: composerField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>מלחין</FormLabel>
+                            <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
                                     options={composerOptions.map(c => ({ value: c, label: c }))}
@@ -135,7 +137,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
                                     }}
-                                    placeholder="בחר מלחין..."
+                                    placeholder={t('selectComposer')}
                                     onInputChange={debouncedComposerSearch}
                                     isLoading={isLoadingComposers}
                                     filter={false}
@@ -151,13 +153,13 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                     name={`repertoire.${index}.title`}
                     render={({ field: titleField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>שם היצירה</FormLabel>
+                            <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
+                                    options={compositionOptions.map(c => ({ value: c.id || '', label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
-                                    placeholder="בחר יצירה..."
+                                    placeholder={t('selectComposition')}
                                     onInputChange={debouncedCompositionSearch}
                                     isLoading={isLoadingCompositions}
                                     filter={false}
@@ -169,15 +171,15 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                 />
 
                 <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
-                    <FormItem> <FormLabel>ז'אנר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר ז'אנר" /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
+                    <FormItem> <FormLabel>{t('genre')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
                 )} />
 
-                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>זמן ביצוע</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>{t('duration')}</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
 
                 <div className="hidden lg:flex items-center justify-center h-10">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
-                        <span className="sr-only">מחק יצירה</span>
+                        <span className="sr-only">{t('deleteItem')}</span>
                     </Button>
                 </div>
             </div>
@@ -199,8 +201,12 @@ const getHebrewAcademicYear = () => {
 }
 
 export function ExamRegistrationForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: ExamRegistrationFormProps) {
+    const t = useTranslations('ExamRegistrationForm');
+    const nt = useTranslations('NewForm');
+    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+
     const form = useForm<FormData>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(getFormSchema(t)),
         defaultValues: initialData ? {
             studentId: student.id,
             studentName: student.name,
@@ -225,7 +231,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
     });
 
     const handleFormSubmit = (data: FormData) => {
-        const totalDurationSeconds = data.repertoire.reduce((total, item) => {
+        const totalDurationSeconds = data.repertoire.reduce((total: number, item: any) => {
             if (!item?.duration) return total;
             const [minutes, seconds] = item.duration.split(':').map(Number);
             if (isNaN(minutes) || isNaN(seconds)) return total;
@@ -236,7 +242,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
 
         const submissionData = {
             ...data,
-            formType: 'הרשמה לבחינה',
+            formType: nt('types.exam_registration'),
             totalDuration: totalDurationFormatted,
             academicYear: getHebrewAcademicYear(),
         } as any;
@@ -250,25 +256,25 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>פרטי תלמיד/ה וכלי</CardTitle>
+                        <CardTitle>{t('studentAndInstrument')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>שם התלמיד/ה</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
-                        <FormItem> <FormLabel>ת.ז.</FormLabel><Input value={student.idNumber} disabled /></FormItem>
-                        <FormField control={form.control} name="instrument" render={({ field }) => (<FormItem> <FormLabel>כלי</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>{t('studentName')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
+                        <FormItem> <FormLabel>{t('idNumber')}</FormLabel><Input value={student.idNumber} disabled /></FormItem>
+                        <FormField control={form.control} name="instrument" render={({ field }) => (<FormItem> <FormLabel>{t('instrument')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>פרטי הבחינה</CardTitle>
+                        <CardTitle>{t('examDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <FormField control={form.control} name="examLevel" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>רמת בחינה</FormLabel>
+                                <FormLabel>{t('examLevel')}</FormLabel>
                                 <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="בחר רמת בחינה" /></SelectTrigger></FormControl>
+                                    <FormControl><SelectTrigger><SelectValue placeholder={t('selectLevel')} /></SelectTrigger></FormControl>
                                     <SelectContent>{examLevels.map(level => <SelectItem key={level} value={level}>{level}</SelectItem>)}</SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -276,9 +282,9 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                         )} />
                         <FormField control={form.control} name="examType" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>סוג בחינה</FormLabel>
+                                <FormLabel>{t('examType')}</FormLabel>
                                 <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="בחר סוג בחינה" /></SelectTrigger></FormControl>
+                                    <FormControl><SelectTrigger><SelectValue placeholder={t('selectType')} /></SelectTrigger></FormControl>
                                     <SelectContent>{examTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -286,8 +292,8 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                         )} />
                         <FormField control={form.control} name="preferredExamDateRange" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>טווח תאריכים מועדף</FormLabel>
-                                <FormControl><Input placeholder="לדוגמה: 1-15 ביוני" {...field} /></FormControl>
+                                <FormLabel>{t('preferredDateRange')}</FormLabel>
+                                <FormControl><Input placeholder={t('dateRangePlaceholder')} {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -296,7 +302,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>רפרטואר</CardTitle>
+                        <CardTitle>{t('repertoire')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -317,7 +323,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                                 disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
                             >
                                 <PlusCircle className="me-2 h-4 w-4" />
-                                הוסף יצירה
+                                {t('addComposition')}
                             </Button>
                         </div>
                         <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
@@ -326,7 +332,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>הצהרת המורה</CardTitle>
+                        <CardTitle>{t('teacherDeclarationTitle')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <FormField
@@ -342,7 +348,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                                     </FormControl>
                                     <div className="space-y-1 leading-none">
                                         <FormLabel>
-                                            אני, {user.name}, מצהיר/ה כי התלמיד/ה {student.name} מוכן/ה לגשת לבחינה ברמה ובסוג המצוינים לעיל.
+                                            {t('teacherDeclarationText', { teacherName: user.name, studentName: student.name })}
                                         </FormLabel>
                                         <FormMessage />
                                     </div>
@@ -355,12 +361,12 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                 <div className="flex justify-end gap-4">
                     {isEditing && onCancel && (
                         <Button type="button" variant="ghost" onClick={onCancel}>
-                            ביטול
+                            {t('cancel')}
                         </Button>
                     )}
                     <Button type="submit">
                         <Send className="me-2 h-4 w-4" />
-                        {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
+                        {isEditing ? t('resubmit') : t('submit')}
                     </Button>
                 </div>
             </form>

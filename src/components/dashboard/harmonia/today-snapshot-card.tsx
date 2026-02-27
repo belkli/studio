@@ -3,12 +3,12 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useAuth } from "@/hooks/use-auth";
 
 export function TodaySnapshotCard() {
     const { mockLessons, users, mockInvoices } = useAuth();
-    
+
     const today = new Date();
     const todayLessons = mockLessons.filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
     const failedPayments = mockInvoices.filter(inv => inv.status === 'OVERDUE');
@@ -27,8 +27,8 @@ export function TodaySnapshotCard() {
                             const student = users.find(u => u.id === lesson.studentId);
                             const teacher = users.find(u => u.id === lesson.teacherId);
                             return (
-                                 <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
-                                    <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit'})}</span>
+                                <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
+                                    <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span>
                                     <span className="font-medium flex-1">{student?.name}</span>
                                     <span className="text-muted-foreground">{teacher?.name}</span>
                                     <span className="text-muted-foreground">חדר {lesson.roomId || 'לא שויך'}</span>
@@ -38,9 +38,9 @@ export function TodaySnapshotCard() {
                         }) : <p className="text-sm text-muted-foreground">אין שיעורים מתוכננים להיום.</p>}
                     </div>
                 </div>
-                 <div>
+                <div>
                     <h4 className="text-sm font-semibold mb-2">בעיות בגבייה</h4>
-                     <div className="space-y-2">
+                    <div className="space-y-2">
                         {failedPayments.length > 0 ? failedPayments.map((payment, index) => {
                             const payer = users.find(u => u.id === payment.payerId);
                             return (
@@ -52,7 +52,7 @@ export function TodaySnapshotCard() {
                                 </div>
                             )
                         }) : <p className="text-sm text-muted-foreground">אין בעיות בגבייה כרגע.</p>}
-                     </div>
+                    </div>
                 </div>
 
                 <Button variant="outline" className="w-full" asChild>

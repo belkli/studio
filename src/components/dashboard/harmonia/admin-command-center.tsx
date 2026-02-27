@@ -3,7 +3,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, FilePlus, Megaphone, UserPlus, FileCheck, Banknote, Coins } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";
 import { RecentAnnouncementsCard } from "./recent-announcements-card";
@@ -14,17 +14,17 @@ import { Badge } from "@/components/ui/badge";
 
 export function AdminCommandCenter() {
     const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
-    
+
     const stats = useMemo(() => {
         if (!user) return { pendingUsers: 0, pendingForms: 0, draftPayrolls: 0 };
-        
+
         const pendingUsers = users.filter(u => u.conservatoriumId === user.conservatoriumId && !u.approved).length;
 
-        const pendingForms = mockFormSubmissions.filter(f => 
-            f.conservatoriumId === user.conservatoriumId && 
+        const pendingForms = mockFormSubmissions.filter(f =>
+            f.conservatoriumId === user.conservatoriumId &&
             (f.status === 'ממתין לאישור מנהל' || f.status === 'נדרש תיקון')
         ).length;
-        
+
         const draftPayrolls = mockPayrolls.filter(p => p.status === 'DRAFT').length;
 
         return { pendingUsers, pendingForms, draftPayrolls };
@@ -34,15 +34,15 @@ export function AdminCommandCenter() {
 
     return (
         <div className="space-y-6">
-             <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">ברוכה הבאה, {user.name.split(' ')[0]}</h1>
                     <p className="text-muted-foreground">זהו מרכז הבקרה שלך עבור {user.conservatoriumName || 'הקונסרבטוריון'}.</p>
                 </div>
             </div>
-            
+
             <KeyMetricsBar />
-            
+
             <Card>
                 <CardHeader>
                     <CardTitle>פעולות מהירות</CardTitle>
@@ -57,20 +57,20 @@ export function AdminCommandCenter() {
                     </Button>
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/approvals">
-                             <FileCheck className="h-6 w-6 mb-2" />
+                            <FileCheck className="h-6 w-6 mb-2" />
                             <span>בדוק טפסים</span>
                             {stats.pendingForms > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingForms}</Badge>}
                         </Link>
                     </Button>
-                     <Button variant="outline" className="flex-col h-24 relative" asChild>
+                    <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/admin/payroll">
                             <Banknote className="h-6 w-6 mb-2" />
                             <span>צפה בטיוטות שכר</span>
-                             {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -right-2">{stats.draftPayrolls}</Badge>}
+                            {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -right-2">{stats.draftPayrolls}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24" asChild>
-                         <Link href="/dashboard/announcements">
+                        <Link href="/dashboard/announcements">
                             <Megaphone className="h-6 w-6 mb-2" />
                             <span>שלח הכרזה</span>
                         </Link>
@@ -90,7 +90,7 @@ export function AdminCommandCenter() {
                     <AiAlertsCard />
                 </div>
             </div>
-             <RecentAnnouncementsCard />
+            <RecentAnnouncementsCard />
         </div>
     )
 }

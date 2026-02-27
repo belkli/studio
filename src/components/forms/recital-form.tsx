@@ -22,26 +22,29 @@ import { SuggestionButton } from './suggestion-button';
 import { schools, genres } from '@/lib/data';
 
 
-const compositionSchema = z.object({
+import { useTranslations } from 'next-intl';
+
+
+const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
-    composer: z.string().min(1, 'חובה להזין מלחין'),
-    title: z.string().min(1, 'חובה להזין שם יצירה'),
-    duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
-    genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
+    composer: z.string().min(1, t('validation.requiredComposer')),
+    title: z.string().min(1, t('validation.requiredTitle')),
+    duration: z.string().regex(/^\d{2}:\d{2}$/, t('validation.invalidDuration')),
+    genre: z.string().min(1, t('validation.requiredGenre')),
     approved: z.boolean().optional(),
 });
 
 
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
-const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
-
-const recitalFormSchema = z.object({
+const getRecitalFormSchema = (t: any) => z.object({
     studentId: z.string(),
     studentName: z.string(),
-    academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
-    grade: z.enum(['י', 'יא', 'יב'], { message: 'חובה לבחור כיתה' }),
+    academicYear: z.string().min(1, t('validation.requiredAcademicYear')),
+    grade: z.enum(['י', 'יא', 'יב'], {
+        errorMap: () => ({ message: t('validation.requiredGrade') })
+    }),
 
     applicantDetails: z.object({
         city: z.string().optional(),
@@ -55,16 +58,16 @@ const recitalFormSchema = z.object({
         isMajorParticipant: z.boolean().default(false),
     }),
     instrumentDetails: z.object({
-        instrument: z.string().min(1, "חובה לציין כלי נגינה"),
+        instrument: z.string().min(1, t('validation.requiredInstrument')),
         yearsOfStudy: z.coerce.number().optional(),
     }),
     teacherDetails: z.object({
         yearsWithTeacher: z.coerce.number().optional(),
     }),
-    repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
+    repertoire: z.array(getCompositionSchema(t)).min(MIN_REPERTOIRE_ITEMS, t('validation.minRepertoire')).max(MAX_REPERTOIRE_ITEMS, t('validation.maxRepertoire', { max: MAX_REPERTOIRE_ITEMS })),
 });
 
-type FormData = z.infer<typeof recitalFormSchema>;
+type FormData = z.infer<ReturnType<typeof getRecitalFormSchema>>;
 
 interface RecitalFormProps {
     user: User;
@@ -92,6 +95,7 @@ const getHebrewAcademicYear = () => {
 
 
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
+    const t = useTranslations('RecitalForm');
     const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
@@ -146,10 +150,10 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     return (
         <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
-                <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
+                <span className="font-medium text-muted-foreground">{t('compositionItem', { index: index + 1 })}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                     <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">מחק יצירה</span>
+                    <span className="sr-only">{t('deleteItem')}</span>
                 </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
@@ -160,7 +164,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                     name={`repertoire.${index}.composer`}
                     render={({ field: composerField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>מלחין</FormLabel>
+                            <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
                                     options={composerOptions.map(c => ({ value: c, label: c }))}
@@ -171,7 +175,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
                                     }}
-                                    placeholder="בחר מלחין..."
+                                    placeholder={t('selectComposer')}
                                     onInputChange={debouncedComposerSearch}
                                     isLoading={isLoadingComposers}
                                     filter={false}
@@ -187,13 +191,13 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                     name={`repertoire.${index}.title`}
                     render={({ field: titleField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>שם היצירה</FormLabel>
+                            <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
+                                    options={compositionOptions.map(c => ({ value: c.id || '', label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
-                                    placeholder="בחר יצירה..."
+                                    placeholder={t('selectComposition')}
                                     onInputChange={debouncedCompositionSearch}
                                     isLoading={isLoadingCompositions}
                                     filter={false}
@@ -205,15 +209,15 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                 />
 
                 <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
-                    <FormItem> <FormLabel>ז'אנר</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="בחר ז'אנר" /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
+                    <FormItem> <FormLabel>{t('genre')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
                 )} />
 
-                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>זמן ביצוע</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>{t('duration')}</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
 
                 <div className="hidden lg:flex items-center justify-center h-10">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
-                        <span className="sr-only">מחק יצירה</span>
+                        <span className="sr-only">{t('deleteItem')}</span>
                     </Button>
                 </div>
             </div>
@@ -222,8 +226,11 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
 }
 
 export function RecitalForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: RecitalFormProps) {
+    const t = useTranslations('RecitalForm');
+    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+
     const form = useForm<FormData>({
-        resolver: zodResolver(recitalFormSchema),
+        resolver: zodResolver(getRecitalFormSchema(t)) as any,
         defaultValues: initialData ? {
             ...initialData,
             ...initialData.applicantDetails,
@@ -270,19 +277,45 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
             <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="space-y-8 mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>פרטי התלמיד/ה והמורה</CardTitle>
+                        <CardTitle>{t('studentDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>שם התלמיד/ה</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
-                        <FormItem> <FormLabel>ת.ז.</FormLabel><Input value={student.idNumber} disabled /></FormItem>
-                        <FormItem> <FormLabel>שם המורה</FormLabel><Input value={student.instruments?.[0]?.teacherName} disabled /></FormItem>
-                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>כיתה</FormLabel> <FormControl><Input {...field} disabled /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>{t('studentName')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
+                        <FormItem> <FormLabel>{t('idNumber')}</FormLabel><Input value={student.idNumber} disabled /></FormItem>
+                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>{t('grade')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+
+                        <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (<FormItem> <FormLabel>{t('city')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (<FormItem> <FormLabel>{t('gender')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>רפרטואר</CardTitle>
+                        <CardTitle>{t('schoolDetails')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <FormField control={form.control as any} name="schoolDetails.schoolName" render={({ field }) => (<FormItem> <FormLabel>{t('schoolName')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="schoolDetails.hasMusicMajor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={!isEditing} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('hasMusicMajor')}</FormLabel></div> </FormItem>)} />
+                        <FormField control={form.control as any} name="schoolDetails.isMajorParticipant" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={!isEditing} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('isMajorParticipant')}</FormLabel></div> </FormItem>)} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('instrumentDetails')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <FormField control={form.control as any} name="instrumentDetails.instrument" render={({ field }) => (<FormItem> <FormLabel>{t('instrument')}</FormLabel> <FormControl><Input {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="instrumentDetails.yearsOfStudy" render={({ field }) => (<FormItem> <FormLabel>{t('yearsOfStudy')}</FormLabel> <FormControl><Input type="number" {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control as any} name="teacherDetails.yearsWithTeacher" render={({ field }) => (<FormItem> <FormLabel>{t('yearsWithTeacher')}</FormLabel> <FormControl><Input type="number" {...field} disabled={!isEditing} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormItem> <FormLabel>{t('teacherName')}</FormLabel><Input value={student.instruments?.[0]?.teacherName} disabled /></FormItem>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('repertoire')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -298,7 +331,7 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                         <div className="flex items-center gap-4 mt-4">
                             <Button type="button" variant="outline" onClick={() => append({ ...emptyComposition })} disabled={fields.length >= MAX_REPERTOIRE_ITEMS} >
                                 <PlusCircle className="me-2 h-4 w-4" />
-                                הוסף יצירה
+                                {t('addComposition')}
                             </Button>
                         </div>
                     </CardContent>
@@ -307,12 +340,12 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                 <div className="flex justify-end gap-4">
                     {isEditing && onCancel && (
                         <Button type="button" variant="ghost" onClick={onCancel}>
-                            ביטול
+                            {t('cancel')}
                         </Button>
                     )}
                     <Button type="submit">
                         <Send className="me-2 h-4 w-4" />
-                        {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
+                        {isEditing ? t('resubmit') : t('submit')}
                     </Button>
                 </div>
             </form>

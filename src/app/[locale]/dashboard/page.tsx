@@ -5,9 +5,8 @@ import { AdminCommandCenter } from "@/components/dashboard/harmonia/admin-comman
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { PlusCircle } from "lucide-react";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
 import { useEffect } from "react";
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
 import StudentProfilePage from "./profile/page";

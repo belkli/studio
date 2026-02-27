@@ -33,7 +33,7 @@ const TeacherProfileSchema = z.object({
 export const MatchTeacherInputSchema = z.object({
   studentProfile: StudentProfileSchema,
   availableTeachers: z.array(TeacherProfileSchema),
-  locale: z.string().optional(),
+  locale: z.string().default('he'),
 });
 export type MatchTeacherInput = z.infer<typeof MatchTeacherInputSchema>;
 

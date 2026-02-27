@@ -39,6 +39,7 @@ export const DraftProgressReportInputSchema = z.object({
   practiceLogs: z.array(PracticeLogSchema),
   lessonNotes: z.array(LessonNoteSchema),
   repertoire: z.array(RepertoireItemSchema),
+  locale: z.string().default('he'),
 });
 export type DraftProgressReportInput = z.infer<typeof DraftProgressReportInputSchema>;
 
@@ -62,27 +63,24 @@ const prompt = ai.definePrompt({
   output: { schema: DraftProgressReportOutputSchema },
   prompt: `You are helping a music teacher, {{{teacherName}}}, write a warm, professional end-of-semester progress report for their student, {{{studentName}}}, who plays {{{instrument}}}. The report is for the {{{period}}} period.
 
-Write the report in Hebrew, using a formal but encouraging tone suitable for both the student and their parents.
+Write the report in the following language: {{{locale}}}. Use a formal but encouraging tone suitable for both the student and their parents.
 Use the provided data to write specific, personal observations — not generic statements.
-Structure the output in Markdown with the following sections:
 
+Ensure the report has appropriate section headers for:
+1. Overall progress summary
+2. Technical and musical progress (mentioning specific pieces)
+3. Practice habits (constructive analysis of logs and consistency)
+4. Repertoire studied (especially completed pieces)
+5. Goals for next semester
+6. Warm closing statement
+
+If the locale is 'he', use these headers:
 ### סיכום התקדמות
-*   Start with an opening paragraph about the student's overall impression and a key achievement this semester.
-
 ### התקדמות טכנית ומוזיקלית
-*   Analyze the lesson notes and repertoire to describe what has improved technically and musically. Reference specific pieces.
-
 ### הרגלי אימון
-*   Analyze the practice log data. Be constructive, not harsh. Mention total practice time, consistency, and any patterns you see (e.g., "ניכרת השקעה רבה לקראת הרסיטל").
-
 ### רפרטואר שנלמד
-*   List the pieces the student worked on, especially those marked as 'COMPLETED' or 'PERFORMANCE_READY'.
-
 ### מטרות לסמסטר הבא
-*   Based on the data, suggest 2-3 clear goals for the next semester.
-
 ### סיכום ומילים חמות
-*   End with a short, encouraging closing statement.
 
 AVAILABLE DATA:
 

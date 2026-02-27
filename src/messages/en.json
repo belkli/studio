@@ -1,4 +1,3 @@
-
 {
     "Navigation": {
         "dashboard": "Dashboard",
@@ -13,6 +12,15 @@
         "back": "Back",
         "next": "Next",
         "submit": "Submit Registration"
+    },
+    "Common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "delete": "Delete",
+        "edit": "Edit",
+        "confirmDelete": "Are you sure you want to delete this?",
+        "actions": "Actions"
     },
     "HomePage": {
         "title": "Harmonia",
@@ -134,53 +142,53 @@
         "viewProfile": "View Profile"
     },
     "DonatePage": {
-      "heroTitle": "Because music is not just for those who can afford it",
-      "heroSubtitle": "Every donation, large or small, allows a talented child with financial difficulties to continue their musical journey. Together, we can give them a future.",
-      "donateNow": "Donate Now",
-      "impact": {
-        "donations": "Donations Received",
-        "students": "Students Supported This Year",
-        "scholarships": "Value of Scholarships Awarded",
-        "coverage": "Average Tuition Coverage"
-      },
-      "storiesTitle": "Their Stories, Our Opportunity",
-      "storiesSubtitle": "Behind every number is a story. Meet some of the students whose lives your donation can change.",
-      "story1Name": "Maya",
-      "story1Age": 14,
-      "story1Instrument": "Violin",
-      "story1Text": "Maya comes from a single-parent family. The scholarship allows her to continue preparing for the Ministry of Education exams. Her teacher says she has real potential for a musical career.",
-      "donateTo": "Donate to {name}",
-      "story2Name": "Yosef",
-      "story2Age": 16,
-      "story2Instrument": "Piano",
-      "story2Text": "Yosef immigrated two years ago and faces integration challenges. Music is his refuge. Thanks to the scholarship, he can continue to play and develop his unique talent.",
-      "story3Name": "Lian",
-      "story3Age": 11,
-      "story3Instrument": "Flute",
-      "story3Text": "Lian lives in the periphery, and access to quality lessons is limited. Your donation will allow her to continue attending lessons at the conservatory and fulfill her dream.",
-      "donateFormTitle": "Make a Donation Today",
-      "donateFormSubtitle": "All donations are tax-deductible under Section 46. 100% of your donation goes directly to student scholarships.",
-      "howItHelpsTitle": "How Your Donation Helps",
-      "help1": "Funds two private lessons for a student.",
-      "help2": "Covers almost a full month of studies.",
-      "help3": "Funds an entire semester of music lessons.",
-      "selectAmount": "Select donation amount",
-      "other": "Other",
-      "frequency": "Frequency",
-      "frequencyOnce": "One-time donation",
-      "frequencyMonthly": "Monthly donation",
-      "frequencyYearly": "Yearly donation",
-      "dedication": "Dedication (Optional)",
-      "dedicationPlaceholder": "In honor of / In memory of...",
-      "receiptDetails": "Details for Tax Receipt (Section 46)",
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Yisrael Yisraeli",
-      "idNumber": "ID Number",
-      "idNumberPlaceholder": "Required for tax credit",
-      "email": "Email",
-      "emailPlaceholder": "For receipt delivery",
-      "anonymous": "I prefer to remain anonymous (no receipt)",
-      "submitButton": "Donate ₪{amount}"
+        "heroTitle": "Because music is not just for those who can afford it",
+        "heroSubtitle": "Every donation, large or small, allows a talented child with financial difficulties to continue their musical journey. Together, we can give them a future.",
+        "donateNow": "Donate Now",
+        "impact": {
+            "donations": "Donations Received",
+            "students": "Students Supported This Year",
+            "scholarships": "Value of Scholarships Awarded",
+            "coverage": "Average Tuition Coverage"
+        },
+        "storiesTitle": "Their Stories, Our Opportunity",
+        "storiesSubtitle": "Behind every number is a story. Meet some of the students whose lives your donation can change.",
+        "story1Name": "Maya",
+        "story1Age": 14,
+        "story1Instrument": "Violin",
+        "story1Text": "Maya comes from a single-parent family. The scholarship allows her to continue preparing for the Ministry of Education exams. Her teacher says she has real potential for a musical career.",
+        "donateTo": "Donate to {name}",
+        "story2Name": "Yosef",
+        "story2Age": 16,
+        "story2Instrument": "Piano",
+        "story2Text": "Yosef immigrated two years ago and faces integration challenges. Music is his refuge. Thanks to the scholarship, he can continue to play and develop his unique talent.",
+        "story3Name": "Lian",
+        "story3Age": 11,
+        "story3Instrument": "Flute",
+        "story3Text": "Lian lives in the periphery, and access to quality lessons is limited. Your donation will allow her to continue attending lessons at the conservatory and fulfill her dream.",
+        "donateFormTitle": "Make a Donation Today",
+        "donateFormSubtitle": "All donations are tax-deductible under Section 46. 100% of your donation goes directly to student scholarships.",
+        "howItHelpsTitle": "How Your Donation Helps",
+        "help1": "Funds two private lessons for a student.",
+        "help2": "Covers almost a full month of studies.",
+        "help3": "Funds an entire semester of music lessons.",
+        "selectAmount": "Select donation amount",
+        "other": "Other",
+        "frequency": "Frequency",
+        "frequencyOnce": "One-time donation",
+        "frequencyMonthly": "Monthly donation",
+        "frequencyYearly": "Yearly donation",
+        "dedication": "Dedication (Optional)",
+        "dedicationPlaceholder": "In honor of / In memory of...",
+        "receiptDetails": "Details for Tax Receipt (Section 46)",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Yisrael Yisraeli",
+        "idNumber": "ID Number",
+        "idNumberPlaceholder": "Required for tax credit",
+        "email": "Email",
+        "emailPlaceholder": "For receipt delivery",
+        "anonymous": "I prefer to remain anonymous (no receipt)",
+        "submitButton": "Donate ₪{amount}"
     },
     "EnrollmentWizard": {
         "steps": {
@@ -517,7 +525,22 @@
         "masterclassesSubtitle": "Hone your skills and learn from the best in the field.",
         "instructor": "Instructor: {name}",
         "date": "Date: {date, date, long}",
-        "registerButton": "Register Now"
+        "registerButton": "Register Now",
+        "addAlumnus": "Add Alumnus",
+        "editAlumnus": "Edit Alumnus",
+        "form": {
+            "name": "Full Name",
+            "namePlaceholder": "Enter name",
+            "graduationYear": "Graduation Year",
+            "instrument": "Instrument",
+            "instrumentPlaceholder": "Select instrument",
+            "currentRole": "Current Role",
+            "rolePlaceholder": "e.g., Professional Pianist",
+            "achievements": "Achievements",
+            "achievementsPlaceholder": "Notable awards, positions, etc.",
+            "avatarUrl": "Avatar URL",
+            "avatarDescription": "Links to an image file (e.g., https://...)"
+        }
     },
     "PaymentSettings": {
         "updateMethodTitle": "Update Payment Method",
@@ -530,5 +553,3 @@
         "saveButton": "Save Card"
     }
 }
-
-    

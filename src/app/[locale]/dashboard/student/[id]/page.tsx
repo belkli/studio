@@ -1,12 +1,12 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useRouter, Link } from "@/i18n/routing";
 import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { StudentProfilePageContent } from '@/components/dashboard/harmonia/student-profile-content';
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -20,7 +20,7 @@ export default function StudentProfileForParentPage() {
 
     if (isLoading) {
         return (
-             <div className="space-y-6">
+            <div className="space-y-6">
                 <div className="flex items-center justify-start">
                     <Skeleton className="h-10 w-44" />
                 </div>
@@ -31,7 +31,7 @@ export default function StudentProfileForParentPage() {
                     <Skeleton className="h-32" />
                     <Skeleton className="h-32" />
                 </div>
-             </div>
+            </div>
         );
     }
 
@@ -44,7 +44,7 @@ export default function StudentProfileForParentPage() {
         }
         return <p>אין לך הרשאה לצפות בפרופיל זה.</p>;
     }
-    
+
     if (!student) {
         notFound();
     }

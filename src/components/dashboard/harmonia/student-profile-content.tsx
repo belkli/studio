@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
@@ -37,7 +37,7 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
     const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
-    
+
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
     const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === student.id), [mockAssignedRepertoire, student.id]);
     const currentPackage = useMemo(() => mockPackages.find(p => p.id === student.packageId), [mockPackages, student.packageId]);
@@ -49,7 +49,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
 
 
     const { totalMinutesThisWeek, weeklyGoal, streak } = useMemo(() => {
-        const weeklyGoal = student.weeklyPracticeGoal || 120; 
+        const weeklyGoal = student.weeklyPracticeGoal || 120;
 
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -64,19 +64,19 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
         }, 0);
 
         // Calculate streak
-        const logDates = [...new Set(userLogs.map(log => new Date(log.date.split('T')[0]).getTime()))].sort((a,b) => b-a);
-        
+        const logDates = [...new Set(userLogs.map(log => new Date(log.date.split('T')[0]).getTime()))].sort((a, b) => b - a);
+
         let currentStreak = 0;
-        if(logDates.length > 0) {
+        if (logDates.length > 0) {
             const todayTime = new Date();
-            todayTime.setHours(0,0,0,0);
+            todayTime.setHours(0, 0, 0, 0);
             const yesterdayTime = new Date(todayTime);
             yesterdayTime.setDate(todayTime.getDate() - 1);
 
             if (logDates[0] === todayTime.getTime() || logDates[0] === yesterdayTime.getTime()) {
                 currentStreak = 1;
                 for (let i = 0; i < logDates.length - 1; i++) {
-                    const diff = (logDates[i] - logDates[i+1]) / (1000 * 60 * 60 * 24);
+                    const diff = (logDates[i] - logDates[i + 1]) / (1000 * 60 * 60 * 24);
                     if (diff === 1) {
                         currentStreak++;
                     } else {
@@ -126,7 +126,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             </Card>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><UserCircle className="text-primary" /> המורה שלי</CardTitle>
                     </CardHeader>
@@ -135,19 +135,19 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <p className="text-muted-foreground">{student.instruments?.[0]?.instrument}</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Music className="text-accent"/> החבילה שלי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Music className="text-accent" /> החבילה שלי</CardTitle>
                     </CardHeader>
                     <CardContent>
-                       {currentPackage ? (
-                        <>
-                            <p className="text-lg font-medium">{currentPackage.title}</p>
-                            <p className="text-sm text-muted-foreground">{currentPackage.description}</p>
-                        </>
-                       ) : (
-                        <p className="text-muted-foreground">לא שויכה חבילה</p>
-                       )}
+                        {currentPackage ? (
+                            <>
+                                <p className="text-lg font-medium">{currentPackage.title}</p>
+                                <p className="text-sm text-muted-foreground">{currentPackage.description}</p>
+                            </>
+                        ) : (
+                            <p className="text-muted-foreground">לא שויכה חבילה</p>
+                        )}
                     </CardContent>
                 </Card>
                 <Card>
@@ -157,11 +157,11 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                     <CardContent>
                         <p className="text-lg font-medium">{totalMinutesThisWeek} / {weeklyGoal} דקות</p>
                         <p className="text-sm text-muted-foreground">התקדמות לקראת היעד שהוגדר</p>
-                         <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
+                        <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
                     </CardContent>
                 </Card>
             </div>
-            
+
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader>
@@ -185,12 +185,12 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                                 <p className="text-xs text-muted-foreground">{composition?.composer}</p>
                                             </TableCell>
                                             <TableCell>
-                                                 <Badge variant="outline">{statusTranslations[rep.status]}</Badge>
+                                                <Badge variant="outline">{statusTranslations[rep.status]}</Badge>
                                             </TableCell>
                                         </TableRow>
                                     )
                                 })}
-                                 {userRepertoire.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-4">טרם הוגדר רפרטואר.</TableCell></TableRow>}
+                                {userRepertoire.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-4">טרם הוגדר רפרטואר.</TableCell></TableRow>}
                             </TableBody>
                         </Table>
                     </CardContent>
@@ -215,7 +215,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             )) : (
                                 <p className="text-sm text-muted-foreground text-center py-4">אין שיעורים מתוכננים.</p>
                             )}
-                             <Button variant="outline" className="w-full" asChild>
+                            <Button variant="outline" className="w-full" asChild>
                                 <Link href="/dashboard/schedule">למערכת השעות המלאה</Link>
                             </Button>
                         </CardContent>
@@ -225,7 +225,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                            {userLogs.slice(0,3).map(log => (
+                            {userLogs.slice(0, 3).map(log => (
                                 <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
                                     <div>
                                         <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
@@ -264,7 +264,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                     </Card>
                 </div>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><Trophy /> הישגים ותעודות</CardTitle>
                     <CardDescription>אבני דרך במסע המוזיקלי שלך.</CardDescription>

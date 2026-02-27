@@ -36,6 +36,7 @@ const EmptySlotSchema = z.object({
 export const TargetSlotsInputSchema = z.object({
   emptySlot: EmptySlotSchema,
   eligibleRecipients: z.array(EligibleRecipientSchema),
+  locale: z.string().default('he'),
 });
 export type TargetSlotsInput = z.infer<typeof TargetSlotsInputSchema>;
 
@@ -70,13 +71,19 @@ Analyze the empty slot and compare it against the list of eligible recipients. F
 4.  **Waitlist Status:** If the recipient is on a waitlist for this instrument/teacher, add +20.
 5.  **General Proximity:** Is the slot time generally convenient (e.g., after school hours)? Add +10 for peak times.
 
-For the top 3-5 matches, provide a 'personalizationHooks' array. These should be short, compelling, human-readable strings **in Hebrew** that an admin could use in an outreach message.
+For the top 3-5 matches, provide a 'personalizationHooks' array. These should be short, compelling, human-readable strings in the following language: {{{locale}}}. These hooks will be used by an admin for outreach.
 
-**Examples of good personalization hooks:**
+**Examples of good personalization hooks (if locale is 'he'):**
 - "יש לה יתרת שיעור השלמה לניצול"
 - "השיעור מתקיים ביום ובשעה שקבעה בעבר"
 - "נמצא/ת ברשימת ההמתנה למורה זה"
 - "הזדמנות להתנסות בכלי נוסף במחיר מוזל"
+
+**Examples of good personalization hooks (if locale is 'en'):**
+- "Has outstanding makeup credits to use"
+- "Class is at a day/time they usually book"
+- "Currently on the waitlist for this teacher"
+- "Opportunity to try a new instrument at a discount"
 
 EMPTY SLOT DETAILS:
 - Teacher: {{{emptySlot.teacherName}}}

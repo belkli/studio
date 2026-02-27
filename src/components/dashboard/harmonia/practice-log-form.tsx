@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ThumbsUp, Meh, Frown } from "lucide-react";
 import { useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { User } from '@/lib/types';
 
@@ -25,7 +25,7 @@ const practiceLogSchema = z.object({
   durationMinutes: z.number().min(5, "אימון חייב להיות לפחות 5 דקות."),
   pieces: z.string().optional(),
   mood: z.enum(["GREAT", "OKAY", "HARD"], {
-    required_error: "חובה לבחור את הרגשתך באימון.",
+    message: "חובה לבחור את הרגשתך באימון.",
   }),
   studentNote: z.string().optional(),
 });
@@ -64,9 +64,9 @@ export function PracticeLogForm() {
     }
 
     const practiceData = {
-        ...data,
-        studentId: studentIdForLog,
-        pieces: data.pieces ? data.pieces.split(',').map(p => ({ title: p.trim() })) : [],
+      ...data,
+      studentId: studentIdForLog,
+      pieces: data.pieces ? data.pieces.split(',').map(p => ({ title: p.trim() })) : [],
     };
     addPracticeLog(practiceData);
     toast({
@@ -138,7 +138,7 @@ export function PracticeLogForm() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="pieces"
@@ -148,7 +148,7 @@ export function PracticeLogForm() {
                   <FormControl>
                     <Textarea placeholder="לדוגמה: סונטה של מוצרט (חזרתי על הפתיחה), אטיוד של שופן..." {...field} />
                   </FormControl>
-                   <p className="text-xs text-muted-foreground">הפרד יצירות בפסיק (,)</p>
+                  <p className="text-xs text-muted-foreground">הפרד יצירות בפסיק (,)</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -186,7 +186,7 @@ export function PracticeLogForm() {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="studentNote"
               render={({ field }) => (

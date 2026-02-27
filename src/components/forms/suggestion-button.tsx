@@ -8,6 +8,8 @@ import { getCompositionSuggestions } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import type { Composition } from '@/lib/types';
 
+import { useLocale } from 'next-intl';
+
 type SuggestionButtonProps = {
   fields: any[];
   append: (value: any, options?: any) => void;
@@ -18,19 +20,23 @@ type SuggestionButtonProps = {
 export function SuggestionButton({ fields, append, getValues }: SuggestionButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const locale = useLocale();
 
   const handleGetSuggestions = async () => {
     setIsLoading(true);
     try {
       const currentValues = getValues();
       const existingCompositions = currentValues.repertoire
-        .map((item: Composition) => item.title)
-        .filter(Boolean);
+        ? currentValues.repertoire
+          .map((item: any) => item.title)
+          .filter(Boolean)
+        : [];
 
       const suggestions = await getCompositionSuggestions({
-        instrument: currentValues.instrument,
+        locale,
+        instrument: currentValues.instrumentDetails?.instrument || currentValues.instrument,
         existingCompositions: existingCompositions,
-        context: `Student in grade ${currentValues.grade}. The program should be balanced for a recital.`
+        context: `Student in grade ${currentValues.grade || 'unknown'}. The program should be balanced for a recital.`
       });
 
       if (suggestions && suggestions.length > 0) {

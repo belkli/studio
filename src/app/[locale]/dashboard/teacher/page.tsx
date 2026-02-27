@@ -1,7 +1,7 @@
 'use client';
 import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { useEffect } from 'react';
 
 export default function TeacherRootPage() {
@@ -17,6 +17,6 @@ export default function TeacherRootPage() {
     if (isLoading || !user || user.role !== 'teacher') {
         return <div>טוען...</div>;
     }
-    
+
     return <TeacherDashboard />;
 }

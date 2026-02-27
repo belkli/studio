@@ -21,45 +21,44 @@ import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { SuggestionButton } from './suggestion-button';
+import { useTranslations } from 'next-intl';
 
 
-const compositionSchema = z.object({
+const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
-    composer: z.string().min(1, 'חובה להזין מלחין'),
-    title: z.string().min(1, 'חובה להזין שם יצירה'),
-    duration: z.string().regex(/^\d{2}:\d{2}$/, 'פורמט לא תקין (MM:SS)'),
-    genre: z.string().min(1, 'חובה לבחור ז\'אנר'),
+    composer: z.string().min(1, t('validation.requiredComposer')),
+    title: z.string().min(1, t('validation.requiredTitle')),
+    duration: z.string().regex(/^\d{2}:\d{2}$/, t('validation.invalidDuration')),
+    genre: z.string().min(1, t('validation.requiredGenre')),
     approved: z.boolean().optional(),
 });
 
 
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
-const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
-
-const formSchema = z.object({
-    academicYear: z.string().min(1, 'חובה לבחור שנת לימודים'),
-    conservatoriumName: z.string().min(1, "חובה לבחור קונסרבטוריון"),
+const getFormSchema = (t: any) => z.object({
+    academicYear: z.string().min(1, t('validation.requiredAcademicYear')),
+    conservatoriumName: z.string().min(1, t('validation.requiredConservatorium')),
 
     // Event Details
-    eventName: z.string().min(1, 'חובה להזין שם אירוע'),
-    eventDate: z.string().min(1, 'חובה להזין תאריך אירוע'),
-    eventLocation: z.string().min(1, 'חובה להזין מיקום'),
+    eventName: z.string().min(1, t('validation.requiredEventName')),
+    eventDate: z.string().min(1, t('validation.requiredEventDate')),
+    eventLocation: z.string().min(1, t('validation.requiredLocation')),
 
     // Ensemble Details
-    conductor: z.string().min(1, 'חובה להזין שם מנצח/ת'),
+    conductor: z.string().min(1, t('validation.requiredConductor')),
     accompanist: z.string().optional(),
-    numParticipants: z.coerce.number().min(1, 'חובה להזין מספר משתתפים'),
+    numParticipants: z.coerce.number().min(1, t('validation.requiredNumParticipants')),
 
     // Repertoire
-    repertoire: z.array(compositionSchema).min(MIN_REPERTOIRE_ITEMS, `חובה להוסיף לפחות יצירה אחת`).max(MAX_REPERTOIRE_ITEMS, `ניתן להוסיף עד ${MAX_REPERTOIRE_ITEMS} יצירות`),
+    repertoire: z.array(getCompositionSchema(t)).min(MIN_REPERTOIRE_ITEMS, t('validation.minRepertoire')).max(MAX_REPERTOIRE_ITEMS, t('validation.maxRepertoire', { max: MAX_REPERTOIRE_ITEMS })),
 
     // Logistical Needs
     logisticalNeeds: z.string().optional(),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
 interface KenesFormProps {
     user: User;
@@ -95,6 +94,7 @@ const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
 
 
 const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
+    const t = useTranslations('KenesForm');
     const { control, setValue, watch, getValues } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<string[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
@@ -146,10 +146,10 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
     return (
         <div className="border rounded-lg relative">
             <div className="p-4 flex justify-between items-center lg:hidden border-b">
-                <span className="font-medium text-muted-foreground">יצירה #{index + 1}</span>
+                <span className="font-medium text-muted-foreground">{t('compositionItem', { index: index + 1 })}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
                     <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">מחק יצירה</span>
+                    <span className="sr-only">{t('deleteItem')}</span>
                 </Button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
@@ -160,7 +160,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                     name={`repertoire.${index}.composer`}
                     render={({ field: composerField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>מלחין</FormLabel>
+                            <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
                                     options={composerOptions.map(c => ({ value: c, label: c }))}
@@ -171,7 +171,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
                                     }}
-                                    placeholder="בחר מלחין..."
+                                    placeholder={t('selectComposer')}
                                     onInputChange={debouncedComposerSearch}
                                     isLoading={isLoadingComposers}
                                     filter={false}
@@ -187,13 +187,13 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                     name={`repertoire.${index}.title`}
                     render={({ field: titleField }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>שם היצירה</FormLabel>
+                            <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={compositionOptions.map(c => ({ value: c.id, label: c.title }))}
+                                    options={compositionOptions.map(c => ({ value: c.id!, label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
-                                    placeholder="בחר יצירה..."
+                                    placeholder={t('selectComposition')}
                                     onInputChange={debouncedCompositionSearch}
                                     isLoading={isLoadingCompositions}
                                     filter={false}
@@ -206,10 +206,10 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
                 <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
                     <FormItem>
-                        <FormLabel>ז'אנר</FormLabel>
+                        <FormLabel>{t('genre')}</FormLabel>
                         <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                                <SelectTrigger><SelectValue placeholder="בחר ז'אנר" /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger>
                             </FormControl>
                             <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
                         </Select>
@@ -220,7 +220,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
                 <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (
                     <FormItem>
-                        <FormLabel>זמן ביצוע</FormLabel>
+                        <FormLabel>{t('duration')}</FormLabel>
                         <FormControl>
                             <Input
                                 dir='ltr'
@@ -236,7 +236,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                 <div className="hidden lg:flex items-center justify-center h-10">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS} onMouseDown={(e) => e.preventDefault()}>
                         <Trash2 className="h-4 w-4 text-destructive" />
-                        <span className="sr-only">מחק יצירה</span>
+                        <span className="sr-only">{t('deleteItem')}</span>
                     </Button>
                 </div>
             </div>
@@ -246,8 +246,11 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
 
 export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCancel }: KenesFormProps) {
+    const t = useTranslations('KenesForm');
+    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+
     const form = useForm<FormData>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(getFormSchema(t)),
         defaultValues: initialData || {
             academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
             repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
@@ -288,7 +291,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
     const numParticipants = form.watch('numParticipants');
     const repertoire = form.watch('repertoire');
 
-    const totalDurationSeconds = useMemo(() => (repertoire || []).reduce((total, item) => {
+    const totalDurationSeconds = useMemo(() => (repertoire || []).reduce((total: number, item: any) => {
         if (!item?.duration) return total;
         const [minutes, seconds] = item.duration.split(':').map(Number);
         if (isNaN(minutes) || isNaN(seconds)) return total;
@@ -333,39 +336,39 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>טופס פרטי משתתף בכנס / אירוע</CardTitle>
+                        <CardTitle>{t('title')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="academicYear" render={({ field }) => (<FormItem> <FormLabel>שנת לימודים</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField name="conservatoriumName" render={({ field }) => (<FormItem> <FormLabel>קונסרבטוריון</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="academicYear" render={({ field }) => (<FormItem> <FormLabel>{t('academicYear')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField name="conservatoriumName" render={({ field }) => (<FormItem> <FormLabel>{t('conservatorium')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>1. פרטי האירוע</CardTitle>
+                        <CardTitle>{t('eventDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="eventName" render={({ field }) => (<FormItem><FormLabel>שם האירוע</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField name="eventDate" render={({ field }) => (<FormItem><FormLabel>תאריך האירוע</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField name="eventLocation" render={({ field }) => (<FormItem><FormLabel>מיקום</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventName" render={({ field }) => (<FormItem><FormLabel>{t('eventName')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventDate" render={({ field }) => (<FormItem><FormLabel>{t('eventDate')}</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventLocation" render={({ field }) => (<FormItem><FormLabel>{t('location')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>2. פרטי ההרכב</CardTitle>
+                        <CardTitle>{t('ensembleDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="conductor" render={({ field }) => (<FormItem><FormLabel>מנצח/ת או מנהל/ת מוזיקלי</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField name="accompanist" render={({ field }) => (<FormItem><FormLabel>פסנתרן/ית מלווה (אופציונלי)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField name="numParticipants" render={({ field }) => (<FormItem><FormLabel>מספר משתתפים</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="conductor" render={({ field }) => (<FormItem><FormLabel>{t('conductor')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="accompanist" render={({ field }) => (<FormItem><FormLabel>{t('accompanist')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="numParticipants" render={({ field }) => (<FormItem><FormLabel>{t('numParticipants')}</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>3. תוכנית לביצוע</CardTitle>
+                        <CardTitle>{t('program')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -386,7 +389,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                                 disabled={fields.length >= MAX_REPERTOIRE_ITEMS}
                             >
                                 <PlusCircle className="me-2 h-4 w-4" />
-                                הוסף יצירה
+                                {t('addComposition')}
                             </Button>
                             <SuggestionButton
                                 fields={fields}
@@ -396,7 +399,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
 
                         </div>
                         {fields.length >= MAX_REPERTOIRE_ITEMS && (
-                            <p className="text-sm text-muted-foreground mt-2">הגעת למספר המקסימלי של {MAX_REPERTOIRE_ITEMS} יצירות.</p>
+                            <p className="text-sm text-muted-foreground mt-2">{t('maxReached', { max: MAX_REPERTOIRE_ITEMS })}</p>
                         )}
                         <FormMessage>{form.formState.errors.repertoire?.root?.message || form.formState.errors.repertoire?.message}</FormMessage>
 
@@ -404,7 +407,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                     <Separator />
                     <CardFooter className="flex justify-end pt-6">
                         <div className="text-lg font-bold">
-                            <span>סה"כ זמן ביצוע: </span>
+                            <span>{t('totalDuration')} </span>
                             <span>{totalDurationFormatted}</span>
                         </div>
                     </CardFooter>
@@ -412,41 +415,41 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>4. צרכים לוגיסטיים</CardTitle>
+                        <CardTitle>{t('logisticalNeeds')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <FormField name="logisticalNeeds" render={({ field }) => (<FormItem><FormLabel>מלל חופשי (אופציונלי)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="logisticalNeeds" render={({ field }) => (<FormItem><FormLabel>{t('logisticalNeedsPlaceholder')}</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>5. חישוב עלות</CardTitle>
+                        <CardTitle>{t('pricing')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             <Notice variant="info">
-                                <NoticeTitle>כיצד העלות מחושבת?</NoticeTitle>
+                                <NoticeTitle>{t('pricingExplainTitle')}</NoticeTitle>
                                 <NoticeDescription>
-                                    המחיר נקבע על פי שלושה גורמים: <strong>סיווג הקונסרבטוריון</strong> (שלב א', ב', או ג'), <strong>גודל ההרכב</strong> (קטן, בינוני, או גדול), ו<strong>משך זמן ההופעה</strong>.
+                                    {t('pricingExplainDesc')}
                                 </NoticeDescription>
                             </Notice>
                             <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">סיווג קונסרבטוריון:</span>
-                                    <span className="font-medium">{tier ? `שלב ${tier}` : '-'}</span>
+                                    <span className="text-muted-foreground">{t('conservatoriumTier')}</span>
+                                    <span className="font-medium">{tier ? `${t('tierPrefix')}${tier}` : '-'}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">גודל הרכב:</span>
-                                    <span className="font-medium">{ensembleSize ? `${ensembleSizeLabels[ensembleSize]} (${numParticipants || 0} משתתפים)` : '-'}</span>
+                                    <span className="text-muted-foreground">{t('ensembleSize')}</span>
+                                    <span className="font-medium">{ensembleSize ? `${t(`sizeLabels.${ensembleSize}`)} (${numParticipants || 0} ${t('numParticipants')})` : '-'}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">משך זמן:</span>
-                                    <span className="font-medium">{durationMinutes.toFixed(2)} דקות</span>
+                                    <span className="text-muted-foreground">{t('durationLabel')}</span>
+                                    <span className="font-medium">{durationMinutes.toFixed(2)} {t('minutes')}</span>
                                 </div>
                                 <Separator />
                                 <div className="flex justify-between text-lg font-bold">
-                                    <span>סה״כ לתשלום:</span>
+                                    <span>{t('totalPrice')}</span>
                                     <span>{calculatedPrice} ₪</span>
                                 </div>
                             </div>
@@ -457,12 +460,12 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                 <div className="flex justify-end gap-4">
                     {isEditing && onCancel && (
                         <Button type="button" variant="ghost" onClick={onCancel}>
-                            ביטול
+                            {t('cancel')}
                         </Button>
                     )}
                     <Button type="submit">
                         <Send className="me-2 h-4 w-4" />
-                        {isEditing ? 'שלח מחדש לאישור' : 'הגש לאישור'}
+                        {isEditing ? t('resubmit') : t('submit')}
                     </Button>
                 </div>
             </form>

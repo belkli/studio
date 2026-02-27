@@ -241,7 +241,6 @@
             "userTitle": "ההרשמה הושלמה בהצלחה!",
             "adminDesc": "התלמיד נוסף למערכת וניתן לנהל את הפרופיל שלו.",
             "userDesc": "בקשתך נשלחה למנהל/ת הקונסרבטוריון לאישור. תקבל/י הודעת אימייל כאשר חשבונך יאושר ותוכל/י להתחבר למערכת.",
-            "backToUsers": "חזרה לניהול משתמשים",
             "backToHome": "חזרה לדף הבית"
         },
         "booking": {
@@ -345,7 +344,7 @@
             "notifications": "התראות",
             "profile": "פרופיל",
             "settings": "הגדרות",
-            "logout": "התנתק"
+            "logout": "התנתקות"
         },
         "welcome": {
             "title": "ברוך הבא, {name}",
@@ -354,25 +353,25 @@
         },
         "overview": {
             "pending": "אישורים ממתינים",
-            "approved": "טפסים שאושרו",
+            "approved": "טפסים מאושרים",
             "rejected": "טפסים שנדחו",
-            "total": "סך הכל הגשות"
+            "total": "סה\"כ הגשות"
         },
         "recentForms": {
             "title": "הגשות אחרונות",
             "viewAll": "כל הטפסים",
-            "studentName": "שם התלמיד/ה",
-            "formType": "סוג הטופס",
+            "studentName": "שם התלמיד",
+            "formType": "סוג טופס",
             "status": "סטטוס",
             "submissionDate": "תאריך הגשה",
             "actions": "פעולות",
             "view": "צפה",
             "descriptions": {
                 "student": "אלו הטפסים האחרונים שהגשת.",
-                "teacher": "אלו הטפסים האחרונים שהוגשו על ידי התלמידים שלך.",
+                "teacher": "אלו הטפסים האחרונים שהוגשו על ידי תלמידיך.",
                 "conservatorium_admin": "אלו הטפסים האחרונים שהוגשו בקונסרבטוריון שלך.",
-                "site_admin": "אלו כלל הטפסים האחרונים שהוגשו במערכת.",
-                "ministry_director": "אלו כלל הטפסים האחרונים שאושרו וממתינים לבחינה.",
+                "site_admin": "אלו כל הטפסים האחרונים שהוגשו במערכת.",
+                "ministry_director": "אלו כל הטפסים האחרונים שאושרו וממתינים לבדיקה.",
                 "parent": "אלו הטפסים האחרונים שהוגשו עבור ילדיך.",
                 "default": "להלן הגשות הטפסים האחרונות."
             }
@@ -380,7 +379,7 @@
         "status": {
             "draft": "טיוטה",
             "pendingTeacher": "ממתין לאישור מורה",
-            "pendingAdmin": "ממתין לאישור מנהל",
+            "pendingAdmin": "ממתין לאישור הנהלה",
             "approved": "מאושר קונסרבטוריון",
             "rejected": "נדחה",
             "revisionRequired": "נדרש תיקון (משרד החינוך)",
@@ -388,29 +387,29 @@
         },
         "makeups": {
             "title": "שיעורי השלמה",
-            "subtitle": "כאן תוכל לראות את יתרת שיעורי ההשלמה שלך ולהזמין שיעור חדש.",
+            "subtitle": "כאן ניתן לראות את יתרת שיעורי ההשלמה שלך ולהזמין שיעור חדש.",
             "balanceCard": {
                 "title": "יתרת שיעורי השלמה",
-                "description": "זיכויים זמינים לשיעורי השלמה עקב ביטולי מורה/מערכת או ביטול מצידך בהתאם למדיניות.",
-                "unit": "זיכויים"
+                "description": "קרדיטים זמינים לשיעורי השלמה עקב ביטולי מורה/מערכת או ביטולים שלך בהתאם למדיניות.",
+                "unit": "קרדיטים"
             },
             "bookCard": {
-                "title": "הזמן שיעור השלמה",
-                "description": "השתמש בזיכויים שלך כדי לקבוע שיעור חדש בזמן שנוח לך.",
-                "button": "עבור להזמנת שיעור"
+                "title": "הזמנת שיעור השלמה",
+                "description": "השתמש בקרדיטים שלך כדי לקבוע שיעור חדש בזמן שנוח לך.",
+                "button": "למעבר להזמנה"
             },
             "details": {
-                "title": "פירוט זיכויים",
-                "empty": "אין זיכויים זמינים כרגע.",
+                "title": "פירוט קרדיטים",
+                "empty": "אין קרדיטים זמיגע כרגע.",
                 "table": {
-                    "source": "מקור הזיכוי",
+                    "source": "מקור הקרדיט",
                     "grantedAt": "תאריך קבלה",
                     "expiresAt": "תאריך תפוגה",
                     "status": "סטטוס"
                 },
                 "reasons": {
                     "TEACHER_CANCELLED": "ביטול מורה",
-                    "ADMIN_CANCELLED": "ביטול מערכתי",
+                    "ADMIN_CANCELLED": "ביטול מערכת",
                     "STUDENT_CANCELLED_NOTICED": "ביטול תלמיד (בזמן)"
                 },
                 "statuses": {
@@ -431,7 +430,45 @@
             },
             "support": "זקוק לעזרה? צור קשר עם המשרד בטלפון או במייל.",
             "backToSite": "חזרה לאתר",
-            "logout": "התנתק"
+            "logout": "התנתקות"
+        },
+        "Teacher": {
+            "welcomeTitle": "ברוך הבא, {name}",
+            "welcomeSubtitle": "זהו לוח הבקרה שלך להיום.",
+            "sickLeave": "דיווח מחלה / היעדרות",
+            "newForm": "טופס חדש",
+            "manageAvailability": "נהל זמינות",
+            "todaysLessons": "השיעורים להיום",
+            "noLessons": "אין שיעורים מתוכננים להיום.",
+            "pendingApprovals": "אישורים ממתינים ({count})",
+            "pendingApprovalsDesc": "הטפסים האחרונים שהוגשו וממתינים לאישורך.",
+            "noPendingApprovals": "אין טפסים הממתינים לאישורך.",
+            "upcomingPerformances": "הופעות קרובות",
+            "upcomingPerformancesDesc": "רסיטלים וקונצרטים בהשתתפות תלמידיך.",
+            "noUpcomingPerformances": "אין הופעות קרובות מתוכננות.",
+            "viewAllApprovals": "לכל האישורים",
+            "myStudents": "התלמידים שלי ({count})",
+            "myStudentsDesc": "נהל את התלמידים שלך, עקוב אחר התקדמותם ותקשר איתם.",
+            "nextLesson": "השיעור הבא:",
+            "noNextLesson": "אין שיעור קרוב",
+            "packageStatus": "סטטוס חבילה:",
+            "notAssigned": "לא שויכה חבילה",
+            "practiceProgress": "התקדמות אימון:",
+            "minutesPracticed": "התאמן/ה {min} דקות השבוע",
+            "noPractice": "לא דווח אימון השבוע",
+            "fullProfile": "פרופיל מלא",
+            "sendMessage": "שלח הודעה",
+            "markAttendance": "סמן נוכחות",
+            "markNoShow": "סמן אי-הגעה (ללא הודעה)",
+            "markAbsence": "סמן היעדרות (עם הודעה)",
+            "attendanceMarked": "הנוכחות סומנה",
+            "lessonUpdated": "סטטוס השיעור עודכן.",
+            "completed": "הושלם",
+            "cancelled": "בוטל",
+            "noShow": "לא הגיע",
+            "waitingForMark": "ממתין לסימון",
+            "room": "חדר {id}",
+            "view": "צפה"
         }
     },
     "Sidebar": {
@@ -479,8 +516,48 @@
         "help": "עזרה",
         "logout": "התנתקות",
         "logo": "הַרמוֹנְיָה",
+        "aiCoach": "מאמן AI",
+        "scholarships": "בקשת מלגה",
+        "alumni": "רשת בוגרים",
+        "manageScholarships": "ניהול קרן מלגות",
         "noNotifications": "אין התראות חדשות",
         "viewAll": "הצג את כל ההתראות"
+    },
+    "SettingsPage": {
+        "title": "הגדרות",
+        "subtitle": "נהל את הגדרות החשבון וההתראות שלך.",
+        "profile": {
+            "title": "פרופיל",
+            "description": "עדכן את הפרטים האישיים שלך.",
+            "name": "שם מלא",
+            "email": "כתובת אימייל",
+            "save": "שמור שינויים",
+            "success": "הפרופיל עודכן",
+            "successDesc": "הפרטים האישיים שלך נשמרו."
+        },
+        "password": {
+            "title": "סיסמה",
+            "description": "שנה את הסיסמה שלך.",
+            "current": "סיסמה נוכחית",
+            "new": "סיסמה חדשה",
+            "update": "עדכן סיסמה",
+            "success": "הסיסמה עודכנה",
+            "successDesc": "הסיסמה החדשה שלך נשמרה."
+        },
+        "conservatorium": {
+            "title": "הגדרות מוסד",
+            "description": "נהל הגדרות גלובליות עבור המוסד שלך, כולל תכונות, תמחור ועוד.",
+            "manageFeatures": "ניהול תכונות",
+            "pricing": "הגדרות תמחור",
+            "cancellation": "מדיניות ביטולים",
+            "manageAI": "ניהול סוכני AI"
+        },
+        "notifications": {
+            "title": "התראות",
+            "description": "בחר אילו התראות לקבל ובאיזה ערוץ - אימייל, SMS או בתוך האפליקציה.",
+            "prompt": "התאם אישית את ההתראות עבור תזכורות שיעורים, ביטולים, עדכוני חיובים ועוד.",
+            "manage": "נהל העדפות התראות"
+        }
     },
     "MessagesPage": {
         "title": "הודעות",
@@ -520,5 +597,154 @@
         "cvc": "CVC",
         "cancel": "ביטול",
         "saveButton": "שמור כרטיס"
+    },
+    "FormsPage": {
+        "title": "ניהול טפסים",
+        "subtitle": "צפה, סנן ונהל את כל הטפסים.",
+        "searchPlaceholder": "חיפוש...",
+        "tabs": {
+            "all": "הכל",
+            "pending": "ממתינים",
+            "approved": "מאושרים",
+            "drafts": "טיוטות"
+        },
+        "noForms": "לא נמצאו טפסים.",
+        "table": {
+            "studentName": "שם התלמיד",
+            "formType": "סוג טופס",
+            "status": "סטטוס",
+            "submissionDate": "תאריך הגשה",
+            "actions": "פעולות",
+            "view": "צפה"
+        }
+    },
+    "NewForm": {
+        "title": "יצירת טופס חדש",
+        "subtitle": "בחר סוג טופס ומלא את הפרטים הנדרשים.",
+        "selectionTitle": "בחירת טופס",
+        "formType": "סוג טופס",
+        "selectType": "בחר את סוג הטופס...",
+        "selectStudent": "בחר תלמיד/ה",
+        "selectStudentPlaceholder": "בחר תלמיד/ה להגשת טופס",
+        "pleaseSelectStudent": "אנא בחר/י תלמיד/ה כדי להמשיך.",
+        "loading": "טוען נתונים...",
+        "successTitle": "טופס {type} הוגש בהצלחה!",
+        "successDesc": "הטופס נשלח לאישור.",
+        "types": {
+            "recital": "רסיטל בגרות",
+            "kenes": "כנס / אירוע",
+            "exam_registration": "הרשמה לבחינה"
+        },
+        "validation": {
+            "required": "חובה לבחור סוג טופס"
+        }
+    },
+    "KenesForm": {
+        "title": "טופס פרטי משתתף בכנס / אירוע",
+        "academicYear": "שנת לימודים",
+        "conservatorium": "קונסרבטוריון",
+        "eventDetails": "1. פרטי האירוע",
+        "eventName": "שם האירוע",
+        "eventDate": "תאריך האירוע",
+        "location": "מיקום",
+        "ensembleDetails": "2. פרטי ההרכב",
+        "conductor": "מנצח/ת או מנהל/ת מוזיקלי",
+        "accompanist": "פסנתרן/ית מלווה (אופציונלי)",
+        "numParticipants": "מספר משתתפים",
+        "program": "3. תוכנית לביצוע",
+        "composition": "יצירה",
+        "composer": "מלחין",
+        "compositionTitle": "שם היצירה",
+        "genre": "ז'אנר",
+        "duration": "זמן ביצוע",
+        "addComposition": "הוסף יצירה",
+        "maxReached": "הגעת למספר המקסימלי של {max} יצירות.",
+        "totalDuration": "סה\"כ זמן ביצוע:",
+        "logisticalNeeds": "4. צרכים לוגיסטיים",
+        "logisticalNeedsPlaceholder": "מלל חופשי (אופציונלי)",
+        "pricing": "5. חישוב עלות",
+        "pricingExplainTitle": "כיצד העלות מחושבת?",
+        "pricingExplainDesc": "המחיר נקבע על פי שלושה גורמים: סיווג הקונסרבטוריון (שלב א', ב', או ג'), גודל ההרכב (קטן, בינוני, או גדול), ומשך זמן ההופעה.",
+        "conservatoriumTier": "סיווג קונסרבטוריון:",
+        "tierPrefix": "שלב ",
+        "ensembleSize": "גודל הרכב:",
+        "durationLabel": "משך זמן:",
+        "minutes": "דקות",
+        "totalPrice": "סה״כ לתשלום:",
+        "cancel": "ביטול",
+        "resubmit": "שלח מחדש לאישור",
+        "submit": "הגש לאישור",
+        "compositionItem": "יצירה #{index}",
+        "deleteItem": "מחק יצירה",
+        "selectComposer": "בחר מלחין...",
+        "selectComposition": "בחר יצירה...",
+        "selectGenre": "בחר ז'אנר",
+        "draftSaved": "טיוטה נשמרה!",
+        "validation": {
+            "requiredComposer": "חובה להזין מלחין",
+            "requiredTitle": "חובה להזין שם יצירה",
+            "invalidDuration": "פורמט לא תקין (MM:SS)",
+            "requiredGenre": "חובה לבחור ז'אנר",
+            "requiredAcademicYear": "חובה לבחור שנת לימודים",
+            "requiredConservatorium": "חובה לבחור קונסרבטוריון",
+            "requiredEventName": "חובה להזין שם אירוע",
+            "requiredEventDate": "חובה להזין תאריך אירוע",
+            "requiredLocation": "חובה להזין מיקום",
+            "requiredConductor": "חובה להזין שם מנצח/ת",
+            "requiredNumParticipants": "חובה להזין מספר משתתפים",
+            "minRepertoire": "חובה להוסיף לפחות יצירה אחת",
+            "maxRepertoire": "ניתן להוסיף עד {max} יצירות"
+        }
+    },
+    "ExamRegistrationForm": {
+        "title": "טופס הרשמה לבחינה",
+        "studentAndInstrument": "פרטי תלמיד/ה וכלי",
+        "studentName": "שם התלמיד/ה",
+        "idNumber": "ת.ז.",
+        "instrument": "כלי",
+        "examDetails": "פרטי הבחינה",
+        "examLevel": "רמת בחינה",
+        "selectLevel": "בחר רמת בחינה",
+        "examType": "סוג בחינה",
+        "selectType": "בחר סוג בחינה",
+        "preferredDateRange": "טווח תאריכים מועדף",
+        "dateRangePlaceholder": "לדוגמה: 1-15 ביוני",
+        "repertoire": "רפרטואר",
+        "compositionItem": "יצירה #{index}",
+        "deleteItem": "מחק יצירה",
+        "composer": "מלחין",
+        "selectComposer": "בחר מלחין...",
+        "compositionTitle": "שם היצירה",
+        "selectComposition": "בחר יצירה...",
+        "genre": "ז'אנר",
+        "selectGenre": "בחר ז'אנר",
+        "duration": "זמן ביצוע",
+        "addComposition": "הוסף יצירה",
+        "teacherDeclarationTitle": "הצהרת המורה",
+        "teacherDeclarationText": "אני, {teacherName}, מצהיר/ה כי התלמיד/ה {studentName} מוכן/ה לגשת לבחינה ברמה ובסוג המצוינים לעיל.",
+        "cancel": "ביטול",
+        "resubmit": "שלח מחדש לאישור",
+        "submit": "הגש לאישור",
+        "validation": {
+            "requiredComposer": "חובה להזין מלחין",
+            "requiredTitle": "חובה להזין שם יצירה",
+            "invalidDuration": "פורמט לא תקין (MM:SS)",
+            "requiredGenre": "חובה לבחור ז'אנר",
+            "requiredInstrument": "חובה לבחור כלי נגינה",
+            "requiredLevel": "חובה לבחור רמת בחינה",
+            "requiredType": "חובה לבחור סוג בחינה",
+            "requiredDeclaration": "חובה לאשר את הצהרת המורה",
+            "minRepertoire": "חובה להוסיף לפחות יצירה אחת",
+            "maxRepertoire": "ניתן להוסיף עד {max} יצירות"
+        }
+    },
+    "Common": {
+        "saveStatusBar": {
+            "saving": "שומר...",
+            "error": "שגיאה בשמירה - נסה שוב",
+            "savedAt": "נשמר ב-{time}",
+            "unsavedChanges": "שינויים לא נשמרו",
+            "saveDraft": "שמור טיוטה"
+        }
     }
 }

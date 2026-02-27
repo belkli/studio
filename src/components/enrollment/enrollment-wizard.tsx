@@ -6,8 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useTranslations, useLocale } from 'next-intl';
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { getTeacherMatches } from "@/app/actions";
@@ -62,12 +61,12 @@ const getSelfSchema = (t: any) => z.object({
 });
 
 const getFormSchema = (t: any) => z.object({
-  registrationType: z.enum(["parent", "self"], { required_error: t('validation.selectType') }),
+  registrationType: z.enum(["parent", "self"], { message: t('validation.selectType') }),
   parentDetails: getParentSchema(t).optional(),
   studentDetails: getStudentSchema(t).optional(),
   selfDetails: getSelfSchema(t).optional(),
   password: z.string().min(8, t('validation.passwordLength', { min: 8 })),
-  conservatorium: z.string({ required_error: t('validation.selectConservatorium') }).min(1, t('validation.selectConservatorium')),
+  conservatorium: z.string({ message: t('validation.selectConservatorium') }).min(1, t('validation.selectConservatorium')),
 
   instrument: z.string().min(1, t('validation.selectInstrument')),
   level: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Exam Candidate']),

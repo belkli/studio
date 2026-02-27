@@ -1,6 +1,6 @@
 
 
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 
@@ -222,6 +222,22 @@ export const ministryDirectorUser: User = {
     id: 'ministry-director-user-1', name: 'יעקב הלוי', email: 'ministry.director@example.com', role: 'ministry_director', conservatoriumId: 'ministry', conservatoriumName: 'משרד החינוך', avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director', idNumber: '123456789', phone: '052-1234567', approved: true, notifications: [], achievements: [],
 };
 
+const parentUser: User = {
+    id: 'parent-user-1',
+    name: 'רוני לוי',
+    email: 'parent@example.com',
+    role: 'parent',
+    conservatoriumId: 'cons-15',
+    conservatoriumName: 'הוד השרון',
+    avatarUrl: 'https://i.pravatar.cc/150?u=parent',
+    idNumber: '777777777',
+    phone: '050-7777777',
+    approved: true,
+    notifications: [],
+    achievements: [],
+    students: [studentUser.id],
+};
+
 export const mockUsers: User[] = [
     studentUser,
     studentUser2,
@@ -232,6 +248,7 @@ export const mockUsers: User[] = [
     pendingTeacher,
     siteAdminUser,
     ministryDirectorUser,
+    parentUser,
     ...conservatoriumAdminUsers
 ].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i); // Remove duplicates
 
@@ -257,7 +274,22 @@ export const mockProgressReports: ProgressReport[] = [];
 export const mockAnnouncements: Announcement[] = [];
 export const mockFormTemplates: FormTemplate[] = [];
 export const mockAuditLog: AuditLogEntry[] = [];
-export const mockEvents: EventProduction[] = [];
+export const mockEvents: EventProduction[] = [
+    {
+        id: 'event-1',
+        conservatoriumId: 'cons-15',
+        name: 'קונצרט אביב 2024',
+        type: 'RECITAL',
+        venue: 'אולם קונצרטים קטן',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().split('T')[0],
+        startTime: '18:30',
+        status: 'OPEN_REGISTRATION',
+        program: [
+            { id: 'ps-1', studentId: 'student-user-1', studentName: 'אריאל לוי', compositionTitle: 'נוקטורן בקו מז\'ור', composer: 'שופן', duration: '04:30' },
+            { id: 'ps-2', studentId: 'student-user-2', studentName: 'תמר ישראלי', compositionTitle: 'סונטה מס\' 16', composer: 'מוצרט', duration: '08:15' }
+        ]
+    }
+];
 export const mockInstrumentInventory: InstrumentInventory[] = [];
 export const mockPerformanceBookings: PerformanceBooking[] = [];
 export const mockScholarshipApplications: any[] = [];
@@ -292,3 +324,50 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 export const mockWaitlist: WaitlistEntry[] = [];
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
+
+export const mockAlumni: Alumnus[] = [
+    {
+        id: 'alumni-1',
+        name: 'דניאל כהן',
+        avatarUrl: 'https://i.pravatar.cc/150?u=alumni1',
+        graduationYear: 2018,
+        instrument: 'פסנתר',
+        currentRole: 'פסנתרן קונצרטים',
+        achievements: 'זוכה תחרות פנינה זלצמן 2021'
+    },
+    {
+        id: 'alumni-2',
+        name: 'מאיה לוי',
+        avatarUrl: 'https://i.pravatar.cc/150?u=alumni2',
+        graduationYear: 2020,
+        instrument: 'כינור',
+        currentRole: 'נגנית בתזמורת הפילהרמונית הישראלית',
+        achievements: 'בוגרת תואר שני בג\'וליארד'
+    },
+    {
+        id: 'alumni-3',
+        name: 'יונתן אגמון',
+        avatarUrl: 'https://i.pravatar.cc/150?u=alumni3',
+        graduationYear: 2019,
+        instrument: 'שירה קלאסית',
+        currentRole: 'סולן באופרה הישראלית',
+        achievements: 'השתתף בכיתת אמן עם פלסידו דומינגו'
+    }
+];
+
+export const mockMasterclasses: Masterclass[] = [
+    {
+        id: 'mc-1',
+        title: 'טכניקות מתקדמות לפסנתר',
+        instructor: 'דניאל כהן',
+        date: '2024-08-15',
+        price: 250,
+    },
+    {
+        id: 'mc-2',
+        title: 'הכנה לאודישנים לתזמורת',
+        instructor: 'מאיה לוי',
+        date: '2024-09-05',
+        price: 300,
+    }
+];

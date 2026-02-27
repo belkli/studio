@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { UploadCloud, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import type { AssignedRepertoire } from "@/lib/types";
 
@@ -27,9 +27,9 @@ export function PracticeVideoUploadForm() {
   const { user, addPracticeVideo, mockAssignedRepertoire, compositions } = useAuth();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const studentId = user?.role === 'student' ? user.id : (user?.role === 'parent' ? user.childIds?.[0] : undefined);
-  
+
   const studentRepertoire = useMemo(() => {
     if (!studentId) return [];
     return mockAssignedRepertoire.filter(rep => rep.studentId === studentId);
@@ -76,28 +76,28 @@ export function PracticeVideoUploadForm() {
               <p className="mt-4 text-muted-foreground">גרור קובץ וידאו לכאן, או לחץ כדי לבחור</p>
               <p className="text-xs text-muted-foreground mt-1">(העלאה בפועל אינה ממומשת בדמו זה)</p>
             </div>
-             <FormField
+            <FormField
               control={form.control}
               name="repertoireId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>לאיזו יצירה מתייחס הוידאו?</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                  <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                     <FormControl>
-                        <SelectTrigger><SelectValue placeholder="בחר יצירה מהרפרטואר..." /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="בחר יצירה מהרפרטואר..." /></SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        {studentRepertoire.map(rep => {
-                            const composition = compositions.find(c => c.id === rep.compositionId);
-                            return <SelectItem key={rep.id} value={rep.id}>{composition?.title}</SelectItem>
-                        })}
+                      {studentRepertoire.map(rep => {
+                        const composition = compositions.find(c => c.id === rep.compositionId);
+                        return <SelectItem key={rep.id} value={rep.id}>{composition?.title}</SelectItem>
+                      })}
                     </SelectContent>
-                   </Select>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="studentNote"
               render={({ field }) => (

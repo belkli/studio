@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import Link from 'next/link';
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export default function SettingsPage() {
+    const t = useTranslations("SettingsPage");
     const { toast } = useToast();
     const { user, newFeaturesEnabled } = useAuth();
 
@@ -18,74 +20,80 @@ export default function SettingsPage() {
 
     const handleSaveProfile = (e: React.FormEvent) => {
         e.preventDefault();
-        toast({ title: 'הפרופיל עודכן', description: 'הפרטים האישיים שלך נשמרו.' });
+        toast({
+            title: t('profile.success'),
+            description: t('profile.successDesc')
+        });
     }
 
     const handleUpdatePassword = (e: React.FormEvent) => {
         e.preventDefault();
-        toast({ title: 'הסיסמה עודכנה', description: 'הסיסמה החדשה שלך נשמרה.' });
+        toast({
+            title: t('password.success'),
+            description: t('password.successDesc')
+        });
     }
-    
+
     const isAdmin = user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">הגדרות</h1>
-                <p className="text-muted-foreground">נהל את הגדרות החשבון וההתראות שלך.</p>
+                <h1 className="text-2xl font-bold">{t('title')}</h1>
+                <p className="text-muted-foreground">{t('subtitle')}</p>
             </div>
-            
+
             <Card>
                 <CardHeader>
-                    <CardTitle>פרופיל</CardTitle>
-                    <CardDescription>עדכן את הפרטים האישיים שלך.</CardDescription>
+                    <CardTitle>{t('profile.title')}</CardTitle>
+                    <CardDescription>{t('profile.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSaveProfile} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">שם מלא</Label>
+                            <Label htmlFor="name">{t('profile.name')}</Label>
                             <Input id="name" defaultValue={user.name} />
                         </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="email">כתובת אימייל</Label>
+                        <div className="space-y-2">
+                            <Label htmlFor="email">{t('profile.email')}</Label>
                             <Input id="email" type="email" defaultValue={user.email} />
                         </div>
-                        <Button type="submit">שמור שינויים</Button>
+                        <Button type="submit">{t('profile.save')}</Button>
                     </form>
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>סיסמה</CardTitle>
-                    <CardDescription>שנה את הסיסמה שלך.</CardDescription>
+                    <CardTitle>{t('password.title')}</CardTitle>
+                    <CardDescription>{t('password.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <form onSubmit={handleUpdatePassword} className="space-y-4">
+                    <form onSubmit={handleUpdatePassword} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="current-password">סיסמה נוכחית</Label>
+                            <Label htmlFor="current-password">{t('password.current')}</Label>
                             <Input id="current-password" type="password" />
                         </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="new-password">סיסמה חדשה</Label>
+                        <div className="space-y-2">
+                            <Label htmlFor="new-password">{t('password.new')}</Label>
                             <Input id="new-password" type="password" />
                         </div>
-                        <Button type="submit">עדכן סיסמה</Button>
+                        <Button type="submit">{t('password.update')}</Button>
                     </form>
                 </CardContent>
             </Card>
 
-             {isAdmin && newFeaturesEnabled && (
+            {isAdmin && newFeaturesEnabled && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>הגדרות מוסד</CardTitle>
-                        <CardDescription>נהל הגדרות גלובליות עבור המוסד שלך, כולל תכונות, תמחור ועוד.</CardDescription>
+                        <CardTitle>{t('conservatorium.title')}</CardTitle>
+                        <CardDescription>{t('conservatorium.description')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">ניהול תכונות</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">הגדרות תמחור</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">מדיניות ביטולים</Link></Button>
-                        <Button asChild variant="outline"><Link href="/dashboard/ai">ניהול סוכני AI</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">{t('conservatorium.manageFeatures')}</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">{t('conservatorium.pricing')}</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">{t('conservatorium.cancellation')}</Link></Button>
+                        <Button asChild variant="outline"><Link href="/dashboard/ai">{t('conservatorium.manageAI')}</Link></Button>
                     </CardContent>
                 </Card>
             )}
@@ -93,17 +101,17 @@ export default function SettingsPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>התראות</CardTitle>
-                    <CardDescription>בחר אילו התראות לקבל ובאיזה ערוץ - אימייל, SMS או בתוך האפליקציה.</CardDescription>
+                    <CardTitle>{t('notifications.title')}</CardTitle>
+                    <CardDescription>{t('notifications.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-muted-foreground">
-                        התאם אישית את ההתראות עבור תזכורות שיעורים, ביטולים, עדכוני חיובים ועוד.
+                        {t('notifications.prompt')}
                     </p>
                 </CardContent>
                 <CardFooter>
-                     <Button asChild>
-                        <Link href="/dashboard/settings/notifications">נהל העדפות התראות</Link>
+                    <Button asChild>
+                        <Link href="/dashboard/settings/notifications">{t('notifications.manage')}</Link>
                     </Button>
                 </CardFooter>
             </Card>

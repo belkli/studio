@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import type { EmptySlot } from "@/lib/types";
 import { PromoteSlotDialog } from "./promote-slot-dialog";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 
 
 const SEVERITY_STYLES: { [key: string]: string } = {
@@ -40,49 +40,49 @@ export function AiAlertsCard() {
 
     return (
         <>
-        <Card className="h-full flex flex-col">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Bell className="text-primary"/>
-                    התראות סוכן AI
-                </CardTitle>
-                <CardDescription>בעיות תפעוליות שזוהו אוטומטית ודורשות את תשומת לבך.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow space-y-3 overflow-y-auto max-h-[300px]">
-                {alerts.length > 0 ? alerts.map(alert => {
-                    const Icon = alert.icon;
-                    return (
-                        <div key={alert.id} className={cn("p-3 rounded-lg border flex items-start gap-3", SEVERITY_STYLES[alert.severity])}>
-                             <Icon className={cn("h-5 w-5 mt-1 flex-shrink-0", SEVERITY_ICONS[alert.severity])} />
-                             <div className="flex-grow">
-                                <h4 className="font-semibold text-sm">{alert.title}</h4>
-                                <p className="text-xs text-muted-foreground">{alert.description}</p>
-                                <Button variant="link" size="sm" asChild className="p-0 h-auto mt-1 text-xs">
-                                     <button onClick={() => handleActionClick(alert)} className="flex items-center">
-                                        {alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3"/>
-                                     </button>
-                                </Button>
-                             </div>
+            <Card className="h-full flex flex-col">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Bell className="text-primary" />
+                        התראות סוכן AI
+                    </CardTitle>
+                    <CardDescription>בעיות תפעוליות שזוהו אוטומטית ודורשות את תשומת לבך.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow space-y-3 overflow-y-auto max-h-[300px]">
+                    {alerts.length > 0 ? alerts.map(alert => {
+                        const Icon = alert.icon;
+                        return (
+                            <div key={alert.id} className={cn("p-3 rounded-lg border flex items-start gap-3", SEVERITY_STYLES[alert.severity])}>
+                                <Icon className={cn("h-5 w-5 mt-1 flex-shrink-0", SEVERITY_ICONS[alert.severity])} />
+                                <div className="flex-grow">
+                                    <h4 className="font-semibold text-sm">{alert.title}</h4>
+                                    <p className="text-xs text-muted-foreground">{alert.description}</p>
+                                    <Button variant="link" size="sm" asChild className="p-0 h-auto mt-1 text-xs">
+                                        <button onClick={() => handleActionClick(alert)} className="flex items-center">
+                                            {alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3" />
+                                        </button>
+                                    </Button>
+                                </div>
+                            </div>
+                        )
+                    }) : (
+                        <div className="text-center text-muted-foreground py-10">
+                            <Bell className="mx-auto h-8 w-8" />
+                            <p className="mt-2 text-sm">הכל תקין. אין התראות כרגע.</p>
                         </div>
-                    )
-                }) : (
-                     <div className="text-center text-muted-foreground py-10">
-                        <Bell className="mx-auto h-8 w-8" />
-                        <p className="mt-2 text-sm">הכל תקין. אין התראות כרגע.</p>
-                    </div>
+                    )}
+                </CardContent>
+                {alerts.length > 0 && (
+                    <CardFooter>
+                        <Button variant="ghost" size="sm" className="w-full text-muted-foreground">הצג את כל ההתראות</Button>
+                    </CardFooter>
                 )}
-            </CardContent>
-            {alerts.length > 0 && (
-                <CardFooter>
-                    <Button variant="ghost" size="sm" className="w-full text-muted-foreground">הצג את כל ההתראות</Button>
-                </CardFooter>
-            )}
-        </Card>
-        <PromoteSlotDialog 
-            slot={promoteSlot}
-            open={!!promoteSlot}
-            onOpenChange={() => setPromoteSlot(null)}
-        />
+            </Card>
+            <PromoteSlotDialog
+                slot={promoteSlot}
+                open={!!promoteSlot}
+                onOpenChange={() => setPromoteSlot(null)}
+            />
         </>
     )
 }

@@ -18,6 +18,24 @@ export type Notification = {
   read: boolean;
 };
 
+export type Alumnus = {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  graduationYear: number;
+  instrument: string;
+  currentRole: string;
+  achievements?: string;
+};
+
+export type Masterclass = {
+  id: string;
+  title: string;
+  instructor: string;
+  date: string;
+  price: number;
+};
+
 // From SDD-07
 export type Channel = 'IN_APP' | 'EMAIL' | 'SMS' | 'WHATSAPP';
 
@@ -219,7 +237,7 @@ export type Conservatorium = {
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
 
 export type Composition = {
-  id: string;
+  id?: string;
   composer: string;
   title: string;
   duration: string; // MM:SS, for the entire piece

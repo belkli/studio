@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { StatusBadge } from "../ui/status-badge";
 import { useTranslations } from 'next-intl';
 

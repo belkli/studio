@@ -3,6 +3,7 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useLocale } from 'next-intl';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -15,24 +16,30 @@ import { ExamRegistrationForm } from '@/components/forms/exam-registration-form'
 import { DynamicForm } from '@/components/forms/dynamic-form'; // Import new component
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 // Update schema to accept custom form IDs
-const formTypeSchema = z.object({
-  formType: z.string({ required_error: 'חובה לבחור סוג טופס' }).min(1, 'חובה לבחור סוג טופס'),
+const getFormTypeSchema = (t: any) => z.object({
+  formType: z.string().min(1, t('validation.required')),
   studentId: z.string().optional(),
 });
 
-type FormTypeData = z.infer<typeof formTypeSchema>;
+type FormTypeData = {
+  formType: string;
+  studentId?: string;
+};
 
 export function NewForm() {
+  const t = useTranslations('NewForm');
+  const locale = useLocale();
   const { toast } = useToast();
-  const { user, users, mockFormSubmissions, updateForm, mockFormTemplates } = useAuth(); // Get templates
+  const { user, users, mockFormSubmissions, updateForm, mockFormTemplates } = useAuth();
   const router = useRouter();
 
   const [studentList, setStudentList] = useState<User[]>([]);
 
   const formTypeForm = useForm<FormTypeData>({
-    resolver: zodResolver(formTypeSchema),
+    resolver: zodResolver(getFormTypeSchema(t)),
   });
 
   const onFormSubmit = useCallback((data: any, template?: any) => {
@@ -53,18 +60,19 @@ export function NewForm() {
       let studentIdForSubmission;
       switch (formType) {
         case 'recital':
-          formTitle = 'רסיטל בגרות';
+          formTitle = t('types.recital');
           studentIdForSubmission = data.studentId;
           break;
         case 'kenes':
-          formTitle = 'כנס / אירוע';
+          formTitle = t('types.kenes');
           studentIdForSubmission = user!.id;
           break;
         case 'exam_registration':
-          formTitle = 'הרשמה לבחינה';
+          formTitle = t('types.exam_registration');
           studentIdForSubmission = data.studentId;
           break;
         default:
+          formTitle = formType;
           studentIdForSubmission = user!.id;
       }
 
@@ -91,15 +99,15 @@ export function NewForm() {
       status: user?.role === 'student' ? 'ממתין לאישור מורה' : 'ממתין לאישור מנהל',
       studentId: finalStudentId,
       studentName: users.find(u => u.id === finalStudentId)?.name ?? '',
-      submissionDate: new Date().toLocaleDateString('he-IL'),
+      submissionDate: new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'he-IL'),
       ...submissionData,
     } as any;
 
     updateForm(newSubmission);
 
     toast({
-      title: `טופס ${formTitle} הוגש בהצלחה!`,
-      description: `הטופס נשלח לאישור.`,
+      title: t('successTitle', { type: formTitle }),
+      description: t('successDesc'),
     });
     router.push('/dashboard/forms');
   }, [toast, router, user, users, updateForm, formTypeForm]);
@@ -124,9 +132,9 @@ export function NewForm() {
 
   const formOptions = useMemo(() => {
     const standardForms = [
-      { value: 'recital', label: 'רסיטל בגרות' },
-      { value: 'kenes', label: 'כנס / אירוע' },
-      { value: 'exam_registration', label: 'הרשמה לבחינה' },
+      { value: 'recital', label: t('types.recital') },
+      { value: 'kenes', label: t('types.kenes') },
+      { value: 'exam_registration', label: t('types.exam_registration') },
     ];
     const customForms = mockFormTemplates.map(t => ({
       value: t.id,
@@ -150,7 +158,7 @@ export function NewForm() {
   }, [user, users]);
 
   if (!user) {
-    return <p>טוען נתונים...</p>
+    return <p>{t('loading')}</p>
   }
 
   const canSelectStudent = user.role !== 'student';
@@ -164,11 +172,11 @@ export function NewForm() {
     // Default needs student selection
     let needsStudentSelection = true;
     if (selectedFormType === 'kenes' || mockFormTemplates.some(t => t.id === selectedFormType)) {
-        needsStudentSelection = false;
+      needsStudentSelection = false;
     }
-    
+
     if (needsStudentSelection && !selectedStudent) {
-        return <p className="text-center text-muted-foreground pt-4">אנא בחר/י תלמיד/ה כדי להמשיך.</p>;
+      return <p className="text-center text-muted-foreground pt-4">{t('pleaseSelectStudent')}</p>;
     }
 
 
@@ -197,7 +205,7 @@ export function NewForm() {
         <form>
           <Card>
             <CardHeader>
-              <CardTitle>בחירת טופס</CardTitle>
+              <CardTitle>{t('selectionTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="grid md:grid-cols-2 gap-4">
               {canSelectFormType && (
@@ -206,11 +214,11 @@ export function NewForm() {
                   name="formType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>סוג טופס</FormLabel>
+                      <FormLabel>{t('formType')}</FormLabel>
                       <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="בחר את סוג הטופס..." />
+                            <SelectValue placeholder={t('selectType')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -229,11 +237,11 @@ export function NewForm() {
                   name="studentId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>בחר תלמיד/ה</FormLabel>
+                      <FormLabel>{t('selectStudent')}</FormLabel>
                       <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="בחר תלמיד/ה להגשת טופס" />
+                            <SelectValue placeholder={t('selectStudentPlaceholder')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
