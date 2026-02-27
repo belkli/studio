@@ -1,0 +1,2283 @@
+[
+    {
+        "id": 1,
+        "name": "קונסרבטוריון אור עקיבא",
+        "name_en": "Or Akiva Municipal Conservatory",
+        "city": "אור עקיבא",
+        "city_en": "Or Akiva",
+        "email": "tsahgertner@gmail.com",
+        "manager_email": "052-2830553",
+        "tel": "04-6703991",
+        "manager": {
+            "name": "צחי גרטנר"
+        },
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני בפיקוח משרד החינוך המפעיל תכניות לימוד מוסיקה לתושבי אור עקיבא.",
+        "location": {
+            "city": "אור עקיבא",
+            "coordinates": {
+                "lat": 32.5027,
+                "lng": 34.9219
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 2,
+        "name": "קונסרבטוריון אילת",
+        "name_en": "Eilat Conservatory",
+        "city": "אילת",
+        "city_en": "Eilat",
+        "email": "pilatcons@gmail.com",
+        "manager_email": "052-2997640",
+        "tel": "08-6377036",
+        "manager": {
+            "name": "פילאט"
+        },
+        "official_site": null,
+        "about": "הקונסרבטוריון העירוני של אילת, מרכז לחינוך מוסיקלי בדרום הארץ.",
+        "location": {
+            "city": "אילת",
+            "coordinates": {
+                "lat": 29.5581,
+                "lng": 34.9482
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 3,
+        "name": "קונסרבטוריון אקדמא אשדוד",
+        "name_en": "Akadma Conservatory Ashdod",
+        "city": "אשדוד",
+        "city_en": "Ashdod",
+        "email": "akadma66@gmail.com",
+        "tel": "08-8545135",
+        "manager": {
+            "name": "ינינה קודליק"
+        },
+        "official_site": "https://www.akadma.co.il/",
+        "about": "הוקם בשנת 1966, מהקונסרבטוריונים הוותיקים בישראל. מונה כ-10 מחלקות עם מאות תלמידים.",
+        "departments": [
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "כלי מיתר"
+            },
+            {
+                "name": "כלי נשיפה"
+            },
+            {
+                "name": "גיטרה"
+            },
+            {
+                "name": "תופים"
+            },
+            {
+                "name": "פיתוח קול"
+            },
+            {
+                "name": "תאוריה"
+            },
+            {
+                "name": "הרכבים קאמריים"
+            },
+            {
+                "name": "מוסיקה לגיל הרך"
+            },
+            {
+                "name": "תזמורות"
+            }
+        ],
+        "location": {
+            "city": "אשדוד",
+            "address": "דרך ארץ 8, אשדוד",
+            "coordinates": {
+                "lat": 31.8014,
+                "lng": 34.6461
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 4,
+        "name": "קונסרבטוריון אשכול גב מערבי א",
+        "name_en": "Eshkol West Negev Conservatory A",
+        "city": "אשכול גב מערבי",
+        "city_en": "Eshkol West Negev",
+        "email": "music@wegall.org.il",
+        "manager_email": "054-4372309",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון האגף המוסיקלי של מועצת אשכול.",
+        "location": {
+            "city": "אשכול גב מערבי",
+            "coordinates": {
+                "lat": 31.3500,
+                "lng": 34.5500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 5,
+        "name": "קונסרבטוריון אשכול גב מערבי ב",
+        "name_en": "Eshkol West Negev Conservatory B",
+        "city": "אשכול גב מערבי",
+        "city_en": "Eshkol West Negev",
+        "email": "music@westnegev.org.il",
+        "manager_email": "054-2503781",
+        "tel": null,
+        "official_site": null,
+        "about": "ענף מוסיקלי נוסף של מועצת אשכול.",
+        "location": {
+            "city": "אשכול גב מערבי",
+            "coordinates": {
+                "lat": 31.3500,
+                "lng": 34.5500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 6,
+        "name": "קונסרבטוריון אשקלון",
+        "name_en": "Ashkelon Conservatory",
+        "city": "אשקלון",
+        "city_en": "Ashkelon",
+        "email": "gil-ad@irontash.org.il",
+        "tel": "08-6792330",
+        "manager": {
+            "name": "גיל עד"
+        },
+        "official_site": "https://www.ironitash.org.il/",
+        "about": "קונסרבטוריון עירוני אשקלון, מציע לימודים על 15 כלי נגינה עם 19 מורים.",
+        "departments": [
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "גיטרה"
+            },
+            {
+                "name": "כינור"
+            },
+            {
+                "name": "צ'לו"
+            },
+            {
+                "name": "חליל"
+            },
+            {
+                "name": "קלרינט"
+            },
+            {
+                "name": "סקסופון"
+            },
+            {
+                "name": "חצוצרה"
+            },
+            {
+                "name": "תופים"
+            },
+            {
+                "name": "פיתוח קול"
+            }
+        ],
+        "location": {
+            "city": "אשקלון",
+            "coordinates": {
+                "lat": 31.6688,
+                "lng": 34.5742
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 7,
+        "name": "קונסרבטוריון באר שבע ע\"ש סמואל רובין",
+        "name_en": "Samuel Rubin Conservatory Beer Sheva",
+        "city": "באר שבע",
+        "city_en": "Beer Sheva",
+        "email": "noammali@br7.org.il",
+        "secondary_email": "shai4199@gmail.com",
+        "tel": "08-6279606",
+        "manager_email": "050-9873772",
+        "official_site": "http://www.musicbr7.org.il/",
+        "about": "נוסד בשנת 1961, אחד הקונסרבטוריונים הוותיקים בנגב. נושא שם הנדיב שמואל רובין.",
+        "departments": [
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "כלי מיתר"
+            },
+            {
+                "name": "כלי נשיפה"
+            },
+            {
+                "name": "גיטרה"
+            },
+            {
+                "name": "נבל"
+            },
+            {
+                "name": "פיתוח קול"
+            },
+            {
+                "name": "תאוריה"
+            }
+        ],
+        "location": {
+            "city": "באר שבע",
+            "address": "דרך המשחררים 10, באר שבע",
+            "coordinates": {
+                "lat": 31.2530,
+                "lng": 34.7915
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 8,
+        "name": "קונסרבטוריון בית שמש א",
+        "name_en": "Beit Shemesh Conservatory A",
+        "city": "בית שמש",
+        "city_en": "Beit Shemesh",
+        "email": "yoelcohenba@gmail.com",
+        "tel": null,
+        "manager_email": "050-8334250",
+        "official_site": null,
+        "about": "קונסרבטוריון בפיקוח משרד החינוך לתושבי בית שמש.",
+        "location": {
+            "city": "בית שמש",
+            "coordinates": {
+                "lat": 31.7516,
+                "lng": 34.9880
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 9,
+        "name": "קונסרבטוריון בית שמש ב",
+        "name_en": "Beit Shemesh Conservatory B",
+        "city": "בית שמש",
+        "city_en": "Beit Shemesh",
+        "email": "kon@BS.matnasim.co.il",
+        "manager_email": "054-7630153",
+        "tel": null,
+        "official_site": null,
+        "about": "ענף נוסף של מרכז הקהילה בית שמש.",
+        "location": {
+            "city": "בית שמש",
+            "coordinates": {
+                "lat": 31.7516,
+                "lng": 34.9880
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 10,
+        "name": "קונסרבטוריון בלוט",
+        "name_en": "Blot Conservatory",
+        "city": "בלוט",
+        "city_en": "Blot",
+        "email": "shari@brener.org.il",
+        "manager_email": "054-8723206",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון אזורי.",
+        "location": {
+            "city": "בלוט",
+            "coordinates": {
+                "lat": 31.8000,
+                "lng": 34.9500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 11,
+        "name": "קונסרבטוריון בת ים",
+        "name_en": "Bat Yam Conservatory",
+        "city": "בת ים",
+        "city_en": "Bat Yam",
+        "email": "hila@tarbut-batyam.co.il",
+        "manager_email": "054-4554054",
+        "tel": null,
+        "official_site": "https://www.tarbut-batyam.co.il/",
+        "about": "קונסרבטוריון עירוני של בת ים, תחת מרחב התרבות של העיר.",
+        "location": {
+            "city": "בת ים",
+            "coordinates": {
+                "lat": 32.0239,
+                "lng": 34.7497
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 12,
+        "name": "קונסרבטוריון גבעתיים",
+        "name_en": "Givatayim Conservatory",
+        "city": "גבעתיים",
+        "city_en": "Givatayim",
+        "email": "omoboe1@gmail.com",
+        "manager_email": "054-3534175",
+        "tel": "03-7323349",
+        "official_site": "https://kehilatayim.org.il/62",
+        "about": "קונסרבטוריון עירוני של גבעתיים, מרכז מוסיקלי חינוכי.",
+        "location": {
+            "city": "גבעתיים",
+            "coordinates": {
+                "lat": 32.0714,
+                "lng": 34.8124
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 13,
+        "name": "קונסרבטוריון דימונה",
+        "name_en": "Dimona Conservatory",
+        "city": "דימונה",
+        "city_en": "Dimona",
+        "email": "mazulai@gmail.com",
+        "manager_email": "058-4415259",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני דימונה.",
+        "location": {
+            "city": "דימונה",
+            "coordinates": {
+                "lat": 31.0676,
+                "lng": 35.0324
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 14,
+        "name": "קונסרבטוריון הגליל העליון",
+        "name_en": "Upper Galilee Conservatory",
+        "city": "הגליל העליון",
+        "city_en": "Upper Galilee",
+        "email": "ShiraTK@galil-elion.org.il",
+        "secondary_email": "stoleralen@gmail.com",
+        "manager_email": "050-7778112",
+        "tel": null,
+        "official_site": "https://www.galil-elion.org.il/",
+        "about": "קונסרבטוריון מועצת גליל עליון.",
+        "location": {
+            "city": "הגליל העליון",
+            "coordinates": {
+                "lat": 33.0500,
+                "lng": 35.5000
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 15,
+        "name": "קונסרבטוריון הוד השרון - אלומה",
+        "name_en": "Hod HaSharon Municipal Conservatory – Aluma",
+        "city": "הוד השרון",
+        "city_en": "Hod HaSharon",
+        "email": "office@alumahod.com",
+        "secondary_email": "music@alumahod.com",
+        "manager_email": "052-4619363",
+        "tel": "073-3808880",
+        "manager": {
+            "name": "יעל פלוטניארז",
+            "role": "מנהלת הקונסרבטוריון",
+            "bio": "מנצחת על תזמורות ומורה לפסנתר. בוגרת תואר ראשון בניצוח תזמורת מהאקדמיה למוסיקה ומחול בירושלים ותואר שני בניצוח מקהלות מאקדמיית בוכמן-מהטה תל אביב.",
+            "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%99%D7%A2%D7%9C-%D7%A4%D7%9C%D7%95%D7%98%D7%A0%D7%99%D7%90%D7%A8%D7%96-300x300.jpg"
+        },
+        "pedagogical_coordinator": {
+            "name": "יעל קדר",
+            "role": "רכזת פדגוגית",
+            "bio": "מנצחת מקהלות ופסנתרנית, בעלת תואר ראשון ושני מהאקדמיה למוסיקה בתל אביב.",
+            "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%A7%D7%93%D7%A8-%D7%99%D7%A2%D7%9C-150x150.png"
+        },
+        "official_site": "https://alumahod.com/",
+        "about_page": "https://alumahod.com/%d7%a7%d7%95%d7%a0%d7%a1%d7%a8%d7%91%d7%98%d7%95%d7%a8%d7%99%d7%95%d7%9f-%d7%90%d7%95%d7%93%d7%95%d7%aa%d7%99%d7%a0%d7%95/",
+        "teachers_page": "https://alumahod.com/teachers-2/",
+        "gallery_link": "https://alumahod.com/%d7%a7%d7%95%d7%a0%d7%a1%d7%a8%d7%91%d7%98%d7%95%d7%a8%d7%99%d7%95%d7%9f-%d7%92%d7%9c%d7%a8%d7%99%d7%94/",
+        "about": "הוקם בשנת 2009 על ידי המנצח ירוחם שרובסקי. קונסרבטוריון עירוני בפיקוח משרד החינוך, מציע מסלולים מקלאסי ועד מוסיקה קלה, הרכבים ותזמורות. תחת מיסודה של הסוכנות היהודית.",
+        "departments": [
+            {
+                "name": "ניצוח ובעלי תפקידים",
+                "link": "https://alumahod.com/%d7%a0%d7%99%d7%a6%d7%95%d7%97-%d7%95%d7%91%d7%a2%d7%9c%d7%99-%d7%aa%d7%a4%d7%a7%d7%99%d7%93%d7%99%d7%9d/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/AVT_3620-scaled.jpg"
+            },
+            {
+                "name": "פסנתר",
+                "head": "טליה גבעון",
+                "link": "https://alumahod.com/%d7%a4%d7%a1%d7%a0%d7%aa%d7%a8/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/MCG01051-e1759057641586.jpeg"
+            },
+            {
+                "name": "פיתוח קול",
+                "link": "https://alumahod.com/%d7%a4%d7%99%d7%aa%d7%95%d7%97-%d7%a7%d7%95%d7%9c/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/-עד-כלות-ספט-25-8-scaled-e1759057949859.jpg"
+            },
+            {
+                "name": "כלי נשיפה",
+                "link": "https://alumahod.com/%d7%9b%d7%9c%d7%99-%d7%a0%d7%a9%d7%99%d7%a4%d7%94/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/A6108108-scaled.jpg"
+            },
+            {
+                "name": "כלי מיתר",
+                "link": "https://alumahod.com/%d7%9b%d7%9c%d7%99-%d7%9e%d7%99%d7%aa%d7%a8/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/358363289_677438947761507_5215693081281009364_n.jpg"
+            },
+            {
+                "name": "תופים וכלי הקשה",
+                "link": "https://alumahod.com/%d7%aa%d7%95%d7%a4%d7%99%d7%9d-%d7%95%d7%9b%d7%9c%d7%99-%d7%94%d7%a7%d7%a9%d7%94/",
+                "photo": "https://alumahod.com/wp-content/uploads/2025/09/A6108037-scaled.jpg"
+            }
+        ],
+        "teachers": [
+            {
+                "name": "יעל פלוטניארז",
+                "role": "מנהלת, מנצחת תזמורות",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%99%D7%A2%D7%9C-%D7%A4%D7%9C%D7%95%D7%98%D7%A0%D7%99%D7%90%D7%A8%D7%96-300x300.jpg"
+            },
+            {
+                "name": "יעל קדר",
+                "role": "רכזת פדגוגית, מנצחת מקהלות, פסנתרנית",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%A7%D7%93%D7%A8-%D7%99%D7%A2%D7%9C-150x150.png"
+            },
+            {
+                "name": "שירה סברוב",
+                "role": "מנצחת מקהלות ילדים ונוער",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%A1%D7%91%D7%A8%D7%95%D7%91-%D7%A9%D7%99%D7%A8%D7%94-150x150.png"
+            },
+            {
+                "name": "אייל הרכבי",
+                "role": "מנצח תזמורות נוער, מעבד ומלחין",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%94%D7%A8%D7%9B%D7%91%D7%99-%D7%90%D7%99%D7%99%D7%9C-2-150x150.png"
+            },
+            {
+                "name": "עדיה לביא",
+                "role": "מנצחת מקהלת בוגרים, זמרת ג'אז",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%9C%D7%91%D7%99%D7%90-%D7%A2%D7%93%D7%99%D7%94-2-150x150.png"
+            },
+            {
+                "name": "טליה גבעון",
+                "role": "ראש מחלקת פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%92%D7%91%D7%A2%D7%95%D7%9F-%D7%98%D7%9C%D7%99%D7%94-%E2%80%93-%D7%A8%D7%9B%D7%96%D7%AA-%D7%9E%D7%97%D7%9C%D7%A7%D7%AA-%D7%94%D7%A4%D7%A1%D7%A0%D7%AA%D7%A8.png"
+            },
+            {
+                "name": "גילי אברבנאל",
+                "role": "פסנתר, תאוריה וקומפוזיציה",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%90%D7%91%D7%A8%D7%91%D7%A0%D7%90%D7%9C-%D7%92%D7%99%D7%9C%D7%99-300x200.png"
+            },
+            {
+                "name": "אלכס גולדברג",
+                "role": "פסנתר והרכבים קאמריים",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%92%D7%95%D7%9C%D7%93%D7%91%D7%A8%D7%92-%D7%90%D7%9C%D7%9B%D7%A1.png"
+            },
+            {
+                "name": "פאינה גלוזמן",
+                "role": "פסנתר ואורגנית",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%92%D7%9C%D7%95%D7%96%D7%9E%D7%9F-%D7%A4%D7%90%D7%99%D7%A0%D7%94-225x300.jpg"
+            },
+            {
+                "name": "אלה דובין",
+                "role": "פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%93%D7%95%D7%91%D7%99%D7%9F-%D7%90%D7%9C%D7%94-149x150.png"
+            },
+            {
+                "name": "יעל דרעי",
+                "role": "פסנתרנית וזמרת אופרה",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/11/%D7%99%D7%A2%D7%9C-%D7%93%D7%A8%D7%A2%D7%99-200x300.jpg"
+            },
+            {
+                "name": "שרה ויסר",
+                "role": "פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%95%D7%99%D7%A1%D7%A8-%D7%A9%D7%A8%D7%94.png"
+            },
+            {
+                "name": "לנה הנקין",
+                "role": "פסנתר, ניצוח מקהלה",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%94%D7%A0%D7%A7%D7%99%D7%9F-%D7%9C%D7%A0%D7%94-191x300.jpg"
+            },
+            {
+                "name": "אירנה פינקלסון",
+                "role": "פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%A4%D7%99%D7%A0%D7%A7%D7%9C%D7%A1%D7%95%D7%9F-%D7%90%D7%99%D7%A8%D7%A0%D7%94.png"
+            },
+            {
+                "name": "אלכס פינקלסון",
+                "role": "פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%A4%D7%99%D7%A0%D7%A7%D7%9C%D7%A1%D7%95%D7%9F-%D7%90%D7%9C%D7%9B%D7%A1.png"
+            },
+            {
+                "name": "גיל פקר",
+                "role": "פסנתר ג'אז",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%92%D7%99%D7%9C-%D7%A4%D7%A7%D7%A8.png"
+            },
+            {
+                "name": "שגיב ציוני",
+                "role": "פסנתר ג'אז, מעבד ומלחין",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/09/%D7%A6%D7%99%D7%95%D7%A0%D7%99-%D7%A9%D7%92%D7%99%D7%91.png"
+            },
+            {
+                "name": "נדב עין הגל",
+                "role": "פסנתר",
+                "photo_url": "https://alumahod.com/wp-content/uploads/2025/12/%D7%A0%D7%93%D7%91-%D7%A2%D7%99%D7%9F-%D7%94%D7%92%D7%9C-300x196.png"
+            }
+        ],
+        "programs": [
+            "בית ספר מנגן",
+            "בית ספר שר",
+            "שיעורי מוסיקה והרכבים",
+            "לימודי מוסיקה בבתי הספר היסודיים",
+            "מקהלות ילדים ונוער"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/alumahodhasharon/",
+            "instagram": "https://www.instagram.com/alumahod/"
+        },
+        "location": {
+            "city": "הוד השרון",
+            "branches": [
+                "שלוחה מזרחית: תיכון אילן רמון",
+                "שלוחה מערבית: בי\"ס לאה גולדברג"
+            ],
+            "coordinates": {
+                "lat": 32.1528,
+                "lng": 34.8927
+            }
+        },
+        "opening_hours": "א'-ה' 14:00-20:00",
+        "photos": [
+            "https://alumahod.com/wp-content/uploads/2025/09/AVT_3620-scaled.jpg",
+            "https://alumahod.com/wp-content/uploads/2025/09/MCG01051-e1759057641586.jpeg",
+            "https://alumahod.com/wp-content/uploads/2025/09/A6108108-scaled.jpg",
+            "https://alumahod.com/wp-content/uploads/2025/09/358363289_677438947761507_5215693081281009364_n.jpg",
+            "https://alumahod.com/wp-content/uploads/2025/09/A6108037-scaled.jpg",
+            "https://alumahod.com/wp-content/uploads/2025/09/logos-12.png"
+        ]
+    },
+    {
+        "id": 16,
+        "name": "קונסרבטוריון הערבה",
+        "name_en": "Arava Conservatory",
+        "city": "הערבה",
+        "city_en": "Arava",
+        "email": "omertolly@gmail.com",
+        "secondary_email": "music@arava.info",
+        "manager_email": "054-6734190",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון מרחב הערבה.",
+        "location": {
+            "city": "הערבה",
+            "coordinates": {
+                "lat": 30.3600,
+                "lng": 35.1200
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 17,
+        "name": "קונסרבטוריון הרצליה - מרכז המוסיקה",
+        "name_en": "Herzliya Music Center",
+        "city": "הרצליה",
+        "city_en": "Herzliya",
+        "email": "dudi@music-herzliya.co.il",
+        "secondary_email": "guy@music-herzliya.co.il",
+        "tel": "09-9500000",
+        "manager": {
+            "name": "דודי סופר",
+            "role": "מנהל מוסיקלי ראשי",
+            "bio": "מנצח ופסנתרן. מנהל מוסיקלי של 4 תזמורות סימפוניות. מנצח על תזמורות מובילות בארץ ובחו\"ל."
+        },
+        "official_site": "https://www.music-herzliya.com/",
+        "about": "מרכז המוסיקה מוביל את כל התכנים המוסיקליים בחינוך ובתרבות בהרצליה. פועל בשלוש שלוחות.",
+        "branches": [
+            {
+                "name": "שלוחת רביבים (יד התשעה)",
+                "address": "רביבים 49, הרצליה",
+                "tel": "09-950-6625",
+                "email": "cons@music-herzliya.co.il",
+                "manager": "יואב שמש"
+            },
+            {
+                "name": "שלוחת מערב (מרכז תאו)",
+                "address": "וינגייט 168, הרצליה",
+                "tel": "09-977-8800",
+                "email": "conswest@music-herzliya.co.il",
+                "manager": "גיא טירם"
+            },
+            {
+                "name": "שלוחת נינא (נווה ישראל)",
+                "address": "דוד אלרואי 1, הרצליה",
+                "tel": "050-200-3665",
+                "email": "cons1@music-herzliya.co.il",
+                "manager": "יוני אורן"
+            }
+        ],
+        "departments": [
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "כלי נשיפה"
+            },
+            {
+                "name": "כלי קשת"
+            },
+            {
+                "name": "גיטרה"
+            },
+            {
+                "name": "קומפוזיציה"
+            },
+            {
+                "name": "תיאוריה"
+            }
+        ],
+        "ensembles": [
+            "תזמורת קאמרית",
+            "תזמורת נשיפה (3 רמות)",
+            "ביג בנד",
+            "תזמורת השרון",
+            "מקהלות (לי-רון, זמר לך, יחדיו)"
+        ],
+        "programs": [
+            "בית ספר מנגן",
+            "מגמות מוסיקה"
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/herzliyamusiccenter",
+            "instagram": "https://www.instagram.com/music_herzliya/",
+            "youtube": "https://www.youtube.com/@musicHerzliya",
+            "tiktok": "https://www.tiktok.com/@music_herzliya"
+        },
+        "location": {
+            "city": "הרצליה",
+            "coordinates": {
+                "lat": 32.1663,
+                "lng": 34.8435
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 18,
+        "name": "קונסרבטוריון זכרון יעקב",
+        "name_en": "Zikhron Ya'akov Conservatory",
+        "city": "זכרון יעקב",
+        "city_en": "Zikhron Ya'akov",
+        "email": "roieshko@gmail.com",
+        "secondary_email": "rizmusicl@gmail.com",
+        "tel": "04-6298121",
+        "manager_email": "052-8134911",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני זכרון יעקב.",
+        "location": {
+            "city": "זכרון יעקב",
+            "coordinates": {
+                "lat": 32.5700,
+                "lng": 34.9500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 19,
+        "name": "קונסרבטוריון חדרה",
+        "name_en": "Hadera Conservatory",
+        "city": "חדרה",
+        "city_en": "Hadera",
+        "email": "cons-hadera@hadera.muni.il",
+        "secondary_email": "tofik-m@hadera.muni.il",
+        "tel": "04-6331686",
+        "manager_email": "052-2495808",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני חדרה.",
+        "location": {
+            "city": "חדרה",
+            "coordinates": {
+                "lat": 32.4365,
+                "lng": 34.9196
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 20,
+        "name": "קונסרבטוריון חולון",
+        "name_en": "Holon Conservatory",
+        "city": "חולון",
+        "city_en": "Holon",
+        "email": "omergab@gmail.com",
+        "tel": "03-5500012",
+        "manager_email": "050-7365217",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני חולון.",
+        "location": {
+            "city": "חולון",
+            "coordinates": {
+                "lat": 32.0107,
+                "lng": 34.7782
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 21,
+        "name": "קונסרבטוריון חוף הכרמל",
+        "name_en": "Hof HaCarmel Conservatory",
+        "city": "חוף הכרמל",
+        "city_en": "Hof HaCarmel",
+        "email": "amirsotoler@gmail.com",
+        "tel": "04-6299712",
+        "manager_email": "052-2257064",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת חוף הכרמל.",
+        "location": {
+            "city": "חוף הכרמל",
+            "coordinates": {
+                "lat": 32.6500,
+                "lng": 34.9500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 22,
+        "name": "קונסרבטוריון דוניה ויצמן - חיפה",
+        "name_en": "Dunie Weizman Conservatory Haifa",
+        "city": "חיפה",
+        "city_en": "Haifa",
+        "email": "snr@bezeqint.net",
+        "tel": "04-8629787",
+        "manager_email": "052-2532649",
+        "official_site": "https://musicschoolhaifa.co.il/",
+        "about": "קונסרבטוריון ויצמן - חוג הכרמל לחינוך המוסיקה.",
+        "location": {
+            "city": "חיפה",
+            "address": "בצלאל 12, חיפה",
+            "coordinates": {
+                "lat": 32.8156,
+                "lng": 34.9895
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 23,
+        "name": "קונסרבטוריון רובין - חיפה",
+        "name_en": "Rubin Conservatory Haifa",
+        "city": "חיפה",
+        "city_en": "Haifa",
+        "email": "shmarcons@barak.net.il",
+        "tel": "04-8521530",
+        "manager_email": "053-3879847",
+        "official_site": "https://www.haifacons.co.il/",
+        "about": "קונסרבטוריון רובין חיפה, מוסד ממלכתי מוביל ברוב כלי הנגינה.",
+        "location": {
+            "city": "חיפה",
+            "address": "הפרסים 24, חיפה",
+            "coordinates": {
+                "lat": 32.8156,
+                "lng": 34.9895
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 24,
+        "name": "קונסרבטוריון טבריה",
+        "name_en": "Tiberias Conservatory",
+        "city": "טבריה",
+        "city_en": "Tiberias",
+        "email": "Tiberias.cons@gmail.com",
+        "tel": "04-6731733",
+        "manager_email": "054-6349190",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני טבריה.",
+        "location": {
+            "city": "טבריה",
+            "coordinates": {
+                "lat": 32.7940,
+                "lng": 35.5308
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 25,
+        "name": "קונסרבטוריון טבריה ב",
+        "name_en": "Tiberias Conservatory B",
+        "city": "טבריה",
+        "city_en": "Tiberias",
+        "email": "alexfridman750@gmail.com",
+        "manager_email": "050-7188882",
+        "tel": null,
+        "official_site": null,
+        "about": "ענף נוסף של הקונסרבטוריון בטבריה.",
+        "location": {
+            "city": "טבריה",
+            "coordinates": {
+                "lat": 32.7940,
+                "lng": 35.5308
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 26,
+        "name": "קונסרבטוריון יהוד",
+        "name_en": "Yehud Conservatory",
+        "city": "יהוד",
+        "city_en": "Yehud",
+        "email": "gutmanr1960@gmail.com",
+        "tel": "08-9194470",
+        "manager_email": "054-9789263",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני יהוד.",
+        "location": {
+            "city": "יהוד",
+            "coordinates": {
+                "lat": 31.9944,
+                "lng": 34.8886
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 27,
+        "name": "קונסרבטוריון יוקנעם-מגדל",
+        "name_en": "Yokneam-Migdal Conservatory",
+        "city": "יוקנעם",
+        "city_en": "Yokneam",
+        "email": "bmusacgliboa@gmail.com",
+        "tel": "04-6598212",
+        "manager_email": "052-3756323",
+        "official_site": null,
+        "about": "בית המוסיקה יוקנעם-מגדל.",
+        "location": {
+            "city": "יוקנעם",
+            "coordinates": {
+                "lat": 32.6561,
+                "lng": 35.1006
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 28,
+        "name": "קונסרבטוריון עמק יזרעאל-מגדל העמק",
+        "name_en": "Jezreel Valley-Migdal HaEmek Conservatory",
+        "city": "מגדל העמק",
+        "city_en": "Migdal HaEmek",
+        "email": "inna_lux@walla.com",
+        "tel": "04-9893986",
+        "manager_email": "050-8670920",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת גולן ורשת קהילתית.",
+        "location": {
+            "city": "מגדל העמק",
+            "coordinates": {
+                "lat": 32.6735,
+                "lng": 35.2387
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 29,
+        "name": "קונסרבטוריון ירוחם",
+        "name_en": "Yerucham Conservatory",
+        "city": "ירוחם",
+        "city_en": "Yerucham",
+        "email": "consyeruhams@gmail.com",
+        "tel": "08-6687000",
+        "manager_email": "050-7119714",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני ירוחם.",
+        "location": {
+            "city": "ירוחם",
+            "coordinates": {
+                "lat": 30.9866,
+                "lng": 34.9267
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 30,
+        "name": "קונסרבטוריון ירוחם ב",
+        "name_en": "Yerucham Conservatory B",
+        "city": "ירוחם",
+        "city_en": "Yerucham",
+        "email": "Musicgonem@gmail.com",
+        "manager_email": "054-7576055",
+        "tel": null,
+        "official_site": null,
+        "about": "ענף נוסף של פעילות המוסיקה בירוחם.",
+        "location": {
+            "city": "ירוחם",
+            "coordinates": {
+                "lat": 30.9866,
+                "lng": 34.9267
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 31,
+        "name": "קונסרבטוריון ירושלים - JAMD",
+        "name_en": "Jerusalem Academy Conservatory (JAMD)",
+        "city": "ירושלים",
+        "city_en": "Jerusalem",
+        "email": "barak@jamd.ac.il",
+        "tel": "04-6550422",
+        "manager_email": "052-2605067",
+        "official_site": "https://conservatoryjamd.co.il/",
+        "about": "קונסרבטוריון האקדמיה למוסיקה ומחול בירושלים, הוקם בשנת 1933. מנה 1000+ תלמידים.",
+        "departments": [
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "כלי מיתר"
+            },
+            {
+                "name": "כלי נשיפה"
+            },
+            {
+                "name": "קול"
+            },
+            {
+                "name": "מוסיקה עתיקה"
+            },
+            {
+                "name": "תאוריה וקומפוזיציה"
+            }
+        ],
+        "location": {
+            "city": "ירושלים",
+            "address": "קמפוס גבעת רם, ירושלים",
+            "coordinates": {
+                "lat": 31.7683,
+                "lng": 35.1966
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 32,
+        "name": "קונסרבטוריון ירושלים - חסידנה",
+        "name_en": "Jerusalem Conservatory – Hassadna",
+        "city": "ירושלים",
+        "city_en": "Jerusalem",
+        "email": "lena@hassadna.com",
+        "tel": "02-5630017",
+        "manager_email": "050-3512545",
+        "official_site": "https://hassadna.com/",
+        "about": "בית הספר למוסיקה חסידנה בירושלים.",
+        "location": {
+            "city": "ירושלים",
+            "coordinates": {
+                "lat": 31.7683,
+                "lng": 35.1966
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 33,
+        "name": "קונסרבטוריון ירושלים - שולמית",
+        "name_en": "Jerusalem Conservatory – Shulamit",
+        "city": "ירושלים",
+        "city_en": "Jerusalem",
+        "email": "benzion@ronshulamit.org.il",
+        "secondary_email": "rivka@ronshulamit.org.il",
+        "tel": "02-6528531",
+        "manager_email": "054-4148277",
+        "official_site": "https://www.ronshulamit.org.il/",
+        "about": "קונסרבטוריון ירושלים - שולמית, מוסד ותיק בחינוך המוסיקלי הירושלמי.",
+        "location": {
+            "city": "ירושלים",
+            "coordinates": {
+                "lat": 31.7683,
+                "lng": 35.1966
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 34,
+        "name": "קונסרבטוריון יפו",
+        "name_en": "Jaffa Conservatory",
+        "city": "יפו",
+        "city_en": "Jaffa",
+        "email": "beltmozarl@gmail.com",
+        "tel": "04-9968532",
+        "manager_email": "054-6469601",
+        "official_site": null,
+        "about": "קונסרבטוריון יפו.",
+        "location": {
+            "city": "יפו",
+            "coordinates": {
+                "lat": 32.0500,
+                "lng": 34.7500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 35,
+        "name": "קונסרבטוריון ירושלים - בית ניסן",
+        "name_en": "Jerusalem Conservatory – Beit Nisan",
+        "city": "ירושלים",
+        "city_en": "Jerusalem",
+        "email": "reuvenmalach@gmail.com",
+        "tel": "09-9799131",
+        "manager_email": "052-4316316",
+        "official_site": null,
+        "about": "ענף מוסיקה ירושלמי.",
+        "location": {
+            "city": "ירושלים",
+            "coordinates": {
+                "lat": 31.7683,
+                "lng": 35.1966
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 36,
+        "name": "קונסרבטוריון כפר סבא א",
+        "name_en": "Kfar Saba Conservatory A",
+        "city": "כפר סבא",
+        "city_en": "Kfar Saba",
+        "email": "music@mkty.co.il",
+        "tel": "09-8985111",
+        "manager_email": "054-7299982",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני כפר סבא.",
+        "location": {
+            "city": "כפר סבא",
+            "coordinates": {
+                "lat": 32.1759,
+                "lng": 34.9088
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 37,
+        "name": "קונסרבטוריון כפר סבא ב",
+        "name_en": "Kfar Saba Conservatory B",
+        "city": "כפר סבא",
+        "city_en": "Kfar Saba",
+        "email": "cfereh@ksaba.co.il",
+        "secondary_email": "SimchaT@ksaba.co.il",
+        "tel": null,
+        "manager_email": "09-7640740",
+        "official_site": "https://www.ksaba.co.il/",
+        "about": "חברת מוסיקה עירונית כפר סבא.",
+        "location": {
+            "city": "כפר סבא",
+            "coordinates": {
+                "lat": 32.1759,
+                "lng": 34.9088
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 38,
+        "name": "קונסרבטוריון כרמיאל",
+        "name_en": "Karmiel Conservatory",
+        "city": "כרמיאל",
+        "city_en": "Karmiel",
+        "email": "dianabcuur@gmail.com",
+        "tel": "04-9580443",
+        "manager_email": "054-6626068",
+        "official_site": "https://www.conskarmiel.net/",
+        "about": "קונסרבטוריון עירוני כרמיאל, מציע לימוד מגוון כלי נגינה.",
+        "location": {
+            "city": "כרמיאל",
+            "coordinates": {
+                "lat": 32.9160,
+                "lng": 35.2972
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 39,
+        "name": "קונסרבטוריון לב השרון",
+        "name_en": "Lev HaSharon Conservatory",
+        "city": "לב השרון",
+        "city_en": "Lev HaSharon",
+        "email": "yhoren1@gmail.com",
+        "tel": "04-6298121",
+        "manager_email": "052-8463924",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת לב השרון.",
+        "location": {
+            "city": "לב השרון",
+            "coordinates": {
+                "lat": 32.3300,
+                "lng": 34.9200
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 40,
+        "name": "קונסרבטוריון תבור",
+        "name_en": "Tavor Conservatory",
+        "city": "תבור",
+        "city_en": "Tavor",
+        "email": "yizharmusicion@gmail.com",
+        "manager_email": "054-2438592",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עמק יזרעאל.",
+        "location": {
+            "city": "תבור",
+            "coordinates": {
+                "lat": 32.6900,
+                "lng": 35.4300
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 41,
+        "name": "קונסרבטוריון מודיעין-מכבים-רעות",
+        "name_en": "Modi'in-Maccabim-Re'ut Conservatory",
+        "city": "מודיעין-מכבים-רעות",
+        "city_en": "Modi'in",
+        "email": "music@modiin.matnasim.co.il",
+        "tel": "08-9702210",
+        "manager_email": "054-8810121",
+        "official_site": "https://music.modiin.matnasim.co.il/",
+        "about": "מרכז מוסיקה עירוני מודיעין, מינהל הקהילה ומנהלי התרבות בר\"מ ל\"צ.",
+        "location": {
+            "city": "מודיעין",
+            "coordinates": {
+                "lat": 31.8939,
+                "lng": 35.0102
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 42,
+        "name": "קונסרבטוריון מרום הגליל",
+        "name_en": "Marom HaGalil Conservatory",
+        "city": "מרום הגליל",
+        "city_en": "Marom HaGalil",
+        "email": "natalikatz61@gmail.com",
+        "manager_email": "054-7808787",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון מועצה מרום הגליל.",
+        "location": {
+            "city": "מרום הגליל",
+            "coordinates": {
+                "lat": 33.0500,
+                "lng": 35.5000
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 43,
+        "name": "קונסרבטוריון מסד/מנשה",
+        "name_en": "Mossad/Manashe Conservatory",
+        "city": "מסד",
+        "city_en": "Mossad",
+        "email": "menachemg@mta.org.il",
+        "tel": "04-9109011",
+        "manager_email": "054-6952125",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת מנשה.",
+        "location": {
+            "city": "מסד",
+            "coordinates": {
+                "lat": 32.5800,
+                "lng": 35.0200
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 44,
+        "name": "קונסרבטוריון מטה יהודה",
+        "name_en": "Mateh Yehuda Conservatory",
+        "city": "מטה יהודה",
+        "city_en": "Mateh Yehuda",
+        "email": "yadharif.cons@m-yehuda.org.il",
+        "secondary_email": "taob100@gmail.com",
+        "manager_email": "054-4494572",
+        "tel": null,
+        "official_site": "https://www.m-yehuda.org.il/",
+        "about": "קונסרבטוריון מועצת מטה יהודה.",
+        "location": {
+            "city": "מטה יהודה",
+            "coordinates": {
+                "lat": 31.7100,
+                "lng": 35.0200
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 45,
+        "name": "קונסרבטוריון מעלה אדומים א",
+        "name_en": "Ma'ale Adumim Conservatory A",
+        "city": "מעלה אדומים",
+        "city_en": "Ma'ale Adumim",
+        "email": "zhuravelR7@gmail.com",
+        "tel": "00-3767373",
+        "manager_email": "054-9257390",
+        "official_site": null,
+        "about": "קונסרבטוריון מעלה אדומים.",
+        "location": {
+            "city": "מעלה אדומים",
+            "coordinates": {
+                "lat": 31.7731,
+                "lng": 35.2983
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 46,
+        "name": "קונסרבטוריון מעלה אדומים ב",
+        "name_en": "Ma'ale Adumim Conservatory B",
+        "city": "מעלה אדומים",
+        "city_en": "Ma'ale Adumim",
+        "email": "nata_k59@walla.co.il",
+        "tel": "02-5798343",
+        "manager_email": "058-8296459",
+        "official_site": null,
+        "about": "ענף נוסף של הקונסרבטוריון במעלה אדומים.",
+        "location": {
+            "city": "מעלה אדומים",
+            "coordinates": {
+                "lat": 31.7731,
+                "lng": 35.2983
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 47,
+        "name": "קונסרבטוריון מעלות-תרשיחא",
+        "name_en": "Ma'alot-Tarshiha Conservatory",
+        "city": "מעלות-תרשיחא",
+        "city_en": "Ma'alot",
+        "email": "eraneibr1@gmail.com",
+        "secondary_email": "music@maalot.matnasim.co.il",
+        "manager_email": "052-6839023",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון מעלות-תרשיחא.",
+        "location": {
+            "city": "מעלות-תרשיחא",
+            "coordinates": {
+                "lat": 33.0150,
+                "lng": 35.2706
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 48,
+        "name": "קונסרבטוריון מטה אשר",
+        "name_en": "Mateh Asher Conservatory",
+        "city": "מטה אשר",
+        "city_en": "Mateh Asher",
+        "email": "laisserh@gmail.com",
+        "tel": "04-9570937",
+        "manager_email": "052-6262878",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצה מטה אשר.",
+        "location": {
+            "city": "מטה אשר",
+            "coordinates": {
+                "lat": 33.0000,
+                "lng": 35.1500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 49,
+        "name": "קונסרבטוריון מרום הגליל ב",
+        "name_en": "Marom HaGalil Conservatory B",
+        "city": "מרום הגליל",
+        "city_en": "Marom HaGalil",
+        "email": "idorvek@gmail.com",
+        "manager_email": "050-4706000",
+        "tel": null,
+        "official_site": null,
+        "about": "ענף נוסף של קונסרבטוריון מרום הגליל.",
+        "location": {
+            "city": "מרום הגליל",
+            "coordinates": {
+                "lat": 33.0500,
+                "lng": 35.5000
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 50,
+        "name": "קונסרבטוריון מרחבים",
+        "name_en": "Merhavim Conservatory",
+        "city": "מרחבים",
+        "city_en": "Merhavim",
+        "email": "zerlina999@gmail.com",
+        "tel": "08-9929420",
+        "manager_email": "054-4571966",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת מרחבים.",
+        "location": {
+            "city": "מרחבים",
+            "coordinates": {
+                "lat": 31.2800,
+                "lng": 34.6500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 51,
+        "name": "קונסרבטוריון מישגב",
+        "name_en": "Misgav Conservatory",
+        "city": "מישגב",
+        "city_en": "Misgav",
+        "email": "music@misgav.org.il",
+        "manager_email": "058-8392323",
+        "tel": null,
+        "official_site": "https://www.misgav.org.il/",
+        "about": "קונסרבטוריון מועצת מישגב.",
+        "location": {
+            "city": "מישגב",
+            "coordinates": {
+                "lat": 32.8900,
+                "lng": 35.2400
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 52,
+        "name": "קונסרבטוריון נהריה",
+        "name_en": "Nahariya Conservatory",
+        "city": "נהריה",
+        "city_en": "Nahariya",
+        "email": "reuvenmalach@gmail.com",
+        "manager_email": "052-4316316",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני נהריה.",
+        "location": {
+            "city": "נהריה",
+            "coordinates": {
+                "lat": 33.0097,
+                "lng": 35.0986
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 53,
+        "name": "קונסרבטוריון נהריה ב",
+        "name_en": "Nahariya Conservatory B",
+        "city": "נהריה",
+        "city_en": "Nahariya",
+        "email": "vladimirk@ktnz.org.il",
+        "secondary_email": "ran.david@ktnz.org.il",
+        "tel": "08-9100499",
+        "manager_email": "052-6645400",
+        "official_site": null,
+        "about": "ענף נוסף של הקונסרבטוריון בנהריה.",
+        "location": {
+            "city": "נהריה",
+            "coordinates": {
+                "lat": 33.0097,
+                "lng": 35.0986
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 54,
+        "name": "קונסרבטוריון נצרת",
+        "name_en": "Nazareth Conservatory",
+        "city": "נצרת",
+        "city_en": "Nazareth",
+        "email": "sameer.makkhoul@gmail.com",
+        "manager_email": "054-4607723",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני נצרת.",
+        "location": {
+            "city": "נצרת",
+            "coordinates": {
+                "lat": 32.6996,
+                "lng": 35.3035
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 55,
+        "name": "קונסרבטוריון נס ציונה",
+        "name_en": "Nes Ziona Conservatory",
+        "city": "נס ציונה",
+        "city_en": "Nes Ziona",
+        "email": "elbaz41@gmail.com",
+        "tel": "08-9934922",
+        "manager_email": "054-5790501",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני נס ציונה.",
+        "location": {
+            "city": "נס ציונה",
+            "coordinates": {
+                "lat": 31.9303,
+                "lng": 34.7980
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 56,
+        "name": "קונסרבטוריון נתניה א",
+        "name_en": "Netanya Conservatory A",
+        "city": "נתניה",
+        "city_en": "Netanya",
+        "email": "arif@netanya-culture.org.il",
+        "tel": "09-8308800",
+        "manager_email": "056-6221892",
+        "official_site": "https://netanya-culture.org.il/",
+        "about": "קונסרבטוריון עירוני נתניה.",
+        "location": {
+            "city": "נתניה",
+            "coordinates": {
+                "lat": 32.3226,
+                "lng": 34.8530
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 57,
+        "name": "קונסרבטוריון נתניה ב",
+        "name_en": "Netanya Conservatory B",
+        "city": "נתניה",
+        "city_en": "Netanya",
+        "email": "rika.lubin@gmail.com",
+        "secondary_email": "SchwartznetaI@gmail.com",
+        "tel": "04-9956152",
+        "manager_email": "050-4706000",
+        "official_site": null,
+        "about": "ענף נוסף של הקונסרבטוריון בנתניה.",
+        "location": {
+            "city": "נתניה",
+            "coordinates": {
+                "lat": 32.3226,
+                "lng": 34.8530
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 58,
+        "name": "קונסרבטוריון עמק הירדן",
+        "name_en": "Jordan Valley Conservatory",
+        "city": "עמק הירדן",
+        "city_en": "Jordan Valley",
+        "email": "music@j-v.org.il",
+        "tel": "04-6757628",
+        "manager_email": "050-7246426",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני עמק הירדן.",
+        "location": {
+            "city": "עמק הירדן",
+            "coordinates": {
+                "lat": 32.7000,
+                "lng": 35.5700
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 59,
+        "name": "קונסרבטוריון עמק יזרעאל א",
+        "name_en": "Jezreel Valley Conservatory A",
+        "city": "עמק יזרעאל",
+        "city_en": "Jezreel Valley",
+        "email": "musiccenter@maianot.co.il",
+        "manager_email": "054-4684472",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון מועצת עמק יזרעאל.",
+        "location": {
+            "city": "עמק יזרעאל",
+            "coordinates": {
+                "lat": 32.6000,
+                "lng": 35.2800
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 60,
+        "name": "קונסרבטוריון עמק יזרעאל ב",
+        "name_en": "Jezreel Valley Conservatory B",
+        "city": "עמק יזרעאל",
+        "city_en": "Jezreel Valley",
+        "email": "yarivd@eyz.org.il",
+        "tel": "04-6550112",
+        "manager_email": "054-3743485",
+        "official_site": "https://www.eyz.org.il/",
+        "about": "ענף נוסף של קונסרבטוריון עמק יזרעאל.",
+        "location": {
+            "city": "עמק יזרעאל",
+            "coordinates": {
+                "lat": 32.6000,
+                "lng": 35.2800
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 61,
+        "name": "קונסרבטוריון עפולה",
+        "name_en": "Afula Conservatory",
+        "city": "עפולה",
+        "city_en": "Afula",
+        "email": "peleg.rippin1@gmail.com",
+        "manager_email": "052-8748303",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני עפולה.",
+        "location": {
+            "city": "עפולה",
+            "coordinates": {
+                "lat": 32.6074,
+                "lng": 35.2897
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 62,
+        "name": "קונסרבטוריון פתח תקווה",
+        "name_en": "Petah Tikva Conservatory",
+        "city": "פתח תקווה",
+        "city_en": "Petah Tikva",
+        "email": "shlomitm@ptikva.org.il",
+        "secondary_email": "travitm@ptikva.org.il",
+        "tel": "03-9286700",
+        "manager_email": "053-3214173",
+        "official_site": "https://www.mcpt.co.il/",
+        "about": "קונסרבטוריון עירוני פתח תקווה, אחד הגדולים במרכז הארץ.",
+        "location": {
+            "city": "פתח תקווה",
+            "address": "השיריון 1, פתח תקווה",
+            "coordinates": {
+                "lat": 32.0840,
+                "lng": 34.8879
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 63,
+        "name": "קונסרבטוריון קדומים",
+        "name_en": "Kedumim Conservatory",
+        "city": "קדומים",
+        "city_en": "Kedumim",
+        "email": "music@kedumim.org.il",
+        "secondary_email": "esty@matnasim.org.il",
+        "tel": "09-7922156",
+        "manager_email": "052-4492280",
+        "official_site": null,
+        "about": "קונסרבטוריון קדומים.",
+        "location": {
+            "city": "קדומים",
+            "coordinates": {
+                "lat": 32.2800,
+                "lng": 35.1500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 64,
+        "name": "קונסרבטוריון קריית גת",
+        "name_en": "Kiryat Gat Conservatory",
+        "city": "קריית גת",
+        "city_en": "Kiryat Gat",
+        "email": "barak8615502@gmail.com",
+        "tel": "04-8991446",
+        "manager_email": "052-8615502",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית גת.",
+        "location": {
+            "city": "קריית גת",
+            "coordinates": {
+                "lat": 31.6099,
+                "lng": 34.7642
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 65,
+        "name": "קונסרבטוריון קצרין",
+        "name_en": "Katzrin Conservatory",
+        "city": "קצרין",
+        "city_en": "Katzrin",
+        "email": "oudayosaf@yahoo.com",
+        "manager_email": "052-5523197",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קצרין.",
+        "location": {
+            "city": "קצרין",
+            "coordinates": {
+                "lat": 32.9999,
+                "lng": 35.6920
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 66,
+        "name": "קונסרבטוריון קריית אונו",
+        "name_en": "Kiryat Ono Conservatory",
+        "city": "קריית אונו",
+        "city_en": "Kiryat Ono",
+        "email": "bararmon@onomusic.org",
+        "tel": "03-8353328",
+        "manager_email": "052-2440894",
+        "official_site": "https://www.k-ono.org.il/",
+        "about": "קונסרבטוריון קריית אונו, ידוע בתזמורות כלי הנשיפה ומחלקת הג'אז.",
+        "location": {
+            "city": "קריית אונו",
+            "address": "המייסדים 5, קריית אונו",
+            "coordinates": {
+                "lat": 32.0627,
+                "lng": 34.8578
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 67,
+        "name": "קונסרבטוריון קריית אתא",
+        "name_en": "Kiryat Ata Conservatory",
+        "city": "קריית אתא",
+        "city_en": "Kiryat Ata",
+        "email": "tanya82@ka.matnasim.co.il",
+        "tel": "04-8450117",
+        "manager_email": "054-6203671",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית אתא, מרכז לחינוך מוסיקלי ותרבות.",
+        "location": {
+            "city": "קריית אתא",
+            "coordinates": {
+                "lat": 32.8063,
+                "lng": 35.1028
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 68,
+        "name": "קונסרבטוריון קריית ביאליק",
+        "name_en": "Kiryat Bialik Conservatory",
+        "city": "קריית ביאליק",
+        "city_en": "Kiryat Bialik",
+        "email": "asafa4@gmail.com",
+        "tel": "04-8730024",
+        "manager_email": "052-2707744",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית ביאליק.",
+        "location": {
+            "city": "קריית ביאליק",
+            "coordinates": {
+                "lat": 32.8305,
+                "lng": 35.0788
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 69,
+        "name": "קונסרבטוריון קריית טבעון",
+        "name_en": "Kiryat Tivon Conservatory",
+        "city": "קריית טבעון",
+        "city_en": "Kiryat Tivon",
+        "email": "muzik@kiryattiv.matnasim.co.il",
+        "tel": "04-9831142",
+        "manager_email": "053-3714775",
+        "official_site": "https://matnastiv.co.il/300",
+        "about": "קונסרבטוריון קריית טבעון.",
+        "location": {
+            "city": "קריית טבעון",
+            "coordinates": {
+                "lat": 32.7148,
+                "lng": 35.1154
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 70,
+        "name": "קונסרבטוריון קריית ים",
+        "name_en": "Kiryat Yam Conservatory",
+        "city": "קריית ים",
+        "city_en": "Kiryat Yam",
+        "email": "lnnag@K-yam.co.il",
+        "tel": "04-8789714",
+        "manager_email": "054-6052558",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית ים.",
+        "location": {
+            "city": "קריית ים",
+            "coordinates": {
+                "lat": 32.8540,
+                "lng": 35.0648
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 71,
+        "name": "קונסרבטוריון קריית מלאכי",
+        "name_en": "Kiryat Malakhi Conservatory",
+        "city": "קריית מלאכי",
+        "city_en": "Kiryat Malakhi",
+        "email": "ys44699@gmail.com",
+        "manager_email": "052-2663695",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית מלאכי.",
+        "location": {
+            "city": "קריית מלאכי",
+            "coordinates": {
+                "lat": 31.7334,
+                "lng": 34.7406
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 72,
+        "name": "קונסרבטוריון קריית שמונה",
+        "name_en": "Kiryat Shmona Conservatory",
+        "city": "קריית שמונה",
+        "city_en": "Kiryat Shmona",
+        "email": "niraj.conservatory@gmail.com",
+        "manager_email": "052-8088404",
+        "tel": null,
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני קריית שמונה.",
+        "location": {
+            "city": "קריית שמונה",
+            "coordinates": {
+                "lat": 33.2075,
+                "lng": 35.5697
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 73,
+        "name": "קונסרבטוריון ראשון לציון",
+        "name_en": "Rishon LeZion Conservatory",
+        "city": "ראשון לציון",
+        "city_en": "Rishon LeZion",
+        "email": "yarongan@gmail.com",
+        "tel": "03-9014527",
+        "manager_email": "054-4765786",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני ראשון לציון.",
+        "location": {
+            "city": "ראשון לציון",
+            "coordinates": {
+                "lat": 31.9730,
+                "lng": 34.7895
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 74,
+        "name": "קונסרבטוריון ראש פינה",
+        "name_en": "Rosh Pinna Conservatory",
+        "city": "ראש פינה",
+        "city_en": "Rosh Pinna",
+        "email": "vocalsingers@gmail.com",
+        "tel": "04-9655122",
+        "manager_email": "052-2969999",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני ראש פינה.",
+        "location": {
+            "city": "ראש פינה",
+            "coordinates": {
+                "lat": 32.9702,
+                "lng": 35.5464
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 75,
+        "name": "קונסרבטוריון רחובות",
+        "name_en": "Rehovot Conservatory",
+        "city": "רחובות",
+        "city_en": "Rehovot",
+        "email": "con1@bezeqint.net",
+        "tel": "09-8316245",
+        "manager_email": "052-4840469",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני רחובות.",
+        "location": {
+            "city": "רחובות",
+            "coordinates": {
+                "lat": 31.8928,
+                "lng": 34.8113
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 76,
+        "name": "קונסרבטוריון רמת גן ע\"ש נעמי שמר",
+        "name_en": "Ramat Gan Conservatory – Naomi Shemer",
+        "city": "רמת גן",
+        "city_en": "Ramat Gan",
+        "email": "michaela.bh@gmail.com",
+        "secondary_email": "info@ramatganmusic.com",
+        "tel": "03-6135474",
+        "manager_email": "052-5547878",
+        "official_site": "https://www.ramatganmusic.com/",
+        "about": "המרכז העירוני למוזיקה רמת גן ע\"ש נעמי שמר. פועל בפיקוח משרד החינוך, מציע לתושבים בכל הגילאים מגוון פעילויות: תזמורות, מקהלות, הרכבים קאמריים, שעורי תאוריה, הלחנה ואלתור.",
+        "departments": [
+            {
+                "name": "כלי נשיפה",
+                "link": "https://www.ramatganmusic.com/department/wind-instruments"
+            },
+            {
+                "name": "כלי מקלדת",
+                "link": "https://www.ramatganmusic.com/department/keyboard-tool"
+            },
+            {
+                "name": "כלי קשת",
+                "link": "https://www.ramatganmusic.com/department/bow-instruments"
+            },
+            {
+                "name": "ניצוח",
+                "link": "https://www.ramatganmusic.com/department/conducting"
+            },
+            {
+                "name": "כלי פריטה (גיטרה)",
+                "link": "https://www.ramatganmusic.com/department/string-instrument"
+            },
+            {
+                "name": "מחלקה ווקאלית",
+                "link": "https://www.ramatganmusic.com/department/vocal-department"
+            },
+            {
+                "name": "כלי הקשה",
+                "link": "https://www.ramatganmusic.com/department/percussions"
+            },
+            {
+                "name": "תאוריה",
+                "link": "https://www.ramatganmusic.com/department/theory"
+            },
+            {
+                "name": "הלחנה ואלתור",
+                "link": "https://www.ramatganmusic.com/department/composition-and-improvisation"
+            },
+            {
+                "name": "הרכבים קאמריים",
+                "link": "https://www.ramatganmusic.com/department/chamber-compositions"
+            },
+            {
+                "name": "תזמורות",
+                "link": "https://www.ramatganmusic.com/department/orchestras"
+            },
+            {
+                "name": "DJ ואולפן הקלטות",
+                "link": "https://www.ramatganmusic.com/department/musicproduction"
+            },
+            {
+                "name": "טרום כלי",
+                "link": "https://www.ramatganmusic.com/department/begining"
+            },
+            {
+                "name": "מחלקה אתנית",
+                "link": "https://www.ramatganmusic.com/department/ethnic"
+            }
+        ],
+        "programs": [
+            "בית ספר מנגן (25 בתי ספר)",
+            "מוסיקה לכל גיל",
+            "שיעורי אורגנית/גיטרה בבי\"ס"
+        ],
+        "teachers_page": "https://www.ramatganmusic.com/teachers",
+        "social_media": {
+            "facebook": "https://www.facebook.com/musicramatgan",
+            "instagram": "https://www.instagram.com/ramatganconservatorium/",
+            "youtube": "https://www.youtube.com/channel/UC6oHYj4u3L3xOwFR7NhDUVg",
+            "tiktok": "https://www.tiktok.com/@ramatganconservatory"
+        },
+        "location": {
+            "city": "רמת גן",
+            "address": "רש\"י 5, מגדל גרונר, קומה מינוס 3, רמת גן 52111",
+            "coordinates": {
+                "lat": 32.0691,
+                "lng": 34.8238
+            }
+        },
+        "opening_hours": "א'-ה' 09:00-19:00",
+        "photos": [
+            "https://i.ytimg.com/vi/oP2mas-Dp3Y/maxresdefault.jpg",
+            "https://i.ytimg.com/vi/_RiYGubY75A/maxresdefault.jpg",
+            "https://static.wixstatic.com/media/005c54_966bd6c7e3db4cfc9135491b8e33db55f000.jpg/v1/fill/w_160,h_90,al_c,q_80/005c54_966bd6c7e3db4cfc9135491b8e33db55f000.jpg"
+        ]
+    },
+    {
+        "id": 77,
+        "name": "קונסרבטוריון רמת השרון",
+        "name_en": "Ramat HaSharon Conservatory",
+        "city": "רמת השרון",
+        "city_en": "Ramat HaSharon",
+        "email": "royzumusic@gmail.com",
+        "secondary_email": "roy_z@ramhash.co.il",
+        "tel": "03-5407580",
+        "manager_email": "052-3884400",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני רמת השרון.",
+        "location": {
+            "city": "רמת השרון",
+            "coordinates": {
+                "lat": 32.1467,
+                "lng": 34.8401
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 78,
+        "name": "קונסרבטוריון רעננה",
+        "name_en": "Ra'anana Conservatory",
+        "city": "רעננה",
+        "city_en": "Ra'anana",
+        "email": "limora@raanana.muni.il",
+        "secondary_email": "raananamusiccenter@gmail.com",
+        "tel": "03-7711330",
+        "manager_email": "052-8197173",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני רעננה.",
+        "location": {
+            "city": "רעננה",
+            "coordinates": {
+                "lat": 32.1851,
+                "lng": 34.8702
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 79,
+        "name": "קונסרבטוריון שדרות",
+        "name_en": "Sderot Conservatory",
+        "city": "שדרות",
+        "city_en": "Sderot",
+        "email": "avivr@salbam.muni.il",
+        "tel": "03-9723041",
+        "manager_email": "054-5869048",
+        "official_site": null,
+        "about": "קונסרבטוריון עירוני שדרות.",
+        "location": {
+            "city": "שדרות",
+            "coordinates": {
+                "lat": 31.5271,
+                "lng": 34.5963
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 80,
+        "name": "קונסרבטוריון שומרון",
+        "name_en": "Shomron Conservatory",
+        "city": "שומרון",
+        "city_en": "Shomron",
+        "email": "musicm@sng.org.il",
+        "tel": "08-8802763",
+        "manager_email": "054-7804983",
+        "official_site": null,
+        "about": "קונסרבטוריון מועצה שומרון.",
+        "location": {
+            "city": "שומרון",
+            "coordinates": {
+                "lat": 32.1000,
+                "lng": 35.0500
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 81,
+        "name": "קונסרבטוריון שפרעם",
+        "name_en": "Shfaram Conservatory",
+        "city": "שפרעם",
+        "city_en": "Shfaram",
+        "email": "david_a@beit-almusica.org.il",
+        "tel": "04-9501135",
+        "manager_email": "054-6606848",
+        "official_site": "https://beit-almusica.org.il/",
+        "about": "קונסרבטוריון שפרעם - בית אל-מוסיקה.",
+        "location": {
+            "city": "שפרעם",
+            "coordinates": {
+                "lat": 32.8063,
+                "lng": 35.1672
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 82,
+        "name": "הקונסרבטוריון הישראלי למוסיקה ע\"ש לין ותד אריסון - תל אביב",
+        "name_en": "The Israeli Conservatory of Music, Tel Aviv (Arisson)",
+        "city": "תל אביב",
+        "city_en": "Tel Aviv",
+        "email": "info@icm.org.il",
+        "secondary_email": "canellis@icm.org.il",
+        "tel": "03-5460524",
+        "fax": "03-6055169",
+        "chamber_music_tel": "03-5466228",
+        "chamber_music_email": "chamber@icm.org.il",
+        "manager": {
+            "name": "קוסטין קנליס אוליאר",
+            "role": "מנכ\"ל הקונסרבטוריון"
+        },
+        "artistic_director_chamber": {
+            "name": "ד\"ר רז בנימיני",
+            "role": "מנהל מוסיקלי – המרכז למוסיקה קאמרית"
+        },
+        "jazz_director": {
+            "name": "מתן צ'פניצקי",
+            "role": "מנהל התכנית העל-תיכונית ללימודי ג'אז"
+        },
+        "jazz_dept_head": {
+            "name": "קובי סלומון",
+            "role": "מנהל מחלקת הג'אז"
+        },
+        "official_site": "https://www.icm.org.il/",
+        "about": "הקונסרבטוריון הישראלי למוסיקה ע\"ש לין ותד אריסון - מרכז מוביל למוסיקה קלאסית וג'אז, הוקם בשנת 1946. מארח את המרכז למוסיקה קאמרית עם סדרות קונצרטים שנתיות.",
+        "about_page": "https://www.icm.org.il/about-us/",
+        "team_page": "https://www.icm.org.il/management-and-team/",
+        "teachers_page": "https://www.icm.org.il/teachers/",
+        "departments": [
+            {
+                "name": "טרום כלי",
+                "link": "https://www.icm.org.il/education_programs/pre-instrumental/"
+            },
+            {
+                "name": "פסנתר",
+                "link": "https://www.icm.org.il/education_programs/piano/"
+            },
+            {
+                "name": "כלי מיתר",
+                "link": "https://www.icm.org.il/education_programs/string/"
+            },
+            {
+                "name": "כלי נשיפה והקשה",
+                "link": "https://www.icm.org.il/education_programs/wind/"
+            },
+            {
+                "name": "מוסיקה עתיקה",
+                "link": "https://www.icm.org.il/education_programs/early-music/"
+            },
+            {
+                "name": "המחלקה הווקאלית",
+                "link": "https://www.icm.org.il/education_programs/voice/"
+            },
+            {
+                "name": "לימודים עיוניים ותאוריה",
+                "link": "https://www.icm.org.il/education_programs/theory/"
+            },
+            {
+                "name": "מסלול קומפוזיציה",
+                "link": "https://www.icm.org.il/education_programs/composition/"
+            },
+            {
+                "name": "מרכז לימודי ג'אז",
+                "link": "https://www.icm.org.il/education_programs/center-for-jazz-studies/"
+            },
+            {
+                "name": "מסלול לימודי מבוגרים",
+                "link": "https://www.icm.org.il/education_programs/adult-music-studies/"
+            },
+            {
+                "name": "תזמורות, מקהלות והרכבים קאמריים",
+                "link": "https://www.icm.org.il/education_programs/ensembles/"
+            }
+        ],
+        "programs": [
+            "תכנית ג'אז בשיתוף הניו-סקול ניו-יורק",
+            "המרכז למוסיקה קאמרית",
+            "מקהלת בת קול",
+            "צליל מכוון (ילדים בסיכון)",
+            "מנגנים ברצף",
+            "תכניות בינלאומיות"
+        ],
+        "ensembles": [
+            "תזמורת כלי קשת צעירה",
+            "תזמורת מעבר לקשת",
+            "כ-15 הרכבים קאמריים",
+            "מקהלת בת קול",
+            "תזמורת הג'אז הישראלית"
+        ],
+        "halls": [
+            {
+                "name": "אולם ראשי",
+                "link": "https://www.icm.org.il/halls/"
+            },
+            {
+                "name": "אולפן הקלטות",
+                "link": "https://www.icm.org.il/recordingstudio/"
+            }
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/ICMtelaviv",
+            "instagram": "https://www.instagram.com/icm_telaviv/"
+        },
+        "location": {
+            "city": "תל אביב",
+            "address": "לואי מרשל 25, ת.ד. 21502, תל אביב 6200003",
+            "coordinates": {
+                "lat": 32.0853,
+                "lng": 34.7818
+            }
+        },
+        "opening_hours": "א'-ה' 11:00-19:00",
+        "photos": [
+            "https://www.icm.org.il/wp-content/uploads/2025/03/%D7%90%D7%A8%D7%99%D7%94-%D7%95%D7%A8%D7%93%D7%99-%D7%A2%D7%9D-%D7%A4%D7%A1%D7%A0%D7%AA%D7%A8-768x431.jpg",
+            "https://www.icm.org.il/wp-content/uploads/2025/04/Harp-Closup.jpg",
+            "https://www.icm.org.il/wp-content/uploads/2024/07/%D7%9E%D7%A7%D7%94%D7%9C%D7%AA-%D7%91%D7%AA-%D7%A7%D7%95%D7%9C-%D7%9E%D7%95%D7%96%D7%90%D7%95%D7%9F-%D7%AA%D7%9C-%D7%90%D7%91%D7%99%D7%91-%D7%97%D7%AA%D7%95%D7%9A-768x346.jpg",
+            "https://www.icm.org.il/wp-content/uploads/2024/08/Jazz-Concert-2-768x513.jpg",
+            "https://www.icm.org.il/wp-content/uploads/2025/08/%D7%91%D7%90%D7%A8%D7%95%D7%A7-%D7%AA%D7%9C-%D7%90%D7%91%D7%99%D7%91-2026-03-768x432.jpg"
+        ]
+    },
+    {
+        "id": 83,
+        "name": "קונסרבטוריון תל אביב-יפו",
+        "name_en": "Tel Aviv-Yafo Conservatory",
+        "city": "תל אביב-יפו",
+        "city_en": "Tel Aviv-Yafo",
+        "email": "amar_ha@mail.tel-aviv.gov.il",
+        "manager_email": "052-6650497",
+        "tel": null,
+        "official_site": "https://www.tel-aviv.gov.il/",
+        "about": "קונסרבטוריון עיריית תל אביב-יפו.",
+        "location": {
+            "city": "תל אביב",
+            "coordinates": {
+                "lat": 32.0853,
+                "lng": 34.7818
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 84,
+        "name": "קונסרבטוריון עכו",
+        "name_en": "Akko Municipal Conservatory",
+        "city": "עכו",
+        "city_en": "Akko",
+        "email": "cons@akko.muni.il",
+        "tel": "04-9956152",
+        "fax": "04-9816515",
+        "official_site": "https://www.consakko.com/",
+        "about": "קונסרבטוריון עירוני עכו, מציע שיעורי נגינה פרטניים במגוון כלים.",
+        "departments": [
+            {
+                "name": "גיטרה"
+            },
+            {
+                "name": "כלי נשיפה"
+            },
+            {
+                "name": "כלי קשת"
+            },
+            {
+                "name": "כלים אותנטיים"
+            },
+            {
+                "name": "פסנתר"
+            },
+            {
+                "name": "קול"
+            },
+            {
+                "name": "תופים ופרקשן"
+            },
+            {
+                "name": "תיאוריה מוסיקלית"
+            }
+        ],
+        "social_media": {
+            "facebook": "https://www.facebook.com/profile.php?id=100089774786996"
+        },
+        "location": {
+            "city": "עכו",
+            "address": "שטראוס 1, עכו",
+            "opening_hours": "ראשון-חמישי 09:00-20:00",
+            "coordinates": {
+                "lat": 32.9283,
+                "lng": 35.0818
+            }
+        },
+        "photos": []
+    },
+    {
+        "id": 85,
+        "name": "קונסרבטוריון כרמיאל ב",
+        "name_en": "Karmiel Conservatory B",
+        "city": "כרמיאל",
+        "city_en": "Karmiel",
+        "email": "yhoren1@gmail.com",
+        "tel": "04-6298121",
+        "manager_email": "052-8463924",
+        "official_site": "https://www.conskarmiel.net/",
+        "about": "ענף נוסף של הקונסרבטוריון העירוני כרמיאל.",
+        "location": {
+            "city": "כרמיאל",
+            "coordinates": {
+                "lat": 32.9160,
+                "lng": 35.2972
+            }
+        },
+        "photos": []
+    }
+]
