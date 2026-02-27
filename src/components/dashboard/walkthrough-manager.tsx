@@ -6,12 +6,12 @@ import { useAuth } from '@/hooks/use-auth';
 import type { UserRole } from '@/lib/types';
 
 const studentSteps: DriveStep[] = [
-  { element: '#nav-profile', popover: { title: 'הפרופיל האישי שלך', description: 'כאן תמצא/י סיכום של הפעילות, ההתקדמות וההישגים שלך.', side: 'left', align: 'start' } },
-  { element: '#nav-schedule', popover: { title: 'מערכת שעות', description: 'כאן תוכל/י לראות את מערכת השעות שלך, לבטל או לשנות מועד של שיעור.', side: 'left', align: 'start' } },
-  { element: '#nav-practice', popover: { title: 'רישום אימונים', description: 'עדכן/י את המורה על ההתקדמות שלך בין השיעורים ותעד/י את האימונים.', side: 'left', align: 'start' } },
-  { element: '#nav-forms', popover: { title: 'טפסים ומסמכים', description: 'הגש/י טפסים לרסיטלים, בחינות ועוד, ועקוב/עקבי אחר סטטוס האישור שלהם.', side: 'left', align: 'start' } },
-  { element: '#nav-messages', popover: { title: 'הודעות', description: 'שלח/י הודעות ישירות למורה שלך מכאן.', side: 'left', align: 'start' } },
-  { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'בכל שאלה - לחץ/י על כפתור העזרה! עוזר ה-AI שלנו זמין 24/7.', side: 'top', align: 'start' } },
+    { element: '#nav-profile', popover: { title: 'הפרופיל האישי שלך', description: 'כאן תמצא/י סיכום של הפעילות, ההתקדמות וההישגים שלך.', side: 'left', align: 'start' } },
+    { element: '#nav-schedule', popover: { title: 'מערכת שעות', description: 'כאן תוכל/י לראות את מערכת השעות שלך, לבטל או לשנות מועד של שיעור.', side: 'left', align: 'start' } },
+    { element: '#nav-practice', popover: { title: 'רישום אימונים', description: 'עדכן/י את המורה על ההתקדמות שלך בין השיעורים ותעד/י את האימונים.', side: 'left', align: 'start' } },
+    { element: '#nav-forms', popover: { title: 'טפסים ומסמכים', description: 'הגש/י טפסים לרסיטלים, בחינות ועוד, ועקוב/עקבי אחר סטטוס האישור שלהם.', side: 'left', align: 'start' } },
+    { element: '#nav-messages', popover: { title: 'הודעות', description: 'שלח/י הודעות ישירות למורה שלך מכאן.', side: 'left', align: 'start' } },
+    { element: '#help-button', popover: { title: 'צריך עזרה?', description: 'בכל שאלה - לחץ/י על כפתור העזרה! עוזר ה-AI שלנו זמין 24/7.', side: 'top', align: 'start' } },
 ];
 
 const parentSteps: DriveStep[] = [
@@ -51,12 +51,14 @@ const stepsConfig: Record<UserRole, DriveStep[]> = {
     conservatorium_admin: adminSteps,
     site_admin: adminSteps,
     ministry_director: [],
+    admin: adminSteps,
+    superadmin: adminSteps,
 };
 
 
 export function useWalkthrough() {
     const { user, markWalkthroughAsSeen } = useAuth();
-    
+
     useEffect(() => {
         if (!user || user.hasSeenWalkthrough) {
             return;
@@ -78,7 +80,7 @@ export function useWalkthrough() {
             prevBtnText: 'הקודם',
             doneBtnText: 'סיום',
         });
-        
+
         const timer = setTimeout(() => {
             driverObj.drive();
         }, 1500);

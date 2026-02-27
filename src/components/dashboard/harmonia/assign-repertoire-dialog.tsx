@@ -33,13 +33,13 @@ export function AssignRepertoireDialog({ studentId, open, onOpenChange }: Assign
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<AssignFormData>({
-    resolver: zodResolver(assignSchema),
+    resolver: zodResolver(assignSchema) as any,
   });
 
   const debouncedSearch = useCallback(debounce(async (query: string) => {
     setIsLoading(true);
     const results = await searchCompositions({ query });
-    setCompositionOptions(results.map(c => ({ value: c.id, label: `${c.title} - ${c.composer}` })));
+    setCompositionOptions(results.map(c => ({ value: c.id as string, label: `${c.title} - ${c.composer}` })));
     setIsLoading(false);
   }, 300), []);
 
@@ -53,7 +53,7 @@ export function AssignRepertoireDialog({ studentId, open, onOpenChange }: Assign
     onOpenChange(false);
     form.reset();
   };
-  
+
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       form.reset();

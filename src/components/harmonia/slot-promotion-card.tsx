@@ -7,7 +7,7 @@ import { ArrowLeft, Clock, Music, Share2, Tag } from "lucide-react";
 import Link from 'next/link';
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
-import type { EmptySlot } from "./available-slots-marketplace";
+import type { EmptySlot } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface SlotPromotionCardProps {
@@ -67,7 +67,7 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <Tag className="h-4 w-4 text-muted-foreground" />
-                     <Badge variant="destructive">הזדמנות של הרגע האחרונה!</Badge>
+                    <Badge variant="destructive">הזדמנות של הרגע האחרונה!</Badge>
                 </div>
             </CardContent>
             <CardFooter className="flex-col items-stretch gap-2">

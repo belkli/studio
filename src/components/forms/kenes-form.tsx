@@ -58,7 +58,9 @@ const getFormSchema = (t: any) => z.object({
     logisticalNeeds: z.string().optional(),
 });
 
-type FormData = z.infer<ReturnType<typeof getFormSchema>>;
+type FormData = z.infer<ReturnType<typeof getFormSchema>> & {
+    numParticipants: number;
+};
 
 interface KenesFormProps {
     user: User;
@@ -250,7 +252,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
     const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
-        resolver: zodResolver(getFormSchema(t)),
+        resolver: zodResolver(getFormSchema(t)) as any,
         defaultValues: initialData || {
             academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
             repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),

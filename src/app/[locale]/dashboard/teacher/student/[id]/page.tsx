@@ -25,16 +25,16 @@ import { MultimediaFeedbackCard } from '@/components/dashboard/harmonia/multimed
 export default function TeacherStudentProfilePage() {
     const params = useParams();
     const studentId = params.id as string;
-    const { 
-        user: teacher, 
-        users, 
-        mockPracticeLogs, 
-        mockAssignedRepertoire, 
-        compositions, 
-        mockLessonNotes, 
+    const {
+        user: teacher,
+        users,
+        mockPracticeLogs,
+        mockAssignedRepertoire,
+        compositions,
+        mockLessonNotes,
         mockProgressReports,
-        updateRepertoireStatus, 
-        addLessonNote, 
+        updateRepertoireStatus,
+        addLessonNote,
         updateUserPracticeGoal,
         addProgressReport,
         assignRepertoire,
@@ -42,7 +42,7 @@ export default function TeacherStudentProfilePage() {
     const router = useRouter();
     const { toast } = useToast();
 
-    
+
     const [practiceGoal, setPracticeGoal] = useState(120);
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
@@ -57,12 +57,12 @@ export default function TeacherStudentProfilePage() {
             router.push('/dashboard');
         }
     }, [teacher, studentId, router]);
-    
+
     const studentLogs = useMemo(() => {
         if (!student) return [];
         return mockPracticeLogs.filter(log => log.studentId === student.id);
     }, [mockPracticeLogs, student]);
-    
+
     const studentRepertoire = useMemo(() => {
         if (!student) return [];
         return mockAssignedRepertoire.filter(rep => rep.studentId === student.id);
@@ -71,13 +71,13 @@ export default function TeacherStudentProfilePage() {
     const studentNotes = useMemo(() => {
         if (!student) return [];
         return mockLessonNotes.filter(note => note.studentId === student.id)
-            .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [mockLessonNotes, student]);
-    
+
     const studentReports = useMemo(() => {
         if (!student) return [];
         return mockProgressReports.filter(report => report.studentId === student.id)
-            .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [mockProgressReports, student]);
 
     const weeklyPracticeData = useMemo(() => {
@@ -101,12 +101,12 @@ export default function TeacherStudentProfilePage() {
         });
         return last7Days;
     }, [studentLogs]);
-    
+
     const { streak, totalMinutesThisMonth, piecesLearned } = useMemo(() => {
         const today = new Date();
         const thisMonth = today.getMonth();
         const thisYear = today.getFullYear();
-    
+
         const totalMinutesThisMonth = studentLogs.reduce((sum, log) => {
             const logDate = new Date(log.date);
             if (logDate.getMonth() === thisMonth && logDate.getFullYear() === thisYear) {
@@ -114,9 +114,9 @@ export default function TeacherStudentProfilePage() {
             }
             return sum;
         }, 0);
-    
+
         const piecesLearned = studentRepertoire.filter(rep => rep.status === 'COMPLETED').length;
-    
+
         const logDates = [...new Set(studentLogs.map(log => new Date(log.date.split('T')[0]).getTime()))].sort((a, b) => b - a);
         let currentStreak = 0;
         if (logDates.length > 0) {
@@ -124,7 +124,7 @@ export default function TeacherStudentProfilePage() {
             todayTime.setHours(0, 0, 0, 0);
             const yesterdayTime = new Date(todayTime);
             yesterdayTime.setDate(todayTime.getDate() - 1);
-    
+
             if (logDates[0] === todayTime.getTime() || logDates[0] === yesterdayTime.getTime()) {
                 currentStreak = 1;
                 for (let i = 0; i < logDates.length - 1; i++) {
@@ -137,7 +137,7 @@ export default function TeacherStudentProfilePage() {
                 }
             }
         }
-    
+
         return { streak: currentStreak, totalMinutesThisMonth, piecesLearned };
     }, [studentLogs, studentRepertoire]);
 
@@ -150,9 +150,9 @@ export default function TeacherStudentProfilePage() {
     if (!teacher || !student) {
         return null; // Or a loading skeleton
     }
-    
+
     const handleAddNote = () => {
-        if(newNote.trim() === '') return;
+        if (newNote.trim() === '') return;
         addLessonNote({
             studentId: student.id,
             teacherId: teacher.id,
@@ -169,7 +169,7 @@ export default function TeacherStudentProfilePage() {
             description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
         });
     };
-    
+
     const handleGenerateReport = async () => {
         setIsDrafting(true);
         setReportDraft(null);
@@ -179,9 +179,9 @@ export default function TeacherStudentProfilePage() {
             teacherName: teacher.name,
             instrument: student.instruments?.[0]?.instrument || 'כלי נגינה',
             period: 'סמסטר אביב 2024',
-            practiceLogs: studentLogs.map(l => ({...l, date: l.date.split('T')[0]})),
-            lessonNotes: studentNotes.map(n => ({createdAt: n.createdAt.split('T')[0], summary: n.summary, homeworkAssignments: n.homeworkAssignments})),
-            repertoire: studentRepertoire.map(r => ({compositionId: r.compositionId, status: r.status})),
+            practiceLogs: studentLogs.map(l => ({ ...l, date: l.date.split('T')[0] })),
+            lessonNotes: studentNotes.map(n => ({ createdAt: n.createdAt.split('T')[0], summary: n.summary, homeworkAssignments: n.homeworkAssignments })),
+            repertoire: studentRepertoire.map(r => ({ compositionId: r.compositionId, status: r.status })),
         };
 
         const result = await draftProgressReport(input);
@@ -191,7 +191,7 @@ export default function TeacherStudentProfilePage() {
 
     const handleSendReport = () => {
         if (!reportDraft) return;
-        
+
         addProgressReport({
             studentId: student.id,
             teacherId: teacher.id,
@@ -209,7 +209,7 @@ export default function TeacherStudentProfilePage() {
 
     return (
         <div className="space-y-6">
-             <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/teacher">
                         <ArrowLeft className="ms-2 h-4 w-4" />
@@ -241,14 +241,14 @@ export default function TeacherStudentProfilePage() {
                         <p className="text-xs text-muted-foreground">ימים רצופים של אימון מתועד</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">זמן אימון (החודש)</CardTitle>
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{(totalMinutesThisMonth / 60).toFixed(1)} שעות</div>
-                         <p className="text-xs text-muted-foreground">{totalMinutesThisMonth} דקות בסך הכל</p>
+                        <p className="text-xs text-muted-foreground">{totalMinutesThisMonth} דקות בסך הכל</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -258,7 +258,7 @@ export default function TeacherStudentProfilePage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{piecesLearned} יצירות</div>
-                         <p className="text-xs text-muted-foreground">בסך הכל מתחילת השנה</p>
+                        <p className="text-xs text-muted-foreground">בסך הכל מתחילת השנה</p>
                     </CardContent>
                 </Card>
             </div>
@@ -267,7 +267,7 @@ export default function TeacherStudentProfilePage() {
                 <Card className="lg:col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="flex items-center gap-2"><Music /> רפרטואר</CardTitle>
-                         <Button variant="outline" size="sm" onClick={() => setIsAssignRepertoireOpen(true)}>
+                        <Button variant="outline" size="sm" onClick={() => setIsAssignRepertoireOpen(true)}>
                             <PlusCircle className="ms-2 h-4 w-4" />
                             הקצה יצירה חדשה
                         </Button>
@@ -290,8 +290,8 @@ export default function TeacherStudentProfilePage() {
                                                 <p className="text-xs text-muted-foreground">{composition?.composer}</p>
                                             </TableCell>
                                             <TableCell>
-                                                 <Select 
-                                                    value={rep.status} 
+                                                <Select
+                                                    value={rep.status}
                                                     onValueChange={(newStatus: RepertoireStatus) => updateRepertoireStatus(rep.id, newStatus)}
                                                     dir="rtl"
                                                 >
@@ -311,16 +311,16 @@ export default function TeacherStudentProfilePage() {
                         </Table>
                     </CardContent>
                 </Card>
-                 <div className="space-y-6">
+                <div className="space-y-6">
                     <Card>
                         <CardHeader><CardTitle className="flex items-center gap-2"><Target /> יעד אימון שבועי</CardTitle></CardHeader>
                         <CardContent className="space-y-2">
                             <Label htmlFor="practice-goal">דקות אימון בשבוע</Label>
                             <div className="flex gap-2">
-                                <Input 
-                                    id="practice-goal" 
-                                    type="number" 
-                                    value={practiceGoal} 
+                                <Input
+                                    id="practice-goal"
+                                    type="number"
+                                    value={practiceGoal}
                                     onChange={(e) => setPracticeGoal(Number(e.target.value))}
                                     step={15}
                                 />
@@ -335,23 +335,23 @@ export default function TeacherStudentProfilePage() {
                                 <BarChart data={weeklyPracticeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                     <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${''}${value} ד`}/>
+                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${''}${value} ד`} />
                                     <Tooltip
                                         cursor={{ fill: 'hsl(var(--muted))' }}
                                         contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
-                                        formatter={(value: number) => [`${value} דקות`, 'זמן אימון']}
+                                        formatter={(value: any) => [`${value} דקות`, 'זמן אימון']}
                                     />
                                     <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
-                 </div>
+                </div>
             </div>
 
             <MultimediaFeedbackCard student={student} />
-            
-             <Card>
+
+            <Card>
                 <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> הערות שיעור</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
@@ -391,10 +391,10 @@ export default function TeacherStudentProfilePage() {
                         </div>
                     )}
                     {reportDraft && (
-                         <div>
+                        <div>
                             <Label htmlFor="report-draft">טיוטת דוח (ניתן לערוך)</Label>
-                            <Textarea id="report-draft" rows={15} value={reportDraft} onChange={(e) => setReportDraft(e.target.value)} className="mt-2 bg-background"/>
-                         </div>
+                            <Textarea id="report-draft" rows={15} value={reportDraft} onChange={(e) => setReportDraft(e.target.value)} className="mt-2 bg-background" />
+                        </div>
                     )}
                 </CardContent>
                 {reportDraft && (
@@ -406,7 +406,7 @@ export default function TeacherStudentProfilePage() {
             </Card>
 
             {studentReports.length > 0 && (
-                 <Card>
+                <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2"><FileText /> דוחות שמורים</CardTitle></CardHeader>
                     <CardContent>
                         <Table>

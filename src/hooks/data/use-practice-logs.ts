@@ -118,7 +118,7 @@ export function usePracticeLogs(studentId?: string): UsePracticeLogsReturn {
             .reduce((s, l) => s + l.durationMinutes, 0);
 
         const moodDistribution = { GREAT: 0, OKAY: 0, HARD: 0 };
-        logs.forEach(l => { moodDistribution[l.mood]++; });
+        logs.forEach(l => { if (l.mood) moodDistribution[l.mood]++; });
 
         return {
             logs,

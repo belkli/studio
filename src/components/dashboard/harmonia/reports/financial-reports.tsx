@@ -20,14 +20,14 @@ export function FinancialReports() {
         teacherRevenue
     } = useMemo(() => {
         // Monthly Revenue (last 6 months)
-        const revenueByMonth: {[key: string]: number} = {};
+        const revenueByMonth: { [key: string]: number } = {};
         const now = new Date();
-        for (let i=5; i >= 0; i--) {
+        for (let i = 5; i >= 0; i--) {
             const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
             const monthKey = format(date, 'MMM', { locale: he });
             revenueByMonth[monthKey] = 0;
         }
-        
+
         mockInvoices.filter(inv => inv.status === 'PAID' && inv.paidAt).forEach(inv => {
             const paidDate = new Date(inv.paidAt!);
             const monthKey = format(paidDate, 'MMM', { locale: he });
@@ -60,7 +60,7 @@ export function FinancialReports() {
 
         // Collection Rate
         const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
-        
+
         // Teacher Revenue
         const teachers = users.filter(u => u.role === 'teacher');
         const teacherRevenueData = teachers.map(teacher => ({
@@ -83,8 +83,8 @@ export function FinancialReports() {
         return mockLessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
             return (lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'CANCELLED_CONSERVATORIUM') &&
-                   lessonDate.getMonth() === thisMonth &&
-                   lessonDate.getFullYear() === thisYear;
+                lessonDate.getMonth() === thisMonth &&
+                lessonDate.getFullYear() === thisYear;
         }).length;
     }, [mockLessons]);
 
@@ -95,11 +95,11 @@ export function FinancialReports() {
                     <CardTitle>הכנסות חודשיות (חצי שנה אחרונה)</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[350px]">
-                     <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={revenueData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} />
                             <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₪${(value/1000)}k`}/>
+                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₪${(value / 1000)}k`} />
                             <Tooltip
                                 cursor={{ fill: 'hsl(var(--muted))' }}
                                 contentStyle={{
@@ -108,7 +108,7 @@ export function FinancialReports() {
                                     borderRadius: 'var(--radius)',
                                     direction: 'rtl',
                                 }}
-                                 formatter={(value: number) => [`₪${value.toLocaleString()}`, 'הכנסה']}
+                                formatter={(value: any) => [`₪${Number(value).toLocaleString()}`, 'הכנסה']}
                             />
                             <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                         </BarChart>
@@ -121,7 +121,7 @@ export function FinancialReports() {
                     <CardHeader>
                         <CardTitle>התפלגות הכנסות לפי חבילה</CardTitle>
                     </CardHeader>
-                     <CardContent className="h-[300px]">
+                    <CardContent className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie data={packageRevenueData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} ${entry.value}%`}>
@@ -129,13 +129,13 @@ export function FinancialReports() {
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip formatter={(value: number, name: string) => [`${value}%`, name]}/>
+                                <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} />
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
                 <Card>
-                     <CardHeader>
+                    <CardHeader>
                         <CardTitle>שיעור גבייה</CardTitle>
                         <CardDescription>אחוז החשבוניות ששולמו.</CardDescription>
                     </CardHeader>
@@ -143,30 +143,30 @@ export function FinancialReports() {
                         <div className="text-4xl font-bold text-green-600">{collectionRate.toFixed(1)}%</div>
                         <Progress value={collectionRate} className="mt-2 h-3" />
                         <p className="text-xs text-muted-foreground mt-2">
-                           {mockInvoices.filter(i => i.status === 'OVERDUE').length} חשבוניות בפיגור.
+                            {mockInvoices.filter(i => i.status === 'OVERDUE').length} חשבוניות בפיגור.
                         </p>
                     </CardContent>
                 </Card>
-                 <Card>
-                     <CardHeader>
+                <Card>
+                    <CardHeader>
                         <CardTitle>זיכויים וקרדיטים</CardTitle>
                         <CardDescription>זיכויים שהונפקו לתלמידים החודש.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="text-4xl font-bold">{creditsIssuedThisMonth}</div>
-                         <p className="text-xs text-muted-foreground mt-2">
-                           זיכויים לשיעורי השלמה.
+                        <p className="text-xs text-muted-foreground mt-2">
+                            זיכויים לשיעורי השלמה.
                         </p>
                     </CardContent>
                 </Card>
             </div>
 
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>מקורות הכנסה מובילים לפי מורה</CardTitle>
                 </CardHeader>
                 <CardContent>
-                     <Table>
+                    <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>מורה</TableHead>

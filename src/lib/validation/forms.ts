@@ -17,7 +17,7 @@ export const FormSubmissionSchema = z.object({
     grade: z.enum(['י', 'יא', 'יב']).optional(),
 
     // Dynamic fields from form template
-    formData: z.record(z.any()).optional(),
+    formData: z.record(z.string(), z.any()).optional(),
 
     // Repertoire (for recital/exam forms)
     repertoire: z.array(z.object({

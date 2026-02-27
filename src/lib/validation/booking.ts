@@ -13,7 +13,7 @@ export const BookingRequestSchema = z.object({
     conservatoriumId: z.string().min(1, 'Conservatorium ID is required'),
     startTime: z.string().datetime({ message: 'Invalid ISO datetime for startTime' }),
     durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)], {
-        errorMap: () => ({ message: 'Duration must be 30, 45, or 60 minutes' }),
+        error: 'Duration must be 30, 45, or 60 minutes'
     }),
     roomId: z.string().optional(),
     packageId: z.string().optional(),

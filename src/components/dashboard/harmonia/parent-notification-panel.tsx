@@ -66,7 +66,7 @@ export function ParentNotificationPanel() {
                         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-border transition-colors">
                             <div className="font-semibold flex items-center gap-2">
                                 נוכחות ושיעורים
-                                <AlertTriangle className="w-4 h-4 text-orange-500" title="התראות אלו מומלצות למעקב רציף אחר שיעורי הילד" />
+                                <AlertTriangle className="w-4 h-4 text-orange-500" />
                             </div>
                             <div className="flex justify-center"><Switch checked={prefs.attendanceSms} onCheckedChange={() => handleToggle('attendanceSms')} /></div>
                             <div className="flex justify-center"><Switch checked={prefs.attendanceEmail} onCheckedChange={() => handleToggle('attendanceEmail')} /></div>

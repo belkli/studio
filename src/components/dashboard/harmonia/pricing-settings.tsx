@@ -47,7 +47,7 @@ export function PricingSettings() {
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
     const form = useForm<PricingFormData>({
-        resolver: zodResolver(pricingSchema),
+        resolver: zodResolver(pricingSchema) as any,
         defaultValues: currentConservatorium?.pricingConfig || {
             baseRatePerLesson: { '30': 0, '45': 0, '60': 0 },
             discounts: { pack5: 0, pack10: 0, yearly: 0, sibling: 0 },

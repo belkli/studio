@@ -25,8 +25,8 @@ const bookingSchema = z.object({
     studentId: z.string().min(1, "חובה לבחור תלמיד."),
     instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
     teacherId: z.string().min(1, "חובה לבחור מורה."),
-    date: z.date({ required_error: "חובה לבחור תאריך." }),
-    time: z.string({ required_error: "חובה לבחור שעה." }),
+    date: z.date(),
+    time: z.string().min(1, "חובה לבחור שעה."),
     durationMinutes: z.coerce.number().default(45),
 });
 
@@ -42,7 +42,7 @@ export function BookLessonWizard() {
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
 
     const form = useForm<BookingFormData>({
-        resolver: zodResolver(bookingSchema),
+        resolver: zodResolver(bookingSchema) as any,
         defaultValues: {
             studentId: user?.role === 'student' ? user.id : '',
             date: new Date(),

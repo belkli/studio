@@ -229,7 +229,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                 <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
                                     <div>
                                         <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                                        <p className="text-xs text-muted-foreground">{log.pieces.map(p => p.title).join(', ')}</p>
+                                        <p className="text-xs text-muted-foreground">{(log.pieces ?? []).map(p => p.title).join(', ')}</p>
                                     </div>
                                     <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
                                         {log.durationMinutes} דקות

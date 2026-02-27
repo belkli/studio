@@ -7,15 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 import { instruments } from "@/lib/data";
 
+const RechartsTooltip = Tooltip as any;
+
 export function AcademicReports() {
     const { mockPracticeLogs, users, mockAssignedRepertoire } = useAuth();
-    
+
     const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
-    
-    const { 
-        practiceEngagementRate, 
-        averageMinutes, 
+
+    const {
+        practiceEngagementRate,
+        averageMinutes,
         lowEngagementStudents,
         repertoireAdvancement,
         engagementByTeacher,
@@ -34,11 +36,11 @@ export function AcademicReports() {
 
         const studentsWhoPracticedThisWeek = new Set(logsThisWeek.map(log => log.studentId));
         const engagementRate = students.length > 0 ? (studentsWhoPracticedThisWeek.size / students.length) * 100 : 0;
-        
+
         const avgMinutes = logsThisWeek.length > 0 && studentsWhoPracticedThisWeek.size > 0
             ? logsThisWeek.reduce((sum, log) => sum + log.durationMinutes, 0) / studentsWhoPracticedThisWeek.size
             : 0;
-        
+
         const studentsPractice = students.map(student => {
             const totalMinutes = mockPracticeLogs
                 .filter(log => log.studentId === student.id)
@@ -48,9 +50,9 @@ export function AcademicReports() {
 
         const lowEngagers = studentsPractice
             .filter(item => item.totalMinutes < 30) // Example threshold
-            .sort((a,b) => a.totalMinutes - b.totalMinutes)
+            .sort((a, b) => a.totalMinutes - b.totalMinutes)
             .slice(0, 5);
-        
+
         const repAdvancement = mockAssignedRepertoire.filter(rep => {
             if (!rep.completedAt) return false;
             const completedDate = new Date(rep.completedAt);
@@ -69,7 +71,7 @@ export function AcademicReports() {
                     })
                     .map(log => log.studentId)
             );
-            
+
             return {
                 name: teacher.name,
                 engagement: (practicedStudents.size / teacherStudents.length) * 100
@@ -78,11 +80,11 @@ export function AcademicReports() {
 
         const instrumentAvgMinutes = instruments.map(instrument => {
             const studentsWithInstrument = students.filter(s => s.instruments?.some(i => i.instrument === instrument));
-            if(studentsWithInstrument.length === 0) return { name: instrument, 'ממוצע דקות': 0};
+            if (studentsWithInstrument.length === 0) return { name: instrument, 'ממוצע דקות': 0 };
 
             const logsForInstrument = mockPracticeLogs.filter(log => {
-                 const logDate = new Date(log.date);
-                 return logDate >= oneMonthAgo && studentsWithInstrument.some(s => s.id === log.studentId);
+                const logDate = new Date(log.date);
+                return logDate >= oneMonthAgo && studentsWithInstrument.some(s => s.id === log.studentId);
             });
             const totalMinutes = logsForInstrument.reduce((sum, log) => sum + log.durationMinutes, 0);
             return {
@@ -91,9 +93,9 @@ export function AcademicReports() {
             }
         });
 
-        return { 
-            practiceEngagementRate: engagementRate, 
-            averageMinutes: avgMinutes, 
+        return {
+            practiceEngagementRate: engagementRate,
+            averageMinutes: avgMinutes,
             lowEngagementStudents: lowEngagers,
             repertoireAdvancement: repAdvancement,
             engagementByTeacher: teacherEngagementData,
@@ -114,7 +116,7 @@ export function AcademicReports() {
                         <div className="text-5xl font-bold text-primary">{practiceEngagementRate.toFixed(0)}%</div>
                     </CardContent>
                 </Card>
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>ממוצע דקות אימון</CardTitle>
                         <CardDescription>לתלמיד מתאמן בשבוע האחרון.</CardDescription>
@@ -144,10 +146,10 @@ export function AcademicReports() {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
-                                <Tooltip
+                                <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
                                     contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
-                                    formatter={(value: number) => [`${value.toFixed(0)}%`, 'מעורבות']}
+                                    formatter={(value: any) => [`${Number(value).toFixed(0)}%`, 'מעורבות']}
                                 />
                                 <Bar dataKey="engagement" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
@@ -164,10 +166,10 @@ export function AcademicReports() {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
-                                <Tooltip
+                                <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
                                     contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
-                                    formatter={(value: number) => [value.toFixed(0), 'ממוצע דקות']}
+                                    formatter={(value: any) => [`${Number(value).toFixed(0)}`, 'ממוצע דקות']}
                                 />
                                 <Bar dataKey="ממוצע דקות" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
                             </BarChart>
@@ -175,13 +177,13 @@ export function AcademicReports() {
                     </CardContent>
                 </Card>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>תלמידים עם מעורבות נמוכה</CardTitle>
                     <CardDescription>תלמידים שרשמו הכי פחות זמן אימון בסך הכל.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <Table>
+                    <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>תלמיד/ה</TableHead>

@@ -80,12 +80,12 @@ export default function FormDetailsPage() {
     const customFormTemplate = form.formTemplateId ? mockFormTemplates.find(t => t.id === form.formTemplateId) : undefined;
 
 
-    const generatePdf = (form) => {
+    const generatePdf = (form: FormSubmission) => {
         const doc = new jsPDF();
         const pageHeight = doc.internal.pageSize.height;
         const pageWidth = doc.internal.pageSize.width;
 
-        const rtl = (text) => text ? text.split('').reverse().join('') : '';
+        const rtl = (text: any) => text ? String(text).split('').reverse().join('') : '';
 
         // Header
         doc.setFont('helvetica', 'bold');
@@ -97,7 +97,7 @@ export default function FormDetailsPage() {
 
         let lastY = 40;
 
-        const addSection = (title, body) => {
+        const addSection = (title: string, body: any[][]) => {
             doc.setFont('helvetica', 'bold');
             doc.text(rtl(title), pageWidth - 15, lastY, { align: 'right' });
             autoTable(doc, {
@@ -162,19 +162,19 @@ export default function FormDetailsPage() {
 
 
     const handleTeacherApprove = () => {
-        const updatedForm = { ...form, status: 'ממתין לאישור מנהל' };
+        const updatedForm: FormSubmission = { ...form, status: 'ממתין לאישור מנהל' };
         updateForm(updatedForm);
         toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
     }
 
     const handleTeacherReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' };
+        const updatedForm: FormSubmission = { ...form, status: 'נדחה' };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
 
     const handleAdminReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' };
+        const updatedForm: FormSubmission = { ...form, status: 'נדחה' };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
     }
@@ -189,7 +189,7 @@ export default function FormDetailsPage() {
             return;
         }
         const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
-        const updatedForm = { ...form, status: 'מאושר', signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
+        const updatedForm: FormSubmission = { ...form, status: 'מאושר', signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
         updateForm(updatedForm);
 
         toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
@@ -197,13 +197,13 @@ export default function FormDetailsPage() {
     }
 
     const handleMinistryFinalApprove = () => {
-        const updatedForm = { ...form, status: 'מאושר סופית' };
+        const updatedForm: FormSubmission = { ...form, status: 'מאושר סופית' };
         updateForm(updatedForm);
         toast({ title: "הטופס אושר סופית", description: `הטופס של ${form.studentName} אושר סופית על ידי משרד החינוך.` });
     }
 
     const handleMinistryRequestChanges = () => {
-        const updatedForm = { ...form, status: 'נדרש תיקון', ministryComment: ministryRejectionReason };
+        const updatedForm: FormSubmission = { ...form, status: 'נדרש תיקון', ministryComment: ministryRejectionReason };
         updateForm(updatedForm);
         setMinistryRejectionDialogOpen(false);
         toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
@@ -220,7 +220,7 @@ export default function FormDetailsPage() {
 
         const totalDurationFormatted = `${String(Math.floor(totalDuration / 60)).padStart(2, '0')}:${String(totalDuration % 60).padStart(2, '0')}`;
 
-        const updatedForm = {
+        const updatedForm: FormSubmission = {
             ...form,
             ...data,
             totalDuration: totalDurationFormatted,
@@ -399,7 +399,7 @@ export default function FormDetailsPage() {
                             {customFormTemplate && form.formData && (
                                 <DetailsCard title="פרטי הטופס" columns={1}>
                                     {customFormTemplate.fields.map(field => {
-                                        const value = form.formData[field.id];
+                                        const value = form.formData?.[field.id];
                                         if (value === undefined || value === null) return null;
 
                                         let displayValue = String(value);

@@ -13,11 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save } from "lucide-react";
 
 const policySchema = z.object({
-  studentNoticeHoursRequired: z.coerce.number().min(0, "חובה להזין מספר שעות חיובי."),
-  studentCancellationCredit: z.enum(['FULL', 'NONE']),
-  studentLateCancelCredit: z.enum(['FULL', 'NONE']),
-  makeupCreditExpiryDays: z.coerce.number().min(0, "חובה להזין מספר ימים חיובי."),
-  maxMakeupsPerTerm: z.coerce.number().min(0, "חובה להזין מספר חיובי."),
+    studentNoticeHoursRequired: z.coerce.number().min(0, "חובה להזין מספר שעות חיובי."),
+    studentCancellationCredit: z.enum(['FULL', 'NONE']),
+    studentLateCancelCredit: z.enum(['FULL', 'NONE']),
+    makeupCreditExpiryDays: z.coerce.number().min(0, "חובה להזין מספר ימים חיובי."),
+    maxMakeupsPerTerm: z.coerce.number().min(0, "חובה להזין מספר חיובי."),
 });
 
 type PolicyFormData = z.infer<typeof policySchema>;
@@ -29,7 +29,7 @@ export function CancellationPolicySettings() {
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
     const form = useForm<PolicyFormData>({
-        resolver: zodResolver(policySchema),
+        resolver: zodResolver(policySchema) as any,
         defaultValues: currentConservatorium?.cancellationPolicy || {
             studentNoticeHoursRequired: 24,
             studentCancellationCredit: 'FULL',
@@ -76,7 +76,7 @@ export function CancellationPolicySettings() {
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                             <FormField name="studentLateCancelCredit" render={({ field }) => (
+                            <FormField name="studentLateCancelCredit" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>זיכוי עבור ביטול מאוחר</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
@@ -93,14 +93,14 @@ export function CancellationPolicySettings() {
                             <CardTitle>כללי שיעורי השלמה</CardTitle>
                         </CardHeader>
                         <CardContent className="grid md:grid-cols-2 gap-6">
-                             <FormField name="makeupCreditExpiryDays" render={({ field }) => (
+                            <FormField name="makeupCreditExpiryDays" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>תוקף זיכוי להשלמה (בימים)</FormLabel>
                                     <Input type="number" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                             <FormField name="maxMakeupsPerTerm" render={({ field }) => (
+                            <FormField name="maxMakeupsPerTerm" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>מקסימום שיעורי השלמה לסמסטר</FormLabel>
                                     <Input type="number" {...field} />
@@ -110,7 +110,7 @@ export function CancellationPolicySettings() {
                         </CardContent>
                     </Card>
                 </div>
-                 <div className="flex justify-end mt-6">
+                <div className="flex justify-end mt-6">
                     <Button type="submit" disabled={!form.formState.isDirty}>
                         <Save className="me-2 h-4 w-4" />
                         שמור שינויים

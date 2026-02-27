@@ -91,7 +91,7 @@ export function ReschedulingChatWidget() {
     }
 
     if (type === 'CANCEL' && lessonId) {
-      cancelLesson(lessonId);
+      cancelLesson(lessonId, false);
       const lesson = mockLessons.find(l => l.id === lessonId);
       toast({ title: 'השיעור בוטל', description: `שיעור ${lesson?.instrument} בוטל בהצלחה.` });
     } else if (type === 'RESCHEDULE' && lessonId && 'newStartTime' in response.proposedChange) {

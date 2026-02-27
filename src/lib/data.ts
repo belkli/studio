@@ -324,6 +324,8 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 export const mockWaitlist: WaitlistEntry[] = [];
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
+export const mockMakeupCredits: any[] = [];
+export const mockRepertoire: Composition[] = compositions;
 
 export const mockAlumni: Alumnus[] = [
     {

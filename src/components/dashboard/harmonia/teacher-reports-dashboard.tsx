@@ -10,7 +10,7 @@ import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 
 export function TeacherReportsDashboard() {
     const { user: teacher, users, mockLessons, mockPracticeLogs, mockFormSubmissions } = useAuth();
-    
+
     const assignedStudents = useMemo(() => {
         if (!teacher || !teacher.students) return [];
         return users.filter(u => teacher.students!.includes(u.id));
@@ -32,19 +32,19 @@ export function TeacherReportsDashboard() {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && (l.status.startsWith('CANCELLED'));
         });
-        
+
         // Mock earnings calculation
         const earningsThisMonth = lessonsThisMonth.length * 150; // Assuming 150 per lesson
 
         const studentsWhoPracticed = new Set(mockPracticeLogs.filter(log => {
             const logDate = new Date(log.date);
-            return isWithinInterval(logDate, {start, end}) && assignedStudents.some(s => s.id === log.studentId);
+            return isWithinInterval(logDate, { start, end }) && assignedStudents.some(s => s.id === log.studentId);
         }).map(log => log.studentId));
 
         const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
-        
-        const upcomingExams = mockFormSubmissions.filter(f => 
-            (f.formType === 'רסיטל בגרות' || f.formType === 'הרשמה לבחינה') && 
+
+        const upcomingExams = mockFormSubmissions.filter(f =>
+            (f.formType === 'רסיטל בגרות' || f.formType === 'הרשמה לבחינה') &&
             assignedStudents.some(s => s.id === f.studentId) &&
             f.status !== 'נדחה' && f.status !== 'טיוטה'
         );
@@ -57,14 +57,14 @@ export function TeacherReportsDashboard() {
             upcomingExams: upcomingExams,
         }
     }, [teacher, mockLessons, mockPracticeLogs, assignedStudents, mockFormSubmissions]);
-    
+
     const practiceEngagementData = useMemo(() => {
         return assignedStudents.map(student => {
             const totalMinutes = mockPracticeLogs
                 .filter(log => log.studentId === student.id)
                 .reduce((sum, log) => sum + log.durationMinutes, 0);
             return { name: student.name.split(' ')[0], minutes: totalMinutes };
-        }).sort((a,b) => b.minutes - a.minutes);
+        }).sort((a, b) => b.minutes - a.minutes);
     }, [assignedStudents, mockPracticeLogs]);
 
     if (!teacher) return null;
@@ -92,8 +92,8 @@ export function TeacherReportsDashboard() {
                         <p className="text-xs text-muted-foreground">{stats.cancellationsThisMonth} ביטולים</p>
                     </CardContent>
                 </Card>
-                 <Card>
-                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">הכנסות החודש (אומדן)</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -102,7 +102,7 @@ export function TeacherReportsDashboard() {
                         <p className="text-xs text-muted-foreground">מבוסס על שיעורים שהושלמו</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">מעורבות באימונים</CardTitle>
                         <Activity className="h-4 w-4 text-muted-foreground" />
@@ -113,22 +113,22 @@ export function TeacherReportsDashboard() {
                     </CardContent>
                 </Card>
             </div>
-            
+
             <Card>
                 <CardHeader>
                     <CardTitle>מעורבות תלמידים באימונים</CardTitle>
                     <CardDescription>סה"כ דקות אימון רשומות לכל תלמיד/ה.</CardDescription>
                 </CardHeader>
-                 <CardContent className="h-[350px]">
-                     <ResponsiveContainer width="100%" height="100%">
+                <CardContent className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={practiceEngagementData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                             <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(value) => `${value}`} />
-                            <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} tickLine={false} axisLine={false}/>
+                            <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} tickLine={false} axisLine={false} />
                             <Tooltip
                                 cursor={{ fill: 'hsl(var(--muted))' }}
                                 contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
-                                 formatter={(value: number) => [`${value} דקות`, 'זמן אימון כולל']}
+                                formatter={(value: any) => [`${Number(value)} דקות`, 'זמן אימון כולל']}
                             />
                             <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20} />
                         </BarChart>
@@ -142,7 +142,7 @@ export function TeacherReportsDashboard() {
                     <CardDescription>סקירת סטטוס הגשות של תלמידיך.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <Table>
+                    <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>תלמיד/ה</TableHead>

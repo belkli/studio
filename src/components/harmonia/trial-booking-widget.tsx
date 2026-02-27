@@ -25,13 +25,13 @@ import { instruments, mockTeachers } from "@/lib/data";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 
 const trialSchema = z.object({
-  instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
-  teacherId: z.string().optional(),
-  date: z.date({ required_error: "חובה לבחור תאריך." }),
-  time: z.string({ required_error: "חובה לבחור שעה." }),
-  name: z.string().min(2, "שם הוא שדה חובה."),
-  phone: z.string().min(9, "מספר טלפון לא תקין."),
-  email: z.string().email("אימייל לא תקין."),
+    instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
+    teacherId: z.string().optional(),
+    date: z.date().nullable().refine(val => !!val, { message: "חובה לבחור תאריך." }),
+    time: z.string().min(1, "חובה לבחור שעה."),
+    name: z.string().min(2, "שם הוא שדה חובה."),
+    phone: z.string().min(9, "מספר טלפון לא תקין."),
+    email: z.string().email("אימייל לא תקין."),
 });
 
 type TrialFormData = z.infer<typeof trialSchema>;
@@ -43,7 +43,7 @@ export function TrialBookingWidget() {
     const locale = useLocale();
     const { toast } = useToast();
     const { addLesson, users } = useAuth();
-    
+
     const steps = [
         { id: 'instrument', title: t('steps.instrument') },
         { id: 'teacher', title: t('steps.teacher') },
@@ -54,9 +54,9 @@ export function TrialBookingWidget() {
 
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    
+
     const form = useForm<TrialFormData>({
-        resolver: zodResolver(trialSchema),
+        resolver: zodResolver(trialSchema) as any,
         defaultValues: { date: new Date() },
     });
 
@@ -88,11 +88,11 @@ export function TrialBookingWidget() {
             }
             // Generate mock slots
             const slots = [];
-            for(let h=parseInt(availability.startTime); h<parseInt(availability.endTime); h++){
-                 if (Math.random() > 0.3) { // Simulate some slots being taken
+            for (let h = parseInt(availability.startTime); h < parseInt(availability.endTime); h++) {
+                if (Math.random() > 0.3) { // Simulate some slots being taken
                     const slotTime = set(selectedDate, { hours: h, minutes: 0 });
-                    if(isBefore(new Date(), slotTime)) slots.push(format(slotTime, 'HH:mm'));
-                 }
+                    if (isBefore(new Date(), slotTime)) slots.push(format(slotTime, 'HH:mm'));
+                }
             }
             setAvailableSlots(slots);
             setIsLoadingSlots(false);
@@ -117,7 +117,7 @@ export function TrialBookingWidget() {
             onSubmit(form.getValues());
         }
     };
-    
+
     const onSubmit = (data: TrialFormData) => {
         setIsSubmitted(true);
         // This is a mock submission
@@ -127,7 +127,7 @@ export function TrialBookingWidget() {
         });
     };
 
-     if (isSubmitted) {
+    if (isSubmitted) {
         return (
             <Card className="w-full max-w-lg mx-4 text-center">
                 <CardHeader>
@@ -143,7 +143,7 @@ export function TrialBookingWidget() {
             </Card>
         );
     }
-    
+
     const teacherOptions = mockTeachers.map(t => ({ value: t.id!, label: t.name! }));
 
     return (
@@ -151,15 +151,15 @@ export function TrialBookingWidget() {
             <CardHeader>
                 <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>{t('subtitle')}</CardDescription>
-                 <div className="pt-4">
-                    <Stepper currentStep={currentStep} steps={steps.map((s,i) => ({...s, icon: stepIcons[i]}))} />
+                <div className="pt-4">
+                    <Stepper currentStep={currentStep} steps={steps.map((s, i) => ({ ...s, icon: stepIcons[i] }))} />
                 </div>
             </CardHeader>
             <CardContent>
                 <FormProvider {...form}>
                     <form className="space-y-6">
                         <AnimatePresence mode="wait">
-                             <motion.div
+                            <motion.div
                                 key={currentStep}
                                 initial={{ opacity: 0, x: 50 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -167,12 +167,12 @@ export function TrialBookingWidget() {
                                 transition={{ duration: 0.3 }}
                                 dir="rtl"
                             >
-                                {currentStep === 0 && <FormField name="instrument" render={({ field }) => ( <FormItem className="flex flex-col"> <FormLabel>{t('instrument')}</FormLabel> <Combobox options={instruments.map(i => ({ value: i, label: i }))} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('instrumentPlaceholder')} /> <FormMessage /> </FormItem> )} />}
-                                {currentStep === 1 && <FormField name="teacherId" render={({ field }) => ( <FormItem className="flex flex-col"> <FormLabel>{t('teacher')}</FormLabel> <Combobox options={teacherOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('teacherPlaceholder')} /> <FormMessage /> </FormItem> )} />}
+                                {currentStep === 0 && <FormField name="instrument" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('instrument')}</FormLabel> <Combobox options={instruments.map(i => ({ value: i, label: i }))} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('instrumentPlaceholder')} /> <FormMessage /> </FormItem>)} />}
+                                {currentStep === 1 && <FormField name="teacherId" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('teacher')}</FormLabel> <Combobox options={teacherOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('teacherPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 2 && (
-                                     <div className="grid md:grid-cols-2 gap-8">
-                                        <FormField name="date" control={form.control} render={({ field }) => ( <FormItem className="flex justify-center"><FormControl><UICalendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => isBefore(date, new Date())} initialFocus locale={locale === 'he' ? he : undefined} className="rounded-md border" /></FormControl><FormMessage /></FormItem> )} />
-                                        <FormField name="time" control={form.control} render={({ field }) => ( <FormItem> <FormLabel>{t('availableSlots')}</FormLabel> <FormControl> <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md"> {isLoadingSlots ? <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : availableSlots.length === 0 ? <p className="text-center text-sm text-muted-foreground p-4">{t('noSlots')}</p> : availableSlots.map(slot => ( <FormItem key={slot}> <FormControl> <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl"> <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" /> <span className="font-mono">{slot}</span> </label> </FormControl> </FormItem> ))} </RadioGroup> </FormControl> <FormMessage /> </FormItem> )} />
+                                    <div className="grid md:grid-cols-2 gap-8">
+                                        <FormField name="date" control={form.control} render={({ field }) => (<FormItem className="flex justify-center"><FormControl><UICalendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => isBefore(date, new Date())} initialFocus locale={locale === 'he' ? he : undefined} className="rounded-md border" /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField name="time" control={form.control} render={({ field }) => (<FormItem> <FormLabel>{t('availableSlots')}</FormLabel> <FormControl> <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md"> {isLoadingSlots ? <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : availableSlots.length === 0 ? <p className="text-center text-sm text-muted-foreground p-4">{t('noSlots')}</p> : availableSlots.map(slot => (<FormItem key={slot}> <FormControl> <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl"> <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" /> <span className="font-mono">{slot}</span> </label> </FormControl> </FormItem>))} </RadioGroup> </FormControl> <FormMessage /> </FormItem>)} />
                                     </div>
                                 )}
                                 {currentStep === 3 && (
@@ -182,7 +182,7 @@ export function TrialBookingWidget() {
                                         <div className="md:col-span-2"><FormField name="email" render={({ field }) => (<FormItem><FormLabel>{t('details.email')}</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)} /></div>
                                     </div>
                                 )}
-                                 {currentStep === 4 && (
+                                {currentStep === 4 && (
                                     <div className="text-center space-y-4">
                                         <h3 className="text-xl font-semibold">{t('payment.title')}</h3>
                                         <p className="text-muted-foreground">{t('payment.price', { price: 50 })}</p>
@@ -196,7 +196,7 @@ export function TrialBookingWidget() {
                     </form>
                 </FormProvider>
             </CardContent>
-             <CardFooter>
+            <CardFooter>
                 <div className="w-full flex justify-between">
                     <Button variant="outline" onClick={() => setCurrentStep(s => s - 1)} disabled={currentStep === 0}>
                         <ArrowRight className="h-4 w-4 me-2" />

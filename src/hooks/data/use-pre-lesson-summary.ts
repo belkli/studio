@@ -30,7 +30,7 @@ export function usePreLessonSummary(
     studentId: string,
     teacherId: string
 ): { summary: PreLessonSummary | null; isLoading: boolean } {
-    const { users, mockLessons, mockPracticeLogs, mockRepertoire, mockLessonNotes } = useAuth();
+    const { users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes } = useAuth();
 
     const summary = useMemo((): PreLessonSummary | null => {
         if (!studentId || !teacherId) return null;
@@ -61,17 +61,17 @@ export function usePreLessonSummary(
         );
 
         const totalPracticeMinutes = practiceAfterLastLesson.reduce((s, l) => s + l.durationMinutes, 0);
-        const pieces = [...new Set(practiceAfterLastLesson.flatMap(l => l.pieces.map(p => p.title)))];
+        const pieces = [...new Set(practiceAfterLastLesson.flatMap(l => (l.pieces ?? []).map(p => p.title)))];
         const studentNotes = practiceAfterLastLesson
-            .filter(l => l.studentNote)
-            .map(l => l.studentNote!);
+            .filter(l => l.studentNote || l.notes)
+            .map(l => (l.studentNote || l.notes)!);
 
-        const moods = practiceAfterLastLesson.map(l => l.mood);
-        const moodScore = moods.reduce((s, m) => s + (m === 'GREAT' ? 3 : m === 'OKAY' ? 2 : 1), 0);
+        const moods = practiceAfterLastLesson.map(l => l.mood).filter(Boolean);
+        const moodScore = (moods as any[]).reduce((s, m) => s + (m === 'GREAT' ? 3 : m === 'OKAY' ? 2 : 1), 0);
         const avgMood = moods.length ? (moodScore / moods.length >= 2.5 ? 'GREAT' : moodScore / moods.length >= 1.5 ? 'OKAY' : 'HARD') : 'N/A';
 
         // Current repertoire
-        const currentRepertoire = (mockRepertoire ?? []).filter(r =>
+        const currentRepertoire = (mockAssignedRepertoire ?? []).filter(r =>
             r.studentId === studentId && r.status !== 'COMPLETED'
         );
 
@@ -95,7 +95,7 @@ export function usePreLessonSummary(
             lastLessonNotes: lastNote,
             unreadStudentMessages: 0,
         };
-    }, [studentId, teacherId, users, mockLessons, mockPracticeLogs, mockRepertoire, mockLessonNotes]);
+    }, [studentId, teacherId, users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes]);
 
     return { summary, isLoading: false };
 }

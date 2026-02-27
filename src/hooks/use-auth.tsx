@@ -7,7 +7,7 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
@@ -41,6 +41,8 @@ interface AuthContextType {
   mockPracticeVideos: PracticeVideo[];
   mockAlumni: Alumnus[];
   mockMasterclasses: Masterclass[];
+  mockMakeupCredits: MakeupCredit[];
+  mockRepertoire: Composition[];
   conservatoriums: Conservatorium[];
   mockBranches: Branch[];
   login: (email: string) => { user: User | null; status: 'approved' | 'pending' | 'not_found' };
@@ -93,6 +95,7 @@ interface AuthContextType {
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
   updateEvent: (event: EventProduction) => void;
+  updateEventStatus: (eventId: string, status: EventProductionStatus) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -130,6 +133,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>(initialMockData.mockMasterclasses);
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>(initialMockData.mockWaitlist);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
+  const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>(initialMockData.mockMakeupCredits || []);
+  const [mockRepertoire, setMockRepertoire] = useState<Composition[]>(initialMockData.mockRepertoire || initialMockData.compositions);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -500,6 +505,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
   };
 
+  const updateEventStatus = (eventId: string, status: EventProductionStatus) => {
+    setMockEvents(prev => prev.map(e => e.id === eventId ? { ...e, status } : e));
+  };
+
   const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
     const student = users.find(u => u.id === studentId);
     const repertoireItem = initialMockData.mockAssignedRepertoire.find(r => r.id === repertoireId);
@@ -731,6 +740,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockPracticeVideos,
       mockAlumni,
       mockMasterclasses,
+      mockMakeupCredits,
+      mockRepertoire,
       conservatoriums,
       mockBranches,
       mockWaitlist,
@@ -782,7 +793,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updateUserPaymentMethod,
       assignRepertoire,
       updatePayrollStatus,
-      updateEvent
+      updateEvent,
+      updateEventStatus
     }}>
       {children}
     </AuthContext.Provider>

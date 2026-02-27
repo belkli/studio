@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Calendar, Clock, MapPin, Ticket, Minus, Plus, Users, Music } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
@@ -26,7 +26,7 @@ export function PublicEventPage() {
     if (!event) {
         return notFound();
     }
-    
+
     const handleTicketPurchase = () => {
         toast({
             title: 'ההזמנה הושלמה!',
@@ -45,9 +45,9 @@ export function PublicEventPage() {
                     </p>
                 </div>
             </section>
-            
+
             <div className="container -mt-20 z-20 relative pb-12">
-                 <div className="grid lg:grid-cols-3 gap-8">
+                <div className="grid lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2">
                         <Card>
                             <CardHeader>
@@ -76,7 +76,7 @@ export function PublicEventPage() {
                             </CardContent>
                         </Card>
                     </div>
-                     <div className="lg:col-span-1 space-y-6">
+                    <div className="lg:col-span-1 space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>פרטי האירוע</CardTitle>
@@ -92,7 +92,7 @@ export function PublicEventPage() {
                                 <CardTitle>רכישת כרטיסים</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {event.ticketPrice > 0 ? (
+                                {(event.ticketPrice ?? 0) > 0 ? (
                                     <>
                                         <div className="flex items-center justify-center gap-4">
                                             <Button variant="outline" size="icon" onClick={() => setTicketCount(c => Math.max(1, c - 1))}><Minus className="h-4 w-4" /></Button>
@@ -102,7 +102,7 @@ export function PublicEventPage() {
                                         <Separator />
                                         <div className="text-center">
                                             <p className="text-sm text-muted-foreground">סה"כ לתשלום</p>
-                                            <p className="text-3xl font-bold">₪{event.ticketPrice * ticketCount}</p>
+                                            <p className="text-3xl font-bold">₪{(event.ticketPrice ?? 0) * ticketCount}</p>
                                         </div>
                                     </>
                                 ) : (
@@ -115,8 +115,8 @@ export function PublicEventPage() {
                                 </Button>
                             </CardFooter>
                         </Card>
-                     </div>
-                 </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

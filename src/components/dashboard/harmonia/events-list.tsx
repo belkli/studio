@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Ticket, Users } from 'lucide-react';
+import { Calendar, Clock, MapPin, Ticket, ArrowLeft, AlertTriangle, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
@@ -28,10 +28,10 @@ export function EventsList() {
                             <Users className="me-2 h-4 w-4" />
                             <span>{event.program.length} משתתפים</span>
                         </div>
-                         {event.isPublic && (
-                             <div className="flex items-center text-sm text-muted-foreground">
+                        {event.isPublic && (
+                            <div className="flex items-center text-sm text-muted-foreground">
                                 <Ticket className="me-2 h-4 w-4" />
-                                <span>{event.ticketPrice > 0 ? `${event.ticketPrice}₪ לכרטיס` : 'כניסה חופשית'}</span>
+                                <span>{(event.ticketPrice ?? 0) > 0 ? `₪${event.ticketPrice}` : 'חינם'}</span>
                             </div>
                         )}
                     </CardContent>

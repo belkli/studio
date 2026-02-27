@@ -429,7 +429,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const formSchema = useMemo(() => getFormSchema(t), [t]);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       registrationType: 'parent',
       goals: [],

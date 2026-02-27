@@ -1,7 +1,7 @@
 
 import type { User as AuthUser } from 'firebase/auth';
 
-export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director';
+export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin';
 
 export type InstrumentInfo = {
   instrument: string;
@@ -151,6 +151,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
+  idNumber?: string;
   role: UserRole;
   conservatoriumId: string;
   conservatoriumName: string;
@@ -158,7 +159,6 @@ export type User = {
   conservatoriumStudyYears?: number;
   instruments?: InstrumentInfo[];
   avatarUrl?: string;
-  idNumber?: string;
   schoolName?: string;
   schoolSymbol?: string;
   birthDate?: string;
@@ -196,6 +196,10 @@ export type User = {
   hasSeenWalkthrough?: boolean;
   isRegistered?: boolean;
   paymentMethods?: PaymentMethod[];
+  gamification?: {
+    currentStreak: number;
+    points: number;
+  };
 };
 
 export type PricingConfig = {
@@ -349,6 +353,12 @@ export type FormSubmission = {
   preferredExamDateRange?: string;
   teacherDeclaration?: boolean;
   instrument?: string;
+  eventName?: string;
+  eventDate?: string;
+  eventLocation?: string;
+  conductor?: string;
+  accompanist?: string;
+  numParticipants?: number;
 };
 
 // From SDD-08: Dynamic Form Builder
@@ -475,15 +485,19 @@ export type PracticeLog = {
   lessonSlotId?: string;         // related lesson
   date: string;                  // ISO Date — indexed for range queries
   durationMinutes: number;
-  pieces: { title: string; composerId?: string; focusArea?: string }[];
-  mood: 'GREAT' | 'OKAY' | 'HARD';
+  pieces?: { title: string; composerId?: string; focusArea?: string }[];
+  mood?: 'GREAT' | 'OKAY' | 'HARD';
   studentNote?: string;
+  notes?: string;                // alias for studentNote
   teacherComment?: string;
   teacherCommentedAt?: string;   // ISO Timestamp
   // Gamification
   pointsAwarded?: number;
+  pointsEarned?: number;         // alias for pointsAwarded
   streakContribution?: boolean;  // Did this log maintain a streak?
   createdAt?: string;            // ISO Timestamp
+  repertoireId?: string;
+  videoAttached?: boolean;
 };
 
 export type RepertoireStatus = 'LEARNING' | 'POLISHING' | 'PERFORMANCE_READY' | 'COMPLETED';
@@ -495,6 +509,7 @@ export type AssignedRepertoire = {
   status: RepertoireStatus;
   assignedAt: string; // ISO Timestamp
   completedAt?: string; // ISO Timestamp
+  compositionDetails?: Composition;
 };
 
 export type TechnicalFlag = {
@@ -771,6 +786,7 @@ export type Branch = {
   name: string;
   address: string;
 };
+
 
 export type PracticeVideo = {
   id: string;

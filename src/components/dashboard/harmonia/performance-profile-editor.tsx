@@ -36,7 +36,7 @@ export function PerformanceProfileEditor() {
     const { toast } = useToast();
 
     const form = useForm<PerformanceProfileFormData>({
-        resolver: zodResolver(performanceProfileSchema),
+        resolver: zodResolver(performanceProfileSchema) as any,
         defaultValues: {
             isOptedIn: user?.performanceProfile?.isOptedIn || false,
             headline: user?.performanceProfile?.headline || '',
