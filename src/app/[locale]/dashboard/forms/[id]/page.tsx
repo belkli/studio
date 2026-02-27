@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { useRef, useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
@@ -21,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { RecitalForm } from '@/components/forms/recital-form';
 import { KenesForm } from '@/components/forms/kenes-form';
 import { ExamRegistrationForm } from '@/components/forms/exam-registration-form';
-import type { FormSubmission } from '@/lib/types';
+import type { FormSubmission, FormStatus } from '@/lib/types';
 
 
 const DetailsCard = ({ title, children, columns = 4 }: { title: string, children: React.ReactNode, columns?: number }) => (
@@ -47,6 +48,10 @@ export default function FormDetailsPage() {
     const formId = params.id as string;
     const { toast } = useToast();
     const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
+    const t = useTranslations('Forms');
+    const ts = useTranslations('Status');
+    const tl = useTranslations('Forms.labels');
+    const tt = useTranslations('Forms.toasts');
 
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
 
@@ -111,46 +116,46 @@ export default function FormDetailsPage() {
         };
 
         if (customFormTemplate && form.formData) {
-             const body = customFormTemplate.fields.map(field => [
+            const body = customFormTemplate.fields.map(field => [
                 String(form.formData![field.id] || ''),
                 field.label
             ]);
-            addSection(rtl("פרטי הטופס"), body as any);
+            addSection(rtl(t("formDetails")), body as any);
         } else {
-             if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
-                addSection("פרטי התלמיד/ה", [
-                    [form.studentName, 'שם מלא'],
-                    [formUser?.idNumber, 'ת.ז.'],
-                    [form.applicantDetails?.birthDate, 'תאריך לידה'],
-                    [form.applicantDetails?.city, 'עיר מגורים'],
-                    [form.applicantDetails?.phone, 'טלפון'],
-                    [formUser?.email, 'דוא"ל'],
+            if (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') {
+                addSection(t("personalDetails"), [
+                    [form.studentName, tl('fullName')],
+                    [formUser?.idNumber, tl('idNumber')],
+                    [form.applicantDetails?.birthDate, tl('birthDate')],
+                    [form.applicantDetails?.city, tl('city')],
+                    [form.applicantDetails?.phone, tl('phone')],
+                    [formUser?.email, tl('email')],
                 ]);
             }
             if (form.formType === 'רסיטל בגרות') {
-                addSection("פרטי בית ספר", [
-                    [form.schoolDetails?.schoolName, 'בית ספר'],
-                    [form.schoolDetails?.hasMusicMajor ? 'כן' : 'לא', 'מגמת מוזיקה'],
-                    [form.schoolDetails?.isMajorParticipant ? 'כן' : 'לא', 'משתתף במגמה'],
+                addSection(t("schoolDetails"), [
+                    [form.schoolDetails?.schoolName, tl('school')],
+                    [form.schoolDetails?.hasMusicMajor ? String(t("labels.yes") || 'כן') : String(t("labels.no") || 'לא'), tl('hasMajor')],
+                    [form.schoolDetails?.isMajorParticipant ? String(t("labels.yes") || 'כן') : String(t("labels.no") || 'לא'), tl('isMajorParticipant')],
                 ]);
             }
 
             if (form.formType === 'הרשמה לבחינה') {
-                addSection("פרטי הבחינה", [
-                    [form.examLevel, 'רמת בחינה'],
-                    [form.examType, 'סוג בחינה'],
+                addSection(t("examDetails" as any) || "פרטי הבחינה", [
+                    [form.examLevel, tl('examLevel' as any) || 'רמת בחינה'],
+                    [form.examType, tl('examType' as any) || 'סוג בחינה'],
                 ]);
             }
 
             if (form.repertoire && form.repertoire.length > 0) {
-                 addSection("רפרטואר", form.repertoire.map(p => [
+                addSection(t("repertoireTitle"), form.repertoire.map(p => [
                     p.duration,
                     p.genre,
                     p.title,
                     p.composer
                 ]) as any);
                 doc.setFont('helvetica', 'bold');
-                doc.text(rtl(`סה"כ: ${form.totalDuration}`), 15, lastY - 10, { align: 'left' });
+                doc.text(rtl(`${tl('total')}: ${form.totalDuration}`), 15, lastY - 10, { align: 'left' });
             }
         }
 
@@ -158,7 +163,7 @@ export default function FormDetailsPage() {
         if (form.signatureUrl) {
             doc.addImage(form.signatureUrl, 'PNG', 140, pageHeight - 55, 50, 25);
         }
-        doc.text(rtl("חתימת המנהל"), 165, pageHeight - 20, { align: 'center' });
+        doc.text(rtl(tl("managerSignature")), 165, pageHeight - 20, { align: 'center' });
 
         const conservatorium = conservatoriums.find(c => c.name === form.conservatoriumName);
         if (conservatorium?.stampUrl) {
@@ -174,27 +179,27 @@ export default function FormDetailsPage() {
     const handleTeacherApprove = () => {
         const updatedForm = { ...form, status: 'ממתין לאישור מנהל' as FormStatus };
         updateForm(updatedForm);
-        toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} אושר והועבר לאישור מנהל.` });
+        toast({ title: tt("approved"), description: tt("approvedDesc", { name: form.studentName }) });
     }
 
     const handleTeacherReject = () => {
         const updatedForm = { ...form, status: 'נדחה' as FormStatus };
         updateForm(updatedForm);
-        toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
+        toast({ variant: "destructive", title: tt("rejected"), description: tt("rejectedDesc", { name: form.studentName }) });
     }
 
     const handleAdminReject = () => {
         const updatedForm = { ...form, status: 'נדחה' as FormStatus };
         updateForm(updatedForm);
-        toast({ variant: "destructive", title: "הטופס נדחה", description: `הטופס של ${form.studentName} נדחה.` });
+        toast({ variant: "destructive", title: tt("rejected"), description: tt("rejectedDesc", { name: form.studentName }) });
     }
 
     const handleConfirmApproval = () => {
         if (sigPadRef.current?.isEmpty()) {
             toast({
                 variant: 'destructive',
-                title: 'חתימה חסרה',
-                description: 'יש לחתום על הטופס כדי לאשר אותו.',
+                title: tt("signatureMissing"),
+                description: tt("signatureMissingDesc"),
             });
             return;
         }
@@ -202,21 +207,21 @@ export default function FormDetailsPage() {
         const updatedForm = { ...form, status: 'מאושר' as FormStatus, signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
         updateForm(updatedForm);
 
-        toast({ title: "הטופס אושר ונחתם!", description: `הטופס של ${form.studentName} אושר סופית.` });
+        toast({ title: tt("signed"), description: tt("signedDesc", { name: form.studentName }) });
         setSignatureDialogOpen(false);
     }
 
     const handleMinistryFinalApprove = () => {
         const updatedForm = { ...form, status: 'מאושר סופית' as FormStatus };
         updateForm(updatedForm);
-        toast({ title: "הטופס אושר סופית", description: `הטופס של ${form.studentName} אושר סופית על ידי משרד החינוך.` });
+        toast({ title: tt("ministryApprove"), description: tt("ministryApproveDesc", { name: form.studentName }) });
     }
 
     const handleMinistryRequestChanges = () => {
         const updatedForm = { ...form, status: 'נדרש תיקון' as FormStatus, ministryComment: ministryRejectionReason };
         updateForm(updatedForm);
         setMinistryRejectionDialogOpen(false);
-        toast({ variant: "destructive", title: "דרישה לתיקונים נשלחה", description: `הטופס של ${form.studentName} הוחזר למנהל הקונסרבטוריון לתיקונים.` });
+        toast({ variant: "destructive", title: tt("changesRequested"), description: tt("changesRequestedDesc", { name: form.studentName }) });
         setMinistryRejectionReason("");
     }
 
@@ -238,7 +243,7 @@ export default function FormDetailsPage() {
             ministryComment: undefined,
         };
         updateForm(updatedForm);
-        toast({ title: 'הטופס עודכן ונשלח מחדש לאישור.' });
+        toast({ title: tt("resubmitted") });
         setIsEditing(false);
     };
 
@@ -251,7 +256,7 @@ export default function FormDetailsPage() {
             <li key="submission" className="flex items-start gap-3">
                 <div className="bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center"><Send size={14} /></div>
                 <div>
-                    <p>הטופס הוגש על ידי {form.studentName}</p>
+                    <p>{ts('history.submitted', { name: form.studentName })}</p>
                     <time className="text-xs">{form.submissionDate}</time>
                 </div>
             </li>
@@ -262,7 +267,7 @@ export default function FormDetailsPage() {
                 <li key="teacher-pending" className="flex items-start gap-3">
                     <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
-                        <p>ממתין לאישור של {form.teacherDetails?.name || 'המורה'} (מורה)</p>
+                        <p>{ts('history.pendingTeacher', { name: form.teacherDetails?.name || t('teacher') })}</p>
                     </div>
                 </li>
             );
@@ -271,7 +276,7 @@ export default function FormDetailsPage() {
                 <li key="teacher-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
-                        <p>אושר על ידי {form.teacherDetails?.name || 'המורה'}</p>
+                        <p>{ts('history.approvedTeacher', { name: form.teacherDetails?.name || t('teacher') })}</p>
                     </div>
                 </li>
             );
@@ -282,7 +287,7 @@ export default function FormDetailsPage() {
                 <li key="admin-pending" className="flex items-start gap-3">
                     <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
-                        <p>ממתין לאישור של {user.name} (מנהל/ת)</p>
+                        <p>{ts('history.pendingAdmin', { name: user.name })}</p>
                     </div>
                 </li>
             );
@@ -291,7 +296,7 @@ export default function FormDetailsPage() {
                 <li key="admin-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
                     <div>
-                        <p>אושר ונחתם על ידי {form.conservatoriumManagerName || 'המנהל/ת'}</p>
+                        <p>{ts('history.approvedAdmin', { name: form.conservatoriumManagerName || t('manager') })}</p>
                         {form.signedAt && <time className="text-xs">{form.signedAt}</time>}
                     </div>
                 </li>
@@ -303,7 +308,7 @@ export default function FormDetailsPage() {
                 <li key="ministry-rejected" className="flex items-start gap-3">
                     <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center"><ShieldAlert size={14} /></div>
                     <div>
-                        <p>הוחזר לתיקונים על ידי משרד החינוך</p>
+                        <p>{ts('history.ministryRejected')}</p>
                     </div>
                 </li>
             );
@@ -312,7 +317,7 @@ export default function FormDetailsPage() {
                 <li key="ministry-approved" className="flex items-start gap-3">
                     <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center"><CircleCheckBig size={14} /></div>
                     <div>
-                        <p>אושר סופית על ידי משרד החינוך</p>
+                        <p>{ts('history.ministryApproved')}</p>
                     </div>
                 </li>
             );
@@ -324,7 +329,7 @@ export default function FormDetailsPage() {
                 <li key="rejected" className="flex items-start gap-3">
                     <div className="bg-red-100 text-red-700 rounded-full h-6 w-6 flex items-center justify-center"><ThumbsDown size={14} /></div>
                     <div>
-                        <p>הטופס נדחה</p>
+                        <p>{ts('history.rejected')}</p>
                     </div>
                 </li>
             );
@@ -340,23 +345,23 @@ export default function FormDetailsPage() {
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/forms">
                         <ArrowLeft className="ms-2 h-4 w-4" />
-                        חזרה לכל הטפסים
+                        {t('backToAll')}
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">
                     {isRevisable && (
                         <Button onClick={() => setIsEditing(true)}>
                             <Edit className="ms-2 h-4 w-4" />
-                            תקן ושלח מחדש
+                            {t('fixAndResubmit')}
                         </Button>
                     )}
                     {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
                         <Button onClick={() => generatePdf(form)} variant="outline">
                             <Download className="ms-2 h-4 w-4" />
-                            הורד PDF
+                            {t('downloadPdf')}
                         </Button>
                     )}
-                    <StatusBadge status={form.status} />
+                    <StatusBadge status={form.status} label={ts(form.status)} />
                 </div>
             </div>
 
@@ -401,22 +406,22 @@ export default function FormDetailsPage() {
                                 <CardHeader>
                                     <CardTitle>{form.formType}</CardTitle>
                                     <CardDescription>
-                                        {form.conservatoriumName} • שנת לימודים: {form.academicYear} {form.grade && `• כיתה: ${form.grade}`} • הוגש ב-{form.submissionDate}
+                                        {form.conservatoriumName} • {t('academicYear')}: {form.academicYear} {form.grade && `• ${t('gradeLabel')}: ${form.grade}`} • {t('submittedAt')} {form.submissionDate}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
 
                             {customFormTemplate && form.formData && (
-                                <DetailsCard title="פרטי הטופס" columns={1}>
+                                <DetailsCard title={t("formDetails")} columns={1}>
                                     {customFormTemplate.fields.map(field => {
                                         const value = form.formData![field.id];
                                         if (value === undefined || value === null) return null;
 
                                         let displayValue = String(value);
                                         if (field.type === 'checkbox') {
-                                            displayValue = value ? 'כן' : 'לא';
+                                            displayValue = value ? (t('labels.yes') || 'כן') : (t('labels.no') || 'לא');
                                         } else if (typeof value === 'boolean') {
-                                            displayValue = value ? 'כן' : 'לא';
+                                            displayValue = value ? (t('labels.yes') || 'כן') : (t('labels.no') || 'לא');
                                         }
 
                                         return <DetailItem key={field.id} label={field.label} value={displayValue} />;
@@ -425,35 +430,35 @@ export default function FormDetailsPage() {
                             )}
 
                             {(form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה') && (
-                                <DetailsCard title="1. פרטים אישיים של המועמד/ת" columns={4}>
-                                    <DetailItem label="שם מלא" value={form.studentName} />
-                                    <DetailItem label="ת.ז." value={formUser?.idNumber} />
-                                    <DetailItem label="תאריך לידה" value={form.applicantDetails?.birthDate} />
-                                    <DetailItem label="מין" value={form.applicantDetails?.gender} />
-                                    <DetailItem label="עיר מגורים" value={form.applicantDetails?.city} />
-                                    <DetailItem label="טלפון נייד" value={form.applicantDetails?.phone} />
-                                    <DetailItem label="אימייל" value={formUser?.email} />
+                                <DetailsCard title={t("personalDetails")} columns={4}>
+                                    <DetailItem label={tl('fullName')} value={form.studentName} />
+                                    <DetailItem label={tl('idNumber')} value={formUser?.idNumber} />
+                                    <DetailItem label={tl('birthDate')} value={form.applicantDetails?.birthDate} />
+                                    <DetailItem label={tl('gender')} value={form.applicantDetails?.gender} />
+                                    <DetailItem label={tl('city')} value={form.applicantDetails?.city} />
+                                    <DetailItem label={tl('phone')} value={form.applicantDetails?.phone} />
+                                    <DetailItem label={tl('email')} value={formUser?.email} />
                                 </DetailsCard>
                             )}
 
 
                             {form.formType === 'רסיטל בגרות' && (
                                 <>
-                                    <DetailsCard title="2. פרטי בית ספר תיכון" columns={3}>
-                                        <DetailItem label="בית ספר" value={form.schoolDetails?.schoolName} />
-                                        <DetailItem label="האם קיימת מגמת מוזיקה?" value={form.schoolDetails?.hasMusicMajor ? "כן" : "לא"} />
-                                        <DetailItem label="האם משתתף/ת במגמה?" value={form.schoolDetails?.isMajorParticipant ? "כן" : "לא"} />
+                                    <DetailsCard title={t("schoolDetails")} columns={3}>
+                                        <DetailItem label={tl('school')} value={form.schoolDetails?.schoolName} />
+                                        <DetailItem label={tl('hasMajor')} value={form.schoolDetails?.hasMusicMajor ? (t('labels.yes') || "כן") : (t('labels.no') || "לא")} />
+                                        <DetailItem label={tl('isMajorParticipant')} value={form.schoolDetails?.isMajorParticipant ? (t('labels.yes') || "כן") : (t('labels.no') || "לא")} />
                                     </DetailsCard>
-                                    <DetailsCard title="3 & 4. פרטי לימוד והוראה" columns={2}>
+                                    <DetailsCard title={t("studyDetails")} columns={2}>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
-                                            <h4 className="font-semibold text-muted-foreground">פרטי הכלי</h4>
-                                            <DetailItem label="כלי נגינה / שירה" value={form.instrumentDetails?.instrument} />
-                                            <DetailItem label="סך שנות לימוד בכלי" value={form.instrumentDetails?.yearsOfStudy} />
+                                            <h4 className="font-semibold text-muted-foreground">{t('instrumentDetails')}</h4>
+                                            <DetailItem label={tl('instrument')} value={form.instrumentDetails?.instrument} />
+                                            <DetailItem label={tl('yearsOfStudy')} value={form.instrumentDetails?.yearsOfStudy} />
                                         </div>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
-                                            <h4 className="font-semibold text-muted-foreground">פרטי המורה</h4>
-                                            <DetailItem label="שם המורה" value={form.teacherDetails?.name} />
-                                            <DetailItem label="סך שנות לימוד עם המורה" value={form.teacherDetails?.yearsWithTeacher} />
+                                            <h4 className="font-semibold text-muted-foreground">{t('teacherDetails')}</h4>
+                                            <DetailItem label={tl('teacherName')} value={form.teacherDetails?.name} />
+                                            <DetailItem label={tl('yearsWithTeacher')} value={form.teacherDetails?.yearsWithTeacher} />
                                         </div>
                                     </DetailsCard>
                                 </>
@@ -474,26 +479,26 @@ export default function FormDetailsPage() {
                             )}
 
                             {form.formType === 'הרשמה לבחינה' && (
-                                <DetailsCard title="פרטי בחינה" columns={3}>
-                                    <DetailItem label="רמת בחינה" value={form.examLevel} />
-                                    <DetailItem label="סוג בחינה" value={form.examType} />
-                                    <DetailItem label="טווח תאריכים מועדף" value={form.preferredExamDateRange} />
+                                <DetailsCard title={t("examDetails" as any) || "פרטי בחינה"} columns={3}>
+                                    <DetailItem label={tl('examLevel' as any) || "רמת בחינה"} value={form.examLevel} />
+                                    <DetailItem label={tl('examType' as any) || "סוג בחינה"} value={form.examType} />
+                                    <DetailItem label={tl('preferredDateRange' as any) || "טווח תאריכים מועדף"} value={form.preferredExamDateRange} />
                                 </DetailsCard>
                             )}
 
                             {form.repertoire.length > 0 && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>תוכנית לביצוע</CardTitle>
+                                        <CardTitle>{t('repertoireTitle')}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead>מלחין</TableHead>
-                                                    <TableHead>שם היצירה</TableHead>
-                                                    <TableHead>ז'אנר</TableHead>
-                                                    <TableHead className="text-center">משך</TableHead>
+                                                    <TableHead>{tl('composer')}</TableHead>
+                                                    <TableHead>{tl('pieceTitle')}</TableHead>
+                                                    <TableHead>{tl('genre')}</TableHead>
+                                                    <TableHead className="text-center">{tl('duration')}</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -510,7 +515,7 @@ export default function FormDetailsPage() {
                                     </CardContent>
                                     <Separator />
                                     <CardFooter className="justify-end font-bold text-lg pt-6">
-                                        <span>סה"כ זמן ביצוע: {form.totalDuration}</span>
+                                        <span>{t('totalDuration')}: {form.totalDuration}</span>
                                     </CardFooter>
                                 </Card>
                             )}
@@ -518,13 +523,13 @@ export default function FormDetailsPage() {
                             {isTeacherApproval && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>פעולות (מורה)</CardTitle>
+                                        <CardTitle>{t('teacherActions')}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <Textarea placeholder="הוסף הערה (אופציונלי)..." />
+                                        <Textarea placeholder={t('labels.addNote' as any) || "הוסף הערה (אופציונלי)..."} />
                                         <div className="flex gap-4">
-                                            <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> אישור והעברה למנהל</Button>
-                                            <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                            <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> {t('approveAndForward')}</Button>
+                                            <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> {t('reject')}</Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -533,13 +538,13 @@ export default function FormDetailsPage() {
                             {isAdminFinalApproval && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>פעולות (מנהל)</CardTitle>
+                                        <CardTitle>{t('adminActions')}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <Textarea placeholder="הוסף הערה (אופציונלי)..." />
+                                        <Textarea placeholder={t('labels.addNote' as any) || "הוסף הערה (אופציונלי)..."} />
                                         <div className="flex gap-4">
-                                            <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> אישור וחתימה</Button>
-                                            <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> דחייה</Button>
+                                            <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> {t('approveAndSign')}</Button>
+                                            <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> {t('reject')}</Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -548,11 +553,11 @@ export default function FormDetailsPage() {
                             {isMinistryApproval && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>פעולות (משרד החינוך)</CardTitle>
+                                        <CardTitle>{t('ministryActions')}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="flex gap-4">
-                                        <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> אישור סופי</Button>
-                                        <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> דרישה לתיקונים</Button>
+                                        <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> {t('finalApprove')}</Button>
+                                        <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> {t('requestChanges')}</Button>
                                     </CardContent>
                                 </Card>
                             )}
@@ -569,13 +574,13 @@ export default function FormDetailsPage() {
                             </Avatar>
                             <div>
                                 <CardTitle>{form.studentName}</CardTitle>
-                                <CardDescription>תלמיד/ה</CardDescription>
+                                <CardDescription>{t('studentRole' as any) || 'תלמיד/ה'}</CardDescription>
                             </div>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle>היסטוריית אישורים</CardTitle>
+                            <CardTitle>{t('history')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {renderApprovalHistory()}
@@ -584,7 +589,7 @@ export default function FormDetailsPage() {
                     {form.teacherComment && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>הערת המורה</CardTitle>
+                                <CardTitle>{t('teacherComment')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm italic">"{form.teacherComment}"</p>
@@ -594,7 +599,7 @@ export default function FormDetailsPage() {
                     {form.ministryComment && (
                         <Card className="border-purple-300 bg-purple-50/50">
                             <CardHeader>
-                                <CardTitle className="text-purple-800">הערת משרד החינוך</CardTitle>
+                                <CardTitle className="text-purple-800">{t('ministryComment')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm italic text-purple-700">"{form.ministryComment}"</p>
@@ -604,7 +609,7 @@ export default function FormDetailsPage() {
                     {form.signatureUrl && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>חתימה דיגיטלית</CardTitle>
+                                <CardTitle>{t('digitalSignature')}</CardTitle>
                             </CardHeader>
                             <CardContent className='flex justify-center items-center p-4 border-dashed border-2 rounded-lg bg-muted/50'>
                                 <img src={form.signatureUrl} alt="Digital Signature" className='h-24' />
@@ -617,9 +622,9 @@ export default function FormDetailsPage() {
             <AlertDialog open={isSignatureDialogOpen} onOpenChange={setSignatureDialogOpen}>
                 <AlertDialogContent dir="rtl" className="sm:max-w-2xl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>חתימה דיגיטלית לאישור הטופס</AlertDialogTitle>
+                        <AlertDialogTitle>{t('signatureDialogTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            אנא חתום/י בתיבה למטה כדי לאשר סופית את הטופס. החתימה תצורף למסמך.
+                            {t('signatureDialogDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="relative w-full aspect-[3/1] rounded-lg border bg-background">
@@ -630,12 +635,12 @@ export default function FormDetailsPage() {
                         />
                         <Button variant="ghost" size="icon" className="absolute top-2 left-2" onClick={clearSignature}>
                             <Trash className="h-4 w-4 text-destructive" />
-                            <span className="sr-only">נקה חתימה</span>
+                            <span className="sr-only">{t('clearSignature')}</span>
                         </Button>
                     </div>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>ביטול</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmApproval}>אישור וחתימה</AlertDialogAction>
+                        <AlertDialogCancel>{t('labels.cancel' as any) || 'ביטול'}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmApproval}>{t('approveAndSign')}</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -643,19 +648,19 @@ export default function FormDetailsPage() {
             <AlertDialog open={isMinistryRejectionDialogOpen} onOpenChange={setMinistryRejectionDialogOpen}>
                 <AlertDialogContent dir="rtl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>דרישה לתיקונים</AlertDialogTitle>
+                        <AlertDialogTitle>{t('ministryChangesTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            נא לפרט את הסיבה להחזרת הטופס לתיקונים. ההערה תוצג למנהל הקונסרבטוריון.
+                            {t('ministryChangesDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <Textarea
-                        placeholder="פרט את הסיבות כאן..."
+                        placeholder={t('labels.reasonPlaceholder' as any) || "פרט את הסיבות כאן..."}
                         value={ministryRejectionReason}
                         onChange={(e) => setMinistryRejectionReason(e.target.value)}
                     />
                     <AlertDialogFooter>
-                        <AlertDialogCancel>ביטול</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleMinistryRequestChanges}>שלח דרישה לתיקונים</AlertDialogAction>
+                        <AlertDialogCancel>{t('labels.cancel' as any) || 'ביטול'}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleMinistryRequestChanges}>{t('sendChangesRequest')}</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

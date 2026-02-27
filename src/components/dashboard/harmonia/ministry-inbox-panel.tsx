@@ -9,6 +9,15 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, XCircle, FileSignature, AlertCircle, Clock, BookOpen, Mic, Award, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
+import { he, enUS, ru, arSA } from 'date-fns/locale';
+import { useTranslations, useLocale } from 'next-intl';
+
+const dateLocales: Record<string, any> = {
+    he: he,
+    en: enUS,
+    ru: ru,
+    ar: arSA,
+};
 
 type MinistryForm = {
     id: string;
@@ -29,6 +38,11 @@ const MOCK_FORMS: MinistryForm[] = [
 ];
 
 export function MinistryInboxPanel() {
+    const t = useTranslations('Ministry');
+    const tCommon = useTranslations('Common');
+    const locale = useLocale();
+    const dateLocale = dateLocales[locale] || he;
+
     const { toast } = useToast();
     const [forms, setForms] = useState<MinistryForm[]>(MOCK_FORMS);
     const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
@@ -43,7 +57,10 @@ export function MinistryInboxPanel() {
     const handleAction = (formId: string, newStatus: MinistryForm['status']) => {
         setForms(prev => prev.map(f => f.id === formId ? { ...f, status: newStatus } : f));
 
-        const statusMsg = newStatus === 'APPROVED' ? 'הטופס אושר בהצלחה' : newStatus === 'REJECTED' ? 'הטופס נדחה' : 'נשלחה בקשה לתיקונים';
+        let statusMsg = '';
+        if (newStatus === 'APPROVED') statusMsg = t('successApprove');
+        else if (newStatus === 'REJECTED') statusMsg = t('successReject');
+        else statusMsg = t('successNeedsChanges');
 
         toast({ title: statusMsg });
 
@@ -62,13 +79,7 @@ export function MinistryInboxPanel() {
     };
 
     const getTypeName = (type: string) => {
-        switch (type) {
-            case 'EXAM_REGISTRATION': return 'רישום למבחן שלב';
-            case 'COMPOSITION_SUBMISSION': return 'הגשת יצירה מקורית';
-            case 'RECITAL': return 'אישור תוכנית רסיטל';
-            case 'SCHOLARSHIP': return 'בקשת מלגה (פיקוח)';
-            default: return 'טופס משרד החינוך';
-        }
+        return t(`formTypes.${type}`);
     };
 
     return (
@@ -79,15 +90,15 @@ export function MinistryInboxPanel() {
                 <CardHeader className="bg-purple-50/50 pb-2">
                     <CardTitle className="text-purple-900 text-lg flex items-center gap-2">
                         <FileSignature className="w-5 h-5" />
-                        תיבת אישורים
+                        {t('inboxTitle')}
                         {pendingForms.length > 0 && <Badge variant="destructive" className="ml-auto rounded-full">{pendingForms.length}</Badge>}
                     </CardTitle>
                 </CardHeader>
                 <Tabs defaultValue="pending" className="flex-1 flex flex-col">
                     <div className="px-4 border-b">
                         <TabsList className="w-full grid grid-cols-2 bg-muted/50 mb-2">
-                            <TabsTrigger value="pending">ממתינים ({pendingForms.length})</TabsTrigger>
-                            <TabsTrigger value="processed">טופלו ({processedForms.length})</TabsTrigger>
+                            <TabsTrigger value="pending">{t('pending', { count: pendingForms.length })}</TabsTrigger>
+                            <TabsTrigger value="processed">{t('processed', { count: processedForms.length })}</TabsTrigger>
                         </TabsList>
                     </div>
 
@@ -97,7 +108,7 @@ export function MinistryInboxPanel() {
                                 <button key={form.id} onClick={() => setSelectedFormId(form.id)} className={`w-full text-right p-3 rounded-lg border text-sm transition-colors ${selectedFormId === form.id ? 'bg-purple-50 border-purple-300 shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}>
                                     <div className="flex justify-between items-start mb-1">
                                         <span className="font-semibold">{form.studentName}</span>
-                                        {form.urgency === 'HIGH' && <Badge variant="destructive" className="text-[10px] px-1 h-4">דחוף</Badge>}
+                                        {form.urgency === 'HIGH' && <Badge variant="destructive" className="text-[10px] px-1 h-4">{t('urgent')}</Badge>}
                                     </div>
                                     <div className="text-muted-foreground text-xs flex items-center gap-1 mb-2">
                                         {getTypeIcon(form.type)} {getTypeName(form.type)}
@@ -107,7 +118,7 @@ export function MinistryInboxPanel() {
                                     </div>
                                 </button>
                             ))}
-                            {pendingForms.length === 0 && <div className="text-center p-6 text-muted-foreground text-sm">אין טפסים הממתינים לאישור פיקוח.</div>}
+                            {pendingForms.length === 0 && <div className="text-center p-6 text-muted-foreground text-sm">{t('emptyInbox')}</div>}
                         </TabsContent>
 
                         <TabsContent value="processed" className="mt-0 space-y-2">
@@ -116,7 +127,7 @@ export function MinistryInboxPanel() {
                                     <div className="flex justify-between items-start mb-1">
                                         <span className="font-medium">{form.studentName}</span>
                                         <Badge variant={form.status === 'APPROVED' ? 'default' : 'secondary'} className={`text-[10px] px-1 h-4 ${form.status === 'APPROVED' ? 'bg-green-600' : form.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                            {form.status === 'APPROVED' ? 'אושר' : form.status === 'REJECTED' ? 'נדחה' : 'הוחזר לתיקונים'}
+                                            {form.status === 'APPROVED' ? t('approved') : form.status === 'REJECTED' ? t('rejected') : t('returned')}
                                         </Badge>
                                     </div>
                                     <div className="text-xs text-muted-foreground">{getTypeName(form.type)}</div>
@@ -143,10 +154,10 @@ export function MinistryInboxPanel() {
                                     <CardDescription className="text-base mt-1">{activeForm.conservatorium}</CardDescription>
                                 </div>
                                 <div className="text-left text-sm text-muted-foreground">
-                                    <div className="flex items-center justify-end gap-1 mb-1"><Clock className="w-3 h-3" /> הוגש ב: {format(new Date(activeForm.submittedAt), 'dd/MM/yyyy')}</div>
+                                    <div className="flex items-center justify-end gap-1 mb-1"><Clock className="w-3 h-3" /> {t('submittedDate')} {format(new Date(activeForm.submittedAt), 'dd/MM/yyyy')}</div>
                                     {activeForm.status !== 'SUBMITTED' && (
                                         <Badge className={`mt-2 ${activeForm.status === 'APPROVED' ? 'bg-green-600' : activeForm.status === 'REJECTED' ? 'bg-red-600' : 'bg-yellow-600'}`}>
-                                            סטטוס קובע: {activeForm.status}
+                                            {t('currentStatus')} {t(activeForm.status === 'APPROVED' ? 'approved' : activeForm.status === 'REJECTED' ? 'rejected' : 'returned')}
                                         </Badge>
                                     )}
                                 </div>
@@ -157,14 +168,14 @@ export function MinistryInboxPanel() {
                             <div className="max-w-xl space-y-8">
 
                                 <section>
-                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">פרטי הגשה</h3>
+                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">{t('submissionDetails')}</h3>
                                     <div className="bg-muted/30 p-4 rounded-lg text-sm leading-relaxed border border-dashed">
                                         {activeForm.details}
                                     </div>
                                 </section>
 
                                 <section>
-                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">מסמכים מצורפים</h3>
+                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">{t('attachments')}</h3>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="border rounded-lg p-3 flex  items-center gap-3 bg-card hover:bg-muted/50 cursor-pointer transition-colors">
                                             <div className="bg-red-100 text-red-600 p-2 rounded"><FileText className="w-5 h-5" /></div>
@@ -186,15 +197,15 @@ export function MinistryInboxPanel() {
                                 </section>
 
                                 <section>
-                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">חתימות מאשרים (קונסרבטוריון)</h3>
+                                    <h3 className="font-semibold text-lg border-b pb-2 mb-4">{t('signatures')}</h3>
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between p-3 bg-green-50/50 border border-green-100 rounded-lg">
-                                            <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-600" /> <span className="font-medium text-sm">מורה מגיש</span></div>
-                                            <span className="text-xs text-muted-foreground italic">נחתם דיגיטלית ב-{format(new Date(activeForm.submittedAt), 'dd/MM')}</span>
+                                            <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-600" /> <span className="font-medium text-sm">{t('teacher')}</span></div>
+                                            <span className="text-xs text-muted-foreground italic">{t('digitallySigned', { date: format(new Date(activeForm.submittedAt), 'dd/MM', { locale: dateLocale }) })}</span>
                                         </div>
                                         <div className="flex items-center justify-between p-3 bg-green-50/50 border border-green-100 rounded-lg">
-                                            <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-600" /> <span className="font-medium text-sm">מנהל קונסרבטוריון</span></div>
-                                            <span className="text-xs text-muted-foreground italic">נחתם דיגיטלית ב-{format(new Date(activeForm.submittedAt), 'dd/MM')}</span>
+                                            <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-600" /> <span className="font-medium text-sm">{t('manager')}</span></div>
+                                            <span className="text-xs text-muted-foreground italic">{t('digitallySigned', { date: format(new Date(activeForm.submittedAt), 'dd/MM', { locale: dateLocale }) })}</span>
                                         </div>
                                     </div>
                                 </section>
@@ -209,31 +220,31 @@ export function MinistryInboxPanel() {
                                     <div className="flex items-center justify-between w-full">
                                         <div className="flex gap-2">
                                             <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50" onClick={() => setIsRejectionBoxOpen(true)}>
-                                                <XCircle className="w-4 h-4 mr-2" /> ביטול דחייה / תיקונים
+                                                <XCircle className="w-4 h-4 mr-2" /> {t('cancelRejection')}
                                             </Button>
                                         </div>
                                         <Button className="bg-green-600 hover:bg-green-700 font-bold px-8" onClick={() => handleAction(activeForm.id, 'APPROVED')}>
-                                            <CheckCircle className="w-4 h-4 mr-2" /> אישור הפיקוח (משרד החינוך)
+                                            <CheckCircle className="w-4 h-4 mr-2" /> {t('ministryApprove')}
                                         </Button>
                                     </div>
                                 ) : (
                                     <div className="w-full space-y-4 animate-in slide-in-from-bottom-2">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-red-900 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> סיבת הדחייה / דרישה לתיקונים:</label>
+                                            <label className="text-sm font-semibold text-red-900 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {t('rejectionReasonLabel')}</label>
                                             <Textarea
-                                                placeholder="לדוגמה: נא לצרף את תווים מפורטים בפורמט PDF כתקנית..."
+                                                placeholder={t('rejectionPlaceholder')}
                                                 value={rejectionReason}
                                                 onChange={(e) => setRejectionReason(e.target.value)}
                                                 className="border-red-200 focus-visible:ring-red-500"
                                             />
                                         </div>
                                         <div className="flex justify-end gap-2">
-                                            <Button variant="ghost" onClick={() => setIsRejectionBoxOpen(false)}>ביטול</Button>
+                                            <Button variant="ghost" onClick={() => setIsRejectionBoxOpen(false)}>{tCommon('cancel')}</Button>
                                             <Button variant="outline" className="text-yellow-700 border-yellow-300 hover:bg-yellow-50" onClick={() => handleAction(activeForm.id, 'NEEDS_CHANGES')} disabled={!rejectionReason}>
-                                                החזר לתיקונים
+                                                {t('submitReturn')}
                                             </Button>
                                             <Button variant="destructive" onClick={() => handleAction(activeForm.id, 'REJECTED')} disabled={!rejectionReason}>
-                                                דחייה סופית
+                                                {t('submitReject')}
                                             </Button>
                                         </div>
                                     </div>
@@ -244,8 +255,8 @@ export function MinistryInboxPanel() {
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
                         <FileSignature className="h-16 w-16 mb-4 opacity-20" />
-                        <h3 className="text-xl font-medium text-foreground mb-2">תיבת הפניות של הפיקוח</h3>
-                        <p className="max-w-md mx-auto">כאן ירוכזו כל הטפסים והבקשות שהוגשו על ידי הקונסרבטוריונים ודורשים חתימה או טיפול של משרד החינוך.</p>
+                        <h3 className="text-xl font-medium text-foreground mb-2">{t('emptyStateTitle')}</h3>
+                        <p className="max-w-md mx-auto">{t('emptyStateDesc')}</p>
                     </div>
                 )}
             </Card>

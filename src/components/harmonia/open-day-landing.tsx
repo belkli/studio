@@ -9,7 +9,7 @@ import { Calendar, Clock, Guitar, Music, Users, CheckCircle2 } from 'lucide-reac
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { instruments } from '@/lib/data';
+import { instruments, conservatoriums } from '@/lib/data';
 import { format, add, setHours, setMinutes, isBefore } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -38,8 +38,12 @@ export function OpenDayLandingPage() {
 
     const [selectedTime, setSelectedTime] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [cityFilter, setCityFilter] = useState<string>('all');
+    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
-    const activeEvent = useMemo(() => mockOpenDayEvents.find(e => e.isActive), [mockOpenDayEvents]);
+    const activeEvents = useMemo(() => mockOpenDayEvents.filter(e => e.isActive), [mockOpenDayEvents]);
+    const activeEvent = useMemo(() => activeEvents.find(e => e.id === selectedEventId), [activeEvents, selectedEventId]);
+    const nextEvent = useMemo(() => activeEvents.length > 0 ? [...activeEvents].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] : null, [activeEvents]);
 
     const availableSlots = useMemo(() => {
         if (!activeEvent) return [];
@@ -85,10 +89,10 @@ export function OpenDayLandingPage() {
         setIsSubmitted(true);
     };
 
-    if (!activeEvent) {
-        return <div className="text-center py-20">כרגע אין יום פתוח מתוכנן. אנא בדקו שוב בקרוב!</div>;
+    if (activeEvents.length === 0) {
+        return <div className="text-center py-20">כרגע אין ימים פתוחים מתוכננים. אנא בדקו שוב בקרוב!</div>;
     }
-    
+
     if (isSubmitted) {
         return (
             <Card className="w-full max-w-2xl mx-auto my-20 shadow-sm text-center">
@@ -113,19 +117,21 @@ export function OpenDayLandingPage() {
                 <div className="relative z-10 p-4 space-y-4">
                     <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{t('heroTitle')}</h1>
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">{t('heroSubtitle')}</p>
-                    <p className="font-semibold text-xl bg-primary/20 backdrop-blur-sm rounded-full px-4 py-1 inline-block">
-                        {format(new Date(activeEvent.date), 'EEEE, dd MMMM yyyy', { locale: he })}
-                    </p>
+                    {nextEvent && (
+                        <p className="font-semibold text-xl bg-primary/20 backdrop-blur-sm rounded-full px-4 py-1 inline-block">
+                            חל מ- {format(new Date(nextEvent.date), 'EEEE, dd MMMM yyyy', { locale: he })}
+                        </p>
+                    )}
                     <div className="pt-4">
                         <Button size="lg" asChild>
-                           <a href="#register">{t('registerNow')}</a>
+                            <a href="#register">{t('registerNow')}</a>
                         </Button>
                     </div>
                 </div>
             </section>
             <section className="py-12 md:py-20 bg-muted/30">
                 <div className="container px-4 md:px-6">
-                     <div className="text-center space-y-4 mb-12">
+                    <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('featuresTitle')}</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
@@ -143,41 +149,108 @@ export function OpenDayLandingPage() {
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('formSubtitle')}</p>
                     </div>
 
-                    <Card className="max-w-4xl mx-auto">
-                        <form onSubmit={handleSubmit}>
-                            <CardContent className="p-6 grid md:grid-cols-2 gap-8">
-                                <div className="space-y-6">
-                                    <h3 className="font-semibold text-lg">{t('registrationDetails')}</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label htmlFor="familyName">{t('familyName')}</Label><Input id="familyName" name="familyName" required /></div>
-                                        <div className="space-y-2"><Label htmlFor="parentEmail">{t('parentEmail')}</Label><Input id="parentEmail" name="parentEmail" type="email" required /></div>
-                                    </div>
-                                    <div className="space-y-2"><Label htmlFor="parentPhone">{t('parentPhone')}</Label><Input id="parentPhone" name="parentPhone" type="tel" required /></div>
-                                    <Separator />
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label htmlFor="childName">{t('childName')}</Label><Input id="childName" name="childName" required /></div>
-                                        <div className="space-y-2"><Label htmlFor="childAge">{t('childAge')}</Label><Input id="childAge" name="childAge" type="number" required /></div>
-                                    </div>
-                                    <div className="space-y-2"><Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label><Select name="instrumentInterest" required><SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
+                    {!activeEvent ? (
+                        <div className="space-y-6 max-w-5xl mx-auto">
+                            <div className="flex justify-end mb-4">
+                                <Select dir="rtl" value={cityFilter} onValueChange={setCityFilter}>
+                                    <SelectTrigger className="w-[300px]">
+                                        <SelectValue placeholder="סינון לפי סניף" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">כל הסניפים והקונסרבטוריונים</SelectItem>
+                                        {conservatoriums.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {activeEvents.filter(e => cityFilter === 'all' || e.conservatoriumId === cityFilter).map(event => {
+                                    const cons = conservatoriums.find(c => c.id === event.conservatoriumId);
+                                    return (
+                                        <Card key={event.id} className="cursor-pointer hover:border-primary transition-colors flex flex-col" onClick={() => setSelectedEventId(event.id)}>
+                                            <CardHeader>
+                                                <CardTitle className="text-lg">{event.name}</CardTitle>
+                                                <CardDescription>{cons?.name}</CardDescription>
+                                            </CardHeader>
+                                            <CardContent className="flex-1">
+                                                <div className="flex items-center text-sm text-muted-foreground mb-2">
+                                                    <Calendar className="ml-2 h-4 w-4" />
+                                                    {format(new Date(event.date), 'dd/MM/yyyy')}
+                                                </div>
+                                                <div className="flex items-center text-sm text-muted-foreground">
+                                                    <Clock className="ml-2 h-4 w-4" />
+                                                    {event.startTime} - {event.endTime}
+                                                </div>
+                                            </CardContent>
+                                            <CardFooter className="mt-auto">
+                                                <Button className="w-full" variant="outline" onClick={() => setSelectedEventId(event.id)}>
+                                                    בחירת יום פתוח
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    );
+                                })}
+                            </div>
+                            {activeEvents.filter(e => cityFilter === 'all' || e.conservatoriumId === cityFilter).length === 0 && (
+                                <div className="text-center py-12 text-muted-foreground bg-muted/20 border rounded-lg">
+                                    <p>לא נמצאו ימים פתוחים לסניף זה.</p>
                                 </div>
-                                <div className="space-y-6">
-                                    <h3 className="font-semibold text-lg">{t('selectTime')}</h3>
-                                    <RadioGroup value={selectedTime} onValueChange={setSelectedTime} className="max-h-96 overflow-y-auto p-1 border rounded-md">
-                                        {availableSlots.length > 0 ? availableSlots.map(slot => (
-                                            <Label key={slot} htmlFor={slot} className="flex items-center p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
-                                                <RadioGroupItem value={slot} id={slot} className="hidden" />
-                                                <Clock className="w-4 h-4 me-3" />
-                                                <span className="font-mono text-lg">{format(new Date(slot), 'HH:mm')}</span>
-                                            </Label>
-                                        )) : <p className="text-center p-8 text-muted-foreground">{t('noSlots')}</p>}
-                                    </RadioGroup>
-                                </div>
-                            </CardContent>
-                            <CardFooter>
-                                <Button type="submit" size="lg" className="w-full">{t('submit')}</Button>
-                            </CardFooter>
-                        </form>
-                    </Card>
+                            )}
+                        </div>
+                    ) : (
+                        <Card className="max-w-4xl mx-auto relative">
+                            <Button
+                                variant="ghost"
+                                className="absolute right-4 top-4 text-muted-foreground"
+                                onClick={() => {
+                                    setSelectedEventId(null);
+                                    setSelectedTime('');
+                                }}
+                            >
+                                חזרה לרשימה
+                            </Button>
+                            <form onSubmit={handleSubmit}>
+                                <CardHeader className="text-center border-b mb-6 pb-6 pt-12">
+                                    <CardTitle>
+                                        הרשמה ליום הפתוח: {activeEvent.name} <br />
+                                        <span className="text-primary text-xl mt-2 block">
+                                            {conservatoriums.find(c => c.id === activeEvent.conservatoriumId)?.name}
+                                        </span>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-6 grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-6">
+                                        <h3 className="font-semibold text-lg">{t('registrationDetails')}</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2"><Label htmlFor="familyName">{t('familyName')}</Label><Input id="familyName" name="familyName" required /></div>
+                                            <div className="space-y-2"><Label htmlFor="parentEmail">{t('parentEmail')}</Label><Input id="parentEmail" name="parentEmail" type="email" required /></div>
+                                        </div>
+                                        <div className="space-y-2"><Label htmlFor="parentPhone">{t('parentPhone')}</Label><Input id="parentPhone" name="parentPhone" type="tel" required /></div>
+                                        <Separator />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2"><Label htmlFor="childName">{t('childName')}</Label><Input id="childName" name="childName" required /></div>
+                                            <div className="space-y-2"><Label htmlFor="childAge">{t('childAge')}</Label><Input id="childAge" name="childAge" type="number" required /></div>
+                                        </div>
+                                        <div className="space-y-2"><Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label><Select name="instrumentInterest" required><SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
+                                    </div>
+                                    <div className="space-y-6">
+                                        <h3 className="font-semibold text-lg">{t('selectTime')}</h3>
+                                        <RadioGroup value={selectedTime} onValueChange={setSelectedTime} className="max-h-96 overflow-y-auto p-1 border rounded-md">
+                                            {availableSlots.length > 0 ? availableSlots.map(slot => (
+                                                <Label key={slot} htmlFor={slot} className="flex items-center p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
+                                                    <RadioGroupItem value={slot} id={slot} className="hidden" />
+                                                    <Clock className="w-4 h-4 me-3" />
+                                                    <span className="font-mono text-lg">{format(new Date(slot), 'HH:mm')}</span>
+                                                </Label>
+                                            )) : <p className="text-center p-8 text-muted-foreground">{t('noSlots')}</p>}
+                                        </RadioGroup>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button type="submit" size="lg" className="w-full">{t('submit')}</Button>
+                                </CardFooter>
+                            </form>
+                        </Card>
+                    )}
                 </div>
             </section>
         </>

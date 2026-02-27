@@ -15,9 +15,10 @@ const getStatusConfig = (t: any): Record<FormStatus, { className: string; label:
 
 interface StatusBadgeProps extends Omit<BadgeProps, 'variant' | 'children'> {
     status: FormStatus;
+    label?: string;
 }
 
-export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
+export function StatusBadge({ status, label, className, ...props }: StatusBadgeProps) {
     const t = useTranslations('Dashboard.status');
     const config = getStatusConfig(t)[status];
 
@@ -27,7 +28,7 @@ export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
 
     return (
         <Badge variant="outline" className={cn("border-transparent", config.className, className)} {...props}>
-            {config.label}
+            {label || config.label}
         </Badge>
     );
 }

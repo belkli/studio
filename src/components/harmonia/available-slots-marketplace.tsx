@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { DayOfWeek, TimeRange, User, Room, EmptySlot } from '@/lib/types';
 import { addDays, getDay, startOfHour, isAfter, isSameDay, setHours, setMinutes } from 'date-fns';
-import { instruments } from '@/lib/data';
+import { instruments, conservatoriums } from '@/lib/data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SlotPromotionCard } from './slot-promotion-card';
 import { Loader2 } from 'lucide-react';
@@ -32,7 +32,7 @@ function getDemandLevel(date: Date): SlotDemandLevel {
 
 export function AvailableSlotsMarketplace() {
     const { users, mockLessons } = useAuth();
-    const [filters, setFilters] = useState({ instrument: 'all', duration: 'all' });
+    const [filters, setFilters] = useState({ instrument: 'all', duration: 'all', conservatoriumId: 'all' });
     const [isLoading, setIsLoading] = useState(true);
 
     const emptySlots = useMemo(() => {
@@ -110,7 +110,8 @@ export function AvailableSlotsMarketplace() {
         return emptySlots.filter(slot => {
             const instrumentMatch = filters.instrument === 'all' || slot.instrument === filters.instrument;
             const durationMatch = filters.duration === 'all' || slot.durationMinutes === parseInt(filters.duration);
-            return instrumentMatch && durationMatch;
+            const conservatoriumMatch = filters.conservatoriumId === 'all' || slot.teacher.conservatoriumId === filters.conservatoriumId;
+            return instrumentMatch && durationMatch && conservatoriumMatch;
         });
     }, [emptySlots, filters]);
 
@@ -132,6 +133,13 @@ export function AvailableSlotsMarketplace() {
             <div className="flex flex-col md:flex-row gap-4 items-center p-4 rounded-lg border bg-card">
                 <h3 className="font-semibold text-lg flex-shrink-0">סינון תוצאות</h3>
                 <div className="flex flex-wrap items-center gap-4">
+                    <Select dir="rtl" value={filters.conservatoriumId} onValueChange={(v) => handleFilterChange('conservatoriumId', v)}>
+                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="כל הקונסרבטוריונים" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">כל הקונסרבטוריונים</SelectItem>
+                            {conservatoriums.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
                     <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}>
                         <SelectTrigger className="w-[180px]"><SelectValue placeholder="כל הכלים" /></SelectTrigger>
                         <SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>

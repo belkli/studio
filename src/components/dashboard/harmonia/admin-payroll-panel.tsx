@@ -1,8 +1,3 @@
-/**
- * @fileoverview Admin-facing dashboard for managing teacher payroll.
- * This component displays all payroll summaries, organized into tabs by their status (Draft, Approved, Paid).
- * It allows administrators to review, approve, and mark payrolls as paid, streamlining the entire monthly process.
- */
 'use client';
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
@@ -14,17 +9,19 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { he, enUS, ru, arSA } from 'date-fns/locale';
 import { Check, Send, Download, Banknote, FileSpreadsheet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { EmptyState } from '@/components/ui/empty-state';
+import { useTranslations, useLocale } from 'next-intl';
 
-const statusTranslations: Record<PayrollStatus, string> = {
-    DRAFT: 'טיוטה',
-    APPROVED: 'מאושר',
-    PAID: 'שולם',
+const dateLocales: Record<string, any> = {
+    he: he,
+    en: enUS,
+    ru: ru,
+    ar: arSA,
 };
 
 /**
@@ -33,16 +30,19 @@ const statusTranslations: Record<PayrollStatus, string> = {
  * Provides actions (Approve, Mark as Paid, Export) based on the payroll status.
  */
 const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
+    const t = useTranslations('Payroll');
+    const locale = useLocale();
+    const dateLocale = dateLocales[locale] || he;
     const { updatePayrollStatus } = useAuth();
     const { toast } = useToast();
 
     const handleApprove = (id: string, teacherName: string) => {
         updatePayrollStatus(id, 'APPROVED');
-        toast({ title: `השכר של ${teacherName} אושר` });
+        toast({ title: t('teacherApproveSuccess', { name: teacherName }) });
     }
     const handleMarkAsPaid = (id: string, teacherName: string) => {
         updatePayrollStatus(id, 'PAID');
-        toast({ title: `השכר של ${teacherName} סומן כ"שולם"` });
+        toast({ title: t('teacherPaidSuccess', { name: teacherName }) });
     }
 
     /**
@@ -58,15 +58,15 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         // PDF Header
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(20);
-        doc.text(rtl(`דוח שכר - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
+        doc.text(rtl(`${t('pdf.title')} - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
 
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
-        doc.text(rtl(`תקופה: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
-        doc.text(rtl(`סטטוס: ${statusTranslations[payroll.status]}`), pageWidth - 15, 42, { align: 'right' });
+        doc.text(rtl(`${t('pdf.period')}: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
+        doc.text(rtl(`${t('pdf.status')}: ${t(payroll.status.toLowerCase() as any)}`), pageWidth - 15, 42, { align: 'right' });
 
         // Table of completed lessons
-        const head = [[rtl('סכום'), rtl('תעריף'), rtl('משך (דקות)'), rtl('תלמיד/ה'), rtl('תאריך')]];
+        const head = [[rtl(t('pdf.amount')), rtl(t('pdf.rate')), rtl(t('pdf.duration')), rtl(t('pdf.student')), rtl(t('pdf.date'))]];
         const body = payroll.completedLessons.map(lesson => [
             rtl(`₪${lesson.subtotal.toFixed(2)}`),
             rtl(`₪${lesson.rate}`),
@@ -95,8 +95,8 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         // Totals
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
-        doc.text(rtl(`שעות סה"כ: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
-        doc.text(rtl(`שכר ברוטו: ₪${payroll.grossPay.toLocaleString()}`), pageWidth - 15, finalY + 25, { align: 'right' });
+        doc.text(rtl(`${t('pdf.totalHours')}: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
+        doc.text(rtl(`${t('pdf.grossPay')}: ₪${payroll.grossPay.toLocaleString()}`), pageWidth - 15, finalY + 25, { align: 'right' });
 
         doc.save(`payroll_${payroll.teacherId}_${payroll.periodStart.slice(0, 7)}.pdf`);
     }
@@ -105,8 +105,8 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
         return (
             <EmptyState
                 icon={Banknote}
-                title="אין דוחות שכר"
-                description="לא קיימים דוחות שכר במצב זה."
+                title={t('emptyTitle')}
+                description={t('emptyDesc')}
                 className="py-12"
             />
         );
@@ -125,33 +125,33 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
                             <div className="text-right">
                                 <p className="font-semibold">{payroll.teacherName}</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {format(new Date(payroll.periodStart), 'MMMM yyyy', { locale: he })}
+                                    {format(new Date(payroll.periodStart), 'MMMM yyyy', { locale: dateLocale })}
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-6 me-4">
                             <div>
-                                <span className="text-sm text-muted-foreground">שעות: </span>
+                                <span className="text-sm text-muted-foreground">{t('hours')}: </span>
                                 <span className="font-bold">{payroll.totalHours.toFixed(2)}</span>
                             </div>
                             <div>
-                                <span className="text-sm text-muted-foreground">שכר ברוטו: </span>
+                                <span className="text-sm text-muted-foreground">{t('grossPay')}: </span>
                                 <span className="font-bold text-green-600">₪{payroll.grossPay.toLocaleString()}</span>
                             </div>
                             <div className="flex gap-2">
                                 {payroll.status === 'DRAFT' && (
                                     <Button size="sm" onClick={(e) => { e.stopPropagation(); handleApprove(payroll.id, payroll.teacherName); }}>
-                                        <Check className="ms-2 h-4 w-4" /> אשר
+                                        <Check className="ms-2 h-4 w-4" /> {t('approve')}
                                     </Button>
                                 )}
                                 {payroll.status === 'APPROVED' && (
                                     <Button size="sm" onClick={(e) => { e.stopPropagation(); handleMarkAsPaid(payroll.id, payroll.teacherName); }}>
-                                        <Send className="ms-2 h-4 w-4" /> סמן כשולם
+                                        <Send className="ms-2 h-4 w-4" /> {t('markAsPaid')}
                                     </Button>
                                 )}
                                 {payroll.status === 'PAID' && (
                                     <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleExport(payroll); }}>
-                                        <Download className="ms-2 h-4 w-4" /> יצא
+                                        <Download className="ms-2 h-4 w-4" /> {t('export')}
                                     </Button>
                                 )}
                             </div>
@@ -159,15 +159,15 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
                     </AccordionTrigger>
                     <AccordionContent className="bg-muted/20">
                         <div className="p-4">
-                            <h4 className="font-semibold mb-2">פירוט שיעורים ({payroll.completedLessons.length})</h4>
+                            <h4 className="font-semibold mb-2">{t('lessonDetails', { count: payroll.completedLessons.length })}</h4>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>תאריך</TableHead>
-                                        <TableHead>תלמיד/ה</TableHead>
-                                        <TableHead>משך (דקות)</TableHead>
-                                        <TableHead>תעריף</TableHead>
-                                        <TableHead className="text-left">סכום</TableHead>
+                                        <TableHead>{t('pdf.date')}</TableHead>
+                                        <TableHead>{t('pdf.student')}</TableHead>
+                                        <TableHead>{t('pdf.duration')}</TableHead>
+                                        <TableHead>{t('pdf.rate')}</TableHead>
+                                        <TableHead className="text-left">{t('pdf.amount')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -195,6 +195,7 @@ const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
  * based on their status, allowing for a clear and manageable workflow.
  */
 export function AdminPayrollPanel() {
+    const t = useTranslations('Payroll');
     const { mockPayrolls } = useAuth();
 
     const draftPayrolls = useMemo(() => mockPayrolls.filter(p => p.status === 'DRAFT'), [mockPayrolls]);
@@ -205,11 +206,19 @@ export function AdminPayrollPanel() {
 
     const handleHilanExport = (payrollsToExport: PayrollSummary[]) => {
         if (payrollsToExport.length === 0) {
-            toast({ title: 'אין נתונים לייצוא', variant: 'destructive' });
+            toast({ title: t('noDataExport'), variant: 'destructive' });
             return;
         }
 
-        const headers = ['מספר עובד', 'שם עובד', 'שעות עבודה', 'שכר ברוטו', 'תחילת מחזור', 'סוף מחזור', 'קוד רכיב חילן'];
+        const headers = [
+            t('csv.employeeId'),
+            t('csv.employeeName'),
+            t('csv.workHours'),
+            t('csv.grossPay'),
+            t('csv.periodStart'),
+            t('csv.periodEnd'),
+            t('csv.hilanCode')
+        ];
         const rows = payrollsToExport.map(p => [
             p.teacherId, // In reality, this would be the ID number (Tz)
             p.teacherName,
@@ -231,27 +240,27 @@ export function AdminPayrollPanel() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast({ title: 'קובץ חילן/מירב יוצר בהצלחה' });
+        toast({ title: t('hilanSuccess') });
     };
 
     return (
         <Tabs defaultValue="drafts" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="drafts">
-                    טיוטות
+                    {t('drafts')}
                     {draftPayrolls.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">{draftPayrolls.length}</span>}
                 </TabsTrigger>
                 <TabsTrigger value="approved">
-                    ממתין לתשלום
+                    {t('pendingPayment')}
                     {approvedPayrolls.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full">{approvedPayrolls.length}</span>}
                 </TabsTrigger>
-                <TabsTrigger value="paid">שולם</TabsTrigger>
+                <TabsTrigger value="paid">{t('paid')}</TabsTrigger>
             </TabsList>
             <Card className="mt-4">
                 <TabsContent value="drafts" className="m-0">
                     <CardHeader>
-                        <CardTitle>דוחות שכר בטיוטה</CardTitle>
-                        <CardDescription>דוחות שכר שנוצרו אוטומטית וממתינים לבדיקה ואישור שלך.</CardDescription>
+                        <CardTitle>{t('draftTitle')}</CardTitle>
+                        <CardDescription>{t('draftDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <PayrollTable payrolls={draftPayrolls} />
@@ -260,12 +269,12 @@ export function AdminPayrollPanel() {
                 <TabsContent value="approved" className="m-0">
                     <CardHeader className="flex flex-row items-start justify-between">
                         <div>
-                            <CardTitle>דוחות שאושרו</CardTitle>
-                            <CardDescription>דוחות אלו אושרו על ידך וממתינים לביצוע התשלום וסימון כ"שולם".</CardDescription>
+                            <CardTitle>{t('approvedTitle')}</CardTitle>
+                            <CardDescription>{t('approvedDesc')}</CardDescription>
                         </div>
                         {approvedPayrolls.length > 0 && (
                             <Button variant="outline" onClick={() => handleHilanExport(approvedPayrolls)}>
-                                <FileSpreadsheet className="me-2 h-4 w-4" /> ייצוא מרוכז למערכת שכר (חילן)
+                                <FileSpreadsheet className="me-2 h-4 w-4" /> {t('exportHilan')}
                             </Button>
                         )}
                     </CardHeader>
@@ -276,12 +285,12 @@ export function AdminPayrollPanel() {
                 <TabsContent value="paid" className="m-0">
                     <CardHeader className="flex flex-row items-start justify-between">
                         <div>
-                            <CardTitle>דוחות ששולמו</CardTitle>
-                            <CardDescription>היסטוריית דוחות שכר ששולמו החודש.</CardDescription>
+                            <CardTitle>{t('paidTitle')}</CardTitle>
+                            <CardDescription>{t('paidDesc')}</CardDescription>
                         </div>
                         {paidPayrolls.length > 0 && (
                             <Button variant="outline" onClick={() => handleHilanExport(paidPayrolls)}>
-                                <FileSpreadsheet className="me-2 h-4 w-4" /> ייצוא נתוני עבר (חילן)
+                                <FileSpreadsheet className="me-2 h-4 w-4" /> {t('exportPast')}
                             </Button>
                         )}
                     </CardHeader>

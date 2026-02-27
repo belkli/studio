@@ -1,7 +1,7 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { ArrowLeft } from "lucide-react";
 import { PricingSettings } from "@/components/dashboard/harmonia/pricing-settings";
 import { useTranslations } from "next-intl";

@@ -10,22 +10,26 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { Branch } from '@/lib/types';
 import { useEffect } from 'react';
-
-const branchSchema = z.object({
-  name: z.string().min(3, 'שם הסניף חייב להכיל לפחות 3 תווים.'),
-  address: z.string().min(5, 'כתובת חייבת להכיל לפחות 5 תווים.'),
-});
-
-type BranchFormData = z.infer<typeof branchSchema>;
+import { useTranslations } from 'next-intl';
 
 interface BranchEditDialogProps {
   branch?: Branch | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: BranchFormData, branchId?: string) => void;
+  onSave: (data: { name: string; address: string }, branchId?: string) => void;
 }
 
 export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchEditDialogProps) {
+  const t = useTranslations('Branches');
+  const tCommon = useTranslations('Common');
+
+  const branchSchema = z.object({
+    name: z.string().min(3, t('validation.nameMin', { min: 3 })),
+    address: z.string().min(5, t('validation.addressMin', { min: 5 })),
+  });
+
+  type BranchFormData = z.infer<typeof branchSchema>;
+
   const form = useForm<BranchFormData>({
     resolver: zodResolver(branchSchema),
     defaultValues: {
@@ -56,11 +60,11 @@ export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchE
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>{branch ? 'עריכת סניף' : 'הוספת סניף חדש'}</DialogTitle>
+          <DialogTitle>{branch ? t('editTitle') : t('addTitle')}</DialogTitle>
           <DialogDescription>
-            {branch ? 'עדכן את פרטי הסניף.' : 'הזן את פרטי הסניף החדש שברצונך להוסיף.'}
+            {branch ? t('editDesc') : t('addDesc')}
           </DialogDescription>
         </DialogHeader>
         <FormProvider {...form}>
@@ -70,9 +74,9 @@ export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchE
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>שם הסניף</FormLabel>
+                  <FormLabel>{t('branchName')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="לדוגמה: שלוחת נווה עוז" {...field} />
+                    <Input placeholder={t('namePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -83,9 +87,9 @@ export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchE
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>כתובת מלאה</FormLabel>
+                  <FormLabel>{t('fullAddress')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="לדוגמה: רחוב הכלניות 15, פתח תקווה" {...field} />
+                    <Input placeholder={t('addressPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,9 +97,9 @@ export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchE
             />
             <DialogFooter className="pt-4">
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                ביטול
+                {tCommon('cancel')}
               </Button>
-              <Button type="submit">שמור סניף</Button>
+              <Button type="submit">{t('saveBranch')}</Button>
             </DialogFooter>
           </form>
         </FormProvider>

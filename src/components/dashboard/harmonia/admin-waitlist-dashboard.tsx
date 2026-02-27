@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { WaitlistEntry, WaitlistStatus } from '@/lib/types';
@@ -8,32 +6,44 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { he, enUS, ru, arSA } from 'date-fns/locale';
 import { Send, Trash2, ListChecks } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from '@/components/ui/empty-state';
+import { useTranslations, useLocale } from 'next-intl';
 
-const statusConfig: Record<WaitlistStatus, { label: string; className: string }> = {
-    WAITING: { label: 'ממתין', className: 'bg-blue-100 text-blue-800' },
-    OFFERED: { label: 'הוצע מקום', className: 'bg-yellow-100 text-yellow-800' },
-    ACCEPTED: { label: 'שובץ', className: 'bg-green-100 text-green-800' },
-    DECLINED: { label: 'דחה הצעה', className: 'bg-gray-100 text-gray-800' },
-    EXPIRED: { label: 'פג תוקף', className: 'bg-red-100 text-red-800' },
+const dateLocales: Record<string, any> = {
+    he: he,
+    en: enUS,
+    ru: ru,
+    ar: arSA,
 };
 
+const statusClasses: Record<WaitlistStatus, string> = {
+    WAITING: 'bg-blue-100 text-blue-800',
+    OFFERED: 'bg-yellow-100 text-yellow-800',
+    ACCEPTED: 'bg-green-100 text-green-800',
+    DECLINED: 'bg-gray-100 text-gray-800',
+    EXPIRED: 'bg-red-100 text-red-800',
+};
 
 export function AdminWaitlistDashboard() {
+    const t = useTranslations('Waitlist');
+    const tCommon = useTranslations('Common');
+    const locale = useLocale();
+    const dateLocale = dateLocales[locale] || he;
+
     const { user, mockWaitlist, updateWaitlistStatus, users } = useAuth();
     const { toast } = useToast();
 
@@ -44,18 +54,18 @@ export function AdminWaitlistDashboard() {
             const teacher = users.find(u => u.id === entry.teacherId);
             return {
                 ...entry,
-                studentName: student?.name || 'לא ידוע',
-                teacherName: teacher?.name || 'לא ידוע',
+                studentName: student?.name || t('unknown'),
+                teacherName: teacher?.name || t('unknown'),
             }
         }).filter(entry => entry.status === 'WAITING' || entry.status === 'OFFERED')
-          .sort((a,b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
-    }, [user, mockWaitlist, users]);
-    
+            .sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
+    }, [user, mockWaitlist, users, t]);
+
     const handleOffer = (entryId: string, studentName: string) => {
         updateWaitlistStatus(entryId, 'OFFERED');
         toast({
-            title: 'הצעה נשלחה',
-            description: `הודעת SMS נשלחה אל ${studentName} עם הצעה למקום פנוי.`,
+            title: t('offerSent'),
+            description: t('offerSentDesc', { name: studentName }),
         });
     }
 
@@ -63,38 +73,38 @@ export function AdminWaitlistDashboard() {
         updateWaitlistStatus(entryId, 'DECLINED'); // Or a new "REMOVED" status
         toast({
             variant: "destructive",
-            title: 'הוסר מרשימת ההמתנה',
+            title: t('removed'),
         });
     }
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>רשימת ממתינים פעילה</CardTitle>
-                <CardDescription>תלמידים הממתינים למקום פנוי, מסודרים לפי תאריך הצטרפות.</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent>
-                 <Table>
+                <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>תלמיד/ה</TableHead>
-                            <TableHead>מורה מבוקש</TableHead>
-                            <TableHead>כלי נגינה</TableHead>
-                            <TableHead>תאריך הצטרפות</TableHead>
-                            <TableHead>סטטוס</TableHead>
-                            <TableHead className="text-left">פעולות</TableHead>
+                            <TableHead>{t('student')}</TableHead>
+                            <TableHead>{t('requestedTeacher')}</TableHead>
+                            <TableHead>{t('instrument')}</TableHead>
+                            <TableHead>{t('joinedDate')}</TableHead>
+                            <TableHead>{t('status')}</TableHead>
+                            <TableHead className="text-left">{t('actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {waitlist.length === 0 ? (
-                             <TableRow>
+                            <TableRow>
                                 <TableCell colSpan={6} className="p-0">
-                                   <EmptyState
+                                    <EmptyState
                                         icon={ListChecks}
-                                        title="רשימת ההמתנה ריקה"
-                                        description="אין כרגע תלמידים הממתינים לשיבוץ."
+                                        title={t('emptyTitle')}
+                                        description={t('emptyDesc')}
                                         className="py-12"
-                                   />
+                                    />
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -107,43 +117,43 @@ export function AdminWaitlistDashboard() {
                                         <div className="flex flex-col">
                                             <span>{format(new Date(entry.joinedAt), 'dd/MM/yyyy')}</span>
                                             <span className="text-xs text-muted-foreground">
-                                                ({formatDistanceToNow(new Date(entry.joinedAt), { locale: he, addSuffix: true })})
+                                                ({formatDistanceToNow(new Date(entry.joinedAt), { locale: dateLocale, addSuffix: true })})
                                             </span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge className={statusConfig[entry.status].className}>
-                                            {statusConfig[entry.status].label}
+                                        <Badge className={statusClasses[entry.status]}>
+                                            {t(`statuses.${entry.status}`)}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-left space-x-2 space-x-reverse">
-                                        <Button 
-                                            variant="outline" 
+                                        <Button
+                                            variant="outline"
                                             size="sm"
                                             disabled={entry.status === 'OFFERED'}
                                             onClick={() => handleOffer(entry.id, entry.studentName)}
                                         >
                                             <Send className="ms-2 h-3 w-3" />
-                                            שלח הצעה
+                                            {t('sendOffer')}
                                         </Button>
-                                         <AlertDialog>
+                                        <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
                                                     <Trash2 className="ms-2 h-3 w-3" />
-                                                    הסר
+                                                    {t('remove')}
                                                 </Button>
                                             </AlertDialogTrigger>
-                                            <AlertDialogContent dir="rtl">
+                                            <AlertDialogContent>
                                                 <AlertDialogHeader>
-                                                    <AlertDialogTitle>הסרת ממתין</AlertDialogTitle>
+                                                    <AlertDialogTitle>{t('removeTitle')}</AlertDialogTitle>
                                                     <AlertDialogDescription>
-                                                        האם להסיר את {entry.studentName} מרשימת ההמתנה? פעולה זו אינה הפיכה.
+                                                        {t('removeConfirm', { name: entry.studentName })}
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
-                                                    <AlertDialogCancel>ביטול</AlertDialogCancel>
+                                                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                                                     <AlertDialogAction onClick={() => handleRemove(entry.id)} className="bg-destructive hover:bg-destructive/90">
-                                                        כן, הסר
+                                                        {t('confirmRemove')}
                                                     </AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>

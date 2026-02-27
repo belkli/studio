@@ -10,12 +10,15 @@ import { Progress } from "@/components/ui/progress";
 import Link from 'next/link';
 import { useMemo, useState } from "react";
 import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useTranslations } from "next-intl";
 import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 
 
 export function StudentBillingDashboard() {
     const { user, users, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
+    const t = useTranslations('StudentBilling');
+    const ti = useTranslations('Invoices');
+
     if (!user) return null;
 
     const userAndChildrenIds = useMemo(() => {
@@ -66,7 +69,7 @@ export function StudentBillingDashboard() {
             creditsRemaining,
             nextBillingDate,
         };
-    }, [mockPackages, user, mockLessons, users]);
+    }, [mockPackages, user, mockLessons, users, activeStudent]);
 
 
     const expiringPackageInfo = useMemo(() => {
@@ -104,10 +107,10 @@ export function StudentBillingDashboard() {
             {expiringPackageInfo && (
                 <Notice variant="critical">
                     <AlertTriangle className="absolute left-4 top-4 h-5 w-5" />
-                    <NoticeTitle>תוקף החבילה שלך עומד לפוג!</NoticeTitle>
+                    <NoticeTitle>{t('packageExpiringNotice')}</NoticeTitle>
                     <NoticeDescription>
-                        נותרו {expiringPackageInfo.days} ימים עד שהחבילה שלך תפוג בתאריך {expiringPackageInfo.date}.
-                        <Button variant="link" className="p-0 text-red-800 dark:text-red-300">לחץ כאן כדי לחדש ולשמור על מקומך.</Button>
+                        {t('packageExpiringDesc', { days: expiringPackageInfo.days, date: expiringPackageInfo.date })}
+                        <Button variant="link" className="p-0 text-red-800 dark:text-red-300">{t('renewNow')}</Button>
                     </NoticeDescription>
                 </Notice>
             )}
@@ -117,33 +120,33 @@ export function StudentBillingDashboard() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Package className="h-5 w-5 text-primary" /> סטטוס חבילה {activeStudent?.name ? `(${activeStudent.name})` : ''}
+                                    <Package className="h-5 w-5 text-primary" /> {t('packageStatus')} {activeStudent?.name ? `(${activeStudent.name})` : ''}
                                 </CardTitle>
-                                <CardDescription className="pt-1">{currentPackage?.title || 'אין חבילה פעילה'}</CardDescription>
+                                <CardDescription className="pt-1">{currentPackage?.title || t('noActivePackage')}</CardDescription>
                             </div>
-                            <Button variant="outline" size="sm">שדרג חבילה</Button>
+                            <Button variant="outline" size="sm">{t('upgradePackage')}</Button>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {currentPackage?.totalCredits && currentPackage.creditsRemaining !== undefined ? (
                             <div>
                                 <div className="flex justify-between items-baseline mb-1">
-                                    <span className="text-sm font-medium">שיעורים נותרו</span>
+                                    <span className="text-sm font-medium">{t('lessonsRemaining')}</span>
                                     <span className="text-lg font-bold">{currentPackage.creditsRemaining} / {currentPackage.totalCredits}</span>
                                 </div>
                                 <Progress value={(currentPackage.creditsRemaining! / currentPackage.totalCredits) * 100} className="h-2" />
                             </div>
                         ) : currentPackage ? (
-                            <div className="text-muted-foreground text-sm">מנוי חודשי ללא הגבלת שיעורים.</div>
+                            <div className="text-muted-foreground text-sm">{t('monthlySubNoLimit')}</div>
                         ) : (
-                            <div className="text-muted-foreground text-sm">לא משויכת חבילה.</div>
+                            <div className="text-muted-foreground text-sm">{t('noPackageAssigned')}</div>
                         )}
                         <div className="flex justify-between text-sm pt-2 border-t">
                             <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4" />
-                                {currentPackage?.nextBillingDate ? 'חיוב הבא' : (currentPackage?.validUntil ? 'תוקף חבילה' : 'סטטוס')}</span>
+                                {currentPackage?.nextBillingDate ? t('nextBilling') : (currentPackage?.validUntil ? t('packageExpiry') : t('status'))}</span>
                             <span className="font-semibold">
-                                {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString('he-IL')} (${currentPackage.price} ₪)`
-                                    : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString('he-IL') : 'פעיל')}
+                                {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString()} (${currentPackage.price} ₪)`
+                                    : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString() : t('active'))}
                             </span>
                         </div>
                     </CardContent>
@@ -151,17 +154,17 @@ export function StudentBillingDashboard() {
 
                 <Card className="flex flex-col">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent" /> שיעורי השלמה</CardTitle>
-                        <CardDescription>זיכויים זמינים עקב ביטולים.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent" /> {t('makeupCredits')}</CardTitle>
+                        <CardDescription>{t('makeupCreditsDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col items-center justify-center">
                         <div className="text-5xl font-bold">{makeupCreditBalance}</div>
-                        <p className="text-sm text-muted-foreground mt-1">זיכויים</p>
+                        <p className="text-sm text-muted-foreground mt-1">{t('credits')}</p>
                     </CardContent>
                     <CardFooter>
                         <Button variant="secondary" className="w-full" asChild>
                             <Link href="/dashboard/makeups">
-                                עבור לניהול שיעורי השלמה
+                                {t('manageMakeups')}
                             </Link>
                         </Button>
                     </CardFooter>
@@ -170,38 +173,38 @@ export function StudentBillingDashboard() {
             <div className="grid md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2">
                     <CardHeader>
-                        <CardTitle>היסטוריית חיובים</CardTitle>
-                        <CardDescription>להלן רשימת החשבוניות והתשלומים האחרונים שלך.</CardDescription>
+                        <CardTitle>{t('billingHistory')}</CardTitle>
+                        <CardDescription>{t('billingHistoryDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>מספר חשבונית</TableHead>
-                                    <TableHead>תאריך</TableHead>
-                                    <TableHead>פרטי חיוב</TableHead>
-                                    <TableHead>סכום</TableHead>
-                                    <TableHead>סטטוס</TableHead>
-                                    <TableHead className="text-left">פעולות</TableHead>
+                                    <TableHead>{ti('invoiceNumber')}</TableHead>
+                                    <TableHead>{ti('date')}</TableHead>
+                                    <TableHead>{ti('details')}</TableHead>
+                                    <TableHead>{ti('amount')}</TableHead>
+                                    <TableHead>{ti('status')}</TableHead>
+                                    <TableHead className="text-left">{ti('actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {userInvoices.map(invoice => (
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-mono">{invoice.invoiceNumber}</TableCell>
-                                        <TableCell>{new Date(invoice.dueDate).toLocaleDateString('he-IL')}</TableCell>
+                                        <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
                                         <TableCell>{invoice.lineItems[0].description}</TableCell>
                                         <TableCell>{invoice.total} ₪</TableCell>
-                                        <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{invoice.status === 'PAID' ? 'שולם' : (invoice.status === 'OVERDUE' ? 'בפיגור' : 'ממתין')}</Badge></TableCell>
+                                        <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
                                         <TableCell className="text-left">
                                             <Button variant="ghost" size="icon">
                                                 <Download className="h-4 w-4" />
-                                                <span className="sr-only">הורד חשבונית</span>
+                                                <span className="sr-only">{ti('downloadInvoice')}</span>
                                             </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                                {userInvoices.length === 0 && <TableRow><TableCell colSpan={6} className="text-center h-24">לא נמצאו חשבוניות.</TableCell></TableRow>}
+                                {userInvoices.length === 0 && <TableRow><TableCell colSpan={6} className="text-center h-24">{ti('noInvoices')}</TableCell></TableRow>}
                             </TableBody>
                         </Table>
                     </CardContent>
@@ -209,25 +212,25 @@ export function StudentBillingDashboard() {
                 <div className="space-y-6">
                     <Card className="flex flex-col justify-center p-6">
                         <CardHeader className="p-0 pb-4">
-                            <CardTitle>ניהול מנוי {activeStudent?.name ? `(${activeStudent.name})` : ''}</CardTitle>
+                            <CardTitle>{t('manageSubscription')} {activeStudent?.name ? `(${activeStudent.name})` : ''}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
-                            <Button className="w-full">נהל אמצעי תשלום</Button>
-                            <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />השהיית מנוי</Button>
+                            <Button className="w-full">{t('managePaymentMethods')}</Button>
+                            <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />{t('pauseSubscription')}</Button>
                             <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={() => {
                                 // Added onClick handler to demonstrate action per child
                                 alert(`ביטול מנוי עבור ${activeStudent?.name || 'התלמיד'}`);
-                            }}><XCircle className="ms-2 h-4 w-4" />ביטול מנוי</Button>
+                            }}><XCircle className="ms-2 h-4 w-4" />{t('cancelSubscription')}</Button>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><ShieldQuestion className="h-5 w-5 text-purple-500" /> מלגות וסיוע כלכלי</CardTitle>
-                            <CardDescription>זקוק/ה לסיוע בתשלום שכר הלימוד? ניתן להגיש בקשה למלגה.</CardDescription>
+                            <CardTitle className="flex items-center gap-2"><ShieldQuestion className="h-5 w-5 text-purple-500" /> {t('scholarshipsAndAid')}</CardTitle>
+                            <CardDescription>{t('scholarshipsDesc')}</CardDescription>
                         </CardHeader>
                         <CardFooter>
                             <Button asChild className="w-full" variant="secondary">
-                                <Link href="/dashboard/apply-for-aid">הגש בקשה למלגה</Link>
+                                <Link href="/dashboard/apply-for-aid">{t('applyForAid')}</Link>
                             </Button>
                         </CardFooter>
                     </Card>
