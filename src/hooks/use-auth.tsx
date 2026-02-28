@@ -105,7 +105,7 @@ interface AuthContextType {
   updateEventStatus: (eventId: string, status: EventProductionStatus) => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * The main provider component that wraps the application.
