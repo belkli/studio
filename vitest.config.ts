@@ -11,15 +11,13 @@ export default defineConfig({
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],
-            include: [
-                'src/components/layout/public-navbar.tsx',
-                'src/components/layout/public-footer.tsx',
-                'src/app/[locale]/about/page.tsx',
-                'src/app/[locale]/contact/page.tsx',
-                'src/components/enrollment/**/*',
-                'src/components/dashboard/alumni/**/*',
-                'src/components/dashboard/harmonia/pricing-settings.tsx',
-                'src/components/dashboard/branches/**/*'
+            include: ['src/**/*.{ts,tsx}'],
+            exclude: [
+                'src/**/*.d.ts',
+                'src/messages/**/*',
+                'src/i18n/**/*',
+                'src/middleware.ts',
+                'src/components/ui/**/*' // shadcn components are usually considered external/library code
             ]
         },
         server: {

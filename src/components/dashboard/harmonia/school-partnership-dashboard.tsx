@@ -75,17 +75,18 @@ const MOCK_PARTNERSHIPS: SchoolPartnership[] = [
 
 // ── Status helpers ────────────────────────────────────────────────────────────
 
-const statusConfig: Record<PartnershipStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
-    ACTIVE: { label: 'פעיל', variant: 'default' },
-    PENDING: { label: 'ממתין', variant: 'secondary' },
-    SUSPENDED: { label: 'מושעה', variant: 'destructive' },
-    ENDED: { label: 'הסתיים', variant: 'outline' },
+const statusConfig: Record<PartnershipStatus, { labelKey: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    ACTIVE: { labelKey: 'status.ACTIVE', variant: 'default' },
+    PENDING: { labelKey: 'status.PENDING', variant: 'secondary' },
+    SUSPENDED: { labelKey: 'status.SUSPENDED', variant: 'destructive' },
+    ENDED: { labelKey: 'status.ENDED', variant: 'outline' },
 };
 
 // ── Create Partnership Dialog ─────────────────────────────────────────────────
 
 function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnership) => void }) {
     const { toast } = useToast();
+    const t = useTranslations('PlayingSchool');
     const [open, setOpen] = useState(false);
     const [schoolName, setSchoolName] = useState('');
     const [schoolSymbol, setSchoolSymbol] = useState('');
@@ -99,7 +100,7 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
 
     const handleSubmit = () => {
         if (!schoolName || !schoolSymbol) {
-            toast({ variant: 'destructive', title: 'שגיאה', description: 'יש למלא שם בית ספר וסמל מוסד.' });
+            toast({ variant: 'destructive', title: t('errorToast'), description: t('errorToastDesc') });
             return;
         }
         const newPartnership: SchoolPartnership = {
@@ -123,68 +124,68 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
             updatedAt: new Date().toISOString(),
         };
         onCreated(newPartnership);
-        toast({ title: 'שותפות נוצרה', description: `${schoolName} נוספה בהצלחה.` });
+        toast({ title: t('successToast'), description: t('successToastDesc', { schoolName }) });
         setOpen(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" />הוסף שותפות חדשה</Button>
+                <Button><Plus className="h-4 w-4 mr-2" />{t('addPartnership')}</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>יצירת שותפות בית ספר מנגן</DialogTitle>
-                    <DialogDescription>מלא את פרטי בית הספר השותף ומודל הסובסידיה.</DialogDescription>
+                    <DialogTitle>{t('createPartnershipTitle')}</DialogTitle>
+                    <DialogDescription>{t('createPartnershipDesc')}</DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 py-4">
                     <div className="space-y-2">
-                        <Label>שם בית הספר</Label>
-                        <Input value={schoolName} onChange={e => setSchoolName(e.target.value)} placeholder="בית ספר אורט..." />
+                        <Label>{t('schoolName')}</Label>
+                        <Input value={schoolName} onChange={e => setSchoolName(e.target.value)} placeholder="..." />
                     </div>
                     <div className="space-y-2">
-                        <Label>סמל מוסד</Label>
+                        <Label>{t('schoolSymbol')}</Label>
                         <Input value={schoolSymbol} onChange={e => setSchoolSymbol(e.target.value)} placeholder="410234" />
                     </div>
                     <div className="space-y-2">
-                        <Label>אימייל קשר</Label>
+                        <Label>{t('contactEmail')}</Label>
                         <Input type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>טלפון קשר</Label>
+                        <Label>{t('contactPhone')}</Label>
                         <Input value={contactPhone} onChange={e => setContactPhone(e.target.value)} />
                     </div>
                     <div className="col-span-2 space-y-2">
-                        <Label>כתובת</Label>
+                        <Label>{t('address')}</Label>
                         <Input value={address} onChange={e => setAddress(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>מודל סובסידיה</Label>
+                        <Label>{t('subsidyModelLvl')}</Label>
                         <Select value={subsidyModel} onValueChange={v => setSubsidyModel(v as SubsidyModel)}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="FULL_MUNICIPAL">עירייה מלאה</SelectItem>
-                                <SelectItem value="SPLIT">שיתוף (עירייה + הורה)</SelectItem>
-                                <SelectItem value="PARENT_ONLY">הורה בלבד</SelectItem>
+                                <SelectItem value="FULL_MUNICIPAL">{t('subsidyModel.FULL_MUNICIPAL')}</SelectItem>
+                                <SelectItem value="SPLIT">{t('subsidyModel.SPLIT')}</SelectItem>
+                                <SelectItem value="PARENT_ONLY">{t('subsidyModel.PARENT_ONLY')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label>% סובסידיית עירייה</Label>
+                        <Label>{t('municipalSubsidyPercent')}</Label>
                         <Input type="number" value={municipalPercent} onChange={e => setMunicipalPercent(e.target.value)} max={100} min={0} />
                     </div>
                     <div className="space-y-2">
-                        <Label>% סובסידיית משרד החינוך</Label>
+                        <Label>{t('ministrySubsidyPercent')}</Label>
                         <Input type="number" value={ministryPercent} onChange={e => setMinistryPercent(e.target.value)} max={100} min={0} />
                     </div>
                     <div className="space-y-2">
-                        <Label>תשלום הורה לשנה (₪)</Label>
+                        <Label>{t('parentYearlyContribution')}</Label>
                         <Input type="number" value={parentContribution} onChange={e => setParentContribution(e.target.value)} min={0} />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => setOpen(false)}>ביטול</Button>
-                    <Button onClick={handleSubmit}>צור שותפות</Button>
+                    <Button variant="outline" onClick={() => setOpen(false)}>{t('cancel')}</Button>
+                    <Button onClick={handleSubmit}>{t('create')}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -194,6 +195,7 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export function SchoolPartnershipDashboard() {
+    const t = useTranslations('PlayingSchool');
     const [partnerships, setPartnerships] = useState<SchoolPartnership[]>(MOCK_PARTNERSHIPS);
     const [activeTab, setActiveTab] = useState('partnerships');
 
@@ -212,9 +214,9 @@ export function SchoolPartnershipDashboard() {
                 <div>
                     <h1 className="text-2xl font-bold flex items-center gap-2">
                         <School className="h-6 w-6 text-primary" />
-                        בית ספר מנגן
+                        {t('pageTitle')}
                     </h1>
-                    <p className="text-muted-foreground mt-1">ניהול שותפויות עם בתי ספר יסודיים</p>
+                    <p className="text-muted-foreground mt-1">{t('adminSubtitle')}</p>
                 </div>
                 <CreatePartnershipDialog onCreated={handleCreated} />
             </div>
@@ -223,32 +225,32 @@ export function SchoolPartnershipDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">שותפויות פעילות</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('activePartnerships')}</CardTitle>
                         <CheckCircle className="h-4 w-4 text-green-500" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{activeCount}</div>
-                        <p className="text-xs text-muted-foreground">{pendingCount} ממתינות לאישור</p>
+                        <p className="text-xs text-muted-foreground">{t('pendingPartnerships', { count: pendingCount })}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">תלמידים רשומים</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('enrolledStudents')}</CardTitle>
                         <Users className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalEnrollments}</div>
-                        <p className="text-xs text-muted-foreground">בכל בתי הספר</p>
+                        <p className="text-xs text-muted-foreground">{t('allSchools')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">שנת לימודים</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('academicYearLvl')}</CardTitle>
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">תשפ"ו</div>
-                        <p className="text-xs text-muted-foreground">שנה אקדמית פעילה</p>
+                        <p className="text-xs text-muted-foreground">{t('activeYear')}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -256,26 +258,26 @@ export function SchoolPartnershipDashboard() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList>
-                    <TabsTrigger value="partnerships">שותפויות</TabsTrigger>
-                    <TabsTrigger value="billing">חיובים</TabsTrigger>
+                    <TabsTrigger value="partnerships">{t('tabs.partnerships')}</TabsTrigger>
+                    <TabsTrigger value="billing">{t('tabs.billing')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="partnerships" className="mt-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>רשימת שותפויות</CardTitle>
-                            <CardDescription>כל בתי הספר השותפים בתוכנית בית ספר מנגן</CardDescription>
+                            <CardTitle>{t('partnershipList')}</CardTitle>
+                            <CardDescription>{t('partnershipListDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>שם בית הספר</TableHead>
-                                        <TableHead>סמל מוסד</TableHead>
-                                        <TableHead>מודל סובסידיה</TableHead>
-                                        <TableHead>תלמידים</TableHead>
-                                        <TableHead>סטטוס</TableHead>
-                                        <TableHead>פעולות</TableHead>
+                                        <TableHead>{t('table.school')}</TableHead>
+                                        <TableHead>{t('table.symbol')}</TableHead>
+                                        <TableHead>{t('table.model')}</TableHead>
+                                        <TableHead>{t('table.students')}</TableHead>
+                                        <TableHead>{t('table.status')}</TableHead>
+                                        <TableHead>{t('table.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -284,16 +286,16 @@ export function SchoolPartnershipDashboard() {
                                             <TableCell className="font-medium">{p.schoolName}</TableCell>
                                             <TableCell className="text-muted-foreground">{p.schoolSymbol}</TableCell>
                                             <TableCell>
-                                                {p.subsidyModel === 'FULL_MUNICIPAL' && 'עירייה מלאה'}
-                                                {p.subsidyModel === 'SPLIT' && `שיתוף ${p.municipalSubsidyPercent}%+${p.ministrySubsidyPercent}%`}
-                                                {p.subsidyModel === 'PARENT_ONLY' && 'הורה בלבד'}
+                                                {p.subsidyModel === 'FULL_MUNICIPAL' && t('subsidyModel.FULL_MUNICIPAL')}
+                                                {p.subsidyModel === 'SPLIT' && `${t('subsidyModel.SPLIT')} ${p.municipalSubsidyPercent}%+${p.ministrySubsidyPercent}%`}
+                                                {p.subsidyModel === 'PARENT_ONLY' && t('subsidyModel.PARENT_ONLY')}
                                             </TableCell>
                                             <TableCell>
                                                 {p.programs.reduce((s, prog) => s + prog.maxStudents, 0)}
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant={statusConfig[p.status].variant}>
-                                                    {statusConfig[p.status].label}
+                                                    {t(statusConfig[p.status].labelKey)}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
@@ -312,14 +314,14 @@ export function SchoolPartnershipDashboard() {
                 <TabsContent value="billing" className="mt-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>חיובים — בית ספר מנגן</CardTitle>
-                            <CardDescription>סקירת תשלומים עירוניים, תשלומי הורים ותביעות משרד החינוך</CardDescription>
+                            <CardTitle>{t('billing.title')}</CardTitle>
+                            <CardDescription>{t('billing.desc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="rounded-md border border-dashed p-8 text-center text-muted-foreground">
                                 <DollarSign className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                                <p className="text-sm">מודול הכספים ייפתח בשלב 2 של הפיתוח.</p>
-                                <p className="text-xs mt-1">ניתן לצפות בחיובים הרגילים בלשונית הכספים הראשית.</p>
+                                <p className="text-sm">{t('billing.wip')}</p>
+                                <p className="text-xs mt-1">{t('billing.wipNote')}</p>
                             </div>
                         </CardContent>
                     </Card>

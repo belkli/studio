@@ -98,6 +98,7 @@ interface AuthContextType {
   newFeaturesEnabled: boolean;
   isLoading: boolean;
   assignRepertoire: (studentId: string, compositionId: string) => void;
+  awardAchievement: (studentId: string, type: AchievementType) => void;
   mockWaitlist: WaitlistEntry[];
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
@@ -254,7 +255,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const addLesson = (lessonData: Partial<LessonSlot>) => {
     const newLesson: LessonSlot = {
       id: `lesson-${Date.now()}`,
-      conservatoriumId: user!.conservatoriumId,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
       status: 'SCHEDULED',
       isCreditConsumed: false,
       createdAt: new Date().toISOString(),
@@ -357,9 +358,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!student) return;
 
     const newLog: PracticeLog = {
-      id: `pl-${Date.now()}`,
       studentId: logData.studentId,
-      teacherId: student.instruments?.[0]?.teacherName ? users.find(t => t.name === student.instruments![0].teacherName)?.id : undefined,
+      teacherId: student.instruments?.[0]?.teacherName
+        ? users.find(t => t.name === student.instruments![0].teacherName)?.id
+        : undefined,
       ...logData
     } as PracticeLog;
     const updatedLogs = [...mockPracticeLogs, newLog];
@@ -427,7 +429,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const addAnnouncement = (announcementData: Partial<Announcement>) => {
     const newAnnouncement: Announcement = {
       id: `ann-${Date.now()}`,
-      conservatoriumId: user!.conservatoriumId,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
       sentAt: new Date().toISOString(),
       ...announcementData
     } as Announcement;
@@ -476,9 +478,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const addToWaitlist = (waitlistEntry: Partial<WaitlistEntry>) => {
     const newEntry: WaitlistEntry = {
-      id: `wait-${Date.now()}`,
-      joinedAt: new Date().toISOString(),
-      status: 'WAITING',
+      id: `wl-${Date.now()}`,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
+      status: 'PENDING',
       ...waitlistEntry
     } as WaitlistEntry;
     setMockWaitlist(prev => [...prev, newEntry]);
@@ -490,7 +492,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const addFormTemplate = (templateData: Partial<FormTemplate>) => {
     const newTemplate: FormTemplate = {
       id: `template-${Date.now()}`,
-      conservatoriumId: user!.conservatoriumId,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
       createdAt: new Date().toISOString(),
       ...templateData
     } as FormTemplate;
@@ -502,7 +504,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const addEvent = (eventData: Partial<EventProduction>) => {
     const newEvent: EventProduction = {
       id: `event-${Date.now()}`,
-      conservatoriumId: user!.conservatoriumId,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
       program: [],
       ...eventData,
     } as EventProduction;
@@ -618,7 +620,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       videoUrl: 'https://placehold.co/600x400.mp4',
       ...videoData
     } as PracticeVideo;
-    setMockPracticeVideos(prev => [newVideo, ...prev]);
+    setMockPracticeVideos(prev => [...prev, newVideo]);
   };
   const addVideoFeedback = (videoId: string, comment: string) => {
     if (!user) return;
@@ -664,7 +666,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       inquiryReceivedAt: new Date().toISOString(),
       ...bookingData
     } as PerformanceBooking;
-    setMockPerformanceBookings(prev => [newBooking, ...prev]);
+    setMockPerformanceBookings(prev => [...prev, newBooking]);
   };
 
   const addScholarshipApplication = (applicationData: Partial<ScholarshipApplication>) => {
@@ -675,15 +677,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: `schol-app-${Date.now()}`,
       studentId: student.id,
       studentName: student.name,
-      instrument: student.instruments?.[0].instrument || 'לא צוין',
-      conservatoriumId: student.conservatoriumId,
+      instrument: student.instruments?.[0]?.instrument || 'לא צוין',
+      conservatoriumId: student.conservatoriumId || 'cons-1',
       academicYear: 'תשפ"ה',
       status: 'SUBMITTED',
       submittedAt: new Date().toISOString(),
       priorityScore: Math.floor(Math.random() * 50) + 40,
       ...applicationData
     } as ScholarshipApplication;
-    setMockScholarshipApplications(prev => [newApplication, ...prev]);
+    setMockScholarshipApplications(prev => [...prev, newApplication]);
   };
 
   const addOpenDayAppointment = (appointmentData: Partial<OpenDayAppointment>) => {
@@ -778,7 +780,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockLessonNotes,
       mockMessageThreads,
       mockProgressReports,
-      mockAnnouncements: initialMockData.mockAnnouncements,
+      mockAnnouncements,
       mockFormTemplates,
       mockAuditLog,
       mockEvents,
@@ -810,6 +812,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       getMakeupCreditBalance,
       getMakeupCreditsDetail,
       addPracticeLog,
+      awardAchievement,
       updateRepertoireStatus,
       addLessonNote,
       updateUserPracticeGoal,
