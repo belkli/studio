@@ -60,7 +60,7 @@ function ConservatoriumInfo({ cons }: { cons: Conservatorium }) {
                         </a>
                     )}
                     {(cons.socialMedia?.whatsapp || cons.tel) && (
-                        <a href={`https://wa.me/${(cons.socialMedia?.whatsapp || cons.tel)?.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-emerald-500 transition-colors group">
+                        <a href={`https://wa.me/${(cons.socialMedia?.whatsapp || cons.tel)?.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-emerald-500 transition-colors group">
                             <MessageCircle className="h-3.5 w-3.5 text-muted-foreground group-hover:text-emerald-500 flex-shrink-0 transition-colors" />
                             <span className="text-xs font-mono">WhatsApp</span>
                         </a>
@@ -69,6 +69,12 @@ function ConservatoriumInfo({ cons }: { cons: Conservatorium }) {
                         <a href={`mailto:${cons.email}`} className="flex items-center gap-2 hover:text-primary transition-colors group">
                             <Mail className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
                             <span className="text-xs break-all">{cons.email}</span>
+                        </a>
+                    )}
+                    {cons.secondaryEmail && (
+                        <a href={`mailto:${cons.secondaryEmail}`} className="flex items-center gap-2 hover:text-primary transition-colors group opacity-80">
+                            <Mail className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
+                            <span className="text-xs break-all">{cons.secondaryEmail}</span>
                         </a>
                     )}
                     {cons.openingHours && (

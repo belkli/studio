@@ -205,7 +205,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                     </a>
                                 )}
                                 {(cons.socialMedia?.whatsapp || cons.tel) && (
-                                    <a href={`https://wa.me/${(cons.socialMedia?.whatsapp || cons.tel)?.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm hover:text-emerald-500 transition-colors">
+                                    <a href={`https://wa.me/${(cons.socialMedia?.whatsapp || cons.tel)?.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm hover:text-emerald-500 transition-colors">
                                         <MessageCircle className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                                         <span className="font-mono">WhatsApp</span>
                                     </a>
@@ -214,6 +214,12 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                     <a href={`mailto:${cons.email}`} className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
                                         <Mail className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                                         <span className="break-all">{cons.email}</span>
+                                    </a>
+                                )}
+                                {cons.secondaryEmail && (
+                                    <a href={`mailto:${cons.secondaryEmail}`} className="flex items-center gap-2 text-sm hover:text-primary transition-colors opacity-80">
+                                        <Mail className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                                        <span className="break-all">{cons.secondaryEmail}</span>
                                     </a>
                                 )}
                                 {cons.officialSite && (

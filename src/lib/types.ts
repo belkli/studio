@@ -277,6 +277,16 @@ export type ConservatoriumBranchInfo = {
   manager?: string;
 };
 
+export type ConservatoriumTranslations = {
+  [locale: string]: {
+    about?: string;
+    openingHours?: string;
+    departments?: { name: string }[];
+    programs?: string[];
+    manager?: { bio?: string };
+  };
+};
+
 export type Conservatorium = {
   id: string;
   name: string;
@@ -305,6 +315,7 @@ export type Conservatorium = {
   ensembles?: string[];
   socialMedia?: SocialMediaLinks;
   photoUrls?: string[];
+  translations?: ConservatoriumTranslations;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
