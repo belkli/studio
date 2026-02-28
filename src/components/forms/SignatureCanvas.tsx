@@ -7,6 +7,7 @@
  */
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface SignatureCanvasProps {
     onSave: (signatureDataUrl: string) => void;
@@ -25,6 +26,7 @@ export function SignatureCanvas({
     disabled = false,
     className = '',
 }: SignatureCanvasProps) {
+    const t = useTranslations('Forms');
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [hasSignature, setHasSignature] = useState(false);
@@ -165,7 +167,7 @@ export function SignatureCanvas({
                 />
                 {!hasSignature && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <p className="text-gray-400 text-sm" dir="rtl">חתום/י כאן</p>
+                        <p className="text-gray-400 text-sm" dir="rtl">{t('signHere')}</p>
                     </div>
                 )}
             </div>
@@ -176,7 +178,7 @@ export function SignatureCanvas({
                     disabled={!hasSignature || disabled}
                     className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                    נקה
+                    {t('clear')}
                 </button>
                 <button
                     type="button"
@@ -184,7 +186,7 @@ export function SignatureCanvas({
                     disabled={!hasSignature || disabled}
                     className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                    אשר חתימה
+                    {t('confirmSignature')}
                 </button>
             </div>
         </div>

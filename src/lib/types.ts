@@ -1,7 +1,7 @@
 
 import type { User as AuthUser } from 'firebase/auth';
 
-export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin';
+export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
 
 export type InstrumentInfo = {
   instrument: string;
@@ -1055,10 +1055,11 @@ export type ExamPrepTracker = {
   updatedAt: string;                    // ISO Timestamp
 };
 
-// SDD-P2: Group/Ensemble Lesson
+// SDD-P2 + SDD-PS: Group/Ensemble Lesson Attendance
 export type GroupAttendanceEntry = {
   studentId: string;
-  status: 'PRESENT' | 'ABSENT_NOTICED' | 'ABSENT_NO_NOTICE' | 'NO_SHOW';
+  studentName?: string;  // SDD-PS addition
+  status: 'PRESENT' | 'ABSENT_NOTICED' | 'ABSENT_NO_NOTICE' | 'NO_SHOW' | 'SCHOOL_EVENT';
   creditConsumed: boolean;
 };
 
@@ -1371,3 +1372,92 @@ export type ComplianceLog = {
   performedBy: string;                  // userId or 'SYSTEM'
   retentionPolicyApplied?: number;
 };
+
+// ── SDD-PS: Playing School Program ───────────────────────────────────────────
+
+export type PartnershipStatus = 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'ENDED';
+export type SubsidyModel = 'FULL_MUNICIPAL' | 'SPLIT' | 'PARENT_ONLY';
+export type PSPaymentMethod = 'SCHOOL_FEES' | 'MUNICIPAL_DIRECT' | 'CARDCOM';
+export type ExcellenceStatus = 'NOMINATED' | 'AUDITIONED' | 'ENROLLED' | 'DECLINED';
+export type GroupLessonStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'MAKEUP';
+
+
+
+export type SchoolProgram = {
+  programId: string;
+  instrument: string;
+  targetGrades: string[];
+  teacherId: string;
+  dayOfWeek: DayOfWeek;
+  startTime: string;
+  durationMinutes: number;
+  roomAtSchool: string;
+  maxStudents: number;
+  excellenceTrackEnabled: boolean;
+};
+
+export type SchoolPartnership = {
+  id: string;
+  conservatoriumId: string;
+  schoolName: string;
+  schoolSymbol: string;
+  municipalityId: string;
+  coordinatorUserId: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  academicYear: string;
+  status: PartnershipStatus;
+  subsidyModel: SubsidyModel;
+  municipalSubsidyPercent: number;
+  ministrySubsidyPercent: number;
+  parentContributionPerYear: number;
+  programs: SchoolProgram[];
+  signedAgreementUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PlayingSchoolEnrollment = {
+  id: string;
+  conservatoriumId: string;
+  partnershipId: string;
+  programId: string;
+  studentId?: string;
+  parentId?: string;
+  studentName: string;
+  studentGrade: string;
+  studentClass: string;
+  schoolSymbol: string;
+  instrument: string;
+  status: 'PENDING_PAYMENT' | 'ACTIVE' | 'WAITLIST' | 'CANCELLED' | 'COMPLETED';
+  paymentStatus: PaymentStatus;
+  paymentMethod: PSPaymentMethod;
+  instrumentLoanId?: string;
+  depositChequeRef?: string;
+  excellenceTrackNominated: boolean;
+  excellenceTrackStatus?: ExcellenceStatus;
+  consentGiven: boolean;
+  academicYear: string;
+  enrolledAt: string;
+  updatedAt: string;
+};
+
+export type SchoolGroupLesson = {
+  id: string;
+  partnershipId: string;
+  programId: string;
+  teacherId: string;
+  schoolSymbol: string;
+  startTime: string;
+  durationMinutes: number;
+  instrument: string;
+  recurrenceId?: string;
+  status: GroupLessonStatus;
+  attendance: GroupAttendanceEntry[];
+  teacherNote?: string;
+  cancelReason?: string;
+  substituteTeacherId?: string;
+  createdAt: string;
+};
+

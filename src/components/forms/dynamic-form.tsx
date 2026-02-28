@@ -4,6 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -19,7 +20,7 @@ interface DynamicFormProps {
   onSubmit: (data: Record<string, any>) => void;
 }
 
-const generateSchema = (fields: FormTemplate['fields']) => {
+const generateSchema = (fields: FormTemplate['fields'], t: any) => {
   const shape: Record<string, z.ZodType<any, any>> = {};
   fields.forEach(field => {
     let fieldSchema: z.ZodType<any, any>;
@@ -39,10 +40,10 @@ const generateSchema = (fields: FormTemplate['fields']) => {
     if (field.required) {
       if (field.type === 'checkbox') {
         fieldSchema = (fieldSchema as z.ZodBoolean).refine(val => val === true, {
-          message: 'שדה זה הוא חובה.',
+          message: 'Required field',
         });
       } else {
-        fieldSchema = (fieldSchema as z.ZodString).min(1, 'שדה חובה');
+        fieldSchema = (fieldSchema as z.ZodString).min(1, 'Required field');
       }
     } else {
       fieldSchema = fieldSchema.optional();
@@ -54,8 +55,9 @@ const generateSchema = (fields: FormTemplate['fields']) => {
 
 
 export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
-  const formSchema = useMemo(() => generateSchema(template.fields), [template.fields]);
-  
+  const t = useTranslations('Forms');
+  const formSchema = useMemo(() => generateSchema(template.fields, t), [template.fields, t]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -75,46 +77,46 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
                 control={form.control}
                 name={field.id}
                 render={({ field: formField }) => {
-                  
+
                   const renderField = () => {
                     switch (field.type) {
-                        case 'textarea':
-                            return <Textarea placeholder={field.placeholder} {...formField} />;
-                        case 'date':
-                            return <Input type="date" {...formField} />;
-                        case 'number':
-                            return <Input type="number" placeholder={field.placeholder} {...formField} />;
-                        case 'dropdown':
-                            return (
-                                <Select onValueChange={formField.onChange} defaultValue={formField.value} dir="rtl">
-                                    <FormControl>
-                                        <SelectTrigger><SelectValue placeholder={field.placeholder || "בחר..."} /></SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {field.options?.split(',').map(opt => <SelectItem key={opt} value={opt.trim()}>{opt.trim()}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            );
-                        case 'checkbox':
-                             return (
-                                <div className="flex items-center space-x-2 space-x-reverse pt-2">
-                                     <Checkbox 
-                                        id={field.id}
-                                        checked={formField.value}
-                                        onCheckedChange={formField.onChange}
-                                     />
-                                     <label htmlFor={field.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                       {field.label}
-                                     </label>
-                                </div>
-                             )
-                        default: // text
-                            return <Input placeholder={field.placeholder} {...formField} />;
+                      case 'textarea':
+                        return <Textarea placeholder={field.placeholder} {...formField} />;
+                      case 'date':
+                        return <Input type="date" {...formField} />;
+                      case 'number':
+                        return <Input type="number" placeholder={field.placeholder} {...formField} />;
+                      case 'dropdown':
+                        return (
+                          <Select onValueChange={formField.onChange} defaultValue={formField.value} dir="rtl">
+                            <FormControl>
+                              <SelectTrigger><SelectValue placeholder={field.placeholder || t('selectPlaceholder')} /></SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {field.options?.split(',').map(opt => <SelectItem key={opt} value={opt.trim()}>{opt.trim()}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        );
+                      case 'checkbox':
+                        return (
+                          <div className="flex items-center space-x-2 space-x-reverse pt-2">
+                            <Checkbox
+                              id={field.id}
+                              checked={formField.value}
+                              onCheckedChange={formField.onChange}
+                            />
+                            <label htmlFor={field.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              {field.label}
+                            </label>
+                          </div>
+                        )
+                      default: // text
+                        return <Input placeholder={field.placeholder} {...formField} />;
                     }
                   };
 
                   if (field.type === 'checkbox') {
-                    return <FormItem><FormControl>{renderField()}</FormControl><FormMessage/></FormItem>
+                    return <FormItem><FormControl>{renderField()}</FormControl><FormMessage /></FormItem>
                   }
 
                   return (
@@ -129,9 +131,9 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
             ))}
           </CardContent>
           <CardFooter>
-             <Button type="submit">
-                <Send className="me-2 h-4 w-4" />
-                הגש לאישור
+            <Button type="submit">
+              <Send className="me-2 h-4 w-4" />
+              {t('submitForApproval')}
             </Button>
           </CardFooter>
         </Card>

@@ -50,6 +50,7 @@ const stepsConfig: Record<UserRole, DriveStep[]> = {
     teacher: teacherSteps,
     conservatorium_admin: adminSteps,
     site_admin: adminSteps,
+    school_coordinator: adminSteps,
     ministry_director: [],
     admin: adminSteps,
     superadmin: adminSteps,

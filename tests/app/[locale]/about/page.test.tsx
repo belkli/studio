@@ -37,7 +37,8 @@ describe('AboutPage', () => {
         fireEvent.change(searchInput, { target: { value: 'הוד השרון' } });
 
         // Verify it shows matching items (assuming data has it)
-        expect(screen.getByText(/הוד השרון/i)).toBeInTheDocument();
+        const items = screen.getAllByText(/הוד השרון/i);
+        expect(items.length).toBeGreaterThan(0);
 
         // Type something random
         fireEvent.change(searchInput, { target: { value: 'ZXYZXYZXY' } });
@@ -49,7 +50,8 @@ describe('AboutPage', () => {
 
         // Find a department chip (e.g., "פסנתר" if it exist in data)
         // Note: ALL_DEPARTMENTS is derived from data.
-        const pianoChip = screen.queryByText('פסנתר');
+        const pianoChips = screen.queryAllByText('פסנתר');
+        const pianoChip = pianoChips[0];
         if (pianoChip) {
             fireEvent.click(pianoChip);
             // Verify results filtered

@@ -78,7 +78,7 @@ interface RecitalFormProps {
     onCancel?: () => void;
 }
 
-const schoolOptions = schools.map(s => ({ value: s.name, label: `${s.name} (סמל: ${s.symbol})` }));
+const getSchoolOptions = (t: any) => schools.map(s => ({ value: s.name, label: `${s.name} (${t('schoolSymbol')}: ${s.symbol})` }));
 
 const getHebrewAcademicYear = () => {
     const date = new Date();

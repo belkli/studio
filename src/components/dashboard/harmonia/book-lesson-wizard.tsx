@@ -20,17 +20,18 @@ import { useRouter } from 'next/navigation';
 import { Combobox } from '@/components/ui/combobox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-const bookingSchema = z.object({
-    studentId: z.string().min(1, "חובה לבחור תלמיד."),
-    instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
-    teacherId: z.string().min(1, "חובה לבחור מורה."),
+const getBookingSchema = (t: any) => z.object({
+    studentId: z.string().min(1, t("studentRequired")),
+    instrument: z.string().min(1, t("instrumentRequired")),
+    teacherId: z.string().min(1, t("teacherRequired")),
     date: z.date(),
-    time: z.string().min(1, "חובה לבחור שעה."),
+    time: z.string().min(1, t("timeRequired")),
     durationMinutes: z.coerce.number().default(45),
 });
 
-type BookingFormData = z.infer<typeof bookingSchema>;
+type BookingFormData = z.infer<ReturnType<typeof getBookingSchema>>;
 
 export function BookLessonWizard() {
     const { user, users, mockLessons, addLesson, mockPackages } = useAuth();
@@ -39,10 +40,12 @@ export function BookLessonWizard() {
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
+    const t = useTranslations("LessonManagement");
+
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
 
     const form = useForm<BookingFormData>({
-        resolver: zodResolver(bookingSchema) as any,
+        resolver: zodResolver(getBookingSchema(t)) as any,
         defaultValues: {
             studentId: user?.role === 'student' ? user.id : '',
             date: new Date(),
@@ -123,8 +126,12 @@ export function BookLessonWizard() {
         });
 
         toast({
-            title: 'השיעור נקבע בהצלחה!',
-            description: `נקבע שיעור ${data.instrument} עם ${teachers.find(t => t.id === data.teacherId)?.name} ב-${format(lessonStartTime, 'dd/MM/yy HH:mm')}.`
+            title: t('lessonBookedSuccess'),
+            description: t('lessonBookedDesc', {
+                instrument: data.instrument,
+                teacherName: teachers.find(t1 => t1.id === data.teacherId)?.name || 'Teacher',
+                dateTime: format(lessonStartTime, 'dd/MM/yy HH:mm')
+            })
         });
         router.push('/dashboard/schedule');
     };
@@ -161,17 +168,17 @@ export function BookLessonWizard() {
                         <div className="grid md:grid-cols-3 gap-8">
                             {/* Filters Column */}
                             <div className="space-y-6">
-                                <h3 className="font-semibold">1. סנן ובחר</h3>
+                                <h3 className="font-semibold">{t('step1Filter')}</h3>
 
                                 {user?.role === 'parent' && (
                                     <FormField name="studentId" control={form.control} render={({ field }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>בחר תלמיד</FormLabel>
+                                            <FormLabel>{t('selectStudent')}</FormLabel>
                                             <Combobox
                                                 options={childrenOptions}
                                                 selectedValue={field.value}
                                                 onSelectedValueChange={field.onChange}
-                                                placeholder="בחר ילד/ה..."
+                                                placeholder={t('selectChildPlaceholder')}
                                             />
                                             <FormMessage />
                                         </FormItem>
@@ -180,12 +187,12 @@ export function BookLessonWizard() {
 
                                 <FormField name="instrument" control={form.control} render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>כלי נגינה</FormLabel>
+                                        <FormLabel>{t('instrument')}</FormLabel>
                                         <Combobox
                                             options={studentInstruments.map(i => ({ value: i, label: i }))}
                                             selectedValue={field.value}
                                             onSelectedValueChange={field.onChange}
-                                            placeholder="בחר כלי..."
+                                            placeholder={t('selectInstrumentPlaceholder')}
                                             disabled={!selectedStudentId}
                                         />
                                         <FormMessage />
@@ -193,28 +200,28 @@ export function BookLessonWizard() {
                                 )} />
                                 <FormField name="teacherId" control={form.control} render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>מורה</FormLabel>
+                                        <FormLabel>{t('teacher')}</FormLabel>
                                         <Combobox
-                                            options={teachers.map(t => ({ value: t.id, label: t.name! }))}
+                                            options={teachers.map(t2 => ({ value: t2.id, label: t2.name! }))}
                                             selectedValue={field.value}
                                             onSelectedValueChange={field.onChange}
-                                            placeholder="בחר מורה..."
+                                            placeholder={t('selectTeacherPlaceholder')}
                                         />
                                         <FormMessage />
                                     </FormItem>
                                 )} />
                                 <FormField name="durationMinutes" control={form.control} render={({ field }) => (
                                     <FormItem className="flex flex-col">
-                                        <FormLabel>אורך שיעור</FormLabel>
+                                        <FormLabel>{t('lessonDuration')}</FormLabel>
                                         <Combobox
                                             options={[
-                                                { value: "30", label: "30 דקות" },
-                                                { value: "45", label: "45 דקות" },
-                                                { value: "60", label: "60 דקות" },
+                                                { value: "30", label: t('duration30') },
+                                                { value: "45", label: t('duration45') },
+                                                { value: "60", label: t('duration60') },
                                             ]}
                                             selectedValue={String(field.value)}
                                             onSelectedValueChange={v => field.onChange(Number(v))}
-                                            placeholder="בחר אורך..."
+                                            placeholder={t('selectDurationPlaceholder')}
                                         />
                                         <FormMessage />
                                     </FormItem>
@@ -228,15 +235,15 @@ export function BookLessonWizard() {
                                                 <AlertTitle>{activePackage.title}</AlertTitle>
                                                 <AlertDescription>
                                                     {hasCredits
-                                                        ? `יתרת קרדיטים: ${activePackage.totalCredits! - activePackage.usedCredits!} מתוך ${activePackage.totalCredits}`
-                                                        : "נגמרו הקרדיטים בחבילה זו. יש לרכוש חבילה חדשה."}
+                                                        ? t('creditBalance', { remaining: String((activePackage.totalCredits || 0) - (activePackage.usedCredits || 0)), total: String(activePackage.totalCredits || 0) })
+                                                        : t('noCreditsLeft')}
                                                 </AlertDescription>
                                             </Alert>
                                         ) : (
                                             <Alert variant="destructive">
                                                 <AlertCircle className="h-4 w-4" />
-                                                <AlertTitle>אין חבילה פעילה</AlertTitle>
-                                                <AlertDescription>לא נמצאה חבילת שיעורים פעילה עבור תלמיד זה.</AlertDescription>
+                                                <AlertTitle>{t('noActivePackage')}</AlertTitle>
+                                                <AlertDescription>{t('noActivePackageDesc')}</AlertDescription>
                                             </Alert>
                                         )}
                                     </div>
@@ -246,7 +253,7 @@ export function BookLessonWizard() {
                             {/* Date & Time Column */}
                             <div className="md:col-span-2 grid md:grid-cols-2 gap-8">
                                 <div className="space-y-6">
-                                    <h3 className="font-semibold">2. בחר תאריך ושעה</h3>
+                                    <h3 className="font-semibold">{t('step2DateTime')}</h3>
                                     <FormField name="date" control={form.control} render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
@@ -267,11 +274,11 @@ export function BookLessonWizard() {
                                 <div className="space-y-6">
                                     <FormField name="time" control={form.control} render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>שעות פנויות</FormLabel>
+                                            <FormLabel>{t('availableTimeSlots')}</FormLabel>
                                             <FormControl>
                                                 <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md">
                                                     {isLoadingSlots && <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
-                                                    {!isLoadingSlots && availableSlots.length === 0 && <p className="text-center text-sm text-muted-foreground p-4">לא נמצאו שעות פנויות למורה בתאריך זה.</p>}
+                                                    {!isLoadingSlots && availableSlots.length === 0 && <p className="text-center text-sm text-muted-foreground p-4">{t('noAvailableTimeSlots')}</p>}
                                                     {!isLoadingSlots && availableSlots.map(slot => (
                                                         <FormItem key={slot}>
                                                             <FormControl>
@@ -292,7 +299,7 @@ export function BookLessonWizard() {
                         </div>
                     </CardContent>
                     <CardFooter className="pt-6">
-                        <Button type="submit" disabled={!form.formState.isValid || !hasCredits}>הזמן שיעור</Button>
+                        <Button type="submit" disabled={!form.formState.isValid || !hasCredits}>{t('bookLesson')}</Button>
                     </CardFooter>
                 </form>
             </FormProvider>

@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export function AidApplicationWizard() {
     const [step, setStep] = useState(1);
@@ -19,6 +20,7 @@ export function AidApplicationWizard() {
     const [isDone, setIsDone] = useState(false);
     const { toast } = useToast();
     const { addScholarshipApplication } = useAuth();
+    const t = useTranslations('ScholarshipApplication');
 
     const handleNext = () => setStep((s) => Math.min(s + 1, 3));
     const handleBack = () => setStep((s) => Math.max(s - 1, 1));
@@ -30,12 +32,12 @@ export function AidApplicationWizard() {
         setTimeout(() => {
             // In a real app, you would gather form data here.
             addScholarshipApplication({});
-            
+
             setIsSubmitting(false);
             setIsDone(true);
             toast({
-                title: 'הבקשה הוגשה בהצלחה',
-                description: 'בקשתך למלגה התקבלה ותיבחן על ידי הוועדה. תשובה תימסר עד 30 ימי עסקים.',
+                title: t('successToastTitle'),
+                description: t('successToastDesc'),
             });
         }, 1500);
     };
@@ -47,36 +49,36 @@ export function AidApplicationWizard() {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
                         <CheckCircle2 className="w-8 h-8 text-primary" />
                     </div>
-                    <h2 className="text-2xl font-bold">הבקשה התקבלה!</h2>
+                    <h2 className="text-2xl font-bold">{t('requestReceived')}</h2>
                     <p className="text-muted-foreground max-w-md">
-                        תגובת הוועדה למלגות תישלח אליך בהקדם. בינתיים, סטטוס הבקשה עודכן באזור האישי שלך.
+                        {t('requestReceivedDesc')}
                     </p>
                     <Button className="mt-4" onClick={() => window.location.href = '/dashboard'}>
-                        חזור ללוח הבקרה
+                        {t('backToDashboard')}
                     </Button>
                 </CardContent>
             </Card>
         );
     }
-    
+
     const stepperSteps = [
-        { id: 'details', title: 'פרטים ורקע' },
-        { id: 'financial', title: 'נימוקים ומסמכים' },
-        { id: 'submit', title: 'הגשה' }
+        { id: 'details', title: t('step1') },
+        { id: 'financial', title: t('step2') },
+        { id: 'submit', title: t('step3') }
     ];
 
     return (
         <Card className="w-full max-w-2xl mx-auto shadow-sm">
             <CardHeader>
-                <CardTitle>בקשה לתמיכה כלכלית / מלגה</CardTitle>
+                <CardTitle>{t('pageTitle')}</CardTitle>
                 <CardDescription>
-                    קרן המלגות של הרמוניה מסייעת לתלמידים מצטיינים או ממשפחות מעוטות יכולת להגשים את החלום המוזיקלי.
+                    {t('pageDesc')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between mb-8 relative">
                     <div className="absolute top-1/2 left-0 right-0 h-1 bg-muted -z-10 -translate-y-1/2 rounded-full" />
-                    <div className={cn("absolute top-1/2 right-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300", 
+                    <div className={cn("absolute top-1/2 right-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300",
                         step === 1 ? 'w-0' : step === 2 ? 'w-1/2' : 'w-full'
                     )} />
 
@@ -94,32 +96,32 @@ export function AidApplicationWizard() {
                     {step === 1 && (
                         <div className="space-y-6 animate-in slide-in-from-right-4">
                             <div className="space-y-4">
-                                <h3 className="text-lg font-medium">פרטים אישיים ורקע</h3>
+                                <h3 className="text-lg font-medium">{t('personalInfoTitle')}</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="firstName">שם פרטי</Label>
+                                        <Label htmlFor="firstName">{t('firstName')}</Label>
                                         <Input id="firstName" required />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="lastName">שם משפחה</Label>
+                                        <Label htmlFor="lastName">{t('lastName')}</Label>
                                         <Input id="lastName" required />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="idNumber">תעודת זהות</Label>
+                                    <Label htmlFor="idNumber">{t('idNumber')}</Label>
                                     <Input id="idNumber" required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="instrument">כלי נגינה ראשי / מסלול</Label>
+                                    <Label htmlFor="instrument">{t('instrument')}</Label>
                                     <Select dir="rtl" required>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="בחר כלי נגינה..." />
+                                            <SelectValue placeholder={t('selectInstrument')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="piano">פסנתר</SelectItem>
-                                            <SelectItem value="violin">כינור</SelectItem>
-                                            <SelectItem value="guitar">גיטרה</SelectItem>
-                                            <SelectItem value="voice">פיתוח קול</SelectItem>
+                                            <SelectItem value="piano">{t('piano')}</SelectItem>
+                                            <SelectItem value="violin">{t('violin')}</SelectItem>
+                                            <SelectItem value="guitar">{t('guitar')}</SelectItem>
+                                            <SelectItem value="voice">{t('voice')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -130,36 +132,36 @@ export function AidApplicationWizard() {
                     {step === 2 && (
                         <div className="space-y-6 animate-in slide-in-from-right-4">
                             <div className="space-y-4">
-                                <h3 className="text-lg font-medium">מצב סוציו-אקונומי ונימוקים</h3>
+                                <h3 className="text-lg font-medium">{t('socioEconomicTitle')}</h3>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="income">הכנסה חודשית משפחתית ממוצעת</Label>
+                                    <Label htmlFor="income">{t('familyIncome')}</Label>
                                     <Select dir="rtl" required>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="אנא בחר רמת הכנסה..." />
+                                            <SelectValue placeholder={t('selectIncome')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="tier1">עד 5,000 ש"ח</SelectItem>
-                                            <SelectItem value="tier2">5,001 - 10,000 ש"ח</SelectItem>
-                                            <SelectItem value="tier3">10,001 - 15,000 ש"ח</SelectItem>
-                                            <SelectItem value="tier4">מעל 15,000 ש"ח</SelectItem>
+                                            <SelectItem value="tier1">{t('tier1')}</SelectItem>
+                                            <SelectItem value="tier2">{t('tier2')}</SelectItem>
+                                            <SelectItem value="tier3">{t('tier3')}</SelectItem>
+                                            <SelectItem value="tier4">{t('tier4')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="siblings">מספר נפשות בבית</Label>
+                                        <Label htmlFor="siblings">{t('householdMembers')}</Label>
                                         <Input id="siblings" type="number" min="1" required />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="reason">נימוק הבקשה למלגה (עד 300 מילים)</Label>
+                                    <Label htmlFor="reason">{t('applicationReason')}</Label>
                                     <Textarea
                                         id="reason"
                                         className="h-32 resize-none"
-                                        placeholder="פרטו מדוע אתם זקוקים למלגה, הישגים מוזיקליים, או כל מידע רלוונטי לוועדה..."
+                                        placeholder={t('reasonPlaceholder')}
                                         required
                                     />
                                 </div>
@@ -170,13 +172,13 @@ export function AidApplicationWizard() {
                     {step === 3 && (
                         <div className="space-y-6 animate-in slide-in-from-right-4">
                             <div className="space-y-4">
-                                <h3 className="text-lg font-medium">צירוף מסמכים (רשות)</h3>
+                                <h3 className="text-lg font-medium">{t('documentsTitle')}</h3>
 
                                 <Alert>
                                     <AlertCircle className="h-4 w-4" />
-                                    <AlertTitle>שימו לב</AlertTitle>
+                                    <AlertTitle>{t('attention')}</AlertTitle>
                                     <AlertDescription>
-                                        צירוף 3 תלושי שכר אחרונים של שני בני הזוג (או אישור מביטוח לאומי) מגדיל משמעותית את המידע העומד לרשות הוועדה בבחינת הבקשה.
+                                        {t('attentionDesc')}
                                     </AlertDescription>
                                 </Alert>
 
@@ -185,8 +187,8 @@ export function AidApplicationWizard() {
                                         <FileUp className="w-6 h-6 text-muted-foreground" />
                                     </div>
                                     <div>
-                                        <p className="font-medium">לחץ להעלאת קבצים או גרור לכאן</p>
-                                        <p className="text-xs text-muted-foreground mt-1">PDF, JPG, PNG עד 5MB</p>
+                                        <p className="font-medium">{t('uploadFiles')}</p>
+                                        <p className="text-xs text-muted-foreground mt-1">{t('fileTypes')}</p>
                                     </div>
                                     <Input id="files" type="file" className="hidden" multiple />
                                 </div>
@@ -196,15 +198,15 @@ export function AidApplicationWizard() {
 
                     <div className="flex justify-between mt-8 pt-4 border-t">
                         <Button type="button" variant="outline" onClick={handleBack} disabled={step === 1 || isSubmitting}>
-                            חזור לחלק הקודם
+                            {t('backBtn')}
                         </Button>
                         {step < 3 ? (
                             <Button type="submit">
-                                המשך לחלק הבא
+                                {t('nextBtn')}
                             </Button>
                         ) : (
                             <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? 'שולח בקשה...' : 'הגש בקשה למלגה'}
+                                {isSubmitting ? t('submittingBtn') : t('submitBtn')}
                             </Button>
                         )}
                     </div>

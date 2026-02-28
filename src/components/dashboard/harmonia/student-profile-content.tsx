@@ -1,18 +1,19 @@
-
 'use client';
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon } from "lucide-react";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon, FileText, CheckCircle2 } from 'lucide-react';
 import { Link } from "@/i18n/routing";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement, LessonNote } from "@/lib/types";
 import { format, formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { useMemo, useState } from "react";
+import { useTranslations } from 'next-intl';
 
 const statusTranslations: Record<RepertoireStatus, string> = {
     LEARNING: 'למידה',
@@ -37,6 +38,8 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
     const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
+    const [activeTab, setActiveTab] = useState('overview');
+    const t = useTranslations("StudentDashboard");
 
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
     const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === student.id), [mockAssignedRepertoire, student.id]);
@@ -98,12 +101,32 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             .slice(0, 3); // show next 3
     }, [mockLessons, student]);
 
+    const getStatusColor = (status: RepertoireStatus) => {
+        switch (status) {
+            case 'LEARNING': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            case 'POLISHING': return 'bg-blue-100 text-blue-800 border-blue-200';
+            case 'PERFORMANCE_READY': return 'bg-green-100 text-green-800 border-green-200';
+            case 'COMPLETED': return 'bg-gray-100 text-gray-800 border-gray-200';
+            default: return 'bg-gray-100 text-gray-800 border-gray-200';
+        }
+    };
+
+    const getStatusLabel = (status: RepertoireStatus) => {
+        switch (status) {
+            case 'LEARNING': return t('statusLearning');
+            case 'POLISHING': return t('statusPolishing');
+            case 'PERFORMANCE_READY': return t('statusReady');
+            case 'COMPLETED': return t('statusCompleted');
+            default: return status;
+        }
+    };
+
     return (
         <>
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">{isParentView ? `הפרופיל של ${student.name.split(' ')[0]}` : `ברוך הבא, ${student.name.split(' ')[0]}`}</h1>
-                    <p className="text-muted-foreground">זהו מרכז הבקרה האישי.</p>
+                    <h1 className="text-2xl font-bold">{isParentView ? t('parentViewTitle', { studentName: student.name.split(' ')[0] }) : t('welcomeTitle', { studentName: student.name.split(' ')[0] })}</h1>
+                    <p className="text-muted-foreground">{t('controlCenter')}</p>
                 </div>
             </div>
             <Card>
@@ -118,7 +141,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <Button variant="outline" size="sm" className="mt-2" asChild>
                             <Link href="/dashboard/settings">
                                 <Edit className="ms-2 h-4 w-4" />
-                                ערוך פרופיל
+                                {t('editProfile')}
                             </Link>
                         </Button>
                     )}
@@ -128,16 +151,16 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><UserCircle className="text-primary" /> המורה שלי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><UserCircle className="text-primary" /> {t('myTeacher')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-medium">{student.instruments?.[0]?.teacherName || 'טרם שויך מורה'}</p>
+                        <p className="text-lg font-medium">{student.instruments?.[0]?.teacherName || t('noTeacherAssigned')}</p>
                         <p className="text-muted-foreground">{student.instruments?.[0]?.instrument}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Music className="text-accent" /> החבילה שלי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Music className="text-accent" /> {t('myPackage')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {currentPackage ? (
@@ -146,17 +169,17 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                 <p className="text-sm text-muted-foreground">{currentPackage.description}</p>
                             </>
                         ) : (
-                            <p className="text-muted-foreground">לא שויכה חבילה</p>
+                            <p className="text-muted-foreground">{t('noPackageAssigned')}</p>
                         )}
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Target className="text-red-500" /> יעד שבועי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Target className="text-red-500" /> {t('weeklyGoal')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-medium">{totalMinutesThisWeek} / {weeklyGoal} דקות</p>
-                        <p className="text-sm text-muted-foreground">התקדמות לקראת היעד שהוגדר</p>
+                        <p className="text-lg font-medium">{totalMinutesThisWeek} / {weeklyGoal} {t('minutes')}</p>
+                        <p className="text-sm text-muted-foreground">{t('weeklyGoalDesc')}</p>
                         <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
                     </CardContent>
                 </Card>
@@ -165,14 +188,14 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Star /> הרפרטואר שלי</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Star /> {t('myRepertoire')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>יצירה</TableHead>
-                                    <TableHead>סטטוס</TableHead>
+                                    <TableHead>{t('piece')}</TableHead>
+                                    <TableHead>{t('status')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -185,12 +208,12 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                                 <p className="text-xs text-muted-foreground">{composition?.composer}</p>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant="outline">{statusTranslations[rep.status]}</Badge>
+                                                <Badge variant="outline" className={getStatusColor(rep.status)}>{getStatusLabel(rep.status)}</Badge>
                                             </TableCell>
                                         </TableRow>
                                     )
                                 })}
-                                {userRepertoire.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-4">טרם הוגדר רפרטואר.</TableCell></TableRow>}
+                                {userRepertoire.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-4">{t('noRepertoire')}</TableCell></TableRow>}
                             </TableBody>
                         </Table>
                     </CardContent>
@@ -198,7 +221,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><CalendarIcon /> שיעורים קרובים</CardTitle>
+                            <CardTitle className="flex items-center gap-2"><CalendarIcon /> {t('upcomingLessons')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             {upcomingLessons.length > 0 ? upcomingLessons.map(lesson => (
@@ -213,16 +236,16 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                     </div>
                                 </div>
                             )) : (
-                                <p className="text-sm text-muted-foreground text-center py-4">אין שיעורים מתוכננים.</p>
+                                <p className="text-sm text-muted-foreground text-center py-4">{t('noUpcomingLessons')}</p>
                             )}
                             <Button variant="outline" className="w-full" asChild>
-                                <Link href="/dashboard/schedule">למערכת השעות המלאה</Link>
+                                <Link href="/dashboard/schedule">{t('fullSchedule')}</Link>
                             </Button>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><BookOpen /> אימונים אחרונים</CardTitle>
+                            <CardTitle className="flex items-center gap-2"><BookOpen /> {t('recentPractices')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             {userLogs.slice(0, 3).map(log => (
@@ -232,19 +255,19 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                         <p className="text-xs text-muted-foreground">{(log.pieces ?? []).map(p => p.title).join(', ')}</p>
                                     </div>
                                     <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
-                                        {log.durationMinutes} דקות
+                                        {log.durationMinutes} {t('minutes')}
                                     </Badge>
                                 </div>
                             ))}
                             <Button variant="outline" className="w-full" asChild>
-                                <Link href="/dashboard/progress">לכל האימונים</Link>
+                                <Link href="/dashboard/progress">{t('allPractices')}</Link>
                             </Button>
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Pencil /> הערות מהמורה</CardTitle>
+                            <CardTitle className="flex items-center gap-2"><Pencil /> {t('teacherNotes')}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {userNotes.length > 0 ? userNotes.slice(0, 2).map(note => (
@@ -258,7 +281,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                     )}
                                 </div>
                             )) : (
-                                <p className="text-sm text-muted-foreground text-center py-4">אין הערות מהמורה לאחרונה.</p>
+                                <p className="text-sm text-muted-foreground text-center py-4">{t('noRecentTeacherNotes')}</p>
                             )}
                         </CardContent>
                     </Card>
@@ -266,8 +289,8 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Trophy /> הישגים ותעודות</CardTitle>
-                    <CardDescription>אבני דרך במסע המוזיקלי שלך.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Trophy /> {t('achievementsAndCertificates')}</CardTitle>
+                    <CardDescription>{t('achievementsDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {student.achievements && student.achievements.length > 0 ? (

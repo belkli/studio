@@ -249,6 +249,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
 export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCancel }: KenesFormProps) {
     const t = useTranslations('KenesForm');
+    const tForms = useTranslations('Forms');
     const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
@@ -284,7 +285,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
             // Simulate success
             setSaveState('success');
             setLastSaved(new Date());
-            toast({ title: "טיוטה נשמרה!" });
+            toast({ title: tForms('draftSaved') });
             form.reset(form.getValues());
             setTimeout(() => setSaveState('idle'), 3000);
         }, 1500);

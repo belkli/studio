@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from 'next-intl';
 
 export function PublicEventPage() {
     const params = useParams();
@@ -19,6 +20,7 @@ export function PublicEventPage() {
     const { mockEvents } = useAuth();
     const { toast } = useToast();
     const [ticketCount, setTicketCount] = useState(1);
+    const t = useTranslations('PublicEventPage');
 
     const event = useMemo(() => mockEvents.find(e => e.id === eventId), [mockEvents, eventId]);
     const heroImage = PlaceHolderImages.find(img => img.id === 'event-wedding');
@@ -29,8 +31,8 @@ export function PublicEventPage() {
 
     const handleTicketPurchase = () => {
         toast({
-            title: 'ההזמנה הושלמה!',
-            description: `${ticketCount} כרטיסים הוזמנו. אישור נשלח למייל.`,
+            title: t('orderComplete'),
+            description: t('orderCompleteDesc', { count: ticketCount }),
         });
     };
 
@@ -41,7 +43,7 @@ export function PublicEventPage() {
                 <div className="relative z-10 p-4 space-y-4">
                     <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{event.name}</h1>
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">
-                        {event.type === 'RECITAL' ? 'הצטרפו אלינו לקונצרט מיוחד המציג את תלמידינו המוכשרים.' : 'ערב של מוזיקה משובחת עם מיטב המבצעים שלנו.'}
+                        {event.type === 'RECITAL' ? t('recitalDesc') : t('concertDesc')}
                     </p>
                 </div>
             </section>
@@ -51,8 +53,8 @@ export function PublicEventPage() {
                     <div className="lg:col-span-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>תוכנית האירוע</CardTitle>
-                                <CardDescription>הרפרטואר שיבוצע על ידי אמנינו הצעירים.</CardDescription>
+                                <CardTitle>{t('eventProgram')}</CardTitle>
+                                <CardDescription>{t('programDesc')}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {event.program.length > 0 ? (
@@ -65,13 +67,13 @@ export function PublicEventPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-sm font-medium">{perf.studentName}</p>
-                                                    <p className="text-xs text-muted-foreground">מבצע/ת</p>
+                                                    <p className="text-xs text-muted-foreground">{t('performer')}</p>
                                                 </div>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-muted-foreground text-center py-8">התוכניה המלאה תפורסם בקרוב.</p>
+                                    <p className="text-muted-foreground text-center py-8">{t('programTBA')}</p>
                                 )}
                             </CardContent>
                         </Card>
@@ -79,7 +81,7 @@ export function PublicEventPage() {
                     <div className="lg:col-span-1 space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>פרטי האירוע</CardTitle>
+                                <CardTitle>{t('eventDetails')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
                                 <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-muted-foreground" /><span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })}</span></div>
@@ -89,7 +91,7 @@ export function PublicEventPage() {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle>רכישת כרטיסים</CardTitle>
+                                <CardTitle>{t('buyTickets')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {(event.ticketPrice ?? 0) > 0 ? (
@@ -101,17 +103,17 @@ export function PublicEventPage() {
                                         </div>
                                         <Separator />
                                         <div className="text-center">
-                                            <p className="text-sm text-muted-foreground">סה"כ לתשלום</p>
+                                            <p className="text-sm text-muted-foreground">{t('totalPayment')}</p>
                                             <p className="text-3xl font-bold">₪{(event.ticketPrice ?? 0) * ticketCount}</p>
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="text-center font-medium text-lg">הכניסה חופשית</p>
+                                    <p className="text-center font-medium text-lg">{t('freeEntrance')}</p>
                                 )}
                             </CardContent>
                             <CardFooter>
                                 <Button className="w-full" size="lg" onClick={handleTicketPurchase}>
-                                    <Ticket className="me-2 h-5 w-5" /> הזמן כרטיסים
+                                    <Ticket className="me-2 h-5 w-5" /> {t('bookTicketsBtn')}
                                 </Button>
                             </CardFooter>
                         </Card>
