@@ -69,10 +69,17 @@ function getAccentColor(id: string): string {
 }
 
 function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium; distance?: number; onClick: () => void }) {
-    const isRTL = true;
+    const t = useTranslations('AboutPage');
+    const locale = useLocale();
     const gradient = getCardGradient(cons.id);
     const accent = getAccentColor(cons.id);
     const heroPhoto = cons.photoUrls?.[0];
+
+    // Pick translated name
+    const translation = cons.translations?.[locale as any];
+    const name = translation?.name || (locale === 'en' ? cons.nameEn : cons.name) || cons.name;
+    const city = (locale === 'en' ? cons.location?.cityEn : cons.location?.city) || cons.location?.city;
+    const about = translation?.about || cons.about;
 
     return (
         <button
@@ -82,7 +89,7 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
             {/* Hero strip */}
             <div className={`relative h-32 bg-gradient-to-br ${gradient} overflow-hidden`}>
                 {heroPhoto ? (
-                    <img src={heroPhoto} alt={cons.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 group-hover:scale-105" />
+                    <img src={heroPhoto} alt={name} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 group-hover:scale-105" />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <Music2 className={`h-16 w-16 ${accent} opacity-20 group-hover:opacity-30 transition-opacity`} />
@@ -92,7 +99,7 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
                 {distance !== undefined && (
                     <div className="absolute top-3 start-3 bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1 flex items-center gap-1.5 text-xs font-semibold">
                         <Navigation2 className="h-3 w-3 text-primary" />
-                        <span>{distance < 1 ? `${Math.round(distance * 1000)}מ'` : `${Math.round(distance)}ק"מ`}</span>
+                        <span>{distance < 1 ? `${Math.round(distance * 1000)}מ'` : `${distance.toFixed(1)}ק"מ`}</span>
                     </div>
                 )}
             </div>
@@ -100,19 +107,19 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
             {/* Content */}
             <div className="p-5 space-y-3">
                 <div>
-                    <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">{cons.name}</h3>
-                    {cons.nameEn && <p className="text-xs text-muted-foreground mt-0.5">{cons.nameEn}</p>}
+                    <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">{name}</h3>
+                    {(locale === 'en' ? cons.nameEn : '') && <p className="text-xs text-muted-foreground mt-0.5">{cons.nameEn}</p>}
                 </div>
 
-                {cons.location?.city && (
+                {city && (
                     <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span>{cons.location.city}</span>
+                        <span>{city}</span>
                     </div>
                 )}
 
-                {cons.about && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{cons.about}</p>
+                {about && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{about}</p>
                 )}
 
                 {/* Departments */}
@@ -147,7 +154,22 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
 }
 
 function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | null; open: boolean; onClose: () => void }) {
+    const t = useTranslations('AboutPage');
+    const locale = useLocale();
+
     if (!cons) return null;
+
+    const translation = cons.translations?.[locale as any];
+    const name = translation?.name || (locale === 'en' ? cons.nameEn : cons.name) || cons.name;
+    const about = translation?.about || cons.about;
+    const openingHours = translation?.openingHours || cons.openingHours;
+
+    // We might need to translate roles for management
+    const managerRole = translation?.manager?.role || cons.manager?.role;
+    const coordRole = translation?.pedagogicalCoordinator?.role || cons.pedagogicalCoordinator?.role;
+    const managerBio = translation?.manager?.bio || cons.manager?.bio;
+    const coordBio = translation?.pedagogicalCoordinator?.bio || cons.pedagogicalCoordinator?.bio;
+
     const accent = getAccentColor(cons.id);
 
     return (
@@ -180,8 +202,8 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                     {/* Header */}
                     <div>
                         <DialogHeader className="text-start space-y-1">
-                            <DialogTitle className="text-2xl font-bold leading-tight">{cons.name}</DialogTitle>
-                            {cons.nameEn && <p className="text-muted-foreground">{cons.nameEn}</p>}
+                            <DialogTitle className="text-2xl font-bold leading-tight">{name}</DialogTitle>
+                            {(locale === 'en' ? '' : cons.nameEn) && <p className="text-muted-foreground">{cons.nameEn}</p>}
                         </DialogHeader>
                     </div>
 
@@ -192,12 +214,12 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                             <div className="bg-muted/30 rounded-xl p-4 space-y-3">
                                 <h4 className="font-semibold text-sm flex items-center gap-2">
                                     <Phone className={`h-4 w-4 ${accent}`} />
-                                    פרטי יצירת קשר
+                                    {t('contactDetails')}
                                 </h4>
-                                {cons.location?.city && (
+                                {(locale === 'en' ? cons.location?.cityEn : cons.location?.city) && (
                                     <div className="flex items-center gap-2 text-sm">
                                         <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                                        <span>{cons.location.address || cons.location.city}</span>
+                                        <span>{cons.location?.address || (locale === 'en' ? cons.location?.cityEn : cons.location?.city)}</span>
                                     </div>
                                 )}
                                 {cons.tel && (
@@ -231,10 +253,10 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                         <ExternalLink className="h-3 w-3" />
                                     </a>
                                 )}
-                                {cons.openingHours && (
+                                {openingHours && (
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                                        <span>{cons.openingHours}</span>
+                                        <span>{openingHours}</span>
                                     </div>
                                 )}
                             </div>
@@ -255,8 +277,8 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                         </Avatar>
                                         <div>
                                             <p className="font-medium text-sm">{cons.manager.name}</p>
-                                            {cons.manager.role && <p className="text-xs text-muted-foreground">{cons.manager.role}</p>}
-                                            {cons.manager.bio && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{cons.manager.bio}</p>}
+                                            {managerRole && <p className="text-xs text-muted-foreground">{managerRole}</p>}
+                                            {managerBio && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{managerBio}</p>}
                                         </div>
                                     </div>
                                     {cons.pedagogicalCoordinator && (
@@ -269,7 +291,8 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                             </Avatar>
                                             <div>
                                                 <p className="font-medium text-sm">{cons.pedagogicalCoordinator.name}</p>
-                                                {cons.pedagogicalCoordinator.role && <p className="text-xs text-muted-foreground">{cons.pedagogicalCoordinator.role}</p>}
+                                                {coordRole && <p className="text-xs text-muted-foreground">{coordRole}</p>}
+                                                {coordBio && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{coordBio}</p>}
                                             </div>
                                         </div>
                                     )}
@@ -300,13 +323,13 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
 
                         {/* Right: About & Departments */}
                         <div className="space-y-4">
-                            {cons.about && (
+                            {about && (
                                 <div>
                                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                                         <Building2 className={`h-4 w-4 ${accent}`} />
-                                        אודות
+                                        {t('about')}
                                     </h4>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{cons.about}</p>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{about}</p>
                                 </div>
                             )}
 
@@ -314,7 +337,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 <div>
                                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                                         <Music2 className={`h-4 w-4 ${accent}`} />
-                                        מחלקות ותחומי לימוד
+                                        {t('departments')}
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
                                         {cons.departments.map((d, i) => (
@@ -331,7 +354,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 <div>
                                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                                         <BookOpen className={`h-4 w-4 ${accent}`} />
-                                        תוכניות לימוד
+                                        {t('programs')}
                                     </h4>
                                     <ul className="space-y-1.5">
                                         {cons.programs.map((p, i) => (
@@ -349,7 +372,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 <div>
                                     <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                                         <MapPin className={`h-4 w-4 ${accent}`} />
-                                        שלוחות
+                                        {t('branches')}
                                     </h4>
                                     <div className="space-y-2">
                                         {cons.branchesInfo.map((b, i) => (
@@ -370,7 +393,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                         <div className="border-t border-border pt-6">
                             <h4 className="font-semibold text-sm mb-4 flex items-center gap-2">
                                 <Users className={`h-4 w-4 ${accent}`} />
-                                צוות מורים ({cons.teachers.length})
+                                {t('teachers', { count: cons.teachers.length })}
                             </h4>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {cons.teachers.slice(0, 12).map((teacher, i) => (
@@ -392,7 +415,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                         <div className="h-16 w-16 rounded-full border-2 border-dashed border-border flex items-center justify-center">
                                             <span className="text-sm font-bold text-muted-foreground">+{cons.teachers.length - 12}</span>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">מורים נוספים</p>
+                                        <p className="text-xs text-muted-foreground">{t('moreTeachers')}</p>
                                     </div>
                                 )}
                             </div>
@@ -402,13 +425,13 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                     {/* CTA */}
                     <div className="border-t border-border pt-4 flex gap-3">
                         <Button asChild className="flex-1">
-                            <Link href="/contact">צור קשר עם קונסרבטוריון זה</Link>
+                            <Link href="/contact">{t('contactThisCons')}</Link>
                         </Button>
                         {cons.officialSite && (
                             <Button asChild variant="outline">
                                 <a href={cons.officialSite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                                     <Globe className="h-4 w-4" />
-                                    אתר רשמי
+                                    {t('officialSite')}
                                 </a>
                             </Button>
                         )}
@@ -424,8 +447,10 @@ const ALL_DEPARTMENTS = Array.from(
 ).sort();
 
 export default function AboutPage() {
+    const t = useTranslations('AboutPage');
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
+    const locale = useLocale();
 
     const [search, setSearch] = useState('');
     const [citySearch, setCitySearch] = useState('');
@@ -458,7 +483,11 @@ export default function AboutPage() {
     const filteredAndSorted = useMemo(() => {
         let list = conservatoriums.filter(c => {
             const q = search.toLowerCase();
-            const nameMatch = c.name.toLowerCase().includes(q) || (c.nameEn?.toLowerCase().includes(q)) || (c.location?.city?.toLowerCase().includes(q)) || (c.location?.cityEn?.toLowerCase().includes(q));
+            const translation = c.translations?.[locale as any];
+            const name = translation?.name || (locale === 'en' ? c.nameEn : c.name) || c.name;
+            const city = (locale === 'en' ? c.location?.cityEn : c.location?.city) || c.location?.city;
+
+            const nameMatch = name.toLowerCase().includes(q) || (c.nameEn?.toLowerCase().includes(q)) || (city?.toLowerCase().includes(q)) || (c.location?.cityEn?.toLowerCase().includes(q));
             const deptMatch = !deptFilter || c.departments?.some(d => d.name === deptFilter);
             return nameMatch && deptMatch;
         });
@@ -475,8 +504,8 @@ export default function AboutPage() {
                 return distA - distB;
             });
         }
-        return list.sort((a, b) => a.name.localeCompare(b.name, 'he'));
-    }, [search, deptFilter, referencePoint]);
+        return list.sort((a, b) => a.name.localeCompare(b.name, locale === 'he' ? 'he' : 'en'));
+    }, [search, deptFilter, referencePoint, locale]);
 
     function getDistance(cons: Conservatorium): number | undefined {
         if (!referencePoint || !cons.location?.coordinates) return undefined;
@@ -491,24 +520,24 @@ export default function AboutPage() {
     const hasFilters = !!search || !!deptFilter || !!citySearch || locationStatus === 'found';
 
     return (
-        <div className="flex flex-col min-h-dvh bg-background">
+        <div className="flex flex-col min-h-dvh bg-background" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
             {/* Header */}
             <PublicNavbar />
 
-            <main className="flex-1 pt-14">
+            <main className="flex-1 pt-14 text-start">
                 {/* Hero */}
                 <section className="relative py-20 px-4 text-center overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
                     <div className="relative max-w-3xl mx-auto space-y-4">
                         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 text-sm font-semibold text-primary mb-2">
                             <Music2 className="h-4 w-4" />
-                            <span>{conservatoriums.length} קונסרבטוריונים</span>
+                            <span>{t('showingCount', { count: conservatoriums.length })}</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-                            מוצאים את הקונסרבטוריון שלכם
+                            {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                            רשת הקונסרבטוריונים של הרמוניה — חינוך מוסיקלי מקצועי לכל הגילאים, בכל רחבי הארץ.
+                            {t('subtitle')}
                         </p>
                     </div>
                 </section>
@@ -523,9 +552,8 @@ export default function AboutPage() {
                                 <input
                                     value={search}
                                     onChange={e => setSearch(e.target.value)}
-                                    placeholder="חיפוש לפי שם עיר, שם קונסרבטוריון..."
+                                    placeholder={t('searchPlaceholder')}
                                     className="w-full h-10 bg-muted/50 border border-border rounded-xl ps-9 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-muted-foreground"
-                                    dir="rtl"
                                 />
                             </div>
                             <div className="flex gap-2">
@@ -535,9 +563,8 @@ export default function AboutPage() {
                                     <input
                                         value={citySearch}
                                         onChange={e => { setCitySearch(e.target.value); setUserLocation(null); setLocationStatus('idle'); }}
-                                        placeholder="מיין לפי עיר..."
+                                        placeholder={t('citySortPlaceholder')}
                                         className="w-full h-10 bg-muted/50 border border-border rounded-xl ps-9 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-muted-foreground"
-                                        dir="rtl"
                                     />
                                 </div>
                                 <Button
@@ -548,7 +575,7 @@ export default function AboutPage() {
                                     className="h-10 gap-2 whitespace-nowrap rounded-xl"
                                 >
                                     <LocateFixed className="h-4 w-4" />
-                                    {locationStatus === 'loading' ? 'מאתר...' : locationStatus === 'found' ? 'ממוין לפי מיקום' : 'מיקום נוכחי'}
+                                    {locationStatus === 'loading' ? t('locating') : locationStatus === 'found' ? t('sortedByLocation') : t('locateMe')}
                                 </Button>
                             </div>
                         </div>
@@ -559,7 +586,7 @@ export default function AboutPage() {
                                 onClick={() => setDeptFilter('')}
                                 className={`flex-shrink-0 h-7 px-3 rounded-full text-xs font-medium border transition-all ${!deptFilter ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/50 border-border hover:border-primary hover:text-primary'}`}
                             >
-                                הכל
+                                {t('allDepartments')}
                             </button>
                             {ALL_DEPARTMENTS.slice(0, 15).map(dept => (
                                 <button
@@ -581,16 +608,16 @@ export default function AboutPage() {
                         <div className="flex items-center justify-between mb-6 text-sm text-muted-foreground">
                             <span>
                                 {filteredAndSorted.length === conservatoriums.length
-                                    ? `מציג ${conservatoriums.length} קונסרבטוריונים`
-                                    : `נמצאו ${filteredAndSorted.length} מתוך ${conservatoriums.length}`}
-                                {referencePoint && ' · ממוין לפי מרחק'}
+                                    ? t('showingCount', { count: conservatoriums.length })
+                                    : t('foundCount', { found: filteredAndSorted.length, total: conservatoriums.length })}
+                                {referencePoint && ` · ${t('sortedByDistance')}`}
                             </span>
                             {hasFilters && (
                                 <button
                                     onClick={() => { setSearch(''); setDeptFilter(''); setCitySearch(''); setUserLocation(null); setLocationStatus('idle'); }}
                                     className="flex items-center gap-1.5 text-primary hover:underline"
                                 >
-                                    <X className="h-3.5 w-3.5" /> נקה סינון
+                                    <X className="h-3.5 w-3.5" /> {t('clearFilters')}
                                 </button>
                             )}
                         </div>
@@ -598,8 +625,8 @@ export default function AboutPage() {
                         {filteredAndSorted.length === 0 ? (
                             <div className="text-center py-24 space-y-3">
                                 <Search className="h-12 w-12 text-muted-foreground/30 mx-auto" />
-                                <p className="text-lg font-medium text-muted-foreground">לא נמצאו קונסרבטוריונים תואמים</p>
-                                <p className="text-sm text-muted-foreground">נסו לשנות את מילות החיפוש או לנקות את הסינון</p>
+                                <p className="text-lg font-medium text-muted-foreground">{t('noResults')}</p>
+                                <p className="text-sm text-muted-foreground">{t('noResultsSub')}</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

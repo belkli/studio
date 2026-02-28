@@ -1422,5 +1422,31 @@
     "nextBtn": "المتابعة للخطوة التالية",
     "submittingBtn": "جاري تقديم الطلب...",
     "submitBtn": "تقديم طلب المنحة"
+  },
+  "AboutPage": {
+    "title": "ابحث عن معهدك الموسيقي",
+    "subtitle": "شبكة معاهد هارمونيا — تعليم موسيقي احترافي لجميع الأعمار، في جميع أنحاء البلاد.",
+    "searchPlaceholder": "البحث حسب المدينة، اسم المعهد...",
+    "citySortPlaceholder": "فرز حسب المدينة...",
+    "locateMe": "الموقع الحالي",
+    "locating": "جاري تحديد الموقع...",
+    "sortedByLocation": "مرتب حسب الموقع",
+    "allDepartments": "الكل",
+    "showingCount": "عرض {count} من المعاهد",
+    "foundCount": "تم العثور على {found} من أصل {total}",
+    "sortedByDistance": "مرتب حسب المسافة",
+    "clearFilters": "مسح الفلاتر",
+    "noResults": "لم يتم العثور على معاهد مطابقة",
+    "noResultsSub": "حاول تغيير كلمات البحث أو مسح الفلاتر",
+    "contactDetails": "تفاصيل الاتصال",
+    "officialSite": "الموقع الرسمي",
+    "about": "حول",
+    "departments": "الأقسام ومجالات الدراسة",
+    "programs": "البرامج",
+    "branches": "الفروع",
+    "teachers": "المعلمون ({count})",
+    "moreTeachers": "معلمون إضافيون",
+    "contactThisCons": "اتصل بهذا المعهد",
+    "management": "الإدارة"
   }
 }

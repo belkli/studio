@@ -147,6 +147,134 @@ export type PaymentMethod = {
   isPrimary: boolean;
 };
 
+// User type defined below
+
+export type PricingConfig = {
+  baseRatePerLesson: {
+    '30': number;
+    '45': number;
+    '60': number;
+  };
+  discounts: {
+    pack5: number;
+    pack10: number;
+    yearly: number;
+    sibling: number;
+  };
+  adHocPremium: number; // as a percentage, e.g. 15 for 15%
+  trialPrice: number;
+};
+
+export type CancellationPolicy = {
+  studentNoticeHoursRequired: number;
+  studentCancellationCredit: 'FULL' | 'NONE'; // For on-time cancellations
+  studentLateCancelCredit: 'FULL' | 'NONE';   // For late cancellations
+  noShowCredit: 'NONE'; // Usually NONE
+  makeupCreditExpiryDays: number;
+  maxMakeupsPerTerm: number;
+};
+
+// --- Public-facing conservatorium profile supporting types ---
+export type ConservatoriumDepartment = {
+  name: string;
+  nameEn?: string;
+  headTeacher?: string;
+  link?: string;
+  photoUrl?: string;
+};
+
+export type ConservatoriumStaffMember = {
+  name: string;
+  role?: string;
+  bio?: string;
+  photoUrl?: string;
+};
+
+/** A teacher's opt-in public profile shown in the conservatorium directory */
+export type TeacherDirectoryProfile = {
+  id: string;
+  name: string;
+  role?: string;
+  bio?: string;
+  photoUrl?: string;
+  instruments?: string[];
+};
+
+export type ConservatoriumLocation = {
+  city: string;
+  cityEn?: string;
+  address?: string;
+  coordinates?: { lat: number; lng: number };
+  branches?: string[]; // Location-level branch descriptions
+};
+
+export type ConservatoriumBranchInfo = {
+  name: string;
+  address?: string;
+  tel?: string;
+  email?: string;
+  manager?: string;
+};
+
+export type SocialMediaLinks = {
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+  tiktok?: string;
+  whatsapp?: string;
+};
+
+export type ConservatoriumProfileTranslation = {
+  name?: string;
+  about?: string;
+  openingHours?: string;
+  programs?: string[];
+  ensembles?: string[];
+  manager?: {
+    role?: string;
+    bio?: string;
+  };
+  pedagogicalCoordinator?: {
+    role?: string;
+    bio?: string;
+  };
+  departments?: Array<{
+    name: string;
+  }>;
+  branchesInfo?: Array<{
+    name: string;
+    address?: string;
+  }>;
+};
+
+export type ConservatoriumTranslations = {
+  he?: ConservatoriumProfileTranslation;
+  en?: ConservatoriumProfileTranslation;
+  ar?: ConservatoriumProfileTranslation;
+  ru?: ConservatoriumProfileTranslation;
+};
+
+export type TranslationMeta = {
+  lastTranslatedAt?: string;
+  sourceHash?: string;
+  translatedBy?: 'AI' | 'HUMAN';
+  aiModel?: string;
+  overrides?: {
+    [locale: string]: string[];
+  };
+};
+
+export type UserProfileTranslation = {
+  bio?: string;
+  role?: string;
+};
+
+export type UserTranslations = {
+  en?: UserProfileTranslation;
+  ar?: UserProfileTranslation;
+  ru?: UserProfileTranslation;
+};
+
 export type User = {
   id: string;
   name: string;
@@ -200,91 +328,8 @@ export type User = {
     currentStreak: number;
     points: number;
   };
-};
-
-export type PricingConfig = {
-  baseRatePerLesson: {
-    '30': number;
-    '45': number;
-    '60': number;
-  };
-  discounts: {
-    pack5: number;
-    pack10: number;
-    yearly: number;
-    sibling: number;
-  };
-  adHocPremium: number; // as a percentage, e.g. 15 for 15%
-  trialPrice: number;
-};
-
-export type CancellationPolicy = {
-  studentNoticeHoursRequired: number;
-  studentCancellationCredit: 'FULL' | 'NONE'; // For on-time cancellations
-  studentLateCancelCredit: 'FULL' | 'NONE';   // For late cancellations
-  noShowCredit: 'NONE'; // Usually NONE
-  makeupCreditExpiryDays: number;
-  maxMakeupsPerTerm: number;
-};
-
-// --- Public-facing conservatorium profile supporting types ---
-export type SocialMediaLinks = {
-  facebook?: string;
-  instagram?: string;
-  youtube?: string;
-  tiktok?: string;
-  whatsapp?: string;
-};
-
-export type ConservatoriumDepartment = {
-  name: string;
-  nameEn?: string;
-  headTeacher?: string;
-  link?: string;
-  photoUrl?: string;
-};
-
-export type ConservatoriumStaffMember = {
-  name: string;
-  role?: string;
-  bio?: string;
-  photoUrl?: string;
-};
-
-/** A teacher's opt-in public profile shown in the conservatorium directory */
-export type TeacherDirectoryProfile = {
-  id: string;
-  name: string;
-  role?: string;
-  bio?: string;
-  photoUrl?: string;
-  instruments?: string[];
-};
-
-export type ConservatoriumLocation = {
-  city: string;
-  cityEn?: string;
-  address?: string;
-  coordinates?: { lat: number; lng: number };
-  branches?: string[]; // Location-level branch descriptions
-};
-
-export type ConservatoriumBranchInfo = {
-  name: string;
-  address?: string;
-  tel?: string;
-  email?: string;
-  manager?: string;
-};
-
-export type ConservatoriumTranslations = {
-  [locale: string]: {
-    about?: string;
-    openingHours?: string;
-    departments?: { name: string }[];
-    programs?: string[];
-    manager?: { bio?: string };
-  };
+  translations?: UserTranslations;
+  translationMeta?: TranslationMeta;
 };
 
 export type Conservatorium = {
@@ -316,6 +361,7 @@ export type Conservatorium = {
   socialMedia?: SocialMediaLinks;
   photoUrls?: string[];
   translations?: ConservatoriumTranslations;
+  translationMeta?: TranslationMeta;
 };
 
 export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';

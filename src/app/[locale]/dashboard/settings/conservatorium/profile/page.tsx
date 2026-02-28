@@ -12,8 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Languages } from 'lucide-react';
-import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium } from '@/lib/types';
-import { translateProfileContent } from '@/app/actions/translate';
+import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember } from '@/lib/types';
+import { translateConservatoriumProfile } from '@/app/actions/translate';
+import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
+import { computeConservatoriumSourceHash } from '@/lib/utils/translation-hash';
 
 export default function ConservatoriumProfileEditor() {
     const t = useTranslations('SettingsPage.conservatorium');
@@ -38,8 +40,42 @@ export default function ConservatoriumProfileEditor() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
+
+        let finalData = { ...formData } as Conservatorium;
+
+        // SDD-i18n-PROFILES: Auto-translate policy
+        const currentHash = computeConservatoriumSourceHash(finalData);
+        const isStale = currentHash !== finalData.translationMeta?.sourceHash;
+
+        if (isStale) {
+            setIsTranslating(true);
+            toast({
+                title: 'Content Changed',
+                description: 'Updating AI translations to match your new content...',
+            });
+
+            const result = await translateConservatoriumProfile(
+                finalData,
+                ['en', 'ar', 'ru'],
+                finalData.translations,
+                finalData.translationMeta?.overrides
+            );
+
+            if (result.success && result.translations && result.meta) {
+                finalData = {
+                    ...finalData,
+                    translations: result.translations,
+                    translationMeta: {
+                        ...result.meta,
+                        overrides: finalData.translationMeta?.overrides
+                    }
+                };
+            }
+            setIsTranslating(false);
+        }
+
         try {
-            updateConservatorium({ ...currentCons, ...formData } as Conservatorium);
+            await updateConservatorium(finalData);
             toast({
                 title: 'Profile Saved',
                 description: 'The conservatorium public profile has been updated.',
@@ -55,44 +91,68 @@ export default function ConservatoriumProfileEditor() {
         }
     };
 
-    const handleAutoTranslate = async () => {
+    const handleAutoTranslateManual = async () => {
         setIsTranslating(true);
-        toast({
-            title: 'Translation Started',
-            description: 'Translating profile content to English, Arabic, and Russian via Gemini AI...',
-        });
+        const result = await translateConservatoriumProfile(
+            formData,
+            ['en', 'ar', 'ru'],
+            formData.translations,
+            formData.translationMeta?.overrides
+        );
 
-        try {
-            const result = await translateProfileContent({
-                about: formData.about,
-                openingHours: formData.openingHours
-            });
-
-            if (result.success && result.translations) {
-                const updatedData = {
-                    ...formData,
-                    translations: result.translations
-                };
-
-                setFormData(updatedData);
-                updateConservatorium({ ...currentCons, ...updatedData } as Conservatorium);
-
-                toast({
-                    title: 'Translation Complete',
-                    description: 'Content has been translated and saved.',
-                });
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (error) {
-            toast({
-                variant: 'destructive',
-                title: 'Translation Failed',
-                description: 'Could not complete the auto-translation.',
-            });
-        } finally {
-            setIsTranslating(false);
+        if (result.success && result.translations && result.meta) {
+            setFormData(prev => ({
+                ...prev,
+                translations: result.translations,
+                translationMeta: {
+                    ...result.meta,
+                    overrides: prev.translationMeta?.overrides
+                }
+            }));
+            toast({ title: 'Translations Updated' });
         }
+        setIsTranslating(false);
+    };
+
+    const handleTranslationChange = (field: string, locale: string, value: string) => {
+        setFormData(prev => {
+            const currentTranslations = prev.translations || {};
+            const localeData = (currentTranslations as any)[locale] || {};
+
+            // Deep update for nested fields like manager.role
+            const newLocaleData = { ...localeData };
+            if (field.includes('.')) {
+                const [parent, child] = field.split('.');
+                newLocaleData[parent] = { ...newLocaleData[parent], [child]: value };
+            } else {
+                newLocaleData[field] = value;
+            }
+
+            const updatedTranslations = {
+                ...currentTranslations,
+                [locale]: newLocaleData
+            };
+
+            // Track meta override
+            const currentOverrides = prev.translationMeta?.overrides || {};
+            const localeOverrides = [...(currentOverrides[locale] || [])];
+            if (!localeOverrides.includes(field)) {
+                localeOverrides.push(field);
+            }
+
+            return {
+                ...prev,
+                translations: updatedTranslations,
+                translationMeta: {
+                    ...prev.translationMeta,
+                    overrides: {
+                        ...currentOverrides,
+                        [locale]: localeOverrides
+                    },
+                    translatedBy: 'HUMAN'
+                }
+            } as Partial<Conservatorium>;
+        });
     };
 
     const updateSocial = (key: keyof SocialMediaLinks, value: string) => {
@@ -109,9 +169,19 @@ export default function ConservatoriumProfileEditor() {
         setFormData(prev => ({
             ...prev,
             manager: {
-                ...prev.manager!,
+                ...(prev.manager || { name: '' }),
                 [key]: value
-            }
+            } as ConservatoriumStaffMember
+        }));
+    };
+
+    const updatePedagogical = (key: string, value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            pedagogicalCoordinator: {
+                ...(prev.pedagogicalCoordinator || { name: '' }),
+                [key]: value
+            } as ConservatoriumStaffMember
         }));
     };
 
@@ -120,18 +190,20 @@ export default function ConservatoriumProfileEditor() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold">Public Profile (About Us)</h1>
-                    <p className="text-muted-foreground">Manage the information displayed on the public directory.</p>
+                    <p className="text-muted-foreground">Manage the multilingual profile shown on the public directory.</p>
                 </div>
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="gap-2 border-primary/30 hover:bg-primary/5 text-primary"
-                    onClick={handleAutoTranslate}
-                    disabled={isTranslating}
-                >
-                    {isTranslating ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    Auto-Translate via Gemini
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="gap-2 border-primary/30 hover:bg-primary/5 text-primary"
+                        onClick={handleAutoTranslateManual}
+                        disabled={isTranslating}
+                    >
+                        {isTranslating ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                        Force Re-translate
+                    </Button>
+                </div>
             </div>
 
             <form onSubmit={handleSave}>
@@ -143,43 +215,60 @@ export default function ConservatoriumProfileEditor() {
                         <TabsTrigger value="team" className="flex items-center gap-2"><Users className="w-4 h-4" /> Team</TabsTrigger>
                         <TabsTrigger value="social" className="flex items-center gap-2"><Share2 className="w-4 h-4" /> Social</TabsTrigger>
                         <TabsTrigger value="media" className="flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Media</TabsTrigger>
-                        <TabsTrigger value="translations" className="flex items-center gap-2"><Languages className="w-4 h-4" /> Translations</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="basic" className="space-y-4 outline-none">
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Basic Information</CardTitle>
-                                <CardDescription>Primary details about the conservatorium.</CardDescription>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                                <div>
+                                    <CardTitle>Basic Information</CardTitle>
+                                    <CardDescription>Primary details about the conservatorium.</CardDescription>
+                                </div>
+                                {computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash && (
+                                    <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 gap-1 h-6">
+                                        <Sparkles className="w-3 h-3" />
+                                        Pending Sync
+                                    </Badge>
+                                )}
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>Name (Hebrew)</Label>
-                                        <Input
-                                            value={formData.name || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                            placeholder="e.g קונסרבטוריון פתח תקווה"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Name (English)</Label>
-                                        <Input
-                                            value={formData.nameEn || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, nameEn: e.target.value }))}
-                                            placeholder="e.g Petah Tikva Conservatorium"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>About Us (Description)</Label>
-                                    <Textarea
-                                        rows={5}
-                                        value={formData.about || ''}
-                                        onChange={e => setFormData(prev => ({ ...prev, about: e.target.value }))}
-                                        placeholder="Write a short description about the conservatorium, its history, and vision..."
-                                    />
-                                </div>
+                            <CardContent className="space-y-6">
+                                <TranslatedFieldInput
+                                    label="Conservatorium Name"
+                                    value={formData.name || ''}
+                                    translations={{
+                                        en: formData.translations?.en?.name || formData.nameEn,
+                                        ar: formData.translations?.ar?.name,
+                                        ru: formData.translations?.ru?.name,
+                                    }}
+                                    fieldKey="name"
+                                    onSourceChange={(val) => setFormData(prev => ({ ...prev, name: val }))}
+                                    onTranslationChange={(loc, val) => handleTranslationChange('name', loc, val)}
+                                    isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                    isTranslating={isTranslating}
+                                    overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
+                                        .filter(([_, fields]) => fields.includes('name'))
+                                        .map(([loc]) => loc)}
+                                />
+
+                                <TranslatedFieldInput
+                                    label="About Us (Description)"
+                                    value={formData.about || ''}
+                                    translations={{
+                                        en: formData.translations?.en?.about,
+                                        ar: formData.translations?.ar?.about,
+                                        ru: formData.translations?.ru?.about,
+                                    }}
+                                    fieldKey="about"
+                                    isTextArea
+                                    onSourceChange={(val) => setFormData(prev => ({ ...prev, about: val }))}
+                                    onTranslationChange={(loc, val) => handleTranslationChange('about', loc, val)}
+                                    isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                    isTranslating={isTranslating}
+                                    overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
+                                        .filter(([_, fields]) => fields.includes('about'))
+                                        .map(([loc]) => loc)}
+                                />
+
                                 <div className="space-y-2 max-w-sm">
                                     <Label>Founded Year</Label>
                                     <Input
@@ -199,7 +288,7 @@ export default function ConservatoriumProfileEditor() {
                                 <CardTitle>Contact Details</CardTitle>
                                 <CardDescription>How prospective students and parents can reach you.</CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Main Phone</Label>
@@ -247,14 +336,24 @@ export default function ConservatoriumProfileEditor() {
                                         placeholder="https://www..."
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>Opening Hours</Label>
-                                    <Input
-                                        value={formData.openingHours || ''}
-                                        onChange={e => setFormData(prev => ({ ...prev, openingHours: e.target.value }))}
-                                        placeholder="e.g Sun-Thu 14:00-20:00"
-                                    />
-                                </div>
+
+                                <TranslatedFieldInput
+                                    label="Opening Hours"
+                                    value={formData.openingHours || ''}
+                                    translations={{
+                                        en: formData.translations?.en?.openingHours,
+                                        ar: formData.translations?.ar?.openingHours,
+                                        ru: formData.translations?.ru?.openingHours,
+                                    }}
+                                    fieldKey="openingHours"
+                                    onSourceChange={(val) => setFormData(prev => ({ ...prev, openingHours: val }))}
+                                    onTranslationChange={(loc, val) => handleTranslationChange('openingHours', loc, val)}
+                                    isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                    isTranslating={isTranslating}
+                                    overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
+                                        .filter(([_, fields]) => fields.includes('openingHours'))
+                                        .map(([loc]) => loc)}
+                                />
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -302,73 +401,107 @@ export default function ConservatoriumProfileEditor() {
                                 <CardTitle>Leadership Team</CardTitle>
                                 <CardDescription>Key figures in the conservatorium.</CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="space-y-4 border rounded-xl p-4 bg-muted/20">
-                                    <h3 className="font-semibold text-sm">Manager</h3>
+                            <CardContent className="space-y-8">
+                                <div className="space-y-6 border rounded-xl p-6 bg-muted/20">
+                                    <div className="flex items-center gap-2">
+                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">Manager</Badge>
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Name</Label>
+                                            <Label>Photo URL</Label>
+                                            <Input
+                                                value={formData.manager?.photoUrl || ''}
+                                                onChange={e => updateManager('photoUrl', e.target.value)}
+                                                placeholder="https://..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Name (Hebrew)</Label>
                                             <Input
                                                 value={formData.manager?.name || ''}
                                                 onChange={e => updateManager('name', e.target.value)}
                                                 placeholder="Manager's Name"
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label>Title / Role</Label>
-                                            <Input
-                                                value={formData.manager?.role || ''}
-                                                onChange={e => updateManager('role', e.target.value)}
-                                                placeholder="Manager"
-                                            />
-                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Short Bio</Label>
-                                        <Textarea
-                                            rows={2}
-                                            value={formData.manager?.bio || ''}
-                                            onChange={e => updateManager('bio', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Photo URL</Label>
-                                        <Input
-                                            value={formData.manager?.photoUrl || ''}
-                                            onChange={e => updateManager('photoUrl', e.target.value)}
-                                            placeholder="https://..."
-                                        />
-                                    </div>
+
+                                    <TranslatedFieldInput
+                                        label="Title / Role"
+                                        value={formData.manager?.role || ''}
+                                        translations={{
+                                            en: formData.translations?.en?.manager?.role,
+                                            ar: formData.translations?.ar?.manager?.role,
+                                            ru: formData.translations?.ru?.manager?.role,
+                                        }}
+                                        fieldKey="manager.role"
+                                        onSourceChange={(val) => updateManager('role', val)}
+                                        onTranslationChange={(loc, val) => handleTranslationChange('manager.role', loc, val)}
+                                        isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                        isTranslating={isTranslating}
+                                    />
+
+                                    <TranslatedFieldInput
+                                        label="Short Bio"
+                                        value={formData.manager?.bio || ''}
+                                        translations={{
+                                            en: formData.translations?.en?.manager?.bio,
+                                            ar: formData.translations?.ar?.manager?.bio,
+                                            ru: formData.translations?.ru?.manager?.bio,
+                                        }}
+                                        fieldKey="manager.bio"
+                                        isTextArea
+                                        onSourceChange={(val) => updateManager('bio', val)}
+                                        onTranslationChange={(loc, val) => handleTranslationChange('manager.bio', loc, val)}
+                                        isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                        isTranslating={isTranslating}
+                                    />
                                 </div>
 
-                                <div className="space-y-4 border rounded-xl p-4 bg-muted/20">
-                                    <h3 className="font-semibold text-sm">Pedagogical Coordinator</h3>
+                                <div className="space-y-6 border rounded-xl p-6 bg-muted/20">
+                                    <div className="flex items-center gap-2">
+                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">Pedagogical Coordinator</Badge>
+                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Name</Label>
+                                            <Label>Name (Hebrew)</Label>
                                             <Input
                                                 value={formData.pedagogicalCoordinator?.name || ''}
-                                                onChange={e => setFormData(prev => ({ ...prev, pedagogicalCoordinator: { ...prev.pedagogicalCoordinator!, name: e.target.value } }))}
+                                                onChange={e => updatePedagogical('name', e.target.value)}
                                                 placeholder="Coordinator's Name"
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label>Title / Role</Label>
-                                            <Input
-                                                value={formData.pedagogicalCoordinator?.role || ''}
-                                                onChange={e => setFormData(prev => ({ ...prev, pedagogicalCoordinator: { ...prev.pedagogicalCoordinator!, role: e.target.value } }))}
-                                                placeholder="Pedagogical Coordinator"
-                                            />
-                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Short Bio</Label>
-                                        <Textarea
-                                            rows={2}
-                                            value={formData.pedagogicalCoordinator?.bio || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, pedagogicalCoordinator: { ...prev.pedagogicalCoordinator!, bio: e.target.value } }))}
-                                        />
-                                    </div>
+
+                                    <TranslatedFieldInput
+                                        label="Title / Role"
+                                        value={formData.pedagogicalCoordinator?.role || ''}
+                                        translations={{
+                                            en: formData.translations?.en?.pedagogicalCoordinator?.role,
+                                            ar: formData.translations?.ar?.pedagogicalCoordinator?.role,
+                                            ru: formData.translations?.ru?.pedagogicalCoordinator?.role,
+                                        }}
+                                        fieldKey="pedagogicalCoordinator.role"
+                                        onSourceChange={(val) => updatePedagogical('role', val)}
+                                        onTranslationChange={(loc, val) => handleTranslationChange('pedagogicalCoordinator.role', loc, val)}
+                                        isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                        isTranslating={isTranslating}
+                                    />
+
+                                    <TranslatedFieldInput
+                                        label="Short Bio"
+                                        value={formData.pedagogicalCoordinator?.bio || ''}
+                                        translations={{
+                                            en: formData.translations?.en?.pedagogicalCoordinator?.bio,
+                                            ar: formData.translations?.ar?.pedagogicalCoordinator?.bio,
+                                            ru: formData.translations?.ru?.pedagogicalCoordinator?.bio,
+                                        }}
+                                        fieldKey="pedagogicalCoordinator.bio"
+                                        isTextArea
+                                        onSourceChange={(val) => updatePedagogical('bio', val)}
+                                        onTranslationChange={(loc, val) => handleTranslationChange('pedagogicalCoordinator.bio', loc, val)}
+                                        isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                        isTranslating={isTranslating}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
@@ -428,7 +561,6 @@ export default function ConservatoriumProfileEditor() {
                                 <CardDescription>Images displayed on your public profile.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <p className="text-sm text-muted-foreground">Add URLs to high-quality images of your facilities, events, and ensembles.</p>
                                 <div className="space-y-2">
                                     <Label>Header Image URL</Label>
                                     <Input
@@ -480,45 +612,6 @@ export default function ConservatoriumProfileEditor() {
                             </CardContent>
                         </Card>
                     </TabsContent>
-
-                    <TabsContent value="translations" className="space-y-4 outline-none">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Automatic Translations</CardTitle>
-                                <CardDescription>Review the AI-generated translations for other languages.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                {!formData.translations ? (
-                                    <div className="text-center py-8 space-y-3">
-                                        <Languages className="w-12 h-12 text-muted-foreground/30 mx-auto" />
-                                        <p className="text-sm text-muted-foreground">No translations generated yet.</p>
-                                        <Button variant="outline" size="sm" onClick={handleAutoTranslate} disabled={isTranslating}>
-                                            Generate Translations Now
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        {['en', 'ar', 'ru'].map(lang => (
-                                            <div key={lang} className="space-y-3 p-4 border rounded-xl bg-muted/10">
-                                                <div className="flex items-center justify-between">
-                                                    <Badge variant="outline" className="uppercase">{lang === 'en' ? 'English' : lang === 'ar' ? 'Arabic' : 'Russian'}</Badge>
-                                                    <span className="text-[10px] text-muted-foreground italic flex items-center gap-1">
-                                                        <Sparkles className="w-3 h-3" /> Auto-translated
-                                                    </span>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label className="text-xs">About Us</Label>
-                                                    <p className="text-sm text-muted-foreground border rounded-lg p-2 bg-background">
-                                                        {(formData.translations as any)[lang]?.about || 'No translation available'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
                 </Tabs>
 
                 <div className="fixed bottom-0 left-0 right-0 p-4 border-t bg-background/80 backdrop-blur-sm shadow-md flex justify-end gap-2 z-10 w-full sm:w-[calc(100%-16rem)] sm:ml-64 transition-all">
@@ -531,3 +624,4 @@ export default function ConservatoriumProfileEditor() {
         </div>
     );
 }
+

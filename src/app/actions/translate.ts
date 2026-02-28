@@ -1,54 +1,205 @@
 'use server';
 
-import { ConservatoriumTranslations } from '@/lib/types';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import type {
+    ConservatoriumTranslations,
+    ConservatoriumProfileTranslation,
+    Conservatorium,
+    UserTranslations,
+    TranslationMeta,
+} from '@/lib/types';
+import { computeConservatoriumSourceHash, computeUserSourceHash } from '@/lib/utils/translation-hash';
 
-/**
- * Server action to translate conservatorium profile data using Gemini AI.
- * In a production environment, this would use the Google Generative AI SDK
- * and a valid API key from environment variables.
- */
-export async function translateProfileContent(
-    content: {
-        about?: string;
-        openingHours?: string;
-        // Add other fields as needed
-    }
-): Promise<{ success: boolean; translations?: ConservatoriumTranslations; error?: string }> {
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+// ── Supported target locales ──────────────────────────────────────────────────
+const TARGET_LOCALES = ['en', 'ar', 'ru'] as const;
+type TargetLocale = typeof TARGET_LOCALES[number];
+
+const LOCALE_NAMES: Record<TargetLocale, string> = {
+    en: 'English',
+    ar: 'Arabic (Modern Standard, right-to-left)',
+    ru: 'Russian',
+};
+
+export async function translateConservatoriumProfile(
+    cons: Partial<Conservatorium>,
+    locales: TargetLocale[] = ['en', 'ar', 'ru'],
+    existingTranslations?: ConservatoriumTranslations,
+    existingOverrides?: TranslationMeta['overrides']
+): Promise<{
+    success: boolean;
+    translations?: ConservatoriumTranslations;
+    meta?: Omit<TranslationMeta, 'overrides'>;
+    error?: string;
+}> {
+
+    // Build the structured source payload
+    const sourcePayload = {
+        name: cons.name,
+        about: cons.about,
+        openingHours: cons.openingHours,
+        managerRole: cons.manager?.role,
+        managerBio: cons.manager?.bio,
+        pedagogicalCoordinatorRole: cons.pedagogicalCoordinator?.role,
+        pedagogicalCoordinatorBio: cons.pedagogicalCoordinator?.bio,
+        departments: cons.departments?.map(d => d.name) ?? [],
+        programs: cons.programs ?? [],
+        ensembles: cons.ensembles ?? [],
+        branchNames: cons.branchesInfo?.map(b => b.name) ?? [],
+        branchAddresses: cons.branchesInfo?.map(b => b.address ?? '') ?? [],
+    };
+
+    const prompt = `
+You are a professional translator specializing in music education and cultural institutions in Israel.
+
+Translate the following JSON object (representing a music conservatorium's public profile written in Hebrew) into ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
+
+RULES:
+1. Return ONLY a valid JSON object. No markdown, no code fences, no preamble.
+2. Preserve proper nouns (names of people, instrument names, specific place names) as-is.
+3. For Arabic: use Modern Standard Arabic, right-to-left appropriate phrasing.
+4. Keep tone professional yet warm — this is public-facing educational content.
+5. If a field is null or empty string, set it to null in the output.
+6. Arrays must have the same number of items as the input array, in the same order.
+7. The output JSON must have this exact structure:
+{
+  "en": { <translated fields> },
+  "ar": { <translated fields> },
+  "ru": { <translated fields> }
+}
+
+Source (Hebrew):
+${JSON.stringify(sourcePayload, null, 2)}
+
+Output JSON:`;
+
     try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        const result = await model.generateContent(prompt);
+        let text = result.response.text().trim();
+        // Strip fences if present
+        text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
 
-        // This is where you would call Gemini API:
-        // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        // const prompt = `Translate the following Hebrew text to English, Arabic, and Russian: ${content.about}`;
-        // ...
+        const raw = JSON.parse(text) as Record<string, any>;
 
-        // For demonstration, we'll return structured mock translations
-        // In a real implementation, these would be the AI generated results
-        const translations: ConservatoriumTranslations = {
-            en: {
-                about: content.about ? `[AI English Translation] ${content.about}` : undefined,
-                openingHours: content.openingHours ? `${content.openingHours} (Localized)` : undefined,
-            },
-            ar: {
-                about: content.about ? `[AI Arabic Translation] ${content.about}` : undefined,
-                openingHours: content.openingHours ? `${content.openingHours} (Localized)` : undefined,
-            },
-            ru: {
-                about: content.about ? `[AI Russian Translation] ${content.about}` : undefined,
-                openingHours: content.openingHours ? `${content.openingHours} (Localized)` : undefined,
+        // Map raw AI output back to ConservatoriumProfileTranslation shape
+        const mapLocale = (locale: TargetLocale): ConservatoriumProfileTranslation => {
+            const r = raw[locale] ?? {};
+            const output: ConservatoriumProfileTranslation = {};
+
+            if (r.name) output.name = r.name;
+            if (r.about) output.about = r.about;
+            if (r.openingHours) output.openingHours = r.openingHours;
+            if (r.managerRole || r.managerBio) output.manager = {
+                role: r.managerRole ?? undefined,
+                bio: r.managerBio ?? undefined,
+            };
+            if (r.pedagogicalCoordinatorRole || r.pedagogicalCoordinatorBio) {
+                output.pedagogicalCoordinator = {
+                    role: r.pedagogicalCoordinatorRole ?? undefined,
+                    bio: r.pedagogicalCoordinatorBio ?? undefined,
+                };
             }
+            if (r.departments?.length) {
+                output.departments = r.departments.map((name: string) => ({ name }));
+            }
+            if (r.programs?.length) output.programs = r.programs;
+            if (r.ensembles?.length) output.ensembles = r.ensembles;
+            if (r.branchNames?.length) {
+                output.branchesInfo = r.branchNames.map((name: string, i: number) => ({
+                    name,
+                    address: r.branchAddresses?.[i] ?? undefined,
+                }));
+            }
+
+            // Preserve any fields the admin has manually overridden (don't overwrite them)
+            const overriddenFields = existingOverrides?.[locale] ?? [];
+            if (overriddenFields.length > 0 && existingTranslations?.[locale]) {
+                const existing = existingTranslations[locale]!;
+                for (const field of overriddenFields) {
+                    if (field === 'name' && existing.name) output.name = existing.name;
+                    if (field === 'about' && existing.about) output.about = existing.about;
+                    if (field === 'openingHours' && existing.openingHours) output.openingHours = existing.openingHours;
+                    if (field === 'manager.role' && existing.manager?.role) {
+                        output.manager = { ...output.manager, role: existing.manager.role };
+                    }
+                    if (field === 'manager.bio' && existing.manager?.bio) {
+                        output.manager = { ...output.manager, bio: existing.manager.bio };
+                    }
+                    // ... repeat for other overrideable fields if needed
+                }
+            }
+
+            return output;
         };
+
+        const translations: ConservatoriumTranslations = {};
+        for (const locale of locales) translations[locale] = mapLocale(locale);
+
+        const meta: Omit<TranslationMeta, 'overrides'> = {
+            lastTranslatedAt: new Date().toISOString(),
+            sourceHash: computeConservatoriumSourceHash(cons),
+            translatedBy: 'AI',
+            aiModel: 'gemini-1.5-flash',
+        };
+
+        return { success: true, translations, meta };
+
+    } catch (err: any) {
+        console.error('[translateConservatoriumProfile]', err);
+        return { success: false, error: err.message ?? 'Translation failed' };
+    }
+}
+
+export async function translateUserBio(
+    bio: string,
+    role?: string,
+    locales: TargetLocale[] = ['en', 'ar', 'ru']
+): Promise<{
+    success: boolean;
+    translations?: UserTranslations;
+    meta?: Omit<TranslationMeta, 'overrides'>;
+    error?: string;
+}> {
+    const prompt = `
+Translate the following music teacher's biography and job title from Hebrew to ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
+
+Return ONLY valid JSON in this structure, no markdown:
+{
+  "en": { "bio": "...", "role": "..." },
+  "ar": { "bio": "...", "role": "..." },
+  "ru": { "bio": "...", "role": "..." }
+}
+
+Hebrew bio: ${bio}
+Hebrew role/title: ${role ?? ''}
+`;
+    try {
+        const result = await model.generateContent(prompt);
+        let text = result.response.text().trim();
+        text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+        const raw = JSON.parse(text);
+
+        const translations: UserTranslations = {};
+        for (const locale of locales) {
+            if (raw[locale]) translations[locale] = {
+                bio: raw[locale].bio || undefined,
+                role: raw[locale].role || undefined,
+            };
+        }
 
         return {
             success: true,
-            translations
+            translations,
+            meta: {
+                lastTranslatedAt: new Date().toISOString(),
+                sourceHash: computeUserSourceHash(bio, role),
+                translatedBy: 'AI',
+                aiModel: 'gemini-1.5-flash',
+            }
         };
-    } catch (error) {
-        console.error('Translation error:', error);
-        return {
-            success: false,
-            error: 'Failed to translate content'
-        };
+    } catch (err: any) {
+        return { success: false, error: err.message };
     }
 }
