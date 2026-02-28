@@ -26,7 +26,8 @@
         "success": "Success",
         "error": "Error",
         "saveFailed": "Save failed",
-        "deleteFailed": "Delete failed"
+        "deleteFailed": "Delete failed",
+        "noData": "No data available"
     },
     "HomePage": {
         "title": "Harmonia",
@@ -882,12 +883,18 @@
         "special": {
             "title": "Special Pricing",
             "trial": "Trial Lesson Price",
-            "ad-hoc": "Ad-Hoc Lesson Premium"
+            "adHoc": "Ad-Hoc Lesson Premium"
         },
         "save": "Save Changes",
         "comparison": {
             "title": "Branch Rate Comparison",
             "description": "View pricing of other conservatoriums for comparison and alignment.",
+            "branch": "Conservatory",
+            "min30": "30 Min",
+            "min45": "45 Min",
+            "min60": "60 Min",
+            "pack5": "5-Pack",
+            "yearly": "Yearly",
             "nameMin": "Branch name must be at least {min} characters.",
             "addressMin": "Address must be at least {min} characters."
         }
@@ -1049,6 +1056,7 @@
             "title": "Conservatory Settings",
             "description": "Manage conservatory features and integrations.",
             "manageFeatures": "Manage Profile",
+            "publicProfile": "Public Profile",
             "pricing": "Pricing Settings",
             "cancellation": "Cancellation Policy",
             "manageAI": "Manage AI Features"
@@ -1059,8 +1067,8 @@
             "prompt": "Configure how you receive alerts.",
             "manage": "Manage Notifications"
         }
-    }
-    ,"FormsPage": {
+    },
+    "FormsPage": {
         "title": "Forms & Requests",
         "subtitle": "Manage your clinical forms, medical requests, and administrative documents.",
         "subtitleStudent": "Submit practice logs, repertoire updates, and absence requests.",
@@ -1073,6 +1081,7 @@
             "pending": "Pending",
             "approved": "Approved",
             "drafts": "Drafts"
-        }
+        },
+        "noForms": "No forms to display"
     }
 }
