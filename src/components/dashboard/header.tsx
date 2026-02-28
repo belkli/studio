@@ -53,8 +53,8 @@ export function Header() {
           <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">
-              <User className="ms-2 h-4 w-4" />
+            <Link href="/dashboard/settings" className="flex items-center">
+              <User className="me-2 h-4 w-4" />
               <span>{t('profile')}</span>
             </Link>
           </DropdownMenuItem>

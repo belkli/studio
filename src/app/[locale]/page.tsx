@@ -20,7 +20,7 @@ export default function Home() {
           <Link href="/musicians" className="text-sm font-medium hover:underline underline-offset-4">{tNav('musicians')}</Link>
           <Link href="/donate" className="text-sm font-medium hover:underline underline-offset-4">{tNav('donate')}</Link>
           <Link href="/open-day" className="text-sm font-medium hover:underline underline-offset-4">{tNav('openDay')}</Link>
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground">{tNav('about')}</Link>
+          <Link href="/about" className="text-sm font-medium hover:underline underline-offset-4">{tNav('about')}</Link>
         </nav>
         <div className="flex-grow" />
         <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function Home() {
           <Link href="#" className="text-xs hover:underline underline-offset-4">
             {t('privacyPolicy')}
           </Link>
-          <Link href="#" className="text-xs hover:underline underline-offset-4">
+          <Link href="/contact" className="text-xs hover:underline underline-offset-4">
             {tNav('contact')}
           </Link>
         </nav>
@@ -73,4 +73,3 @@ export default function Home() {
 }
 
 
-    

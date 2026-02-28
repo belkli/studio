@@ -6,10 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useMemo } from "react";
 import { isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
+import { useTranslations } from "next-intl";
 
 export function TeacherReports() {
+    const t = useTranslations('Reports');
     const { users, mockLessons, mockPracticeLogs } = useAuth();
-    
+
     const teacherStats = useMemo(() => {
         const teachers = users.filter(u => u.role === 'teacher');
         const now = new Date();
@@ -18,12 +20,12 @@ export function TeacherReports() {
 
         return teachers.map(teacher => {
             const assignedStudents = teacher.students || [];
-            
-            const lessonsThisMonth = mockLessons.filter(l => 
-                l.teacherId === teacher.id && 
+
+            const lessonsThisMonth = mockLessons.filter(l =>
+                l.teacherId === teacher.id &&
                 isWithinInterval(new Date(l.startTime), { start, end })
             );
-            
+
             const taughtLessons = lessonsThisMonth.filter(l => l.status === 'COMPLETED').length;
             const scheduledLessons = lessonsThisMonth.filter(l => l.status === 'SCHEDULED' || l.status === 'COMPLETED').length;
             const teacherCancellations = lessonsThisMonth.filter(l => l.status === 'CANCELLED_TEACHER').length;
@@ -34,7 +36,7 @@ export function TeacherReports() {
             const studentsWhoPracticed = new Set(
                 mockPracticeLogs.filter(log => {
                     const logDate = new Date(log.date);
-                    return isWithinInterval(logDate, {start, end}) && assignedStudents.includes(log.studentId);
+                    return isWithinInterval(logDate, { start, end }) && assignedStudents.includes(log.studentId);
                 }).map(log => log.studentId)
             );
             const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
@@ -55,19 +57,19 @@ export function TeacherReports() {
         <div className="space-y-6 mt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>ביצועי מורים</CardTitle>
-                    <CardDescription>סקירה כללית על פעילות המורים בחודש הנוכחי.</CardDescription>
+                    <CardTitle>{t('teacherPerformance')}</CardTitle>
+                    <CardDescription>{t('teacherPerformanceDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>מורה</TableHead>
-                                <TableHead>תלמידים / תפוסה</TableHead>
-                                <TableHead>שיעורים החודש</TableHead>
-                                <TableHead>שיעור נוכחות</TableHead>
-                                <TableHead>שיעור ביטולים (מצד המורה)</TableHead>
-                                <TableHead>מעורבות תלמידים (אימונים)</TableHead>
+                                <TableHead>{t('teacher')}</TableHead>
+                                <TableHead>{t('studentsCapacity')}</TableHead>
+                                <TableHead>{t('lessonsThisMonth')}</TableHead>
+                                <TableHead>{t('attendanceRate')}</TableHead>
+                                <TableHead>{t('teacherCancellations')}</TableHead>
+                                <TableHead>{t('studentPracticeEngagement')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

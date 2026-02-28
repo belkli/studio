@@ -9,6 +9,7 @@
         "contact": "Contact",
         "login": "Login",
         "register": "Register",
+        "profile": "Edit Profile",
         "back": "Back",
         "next": "Next",
         "submit": "Submit Registration"
@@ -537,7 +538,7 @@
         "header": {
             "search": "Search...",
             "notifications": "Notifications",
-            "profile": "Profile",
+            "profile": "Manage Account",
             "settings": "Settings",
             "logout": "Logout"
         },
@@ -727,7 +728,75 @@
         "typeMessage": "Type a message..."
     },
     "Reports": {
-        "teachers": "Teacher Reports"
+        "teachers": "Teacher Reports",
+        "financial": "Financial Reports",
+        "operational": "Operational Reports",
+        "academic": "Academic Reports",
+        "financialTitle": "Monthly Revenue (Last 6 Months)",
+        "revenue": "Revenue",
+        "revenueByPackage": "Revenue by Package",
+        "collectionRate": "Collection Rate",
+        "collectionRateDesc": "Percentage of paid invoices.",
+        "overdueInvoices": "{count} overdue invoices.",
+        "creditsIssued": "Credits & Adjustments",
+        "creditsIssuedDesc": "Credits issued to students this month.",
+        "makeupCredits": "Makeup lesson credits.",
+        "topTeacherRevenue": "Top Revenue Sources by Teacher",
+        "teacher": "Teacher",
+        "monthlyRevenueEstimate": "Monthly Revenue (Estimated)",
+        "cancellationDistribution": "Cancellation Distribution",
+        "lessonCount": "Number of Lessons",
+        "cancellationsByDay": "Cancellations by Weekday",
+        "cancellations": "Cancellations",
+        "conversionRate": "Conversion Rate",
+        "trialToEnrollment": "Trial to Enrollment Rate",
+        "trialConversionDesc": "21 out of 31 trial students enrolled this month (mock data).",
+        "makeupUtilization": "Makeup Lesson Utilization",
+        "makeupUtilizationDesc": "Percentage of used makeup credits",
+        "makeupCreditsContext": "From all credits created due to teacher/system cancellations.",
+        "teacherCapacity": "Teacher Capacity (% Occupancy)",
+        "occupancy": "Occupancy",
+        "capacity": "Capacity",
+        "capacityLabel": "{percent}% Occupancy",
+        "practiceEngagement": "Practice Engagement Rate",
+        "practiceEngagementDesc": "Percentage of students who logged practice last week.",
+        "averagePracticeMinutes": "Average Practice Minutes",
+        "averagePracticeMinutesDesc": "Per practicing student last week.",
+        "repertoireAdvancement": "Repertoire Advancement",
+        "repertoireAdvancementDesc": "Pieces completed this month.",
+        "engagementByTeacher": "Practice Engagement by Teacher (Last Week)",
+        "engagement": "Engagement",
+        "avgMinutesByInstrument": "Avg Monthly Practice Minutes by Instrument",
+        "avgMinutes": "Avg Minutes",
+        "minutesLabel": "{count} minutes",
+        "lowEngagementStudents": "Low Engagement Students",
+        "lowEngagementDesc": "Students with the least total practice time.",
+        "student": "Student",
+        "totalMinutes": "Total Practice Minutes",
+        "teacherPerformance": "Teacher Performance",
+        "teacherPerformanceDesc": "General overview of teacher activity this month.",
+        "studentsCapacity": "Students / Capacity",
+        "lessonsThisMonth": "Lessons This Month",
+        "attendanceRate": "Attendance Rate",
+        "teacherCancellations": "Cancellation Rate (Teacher Side)",
+        "studentPracticeEngagement": "Student Practice Engagement",
+        "roomOccupancyHeatmap": "Room Occupancy Heatmap",
+        "roomOccupancyDesc": "Hourly occupancy of all rooms throughout the week. Darker colors indicate higher occupancy.",
+        "free": "Free",
+        "full": "Full",
+        "occupancyInfo": "Occupancy: {booked} out of {total} rooms",
+        "cancellationTypes": {
+            "STUDENT_NOTICED": "Student Cancelled (On-time)",
+            "STUDENT_NO_NOTICE": "Student Cancelled (Late)",
+            "TEACHER": "Teacher Cancelled",
+            "NO_SHOW_STUDENT": "No Show"
+        },
+        "packageTypes": {
+            "ANNUAL_SUB": "Annual Subscription",
+            "MONTHLY_SUB": "Monthly Subscription",
+            "PACKAGES": "Packages",
+            "SINGLE_LESSONS": "Single Lessons"
+        }
     },
     "HelpAssistant": {
         "title": "Harmonia AI Assistant",
@@ -989,6 +1058,21 @@
             "description": "Choose what you want to be notified about.",
             "prompt": "Configure how you receive alerts.",
             "manage": "Manage Notifications"
+        }
+    }
+    ,"FormsPage": {
+        "title": "Forms & Requests",
+        "subtitle": "Manage your clinical forms, medical requests, and administrative documents.",
+        "subtitleStudent": "Submit practice logs, repertoire updates, and absence requests.",
+        "subtitleParent": "Manage enrollment forms, billing requests, and scholarship applications.",
+        "subtitleTeacher": "Review student logs, submit lesson reports, and manage availability.",
+        "newForm": "New Form / Request",
+        "searchPlaceholder": "Search forms by title or student name...",
+        "tabs": {
+            "all": "All Forms",
+            "pending": "Pending",
+            "approved": "Approved",
+            "drafts": "Drafts"
         }
     }
 }
