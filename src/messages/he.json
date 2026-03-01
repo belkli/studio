@@ -1162,6 +1162,7 @@
       }
     },
     "wizard": {
+      "backToFinder": "חזרה לחיפוש בתי ספר",
       "step1": "פרטי התוכנית",
       "step2": "פרטי התלמיד/ה",
       "step3": "פרטי ההורה",
@@ -1260,11 +1261,13 @@
       "title": "מצא בית ספר מנגן",
       "subtitle": "רשת בתי ספר מנגן של הרמוניה — לומדים כלי נגינה בבית הספר",
       "searchPlaceholder": "חיפוש לפי שם בית ספר, עיר או סמל מוסד...",
+      "allInstruments": "כל הכלים",
+      "filterByInstrument": "סינון לפי כלי",
       "noResults": "לא נמצאו בתי ספר מנגן",
       "noResultsSub": "נסו לשנות את החיפוש",
       "schoolSymbol": "סמל מוסד",
       "city": "עיר",
-      "instruments": "כלי נגינה",
+      "instrumentsLabel": "כלי נגינה",
       "programType": "סוג תוכנית",
       "applyNow": "הגש בקשה עכשיו",
       "learnMore": "מידע נוסף",
@@ -1273,6 +1276,8 @@
       "parentName": "שם ההורה",
       "childSchoolSymbol": "סמל מוסד של ילדך",
       "sendEnquiry": "שלח פנייה",
+      "sending": "שולח...",
+      "sendAnotherMessage": "שלח פנייה נוספת",
       "enquirySent": "הפנייה נשלחה בהצלחה!",
       "parentEmail": "כתובת אימייל",
       "parentPhone": "מספר טלפון",
@@ -1280,7 +1285,16 @@
       "enquirySuccessDesc": "תודה! צוות השותפויות שלנו ייצור איתך קשר בקרוב.",
       "groupProgram": "תוכנית קבוצתית",
       "individualProgram": "תוכנית אישית",
-      "offeredInstruments": "כלי נגינה המוצעים"
+      "offeredInstruments": "כלי נגינה המוצעים",
+      "instruments": {
+        "piano": "פסנתר",
+        "violin": "כינור",
+        "flute": "חליל צד",
+        "guitar": "גיטרה",
+        "drums": "תופים",
+        "cello": "צ׳לו",
+        "voice": "שירה"
+      }
     },
     "mock": {
       "schoolName": "בית ספר ORT רמת גן",

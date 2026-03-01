@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { School, CheckCircle, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link, useRouter } from '@/i18n/routing';
 
 // ── Mock school data (derived from token) ────────────────────────────────────
 
@@ -74,6 +74,14 @@ interface Props {
 
 export function PlayingSchoolEnrollmentWizard({ token }: Props) {
     const t = useTranslations('PlayingSchool');
+    const router = useRouter();
+    const locale = (router as any).locale || 'he';
+    const isRtl = locale === 'he' || locale === 'ar';
+
+    // Direction-aware icons
+    const NextIcon = isRtl ? ChevronLeft : ChevronRight;
+    const PrevIcon = isRtl ? ChevronRight : ChevronLeft;
+
     const [step, setStep] = useState<Step>(1);
     const [submitted, setSubmitted] = useState(false);
     const [schoolInfo, setSchoolInfo] = useState<any>(null);
@@ -185,12 +193,19 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
         <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
             <div className="max-w-xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="text-center pt-8 pb-4">
+                <div className="flex flex-col items-center pt-8 pb-4">
+                    <Link
+                        href="/playing-school"
+                        className="text-xs font-bold text-primary hover:underline flex items-center gap-1 mb-4 bg-primary/10 px-3 py-1.5 rounded-full transition-colors"
+                    >
+                        {isRtl ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+                        {t('wizard.backToFinder') || 'Back to School Finder'}
+                    </Link>
                     <div className="flex items-center justify-center gap-2 mb-2">
                         <School className="h-6 w-6 text-primary" />
                         <span className="text-xl font-bold">{t('wizard.title')}</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">{MOCK_SCHOOL_INFO.schoolName} × {MOCK_SCHOOL_INFO.conservatoriumName}</p>
+                    <p className="text-muted-foreground text-sm font-medium">{schoolInfo.name} × {schoolInfo.conservatorium}</p>
                 </div>
 
                 <StepIndicator current={step} />
@@ -221,7 +236,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                         <div className="flex justify-between font-bold border-t pt-2 mt-2"><span>{t('wizard.parentContribution')}</span><span>₪{schoolInfo.parentContribution}</span></div>
                                     </div>
                                 </div>
-                                <Button className="w-full" onClick={next}>{t('wizard.nextStudent')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                <Button className="w-full" onClick={next}>{t('wizard.nextStudent')} <NextIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} /></Button>
                             </CardContent>
                         </>
                     )}
@@ -259,8 +274,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     <Input type="date" value={studentDob} onChange={e => setStudentDob(e.target.value)} />
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button type="button" className="flex-1" onClick={next} disabled={!studentName || !studentGrade}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><PrevIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!studentName || !studentGrade}>{t('wizard.next')} <NextIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -290,8 +305,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     <Input value={parentId} onChange={e => setParentId(e.target.value)} />
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button type="button" className="flex-1" onClick={next} disabled={!parentName || !parentPhone || !parentEmail}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><PrevIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!parentName || !parentPhone || !parentEmail}>{t('wizard.next')} <NextIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -325,8 +340,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     </Label>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button type="button" className="flex-1" onClick={next} disabled={!consent}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><PrevIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!consent}>{t('wizard.next')} <NextIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -363,7 +378,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     </div>
                                 </div>
                                 <div className="flex gap-2 pt-2">
-                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><PrevIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} />{t('wizard.prev')}</Button>
                                     <Button type="button" className="flex-1" onClick={handleSubmit} disabled={isSubmitting}>
                                         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t('wizard.complete')}
                                     </Button>

@@ -20,7 +20,7 @@ const mockPartnerships = [
         schoolName: 'תיכון הדרים',
         schoolSymbol: '44570001',
         city: 'הוד השרון',
-        instruments: ['פסנתר', 'כינור', 'חליל צד'],
+        instruments: ['piano', 'violin', 'flute'],
         programType: 'GROUP',
         status: 'ACTIVE'
     },
@@ -29,7 +29,7 @@ const mockPartnerships = [
         schoolName: 'תיכון חדש',
         schoolSymbol: '12345678',
         city: 'תל אביב',
-        instruments: ['גיטרה', 'תופים'],
+        instruments: ['guitar', 'drums'],
         programType: 'INDIVIDUAL',
         status: 'ACTIVE'
     },
@@ -38,7 +38,7 @@ const mockPartnerships = [
         schoolName: 'תיכון הראשונים',
         schoolSymbol: '87654321',
         city: 'הרצליה',
-        instruments: ['פסנתר', 'צ׳לו'],
+        instruments: ['piano', 'cello'],
         programType: 'GROUP',
         status: 'ACTIVE'
     },
@@ -47,7 +47,7 @@ const mockPartnerships = [
         schoolName: 'בית ספר לאמנויות',
         schoolSymbol: '11223344',
         city: 'ירושלים',
-        instruments: ['שירה', 'פסנתר', 'כינור'],
+        instruments: ['voice', 'piano', 'violin'],
         programType: 'GROUP',
         status: 'ACTIVE'
     }
@@ -59,6 +59,10 @@ interface PlayingSchoolFinderProps {
 
 export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
     const t = useTranslations('PlayingSchool.finder');
+    const locale = useRouter().locale || 'he';
+    const isRtl = locale === 'he' || locale === 'ar';
+    const NextIcon = isRtl ? ChevronDown : ArrowRight; // Context dependent, but let's use a standard next arrow
+
     const [search, setSearch] = useState('');
     const [selectedInstrument, setSelectedInstrument] = useState<string>('all');
     const [isSubmittingLead, setIsSubmittingLead] = useState(false);
@@ -97,6 +101,8 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
         });
     };
 
+    const ArrowIcon = isRtl ? () => <ArrowRight className="h-5 w-5 me-2 group-hover/btn:-translate-x-1 transition-transform rotate-180" /> : () => <ArrowRight className="h-5 w-5 ms-2 group-hover/btn:translate-x-1 transition-transform" />;
+
     return (
         <div className={cn("space-y-12", className)}>
             <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -120,7 +126,7 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
                         <SelectContent>
                             <SelectItem value="all">{t('allInstruments') || 'All Instruments'}</SelectItem>
                             {allInstruments.map(inst => (
-                                <SelectItem key={inst} value={inst}>{inst}</SelectItem>
+                                <SelectItem key={inst} value={inst}>{t(`instruments.${inst}`)}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
@@ -155,7 +161,7 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
                                 <div className="flex flex-wrap gap-2">
                                     {school.instruments.map(inst => (
                                         <Badge key={inst} variant="outline" className="text-xs font-bold py-1 px-2.5 border-slate-200 text-slate-600 bg-white">
-                                            {inst}
+                                            {t(`instruments.${inst}`)}
                                         </Badge>
                                     ))}
                                 </div>
@@ -167,7 +173,7 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
                                 onClick={() => router.push(`/register/school?token=mock-token-${school.schoolSymbol}`)}
                             >
                                 {t('applyNow')}
-                                <ArrowRight className="h-5 w-5 ms-2 group-hover/btn:translate-x-1 transition-transform" />
+                                <ArrowIcon />
                             </Button>
                             <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200" title={t('learnMore')}>
                                 <Info className="h-5 w-5" />
