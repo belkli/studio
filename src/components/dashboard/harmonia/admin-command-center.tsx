@@ -11,8 +11,11 @@ import { AiAlertsCard } from "./ai-alerts-card";
 import { useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations } from 'next-intl';
+
 
 export function AdminCommandCenter() {
+    const t = useTranslations('AdminDashboard');
     const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
 
     const stats = useMemo(() => {
@@ -36,8 +39,8 @@ export function AdminCommandCenter() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">ברוכה הבאה, {user.name.split(' ')[0]}</h1>
-                    <p className="text-muted-foreground">זהו מרכז הבקרה שלך עבור {user.conservatoriumName || 'הקונסרבטוריון'}.</p>
+                    <h1 className="text-2xl font-bold">{t('welcome', { name: user.name.split(' ')[0] })}</h1>
+                    <p className="text-muted-foreground">{t('controlCenter', { name: user.conservatoriumName || 'Harmonia' })}</p>
                 </div>
             </div>
 
@@ -45,39 +48,39 @@ export function AdminCommandCenter() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>פעולות מהירות</CardTitle>
+                    <CardTitle>{t('quickActions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/users?tab=pending">
                             <UserPlus className="h-6 w-6 mb-2" />
-                            <span>אשר הרשמות</span>
+                            <span>{t('approveEnrollments')}</span>
                             {stats.pendingUsers > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingUsers}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/approvals">
                             <FileCheck className="h-6 w-6 mb-2" />
-                            <span>בדוק טפסים</span>
+                            <span>{t('reviewForms')}</span>
                             {stats.pendingForms > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingForms}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/admin/payroll">
                             <Banknote className="h-6 w-6 mb-2" />
-                            <span>צפה בטיוטות שכר</span>
+                            <span>{t('viewPayrollDrafts')}</span>
                             {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -right-2">{stats.draftPayrolls}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24" asChild>
                         <Link href="/dashboard/announcements">
                             <Megaphone className="h-6 w-6 mb-2" />
-                            <span>שלח הכרזה</span>
+                            <span>{t('sendAnnouncement')}</span>
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24" disabled>
                         <Coins className="h-6 w-6 mb-2" />
-                        <span>הנפק זיכוי ידני</span>
+                        <span>{t('issueCredit')}</span>
                     </Button>
                 </CardContent>
             </Card>

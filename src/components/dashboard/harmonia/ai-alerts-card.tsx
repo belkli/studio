@@ -10,6 +10,8 @@ import { useState } from "react";
 import type { EmptySlot } from "@/lib/types";
 import { PromoteSlotDialog } from "./promote-slot-dialog";
 import { useRouter } from "@/i18n/routing";
+import { useTranslations } from 'next-intl';
+
 
 
 const SEVERITY_STYLES: { [key: string]: string } = {
@@ -26,6 +28,7 @@ const SEVERITY_ICONS: { [key: string]: string } = {
 
 
 export function AiAlertsCard() {
+    const t = useTranslations('AiAlerts');
     const alerts = useAdminAlerts();
     const router = useRouter();
     const [promoteSlot, setPromoteSlot] = useState<EmptySlot | null>(null);
@@ -44,9 +47,9 @@ export function AiAlertsCard() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="text-primary" />
-                        התראות סוכן AI
+                        {t('title')}
                     </CardTitle>
-                    <CardDescription>בעיות תפעוליות שזוהו אוטומטית ודורשות את תשומת לבך.</CardDescription>
+                    <CardDescription>{t('subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-3 overflow-y-auto max-h-[300px]">
                     {alerts.length > 0 ? alerts.map(alert => {
@@ -57,10 +60,10 @@ export function AiAlertsCard() {
                                 <div className="flex-grow">
                                     <h4 className="font-semibold text-sm">{alert.title}</h4>
                                     <p className="text-xs text-muted-foreground">{alert.description}</p>
-                                    <Button variant="link" size="sm" asChild className="p-0 h-auto mt-1 text-xs">
-                                        <button onClick={() => handleActionClick(alert)} className="flex items-center">
-                                            {alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3" />
-                                        </button>
+                                    <Button variant="link" size="sm" onClick={() => handleActionClick(alert)} className="p-0 h-auto mt-1 text-xs">
+                                        <span className="flex items-center">
+                                            {alert.actionLabel} <ArrowLeft className="ms-1 h-3 w-3 rtl:rotate-180" />
+                                        </span>
                                     </Button>
                                 </div>
                             </div>
@@ -68,13 +71,13 @@ export function AiAlertsCard() {
                     }) : (
                         <div className="text-center text-muted-foreground py-10">
                             <Bell className="mx-auto h-8 w-8" />
-                            <p className="mt-2 text-sm">הכל תקין. אין התראות כרגע.</p>
+                            <p className="mt-2 text-sm">{t('noAlerts')}</p>
                         </div>
                     )}
                 </CardContent>
                 {alerts.length > 0 && (
                     <CardFooter>
-                        <Button variant="ghost" size="sm" className="w-full text-muted-foreground">הצג את כל ההתראות</Button>
+                        <Button variant="ghost" size="sm" className="w-full text-muted-foreground">{t('viewAll')}</Button>
                     </CardFooter>
                 )}
             </Card>

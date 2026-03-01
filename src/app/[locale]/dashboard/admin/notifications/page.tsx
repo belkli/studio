@@ -2,28 +2,31 @@
 'use client';
 
 import { NotificationAuditLog } from "@/components/dashboard/harmonia/notification-audit-log";
-import { useAuth } from "@/hooks/use-auth";
+import { useAdminGuard } from '@/hooks/use-admin-guard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslations } from "next-intl";
 
 export default function NotificationLogPage() {
-    const { user } = useAuth();
-    const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
+    const { user, isLoading } = useAdminGuard();
+    const tAdmin = useTranslations('AdminPages.notificationsLog');
 
-    if (!isAdmin) {
+    if (isLoading || !user) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-6 p-6">
                 <div>
-                    <h1 className="text-2xl font-bold">יומן התראות</h1>
-                    <p className="text-muted-foreground">אין לך הרשאה לצפות בעמוד זה.</p>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-5 w-64 mt-2" />
                 </div>
+                <Skeleton className="h-96" />
             </div>
         );
     }
-    
+
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">יומן התראות מערכת</h1>
-                <p className="text-muted-foreground">צפה בכל ההתראות היוצאות שנשלחו למשתמשים.</p>
+                <h1 className="text-2xl font-bold">{tAdmin('titleSystem')}</h1>
+                <p className="text-muted-foreground">{tAdmin('subtitle')}</p>
             </div>
             <NotificationAuditLog />
         </div>

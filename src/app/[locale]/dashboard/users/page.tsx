@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { UserRole, User } from "@/lib/types";
 import { Check, Edit, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAdminGuard } from "@/hooks/use-admin-guard";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
@@ -50,9 +52,10 @@ const getEditUserSchema = (t: any) => z.object({
 type EditUserFormData = z.infer<ReturnType<typeof getEditUserSchema>>;
 
 export default function UsersPage() {
-    const { user: currentUser, users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
+    const { user: currentUser, isLoading, users } = useAdminGuard();
     const searchParams = useSearchParams();
     const t = useTranslations('UserManagement');
+    const { approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const defaultTab = searchParams.get('tab') || 'approved';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -118,8 +121,20 @@ export default function UsersPage() {
 
     const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student') && newFeaturesEnabled;
 
-    if (!currentUser) {
-        return null; // Or a loading spinner
+    if (isLoading || !currentUser) {
+        return (
+            <div className="space-y-6">
+                <div>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-5 w-64 mt-2" />
+                </div>
+                <div className="flex gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-96 w-full" />
+            </div>
+        );
     }
 
     const handleApprove = (user: User) => {
@@ -163,8 +178,8 @@ export default function UsersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-right">{t('title')}</h1>
-                <p className="text-muted-foreground text-right">{t('manageUsers')}</p>
+                <h1 className="text-2xl font-bold">{t('title')}</h1>
+                <p className="text-muted-foreground">{t('manageUsers')}</p>
             </div>
 
             <Tabs defaultValue={defaultTab}>
@@ -179,7 +194,7 @@ export default function UsersPage() {
                 <TabsContent value="approved" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-right">
+                            <CardTitle>
                                 {currentUser.role === 'site_admin'
                                     ? t('allUsers')
                                     : t('usersIn', { name: currentUser.conservatoriumName })
@@ -208,8 +223,8 @@ export default function UsersPage() {
                 <TabsContent value="pending" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-right">{t('pendingRequests')}</CardTitle>
-                            <CardDescription className="text-right">{t('pendingRequestsDesc')}</CardDescription>
+                            <CardTitle>{t('pendingRequests')}</CardTitle>
+                            <CardDescription>{t('pendingRequestsDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <PendingUsersTable users={pendingUsers} onApprove={handleApprove} onReject={handleRejectClick} />

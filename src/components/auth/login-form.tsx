@@ -9,15 +9,33 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export function LoginForm() {
   const t = useTranslations("Auth")
   const { toast } = useToast()
   const { login } = useAuth()
+  const locale = useLocale()
+  const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('password') // Mock password
+  const [password, setPassword] = useState('')
+
+  const handleOAuthNotAvailable = () => {
+    toast({
+      title: t('oauthComingSoon') ?? 'Coming Soon',
+      description: t('oauthComingSoonDesc') ?? 'Google/Microsoft login is not yet available.',
+    })
+  }
+
+  const handleForgotPassword = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!email) {
+      toast({ title: t('enterEmailFirst') ?? 'Please enter your email first', variant: 'destructive' })
+      return
+    }
+    toast({ title: t('passwordResetSent') ?? 'Password reset link sent', description: t('passwordResetSentDesc') ?? 'Check your inbox for instructions.' })
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -77,7 +95,13 @@ export function LoginForm() {
         <CardDescription>{t('cardDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="email" className="w-full" dir="rtl">
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded p-3 text-xs mb-6 flex items-start gap-2">
+            <Icons.help className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>⚠️ Demo mode: Any email from the mock list logs in. No password is checked.</span>
+          </div>
+        )}
+        <Tabs defaultValue="email" className="w-full" dir={dir}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="email">{t('emailPasswordTab')}</TabsTrigger>
             <TabsTrigger value="magic">{t('magicLinkTab')}</TabsTrigger>
@@ -91,7 +115,7 @@ export function LoginForm() {
               <div className="space-y-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">{t('passwordLabel')}</Label>
-                  <Link href="#" className="ms-auto inline-block text-sm underline">
+                  <Link href="#" onClick={handleForgotPassword} className="ms-auto inline-block text-sm underline">
                     {t('forgotPassword')}
                   </Link>
                 </div>
@@ -125,11 +149,11 @@ export function LoginForm() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" disabled={loading}>
+          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading}>
             <Icons.google className="me-2 h-4 w-4" />
             Google
           </Button>
-          <Button variant="outline" disabled={loading}>
+          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading}>
             <Icons.microsoft className="me-2 h-4 w-4" />
             Microsoft
           </Button>

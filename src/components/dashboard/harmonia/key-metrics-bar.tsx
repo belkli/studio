@@ -4,14 +4,16 @@ import { useAdminAlerts } from "@/hooks/use-admin-alerts";
 import { useAuth } from "@/hooks/use-auth";
 import { useMemo } from "react";
 import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
+import { useTranslations } from 'next-intl';
 
 export function KeyMetricsBar() {
+    const t = useTranslations('KeyMetrics');
     const alerts = useAdminAlerts();
     const { users, mockLessons, mockFormSubmissions } = useAuth();
-    
+
     const stats = useMemo(() => {
         const activeStudents = users.filter(u => u.role === 'student' && u.approved).length;
-        
+
         const today = new Date();
         const weekStart = startOfWeek(today, { weekStartsOn: 0 }); // Sunday
         const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
@@ -20,18 +22,18 @@ export function KeyMetricsBar() {
             const lessonDate = new Date(l.startTime);
             return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
         }).length;
-        
+
         const pendingForms = mockFormSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
-        
+
         return { activeStudents, lessonsThisWeek, pendingForms };
     }, [users, mockLessons, mockFormSubmissions]);
 
 
     const metrics = [
-        { title: "תלמידים פעילים", value: stats.activeStudents.toString(), icon: Users, color: "text-blue-500" },
-        { title: "שיעורים השבוע", value: stats.lessonsThisWeek.toString(), icon: Calendar, color: "text-green-500" },
-        { title: "אישורים ממתינים", value: stats.pendingForms.toString(), icon: BookOpen, color: "text-orange-500" },
-        { title: "התראות AI", value: alerts.length.toString(), icon: Bell, color: alerts.length > 0 ? "text-red-500" : "text-purple-500" },
+        { title: t('activeStudents'), value: stats.activeStudents.toString(), icon: Users, color: "text-blue-500" },
+        { title: t('lessonsThisWeek'), value: stats.lessonsThisWeek.toString(), icon: Calendar, color: "text-green-500" },
+        { title: t('pendingApprovals'), value: stats.pendingForms.toString(), icon: BookOpen, color: "text-orange-500" },
+        { title: t('aiAlerts'), value: alerts.length.toString(), icon: Bell, color: alerts.length > 0 ? "text-red-500" : "text-purple-500" },
     ]
 
     return (

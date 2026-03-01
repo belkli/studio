@@ -1,4 +1,52 @@
 {
+  "AdminDashboard": {
+    "welcome": "أهلاً بك، {name}",
+    "controlCenter": "هذا هو مركز التحكم الخاص بك بـ {name}.",
+    "quickActions": "إجراءات سريعة",
+    "approveEnrollments": "الموافقة على التسجيلات",
+    "reviewForms": "مراجعة النماذج",
+    "viewPayrollDrafts": "عرض مسودات الرواتب",
+    "sendAnnouncement": "إرسال إعلان",
+    "issueCredit": "إصدار رصيد يدوي"
+  },
+  "KeyMetrics": {
+    "activeStudents": "الطلاب النشطون",
+    "lessonsThisWeek": "دروس هذا الأسبوع",
+    "pendingApprovals": "الموافقات المعلقة",
+    "aiAlerts": "تنبيهات AI"
+  },
+  "TodaySnapshot": {
+    "title": "نظرة عامة يومية",
+    "subtitle": "ماذا يحدث اليوم في الكونسرفتوار.",
+    "lessonsToday": "دروس اليوم ({count})",
+    "noLessons": "لا توجد دروس مقررة اليوم.",
+    "billingIssues": "مشاكل الفوترة",
+    "noBillingIssues": "لا توجد مشاكل في الفوترة حالياً.",
+    "overdue": "متأخر",
+    "fullSchedule": "إلى الجدول الكامل",
+    "room": "غرفة {number}",
+    "notAssigned": "غير معين"
+  },
+  "AdminAlerts": {
+    "teacherCapacityTitle": "قدرة المعلم عالية: {name}",
+    "teacherCapacityDesc": "المعلم بنسبة إشغال {percent}%. يرجى النظر في إغلاق التسجيل.",
+    "manageTeachers": "إدارة المعلمين",
+    "studentDisengagedTitle": "طالب معرض لخطر الانقطاع: {name}",
+    "studentDisengagedDesc": "لم يتم تسجيل أي تمرين في آخر 30 يوماً وتم تسجيل {count} غيابات.",
+    "viewProfile": "عرض الملف الشخصي",
+    "makeupBacklogTitle": "رصيد دروس تعويضية عالٍ: {name}",
+    "makeupBacklogDesc": "للطالب رصيد {count} دروس تعويضية. يرجى تشجيع تحديد المواعيد.",
+    "viewMakeups": "عرض لوحة التعويضات",
+    "paymentSpikeTitle": "تعدد التحصيلات المتأخرة",
+    "paymentSpikeDesc": "توجد {count} فواتير لم تدفع في وقتها. يرجى المتابعة.",
+    "goToBilling": "انتقل إلى الفوترة",
+    "substituteNeededTitle": "مطلوب تعيين بديل",
+    "substituteNeededDesc": "تم إلغاء {count} دروس بسبب غياب المعلم وتتطلب تعيين معلم بديل.",
+    "assignSubstitutes": "تعيين المعلمين البدلاء",
+    "promoteSlotTitle": "فرصة لملء نافذة شاغرة",
+    "promoteSlotDesc": "درس {instrument} مع {name} يوم {day} متاح.",
+    "promoteSlot": "ترويج الدرس"
+  },
   "Navigation": {
     "dashboard": "لوحة التحكم",
     "lessons": "الدروس المتاحة",
@@ -1964,6 +2012,11 @@
       "title": "قوائم الانتظار",
       "header": "إدارة قوائم الانتظار",
       "subtitle": "عرض وإدارة الطلاب المنتظرين للتسجيل.",
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة."
+    },
+    "ministry": {
+      "title": "بوابة مديرا مكاتب وزارة التعليم - هارمونيا",
+      "subtitle": "إدارة واعتماد الطلبات، الحفلات الموسيقية، المنح الدراسية والامتحانات المقدمة من الكونسرفتوارات.",
       "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة."
     }
   },

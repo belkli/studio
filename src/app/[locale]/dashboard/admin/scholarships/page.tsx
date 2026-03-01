@@ -10,9 +10,32 @@ import { useAuth } from '@/hooks/use-auth';
 import { useTranslations } from 'next-intl';
 import type { ScholarshipApplication, ApplicationStatus } from '@/lib/types';
 
+import { useAdminGuard } from '@/hooks/use-admin-guard';
+import { Skeleton } from '@/components/ui/skeleton';
+
 export default function AdminScholarshipsPage() {
-    const { user, mockScholarshipApplications } = useAuth();
+    const { user, isLoading } = useAdminGuard();
+    const { mockScholarshipApplications } = useAuth();
     const t = useTranslations('AdminScholarships');
+
+    if (isLoading || !user) {
+        return (
+            <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-7xl mx-auto">
+                <div className="flex items-center justify-between space-y-2 mb-8">
+                    <div>
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-5 w-64 mt-2" />
+                    </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                    <Skeleton className="h-32" />
+                    <Skeleton className="h-32" />
+                    <Skeleton className="h-32" />
+                </div>
+                <Skeleton className="h-96" />
+            </div>
+        );
+    }
 
     const statusConfig: Record<ApplicationStatus, { label: string; icon: React.ElementType, className: string }> = {
         DRAFT: { label: t('statuses.DRAFT'), icon: Clock, className: 'bg-gray-100 text-gray-800' },
@@ -26,11 +49,8 @@ export default function AdminScholarshipsPage() {
         EXPIRED: { label: t('statuses.EXPIRED'), icon: XCircle, className: 'bg-gray-100 text-gray-800' },
     };
 
-    if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
-        return <p>{t('noPermission')}</p>;
-    }
-
     const applications = mockScholarshipApplications.filter(app => app.conservatoriumId === user.conservatoriumId);
+
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-7xl mx-auto">

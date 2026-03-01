@@ -1,4 +1,52 @@
 {
+  "AdminDashboard": {
+    "welcome": "Welcome, {name}",
+    "controlCenter": "This is your control center for {name}.",
+    "quickActions": "Quick Actions",
+    "approveEnrollments": "Approve Enrollments",
+    "reviewForms": "Review Forms",
+    "viewPayrollDrafts": "View Payroll Drafts",
+    "sendAnnouncement": "Send Announcement",
+    "issueCredit": "Issue Manual Credit"
+  },
+  "KeyMetrics": {
+    "activeStudents": "Active Students",
+    "lessonsThisWeek": "Lessons This Week",
+    "pendingApprovals": "Pending Approvals",
+    "aiAlerts": "AI Alerts"
+  },
+  "TodaySnapshot": {
+    "title": "Daily Snapshot",
+    "subtitle": "What's happening today in the conservatory.",
+    "lessonsToday": "Today's Lessons ({count})",
+    "noLessons": "No lessons scheduled for today.",
+    "billingIssues": "Billing Issues",
+    "noBillingIssues": "No billing issues at the moment.",
+    "overdue": "Overdue",
+    "fullSchedule": "To Full Schedule",
+    "room": "Room {number}",
+    "notAssigned": "Not Assigned"
+  },
+  "AdminAlerts": {
+    "teacherCapacityTitle": "High Teacher Capacity: {name}",
+    "teacherCapacityDesc": "Teacher is at {percent}% occupancy. Consider closing registration.",
+    "manageTeachers": "Manage Teachers",
+    "studentDisengagedTitle": "Student at risk of dropout: {name}",
+    "studentDisengagedDesc": "No practice logged in the last 30 days and {count} absences marked.",
+    "viewProfile": "View Profile",
+    "makeupBacklogTitle": "High makeup lesson balance: {name}",
+    "makeupBacklogDesc": "Student has a balance of {count} makeup lessons. Encourage scheduling.",
+    "viewMakeups": "View Makeup Board",
+    "paymentSpikeTitle": "Multiple Overdue Charges",
+    "paymentSpikeDesc": "There are {count} unpaid invoices. Please follow up.",
+    "goToBilling": "Go to Billing",
+    "substituteNeededTitle": "Substitute Placement Needed",
+    "substituteNeededDesc": "{count} lessons cancelled due to teacher absence and require a substitute.",
+    "assignSubstitutes": "Assign Substitutes",
+    "promoteSlotTitle": "Opportunity to fill empty slot",
+    "promoteSlotDesc": "{instrument} lesson with {name} on {day} is available.",
+    "promoteSlot": "Promote Lesson"
+  },
   "Navigation": {
     "dashboard": "Dashboard",
     "lessons": "Available Lessons",
@@ -399,6 +447,15 @@
     }
   },
   "Dashboard": {
+    "status": {
+      "draft": "Draft",
+      "pendingTeacher": "Pending Teacher",
+      "pendingAdmin": "Pending Admin",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "revisionRequired": "Revision Required",
+      "finalApproved": "Final Approved"
+    },
     "header": {
       "search": "Search...",
       "notifications": "Notifications",
@@ -1932,6 +1989,11 @@
       "title": "Waitlists",
       "header": "Waitlist Management",
       "subtitle": "View and manage students waiting for a vacancy with teachers.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "ministry": {
+      "title": "Ministry of Education District Portal",
+      "subtitle": "Manage and approve requests, recitals, and scholarships submitted by conservatories.",
       "noPermission": "You do not have permission to view this page."
     }
   },

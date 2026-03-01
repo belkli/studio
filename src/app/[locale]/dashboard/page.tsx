@@ -19,16 +19,20 @@ export default function DashboardPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading && newFeaturesEnabled) {
-            if (user?.role === 'parent') {
+        if (!isLoading && newFeaturesEnabled && user) {
+            if (user.role === 'site_admin' || user.role === 'conservatorium_admin') {
+                router.replace('/dashboard/admin');
+            } else if (user.role === 'teacher') {
+                router.replace('/dashboard/teacher');
+            } else if (user.role === 'parent') {
                 router.replace('/dashboard/family');
-            } else if (user?.role === 'student') {
+            } else if (user.role === 'student') {
                 router.replace('/dashboard/profile');
             }
         }
     }, [isLoading, newFeaturesEnabled, user, router]);
 
-    if (isLoading || !user) {
+    if (isLoading || !user || newFeaturesEnabled) {
         return (
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -36,7 +40,6 @@ export default function DashboardPage() {
                         <Skeleton className="h-8 w-48" />
                         <Skeleton className="h-5 w-64 mt-2" />
                     </div>
-                    <Skeleton className="h-10 w-32" />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Skeleton className="h-28" />
@@ -44,22 +47,8 @@ export default function DashboardPage() {
                     <Skeleton className="h-28" />
                     <Skeleton className="h-28" />
                 </div>
-                <Skeleton className="h-96" />
             </div>
         );
-    }
-
-    if (newFeaturesEnabled) {
-        if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
-            return <AdminCommandCenter />;
-        }
-        if (user.role === 'teacher') {
-            return <TeacherDashboard />;
-        }
-        // Fallback for student/parent if redirect hasn't happened yet
-        if (user.role === 'student' || user.role === 'parent') {
-            return <StudentProfilePage />;
-        }
     }
 
     // Legacy Dashboard for roles not covered by new features yet, or when flag is off

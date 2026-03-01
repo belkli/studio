@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview This is the central authentication and state management provider for the Harmonia application.
  * It uses React Context to provide user authentication status, user data, and all mock data
@@ -176,11 +177,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return currentConservatorium?.newFeaturesEnabled || false;
   }, [user, conservatoriums]);
 
-  // On initial load, check for a user in localStorage to persist login state.
+  // On initial load, check for a user in localStorage to persist login state with role validation.
   useEffect(() => {
     const storedUser = localStorage.getItem('harmonia-user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedData = JSON.parse(storedUser);
+        const VALID_ROLES = ['student', 'teacher', 'parent', 'conservatorium_admin', 'site_admin', 'ministry_director', 'school_coordinator'];
+        if (VALID_ROLES.includes(parsedData?.role)) {
+          setUser(parsedData);
+        } else {
+          localStorage.removeItem('harmonia-user');
+        }
+      } catch (e) {
+        localStorage.removeItem('harmonia-user');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -785,98 +796,108 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockPayrolls(prev => prev.map(p => p.id === payrollId ? { ...p, status } : p));
   };
 
+  const contextValue = useMemo(() => ({
+    user,
+    users,
+    mockFormSubmissions,
+    compositions: initialMockData.compositions,
+    mockLessons,
+    mockPackages,
+    mockInvoices,
+    mockPracticeLogs,
+    mockAssignedRepertoire,
+    mockLessonNotes,
+    mockMessageThreads,
+    mockProgressReports,
+    mockAnnouncements,
+    mockFormTemplates,
+    mockAuditLog,
+    mockPlayingSchoolInvoices,
+    mockEvents,
+    mockInstrumentInventory,
+    mockPerformanceBookings,
+    mockScholarshipApplications,
+    mockOpenDayEvents,
+    mockOpenDayAppointments,
+    mockPracticeVideos,
+    mockAlumni,
+    mockMasterclasses,
+    mockMakeupCredits,
+    mockRepertoire,
+    conservatoriums,
+    mockBranches,
+    mockWaitlist,
+    mockPayrolls,
+    login,
+    logout,
+    approveUser,
+    rejectUser,
+    updateForm,
+    updateUser,
+    newFeaturesEnabled,
+    isLoading,
+    addLesson,
+    cancelLesson,
+    rescheduleLesson,
+    getMakeupCreditBalance,
+    getMakeupCreditsDetail,
+    addPracticeLog,
+    awardAchievement,
+    updateRepertoireStatus,
+    addLessonNote,
+    updateUserPracticeGoal,
+    addProgressReport,
+    addMessage,
+    addAnnouncement,
+    assignSubstitute,
+    reportSickLeave,
+    updateLessonStatus,
+    addToWaitlist,
+    updateWaitlistStatus,
+    addFormTemplate,
+    updateConservatorium,
+    addEvent,
+    addPerformanceToEvent,
+    removePerformanceFromEvent,
+    assignInstrumentToStudent,
+    returnInstrument,
+    addInstrument,
+    updateInstrument,
+    deleteInstrument,
+    addPracticeVideo,
+    addVideoFeedback,
+    assignMusiciansToPerformance,
+    updatePerformanceBookingStatus,
+    addPerformanceBooking,
+    addScholarshipApplication,
+    addOpenDayAppointment,
+    markWalkthroughAsSeen,
+    addUser,
+    addBranch,
+    updateBranch,
+    mockRooms,
+    addRoom,
+    updateRoom,
+    deleteRoom,
+    updateNotificationPreferences,
+    updateUserPaymentMethod,
+    assignRepertoire,
+    updatePayrollStatus,
+    updateEvent,
+    updateEventStatus
+  }), [
+    user, users, mockFormSubmissions, mockLessons, mockPackages, mockInvoices,
+    mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes, mockMessageThreads,
+    mockProgressReports, mockAnnouncements, mockFormTemplates, mockAuditLog,
+    mockPlayingSchoolInvoices, mockEvents, mockInstrumentInventory,
+    mockPerformanceBookings, mockScholarshipApplications, mockOpenDayEvents,
+    mockOpenDayAppointments, mockPracticeVideos, mockAlumni, mockMasterclasses,
+    mockMakeupCredits, mockRepertoire, conservatoriums, mockBranches,
+    mockWaitlist, mockPayrolls, newFeaturesEnabled, isLoading, mockRooms
+  ]);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      users,
-      mockFormSubmissions,
-      compositions: initialMockData.compositions,
-      mockLessons,
-      mockPackages,
-      mockInvoices,
-      mockPracticeLogs,
-      mockAssignedRepertoire,
-      mockLessonNotes,
-      mockMessageThreads,
-      mockProgressReports,
-      mockAnnouncements,
-      mockFormTemplates,
-      mockAuditLog,
-      mockPlayingSchoolInvoices,
-      mockEvents,
-      mockInstrumentInventory,
-      mockPerformanceBookings,
-      mockScholarshipApplications,
-      mockOpenDayEvents,
-      mockOpenDayAppointments,
-      mockPracticeVideos,
-      mockAlumni,
-      mockMasterclasses,
-      mockMakeupCredits,
-      mockRepertoire,
-      conservatoriums,
-      mockBranches,
-      mockWaitlist,
-      mockPayrolls,
-      login,
-      logout,
-      approveUser,
-      rejectUser,
-      updateForm,
-      updateUser,
-      newFeaturesEnabled,
-      isLoading,
-      addLesson,
-      cancelLesson,
-      rescheduleLesson,
-      getMakeupCreditBalance,
-      getMakeupCreditsDetail,
-      addPracticeLog,
-      awardAchievement,
-      updateRepertoireStatus,
-      addLessonNote,
-      updateUserPracticeGoal,
-      addProgressReport,
-      addMessage,
-      addAnnouncement,
-      assignSubstitute,
-      reportSickLeave,
-      updateLessonStatus,
-      addToWaitlist,
-      updateWaitlistStatus,
-      addFormTemplate,
-      updateConservatorium,
-      addEvent,
-      addPerformanceToEvent,
-      removePerformanceFromEvent,
-      assignInstrumentToStudent,
-      returnInstrument,
-      addInstrument,
-      updateInstrument,
-      deleteInstrument,
-      addPracticeVideo,
-      addVideoFeedback,
-      assignMusiciansToPerformance,
-      updatePerformanceBookingStatus,
-      addPerformanceBooking,
-      addScholarshipApplication,
-      addOpenDayAppointment,
-      markWalkthroughAsSeen,
-      addUser,
-      addBranch,
-      updateBranch,
-      mockRooms,
-      addRoom,
-      updateRoom,
-      deleteRoom,
-      updateNotificationPreferences,
-      updateUserPaymentMethod,
-      assignRepertoire,
-      updatePayrollStatus,
-      updateEvent,
-      updateEventStatus
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

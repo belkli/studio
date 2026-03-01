@@ -1,21 +1,24 @@
 'use client';
 
 import { AdminWaitlistDashboard } from "@/components/dashboard/harmonia/admin-waitlist-dashboard";
-import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "next-intl";
 
-export default function AdminWaitlistsPage() {
-    const { user } = useAuth();
-    const tAdmin = useTranslations('AdminPages.waitlists');
-    const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
-    if (!isAdmin) {
+import { useAdminGuard } from "@/hooks/use-admin-guard";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function AdminWaitlistsPage() {
+    const { user, isLoading } = useAdminGuard();
+    const tAdmin = useTranslations('AdminPages.waitlists');
+
+    if (isLoading || !user) {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold">{tAdmin('title')}</h1>
-                    <p className="text-muted-foreground">{tAdmin('noPermission')}</p>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-5 w-64 mt-2" />
                 </div>
+                <Skeleton className="h-96" />
             </div>
         );
     }

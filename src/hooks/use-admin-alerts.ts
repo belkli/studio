@@ -20,7 +20,10 @@ export interface AdminAlert {
     data?: any;
 }
 
+import { useTranslations } from 'next-intl';
+
 export function useAdminAlerts(): AdminAlert[] {
+    const t = useTranslations('AdminAlerts');
     const { users, mockLessons, mockPracticeLogs, mockInvoices } = useAuth();
     const dateLocale = useDateLocale();
 
@@ -49,10 +52,10 @@ export function useAdminAlerts(): AdminAlert[] {
                         id: `teacher-cap-${teacher.id}`,
                         severity: 'warning',
                         icon: Users,
-                        title: `קיבולת מורה גבוהה: ${teacher.name}`,
-                        description: `המורה בתפוסה של ${(capacity * 100).toFixed(0)}%. יש לשקול סגירת הרשמה.`,
+                        title: t('teacherCapacityTitle', { name: teacher.name }),
+                        description: t('teacherCapacityDesc', { percent: (capacity * 100).toFixed(0) }),
                         actionLink: `/dashboard/users`,
-                        actionLabel: 'נהל מורים'
+                        actionLabel: t('manageTeachers')
                     });
                 }
             }
@@ -75,10 +78,10 @@ export function useAdminAlerts(): AdminAlert[] {
                     id: `student-disengaged-${student.id}`,
                     severity: 'critical',
                     icon: UserX,
-                    title: `תלמיד/ה בסיכון נשירה: ${student.name}`,
-                    description: `לא נרשם אימון ב-30 הימים האחרונים וסומנו ${noShows} היעדרויות.`,
+                    title: t('studentDisengagedTitle', { name: student.name }),
+                    description: t('studentDisengagedDesc', { count: noShows }),
                     actionLink: `/dashboard/teacher/student/${student.id}`,
-                    actionLabel: 'צפה בפרופיל'
+                    actionLabel: t('viewProfile')
                 });
             }
         });
@@ -94,10 +97,10 @@ export function useAdminAlerts(): AdminAlert[] {
                     id: `makeup-backlog-${student.id}`,
                     severity: 'info',
                     icon: CalendarClock,
-                    title: `יתרת שיעורי השלמה גבוהה: ${student.name}`,
-                    description: `לתלמיד/ה יתרה של ${balance} שיעורי השלמה. יש לעודד קביעת שיעורים.`,
+                    title: t('makeupBacklogTitle', { name: student.name }),
+                    description: t('makeupBacklogDesc', { count: balance }),
                     actionLink: `/dashboard/admin/makeups`,
-                    actionLabel: 'צפה בלוח ההשלמות'
+                    actionLabel: t('viewMakeups')
                 });
             }
         });
@@ -109,10 +112,10 @@ export function useAdminAlerts(): AdminAlert[] {
                 id: `payment-spike`,
                 severity: 'critical',
                 icon: CreditCard,
-                title: `ריבוי חיובים בפיגור`,
-                description: `קיימות ${overdueInvoices.length} חשבוניות שלא שולמו בזמן. יש לבצע מעקב.`,
+                title: t('paymentSpikeTitle'),
+                description: t('paymentSpikeDesc', { count: overdueInvoices.length }),
                 actionLink: `/dashboard/billing`,
-                actionLabel: 'עבור לחיובים'
+                actionLabel: t('goToBilling')
             });
         }
 
@@ -123,10 +126,10 @@ export function useAdminAlerts(): AdminAlert[] {
                 id: 'substitute-needed',
                 severity: 'critical',
                 icon: UserX,
-                title: 'דרוש שיבוץ מחליף/ה',
-                description: `${lessonsNeedingSub.length} שיעורים בוטלו עקב היעדרות מורה ודורשים שיבוץ מורה מחליף.`,
+                title: t('substituteNeededTitle'),
+                description: t('substituteNeededDesc', { count: lessonsNeedingSub.length }),
                 actionLink: '/dashboard/admin/substitute',
-                actionLabel: 'שבץ מורים מחליפים',
+                actionLabel: t('assignSubstitutes'),
             });
         }
 
@@ -154,20 +157,19 @@ export function useAdminAlerts(): AdminAlert[] {
                     );
 
                     if (!isBooked) {
-                        // Using the outer getDemandLevel helper
                         const demandString = getDemandLevel(mockLessons, slotTime);
                         if (demandString === 'CRITICAL' || demandString === 'HIGH') {
                             potentialSlots.push({
                                 id: `${teacher.id}-${date.toISOString()}-${hour}`,
                                 teacher: teacher,
-                                instrument: teacherInstruments[0] || 'שיעור', // Fallback
+                                instrument: teacherInstruments[0] || 'שיעור',
                                 startTime: slotTime,
-                                durationMinutes: 45, // default
-                                basePrice: 120, // mock
-                                promotionalPrice: 100, // mock
-                                discount: 15, // mock
+                                durationMinutes: 45,
+                                basePrice: 120,
+                                promotionalPrice: 100,
+                                discount: 15,
                                 urgency: isSameDay(date, today) ? 'SAME_DAY' : 'TOMORROW',
-                                demandLevel: demandString === 'CRITICAL' ? 'HIGH_DEMAND' : 'MEDIUM_DEMAND', // Mapping to required type if necessary
+                                demandLevel: demandString === 'CRITICAL' ? 'HIGH_DEMAND' : 'MEDIUM_DEMAND',
                             });
                         }
                     }
@@ -182,17 +184,21 @@ export function useAdminAlerts(): AdminAlert[] {
                 id: `promote-slot-${slotToPromote.id}`,
                 severity: 'info',
                 icon: TrendingUp,
-                title: `הזדמנות למילוי חלון פנוי`,
-                description: `שיעור ${slotToPromote.instrument} עם ${slotToPromote.teacher.name} ביום ${format(slotToPromote.startTime, 'EEEE', { locale: dateLocale })} פנוי.`,
+                title: t('promoteSlotTitle'),
+                description: t('promoteSlotDesc', {
+                    instrument: slotToPromote.instrument,
+                    name: slotToPromote.teacher.name,
+                    day: format(slotToPromote.startTime, 'EEEE', { locale: dateLocale })
+                }),
                 actionLink: '#promote-slot',
-                actionLabel: 'קדם שיעור',
+                actionLabel: t('promoteSlot'),
                 data: slotToPromote,
             });
         }
 
 
         return allAlerts;
-    }, [users, mockLessons, mockPracticeLogs, mockInvoices, dateLocale]);
+    }, [users, mockLessons, mockPracticeLogs, mockInvoices, dateLocale, t]);
 
     return alerts;
 }

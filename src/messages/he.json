@@ -1,4 +1,53 @@
 {
+  "AdminDashboard": {
+    "welcome": "ברוך הבא, {name}",
+    "welcomeFem": "ברוכה הבאה, {name}",
+    "controlCenter": "זהו מרכז הבקרה שלך עבור {name}.",
+    "quickActions": "פעולות מהירות",
+    "approveEnrollments": "אשר הרשמות",
+    "reviewForms": "בדוק טפסים",
+    "viewPayrollDrafts": "צפה בטיוטות שכר",
+    "sendAnnouncement": "שלח הכרזה",
+    "issueCredit": "הנפק זיכוי ידני"
+  },
+  "KeyMetrics": {
+    "activeStudents": "תלמידים פעילים",
+    "lessonsThisWeek": "שיעורים השבוע",
+    "pendingApprovals": "אישורים ממתינים",
+    "aiAlerts": "התראות AI"
+  },
+  "TodaySnapshot": {
+    "title": "תמונת מצב יומית",
+    "subtitle": "מה קורה היום בקונסרבטוריון.",
+    "lessonsToday": "השיעורים להיום ({count})",
+    "noLessons": "אין שיעורים מתוכננים להיום.",
+    "billingIssues": "בעיות בגבייה",
+    "noBillingIssues": "אין בעיות בגבייה כרגע.",
+    "overdue": "בפיגור",
+    "fullSchedule": "למערכת השעות המלאה",
+    "room": "חדר {number}",
+    "notAssigned": "לא שויך"
+  },
+  "AdminAlerts": {
+    "teacherCapacityTitle": "קיבולת מורה גבוהה: {name}",
+    "teacherCapacityDesc": "המורה בתפוסה של {percent}%. יש לשקול סגירת הרשמה.",
+    "manageTeachers": "נהל מורים",
+    "studentDisengagedTitle": "תלמיד/ה בסיכון נשירה: {name}",
+    "studentDisengagedDesc": "לא נרשם אימון ב-30 הימים האחרונים וסומנו {count} היעדרויות.",
+    "viewProfile": "צפה בפרופיל",
+    "makeupBacklogTitle": "יתרת שיעורי השלמה גבוהה: {name}",
+    "makeupBacklogDesc": "לתלמיד/ה יתרה של {count} שיעורי השלמה. יש לעודד קביעת שיעורים.",
+    "viewMakeups": "צפה בלוח ההשלמות",
+    "paymentSpikeTitle": "ריבוי חיובים בפיגור",
+    "paymentSpikeDesc": "קיימות {count} חשבוניות שלא שולמו בזמן. יש לבצע מעקב.",
+    "goToBilling": "עבור לחיובים",
+    "substituteNeededTitle": "דרוש שיבוץ מחליף/ה",
+    "substituteNeededDesc": "{count} שיעורים בוטלו עקב היעדרות מורה ודורשים שיבוץ מורה מחליף.",
+    "assignSubstitutes": "שבץ מורים מחליפים",
+    "promoteSlotTitle": "הזדמנות למילוי חלון פנוי",
+    "promoteSlotDesc": "שיעור {instrument} עם {name} ביום {day} פנוי.",
+    "promoteSlot": "קדם שיעור"
+  },
   "Navigation": {
     "dashboard": "לוח בקרה",
     "lessons": "שיעורים פנויים",
@@ -1978,6 +2027,11 @@
       "title": "רשימות המתנה",
       "header": "ניהול רשימות המתנה",
       "subtitle": "צפה ונהל תלמידים הממתינים לשיבוץ.",
+      "noPermission": "אין לך הרשאה לצפות בדף זה."
+    },
+    "ministry": {
+      "title": "פורטל משרד החינוך מחוז – הרמוניה",
+      "subtitle": "ניהול ואישור בקשות, רסיטלים, מלגות ומבחני שלב המוגשים על ידי הקונסרבטוריונים.",
       "noPermission": "אין לך הרשאה לצפות בדף זה."
     }
   },
