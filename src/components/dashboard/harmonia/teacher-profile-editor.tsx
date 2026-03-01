@@ -15,8 +15,9 @@ import { languages, teacherSpecialties } from "@/lib/data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TranslatedFieldInput } from "./translated-field-input";
 import { Sparkles } from "lucide-react";
-import { translateUserProfile } from "@/app/actions/translate";
+import { translateUserBio } from "@/app/actions/translate";
 import { computeUserSourceHash } from "@/lib/utils/translation-hash";
+import { useState } from "react";
 
 const profileSchema = z.object({
     name: z.string().min(2, "שם חייב להכיל לפחות 2 תווים."),
@@ -60,7 +61,7 @@ export function TeacherProfileEditor() {
                 description: "ה-AI מעדכן את הביוגרפיה שלך בשפות נוספות.",
             });
 
-            const result = await translateUserProfile(
+            const result = await translateUserBio(
                 updatedUser as any,
                 ['en', 'ar', 'ru'],
                 user.translations,

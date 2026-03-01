@@ -447,15 +447,6 @@
     }
   },
   "Dashboard": {
-    "status": {
-      "draft": "Draft",
-      "pendingTeacher": "Pending Teacher",
-      "pendingAdmin": "Pending Admin",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "revisionRequired": "Revision Required",
-      "finalApproved": "Final Approved"
-    },
     "header": {
       "search": "Search...",
       "notifications": "Notifications",
