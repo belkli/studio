@@ -8,16 +8,19 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { CreditCard, FileText, CheckCircle2, AlertCircle, History, ExternalLink, ShieldCheck } from 'lucide-react';
-
-const MOCK_INVOICES = [
-    { id: 'inv-101', month: 'ספטמבר 2026', amount: 800, status: 'PAID', date: '2026-09-01' },
-    { id: 'inv-102', month: 'אוקטובר 2026', amount: 800, status: 'PAID', date: '2026-10-01' },
-    { id: 'inv-103', month: 'נובמבר 2026', amount: 850, status: 'PENDING', date: '2026-11-01', note: 'כולל השתתפות כינוס חורף (50 ₪)' }
-];
+import { useTranslations } from 'next-intl';
 
 export function ParentPaymentPanel() {
     const { user } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('ParentPayment');
+
+    const MOCK_INVOICES = [
+        { id: 'inv-101', month: t('sep2026'), amount: 800, status: 'PAID', date: '2026-09-01' },
+        { id: 'inv-102', month: t('oct2026'), amount: 800, status: 'PAID', date: '2026-10-01' },
+        { id: 'inv-103', month: t('nov2026'), amount: 850, status: 'PENDING', date: '2026-11-01', note: t('winterConcert') }
+    ];
+
     const [isProcessing, setIsProcessing] = useState(false);
 
     const pendingInvoices = MOCK_INVOICES.filter(i => i.status === 'PENDING');
@@ -31,8 +34,8 @@ export function ParentPaymentPanel() {
         setTimeout(() => {
             setIsProcessing(false);
             toast({
-                title: 'הופנית לעמוד התשלום המאובטח (Cardcom)',
-                description: 'בפועל בחלון זה ייפתח דף תשלום מאובטח בתקן PCI-DSS.'
+                title: t('redirectSecurePayment'),
+                description: t('redirectSecurePaymentDesc')
             });
         }, 1500);
     };
@@ -42,8 +45,8 @@ export function ParentPaymentPanel() {
         setTimeout(() => {
             setIsProcessing(false);
             toast({
-                title: 'הגדרת הוראת קבע באשראי',
-                description: 'הבקשה להוראת קבע (Tokens) נשלחה לשרתי קארדקום.'
+                title: t('setupRecurring'),
+                description: t('setupRecurringDesc')
             });
         }, 1500);
     };
@@ -56,29 +59,29 @@ export function ParentPaymentPanel() {
                 <Card className="md:col-span-1 border-t-4 border-t-blue-600 shadow-sm">
                     <CardHeader className="bg-blue-50/50 pb-4">
                         <CardTitle className="text-blue-900 flex items-center gap-2">
-                            <CreditCard className="w-5 h-5 text-blue-600" /> סיכום חיובים
+                            <CreditCard className="w-5 h-5 text-blue-600" /> {t('billingSummary')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6 space-y-6">
                         <div className="text-center">
-                            <p className="text-sm text-muted-foreground mb-1">יתרה לתשלום</p>
+                            <p className="text-sm text-muted-foreground mb-1">{t('balanceDue')}</p>
                             <div className="text-4xl font-bold text-blue-900">₪{totalPending}</div>
-                            {totalPending > 0 && <p className="text-sm text-red-500 font-medium mt-2">יש לשלם עד 10 לחודש</p>}
+                            {totalPending > 0 && <p className="text-sm text-red-500 font-medium mt-2">{t('payByTenth')}</p>}
                         </div>
 
                         <div className="space-y-3">
                             <Button className="w-full text-md h-12" onClick={handlePayNow} disabled={totalPending === 0 || isProcessing}>
-                                {isProcessing ? 'מעבד...' : 'לתשלום מאובטח כעת'}
+                                {isProcessing ? t('processing') : t('proceedToPayment')}
                             </Button>
                             <Button variant="outline" className="w-full text-blue-700 border-blue-200 hover:bg-blue-50" onClick={handleSetupRecurring} disabled={isProcessing}>
                                 <ShieldCheck className="w-4 h-4 mr-2" />
-                                הגדרת חלופת תשלום / הוראת קבע
+                                {t('setupAltPayment')}
                             </Button>
                         </div>
 
                         <div className="bg-muted p-3 flex gap-3 rounded-lg items-start text-xs text-muted-foreground">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                            <p>כל התשלומים מבוצעים דרך מערכת CardCom העומדת בתקן האבטחה המחמיר PCI-DSS. פרטי האשראי אינם נשמרים במערכות "הרמוניה".</p>
+                            <p>{t('securityNotice')}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -86,8 +89,8 @@ export function ParentPaymentPanel() {
                 {/* Invoices List */}
                 <Card className="md:col-span-2 shadow-sm">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-muted-foreground" /> פירוט חשבוניות</CardTitle>
-                        <CardDescription>צפה בחשבוניות פתוחות והיסטוריית תשלומים.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-muted-foreground" /> {t('invoiceDetails')}</CardTitle>
+                        <CardDescription>{t('viewInvoices')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-6">
@@ -95,30 +98,30 @@ export function ParentPaymentPanel() {
                             {/* Pending */}
                             <div>
                                 <h3 className="font-semibold text-red-600 mb-3 flex items-center gap-2">
-                                    לתשלום מידי <Badge variant="destructive" className="rounded-full px-2 py-0 text-xs">{pendingInvoices.length}</Badge>
+                                    {t('immediatePayment')} <Badge variant="destructive" className="rounded-full px-2 py-0 text-xs">{pendingInvoices.length}</Badge>
                                 </h3>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>מס' דרישה</TableHead>
-                                            <TableHead>חודש</TableHead>
-                                            <TableHead>פירוט</TableHead>
-                                            <TableHead className="text-right">סכום</TableHead>
+                                            <TableHead>{t('requestNo')}</TableHead>
+                                            <TableHead>{t('month')}</TableHead>
+                                            <TableHead>{t('details')}</TableHead>
+                                            <TableHead className="text-right">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {pendingInvoices.length === 0 ? (
-                                            <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-4">אין חשבוניות פתוחות לתשלום.</TableCell></TableRow>
+                                            <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-4">{t('noOpenInvoices')}</TableCell></TableRow>
                                         ) : (
                                             pendingInvoices.map(inv => (
                                                 <TableRow key={inv.id} className="bg-red-50/30">
                                                     <TableCell className="font-medium text-xs text-muted-foreground">{inv.id}</TableCell>
                                                     <TableCell>{inv.month}</TableCell>
-                                                    <TableCell className="text-sm text-gray-600">{inv.note || 'שכר לימוד לקונסרבטוריון'}</TableCell>
+                                                    <TableCell className="text-sm text-gray-600">{inv.note || t('conservatoryTuition')}</TableCell>
                                                     <TableCell className="text-right font-bold text-red-600">₪{inv.amount}</TableCell>
                                                     <TableCell className="text-left">
-                                                        <Button size="sm" onClick={handlePayNow} className="px-3 rounded-full h-7 text-xs">שלם</Button>
+                                                        <Button size="sm" onClick={handlePayNow} className="px-3 rounded-full h-7 text-xs">{t('payBtn')}</Button>
                                                     </TableCell>
                                                 </TableRow>
                                             ))
@@ -130,15 +133,15 @@ export function ParentPaymentPanel() {
                             {/* History */}
                             <div>
                                 <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                                    <History className="w-4 h-4 text-gray-500" /> היסטוריית תשלומים <span className="text-xs font-normal text-muted-foreground">(2 האחרונים)</span>
+                                    <History className="w-4 h-4 text-gray-500" /> {t('paymentHistory')} <span className="text-xs font-normal text-muted-foreground">{t('lastTwo')}</span>
                                 </h3>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>מס' קבלה</TableHead>
-                                            <TableHead>חודש</TableHead>
-                                            <TableHead>סטטוס</TableHead>
-                                            <TableHead className="text-right">סכום</TableHead>
+                                            <TableHead>{t('receiptNo')}</TableHead>
+                                            <TableHead>{t('month')}</TableHead>
+                                            <TableHead>{t('status')}</TableHead>
+                                            <TableHead className="text-right">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -149,13 +152,13 @@ export function ParentPaymentPanel() {
                                                 <TableCell>{inv.month}</TableCell>
                                                 <TableCell>
                                                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                                        <CheckCircle2 className="w-3 h-3 mr-1" /> שולם
+                                                        <CheckCircle2 className="w-3 h-3 mr-1" /> {t('paidStatus')}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right font-medium">₪{inv.amount}</TableCell>
                                                 <TableCell className="text-left">
                                                     <Button variant="ghost" size="sm" className="h-7 px-2 text-blue-600 whitespace-nowrap">
-                                                        הורד קבלה <ExternalLink className="w-3 h-3 ml-1" />
+                                                        {t('downloadReceipt')} <ExternalLink className="w-3 h-3 ml-1" />
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>

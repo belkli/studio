@@ -7,7 +7,7 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter, usePathname } from 'next/navigation';
 import { useToast } from './use-toast';
@@ -32,6 +32,7 @@ interface AuthContextType {
   mockAnnouncements: Announcement[];
   mockFormTemplates: FormTemplate[];
   mockAuditLog: AuditLogEntry[];
+  mockPlayingSchoolInvoices: PlayingSchoolInvoice[];
   mockEvents: EventProduction[];
   mockInstrumentInventory: InstrumentInventory[];
   mockPerformanceBookings: PerformanceBooking[];
@@ -129,6 +130,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockAnnouncements, setMockAnnouncements] = useState<Announcement[]>(initialMockData.mockAnnouncements);
   const [mockFormTemplates, setMockFormTemplates] = useState<FormTemplate[]>(initialMockData.mockFormTemplates);
   const [mockAuditLog, setMockAuditLog] = useState<AuditLogEntry[]>(initialMockData.mockAuditLog);
+  const [mockPlayingSchoolInvoices, setMockPlayingSchoolInvoices] = useState<PlayingSchoolInvoice[]>([]);
+
+  useEffect(() => {
+    // Initialize some PS invoices if user is a parent with PS children
+    if (user?.role === 'parent' && users.some(u => u.parentId === user.id && u.playingSchoolInfo)) {
+      const psChildren = users.filter(u => u.parentId === user.id && u.playingSchoolInfo);
+      const initialPsInvoices: PlayingSchoolInvoice[] = psChildren.map(child => ({
+        id: `ps-inv-${child.id}`,
+        studentId: child.id,
+        parentId: user.id,
+        amount: 1500, // Year total or similar
+        description: `Playing School Program - ${child.playingSchoolInfo?.instrument} at ${child.playingSchoolInfo?.schoolName}`,
+        dueDate: '2024-04-01',
+        status: 'PENDING',
+        academicYear: '2023-2024'
+      }));
+      setMockPlayingSchoolInvoices(initialPsInvoices);
+    }
+  }, [user, users]);
   const [mockEvents, setMockEvents] = useState<EventProduction[]>(initialMockData.mockEvents);
   const [mockInstrumentInventory, setMockInstrumentInventory] = useState<InstrumentInventory[]>(initialMockData.mockInstrumentInventory);
   const [mockPerformanceBookings, setMockPerformanceBookings] = useState<PerformanceBooking[]>(initialMockData.mockPerformanceBookings);
@@ -783,6 +803,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mockAnnouncements,
       mockFormTemplates,
       mockAuditLog,
+      mockPlayingSchoolInvoices,
       mockEvents,
       mockInstrumentInventory,
       mockPerformanceBookings,

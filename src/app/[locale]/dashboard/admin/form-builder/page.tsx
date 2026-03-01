@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 export default function FormBuilderPage() {
     const { user } = useAuth();
     const t = useTranslations('Sidebar');
+    const tAdmin = useTranslations('AdminPages.formBuilder');
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     if (!isAdmin) {
@@ -14,17 +15,17 @@ export default function FormBuilderPage() {
             <div className="space-y-6">
                 <div>
                     <h1 className="text-2xl font-bold">{t('formBuilder')}</h1>
-                    <p className="text-muted-foreground">אין לך הרשאה לצפות בעמוד זה.</p>
+                    <p className="text-muted-foreground">{tAdmin('noPermission')}</p>
                 </div>
             </div>
         );
     }
-    
+
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">בנאי טפסים דינמי</h1>
-                <p className="text-muted-foreground">צור וערוך תבניות טפסים מותאמות אישית עבור המוסד שלך.</p>
+                <h1 className="text-2xl font-bold">{tAdmin('title')}</h1>
+                <p className="text-muted-foreground">{tAdmin('subtitle')}</p>
             </div>
             <FormBuilder />
         </div>

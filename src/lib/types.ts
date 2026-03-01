@@ -3,6 +3,8 @@ import type { User as AuthUser } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
 
+export type AccountType = 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
+
 export type InstrumentInfo = {
   instrument: string;
   teacherName: string;
@@ -46,7 +48,14 @@ export type NotificationType =
   | 'paymentDue'
   | 'formStatusChanges'
   | 'teacherMessages'
-  | 'systemAnnouncements';
+  | 'systemAnnouncements'
+  | 'psLessonReminders'
+  | 'psLessonCancellation'
+  | 'psPaymentDue'
+  | 'psExcellenceUpdates'
+  | 'psNewEnrollment'
+  | 'psPartnershipUpdate'
+  | 'psCoordinatorAnnouncements';
 
 export type NotificationPreferences = {
   preferences: Record<NotificationType, Channel[]>;
@@ -73,6 +82,8 @@ export type WeeklyAvailabilityBlock = {
 // From SDD-14B: Student Achievement & Certificate System
 export type AchievementType =
   // Practice milestones
+  | 'FIRST_PLAYING_SCHOOL_LESSON'
+  | 'INSTRUMENT_COLLECTED'
   | 'PRACTICE_STREAK_7'          // 7 consecutive days logged
   | 'PRACTICE_STREAK_30'         // 30 consecutive days
   | 'TOTAL_HOURS_10'             // 10 cumulative practice hours
@@ -140,11 +151,52 @@ export type PerformanceProfile = {
 
 export type PaymentMethod = {
   id: string;
-  type: 'CreditCard';
-  last4: string;
-  expiryMonth: number;
-  expiryYear: number;
+  type: 'CreditCard' | 'PayPal' | 'BankTransfer';
+  last4?: string;
+  brand?: string;
+  expiryMonth?: number;
+  expiryYear?: number;
   isPrimary: boolean;
+};
+
+// From SDD-PS
+export type PlayingSchoolInfo = {
+  schoolName: string;
+  schoolSymbol: string;
+  instrument: string;
+  instrumentReceived: boolean;
+  receivedAt?: string; // ISO Date
+  programType: 'GROUP' | 'INDIVIDUAL';
+  municipalSubsidyPercent: number;
+  ministrySubsidyPercent: number;
+  parentYearlyContribution: number;
+  teacherName?: string;
+  lessonDay?: string;
+  nextLessonDate?: string; // ISO Timestamp format for next class
+  excellenceTrackNominated?: boolean;
+  excellenceTrackAccepted?: boolean;
+  excellenceTrackOfferDate?: string; // ISO Timestamp
+};
+
+export type PlayingSchoolInvoice = {
+  id: string;
+  studentId: string;
+  parentId: string;
+  amount: number;
+  dueDate: string;
+  status: 'PAID' | 'PENDING' | 'OVERDUE';
+  description: string;
+  academicYear: string;
+  paymentMethod?: PSPaymentMethod;
+  paidAt?: string;
+};
+
+export type PartnershipAnalytics = {
+  leads: number;
+  tokenScans: number;
+  wizardStarts: number;
+  completedEnrollments: number;
+  conversionRate: number;
 };
 
 // User type defined below
@@ -267,6 +319,8 @@ export type TranslationMeta = {
 export type UserProfileTranslation = {
   bio?: string;
   role?: string;
+  headline?: string;
+  performanceBio?: string;
 };
 
 export type UserTranslations = {
@@ -302,7 +356,7 @@ export type User = {
   parentId?: string;    // Link to parent user
   childIds?: string[];  // Link to child users
   students?: string[]; // For teachers/admins to list their students by ID
-  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' | 'י' | 'יא' | 'יב';
+  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' | 'י' | 'יא' | 'יב' | 'TBD';
   // Teacher-specific fields from SDD-03 & SDD-13
   bio?: string;
   specialties?: TeacherSpecialty[];
@@ -330,6 +384,8 @@ export type User = {
   };
   translations?: UserTranslations;
   translationMeta?: TranslationMeta;
+  accountType?: AccountType;
+  playingSchoolInfo?: PlayingSchoolInfo;
 };
 
 export type Conservatorium = {
@@ -1186,6 +1242,8 @@ export const ACHIEVEMENT_DEFINITIONS: Record<AchievementType, Omit<Achievement, 
   FORM_SUBMITTED: { type: 'FORM_SUBMITTED', title: 'Form Submitted', titleHe: 'טופס הוגש!', description: 'הגשת טופס ראשון', icon: '📋', points: 10, },
   EXAM_REGISTERED: { type: 'EXAM_REGISTERED', title: 'Exam Registered', titleHe: 'נרשמת לבחינה!', description: 'נרשמת לבחינה ראשונה', icon: '📝', points: 50, },
   EXAM_PASSED: { type: 'EXAM_PASSED', title: 'Exam Passed!', titleHe: 'עברת בחינה!', description: 'עברת בחינת משרד החינוך', icon: '🎓', points: 300, },
+  FIRST_PLAYING_SCHOOL_LESSON: { type: 'FIRST_PLAYING_SCHOOL_LESSON', title: 'School Music Debut', titleHe: 'שיעור נגינה ראשון בביה"ס!', description: 'התחלת ללמוד מוזיקה בבית הספר', icon: '🏫', points: 30, },
+  INSTRUMENT_COLLECTED: { type: 'INSTRUMENT_COLLECTED', title: 'Got My Instrument!', titleHe: 'קיבלתי כלי נגינה!', description: 'אספת את כלי הנגינה שלך מהקונסרבטוריון', icon: '🎺', points: 20, },
 };
 
 // SDD-P3: Student Level Calculator
@@ -1504,6 +1562,21 @@ export type SchoolGroupLesson = {
   teacherNote?: string;
   cancelReason?: string;
   substituteTeacherId?: string;
+  createdAt: string;
+};
+
+export type LeadStatus = 'NEW' | 'CONTACTED' | 'CONVERTED' | 'ARCHIVED';
+
+export type PlayingSchoolInterestLead = {
+  id: string;
+  parentName: string;
+  parentEmail: string;
+  parentPhone: string;
+  schoolName?: string;
+  schoolSymbol?: string;
+  city?: string;
+  status: LeadStatus;
+  notes?: string;
   createdAt: string;
 };
 

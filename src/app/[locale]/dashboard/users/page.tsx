@@ -21,37 +21,38 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { isValidIsraeliID } from "@/lib/utils";
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
+const roleTranslations = (t: any): Record<UserRole, string> => ({
+    student: t('roles.student'),
+    teacher: t('roles.teacher'),
+    parent: t('roles.parent'),
+    conservatorium_admin: t('roles.conservatorium_admin'),
+    site_admin: t('roles.site_admin'),
+    ministry_director: t('roles.ministry_director')
+});
 
-const roleTranslations: Record<UserRole, string> = {
-    student: "תלמיד",
-    teacher: "מורה",
-    parent: "הורה",
-    conservatorium_admin: "מנהל קונסרבטוריון",
-    site_admin: "מנהל מערכת",
-    ministry_director: "מנהל משרד החינוך"
-};
-
-const editUserSchema = z.object({
-    name: z.string().min(2, "שם מלא חייב להכיל לפחות 2 תווים."),
-    email: z.string().email("כתובת אימייל לא תקינה."),
+const getEditUserSchema = (t: any) => z.object({
+    name: z.string().min(2, t('validation.nameMin')),
+    email: z.string().email(t('validation.emailInvalid')),
     role: z.enum(["student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director"]),
     grade: z.string().optional(),
-    idNumber: z.string().refine(isValidIsraeliID, "מספר ת.ז. לא תקין."),
-    phone: z.string().min(9, "מספר נייד לא תקין.").optional(),
-    conservatoriumStudyYears: z.coerce.number().min(0, "שנים חייבות להיות מספר חיובי.").optional(),
+    idNumber: z.string().refine(isValidIsraeliID, t('validation.idInvalid')),
+    phone: z.string().min(9, t('validation.phoneInvalid')).optional(),
+    conservatoriumStudyYears: z.coerce.number().min(0, t('validation.yearsPositive')).optional(),
     instruments: z.array(z.object({
         instrument: z.string(),
         teacherName: z.string(),
-        yearsOfStudy: z.coerce.number().min(0, "שנים חייבות להיות מספר חיובי.").optional(),
+        yearsOfStudy: z.coerce.number().min(0, t('validation.yearsPositive')).optional(),
     })).optional(),
 });
 
-type EditUserFormData = z.infer<typeof editUserSchema>;
+type EditUserFormData = z.infer<ReturnType<typeof getEditUserSchema>>;
 
 export default function UsersPage() {
     const { user: currentUser, users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const searchParams = useSearchParams();
+    const t = useTranslations('UserManagement');
     const defaultTab = searchParams.get('tab') || 'approved';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -124,7 +125,7 @@ export default function UsersPage() {
     const handleApprove = (user: User) => {
         const { toast } = useToast();
         approveUser(user.id);
-        toast({ title: 'משתמש אושר', description: `חשבונו של ${user.name} אושר.` });
+        toast({ title: t('userApproved'), description: t('userApprovedDesc', { name: user.name }) });
     };
 
     const handleRejectClick = (user: User) => {
@@ -145,15 +146,15 @@ export default function UsersPage() {
         };
 
         updateUser(finalUpdatedUser);
-        toast({ title: 'משתמש עודכן', description: `פרטיו של ${finalUpdatedUser.name} עודכנו בהצלחה.` });
+        toast({ title: t('userUpdated'), description: t('userUpdatedDesc', { name: finalUpdatedUser.name }) });
         setEditingUser(null);
     }
 
     const confirmReject = () => {
         if (selectedUserToReject) {
             const { toast } = useToast();
-            rejectUser(selectedUserToReject.id, rejectionReason || 'לא צוינה סיבה');
-            toast({ variant: "destructive", title: 'משתמש נדחה', description: `חשבונו של ${selectedUserToReject.name} נדחה.` });
+            rejectUser(selectedUserToReject.id, rejectionReason || t('noReasonProvided'));
+            toast({ variant: "destructive", title: t('userRejected'), description: t('userRejectedDesc', { name: selectedUserToReject.name }) });
             setSelectedUserToReject(null);
             setRejectionReason('');
         }
@@ -162,17 +163,17 @@ export default function UsersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-right">ניהול משתמשים</h1>
-                <p className="text-muted-foreground text-right">נהל משתמשים, הרשאות ובקשות הצטרפות.</p>
+                <h1 className="text-2xl font-bold text-right">{t('title')}</h1>
+                <p className="text-muted-foreground text-right">{t('manageUsers')}</p>
             </div>
 
             <Tabs defaultValue={defaultTab}>
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="pending">
-                        ממתינים לאישור
+                        {t('pendingApprovalCount')}
                         {pendingUsers.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{pendingUsers.length}</span>}
                     </TabsTrigger>
-                    <TabsTrigger value="approved">משתמשים מאושרים</TabsTrigger>
+                    <TabsTrigger value="approved">{t('approvedUsers')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="approved" className="mt-6">
@@ -180,8 +181,8 @@ export default function UsersPage() {
                         <CardHeader>
                             <CardTitle className="text-right">
                                 {currentUser.role === 'site_admin'
-                                    ? 'כלל המשתמשים'
-                                    : `משתמשים ב${currentUser.conservatoriumName}`
+                                    ? t('allUsers')
+                                    : t('usersIn', { name: currentUser.conservatoriumName })
                                 }
                             </CardTitle>
                         </CardHeader>
@@ -189,13 +190,13 @@ export default function UsersPage() {
                             <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
                                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input type="search" placeholder="חיפוש לפי שם או אימייל..." className="w-full rounded-lg bg-background pr-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                    <Input type="search" placeholder={t('searchPlaceholder')} className="w-full rounded-lg bg-background pr-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 {showFilters && (
                                     <>
-                                        <Select dir="rtl" value={instrumentFilter} onValueChange={setInstrumentFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder="סינון לפי כלי נגינה" /></SelectTrigger><SelectContent><SelectItem value="all">כל הכלים</SelectItem>{availableInstruments.map(inst => <SelectItem key={inst} value={inst}>{inst}</SelectItem>)}</SelectContent></Select>
-                                        <Select dir="rtl" value={teacherFilter} onValueChange={setTeacherFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder="סינון לפי מורה" /></SelectTrigger><SelectContent><SelectItem value="all">כל המורים</SelectItem>{availableTeachers.map(teacher => <SelectItem key={teacher} value={teacher}>{teacher}</SelectItem>)}</SelectContent></Select>
-                                        <Select dir="rtl" value={gradeFilter} onValueChange={setGradeFilter}><SelectTrigger className="w-full md:w-[150px]"><SelectValue placeholder="סינון לפי כיתה" /></SelectTrigger><SelectContent><SelectItem value="all">כל הכיתות</SelectItem>{availableGrades.map(grade => <SelectItem key={grade} value={grade}>{grade}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir="rtl" value={instrumentFilter} onValueChange={setInstrumentFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allInstruments')}</SelectItem>{availableInstruments.map(inst => <SelectItem key={inst} value={inst}>{inst}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir="rtl" value={teacherFilter} onValueChange={setTeacherFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByTeacher')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allTeachers')}</SelectItem>{availableTeachers.map(teacher => <SelectItem key={teacher} value={teacher}>{teacher}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir="rtl" value={gradeFilter} onValueChange={setGradeFilter}><SelectTrigger className="w-full md:w-[150px]"><SelectValue placeholder={t('filterByGrade')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allGrades')}</SelectItem>{availableGrades.map(grade => <SelectItem key={grade} value={grade}>{grade}</SelectItem>)}</SelectContent></Select>
                                     </>
                                 )}
                             </div>
@@ -207,8 +208,8 @@ export default function UsersPage() {
                 <TabsContent value="pending" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-right">בקשות הצטרפות ממתינות</CardTitle>
-                            <CardDescription className="text-right">אשר או דחה בקשות של משתמשים חדשים להצטרף לקונסרבטוריון שלך.</CardDescription>
+                            <CardTitle className="text-right">{t('pendingRequests')}</CardTitle>
+                            <CardDescription className="text-right">{t('pendingRequestsDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <PendingUsersTable users={pendingUsers} onApprove={handleApprove} onReject={handleRejectClick} />
@@ -220,17 +221,17 @@ export default function UsersPage() {
             <AlertDialog open={!!selectedUserToReject} onOpenChange={(isOpen) => !isOpen && setSelectedUserToReject(null)}>
                 <AlertDialogContent dir="rtl">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>דחיית משתמש: {selectedUserToReject?.name}</AlertDialogTitle>
+                        <AlertDialogTitle>{t('rejectUserTitle', { name: selectedUserToReject?.name || '' })}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            האם אתה בטוח שברצונך לדחות את בקשת ההצטרפות? ניתן לציין סיבה לדחייה (אופציונלי).
+                            {t('rejectUserDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="py-4">
-                        <Textarea placeholder="סיבת הדחייה..." value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
+                        <Textarea placeholder={t('rejectionReasonPlaceholder')} value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
                     </div>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>ביטול</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">דחה משתמש</AlertDialogAction>
+                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t('rejectBtn')}</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -238,9 +239,9 @@ export default function UsersPage() {
             <Dialog open={!!editingUser} onOpenChange={(isOpen) => !isOpen && setEditingUser(null)}>
                 <DialogContent dir="rtl" className="sm:max-w-xl">
                     <DialogHeader>
-                        <DialogTitle>עריכת משתמש: {editingUser?.name}</DialogTitle>
+                        <DialogTitle>{t('editUser', { name: editingUser?.name || '' })}</DialogTitle>
                     </DialogHeader>
-                    {editingUser && <EditUserForm user={editingUser} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} />}
+                    {editingUser && <EditUserForm user={editingUser} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} t={t} />}
                 </DialogContent>
             </Dialog>
 
@@ -251,32 +252,34 @@ export default function UsersPage() {
 const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[], currentUser: User, showFilters: boolean, onEdit: (user: User) => void }) => {
     const { toast } = useToast();
     const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
+    const t = useTranslations('UserManagement');
+    const roles = roleTranslations(t);
 
     const handleEdit = (user: User) => {
         if (canEdit) {
             onEdit(user);
         } else {
-            toast({ title: 'אין הרשאה', description: 'אין לך הרשאה לערוך משתמש זה.' });
+            toast({ title: t('noPermission'), description: t('noPermissionEdit') });
         }
     };
 
     if (users.length === 0) {
-        return <p className="text-center text-muted-foreground pt-8">לא נמצאו משתמשים התואמים את החיפוש.</p>;
+        return <p className="text-center text-muted-foreground pt-8">{t('noUsersFoundContent')}</p>;
     }
 
     return (
         <Table>
             <TableHeader><TableRow>
-                <TableHead>שם</TableHead>
-                {showFilters && <TableHead>ת.ז.</TableHead>}
-                <TableHead dir="ltr" className="text-left">אימייל</TableHead>
-                {showFilters && <TableHead>נייד</TableHead>}
-                <TableHead>תפקיד</TableHead>
-                {showFilters && <TableHead>כלי נגינה</TableHead>}
-                {showFilters && <TableHead>מורה</TableHead>}
-                {showFilters && <TableHead>וותק בקונס'</TableHead>}
-                {currentUser.role === 'site_admin' && <TableHead>קונסרבטוריון</TableHead>}
-                {canEdit && <TableHead className="text-left">פעולות</TableHead>}
+                <TableHead>{t('name')}</TableHead>
+                {showFilters && <TableHead>{t('idNumber')}</TableHead>}
+                <TableHead dir="ltr" className="text-left">{t('email')}</TableHead>
+                {showFilters && <TableHead>{t('phone')}</TableHead>}
+                <TableHead>{t('role')}</TableHead>
+                {showFilters && <TableHead>{t('instrument')}</TableHead>}
+                {showFilters && <TableHead>{t('teacher')}</TableHead>}
+                {showFilters && <TableHead>{t('seniority')}</TableHead>}
+                {currentUser.role === 'site_admin' && <TableHead>{t('conservatorium')}</TableHead>}
+                {canEdit && <TableHead className="text-left">{t('actions')}</TableHead>}
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
@@ -285,7 +288,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                         {showFilters && <TableCell>{user.idNumber || '-'}</TableCell>}
                         <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
                         {showFilters && <TableCell>{user.phone || '-'}</TableCell>}
-                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roleTranslations[user.role]}</span></TableCell>
+                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roles[user.role]}</span></TableCell>
                         {showFilters && (
                             <>
                                 <TableCell>{user.instruments?.map(i => i.instrument).join(', ') || '-'}</TableCell>
@@ -296,7 +299,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                         {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
                         {canEdit && (
                             <TableCell className="text-left">
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">ערוך</span></Button>
+                                <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">Edit</span></Button>
                             </TableCell>
                         )}
                     </TableRow>
@@ -307,26 +310,29 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
 };
 
 const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onApprove: (user: User) => void, onReject: (user: User) => void }) => {
+    const t = useTranslations('UserManagement');
+    const roles = roleTranslations(t);
+
     if (users.length === 0) {
-        return <p className="text-center text-muted-foreground pt-8">אין בקשות ממתינות לאישור.</p>;
+        return <p className="text-center text-muted-foreground pt-8">{t('noPendingRequests')}</p>;
     }
     return (
         <Table>
             <TableHeader><TableRow>
-                <TableHead>שם</TableHead>
-                <TableHead dir="ltr" className="text-left">אימייל</TableHead>
-                <TableHead>תפקיד מבוקש</TableHead>
-                <TableHead className="text-left">פעולות</TableHead>
+                <TableHead>{t('name')}</TableHead>
+                <TableHead dir="ltr" className="text-left">{t('email')}</TableHead>
+                <TableHead>{t('requestedRole')}</TableHead>
+                <TableHead className="text-left">{t('actions')}</TableHead>
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
-                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roleTranslations[user.role]}</span></TableCell>
+                        <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roles[user.role]}</span></TableCell>
                         <TableCell className="text-left space-x-2 space-x-reverse">
-                            <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-700" onClick={() => onApprove(user)}><Check className="h-4 w-4" /><span className="sr-only">אשר</span></Button>
-                            <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => onReject(user)}><X className="h-4 w-4" /><span className="sr-only">דחה</span></Button>
+                            <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-700" onClick={() => onApprove(user)}><Check className="h-4 w-4" /><span className="sr-only">{t('approve')}</span></Button>
+                            <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => onReject(user)}><X className="h-4 w-4" /><span className="sr-only">{t('reject')}</span></Button>
                         </TableCell>
                     </TableRow>
                 ))}
@@ -336,9 +342,10 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
 };
 
 
-const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User }) => {
+const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User, onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
+    const editSchema = useMemo(() => getEditUserSchema(t), [t]);
     const form = useForm<EditUserFormData>({
-        resolver: zodResolver(editUserSchema),
+        resolver: zodResolver(editSchema),
         defaultValues: {
             name: user.name || '',
             email: user.email || '',
@@ -359,10 +366,10 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
         <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">
-                    <FormField name="name" render={({ field }) => (<FormItem> <FormLabel>שם מלא</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>אימייל</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="idNumber" render={({ field }) => (<FormItem> <FormLabel>ת.ז.</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="phone" render={({ field }) => (<FormItem> <FormLabel>נייד</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="name" render={({ field }) => (<FormItem> <FormLabel>{t('fullNameTitle')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>{t('email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 </div>
 
                 <FormField
@@ -370,16 +377,16 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     name="role"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>תפקיד</FormLabel>
+                            <FormLabel>{t('role')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole} dir="rtl">
                                 <FormControl>
-                                    <SelectTrigger><SelectValue placeholder="בחר תפקיד" /></SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder={t('selectRole')} /></SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {currentUser.role === 'site_admin' && <SelectItem value="conservatorium_admin">מנהל קונסרבטוריון</SelectItem>}
-                                    <SelectItem value="teacher">מורה</SelectItem>
-                                    <SelectItem value="student">תלמיד</SelectItem>
-                                    <SelectItem value="parent">הורה</SelectItem>
+                                    {currentUser.role === 'site_admin' && <SelectItem value="conservatorium_admin">{t('roles.conservatorium_admin')}</SelectItem>}
+                                    <SelectItem value="teacher">{t('roles.teacher')}</SelectItem>
+                                    <SelectItem value="student">{t('roles.student')}</SelectItem>
+                                    <SelectItem value="parent">{t('roles.parent')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -394,11 +401,11 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                                 name="grade"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>כיתה</FormLabel>
+                                        <FormLabel>{t('grade')}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="בחר כיתה" />
+                                                    <SelectValue placeholder={t('selectGrade')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -425,7 +432,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                                 name="conservatoriumStudyYears"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>וותק בקונס' (שנים)</FormLabel>
+                                        <FormLabel>{t('seniorityYears')}</FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} disabled={!canEditSeniority} />
                                         </FormControl>
@@ -436,15 +443,15 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                         </div>
                         {user.instruments && user.instruments.length > 0 && (
                             <div className="space-y-4 pt-4 mt-4 border-t">
-                                <h4 className="font-medium text-muted-foreground">וותק עם מורים</h4>
+                                <h4 className="font-medium text-muted-foreground">{t('seniorityWithTeachers')}</h4>
                                 {(form.getValues('instruments') || []).map((inst, index) => (
                                     <div key={index} className="grid grid-cols-[1fr_1fr_120px] items-end gap-2 p-3 border rounded-md bg-muted/50">
                                         <div>
-                                            <FormLabel className="text-xs">כלי נגינה</FormLabel>
+                                            <FormLabel className="text-xs">{t('instrument')}</FormLabel>
                                             <Input value={inst.instrument} disabled className="bg-background" />
                                         </div>
                                         <div>
-                                            <FormLabel className="text-xs">שם המורה</FormLabel>
+                                            <FormLabel className="text-xs">{t('teacherName')}</FormLabel>
                                             <Input value={inst.teacherName} disabled className="bg-background" />
                                         </div>
                                         <FormField
@@ -452,7 +459,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                                             name={`instruments.${index}.yearsOfStudy`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-xs">שנות וותק</FormLabel>
+                                                    <FormLabel className="text-xs">{t('yearsSeniority')}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             type="number"
@@ -473,8 +480,8 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser }: { user: User, o
                     </div>
                 )}
                 <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={onCancel}>ביטול</Button>
-                    <Button type="submit">שמור שינויים</Button>
+                    <Button type="button" variant="ghost" onClick={onCancel}>{t('cancel')}</Button>
+                    <Button type="submit">{t('saveChanges')}</Button>
                 </DialogFooter>
             </form>
         </FormProvider>

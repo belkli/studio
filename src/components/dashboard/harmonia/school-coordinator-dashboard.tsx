@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,39 +9,40 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calendar, Users, MessageSquare, School, AlertCircle, CheckCircle } from 'lucide-react';
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
-
-const MOCK_SCHOOL = {
-    name: 'בית ספר אורט רמת גן',
-    symbol: '410234',
-    teacherName: 'מיכל כהן',
-    instrument: 'חליל',
-    lessonDay: 'רביעי',
-    lessonTime: '10:00',
-    room: 'חדר מוסיקה 3',
-    enrolledCount: 11,
-    maxStudents: 12,
-};
-
-const MOCK_STUDENTS = [
-    { id: 's1', name: 'דניאל לוי', grade: "ב'", class: "1ב", paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
-    { id: 's2', name: 'נועה שמיר', grade: "ב'", class: "1ב", paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
-    { id: 's3', name: 'יונתן ברק', grade: "ג'", class: "2ג", paymentStatus: 'PENDING' as const, instrumentStatusKey: 'coordinator.instrumentPending' },
-    { id: 's4', name: 'מיה אברהים', grade: "ג'", class: "2ג", paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
-    { id: 's5', name: 'עומר ישראלי', grade: "ב'", class: "1ב", paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
-];
-
-const MOCK_UPCOMING_LESSONS = [
-    { date: '5 במרץ 2026', dayOfWeek: 'רביעי', time: '10:00–10:45', status: 'SCHEDULED' },
-    { date: '12 במרץ 2026', dayOfWeek: 'רביעי', time: '10:00–10:45', status: 'SCHEDULED' },
-    { date: '19 במרץ 2026', dayOfWeek: 'רביעי', time: '10:00–10:45', status: 'SCHEDULED' },
-];
-
-// ── Main Component ────────────────────────────────────────────────────────────
 
 export function SchoolCoordinatorDashboard() {
     const t = useTranslations('PlayingSchool');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [activeTab, setActiveTab] = useState('overview');
+
+    // ── Mock data ─────────────────────────────────────────────────────────────────
+    const MOCK_SCHOOL = {
+        name: t('mock.schoolName'),
+        symbol: '410234',
+        teacherName: t('mock.teacherName'),
+        instrument: t('mock.instrument'),
+        lessonDay: t('mock.lessonDay'),
+        lessonTime: '10:00',
+        room: t('mock.room'),
+        enrolledCount: 11,
+        maxStudents: 12,
+    };
+
+    const MOCK_STUDENTS = [
+        { id: 's1', name: t('mock.student1'), grade: t('mock.grade2'), class: t('mock.class1b'), paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
+        { id: 's2', name: t('mock.student2'), grade: t('mock.grade2'), class: t('mock.class1b'), paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
+        { id: 's3', name: t('mock.student3'), grade: t('mock.grade3'), class: t('mock.class2c'), paymentStatus: 'PENDING' as const, instrumentStatusKey: 'coordinator.instrumentPending' },
+        { id: 's4', name: t('mock.student4'), grade: t('mock.grade3'), class: t('mock.class2c'), paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
+        { id: 's5', name: t('mock.student5'), grade: t('mock.grade2'), class: t('mock.class1b'), paymentStatus: 'PAID' as const, instrumentStatusKey: 'coordinator.instrumentReceived' },
+    ];
+
+    const MOCK_UPCOMING_LESSONS = [
+        { date: t('mock.date1'), dayOfWeek: t('mock.lessonDay'), time: '10:00–10:45', status: 'SCHEDULED' },
+        { date: t('mock.date2'), dayOfWeek: t('mock.lessonDay'), time: '10:00–10:45', status: 'SCHEDULED' },
+        { date: t('mock.date3'), dayOfWeek: t('mock.lessonDay'), time: '10:00–10:45', status: 'SCHEDULED' },
+    ];
+    // ── Main Component ────────────────────────────────────────────────────────────
 
     return (
         <div className="space-y-6 p-6">
@@ -86,7 +87,7 @@ export function SchoolCoordinatorDashboard() {
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={setActiveTab} dir={isRtl ? 'rtl' : 'ltr'}>
                 <TabsList>
                     <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
                     <TabsTrigger value="students">{t('tabs.students')}</TabsTrigger>
@@ -110,7 +111,7 @@ export function SchoolCoordinatorDashboard() {
                                 </div>
                                 <div className="flex items-center gap-2 text-sm p-2 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
                                     <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                                    <span>{t('coordinator.alertPayment', { name: 'יונתן ברק' })}</span>
+                                    <span>{t('coordinator.alertPayment', { name: t('mock.student3') })}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm p-2 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
                                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
@@ -128,13 +129,13 @@ export function SchoolCoordinatorDashboard() {
                             <CardDescription>{t('coordinator.studentsDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Table>
+                            <Table dir={isRtl ? 'rtl' : 'ltr'}>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('table.school')}</TableHead>
-                                        <TableHead>{t('wizard.grade')}</TableHead>
-                                        <TableHead>{t('tabs.billing')}</TableHead>
-                                        <TableHead>{t('table.pickupStatus')}</TableHead>
+                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('table.school')}</TableHead>
+                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('wizard.grade')}</TableHead>
+                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('tabs.billing')}</TableHead>
+                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('table.pickupStatus')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -148,7 +149,7 @@ export function SchoolCoordinatorDashboard() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-sm text-muted-foreground">
-                                                {t(s.instrumentStatusKey)}
+                                                {t(s.instrumentStatusKey as any)}
                                             </TableCell>
                                         </TableRow>
                                     ))}

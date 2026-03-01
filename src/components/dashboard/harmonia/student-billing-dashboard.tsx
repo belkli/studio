@@ -1,8 +1,10 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
+import { getPlayingSchoolPaymentUrl } from "@/app/actions";
+import { toast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion } from "lucide-react";
+import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion, School, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,9 +17,12 @@ import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 
 
 export function StudentBillingDashboard() {
-    const { user, users, mockInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
+    const { user, users, mockInvoices, mockPlayingSchoolInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
     const t = useTranslations('StudentBilling');
+    const { useDateLocale } = require('@/hooks/use-date-locale'); // Importing inside if missing at top, but usually it's there
     const ti = useTranslations('Invoices');
+    const tps = useTranslations('PlayingSchool.programBilling');
+    const dateLocale = useDateLocale();
 
     if (!user) return null;
 
@@ -42,6 +47,19 @@ export function StudentBillingDashboard() {
     const [selectedStudentId, setSelectedStudentId] = useState<string | undefined>(
         studentChildren.length > 0 ? studentChildren[0].id : undefined
     );
+    const [isProcessingPayment, setIsProcessingPayment] = useState<string | null>(null);
+
+    const handlePayInvoice = async (invoiceId: string) => {
+        setIsProcessingPayment(invoiceId);
+        try {
+            const { url } = await getPlayingSchoolPaymentUrl(invoiceId);
+            window.location.href = url;
+        } catch (err) {
+            toast({ variant: 'destructive', title: 'Payment Error', description: 'Could not generate payment link. Please try again later.' });
+        } finally {
+            setIsProcessingPayment(null);
+        }
+    };
 
     const activeStudent = useMemo(() => {
         return studentChildren.find(s => s.id === selectedStudentId) || studentChildren[0];
@@ -145,8 +163,8 @@ export function StudentBillingDashboard() {
                             <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4" />
                                 {currentPackage?.nextBillingDate ? t('nextBilling') : (currentPackage?.validUntil ? t('packageExpiry') : t('status'))}</span>
                             <span className="font-semibold">
-                                {currentPackage?.nextBillingDate ? `${new Date(currentPackage.nextBillingDate).toLocaleDateString()} (${currentPackage.price} ₪)`
-                                    : (currentPackage?.validUntil ? new Date(currentPackage.validUntil).toLocaleDateString() : t('active'))}
+                                {currentPackage?.nextBillingDate ? `${format(new Date(currentPackage.nextBillingDate), 'P', { locale: dateLocale })} (${currentPackage.price} ₪)`
+                                    : (currentPackage?.validUntil ? format(new Date(currentPackage.validUntil), 'P', { locale: dateLocale }) : t('active'))}
                             </span>
                         </div>
                     </CardContent>
@@ -192,7 +210,7 @@ export function StudentBillingDashboard() {
                                 {userInvoices.map(invoice => (
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-mono">{invoice.invoiceNumber}</TableCell>
-                                        <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{format(new Date(invoice.dueDate), 'P', { locale: dateLocale })}</TableCell>
                                         <TableCell>{invoice.lineItems[0].description}</TableCell>
                                         <TableCell>{invoice.total} ₪</TableCell>
                                         <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
@@ -209,6 +227,60 @@ export function StudentBillingDashboard() {
                         </Table>
                     </CardContent>
                 </Card>
+
+                {mockPlayingSchoolInvoices && mockPlayingSchoolInvoices.length > 0 && (
+                    <Card className="md:col-span-2 border-indigo-100 bg-indigo-50/10">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <School className="h-5 w-5 text-indigo-600" />
+                                {tps('title')}
+                            </CardTitle>
+                            <CardDescription>{tps('subtitle')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>{ti('date')}</TableHead>
+                                        <TableHead>{ti('details')}</TableHead>
+                                        <TableHead>{ti('amount')}</TableHead>
+                                        <TableHead>{ti('status')}</TableHead>
+                                        <TableHead className="text-left">{ti('actions')}</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {mockPlayingSchoolInvoices.map(invoice => (
+                                        <TableRow key={invoice.id}>
+                                            <TableCell>{format(new Date(invoice.dueDate), 'P', { locale: dateLocale })}</TableCell>
+                                            <TableCell>
+                                                <p className="font-medium">{invoice.description}</p>
+                                                <p className="text-[10px] text-indigo-600 font-bold uppercase">{tps('subsidyNotice')}</p>
+                                            </TableCell>
+                                            <TableCell>{invoice.amount} ₪</TableCell>
+                                            <TableCell>
+                                                <Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                                                    {ti(`statuses.${invoice.status}`)}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-left">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="bg-white border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                                                    onClick={() => handlePayInvoice(invoice.id)}
+                                                    disabled={isProcessingPayment === invoice.id || invoice.status === 'PAID'}
+                                                >
+                                                    {isProcessingPayment === invoice.id ? <Loader2 className="h-3 w-3 animate-spin me-2" /> : null}
+                                                    {invoice.status === 'PAID' ? ti('statuses.PAID') : t('payNow')}
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                )}
                 <div className="space-y-6">
                     <Card className="flex flex-col justify-center p-6">
                         <CardHeader className="p-0 pb-4">

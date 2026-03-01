@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, SlidersHorizontal, User as UserIcon, DoorOpen, Music, Building2 } from 'lucide-react';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -48,6 +48,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 
 export function MasterScheduleCalendar() {
     const { user, users, mockLessons, mockBranches } = useAuth();
+    const dateLocale = useDateLocale();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
         branchId: 'all',
@@ -57,7 +58,7 @@ export function MasterScheduleCalendar() {
     });
 
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
-    
+
     const weekInterval = {
         start: startOfWeek(currentDate, { weekStartsOn: 0 }),
         end: endOfWeek(currentDate, { weekStartsOn: 0 }),
@@ -69,7 +70,7 @@ export function MasterScheduleCalendar() {
         if (filters.branchId === 'all') return mockRooms;
         return mockRooms.filter(r => r.branchId === filters.branchId);
     }, [filters.branchId]);
-    
+
     const filteredLessons = useMemo(() => {
         return mockLessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
@@ -80,7 +81,7 @@ export function MasterScheduleCalendar() {
             if (filters.teacherId !== 'all' && lesson.teacherId !== filters.teacherId) return false;
             if (filters.roomId !== 'all' && lesson.roomId !== filters.roomId) return false;
             if (filters.instrument !== 'all' && lesson.instrument !== filters.instrument) return false;
-            
+
             return true;
         });
     }, [mockLessons, weekInterval, filters]);
@@ -103,7 +104,7 @@ export function MasterScheduleCalendar() {
             return newFilters;
         });
     };
-    
+
     const handleWeekChange = (direction: 'next' | 'prev') => {
         setCurrentDate(current => addDays(current, direction === 'next' ? 7 : -7));
     }
@@ -114,15 +115,15 @@ export function MasterScheduleCalendar() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')}><ArrowRight className="h-4 w-4" /></Button>
-                        <span className="font-semibold text-lg">{format(weekInterval.start, 'd בMMM')} - {format(weekInterval.end, 'd בMMM yyyy', { locale: he })}</span>
+                        <span className="font-semibold text-lg">{format(weekInterval.start, 'd בMMM')} - {format(weekInterval.end, 'd בMMM yyyy', { locale: dateLocale })}</span>
                         <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')}><ArrowLeft className="h-4 w-4" /></Button>
                     </div>
-                     <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
-                        <Select dir="rtl" value={filters.branchId} onValueChange={(v) => handleFilterChange('branchId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל הסניפים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הסניפים</SelectItem>{mockBranches.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.teacherId} onValueChange={(v) => handleFilterChange('teacherId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל המורים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל המורים</SelectItem>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל החדרים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל החדרים</SelectItem>{filteredRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Music className="h-4 w-4 text-muted-foreground"/><SelectValue placeholder="כל הכלים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select>
+                        <Select dir="rtl" value={filters.branchId} onValueChange={(v) => handleFilterChange('branchId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל הסניפים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הסניפים</SelectItem>{mockBranches.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir="rtl" value={filters.teacherId} onValueChange={(v) => handleFilterChange('teacherId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל המורים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל המורים</SelectItem>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir="rtl" value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל החדרים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל החדרים</SelectItem>{filteredRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Music className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל הכלים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select>
                     </div>
                 </div>
             </CardHeader>
@@ -131,7 +132,7 @@ export function MasterScheduleCalendar() {
                     <div className="p-2 border-b border-s"></div>
                     {daysOfWeek.map((day) => (
                         <div key={day.toISOString()} className="text-center font-semibold p-2 border-b border-s text-sm">
-                            {format(day, 'EEE', { locale: he })}
+                            {format(day, 'EEE', { locale: dateLocale })}
                             <div className="font-normal text-xs text-muted-foreground">{format(day, 'd/M')}</div>
                         </div>
                     ))}

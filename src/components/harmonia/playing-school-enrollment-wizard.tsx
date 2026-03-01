@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { resolvePlayingSchoolToken, createPlayingSchoolEnrollment } from '@/app/actions';
+import { toast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { School, CheckCircle, ChevronRight, ChevronLeft } from 'lucide-react';
+import { School, CheckCircle, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // ── Mock school data (derived from token) ────────────────────────────────────
@@ -74,6 +76,23 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
     const t = useTranslations('PlayingSchool');
     const [step, setStep] = useState<Step>(1);
     const [submitted, setSubmitted] = useState(false);
+    const [schoolInfo, setSchoolInfo] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        async function fetchSchool() {
+            try {
+                const info = await resolvePlayingSchoolToken(token);
+                setSchoolInfo(info);
+            } catch (err) {
+                toast({ variant: 'destructive', title: 'Invalid Token', description: 'The school registration link is invalid or expired.' });
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchSchool();
+    }, [token]);
 
     // Form state
     const [studentName, setStudentName] = useState('');
@@ -90,13 +109,59 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
 
     const { costBreakdown } = MOCK_SCHOOL_INFO;
 
-    const next = () => setStep(s => Math.min(s + 1, 5) as Step);
+    const next = () => {
+        console.log('Advancing from step', step);
+        setStep(s => Math.min(s + 1, 5) as Step);
+    };
     const prev = () => setStep(s => Math.max(s - 1, 1) as Step);
 
-    const handleSubmit = () => {
-        // In real implementation: call createPlayingSchoolEnrollment cloud function
-        setSubmitted(true);
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const result = await createPlayingSchoolEnrollment({
+                token,
+                registrationType: 'playing_school',
+                studentDetails: { name: studentName, grade: studentGrade, class: studentClass, dob: studentDob },
+                parentDetails: { name: parentName, phone: parentPhone, email: parentEmail, id: parentId },
+                schoolId: schoolInfo.id,
+                instrument,
+                paymentMethod
+            });
+
+            if (result.success && result.redirectUrl && paymentMethod === 'CARDCOM') {
+                window.location.href = result.redirectUrl;
+            } else {
+                setSubmitted(true);
+            }
+        } catch (err) {
+            toast({ variant: 'destructive', title: 'Submission Error', description: 'There was an error processing your enrollment. Please try again.' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
+                <Card className="max-w-md w-full text-center shadow-xl p-8">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        <p className="text-muted-foreground">Loading school information...</p>
+                    </div>
+                </Card>
+            </div>
+        );
+    }
+
+    if (!schoolInfo) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
+                <Card className="max-w-md w-full text-center shadow-xl p-8">
+                    <p className="text-destructive font-medium">Error loading school profile. Please check your token and try again.</p>
+                </Card>
+            </div>
+        );
+    }
 
     if (submitted) {
         return (
@@ -123,7 +188,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                 <div className="text-center pt-8 pb-4">
                     <div className="flex items-center justify-center gap-2 mb-2">
                         <School className="h-6 w-6 text-primary" />
-                        <span className="text-xl font-bold">בית ספר מנגן</span>
+                        <span className="text-xl font-bold">{t('wizard.title')}</span>
                     </div>
                     <p className="text-muted-foreground text-sm">{MOCK_SCHOOL_INFO.schoolName} × {MOCK_SCHOOL_INFO.conservatoriumName}</p>
                 </div>
@@ -140,20 +205,20 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="rounded-lg bg-muted/50 p-4 space-y-2 text-sm">
-                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.school')}</span><span className="font-medium">{MOCK_SCHOOL_INFO.schoolName}</span></div>
-                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.instrument')}</span><span className="font-medium">{MOCK_SCHOOL_INFO.instrument}</span></div>
-                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.grades')}</span><span className="font-medium">{MOCK_SCHOOL_INFO.grades.join(', ')}</span></div>
-                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.lessonDay')}</span><span className="font-medium">{MOCK_SCHOOL_INFO.lessonDay} {MOCK_SCHOOL_INFO.lessonTime}</span></div>
+                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.school')}</span><span className="font-medium">{schoolInfo.name}</span></div>
+                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.instrument')}</span><span className="font-medium">{schoolInfo.instrument}</span></div>
+                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.grades')}</span><span className="font-medium">{schoolInfo.grades}</span></div>
+                                    <div className="flex justify-between"><span className="text-muted-foreground">{t('wizard.lessonDay')}</span><span className="font-medium">{schoolInfo.lessonDay}</span></div>
                                 </div>
-                                <p className="text-sm text-muted-foreground">{MOCK_SCHOOL_INFO.programDescription}</p>
+                                <p className="text-sm text-muted-foreground">{t('wizard.programInfoDesc')}</p>
 
                                 <div className="rounded-lg border p-4 space-y-2">
                                     <p className="font-medium text-sm">{t('wizard.costBreakdown')}</p>
                                     <div className="text-sm space-y-1">
-                                        <div className="flex justify-between"><span>{t('wizard.basePrice')}</span><span>₪{costBreakdown.basePrice}</span></div>
-                                        <div className="flex justify-between text-green-600"><span>{t('wizard.municipalSubsidy', { percent: 60 })}</span><span>-₪{costBreakdown.municipalSubsidy}</span></div>
-                                        <div className="flex justify-between text-green-600"><span>{t('wizard.ministrySubsidy', { percent: 10 })}</span><span>-₪{costBreakdown.ministrySubsidy}</span></div>
-                                        <div className="flex justify-between font-bold border-t pt-2 mt-2"><span>{t('wizard.parentContribution')}</span><span>₪{costBreakdown.parentContribution}</span></div>
+                                        <div className="flex justify-between"><span>{t('wizard.basePrice')}</span><span>₪{schoolInfo.basePrice}</span></div>
+                                        <div className="flex justify-between text-green-600"><span>{t('wizard.municipalSubsidy', { percent: 0 })}</span><span>-₪{schoolInfo.subsidies.municipal}</span></div>
+                                        <div className="flex justify-between text-green-600"><span>{t('wizard.ministrySubsidy', { percent: 0 })}</span><span>-₪{schoolInfo.subsidies.ministry}</span></div>
+                                        <div className="flex justify-between font-bold border-t pt-2 mt-2"><span>{t('wizard.parentContribution')}</span><span>₪{schoolInfo.parentContribution}</span></div>
                                     </div>
                                 </div>
                                 <Button className="w-full" onClick={next}>{t('wizard.nextStudent')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
@@ -178,7 +243,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                         <Select value={studentGrade} onValueChange={setStudentGrade}>
                                             <SelectTrigger><SelectValue placeholder={t('wizard.gradePlaceholder')} /></SelectTrigger>
                                             <SelectContent>
-                                                {MOCK_SCHOOL_INFO.grades.map(g => (
+                                                {schoolInfo.grades.split(' - ').map((g: string) => (
                                                     <SelectItem key={g} value={g}>{g}</SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -194,8 +259,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     <Input type="date" value={studentDob} onChange={e => setStudentDob(e.target.value)} />
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button className="flex-1" onClick={next} disabled={!studentName || !studentGrade}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!studentName || !studentGrade}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -225,8 +290,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     <Input value={parentId} onChange={e => setParentId(e.target.value)} />
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button className="flex-1" onClick={next} disabled={!parentName || !parentPhone || !parentEmail}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!parentName || !parentPhone || !parentEmail}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -260,8 +325,8 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     </Label>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button className="flex-1" onClick={next} disabled={!consent}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={next} disabled={!consent}>{t('wizard.next')} <ChevronLeft className="ms-2 h-4 w-4" /></Button>
                                 </div>
                             </CardContent>
                         </>
@@ -272,7 +337,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                         <>
                             <CardHeader>
                                 <CardTitle>{t('wizard.paymentTitle')}</CardTitle>
-                                <CardDescription>{t('wizard.paymentAmt', { amount: costBreakdown.parentContribution })}</CardDescription>
+                                <CardDescription>{t('wizard.paymentAmt', { amount: schoolInfo.parentContribution })}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-3">
@@ -293,13 +358,15 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                         <div className={cn('w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0', paymentMethod === 'CARDCOM' ? 'border-primary bg-primary' : 'border-muted-foreground')} />
                                         <div>
                                             <p className="font-medium">{t('wizard.payOnline')}</p>
-                                            <p className="text-sm text-muted-foreground">{t('wizard.payOnlineDesc', { amount: Math.round(costBreakdown.parentContribution / 10) })}</p>
+                                            <p className="text-sm text-muted-foreground">{t('wizard.payOnlineDesc', { amount: Math.round(schoolInfo.parentContribution / 10) })}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
-                                    <Button className="flex-1" onClick={handleSubmit}>{t('wizard.complete')}</Button>
+                                    <Button type="button" variant="outline" onClick={prev} className="flex-1"><ChevronRight className="me-2 h-4 w-4" />{t('wizard.prev')}</Button>
+                                    <Button type="button" className="flex-1" onClick={handleSubmit} disabled={isSubmitting}>
+                                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t('wizard.complete')}
+                                    </Button>
                                 </div>
                             </CardContent>
                         </>

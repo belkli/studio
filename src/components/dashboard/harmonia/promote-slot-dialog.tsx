@@ -12,7 +12,7 @@ import { Loader2, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useLocale } from 'next-intl';
 
 
@@ -29,6 +29,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<TargetSlotsOutput['suggestions']>([]);
   const locale = useLocale();
+  const dateLocale = useDateLocale();
 
   useEffect(() => {
     if (open && slot) {
@@ -80,7 +81,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
         <DialogHeader>
           <DialogTitle>קידום שיעור פנוי</DialogTitle>
           <DialogDescription>
-            {slot && `שיעור ${slot.instrument} עם ${slot.teacher.name} ביום ${format(slot.startTime, 'EEEE, HH:mm', { locale: he })}`}
+            {slot && `שיעור ${slot.instrument} עם ${slot.teacher.name} ביום ${format(slot.startTime, 'EEEE, HH:mm', { locale: dateLocale })}`}
           </DialogDescription>
         </DialogHeader>
 

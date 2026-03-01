@@ -82,6 +82,26 @@ const AlumnusSchema = z.object({
 
 const DeleteAlumnusSchema = z.string();
 
+const ResolveTokenSchema = z.string();
+const CreateEnrollmentSchema = z.object({
+  token: z.string(),
+  registrationType: z.string(),
+  studentDetails: z.any(),
+  parentDetails: z.any(),
+  schoolId: z.string(),
+  instrument: z.string(),
+  paymentMethod: z.string().optional(),
+});
+const GetPaymentUrlSchema = z.string();
+const ExcellenceTrackResponseSchema = z.object({
+  studentId: z.string(),
+  reason: z.string().optional(),
+});
+const InviteCoordinatorSchema = z.object({
+  partnershipId: z.string(),
+  email: z.string().email(),
+});
+
 
 // Secure Server Actions wrapped with Authentication & Zod Validation
 
@@ -242,5 +262,137 @@ export const deleteAlumnus = withAuth(
     // For now, we simulate a successful deletion.
     console.log('Deleting alumnus with ID:', id);
     return { success: true };
+  }
+);
+
+/**
+ * Resolves a Playing School registration token to program details.
+ */
+export const resolvePlayingSchoolToken = withAuth(
+  ResolveTokenSchema,
+  async (token: string) => {
+    // Mock token resolution logic
+    console.log('Resolving token:', token);
+
+    // Simulating token lookup
+    if (token === 'INVALID') {
+      throw new Error('Invalid token');
+    }
+
+    // Returning mock school info
+    return {
+      id: 'sch-1',
+      name: 'ORT Ramat Gan',
+      symbol: '123456',
+      city: 'Ramat Gan',
+      instrument: 'Flute',
+      grades: '2nd - 6th',
+      lessonDay: 'Tuesday',
+      basePrice: 1800,
+      monthlyPrice: 150,
+      subsidies: {
+        municipal: 300,
+        ministry: 500,
+      },
+      parentContribution: 1000,
+    };
+  }
+);
+
+/**
+ * Creates a new Playing School enrollment.
+ */
+export const createPlayingSchoolEnrollment = withAuth(
+  CreateEnrollmentSchema,
+  async (data: z.infer<typeof CreateEnrollmentSchema>) => {
+    console.log('Creating enrollment:', data);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Simulate payment redirect URL (Cardcom pattern)
+    const redirectUrl = `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=12345&ReturnValue=${data.token}`;
+
+    return {
+      success: true,
+      enrollmentId: `enr-${Date.now()}`,
+      redirectUrl,
+    };
+  }
+);
+
+/**
+ * Gets a payment URL for an outstanding Playing School invoice.
+ */
+export const getPlayingSchoolPaymentUrl = withAuth(
+  GetPaymentUrlSchema,
+  async (invoiceId: string) => {
+    console.log('Generating payment URL for invoice:', invoiceId);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Simulate Cardcom payment URL
+    return {
+      url: `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=12345&InvoiceId=${invoiceId}&Operation=Payment`,
+    };
+  }
+);
+
+/**
+ * Accepts an excellence track offer for a student.
+ */
+export const acceptExcellenceTrackOffer = withAuth(
+  ExcellenceTrackResponseSchema,
+  async (data: { studentId: string }) => {
+    console.log('Accepting excellence track for student:', data.studentId);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    return {
+      success: true,
+      message: 'Excellent! Your child has been enrolled in the Excellence Track.',
+    };
+  }
+);
+
+/**
+ * Declines an excellence track offer for a student.
+ */
+export const declineExcellenceTrackOffer = withAuth(
+  ExcellenceTrackResponseSchema,
+  async (data: { studentId: string; reason?: string }) => {
+    console.log('Declining excellence track for student:', data.studentId, 'Reason:', data.reason);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    return {
+      success: true,
+      message: 'Offer declined. Your child will continue in the regular program.',
+    };
+  }
+);
+
+/**
+ * Invites a school coordinator to join a partnership.
+ */
+export const inviteSchoolCoordinator = withAuth(
+  InviteCoordinatorSchema,
+  async (data: { partnershipId: string; email: string }) => {
+    console.log('Inviting coordinator:', data.email, 'for partnership:', data.partnershipId);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Generate a mock invitation token
+    const token = `INV_${Math.random().toString(36).substring(7).toUpperCase()}`;
+
+    return {
+      success: true,
+      invitationUrl: `https://harmony.app/accept-invite/${token}`,
+      message: `Invitation sent successfully to ${data.email}`,
+    };
   }
 );

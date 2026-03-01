@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { instruments, conservatoriums } from '@/lib/data';
 import { format, add, setHours, setMinutes, isBefore } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
@@ -33,6 +33,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 export function OpenDayLandingPage() {
     const { mockOpenDayEvents, mockOpenDayAppointments, addOpenDayAppointment } = useAuth();
     const t = useTranslations('OpenDay');
+    const dateLocale = useDateLocale();
     const { toast } = useToast();
     const heroImage = PlaceHolderImages.find(img => img.id === 'open-day-hero');
 
@@ -67,8 +68,8 @@ export function OpenDayLandingPage() {
         if (!activeEvent || !selectedTime) {
             toast({
                 variant: 'destructive',
-                title: 'פרטים חסרים',
-                description: 'אנא בחר/י שעת פגישה.',
+                title: t('missingDetails'),
+                description: t('missingDetailsDesc'),
             });
             return;
         }
@@ -90,7 +91,7 @@ export function OpenDayLandingPage() {
     };
 
     if (activeEvents.length === 0) {
-        return <div className="text-center py-20">כרגע אין ימים פתוחים מתוכננים. אנא בדקו שוב בקרוב!</div>;
+        return <div className="text-center py-20">{t('noOpenDays')}</div>;
     }
 
     if (isSubmitted) {
@@ -119,7 +120,7 @@ export function OpenDayLandingPage() {
                     <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200">{t('heroSubtitle')}</p>
                     {nextEvent && (
                         <p className="font-semibold text-xl bg-primary/20 backdrop-blur-sm rounded-full px-4 py-1 inline-block">
-                            חל מ- {format(new Date(nextEvent.date), 'EEEE, dd MMMM yyyy', { locale: he })}
+                            {t('startingFrom', { date: format(new Date(nextEvent.date), 'EEEE, dd MMMM yyyy', { locale: dateLocale }) })}
                         </p>
                     )}
                     <div className="pt-4">
@@ -154,10 +155,10 @@ export function OpenDayLandingPage() {
                             <div className="flex justify-end mb-4">
                                 <Select dir="rtl" value={cityFilter} onValueChange={setCityFilter}>
                                     <SelectTrigger className="w-[300px]">
-                                        <SelectValue placeholder="סינון לפי סניף" />
+                                        <SelectValue placeholder={t('filterByBranch')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">כל הסניפים והקונסרבטוריונים</SelectItem>
+                                        <SelectItem value="all">{t('allBranches')}</SelectItem>
                                         {conservatoriums.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -183,7 +184,7 @@ export function OpenDayLandingPage() {
                                             </CardContent>
                                             <CardFooter className="mt-auto">
                                                 <Button className="w-full" variant="outline" onClick={() => setSelectedEventId(event.id)}>
-                                                    בחירת יום פתוח
+                                                    {t('selectOpenDay')}
                                                 </Button>
                                             </CardFooter>
                                         </Card>
@@ -192,7 +193,7 @@ export function OpenDayLandingPage() {
                             </div>
                             {activeEvents.filter(e => cityFilter === 'all' || e.conservatoriumId === cityFilter).length === 0 && (
                                 <div className="text-center py-12 text-muted-foreground bg-muted/20 border rounded-lg">
-                                    <p>לא נמצאו ימים פתוחים לסניף זה.</p>
+                                    <p>{t('noEventsForBranch')}</p>
                                 </div>
                             )}
                         </div>
@@ -206,12 +207,12 @@ export function OpenDayLandingPage() {
                                     setSelectedTime('');
                                 }}
                             >
-                                חזרה לרשימה
+                                {t('backToList')}
                             </Button>
                             <form onSubmit={handleSubmit}>
                                 <CardHeader className="text-center border-b mb-6 pb-6 pt-12">
                                     <CardTitle>
-                                        הרשמה ליום הפתוח: {activeEvent.name} <br />
+                                        {t('registerForEvent', { name: activeEvent.name })} <br />
                                         <span className="text-primary text-xl mt-2 block">
                                             {conservatoriums.find(c => c.id === activeEvent.conservatoriumId)?.name}
                                         </span>

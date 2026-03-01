@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, DownloadCloud, Trash2, Plus } from 'lucide-react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useTranslations, useLocale } from 'next-intl';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 const INITIAL_CLOSURES: ClosureDate[] = [
     {
@@ -43,20 +44,24 @@ const INITIAL_CLOSURES: ClosureDate[] = [
     }
 ];
 
-const typeLabels: Record<string, string> = {
-    'NATIONAL_HOLIDAY': 'חג לאומי',
-    'CONSERVATORIUM_CLOSURE': 'חופשת קונסרבטוריון',
-    'EXAM_PERIOD': 'תקופת בגרויות',
-    'OTHER': 'אחר',
-};
-
 export function AdminCalendarPanel() {
     const [closures, setClosures] = useState<ClosureDate[]>(INITIAL_CLOSURES);
     const { toast } = useToast();
+    const t = useTranslations('AdminCalendarPanel');
+    const locale = useLocale();
+    const dateLocale = useDateLocale();
+    const isHe = locale === 'he';
+
+    const typeLabels: Record<string, string> = {
+        'NATIONAL_HOLIDAY': t('typeNationalHoliday'),
+        'CONSERVATORIUM_CLOSURE': t('typeConservatoriumClosure'),
+        'EXAM_PERIOD': t('typeExamPeriod'),
+        'OTHER': t('typeOther'),
+    };
 
     const handleImportHebcal = () => {
         // Mocking the Hebcal API import process
-        toast({ title: 'מייבא חגי ישראל (Hebcal)...' });
+        toast({ title: t('importingHebcal') });
         setTimeout(() => {
             const newClosures: ClosureDate[] = [
                 {
@@ -86,28 +91,28 @@ export function AdminCalendarPanel() {
 
             setClosures(prev => [...prev, ...filteredNew].sort((a, b) => a.date.localeCompare(b.date)));
 
-            toast({ title: `יובאו ${filteredNew.length} חגים בהצלחה.` });
+            toast({ title: t('importedSuccess', { count: filteredNew.length }) });
         }, 1500);
     };
 
     const handleDelete = (id: string) => {
         setClosures(prev => prev.filter(c => c.id !== id));
-        toast({ title: 'המועד נמחק מהיומן' });
+        toast({ title: t('holidayRemoved') });
     };
 
     return (
         <Card>
             <CardHeader className="flex flex-row items-start justify-between">
                 <div>
-                    <CardTitle className="flex items-center gap-2 shadow-sm"><CalendarDays className="h-5 w-5 text-primary" /> חופשות וחגים ({closures.length})</CardTitle>
-                    <CardDescription>תאריכים בהם יומן השיבוצים חסום ולא ניתן לקבוע שיעורים חדשים.</CardDescription>
+                    <CardTitle className="flex items-center gap-2 shadow-sm"><CalendarDays className="h-5 w-5 text-primary" /> {t('panelTitle', { count: closures.length })}</CardTitle>
+                    <CardDescription>{t('panelDescription')}</CardDescription>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={handleImportHebcal}>
-                        <DownloadCloud className="me-2 h-4 w-4" /> ייבוא מ־Hebcal
+                        <DownloadCloud className="me-2 h-4 w-4" /> {t('importHebcalBtn')}
                     </Button>
                     <Button>
-                        <Plus className="me-2 h-4 w-4" /> מועד חופשה חדש
+                        <Plus className="me-2 h-4 w-4" /> {t('newHolidayBtn')}
                     </Button>
                 </div>
             </CardHeader>
@@ -115,28 +120,30 @@ export function AdminCalendarPanel() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>תאריך</TableHead>
-                            <TableHead>שם החג/המועד</TableHead>
-                            <TableHead>סוג</TableHead>
-                            <TableHead>רלוונטיות</TableHead>
-                            <TableHead className="text-left">פעולות</TableHead>
+                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colDate')}</TableHead>
+                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colName')}</TableHead>
+                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colType')}</TableHead>
+                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colRelevance')}</TableHead>
+                            <TableHead className={isHe ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {closures.length === 0 ? (
-                            <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">לא הוגדרו חופשות במערכת.</TableCell></TableRow>
+                            <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">{t('noHolidays')}</TableCell></TableRow>
                         ) : (
                             closures.map(c => (
                                 <TableRow key={c.id}>
-                                    <TableCell className="font-medium">{format(new Date(c.date), 'dd/MM/yyyy', { locale: he })}</TableCell>
-                                    <TableCell>{c.nameHe}</TableCell>
-                                    <TableCell>
+                                    <TableCell className={`font-medium ${isHe ? 'text-right' : 'text-left'}`}>
+                                        {format(new Date(c.date), 'dd/MM/yyyy', { locale: dateLocale })}
+                                    </TableCell>
+                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>{isHe ? c.nameHe : c.name}</TableCell>
+                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>
                                         <Badge variant={c.type === 'NATIONAL_HOLIDAY' ? 'default' : 'secondary'}>
                                             {typeLabels[c.type] || c.type}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>{c.affectsAllTeachers ? 'כלל הקונסרבטוריון' : 'חלק מהמורים'}</TableCell>
-                                    <TableCell className="text-left">
+                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>{c.affectsAllTeachers ? t('relevanceAll') : t('relevanceSome')}</TableCell>
+                                    <TableCell className={isHe ? 'text-left' : 'text-right'}>
                                         <Button variant="ghost" size="icon" onClick={() => c.id && handleDelete(c.id)}>
                                             <Trash2 className="h-4 w-4 text-destructive" />
                                         </Button>

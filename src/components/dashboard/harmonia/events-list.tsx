@@ -5,9 +5,12 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Calendar, Clock, MapPin, Ticket, ArrowLeft, AlertTriangle, Users } from 'lucide-react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
+import { useTranslations } from 'next-intl';
 
 export function EventsList() {
+    const t = useTranslations('Events');
+    const dateLocale = useDateLocale();
     const { mockEvents, user } = useAuth();
     const events = mockEvents.filter(e => e.conservatoriumId === user?.conservatoriumId);
 
@@ -22,7 +25,7 @@ export function EventsList() {
                     <CardContent className="flex-grow space-y-3">
                         <div className="flex items-center text-sm text-muted-foreground">
                             <Calendar className="me-2 h-4 w-4" />
-                            <span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })} בשעה {event.startTime}</span>
+                            <span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: dateLocale })} בשעה {event.startTime}</span>
                         </div>
                         <div className="flex items-center text-sm text-muted-foreground">
                             <Users className="me-2 h-4 w-4" />

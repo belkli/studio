@@ -8,15 +8,9 @@ import { useAuth } from "@/hooks/use-auth";
 import type { LessonSlot, WeeklyAvailabilityBlock, DayOfWeek } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations, useLocale } from 'next-intl';
 
-const days: { he: string, key: DayOfWeek }[] = [
-    { he: "ראשון", key: "SUN" },
-    { he: "שני", key: "MON" },
-    { he: "שלישי", key: "TUE" },
-    { he: "רביעי", key: "WED" },
-    { he: "חמישי", key: "THU" },
-    { he: "שישי", key: "FRI" },
-];
+const DAY_KEYS: DayOfWeek[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI"];
 const times = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 export function AvailabilityGrid() {
@@ -24,6 +18,9 @@ export function AvailabilityGrid() {
     const { toast } = useToast();
     const [availableSlots, setAvailableSlots] = useState<Record<string, boolean>>({});
     const [isDirty, setIsDirty] = useState(false);
+    const t = useTranslations('AvailabilityGrid');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     useEffect(() => {
         if (user?.availability) {
@@ -45,7 +42,8 @@ export function AvailabilityGrid() {
         const lessonMap: Record<string, LessonSlot> = {};
         mockLessons.filter(l => l.teacherId === user.id).forEach(lesson => {
             const date = new Date(lesson.startTime);
-            const dayKey = days[date.getDay()]?.key;
+            const dayIndex = date.getDay();
+            const dayKey = (DAY_KEYS[dayIndex] || ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][dayIndex]) as DayOfWeek;
             const time = `${String(date.getHours()).padStart(2, '0')}:00`;
             if (dayKey) {
                 lessonMap[`${dayKey}-${time}`] = lesson;
@@ -66,14 +64,14 @@ export function AvailabilityGrid() {
         if (!user) return;
 
         const newAvailability: WeeklyAvailabilityBlock[] = [];
-        days.forEach(day => {
+        DAY_KEYS.forEach(day => {
             let currentBlock: WeeklyAvailabilityBlock | null = null;
             for (let i = 0; i < times.length; i++) {
                 const time = times[i];
-                const key = `${day.key}-${time}`;
+                const key = `${day}-${time}`;
                 if (availableSlots[key]) {
                     if (!currentBlock) {
-                        currentBlock = { dayOfWeek: day.key, startTime: time, endTime: '' };
+                        currentBlock = { dayOfWeek: day, startTime: time, endTime: '' };
                     }
                 } else {
                     if (currentBlock) {
@@ -89,54 +87,54 @@ export function AvailabilityGrid() {
                 newAvailability.push(currentBlock);
             }
         });
-        
+
         updateUser({ ...user, availability: newAvailability });
         setIsDirty(false);
-        toast({ title: 'הזמינות נשמרה בהצלחה' });
+        toast({ title: t('saveSuccess') });
     };
 
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle>תבנית זמינות שבועית</CardTitle>
-                        <CardDescription>לחץ על משבצות זמן כדי לסמן אותן כפנויות. אלו השעות שיוצגו לתלמידים להזמנת שיעורים.</CardDescription>
+                        <CardTitle>{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" disabled><Copy className="ms-2 h-4 w-4" /> העתק משבוע שעבר</Button>
-                        <Button disabled><PlusCircle className="ms-2 h-4 w-4" /> הוסף חריגה</Button>
+                        <Button variant="outline" disabled><Copy className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} /> {t('copyLastWeek')}</Button>
+                        <Button disabled><PlusCircle className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} /> {t('addException')}</Button>
                     </div>
                 </div>
             </CardHeader>
             <CardContent>
                 <div className="border rounded-lg overflow-x-auto">
-                    <div className="grid grid-cols-[auto_repeat(6,1fr)] text-center text-sm font-semibold min-w-[800px]">
+                    <div className="grid grid-cols-[auto_repeat(6,1fr)] text-center text-sm font-semibold min-w-[800px]" dir={isRtl ? 'rtl' : 'ltr'}>
                         <div className="p-2 border-b border-s sticky start-0 bg-card"></div>
-                        {days.map(day => (
-                            <div key={day.key} className="p-2 border-b border-s bg-card">{day.he}</div>
+                        {DAY_KEYS.map(dayKey => (
+                            <div key={dayKey} className="p-2 border-b border-s bg-card">{t(`days.${dayKey}`)}</div>
                         ))}
                         {times.map(time => (
                             <React.Fragment key={time}>
                                 <div className="p-2 border-s flex items-center justify-center text-xs text-muted-foreground sticky start-0 bg-card font-mono">{time}</div>
-                                {days.map(day => {
-                                    const key = `${day.key}-${time}`;
+                                {DAY_KEYS.map(dayKey => {
+                                    const key = `${dayKey}-${time}`;
                                     const isBooked = teacherLessons[key];
                                     const isAvailable = availableSlots[key];
                                     return (
-                                        <div 
-                                            key={key} 
+                                        <div
+                                            key={key}
                                             className={cn(
                                                 "h-16 border-b border-s p-1 transition-colors",
                                                 isBooked ? 'bg-blue-100 dark:bg-blue-900/50 cursor-not-allowed' : 'hover:bg-green-100 dark:hover:bg-green-900/30 cursor-pointer',
                                                 isAvailable && !isBooked && 'bg-green-200/70 dark:bg-green-500/30'
                                             )}
-                                            onClick={() => handleSlotClick(day.key, time)}
+                                            onClick={() => handleSlotClick(dayKey, time)}
                                         >
                                             {isBooked && (
-                                                 <div className="bg-blue-500/10 border-r-4 border-blue-500 p-1 rounded-sm text-xs h-full overflow-hidden text-right">
+                                                <div className={cn("bg-blue-500/10 p-1 rounded-sm text-xs h-full overflow-hidden", isRtl ? "border-r-4 border-blue-500 text-right" : "border-l-4 border-blue-500 text-left")}>
                                                     <p className="font-bold truncate text-blue-800 dark:text-blue-200">{isBooked.instrument}</p>
-                                                    <p className="truncate text-blue-700 dark:text-blue-300">{user?.students?.find(s => s === isBooked.studentId) ? users.find(u => u.id === isBooked.studentId)?.name : 'תלמיד'}
+                                                    <p className="truncate text-blue-700 dark:text-blue-300">{user?.students?.find(s => s === isBooked.studentId) ? users.find(u => u.id === isBooked.studentId)?.name : t('studentFallback')}
                                                     </p>
                                                 </div>
                                             )}
@@ -147,19 +145,19 @@ export function AvailabilityGrid() {
                         ))}
                     </div>
                 </div>
-                 <div className="mt-6 flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
-                    <Calendar className="h-6 w-6 text-primary mt-1"/>
+                <div className="mt-6 flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+                    <Calendar className="h-6 w-6 text-primary mt-1" />
                     <div>
-                        <h4 className="font-semibold">סנכרון יומן חיצוני</h4>
-                        <p className="text-sm text-muted-foreground">חבר את יומן Google או Apple שלך כדי לחסום אוטומטית זמנים שאינך פנוי/ה בהם, ולהציג את שיעורי הרמוניה ביומן האישי שלך.</p>
-                        <Button variant="secondary" className="mt-2" disabled>חבר יומן</Button>
+                        <h4 className="font-semibold">{t('syncTitle')}</h4>
+                        <p className="text-sm text-muted-foreground">{t('syncDesc')}</p>
+                        <Button variant="secondary" className="mt-2" disabled>{t('connectBtn')}</Button>
                     </div>
                 </div>
             </CardContent>
-             <CardFooter>
+            <CardFooter>
                 <Button onClick={handleSaveChanges} disabled={!isDirty}>
-                    <Save className="me-2 h-4 w-4" />
-                    שמור שינויים
+                    <Save className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
+                    {t('saveBtn')}
                 </Button>
             </CardFooter>
         </Card>

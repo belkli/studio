@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking, User } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useTranslations } from 'next-intl';
 
 interface AssignMusicianDialogProps {
   booking: PerformanceBooking | null;
@@ -20,11 +21,12 @@ interface AssignMusicianDialogProps {
 
 export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }: AssignMusicianDialogProps) {
   const { users } = useAuth();
+  const t = useTranslations('PerformanceBooking');
   const [selectedMusicianIds, setSelectedMusicianIds] = useState<string[]>([]);
 
-  const performers = useMemo(() => 
+  const performers = useMemo(() =>
     users.filter(u => u.role === 'teacher' && u.performanceProfile?.isOptedIn && u.performanceProfile?.adminApproved)
-  , [users]);
+    , [users]);
 
   // When dialog opens, pre-select already assigned musicians
   useEffect(() => {
@@ -51,9 +53,9 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent dir="rtl" className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>שיבוץ מוזיקאים לאירוע</DialogTitle>
+          <DialogTitle>{t('dialogAssignTitle')}</DialogTitle>
           <DialogDescription>
-            בחר את המוזיקאים שיופיעו באירוע: {booking?.eventName}
+            {t('dialogAssignDesc', { eventName: booking?.eventName || '' })}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-80 my-4">
@@ -71,12 +73,12 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
                     onCheckedChange={() => handleToggleMusician(performer.id)}
                   />
                   <Avatar className="h-9 w-9">
-                      <AvatarImage src={image?.imageUrl || performer.avatarUrl} />
-                      <AvatarFallback>{performer.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={image?.imageUrl || performer.avatarUrl} />
+                    <AvatarFallback>{performer.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                      <Label htmlFor={`musician-${performer.id}`} className="font-medium cursor-pointer">{performer.name}</Label>
-                      <p className="text-xs text-muted-foreground">{performer.instruments?.map(i => i.instrument).join(', ')}</p>
+                    <Label htmlFor={`musician-${performer.id}`} className="font-medium cursor-pointer">{performer.name}</Label>
+                    <p className="text-xs text-muted-foreground">{performer.instruments?.map(i => i.instrument).join(', ')}</p>
                   </div>
                 </div>
               )
@@ -84,8 +86,8 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
           </div>
         </ScrollArea>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleConfirm}>שמור שיבוץ</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('dialogCancelBtn')}</Button>
+          <Button onClick={handleConfirm}>{t('dialogSaveAssignBtn')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

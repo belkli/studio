@@ -13,7 +13,7 @@ import { RescheduleLessonDialog } from './reschedule-lesson-dialog';
 import { cn } from '@/lib/utils';
 import { LessonDetailDialog } from './lesson-detail-dialog';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval, isSameDay } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
@@ -83,6 +83,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
     const [lessonToReschedule, setLessonToReschedule] = useState<LessonSlot | null>(null);
 
     const { user, users, cancelLesson, rescheduleLesson } = useAuth();
+    const dateLocale = useDateLocale();
     const { toast } = useToast();
     const isTeacher = user?.role === 'teacher';
 
@@ -160,7 +161,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
                         <div className="p-2 border-b border-s bg-muted/30"></div>
                         {daysOfWeek.slice(0, 6).map((day: Date) => (
                             <div key={day.toISOString()} className="text-center p-3 border-b border-s bg-muted/30">
-                                <div className="font-bold text-sm mb-0.5">{format(day, 'EEEE', { locale: he })}</div>
+                                <div className="font-bold text-sm mb-0.5">{format(day, 'EEEE', { locale: dateLocale })}</div>
                                 <div className="text-[10px] text-muted-foreground font-medium">{format(day, 'd/M')}</div>
                             </div>
                         ))}

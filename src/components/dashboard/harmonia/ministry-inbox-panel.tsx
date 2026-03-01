@@ -9,15 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, XCircle, FileSignature, AlertCircle, Clock, BookOpen, Mic, Award, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
-import { he, enUS, ru, arSA } from 'date-fns/locale';
 import { useTranslations, useLocale } from 'next-intl';
-
-const dateLocales: Record<string, any> = {
-    he: he,
-    en: enUS,
-    ru: ru,
-    ar: arSA,
-};
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 type MinistryForm = {
     id: string;
@@ -40,8 +33,7 @@ const MOCK_FORMS: MinistryForm[] = [
 export function MinistryInboxPanel() {
     const t = useTranslations('Ministry');
     const tCommon = useTranslations('Common');
-    const locale = useLocale();
-    const dateLocale = dateLocales[locale] || he;
+    const dateLocale = useDateLocale();
 
     const { toast } = useToast();
     const [forms, setForms] = useState<MinistryForm[]>(MOCK_FORMS);

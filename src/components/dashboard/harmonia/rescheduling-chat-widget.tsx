@@ -12,7 +12,7 @@ import type { RescheduleResponse } from '@/ai/flows/reschedule-flow';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { format, add, set } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 interface Message {
   sender: 'user' | 'bot';

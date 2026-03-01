@@ -14,30 +14,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Send } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations, useLocale } from 'next-intl';
 
-const announcementSchema = z.object({
-  title: z.string().min(5, "הכותרת חייבת להכיל לפחות 5 תווים."),
-  body: z.string().min(10, "גוף ההודעה חייב להכיל לפחות 10 תווים."),
+const getAnnouncementSchema = (t: any) => z.object({
+  title: z.string().min(5, t('errors.titleMin')),
+  body: z.string().min(10, t('errors.bodyMin')),
   targetAudience: z.enum(['ALL', 'STUDENTS', 'PARENTS', 'TEACHERS']),
   channels: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "חובה לבחור לפחות ערוץ הפצה אחד.",
+    message: t('errors.minOneChannel'),
   }),
 });
 
-type AnnouncementFormData = z.infer<typeof announcementSchema>;
-
-const channelOptions = [
-    { id: 'IN_APP', label: 'התראה במערכת' },
-    { id: 'EMAIL', label: 'אימייל' },
-    { id: 'SMS', label: 'SMS' },
-];
+type AnnouncementFormData = z.infer<ReturnType<typeof getAnnouncementSchema>>;
 
 export function AnnouncementComposer() {
+  const t = useTranslations('AnnouncementComposer');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const { toast } = useToast();
   const { user, addAnnouncement } = useAuth();
-  
+
+  const announcementSchema = getAnnouncementSchema(t);
+
+  const channelOptions = [
+    { id: 'IN_APP', label: t('channels.IN_APP') },
+    { id: 'EMAIL', label: t('channels.EMAIL') },
+    { id: 'SMS', label: t('channels.SMS') },
+  ];
+
   const form = useForm<AnnouncementFormData>({
-    resolver: zodResolver(announcementSchema),
+    resolver: zodResolver(announcementSchema) as any,
     defaultValues: {
       title: "",
       body: "",
@@ -49,33 +55,33 @@ export function AnnouncementComposer() {
   const onSubmit = (data: AnnouncementFormData) => {
     addAnnouncement(data as any);
     toast({
-      title: "ההכרזה נשלחה בהצלחה!",
-      description: `ההודעה "${data.title}" נשלחה לקהל היעד הנבחר.`,
+      title: t('successToast'),
+      description: t('successDesc', { title: data.title }),
     });
     form.reset();
   };
-  
+
   if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
-    return <p>אין לך הרשאה לבצע פעולה זו.</p>;
+    return <p>{t('noPermission')}</p>;
   }
 
   return (
-    <Card>
+    <Card dir={isRtl ? 'rtl' : 'ltr'}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader>
-            <CardTitle>יצירת הכרזה</CardTitle>
-            <CardDescription>מלא את פרטי ההודעה שברצונך לשלוח.</CardDescription>
+          <CardHeader className="text-start">
+            <CardTitle>{t('title')}</CardTitle>
+            <CardDescription>{t('description')}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 text-start">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>כותרת</FormLabel>
+                  <FormLabel>{t('formLabels.title')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="לדוגמה: תזכורת על חופשת חנוכה" {...field} />
+                    <Input placeholder={t('placeholders.title')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,9 +92,9 @@ export function AnnouncementComposer() {
               name="body"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>תוכן ההודעה</FormLabel>
+                  <FormLabel>{t('formLabels.body')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="כתוב את תוכן ההכרזה כאן... ניתן להשתמש בתחביר Markdown בסיסי." rows={8} {...field} />
+                    <Textarea placeholder={t('placeholders.body')} rows={8} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,18 +107,18 @@ export function AnnouncementComposer() {
                 name="targetAudience"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>קהל יעד</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                    <FormLabel>{t('formLabels.targetAudience')}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="בחר למי לשלוח" />
+                          <SelectValue placeholder={t('placeholders.targetAudience')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="ALL">כל המשתמשים</SelectItem>
-                        <SelectItem value="STUDENTS">תלמידים</SelectItem>
-                        <SelectItem value="PARENTS">הורים</SelectItem>
-                        <SelectItem value="TEACHERS">מורים</SelectItem>
+                        <SelectItem value="ALL">{t('audiences.ALL')}</SelectItem>
+                        <SelectItem value="STUDENTS">{t('audiences.STUDENTS')}</SelectItem>
+                        <SelectItem value="PARENTS">{t('audiences.PARENTS')}</SelectItem>
+                        <SelectItem value="TEACHERS">{t('audiences.TEACHERS')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -125,8 +131,8 @@ export function AnnouncementComposer() {
                 name="channels"
                 render={() => (
                   <FormItem>
-                    <FormLabel>ערוצי הפצה</FormLabel>
-                    <div className="flex items-center space-x-4 space-x-reverse pt-2">
+                    <FormLabel>{t('formLabels.channels')}</FormLabel>
+                    <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-4' : 'space-x-4'} pt-2`}>
                       {channelOptions.map((item) => (
                         <FormField
                           key={item.id}
@@ -136,7 +142,7 @@ export function AnnouncementComposer() {
                             return (
                               <FormItem
                                 key={item.id}
-                                className="flex flex-row items-start space-x-3 space-x-reverse space-y-0"
+                                className={`flex flex-row items-start ${isRtl ? 'space-x-reverse space-x-3' : 'space-x-3'} space-y-0`}
                               >
                                 <FormControl>
                                   <Checkbox
@@ -145,10 +151,10 @@ export function AnnouncementComposer() {
                                       return checked
                                         ? field.onChange([...(field.value || []), item.id])
                                         : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                          field.value?.filter(
+                                            (value) => value !== item.id
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -167,10 +173,10 @@ export function AnnouncementComposer() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className={`${isRtl ? 'justify-end' : 'justify-start'}`}>
             <Button type="submit">
-              <Send className="me-2 h-4 w-4" />
-              שלח הכרזה
+              <Send className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+              {t('submitBtn')}
             </Button>
           </CardFooter>
         </form>
@@ -178,3 +184,4 @@ export function AnnouncementComposer() {
     </Card>
   );
 }
+

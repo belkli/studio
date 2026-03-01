@@ -8,26 +8,34 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Mail, MessageSquare, Bell, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations, useLocale } from 'next-intl';
 
-const channelConfig: Record<Channel, { icon: React.ElementType, label: string }> = {
-    IN_APP: { icon: Bell, label: 'מערכת' },
-    EMAIL: { icon: Mail, label: 'אימייל' },
-    SMS: { icon: MessageSquare, label: 'SMS' },
-    WHATSAPP: { icon: MessageSquare, label: 'וואטסאפ' },
-};
+const getChannelConfig = (t: any): Record<Channel, { icon: React.ElementType, label: string }> => ({
+    IN_APP: { icon: Bell, label: t('channels.IN_APP') },
+    EMAIL: { icon: Mail, label: t('channels.EMAIL') },
+    SMS: { icon: MessageSquare, label: t('channels.SMS') },
+    WHATSAPP: { icon: MessageSquare, label: t('channels.WHATSAPP') },
+});
 
-const statusConfig: Record<AuditLogEntry['status'], { icon: React.ElementType, label: string, className: string }> = {
-    SENT: { icon: CheckCircle, label: 'נשלח', className: 'text-yellow-600' },
-    DELIVERED: { icon: CheckCircle, label: 'הגיע ליעד', className: 'text-green-600' },
-    FAILED: { icon: XCircle, label: 'נכשל', className: 'text-red-600' },
-    OPTED_OUT: { icon: Bell, label: 'המשתמש ביטל', className: 'text-gray-500' },
-};
+const getStatusConfig = (t: any): Record<AuditLogEntry['status'], { icon: React.ElementType, label: string, className: string }> => ({
+    SENT: { icon: CheckCircle, label: t('statuses.SENT'), className: 'text-yellow-600' },
+    DELIVERED: { icon: CheckCircle, label: t('statuses.DELIVERED'), className: 'text-green-600' },
+    FAILED: { icon: XCircle, label: t('statuses.FAILED'), className: 'text-red-600' },
+    OPTED_OUT: { icon: Bell, label: t('statuses.OPTED_OUT'), className: 'text-gray-500' },
+});
 
 export function NotificationAuditLog() {
     const { mockAuditLog, users } = useAuth();
+    const t = useTranslations('NotificationAuditLog');
+    const locale = useLocale();
+    const dateLocale = useDateLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+
+    const channelConfig = getChannelConfig(t);
+    const statusConfig = getStatusConfig(t);
 
     const auditLogWithUsers = useMemo(() => {
         return mockAuditLog.map(log => ({
@@ -35,24 +43,24 @@ export function NotificationAuditLog() {
             user: users.find(u => u.id === log.userId)
         })).sort((a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime());
     }, [mockAuditLog, users]);
-    
+
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
-                <CardTitle>יומן התראות יוצאות</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
-                    רשימת כל ההתראות שנשלחו מהמערכת. הסטטוסים מדומים.
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Table>
+                <Table dir={isRtl ? 'rtl' : 'ltr'}>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>משתמש</TableHead>
-                            <TableHead>ערוץ</TableHead>
-                            <TableHead>כותרת</TableHead>
-                            <TableHead>סטטוס</TableHead>
-                            <TableHead>זמן</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.user')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.channel')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.subject')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.status')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.time')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -61,7 +69,7 @@ export function NotificationAuditLog() {
                             const StatusIcon = statusConfig[log.status]?.icon;
                             return (
                                 <TableRow key={log.id}>
-                                    <TableCell className="font-medium">{log.user?.name || 'לא ידוע'}</TableCell>
+                                    <TableCell className="font-medium">{log.user?.name || t('unknownUser')}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className="flex items-center gap-1.5 w-fit">
                                             {ChannelIcon && <ChannelIcon className="h-3.5 w-3.5" />}
@@ -75,7 +83,7 @@ export function NotificationAuditLog() {
                                             {statusConfig[log.status]?.label}
                                         </div>
                                     </TableCell>
-                                    <TableCell>{format(new Date(log.sentAt), "dd/MM/yy HH:mm:ss", { locale: he })}</TableCell>
+                                    <TableCell>{format(new Date(log.sentAt), "dd/MM/yy HH:mm:ss", { locale: dateLocale })}</TableCell>
                                 </TableRow>
                             );
                         })}

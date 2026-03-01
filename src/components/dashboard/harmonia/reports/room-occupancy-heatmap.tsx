@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTranslations, useLocale } from 'next-intl';
-import { format, startOfWeek } from 'date-fns';
+import { format, startOfWeek, addDays } from 'date-fns';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`); // 08:00 to 20:00
 const totalRooms = mockRooms.length;
@@ -17,14 +18,18 @@ export function RoomOccupancyHeatmap() {
     const { mockLessons } = useAuth();
     const locale = useLocale();
 
-    const days = [
-        { name: locale === 'he' ? "א" : locale === 'ru' ? "Пн" : locale === 'ar' ? "ح" : "Sun", key: 0 },
-        { name: locale === 'he' ? "ב" : locale === 'ru' ? "Вт" : locale === 'ar' ? "ن" : "Mon", key: 1 },
-        { name: locale === 'he' ? "ג" : locale === 'ru' ? "Ср" : locale === 'ar' ? "ث" : "Tue", key: 2 },
-        { name: locale === 'he' ? "ד" : locale === 'ru' ? "Чт" : locale === 'ar' ? "ر" : "Wed", key: 3 },
-        { name: locale === 'he' ? "ה" : locale === 'ru' ? "Пт" : locale === 'ar' ? "خ" : "Thu", key: 4 },
-        { name: locale === 'he' ? "ו" : locale === 'ru' ? "Сб" : locale === 'ar' ? "ج" : "Fri", key: 5 },
-    ];
+    const dateLocale = useDateLocale();
+
+    const days = useMemo(() => {
+        const start = startOfWeek(new Date(), { weekStartsOn: 0, locale: dateLocale });
+        return Array.from({ length: 7 }).map((_, i) => {
+            const date = addDays(start, i);
+            return {
+                name: format(date, 'EEEEEE', { locale: dateLocale }), // Short day name (e.g., Su, Mo, א, ב)
+                key: i
+            };
+        });
+    }, [dateLocale]);
 
     const occupancyData = useMemo(() => {
         const grid: Record<string, { booked: number, rooms: string[] }> = {};

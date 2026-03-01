@@ -14,7 +14,8 @@ import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocalizedUserProfile } from "@/lib/utils/localized-content";
 
 const OccasionTile = ({ imageId, title, icon }: { imageId: string, title: string, icon: React.ReactNode }) => {
     const image = PlaceHolderImages.find(img => img.id === imageId);
@@ -31,9 +32,12 @@ const OccasionTile = ({ imageId, title, icon }: { imageId: string, title: string
     )
 }
 
-const MusicianCard = ({ musician }: { musician: User }) => {
+const MusicianCard = ({ musician: originalMusician }: { musician: User }) => {
     const t = useTranslations('MusiciansForHire');
+    const locale = useLocale();
+    const musician = getLocalizedUserProfile(originalMusician, locale);
     const image = PlaceHolderImages.find(img => img.id === musician.avatarUrl); // Using avatarUrl as imageId
+
     return (
         <Card>
             <CardHeader className="flex-row items-center gap-4">
@@ -43,11 +47,13 @@ const MusicianCard = ({ musician }: { musician: User }) => {
                 </Avatar>
                 <div>
                     <CardTitle>{musician.name}</CardTitle>
-                    <CardDescription>{musician.performanceProfile?.headline}</CardDescription>
+                    <CardDescription>{musician.localizedHeadline || musician.performanceProfile?.headline}</CardDescription>
                 </div>
             </CardHeader>
             <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2">{musician.performanceProfile?.performanceBio}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                    {musician.localizedPerformanceBio || musician.performanceProfile?.performanceBio}
+                </p>
                 <Button variant="link" className="p-0 mt-2">{t('viewProfile')}</Button>
             </CardContent>
         </Card>
@@ -164,7 +170,7 @@ export function MusiciansForHire() {
                                 <div className="text-center space-y-4 p-8">
                                     <p className="text-muted-foreground">{t('form.quoteTitle')}</p>
                                     <p className="text-5xl font-bold">{t('form.quotePrice', { price: '2,800' })}</p>
-                                    <p className="text-sm text-muted-foreground">{t('form.quoteDetails', { ensemble: "דואט קלאסי", duration: 3})}</p>
+                                    <p className="text-sm text-muted-foreground">{t('form.quoteDetails', { ensemble: "דואט קלאסי", duration: 3 })}</p>
                                     <Button size="lg" className="mt-4">{t('form.submitRequest')}</Button>
                                 </div>
                             )}

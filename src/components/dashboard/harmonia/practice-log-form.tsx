@@ -17,25 +17,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "@/i18n/routing";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { User } from '@/lib/types';
+import { useTranslations } from 'next-intl';
 
-
-const practiceLogSchema = z.object({
+const createPracticeLogSchema = (t: any) => z.object({
   studentId: z.string().optional(),
-  date: z.string().min(1, "יש לבחור תאריך."),
-  durationMinutes: z.number().min(5, "אימון חייב להיות לפחות 5 דקות."),
+  date: z.string().min(1, t('errorDateRequired')),
+  durationMinutes: z.number().min(5, t('errorDurationMin')),
   pieces: z.string().optional(),
   mood: z.enum(["GREAT", "OKAY", "HARD"], {
-    message: "חובה לבחור את הרגשתך באימון.",
+    message: t('errorMoodRequired'),
   }),
   studentNote: z.string().optional(),
 });
-
-type PracticeLogFormData = z.infer<typeof practiceLogSchema>;
 
 export function PracticeLogForm() {
   const { toast } = useToast();
   const { user, users, addPracticeLog } = useAuth();
   const router = useRouter();
+  const t = useTranslations('PracticeLogForm');
+
+  const practiceLogSchema = createPracticeLogSchema(t);
+  type PracticeLogFormData = z.infer<typeof practiceLogSchema>;
 
   const form = useForm<PracticeLogFormData>({
     resolver: zodResolver(practiceLogSchema),
@@ -56,8 +58,8 @@ export function PracticeLogForm() {
 
     if (!studentIdForLog) {
       toast({
-        title: 'שגיאה',
-        description: 'יש לבחור עבור מי לרשום את האימון.',
+        title: t('errorGenericTitle'),
+        description: t('errorStudentRequired'),
         variant: 'destructive',
       });
       return;
@@ -70,8 +72,8 @@ export function PracticeLogForm() {
     };
     addPracticeLog(practiceData);
     toast({
-      title: "האימון נרשם בהצלחה!",
-      description: `כל הכבוד על אימון של ${data.durationMinutes} דקות.`,
+      title: t('successTitle'),
+      description: t('successDesc', { duration: data.durationMinutes }),
     });
     router.push('/dashboard/progress');
   };
@@ -79,8 +81,8 @@ export function PracticeLogForm() {
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle>יומן אימונים</CardTitle>
-        <CardDescription>מלא את פרטי האימון שלך.</CardDescription>
+        <CardTitle>{t('formTitle')}</CardTitle>
+        <CardDescription>{t('formDesc')}</CardDescription>
       </CardHeader>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -91,10 +93,10 @@ export function PracticeLogForm() {
                 name="studentId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>רישום אימון עבור</FormLabel>
+                    <FormLabel>{t('logForLabel')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
-                        <SelectTrigger><SelectValue placeholder="בחר/י ילד/ה..." /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t('selectChildPlaceholder')} /></SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {children.map(child => <SelectItem key={child.id} value={child.id}>{child.name}</SelectItem>)}
@@ -110,7 +112,7 @@ export function PracticeLogForm() {
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>תאריך</FormLabel>
+                  <FormLabel>{t('dateLabel')}</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -124,7 +126,7 @@ export function PracticeLogForm() {
               name="durationMinutes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>משך אימון (דקות): {field.value}</FormLabel>
+                  <FormLabel>{t('durationLabel', { value: field.value })}</FormLabel>
                   <FormControl>
                     <Slider
                       min={5}
@@ -144,11 +146,11 @@ export function PracticeLogForm() {
               name="pieces"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>יצירות שתורגלו</FormLabel>
+                  <FormLabel>{t('piecesLabel')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="לדוגמה: סונטה של מוצרט (חזרתי על הפתיחה), אטיוד של שופן..." {...field} />
+                    <Textarea placeholder={t('piecesPlaceholder')} {...field} />
                   </FormControl>
-                  <p className="text-xs text-muted-foreground">הפרד יצירות בפסיק (,)</p>
+                  <p className="text-xs text-muted-foreground">{t('piecesHelpText')}</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -159,7 +161,7 @@ export function PracticeLogForm() {
               name="mood"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>איך היה האימון?</FormLabel>
+                  <FormLabel>{t('moodLabel')}</FormLabel>
                   <FormControl>
                     <ToggleGroup
                       type="single"
@@ -170,15 +172,15 @@ export function PracticeLogForm() {
                     >
                       <ToggleGroupItem value="GREAT" aria-label="Great">
                         <ThumbsUp className="h-4 w-4 me-2" />
-                        מעולה
+                        {t('moodGreat')}
                       </ToggleGroupItem>
                       <ToggleGroupItem value="OKAY" aria-label="Okay">
                         <Meh className="h-4 w-4 me-2" />
-                        בסדר
+                        {t('moodOkay')}
                       </ToggleGroupItem>
                       <ToggleGroupItem value="HARD" aria-label="Hard">
                         <Frown className="h-4 w-4 me-2" />
-                        מאתגר
+                        {t('moodHard')}
                       </ToggleGroupItem>
                     </ToggleGroup>
                   </FormControl>
@@ -191,9 +193,9 @@ export function PracticeLogForm() {
               name="studentNote"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>הערות למורה (אופציונלי)</FormLabel>
+                  <FormLabel>{t('notesLabel')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="לדוגמה: התקשיתי במעבר בתיבה 24, אשמח לעבור על זה בשיעור הבא." {...field} />
+                    <Textarea placeholder={t('notesPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +204,7 @@ export function PracticeLogForm() {
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full">
-              שמור אימון
+              {t('saveBtn')}
             </Button>
           </CardFooter>
         </form>

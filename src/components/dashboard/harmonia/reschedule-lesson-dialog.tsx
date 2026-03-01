@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { add, set, format, getDay, isBefore, isToday } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import type { LessonSlot } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
@@ -33,6 +33,7 @@ interface RescheduleLessonDialogProps {
 
 export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }: RescheduleLessonDialogProps) {
     const { users, mockLessons } = useAuth();
+    const dateLocale = useDateLocale();
     const { toast } = useToast();
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
@@ -152,7 +153,7 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
                                             onSelect={field.onChange}
                                             disabled={(date) => isBefore(date, new Date()) && !isToday(date)}
                                             initialFocus
-                                            locale={he}
+                                            locale={dateLocale}
                                             className="rounded-md border"
                                         />
                                     </FormControl>

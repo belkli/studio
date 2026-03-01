@@ -12,22 +12,24 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useTranslations } from "next-intl";
 
-const ApprovalsTable = ({ 
-    forms, 
-    onApprove, 
-    onReject, 
-    showActions 
-}: { 
-    forms: FormSubmission[], 
-    onApprove: (form: FormSubmission) => void, 
+const ApprovalsTable = ({
+    forms,
+    onApprove,
+    onReject,
+    showActions
+}: {
+    forms: FormSubmission[],
+    onApprove: (form: FormSubmission) => void,
     onReject: (form: FormSubmission) => void,
     showActions: boolean
 }) => {
-    
+
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
     const { user } = useAuth();
-    
+    const t = useTranslations("ApprovalsPage");
+
     const handleSelectAll = (checked: boolean | string) => {
         if (checked) {
             setSelectedRows(forms.map(f => f.id));
@@ -35,7 +37,7 @@ const ApprovalsTable = ({
             setSelectedRows([]);
         }
     };
-    
+
     const handleRowSelect = (id: string, checked: boolean) => {
         if (checked) {
             setSelectedRows([...selectedRows, id]);
@@ -43,11 +45,11 @@ const ApprovalsTable = ({
             setSelectedRows(selectedRows.filter(rowId => rowId !== id));
         }
     };
-    
+
     if (forms.length === 0) {
-        return <p className="text-center text-muted-foreground p-8">אין טפסים להצגה.</p>;
+        return <p className="text-center text-muted-foreground p-8">{t('noForms')}</p>;
     }
-    
+
     return (
         <div>
             {user && (user.role === 'conservatorium_admin' || user.role === 'site_admin') && (
@@ -56,51 +58,51 @@ const ApprovalsTable = ({
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" disabled={selectedRows.length === 0}>
                                 <MoreHorizontal className="me-2 h-4 w-4" />
-                                פעולות קבוצתיות ({selectedRows.length})
+                                {t('bulkActions')} ({selectedRows.length})
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem disabled>
                                 <Check className="ms-2 h-4 w-4 text-green-500" />
-                                אשר את כל הבחורים
+                                {t('approveAllSelected')}
                             </DropdownMenuItem>
                             <DropdownMenuItem disabled>
                                 <Download className="ms-2 h-4 w-4" />
-                                יצא כ-PDF
+                                {t('exportAsPdf')}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             )}
-             <Table>
+            <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[50px]">
-                            <Checkbox 
-                                onCheckedChange={handleSelectAll} 
+                            <Checkbox
+                                onCheckedChange={handleSelectAll}
                                 checked={selectedRows.length === forms.length && forms.length > 0}
                                 aria-label="Select all"
                             />
                         </TableHead>
-                        <TableHead>שם התלמיד/ה</TableHead>
-                        <TableHead>סוג</TableHead>
-                        <TableHead>קונסרבטוריון</TableHead>
-                        <TableHead>סטטוס</TableHead>
-                        <TableHead className="text-left">פעולות</TableHead>
+                        <TableHead>{t('studentName')}</TableHead>
+                        <TableHead>{t('type')}</TableHead>
+                        <TableHead>{t('conservatorium')}</TableHead>
+                        <TableHead>{t('status')}</TableHead>
+                        <TableHead className="text-left">{t('actions')}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {forms.map(form => {
-                         const canRevise = (user?.role === 'conservatorium_admin' || user?.role === 'site_admin') && form.status === 'נדרש תיקון';
+                        const canRevise = (user?.role === 'conservatorium_admin' || user?.role === 'site_admin') && form.status === 'נדרש תיקון';
 
                         return (
                             <TableRow key={form.id} data-state={selectedRows.includes(form.id) ? "selected" : ""}>
                                 <TableCell>
-                                     <Checkbox 
+                                    <Checkbox
                                         onCheckedChange={(checked) => handleRowSelect(form.id, !!checked)}
                                         checked={selectedRows.includes(form.id)}
                                         aria-label="Select row"
-                                     />
+                                    />
                                 </TableCell>
                                 <TableCell className="font-medium">
                                     <Link href={`/dashboard/forms/${form.id}`} className="hover:underline">{form.studentName}</Link>
@@ -109,32 +111,32 @@ const ApprovalsTable = ({
                                 <TableCell>{form.conservatoriumName}</TableCell>
                                 <TableCell><StatusBadge status={form.status} /></TableCell>
                                 <TableCell className="text-left">
-                                     <div className="flex justify-end gap-2">
+                                    <div className="flex justify-end gap-2">
                                         <Button asChild variant="outline" size="sm">
                                             <Link href={`/dashboard/forms/${form.id}`}>
                                                 <Eye className="ms-1 h-4 w-4" />
-                                                צפייה
+                                                {t('view')}
                                             </Link>
                                         </Button>
-                                        
+
                                         {showActions && (
                                             <>
                                                 {canRevise ? (
                                                     <Button asChild variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700">
                                                         <Link href={`/dashboard/forms/${form.id}?edit=true`}>
                                                             <Edit className="ms-1 h-4 w-4" />
-                                                            תקן ושלח
+                                                            {t('reviseAndSend')}
                                                         </Link>
                                                     </Button>
                                                 ) : (
                                                     <>
                                                         <Button variant="outline" size="sm" onClick={() => onApprove(form)} className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700">
                                                             <Check className="ms-1 h-4 w-4" />
-                                                            אישור
+                                                            {t('approve')}
                                                         </Button>
                                                         <Button variant="outline" size="sm" onClick={() => onReject(form)} className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
                                                             <ThumbsDown className="ms-1 h-4 w-4" />
-                                                            דחייה
+                                                            {t('reject')}
                                                         </Button>
                                                     </>
                                                 )}
@@ -154,29 +156,30 @@ const ApprovalsTable = ({
 export default function ApprovalsPage() {
     const { user, mockFormSubmissions, updateForm } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations("ApprovalsPage");
 
     const { myQueue, allPending } = useMemo(() => {
         if (!user) return { myQueue: [], allPending: [] };
-        
+
         const myQueueForms: FormSubmission[] = [];
         const allPendingForms = mockFormSubmissions.filter(form => form.status !== 'טיוטה' && form.status !== 'נדחה' && form.status !== 'מאושר סופית');
 
         mockFormSubmissions.forEach(form => {
             let isInMyQueue = false;
 
-            switch(user.role) {
+            switch (user.role) {
                 case 'teacher':
                     if (form.status === 'ממתין לאישור מורה' && user.students?.includes(form.studentId)) {
                         isInMyQueue = true;
                     }
                     break;
                 case 'conservatorium_admin':
-                     if ((form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') && form.conservatoriumId === user.conservatoriumId) {
+                    if ((form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') && form.conservatoriumId === user.conservatoriumId) {
                         isInMyQueue = true;
                     }
                     break;
                 case 'site_admin':
-                     if (form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') {
+                    if (form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') {
                         isInMyQueue = true;
                     }
                     break;
@@ -193,7 +196,7 @@ export default function ApprovalsPage() {
         });
         return { myQueue: myQueueForms, allPending: allPendingForms };
     }, [user, mockFormSubmissions]);
-    
+
     const handleApprove = (form: FormSubmission) => {
         let nextStatus: FormSubmission['status'] | null = null;
         if (form.status === 'ממתין לאישור מורה') nextStatus = 'ממתין לאישור מנהל';
@@ -202,54 +205,56 @@ export default function ApprovalsPage() {
 
         if (nextStatus) {
             updateForm({ ...form, status: nextStatus });
-            toast({ title: "הטופס אושר", description: `הטופס של ${form.studentName} הועבר לשלב הבא.` });
+            toast({ title: t('formApproved'), description: t('formApprovedDesc', { name: form.studentName }) });
         }
     };
-    
+
     const handleReject = (form: FormSubmission) => {
         let newStatus: FormSubmission['status'] = 'נדחה';
         if (form.status === 'מאושר' && user?.role === 'ministry_director') {
             newStatus = 'נדרש תיקון';
         }
         updateForm({ ...form, status: newStatus });
-        toast({ variant: "destructive", title: newStatus === 'נדחה' ? "הטופס נדחה" : "נדרש תיקון", description: `הטופס של ${form.studentName} ${newStatus === 'נדחה' ? 'נדחה' : 'הוחזר לתיקונים'}.` });
+        const titleKey = newStatus === 'נדחה' ? 'formRejected' : 'formNeedsRevision';
+        const action = newStatus === 'נדחה' ? 'rejected' : 'returned for revisions';
+        toast({ variant: "destructive", title: t(titleKey), description: t('formRejectedDesc', { name: form.studentName, action }) });
     };
 
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">אישורים</h1>
-                <p className="text-muted-foreground">כאן תוכל לצפות ולאשר טפסים של תלמידים ומורים.</p>
+                <h1 className="text-2xl font-bold">{t('title')}</h1>
+                <p className="text-muted-foreground">{t('subtitle')}</p>
             </div>
-            
-             <Tabs defaultValue="my-queue">
+
+            <Tabs defaultValue="my-queue">
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="my-queue">
-                        לטיפולך
-                         {myQueue.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">{myQueue.length}</span>}
+                        {t('tabs.forYourHandling')}
+                        {myQueue.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">{myQueue.length}</span>}
                     </TabsTrigger>
-                     <TabsTrigger value="all-open">כלל הטפסים הפתוחים</TabsTrigger>
-                     <TabsTrigger value="overdue" disabled>באיחור</TabsTrigger>
+                    <TabsTrigger value="all-open">{t('tabs.allOpenForms')}</TabsTrigger>
+                    <TabsTrigger value="overdue" disabled>{t('tabs.overdue')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="my-queue" className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>טפסים הממתינים לטיפולך</CardTitle>
-                            <CardDescription>טפסים אלו דורשים את אישורך, דחייתך או תיקונך כדי להתקדם בתהליך.</CardDescription>
+                            <CardTitle>{t('myQueueTitle')}</CardTitle>
+                            <CardDescription>{t('myQueueDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                           <ApprovalsTable forms={myQueue} onApprove={handleApprove} onReject={handleReject} showActions={true} />
+                            <ApprovalsTable forms={myQueue} onApprove={handleApprove} onReject={handleReject} showActions={true} />
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="all-open" className="mt-6">
-                     <Card>
+                    <Card>
                         <CardHeader>
-                            <CardTitle>כלל הטפסים הפתוחים במערכת</CardTitle>
-                            <CardDescription>סקירה כללית של כל הטפסים שנמצאים בתהליך אישור.</CardDescription>
+                            <CardTitle>{t('allOpenTitle')}</CardTitle>
+                            <CardDescription>{t('allOpenDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                           <ApprovalsTable forms={allPending} onApprove={handleApprove} onReject={handleReject} showActions={false}/>
+                            <ApprovalsTable forms={allPending} onApprove={handleApprove} onReject={handleReject} showActions={false} />
                         </CardContent>
                     </Card>
                 </TabsContent>

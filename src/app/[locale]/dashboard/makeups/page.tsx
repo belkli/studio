@@ -11,18 +11,12 @@ import { useTranslations } from 'next-intl';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { he, enUS, ru, ar } from 'date-fns/locale';
-import { useParams } from 'next/navigation';
-import type { Locale } from 'date-fns';
-
-const localesArr: { [key: string]: Locale } = { he, en: enUS, ru, ar };
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 export default function MakeupsPage() {
     const { user, getMakeupCreditBalance, getMakeupCreditsDetail } = useAuth();
     const t = useTranslations('Dashboard.makeups');
-    const { locale } = useParams();
-
-    const dateLocale = localesArr[locale as string] || he;
+    const dateLocale = useDateLocale();
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];

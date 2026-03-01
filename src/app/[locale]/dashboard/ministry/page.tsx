@@ -1,6 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useTranslations } from 'next-intl';
 import type { FormSubmission, FormStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ const ministryViewableStatuses: FormStatus[] = ['מאושר', 'נדרש תיקו
 
 export default function MinistryDashboard() {
   const { user, users, mockFormSubmissions: allForms } = useAuth();
+  const t = useTranslations('Ministry');
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     formType: 'all',
@@ -54,8 +56,8 @@ export default function MinistryDashboard() {
   if (user?.role !== 'ministry_director') {
     return (
       <div className="text-center p-8">
-        <h1 className="text-2xl font-bold text-destructive">אין לך הרשאה לגשת לעמוד זה</h1>
-        <p className="text-muted-foreground">עמוד זה מיועד למנהלי משרד החינוך בלבד.</p>
+        <h1 className="text-2xl font-bold text-destructive">{t('noPermission')}</h1>
+        <p className="text-muted-foreground">{t('noPermissionDesc')}</p>
       </div>
     );
   }
@@ -67,13 +69,13 @@ export default function MinistryDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">לוח בקרה - משרד החינוך</h1>
-        <p className="text-muted-foreground">צפייה ואישור סופי של טפסים שאושרו על ידי הקונסרבטוריונים.</p>
+        <h1 className="text-2xl font-bold">{t('dashboardTitle')}</h1>
+        <p className="text-muted-foreground">{t('dashboardSubtitle')}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>סינון טפסים</CardTitle>
+          <CardTitle>{t('filterForms')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -81,7 +83,7 @@ export default function MinistryDashboard() {
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="חיפוש לפי שם תלמיד או מזהה טופס..."
+                placeholder={t('searchPlaceholder')}
                 className="w-full rounded-lg bg-background pr-10 text-right"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -89,41 +91,41 @@ export default function MinistryDashboard() {
             </div>
 
             <Select dir="rtl" value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
-              <SelectTrigger><SelectValue placeholder="סינון לפי סטטוס" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('filterByStatus')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">כל הסטטוסים</SelectItem>
+                <SelectItem value="all">{t('allStatuses')}</SelectItem>
                 {ministryViewableStatuses.map(s => <SelectItem key={s} value={s}><StatusBadge status={s} /></SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select dir="rtl" value={filters.formType} onValueChange={(v) => handleFilterChange('formType', v)}>
-              <SelectTrigger><SelectValue placeholder="סינון לפי סוג טופס" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('filterByFormType')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">כל סוגי הטפסים</SelectItem>
+                <SelectItem value="all">{t('allFormTypes')}</SelectItem>
                 {formTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select dir="rtl" value={filters.conservatorium} onValueChange={(v) => handleFilterChange('conservatorium', v)}>
-              <SelectTrigger><SelectValue placeholder="סינון לפי קונסרבטוריון" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('filterByConservatorium')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">כל הקונסרבטוריונים</SelectItem>
+                <SelectItem value="all">{t('allConservatories')}</SelectItem>
                 {conservatoriums.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select dir="rtl" value={filters.grade} onValueChange={(v) => handleFilterChange('grade', v)}>
-              <SelectTrigger><SelectValue placeholder="סינון לפי כיתה" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('filterByGrade')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">כל הכיתות</SelectItem>
+                <SelectItem value="all">{t('allGrades')}</SelectItem>
                 {grades.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}>
-              <SelectTrigger><SelectValue placeholder="סינון לפי כלי" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">כל הכלים</SelectItem>
+                <SelectItem value="all">{t('allInstruments')}</SelectItem>
                 {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -133,19 +135,19 @@ export default function MinistryDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>רשימת טפסים</CardTitle>
+          <CardTitle>{t('formsList')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table className="w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>שם התלמיד/ה</TableHead>
-                <TableHead>קונסרבטוריון</TableHead>
-                <TableHead>סוג הטופס</TableHead>
-                <TableHead>כיתה</TableHead>
-                <TableHead>סטטוס</TableHead>
-                <TableHead>תאריך הגשה</TableHead>
-                <TableHead className="text-left"><span className="sr-only">פעולות</span></TableHead>
+                <TableHead>{t('studentName')}</TableHead>
+                <TableHead>{t('conservatorium')}</TableHead>
+                <TableHead>{t('formType')}</TableHead>
+                <TableHead>{t('grade')}</TableHead>
+                <TableHead>{t('status')}</TableHead>
+                <TableHead>{t('submissionDate')}</TableHead>
+                <TableHead className="text-left"><span className="sr-only">{t('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -161,13 +163,13 @@ export default function MinistryDashboard() {
                   <TableCell>{form.submissionDate}</TableCell>
                   <TableCell className="text-left">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/forms/${form.id}`}>צפה וטפל</Link>
+                      <Link href={`/dashboard/forms/${form.id}`}>{t('viewAndProcess')}</Link>
                     </Button>
                   </TableCell>
                 </TableRow>
               )) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground p-8">לא נמצאו טפסים התואמים את הסינון.</TableCell>
+                  <TableCell colSpan={7} className="text-center text-muted-foreground p-8">{t('noFormsFound')}</TableCell>
                 </TableRow>
               )}
             </TableBody>

@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 import type { User, PracticeLog, Package, LessonSlot, SlotStatus, EventProduction } from "@/lib/types";
 import { mockEvents } from "@/lib/data";
 import { format } from "date-fns";
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslations } from "next-intl";
@@ -105,6 +105,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
         [0];
     }, [lessons, student.id]);
 
+    const dateLocale = useDateLocale();
     const t = useTranslations("Dashboard.Teacher");
 
     return (
@@ -123,7 +124,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
                 <div>
                     <p className="font-semibold">{t('nextLesson')}</p>
                     {nextLesson ? (
-                        <p className="text-muted-foreground">{format(new Date(nextLesson.startTime), "EEEE, dd/MM 'בשעה' HH:mm", { locale: he })} ({nextLesson.instrument})</p>
+                        <p className="text-muted-foreground">{format(new Date(nextLesson.startTime), "EEEE, dd/MM 'בשעה' HH:mm", { locale: dateLocale })} ({nextLesson.instrument})</p>
                     ) : (
                         <p className="text-muted-foreground">{t('noNextLesson')}</p>
                     )}

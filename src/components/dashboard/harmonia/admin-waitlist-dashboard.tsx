@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
-import { he, enUS, ru, arSA } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Send, Trash2, ListChecks } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -23,12 +23,7 @@ import {
 import { EmptyState } from '@/components/ui/empty-state';
 import { useTranslations, useLocale } from 'next-intl';
 
-const dateLocales: Record<string, any> = {
-    he: he,
-    en: enUS,
-    ru: ru,
-    ar: arSA,
-};
+
 
 const statusClasses: Record<WaitlistStatus, string> = {
     WAITING: 'bg-blue-100 text-blue-800',
@@ -41,8 +36,7 @@ const statusClasses: Record<WaitlistStatus, string> = {
 export function AdminWaitlistDashboard() {
     const t = useTranslations('Waitlist');
     const tCommon = useTranslations('Common');
-    const locale = useLocale();
-    const dateLocale = dateLocales[locale] || he;
+    const dateLocale = useDateLocale();
 
     const { user, mockWaitlist, updateWaitlistStatus, users } = useAuth();
     const { toast } = useToast();

@@ -24,9 +24,10 @@ import {
     XCircle
 } from "lucide-react";
 import { format } from "date-fns";
-import { he } from "date-fns/locale";
 import type { LessonSlot, User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+import { useDateLocale } from "@/hooks/use-date-locale";
 
 interface LessonDetailDialogProps {
     lesson: LessonSlot | null;
@@ -38,25 +39,6 @@ interface LessonDetailDialogProps {
     isTeacher: boolean;
 }
 
-const typeMap = {
-    'RECURRING': { label: 'שיעור קבוע', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-    'MAKEUP': { label: 'שיעור השלמה', color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
-    'TRIAL': { label: 'שיעור ניסיון', color: 'bg-green-100 text-green-700 border-green-200' },
-    'ADHOC': { label: 'שיעור חד-פעמי', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-    'GROUP': { label: 'שיעור קבוצתי', color: 'bg-teal-100 text-teal-700 border-teal-200' },
-};
-
-const statusMap = {
-    'SCHEDULED': { label: 'מתוזמן', icon: Clock, color: 'text-blue-600' },
-    'COMPLETED': { label: 'בוצע', icon: CheckCircle2, color: 'text-green-600' },
-    'CANCELLED_STUDENT_NOTICED': { label: 'בוטל (בהודעה)', icon: XCircle, color: 'text-red-600' },
-    'CANCELLED_STUDENT_NO_NOTICE': { label: 'בוטל (ללא הודעה)', icon: XCircle, color: 'text-red-700' },
-    'CANCELLED_TEACHER': { label: 'בוטל ע"י מורה', icon: XCircle, color: 'text-red-600' },
-    'CANCELLED_CONSERVATORIUM': { label: 'בוטל ע"י קונסרבטוריון', icon: XCircle, color: 'text-red-600' },
-    'NO_SHOW_STUDENT': { label: 'תלמיד לא הגיע', icon: AlertCircle, color: 'text-orange-600' },
-    'NO_SHOW_TEACHER': { label: 'מורה לא הגיע', icon: AlertCircle, color: 'text-orange-600' },
-};
-
 export function LessonDetailDialog({
     lesson,
     otherUser,
@@ -66,7 +48,29 @@ export function LessonDetailDialog({
     onRescheduleClick,
     isTeacher
 }: LessonDetailDialogProps) {
+    const t = useTranslations('LessonManagement');
+    const dateLocale = useDateLocale();
+
     if (!lesson) return null;
+
+    const typeMap: Record<string, any> = {
+        'RECURRING': { label: t('typeRecurring'), color: 'bg-blue-100 text-blue-700 border-blue-200' },
+        'MAKEUP': { label: t('typeMakeup'), color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
+        'TRIAL': { label: t('typeTrial'), color: 'bg-green-100 text-green-700 border-green-200' },
+        'ADHOC': { label: t('typeAdhoc'), color: 'bg-orange-100 text-orange-700 border-orange-200' },
+        'GROUP': { label: t('typeGroup'), color: 'bg-teal-100 text-teal-700 border-teal-200' },
+    };
+
+    const statusMap: Record<string, any> = {
+        'SCHEDULED': { label: t('statusScheduled'), icon: Clock, color: 'text-blue-600' },
+        'COMPLETED': { label: t('statusCompleted'), icon: CheckCircle2, color: 'text-green-600' },
+        'CANCELLED_STUDENT_NOTICED': { label: t('statusCancelledStudentNotified'), icon: XCircle, color: 'text-red-600' },
+        'CANCELLED_STUDENT_NO_NOTICE': { label: t('statusCancelledStudentNoNotice'), icon: XCircle, color: 'text-red-700' },
+        'CANCELLED_TEACHER': { label: t('statusCancelledTeacher'), icon: XCircle, color: 'text-red-600' },
+        'CANCELLED_CONSERVATORIUM': { label: t('statusCancelledConservatorium'), icon: XCircle, color: 'text-red-600' },
+        'NO_SHOW_STUDENT': { label: t('statusNoShowStudent'), icon: AlertCircle, color: 'text-orange-600' },
+        'NO_SHOW_TEACHER': { label: t('statusNoShowTeacher'), icon: AlertCircle, color: 'text-orange-600' },
+    };
 
     const typeInfo = typeMap[lesson.type] || typeMap['RECURRING'];
     const statusInfo = statusMap[lesson.status] || statusMap['SCHEDULED'];
@@ -90,10 +94,10 @@ export function LessonDetailDialog({
                     </div>
                     <DialogTitle className="text-xl flex items-center gap-2">
                         <Music className="h-5 w-5 text-muted-foreground" />
-                        שיעור {lesson.instrument}
+                        {t('instrumentLesson', { instrument: lesson.instrument })}
                     </DialogTitle>
                     <DialogDescription className="text-right">
-                        פרטי השיעור המלאים
+                        {t('fullLessonDetails')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -103,8 +107,8 @@ export function LessonDetailDialog({
                             <User className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground text-xs">{isTeacher ? "תלמיד/ה" : "מורה"}</p>
-                            <p className="font-medium">{otherUser?.name || "לא נמצא"}</p>
+                            <p className="text-muted-foreground text-xs">{isTeacher ? t('studentLabel') : t('teacherLabel')}</p>
+                            <p className="font-medium">{otherUser?.name || t('notFound')}</p>
                         </div>
                     </div>
 
@@ -113,8 +117,8 @@ export function LessonDetailDialog({
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground text-xs">תאריך</p>
-                            <p className="font-medium">{format(startTime, 'EEEE, d בMMMM yyyy', { locale: he })}</p>
+                            <p className="text-muted-foreground text-xs">{t('dateLabel')}</p>
+                            <p className="font-medium">{format(startTime, 'EEEE, d MMMM yyyy', { locale: dateLocale })}</p>
                         </div>
                     </div>
 
@@ -123,9 +127,9 @@ export function LessonDetailDialog({
                             <Clock className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div>
-                            <p className="text-muted-foreground text-xs">זמן ומשך</p>
+                            <p className="text-muted-foreground text-xs">{t('timeAndDuration')}</p>
                             <p className="font-medium">
-                                {format(startTime, 'HH:mm')} ({lesson.durationMinutes} דקות)
+                                {format(startTime, 'HH:mm')} {t('durationMinutesStr', { durationMinutes: lesson.durationMinutes })}
                             </p>
                         </div>
                     </div>
@@ -135,14 +139,14 @@ export function LessonDetailDialog({
                             {lesson.isVirtual ? <Video className="h-4 w-4 text-muted-foreground" /> : <MapPin className="h-4 w-4 text-muted-foreground" />}
                         </div>
                         <div>
-                            <p className="text-muted-foreground text-xs">מיקום</p>
+                            <p className="text-muted-foreground text-xs">{t('locationLabel')}</p>
                             <p className="font-medium">
                                 {lesson.isVirtual ? (
                                     <a href={lesson.meetingLink} target="_blank" rel="noreferrer" className="text-primary hover:underline flex items-center gap-1">
-                                        קישור לשיעור וירטואלי
+                                        {t('virtualLessonLink')}
                                     </a>
                                 ) : (
-                                    `חדר ${lesson.roomId || 'לא נקבע'}`
+                                    lesson.roomId ? t('roomSet', { roomId: lesson.roomId }) : t('roomNotSet')
                                 )}
                             </p>
                         </div>
@@ -152,7 +156,7 @@ export function LessonDetailDialog({
                         <div className="bg-muted/50 p-3 rounded-lg mt-2 border border-muted">
                             <div className="flex items-center gap-2 mb-1 text-xs text-muted-foreground font-semibold">
                                 <Info className="h-3 w-3" />
-                                הערות מורה
+                                {t('teacherNotes')}
                             </div>
                             <p className="text-sm italic">"{lesson.teacherNote}"</p>
                         </div>
@@ -163,15 +167,15 @@ export function LessonDetailDialog({
                     {!isPast && !isCancelled && (
                         <>
                             <Button variant="default" className="flex-1" onClick={() => onRescheduleClick(lesson)}>
-                                שינוי מועד
+                                {t('rescheduleAction')}
                             </Button>
                             <Button variant="outline" className="flex-1 border-destructive text-destructive hover:bg-destructive/10" onClick={() => onCancelClick(lesson)}>
-                                ביטול שיעור
+                                {t('cancelLessonAction')}
                             </Button>
                         </>
                     )}
                     <Button variant="secondary" className={cn((isPast || isCancelled) ? "w-full" : "hidden sm:inline-flex")} onClick={() => onOpenChange(false)}>
-                        סגור
+                        {t('closeAction')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

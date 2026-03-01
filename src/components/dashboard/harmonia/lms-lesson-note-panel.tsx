@@ -11,10 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Save, AlertTriangle, Music, Mic, FileText, CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, studentId: string }) {
     const { mockLessonNotes, addLessonNote, users } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('LessonManagement');
 
     const [publicSummary, setPublicSummary] = useState('');
     const [homeworkDesc, setHomeworkDesc] = useState('');
@@ -61,7 +63,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
             isSharedWithStudent: true
         });
 
-        toast({ title: 'סיכום השיעור נשמר בהצלחה.' });
+        toast({ title: t('noteSavedSuccess') });
     };
 
     const toggleFlag = (flag: string) => {
@@ -69,21 +71,21 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
     };
 
     const technicalOptions = [
-        { value: 'POSTURE', label: 'יציבה' },
-        { value: 'TONE', label: 'הפקת צליל' },
-        { value: 'RHYTHM', label: 'קצב' },
-        { value: 'THEORY_GAP', label: 'פער תיאורטי' },
-        { value: 'MOTIVATION', label: 'מוטיבציה' },
-        { value: 'TECHNIQUE', label: 'טכניקה' },
+        { value: 'POSTURE', label: t('posture') },
+        { value: 'TONE', label: t('toneProduction') },
+        { value: 'RHYTHM', label: t('rhythm') },
+        { value: 'THEORY_GAP', label: t('theoryGap') },
+        { value: 'MOTIVATION', label: t('motivation') },
+        { value: 'TECHNIQUE', label: t('technique') },
     ];
 
     return (
         <Card className="max-w-4xl border-t-4 border-t-primary">
             <CardHeader className="bg-muted/30 pb-4">
                 <CardTitle className="flex justify-between items-center">
-                    <span>סיכום שיעור - תלמיד/ה: {student?.name}</span>
+                    <span>{t('lessonNoteStudent', { name: student?.name || '' })}</span>
                     <Badge variant={existingNote ? 'default' : 'secondary'}>
-                        {existingNote ? 'נערך בעבר' : 'טיוטה חדשה'}
+                        {existingNote ? t('previouslyEdited') : t('newDraft')}
                     </Badge>
                 </CardTitle>
             </CardHeader>
@@ -94,14 +96,14 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                     <div className="space-y-4 border-l pl-6">
                         <div className="flex items-center gap-2 font-semibold text-lg text-primary">
                             <FileText className="w-5 h-5" />
-                            <span>סיכום ומשימות ציבורי</span>
-                            <span className="text-xs font-normal text-muted-foreground">(גלוי לתלמיד ולהורה)</span>
+                            <span>{t('publicSummaryTasks')}</span>
+                            <span className="text-xs font-normal text-muted-foreground">{t('visibleToStudentParent')}</span>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>מה למדנו היום?</Label>
+                            <Label>{t('whatDidWeLearn')}</Label>
                             <Textarea
-                                placeholder="למשל: היום התמקדנו בסולמות ובטכניקת אצבוע..."
+                                placeholder={t('whatDidWeLearnPlaceholder')}
                                 value={publicSummary}
                                 onChange={(e) => setPublicSummary(e.target.value)}
                                 className="h-24"
@@ -109,18 +111,18 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                         </div>
 
                         <div className="space-y-2">
-                            <Label>שיעורי בית / יצירות לתרגול</Label>
+                            <Label>{t('homeworkPieces')}</Label>
                             <Input
-                                placeholder="למשל: סונטה בדו מז'ור, סולם פה מינור"
+                                placeholder={t('homeworkPiecesPlaceholder')}
                                 value={homeworkPieces}
                                 onChange={(e) => setHomeworkPieces(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label>הערה נוספת לתרגול</Label>
+                            <Label>{t('additionalPracticeNote')}</Label>
                             <Textarea
-                                placeholder="למשל: נא להקפיד על הדינמיקה בתיבות 15-20."
+                                placeholder={t('additionalPracticeNotePlaceholder')}
                                 value={homeworkDesc}
                                 onChange={(e) => setHomeworkDesc(e.target.value)}
                                 className="h-20"
@@ -132,14 +134,14 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 font-semibold text-lg text-purple-600">
                             <AlertTriangle className="w-5 h-5" />
-                            <span>יומן פדגוגי אישי</span>
-                            <span className="text-xs font-normal text-muted-foreground">(לעיונך בלבד)</span>
+                            <span>{t('personalPedagogicalLog')}</span>
+                            <span className="text-xs font-normal text-muted-foreground">{t('forYourEyesOnly')}</span>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>רשמים והערות סטודיו</Label>
+                            <Label>{t('studioImpressions')}</Label>
                             <Textarea
-                                placeholder="רשמים אישיים, בעיות, תכנון לשיעור הבא..."
+                                placeholder={t('studioImpressionsPlaceholder')}
                                 value={privateNote}
                                 onChange={(e) => setPrivateNote(e.target.value)}
                                 className="h-32 bg-purple-50/50"
@@ -147,7 +149,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                         </div>
 
                         <div className="space-y-2">
-                            <Label>דגלים טכניים (במעקב)</Label>
+                            <Label>{t('technicalFlagsTracked')}</Label>
                             <div className="flex flex-wrap gap-2">
                                 {technicalOptions.map(opt => (
                                     <Badge
@@ -163,16 +165,16 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                         </div>
 
                         <div className="space-y-2">
-                            <Label>אווירת השיעור (Mood)</Label>
+                            <Label>{t('lessonMood')}</Label>
                             <Select dir="rtl" value={mood} onValueChange={setMood}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="בחר אווירה..." />
+                                    <SelectValue placeholder={t('selectMood')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="GREAT_SESSION">מצוין - פוקוס מלא</SelectItem>
-                                    <SelectItem value="PRODUCTIVE">פרודוקטיבי - התקדמות טובה</SelectItem>
-                                    <SelectItem value="CHALLENGING">מאתגר - קשיי ריכוז/טכניקה</SelectItem>
-                                    <SelectItem value="CONCERN">מדאיג - דורש שיחה עם ההורים</SelectItem>
+                                    <SelectItem value="GREAT_SESSION">{t('moodExcellent')}</SelectItem>
+                                    <SelectItem value="PRODUCTIVE">{t('moodProductive')}</SelectItem>
+                                    <SelectItem value="CHALLENGING">{t('moodChallenging')}</SelectItem>
+                                    <SelectItem value="CONCERN">{t('moodConcerning')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -180,8 +182,8 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
                 </div>
             </CardContent>
             <CardFooter className="bg-muted/30 flex justify-between pt-4">
-                <Button variant="outline"><Mic className="w-4 h-4 me-2" /> הוסף פידבק קולי</Button>
-                <Button onClick={handleSave} className="w-32"><Save className="w-4 h-4 me-2" /> שמור סיכום</Button>
+                <Button variant="outline"><Mic className="w-4 h-4 me-2" /> {t('addVoiceFeedback')}</Button>
+                <Button onClick={handleSave} className="w-32"><Save className="w-4 h-4 me-2" /> {t('saveNote')}</Button>
             </CardFooter>
         </Card>
     );

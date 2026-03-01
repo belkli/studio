@@ -9,20 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { he, enUS, ru, arSA } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Check, Send, Download, Banknote, FileSpreadsheet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useTranslations, useLocale } from 'next-intl';
-
-const dateLocales: Record<string, any> = {
-    he: he,
-    en: enUS,
-    ru: ru,
-    ar: arSA,
-};
 
 /**
  * Renders a table of payroll summaries within an accordion.
@@ -31,8 +24,7 @@ const dateLocales: Record<string, any> = {
  */
 const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
     const t = useTranslations('Payroll');
-    const locale = useLocale();
-    const dateLocale = dateLocales[locale] || he;
+    const dateLocale = useDateLocale();
     const { updatePayrollStatus } = useAuth();
     const { toast } = useToast();
 

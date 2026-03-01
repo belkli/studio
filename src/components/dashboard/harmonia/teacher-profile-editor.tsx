@@ -13,6 +13,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { languages, teacherSpecialties } from "@/lib/data";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TranslatedFieldInput } from "./translated-field-input";
+import { Sparkles } from "lucide-react";
+import { translateUserProfile } from "@/app/actions/translate";
+import { computeUserSourceHash } from "@/lib/utils/translation-hash";
 
 const profileSchema = z.object({
     name: z.string().min(2, "שם חייב להכיל לפחות 2 תווים."),
@@ -27,6 +31,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 export function TeacherProfileEditor() {
     const { user, updateUser } = useAuth();
     const { toast } = useToast();
+    const [isTranslating, setIsTranslating] = useState(false);
 
     const form = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
@@ -41,12 +46,74 @@ export function TeacherProfileEditor() {
 
     if (!user) return null;
 
-    const onSubmit = (data: ProfileFormData) => {
-        const updatedUser = { ...user, ...data };
+    const onSubmit = async (data: ProfileFormData) => {
+        let updatedUser = { ...user, ...data };
+
+        // Auto-translate if bio changed
+        const currentHash = computeUserSourceHash(updatedUser as any);
+        const isStale = currentHash !== user.translationMeta?.sourceHash;
+
+        if (isStale && data.bio) {
+            setIsTranslating(true);
+            toast({
+                title: "מעדכן תרגומים...",
+                description: "ה-AI מעדכן את הביוגרפיה שלך בשפות נוספות.",
+            });
+
+            const result = await translateUserProfile(
+                updatedUser as any,
+                ['en', 'ar', 'ru'],
+                user.translations,
+                user.translationMeta?.overrides
+            );
+
+            if (result.success && result.translations && result.meta) {
+                updatedUser = {
+                    ...updatedUser,
+                    translations: result.translations,
+                    translationMeta: {
+                        ...result.meta,
+                        overrides: user.translationMeta?.overrides
+                    }
+                } as any;
+            }
+            setIsTranslating(false);
+        }
+
         updateUser(updatedUser as any);
 
         toast({
             title: "הפרופיל עודכן בהצלחה!",
+        });
+    };
+
+    const handleTranslationChange = (field: string, locale: string, value: string) => {
+        if (!user) return;
+
+        const currentTranslations = user.translations || {};
+        const localeData = (currentTranslations as any)[locale] || {};
+        const updatedTranslations = {
+            ...currentTranslations,
+            [locale]: { ...localeData, [field]: value }
+        };
+
+        const currentOverrides = user.translationMeta?.overrides || {};
+        const localeOverrides = [...(currentOverrides[locale] || [])];
+        if (!localeOverrides.includes(field)) {
+            localeOverrides.push(field);
+        }
+
+        updateUser({
+            ...user,
+            translations: updatedTranslations,
+            translationMeta: {
+                ...user.translationMeta,
+                overrides: {
+                    ...currentOverrides,
+                    [locale]: localeOverrides
+                },
+                translatedBy: 'HUMAN'
+            }
         });
     };
 
@@ -67,7 +134,29 @@ export function TeacherProfileEditor() {
                             <FormField control={form.control} name="name" render={({ field }) => (<FormItem><FormLabel>שם מלא</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             <FormField control={form.control} name="email" render={({ field }) => (<FormItem><FormLabel>אימייל</FormLabel><FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         </div>
-                        <FormField control={form.control} name="bio" render={({ field }) => (<FormItem><FormLabel>ביוגרפיה קצרה</FormLabel><FormControl><Textarea rows={5} placeholder="ספר/י על עצמך, על הניסיון והגישה הפדגוגית שלך..." {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="bio" render={({ field }) => (
+                            <FormItem>
+                                <TranslatedFieldInput
+                                    label="ביוגרפיה קצרה"
+                                    value={field.value || ''}
+                                    translations={{
+                                        en: user.translations?.en?.bio,
+                                        ar: user.translations?.ar?.bio,
+                                        ru: user.translations?.ru?.bio,
+                                    }}
+                                    fieldKey="bio"
+                                    isTextArea
+                                    onSourceChange={field.onChange}
+                                    onTranslationChange={(loc, val) => handleTranslationChange('bio', loc, val)}
+                                    isStale={computeUserSourceHash({ ...user, bio: field.value } as any) !== user.translationMeta?.sourceHash}
+                                    isTranslating={isTranslating}
+                                    overriddenLocales={Object.entries(user.translationMeta?.overrides || {})
+                                        .filter(([_, fields]) => fields.includes('bio'))
+                                        .map(([loc]) => loc)}
+                                />
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
                         <FormField name="specialties" render={() => (
                             <FormItem>
@@ -109,7 +198,9 @@ export function TeacherProfileEditor() {
 
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit" className="w-full">שמור שינויים</Button>
+                        <Button type="submit" className="w-full" disabled={isTranslating}>
+                            {isTranslating ? "מעדכן תרגומים..." : "שמור שינויים"}
+                        </Button>
                     </CardFooter>
                 </form>
             </FormProvider>

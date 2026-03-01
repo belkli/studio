@@ -6,11 +6,12 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Megaphone, Mail, MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import type { Channel } from '@/lib/types';
 
 export function RecentAnnouncementsCard() {
     const { mockAnnouncements, user } = useAuth();
+    const dateLocale = useDateLocale();
 
     const relevantAnnouncements = mockAnnouncements
         .filter(ann => ann.conservatoriumId === user?.conservatoriumId)
@@ -36,7 +37,7 @@ export function RecentAnnouncementsCard() {
                         <div className="flex justify-between items-start">
                             <h4 className="font-semibold text-sm">{ann.title}</h4>
                             <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                {formatDistanceToNow(new Date(ann.sentAt), { addSuffix: true, locale: he })}
+                                {formatDistanceToNow(new Date(ann.sentAt), { addSuffix: true, locale: dateLocale })}
                             </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>

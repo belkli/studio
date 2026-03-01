@@ -8,10 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { BellRing, Smartphone, Mail, AlertTriangle, Clock, Settings, Save } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function ParentNotificationPanel() {
     const { toast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
+    const t = useTranslations('ParentNotificationPanel');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     // Preferences state
     const [prefs, setPrefs] = useState({
@@ -35,7 +39,7 @@ export function ParentNotificationPanel() {
         setIsSaving(true);
         setTimeout(() => {
             setIsSaving(false);
-            toast({ title: 'העדפות התראות עודכנו בהצלחה', variant: 'default' });
+            toast({ title: t('successMsg'), variant: 'default' });
         }, 800);
     };
 
@@ -44,28 +48,28 @@ export function ParentNotificationPanel() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <BellRing className="w-5 h-5 text-purple-600" />
-                    הגדרות התראה ועדכונים
+                    {t('panelTitle')}
                 </CardTitle>
                 <CardDescription>
-                    בחר כיצד נעדכן אותך בנוגע לנוכחות, תשלומים ואירועי הקונסרבטוריון.
+                    {t('panelDesc')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
 
                 {/* Channels Grid */}
                 <div className="space-y-4">
-                    <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2"><Settings className="w-4 h-4" /> ערוצי תקשורת</h3>
+                    <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2"><Settings className="w-4 h-4" /> {t('channelsTitle')}</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-medium text-sm text-center mb-2 px-4">
-                        <div className="hidden md:block text-right">סוג עדכון</div>
-                        <div className="flex items-center justify-center gap-2 text-blue-700 bg-blue-50 py-2 rounded-md"><Smartphone className="w-4 h-4" /> הודעת SMS</div>
-                        <div className="flex items-center justify-center gap-2 text-indigo-700 bg-indigo-50 py-2 rounded-md"><Mail className="w-4 h-4" /> דואר אלקטרוני</div>
+                        <div className={`hidden md:block ${isRtl ? 'text-right' : 'text-left'}`}>{t('colUpdateType')}</div>
+                        <div className="flex items-center justify-center gap-2 text-blue-700 bg-blue-50 py-2 rounded-md"><Smartphone className="w-4 h-4" /> {t('colSms')}</div>
+                        <div className="flex items-center justify-center gap-2 text-indigo-700 bg-indigo-50 py-2 rounded-md"><Mail className="w-4 h-4" /> {t('colEmail')}</div>
                     </div>
 
                     <div className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-border transition-colors">
                             <div className="font-semibold flex items-center gap-2">
-                                נוכחות ושיעורים
+                                {t('rowAttendance')}
                                 <AlertTriangle className="w-4 h-4 text-orange-500" />
                             </div>
                             <div className="flex justify-center"><Switch checked={prefs.attendanceSms} onCheckedChange={() => handleToggle('attendanceSms')} /></div>
@@ -74,21 +78,21 @@ export function ParentNotificationPanel() {
                     </div>
                     <div className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-border transition-colors">
-                            <div className="font-semibold">תשלומים וחשבוניות</div>
+                            <div className="font-semibold">{t('rowPayments')}</div>
                             <div className="flex justify-center"><Switch checked={prefs.paymentSms} onCheckedChange={() => handleToggle('paymentSms')} /></div>
                             <div className="flex justify-center"><Switch checked={prefs.paymentEmail} onCheckedChange={() => handleToggle('paymentEmail')} /></div>
                         </div>
                     </div>
                     <div className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-border transition-colors">
-                            <div className="font-semibold">אירועים וקונצרטים</div>
+                            <div className="font-semibold">{t('rowEvents')}</div>
                             <div className="flex justify-center"><Switch checked={prefs.generalSms} onCheckedChange={() => handleToggle('generalSms')} /></div>
                             <div className="flex justify-center"><Switch checked={prefs.generalEmail} onCheckedChange={() => handleToggle('generalEmail')} /></div>
                         </div>
                     </div>
                     <div className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-border transition-colors">
-                            <div className="font-semibold text-muted-foreground">שיווק ומבצעים</div>
+                            <div className="font-semibold text-muted-foreground">{t('rowMarketing')}</div>
                             <div className="flex justify-center"><Switch checked={prefs.marketingSms} onCheckedChange={() => handleToggle('marketingSms')} /></div>
                             <div className="flex justify-center"><Switch disabled checked={false} /></div>
                         </div>
@@ -101,10 +105,10 @@ export function ParentNotificationPanel() {
                         <div className="flex flex-col">
                             <Label className="text-base font-semibold flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-purple-600" />
-                                שעות שקטות (Quiet Hours)
+                                {t('quietHoursTitle')}
                             </Label>
                             <span className="text-sm text-muted-foreground mt-1">
-                                השהיית מסרונים לא דחופים (שאינם נוכחות) מחוץ לשעות הפעילות.
+                                {t('quietHoursDesc')}
                             </span>
                         </div>
                         <Switch checked={prefs.quietHoursEnabled} onCheckedChange={() => handleToggle('quietHoursEnabled')} />
@@ -113,8 +117,8 @@ export function ParentNotificationPanel() {
                     {prefs.quietHoursEnabled && (
                         <div className="grid grid-cols-2 gap-6 pt-4 border-t mt-4">
                             <div className="space-y-2">
-                                <Label>החל משעה</Label>
-                                <Select dir="rtl" value={prefs.quietHoursStart} onValueChange={(val) => setPrefs(prev => ({ ...prev, quietHoursStart: val }))}>
+                                <Label>{t('fromTimeLabel')}</Label>
+                                <Select dir={isRtl ? 'rtl' : 'ltr'} value={prefs.quietHoursStart} onValueChange={(val) => setPrefs(prev => ({ ...prev, quietHoursStart: val }))}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="20:00">20:00</SelectItem>
@@ -125,13 +129,13 @@ export function ParentNotificationPanel() {
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label>ועד שעה</Label>
-                                <Select dir="rtl" value={prefs.quietHoursEnd} onValueChange={(val) => setPrefs(prev => ({ ...prev, quietHoursEnd: val }))}>
+                                <Label>{t('untilTimeLabel')}</Label>
+                                <Select dir={isRtl ? 'rtl' : 'ltr'} value={prefs.quietHoursEnd} onValueChange={(val) => setPrefs(prev => ({ ...prev, quietHoursEnd: val }))}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="06:00">06:00 בוקר</SelectItem>
-                                        <SelectItem value="07:00">07:00 בוקר</SelectItem>
-                                        <SelectItem value="08:00">08:00 בוקר</SelectItem>
+                                        <SelectItem value="06:00">06:00 {t('morningLabel')}</SelectItem>
+                                        <SelectItem value="07:00">07:00 {t('morningLabel')}</SelectItem>
+                                        <SelectItem value="08:00">08:00 {t('morningLabel')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -139,9 +143,9 @@ export function ParentNotificationPanel() {
                     )}
                 </div>
 
-                <div className="pt-4 flex justify-end">
+                <div className={`pt-4 flex ${isRtl ? 'justify-end' : 'justify-start'}`}>
                     <Button onClick={handleSave} disabled={isSaving} className="px-8">
-                        {isSaving ? 'שומר...' : <><Save className="w-4 h-4 mr-2" /> שמירת שינויים</>}
+                        {isSaving ? t('savingBtn') : <><Save className="w-4 h-4 mr-2" /> {t('saveBtn')}</>}
                     </Button>
                 </div>
 

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Video, MessageSquare, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import type { PracticeVideo, User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -19,13 +19,14 @@ interface MultimediaFeedbackCardProps {
 
 export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps) {
   const { mockPracticeVideos, addVideoFeedback } = useAuth();
+  const dateLocale = useDateLocale();
   const { toast } = useToast();
   const [newFeedback, setNewFeedback] = useState<Record<string, string>>({});
 
   const studentVideos = useMemo(() => {
     return mockPracticeVideos
       .filter(v => v.studentId === student.id)
-      .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [mockPracticeVideos, student.id]);
 
   const handleSendFeedback = (videoId: string) => {
@@ -36,7 +37,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
     setNewFeedback(prev => ({ ...prev, [videoId]: '' }));
     toast({ title: 'המשוב נשלח בהצלחה' });
   };
-  
+
   return (
     <Card>
       <CardHeader>
@@ -61,7 +62,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                     <Button variant="outline" size="sm">צפה בסרטון</Button>
                   </div>
                   {video.studentNote && <p className="text-sm italic mt-2 p-2 bg-background/50 rounded-md">"{video.studentNote}"</p>}
-                  
+
                   <div className="mt-4 space-y-3">
                     <h5 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" />המשוב שלך:</h5>
                     {video.feedback?.map((fb, index) => (
@@ -69,20 +70,20 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                         <p>{fb.comment}</p>
                         <p className="text-muted-foreground text-right mt-1">
                           <Clock className="h-3 w-3 inline-block ms-1" />
-                          {formatDistanceToNow(new Date(fb.createdAt), { addSuffix: true, locale: he })}
+                          {formatDistanceToNow(new Date(fb.createdAt), { addSuffix: true, locale: dateLocale })}
                         </p>
                       </div>
                     ))}
                     <div className="flex gap-2">
-                       <Textarea 
-                         placeholder="כתוב משוב..." 
-                         rows={2} 
-                         value={newFeedback[video.id] || ''}
-                         onChange={(e) => setNewFeedback(prev => ({ ...prev, [video.id]: e.target.value }))}
-                       />
-                       <Button size="icon" onClick={() => handleSendFeedback(video.id)} disabled={!newFeedback[video.id]}>
-                         <Send className="h-4 w-4" />
-                       </Button>
+                      <Textarea
+                        placeholder="כתוב משוב..."
+                        rows={2}
+                        value={newFeedback[video.id] || ''}
+                        onChange={(e) => setNewFeedback(prev => ({ ...prev, [video.id]: e.target.value }))}
+                      />
+                      <Button size="icon" onClick={() => handleSendFeedback(video.id)} disabled={!newFeedback[video.id]}>
+                        <Send className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>

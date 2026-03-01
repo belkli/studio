@@ -11,6 +11,7 @@ import { differenceInYears } from 'date-fns';
 import { AgeUpgradeModal } from "./age-upgrade-modal";
 import type { User } from "@/lib/types";
 import { WeeklyDigestCard } from "./weekly-digest-card";
+import { PlayingSchoolChildCard } from "./playing-school-child-card";
 
 export function FamilyHub() {
     const { user, users, isLoading } = useAuth();
@@ -40,6 +41,12 @@ export function FamilyHub() {
                     return (
                         <div key={child.id} id={`child-card-${index}`} className="flex flex-col gap-6">
                             <WeeklyDigestCard child={child} />
+                            {child.playingSchoolInfo && (
+                                <PlayingSchoolChildCard
+                                    child={child}
+                                    psInfo={child.playingSchoolInfo}
+                                />
+                            )}
                             {needsAgeUpgrade && (
                                 <Button variant="outline" className="w-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/20" onClick={() => setSelectedChildForUpgrade(child)}>
                                     הזמן את {child.name.split(' ')[0]} לנהל את החשבון

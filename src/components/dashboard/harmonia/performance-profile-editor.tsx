@@ -3,20 +3,21 @@ import { useAuth } from "@/hooks/use-auth";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { languages, performanceGenres } from "@/lib/data";
+import { performanceGenres } from "@/lib/data";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Music, PlusCircle, Save, Trash2, Video } from "lucide-react";
+import { PlusCircle, Save, Trash2, Video } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
+import { useTranslations } from 'next-intl';
 
-const performanceProfileSchema = z.object({
+const createPerformanceProfileSchema = (t: any) => z.object({
     isOptedIn: z.boolean().default(false),
     headline: z.string().optional(),
     performanceBio: z.string().optional(),
@@ -24,16 +25,18 @@ const performanceProfileSchema = z.object({
     canPerformSolo: z.boolean().default(false),
     canPerformChamber: z.boolean().default(false),
     videoLinks: z.array(z.object({
-        title: z.string().min(1, "נדרשת כותרת"),
-        url: z.string().url("כתובת לא תקינה"),
+        title: z.string().min(1, t('validationTitleRequired')),
+        url: z.string().url(t('validationInvalidUrl')),
     })).optional(),
 });
-
-type PerformanceProfileFormData = z.infer<typeof performanceProfileSchema>;
 
 export function PerformanceProfileEditor() {
     const { user, updateUser } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('PerformanceProfileEditor');
+
+    const performanceProfileSchema = createPerformanceProfileSchema(t);
+    type PerformanceProfileFormData = z.infer<typeof performanceProfileSchema>;
 
     const form = useForm<PerformanceProfileFormData>({
         resolver: zodResolver(performanceProfileSchema) as any,
@@ -50,7 +53,7 @@ export function PerformanceProfileEditor() {
 
     const { fields, append, remove } = useFieldArray({
         control: form.control,
-        name: 'videoLinks'
+        name: 'videoLinks' as never
     });
 
     if (!user || user.role !== 'teacher') return null;
@@ -65,7 +68,7 @@ export function PerformanceProfileEditor() {
         };
         updateUser(updatedUser as any);
         toast({
-            title: "פרופיל ההופעות שלך עודכן!",
+            title: t('profileUpdated'),
         });
         form.reset(data);
     };
@@ -84,10 +87,10 @@ export function PerformanceProfileEditor() {
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                         <div className="space-y-0.5">
                                             <FormLabel className="text-base">
-                                                הצטרפות ל-Musicians for Hire
+                                                {t('optInTitle')}
                                             </FormLabel>
                                             <FormDescription>
-                                                אפשר למנהלי אירועים למצוא אותך ולהזמין אותך להופעות דרך הפלטפורמה.
+                                                {t('optInDesc')}
                                             </FormDescription>
                                         </div>
                                         <FormControl>
@@ -106,8 +109,8 @@ export function PerformanceProfileEditor() {
                         <>
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>פרופיל ציבורי</CardTitle>
-                                    <CardDescription>פרטים אלו יוצגו למזמיני אירועים פוטנציאליים.</CardDescription>
+                                    <CardTitle>{t('publicProfileTitle')}</CardTitle>
+                                    <CardDescription>{t('publicProfileDesc')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-4">
@@ -117,19 +120,19 @@ export function PerformanceProfileEditor() {
                                         </Avatar>
                                         <Input value={user.name} disabled className="text-lg font-bold" />
                                     </div>
-                                    <FormField control={form.control} name="headline" render={({ field }) => (<FormItem><FormLabel>כותרת מקצועית</FormLabel><FormControl><Input placeholder="לדוגמה: כנר קונצרטים ומוזיקאי קאמרי" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                    <FormField control={form.control} name="performanceBio" render={({ field }) => (<FormItem><FormLabel>ביוגרפיה להופעות</FormLabel><FormControl><Textarea rows={5} placeholder="ספר על עצמך כמופיע, על סגנונותיך, ועל הניסיון הבימתי שלך." {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={form.control} name="headline" render={({ field }) => (<FormItem><FormLabel>{t('headlineLabel')}</FormLabel><FormControl><Input placeholder={t('headlinePlaceholder')} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={form.control} name="performanceBio" render={({ field }) => (<FormItem><FormLabel>{t('bioLabel')}</FormLabel><FormControl><Textarea rows={5} placeholder={t('bioPlaceholder')} {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 </CardContent>
                             </Card>
 
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>יכולות ביצוע</CardTitle>
+                                    <CardTitle>{t('capabilitiesTitle')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <FormField name="performanceGenres" render={() => (
                                         <FormItem>
-                                            <FormLabel>ז'אנרים להופעה</FormLabel>
+                                            <FormLabel>{t('genresLabel')}</FormLabel>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
                                                 {performanceGenres.map((item) => (
                                                     <FormField key={item.id} name="performanceGenres" render={({ field }) => (
@@ -143,33 +146,33 @@ export function PerformanceProfileEditor() {
                                         </FormItem>
                                     )} />
                                     <div className="flex gap-4">
-                                        <FormField control={form.control} name="canPerformSolo" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>יכול/ה להופיע כסולן/ית</FormLabel></FormItem>)} />
-                                        <FormField control={form.control} name="canPerformChamber" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>יכול/ה להופיע בהרכב קאמרי</FormLabel></FormItem>)} />
+                                        <FormField control={form.control} name="canPerformSolo" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('soloToggle')}</FormLabel></FormItem>)} />
+                                        <FormField control={form.control} name="canPerformChamber" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('chamberToggle')}</FormLabel></FormItem>)} />
                                     </div>
                                 </CardContent>
                             </Card>
 
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>מדיה</CardTitle>
-                                    <CardDescription>הוסף קישורים לסרטוני YouTube או Vimeo המציגים את ביצועיך.</CardDescription>
+                                    <CardTitle>{t('mediaTitle')}</CardTitle>
+                                    <CardDescription>{t('mediaDesc')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {fields.map((field, index) => (
                                         <div key={field.id} className="flex items-end gap-2 p-3 border rounded-lg">
-                                            <FormField control={form.control} name={`videoLinks.${index}.title`} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>כותרת</FormLabel> <FormControl><Input placeholder="לדוגמה: קונצ'רטו של בטהובן" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                                            <FormField control={form.control} name={`videoLinks.${index}.url`} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>קישור</FormLabel> <InputGroup><InputGroupText><Video className="h-4 w-4" /></InputGroupText><FormControl><Input dir="ltr" placeholder="https://youtube.com/watch?v=..." {...field} className="rounded-s-none" /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
+                                            <FormField control={form.control} name={`videoLinks.${index}.title` as never} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>{t('videoTitleLabel')}</FormLabel> <FormControl><Input placeholder={t('videoTitlePlaceholder')} {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                            <FormField control={form.control} name={`videoLinks.${index}.url` as never} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>{t('videoUrlLabel')}</FormLabel> <InputGroup><InputGroupText><Video className="h-4 w-4" /></InputGroupText><FormControl><Input dir="ltr" placeholder="https://youtube.com/watch?v=..." {...field} className="rounded-s-none" /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
                                             <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" onClick={() => append({ title: '', url: '' })}><PlusCircle className="me-2 h-4 w-4" />הוסף קישור</Button>
+                                    <Button type="button" variant="outline" onClick={() => append({ title: '', url: '' } as never)}><PlusCircle className="me-2 h-4 w-4" />{t('addLinkBtn')}</Button>
                                 </CardContent>
                             </Card>
 
                             <div className="flex justify-end">
                                 <Button type="submit" disabled={!form.formState.isDirty}>
                                     <Save className="me-2 h-4 w-4" />
-                                    שמור פרופיל הופעות
+                                    {t('saveBtn')}
                                 </Button>
                             </div>
                         </>

@@ -48,7 +48,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { Notification, UserRole } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 // ─────────────────────────── Types ───────────────────────────────────────────
 
@@ -285,23 +285,26 @@ const harmoniaNavGroups: NavGroup[] = [
 
 // ─────────────────────────── Notification Item ───────────────────────────────
 
-const NotificationItem = ({ notification }: { notification: Notification }) => (
-  <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
-    <Link href={notification.link}>
-      <div className="flex-shrink-0 mt-1">
-        <Bell className="h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex-grow">
-        <p className="font-semibold text-sm">{notification.title}</p>
-        <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
-        <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true, locale: he })}
+const NotificationItem = ({ notification }: { notification: Notification }) => {
+  const dateLocale = useDateLocale();
+  return (
+    <DropdownMenuItem asChild className={cn('flex items-start gap-3 cursor-pointer p-3', !notification.read && 'bg-accent/50')}>
+      <Link href={notification.link}>
+        <div className="flex-shrink-0 mt-1">
+          <Bell className="h-4 w-4 text-muted-foreground" />
         </div>
-      </div>
-    </Link>
-  </DropdownMenuItem>
-);
+        <div className="flex-grow">
+          <p className="font-semibold text-sm">{notification.title}</p>
+          <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
+          <div className="text-xs text-muted-foreground/80 mt-1 flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true, locale: dateLocale })}
+          </div>
+        </div>
+      </Link>
+    </DropdownMenuItem>
+  );
+};
 
 // ─────────────────────────── Legacy type (unchanged) ─────────────────────────
 

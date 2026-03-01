@@ -4,56 +4,22 @@ import { Switch } from "@/components/ui/switch";
 import { Bot, BrainCircuit, HeartHandshake, MessageSquare, Presentation, Bell, Search, FilePlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from 'next-intl';
 import { useMemo } from "react";
-
-const agents = [
-    {
-        icon: HeartHandshake,
-        title: "סוכן ההתאמה (Matchmaker)",
-        description: "מתאים אוטומטית בין תלמידים חדשים למורים הזמינים המתאימים ביותר על סמך פרופיל מוזיקלי, מטרות וזמינות.",
-        id: "matchmaker-agent",
-        defaultChecked: true,
-    },
-    {
-        icon: FilePlus,
-        title: "סוכן הצעת יצירות",
-        description: "מציע יצירות רלוונטיות לרפרטואר על בסיס רמת התלמיד, מטרותיו והיצירות שכבר נבחרו.",
-        id: "composition-suggester",
-        defaultChecked: true,
-    },
-    {
-        icon: MessageSquare,
-        title: "סוכן תיאום (Rescheduling Concierge)",
-        description: "מטפל בבקשות לביטול ושינוי מועד שיעורים באופן אוטומטי דרך וואטסאפ או צ'אט.",
-        id: "reschedule-agent",
-        defaultChecked: false,
-    },
-    {
-        icon: Presentation,
-        title: "סוכן דוחות התקדמות",
-        description: "מייצר טיוטה ראשונית של דוחות התקדמות תקופתיים עבור מורים, על בסיס יומני אימון והערות שיעור.",
-        id: "progress-report-agent",
-        defaultChecked: false,
-    },
-    {
-        icon: Bell,
-        title: "סוכן התראות למנהלים",
-        description: "מנטר את המערכת באופן רציף ומציף בעיות תפעוליות לפני שהן הופכות למשבר.",
-        id: "admin-alerts-agent",
-        defaultChecked: true,
-    },
-    {
-        icon: Search,
-        title: "סוכן שימור לידים",
-        description: "מבצע מעקב אוטומטי ומותאם אישית אחרי תלמידים שנרשמו לשיעור ניסיון ולא המשיכו לחבילה.",
-        id: "lead-nurture-agent",
-        defaultChecked: false,
-    }
-];
 
 export default function AiAgentsPage() {
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('AiAgents');
+
+    const agents = [
+        { icon: HeartHandshake, title: t('agents.matchmaker'), description: t('agents.matchmakerDesc'), id: "matchmaker-agent", defaultChecked: true },
+        { icon: FilePlus, title: t('agents.compositionSuggester'), description: t('agents.compositionSuggesterDesc'), id: "composition-suggester", defaultChecked: true },
+        { icon: MessageSquare, title: t('agents.reschedule'), description: t('agents.rescheduleDesc'), id: "reschedule-agent", defaultChecked: false },
+        { icon: Presentation, title: t('agents.progressReport'), description: t('agents.progressReportDesc'), id: "progress-report-agent", defaultChecked: false },
+        { icon: Bell, title: t('agents.adminAlerts'), description: t('agents.adminAlertsDesc'), id: "admin-alerts-agent", defaultChecked: true },
+        { icon: Search, title: t('agents.leadNurture'), description: t('agents.leadNurtureDesc'), id: "lead-nurture-agent", defaultChecked: false },
+    ];
 
     const currentConservatorium = useMemo(() => {
         if (!user) return null;
@@ -62,35 +28,36 @@ export default function AiAgentsPage() {
 
     const handleAgentToggle = (agentId: string, enabled: boolean) => {
         if (!currentConservatorium) return;
-        
+
         const newConfig = {
             ...currentConservatorium.aiAgentsConfig,
             [agentId]: enabled,
         };
 
         updateConservatorium({ ...currentConservatorium, aiAgentsConfig: newConfig });
-        
+
+        const agentName = agents.find(a => a.id === agentId)?.title || '';
         toast({
-            title: "הגדרה עודכנה",
-            description: `סוכן "${agents.find(a => a.id === agentId)?.title}" ${enabled ? 'הופעל' : 'כובה'}.`
+            title: t('settingUpdated'),
+            description: t('agentToggled', { name: agentName, state: enabled ? t('activated') : t('deactivated') })
         });
     };
-    
+
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
-        return <p>אין לך הרשאה לצפות בעמוד זה.</p>
+        return <p>{t('noPermission')}</p>;
     }
 
     if (!currentConservatorium) {
-        return <div>טוען הגדרות...</div>;
+        return <div>{t('loadingSettings')}</div>;
     }
 
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">סוכני AI</h1>
-                <p className="text-muted-foreground">נהל את האוטומציות והסוכנים החכמים של המערכת.</p>
+                <h1 className="text-2xl font-bold">{t('title')}</h1>
+                <p className="text-muted-foreground">{t('manageAutomations')}</p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {agents.map((agent) => {
                     const isChecked = currentConservatorium.aiAgentsConfig?.[agent.id] ?? agent.defaultChecked;
@@ -104,11 +71,11 @@ export default function AiAgentsPage() {
                                         </div>
                                         <CardTitle>{agent.title}</CardTitle>
                                     </div>
-                                    <Switch 
+                                    <Switch
                                         id={agent.id}
                                         checked={isChecked}
                                         onCheckedChange={(checked) => handleAgentToggle(agent.id, checked)}
-                                        aria-label={`Enable ${agent.title}`} 
+                                        aria-label={`Enable ${agent.title}`}
                                     />
                                 </div>
                                 <CardDescription className="pt-2">{agent.description}</CardDescription>

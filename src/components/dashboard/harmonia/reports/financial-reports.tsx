@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations, useLocale } from 'next-intl';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -15,6 +15,7 @@ export function FinancialReports() {
     const t = useTranslations('Reports');
     const tInvoices = useTranslations('Invoices');
     const { mockInvoices, users, mockPackages, mockLessons } = useAuth();
+    const dateLocale = useDateLocale();
     const locale = useLocale();
 
     const {
@@ -26,7 +27,6 @@ export function FinancialReports() {
         // Monthly Revenue (last 6 months)
         const revenueByMonth: { [key: string]: number } = {};
         const now = new Date();
-        const dateLocale = locale === 'he' ? he : undefined;
 
         for (let i = 5; i >= 0; i--) {
             const date = new Date(now.getFullYear(), now.getMonth() - i, 1);

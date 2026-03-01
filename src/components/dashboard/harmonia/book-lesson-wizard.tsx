@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { add, set, format, getDay, isBefore } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import type { LessonSlot, User } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -41,6 +41,7 @@ export function BookLessonWizard() {
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
     const t = useTranslations("LessonManagement");
+    const dateLocale = useDateLocale();
 
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
 
@@ -263,7 +264,7 @@ export function BookLessonWizard() {
                                                     onSelect={field.onChange}
                                                     disabled={(date) => isBefore(date, new Date())}
                                                     initialFocus
-                                                    locale={he}
+                                                    locale={dateLocale}
                                                     className="rounded-md border w-full"
                                                 />
                                             </FormControl>

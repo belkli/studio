@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Clock, Check, UserX } from 'lucide-react';
 import type { OpenDayAppointment } from '@/lib/types';
 import { useTranslations } from 'next-intl';
@@ -14,6 +14,7 @@ import { useTranslations } from 'next-intl';
 export function OpenDayAdminDashboard() {
     const { user, mockOpenDayAppointments, mockOpenDayEvents } = useAuth();
     const t = useTranslations('AdminOpenDay');
+    const dateLocale = useDateLocale();
 
     const appointments = useMemo(() => {
         if (!user) return [];

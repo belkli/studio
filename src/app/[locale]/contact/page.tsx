@@ -15,12 +15,18 @@ import { useToast } from "@/hooks/use-toast";
 import { conservatoriums } from "@/lib/data";
 import type { Conservatorium } from "@/lib/types";
 import { useState, useMemo } from "react";
+import { useLocale } from 'next-intl';
+import { getLocalizedConservatorium } from "@/lib/utils/localized-content";
 import {
     CheckCircle2, Search, Phone, Mail, Globe, MapPin, Clock,
     Music2, Building2, ChevronDown, X, ExternalLink, Star, MessageCircle
 } from "lucide-react";
 
-function ConservatoriumInfo({ cons }: { cons: Conservatorium }) {
+function ConservatoriumInfo({ cons: originalCons }: { cons: Conservatorium }) {
+    const t = useTranslations('ContactPage');
+    const locale = useLocale();
+    const cons = getLocalizedConservatorium(originalCons, locale);
+
     return (
         <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-background to-background overflow-hidden">
             {/* Mini hero */}
@@ -36,8 +42,10 @@ function ConservatoriumInfo({ cons }: { cons: Conservatorium }) {
             </div>
             <div className="p-4 space-y-3 -mt-4 relative">
                 <div>
-                    <h3 className="font-bold text-base leading-tight">{cons.name}</h3>
-                    {cons.nameEn && <p className="text-xs text-muted-foreground">{cons.nameEn}</p>}
+                    <h3 className="font-bold text-base leading-tight">
+                        {(locale === 'en' && cons.nameEn) ? cons.nameEn : cons.name}
+                    </h3>
+                    {(locale !== 'en' && cons.nameEn) && <p className="text-xs text-muted-foreground">{cons.nameEn}</p>}
                 </div>
 
                 {cons.about && <p className="text-xs text-muted-foreground leading-relaxed">{cons.about}</p>}
@@ -88,7 +96,7 @@ function ConservatoriumInfo({ cons }: { cons: Conservatorium }) {
                     {cons.officialSite && (
                         <a href={cons.officialSite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
                             <Globe className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span className="text-xs">אתר רשמי</span>
+                            <span className="text-xs">{t('officialSite')}</span>
                             <ExternalLink className="h-2.5 w-2.5" />
                         </a>
                     )}
@@ -131,19 +139,24 @@ function ConservatoriumSearchPicker({
     selected: Conservatorium | null;
     onSelect: (c: Conservatorium) => void;
 }) {
+    const t = useTranslations('ContactPage');
+    const locale = useLocale();
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
 
+    const localizedCons = useMemo(() =>
+        conservatoriums.map(c => getLocalizedConservatorium(c, locale)),
+        [locale]);
+
     const filtered = useMemo(() =>
-        conservatoriums
+        localizedCons
             .filter(c => {
                 const q = query.toLowerCase();
                 return c.name.toLowerCase().includes(q) ||
-                    (c.nameEn?.toLowerCase().includes(q)) ||
                     (c.location?.city?.toLowerCase().includes(q));
             })
             .slice(0, 20),
-        [query]
+        [localizedCons, query]
     );
 
     return (
@@ -163,7 +176,7 @@ function ConservatoriumSearchPicker({
                 ) : (
                     <>
                         <Search className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground flex-1">חיפוש קונסרבטוריון...</span>
+                        <span className="text-sm text-muted-foreground flex-1">{t('searchPlaceholder')}</span>
                         <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     </>
                 )}
@@ -180,15 +193,14 @@ function ConservatoriumSearchPicker({
                                     autoFocus
                                     value={query}
                                     onChange={e => setQuery(e.target.value)}
-                                    placeholder="חיפוש עיר או שם קונסרבטוריון..."
-                                    dir="rtl"
+                                    placeholder={t('searchPickerPlaceholder')}
                                     className="w-full h-9 bg-muted/50 rounded-lg ps-9 pe-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                                 />
                             </div>
                         </div>
                         <ul className="max-h-56 overflow-y-auto">
                             {filtered.length === 0 ? (
-                                <li className="px-4 py-3 text-sm text-muted-foreground text-center">לא נמצאו תוצאות</li>
+                                <li className="px-4 py-3 text-sm text-muted-foreground text-center">{t('noResults')}</li>
                             ) : filtered.map(c => (
                                 <li key={c.id}>
                                     <button
@@ -214,28 +226,31 @@ function ConservatoriumSearchPicker({
 export default function ContactPage() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
+    const t = useTranslations('ContactPage');
+    const locale = useLocale();
     const { toast } = useToast();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [selectedCons, setSelectedCons] = useState<Conservatorium | null>(null);
+    const isRtl = locale === 'he' || locale === 'ar';
     const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', message: '' });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitted(true);
-        toast({ title: "הפנייה נשלחה בהצלחה", description: "ניצור איתך קשר בהקדם האפשרי." });
+        toast({ title: t('successTitle'), description: t('successDesc') });
     };
 
     return (
-        <div className="flex flex-col min-h-dvh bg-background">
+        <div className="flex flex-col min-h-dvh bg-background" dir={isRtl ? 'rtl' : 'ltr'}>
             <PublicNavbar />
 
             <main className="flex-1 pt-14">
                 {/* Hero */}
                 <section className="py-16 px-4 text-center bg-gradient-to-b from-primary/5 to-background">
                     <div className="max-w-2xl mx-auto space-y-3">
-                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">צור קשר</h1>
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground text-lg">
-                            בחרו את הקונסרבטוריון הקרוב אליכם ונחזור אליכם בהקדם
+                            {t('subtitle')}
                         </p>
                     </div>
                 </section>
@@ -247,8 +262,8 @@ export default function ContactPage() {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                                     <CheckCircle2 className="w-10 h-10 text-primary" />
                                 </div>
-                                <h2 className="text-2xl font-bold">תודה על פנייתך!</h2>
-                                <p className="text-muted-foreground">הפרטים התקבלו במערכת, צוות הקונסרבטוריון ייצור עמך קשר בשעות הקרובות.</p>
+                                <h2 className="text-2xl font-bold">{t('thanksTitle')}</h2>
+                                <p className="text-muted-foreground">{t('successDesc')}</p>
                                 {selectedCons && (
                                     <div className="bg-muted/30 rounded-xl p-4 text-sm text-start space-y-1 border border-border">
                                         <p className="font-semibold">{selectedCons.name}</p>
@@ -256,20 +271,20 @@ export default function ContactPage() {
                                         {selectedCons.email && <p className="text-muted-foreground flex items-center gap-2"><Mail className="h-3.5 w-3.5" />{selectedCons.email}</p>}
                                     </div>
                                 )}
-                                <Button onClick={() => { setIsSubmitted(false); setSelectedCons(null); }}>שליחת הודעה נוספת</Button>
+                                <Button onClick={() => { setIsSubmitted(false); setSelectedCons(null); }}>{t('sendAnotherMessage')}</Button>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                                 {/* Form */}
                                 <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm order-2 lg:order-1">
                                     <div className="bg-gradient-to-r from-primary/10 to-violet-500/10 px-6 py-5 border-b border-border">
-                                        <h2 className="font-bold text-lg">שלחו לנו הודעה</h2>
-                                        <p className="text-sm text-muted-foreground mt-0.5">אנא מלאו את הפרטים ונחזור אליכם</p>
+                                        <h2 className="font-bold text-lg">{t('formTitle')}</h2>
+                                        <p className="text-sm text-muted-foreground mt-0.5">{t('formSubtitle')}</p>
                                     </div>
                                     <form onSubmit={handleSubmit} className="p-6 space-y-5">
                                         {/* Conservatorium picker */}
                                         <div className="space-y-2">
-                                            <Label className="text-sm font-medium">קונסרבטוריון מבוקש <span className="text-destructive">*</span></Label>
+                                            <Label className="text-sm font-medium">{t('requestedConservatorium')} <span className="text-destructive">*</span></Label>
                                             <ConservatoriumSearchPicker
                                                 selected={selectedCons}
                                                 onSelect={c => setSelectedCons(c)}
@@ -278,47 +293,41 @@ export default function ContactPage() {
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="firstName">שם פרטי <span className="text-destructive">*</span></Label>
+                                                <Label htmlFor="firstName">{t('firstName')} <span className="text-destructive">*</span></Label>
                                                 <Input
                                                     id="firstName"
                                                     required
-                                                    dir="rtl"
                                                     value={form.firstName}
                                                     onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
                                                     className="rounded-xl"
-                                                    placeholder="ישראל"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="lastName">שם משפחה <span className="text-destructive">*</span></Label>
+                                                <Label htmlFor="lastName">{t('lastName')} <span className="text-destructive">*</span></Label>
                                                 <Input
                                                     id="lastName"
                                                     required
-                                                    dir="rtl"
                                                     value={form.lastName}
                                                     onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
                                                     className="rounded-xl"
-                                                    placeholder="ישראלי"
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="phone">טלפון <span className="text-destructive">*</span></Label>
+                                                <Label htmlFor="phone">{t('phone')} <span className="text-destructive">*</span></Label>
                                                 <Input
                                                     id="phone"
                                                     type="tel"
                                                     required
-                                                    dir="rtl"
                                                     value={form.phone}
                                                     onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                                                     className="rounded-xl font-mono"
-                                                    placeholder="05x-xxxxxxx"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="email">דוא"ל</Label>
+                                                <Label htmlFor="email">{t('email')}</Label>
                                                 <Input
                                                     id="email"
                                                     type="email"
@@ -332,14 +341,13 @@ export default function ContactPage() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="message">תוכן הפנייה</Label>
+                                            <Label htmlFor="message">{t('enquiryContent')}</Label>
                                             <Textarea
                                                 id="message"
                                                 rows={4}
-                                                dir="rtl"
                                                 value={form.message}
                                                 onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                                                placeholder="איך נוכל לעזור לכם? כלי נגינה, גיל, ניסיון..."
+                                                placeholder={t('enquiryPlaceholder')}
                                                 className="rounded-xl resize-none"
                                             />
                                         </div>
@@ -349,7 +357,7 @@ export default function ContactPage() {
                                             className="w-full h-11 text-base font-semibold rounded-xl"
                                             disabled={!selectedCons}
                                         >
-                                            {!selectedCons ? 'בחרו קונסרבטוריון בתחילה' : 'שלחו הודעה'}
+                                            {!selectedCons ? t('selectConservatoriumFirst') : t('sendMessage')}
                                         </Button>
                                     </form>
                                 </div>
@@ -360,7 +368,7 @@ export default function ContactPage() {
                                         <>
                                             <div className="flex items-center gap-2 text-sm text-primary font-medium">
                                                 <Building2 className="h-4 w-4" />
-                                                פרטי הקונסרבטוריון שבחרתם
+                                                {t('selectedConsDetails')}
                                             </div>
                                             <ConservatoriumInfo cons={selectedCons} />
                                         </>
@@ -370,30 +378,30 @@ export default function ContactPage() {
                                                 <Music2 className="h-8 w-8 text-primary/50" />
                                             </div>
                                             <div>
-                                                <p className="font-medium text-base">בחרו קונסרבטוריון</p>
-                                                <p className="text-sm text-muted-foreground mt-1">לאחר הבחירה יוצגו כאן פרטי יצירת הקשר והמידע על הקונסרבטוריון</p>
+                                                <p className="font-medium text-base">{t('chooseCons')}</p>
+                                                <p className="text-sm text-muted-foreground mt-1">{t('chooseConsDesc')}</p>
                                             </div>
                                             <Button asChild variant="outline" size="sm">
-                                                <Link href="/about">לרשימת כל הקונסרבטוריונים</Link>
+                                                <Link href="/about">{t('allConsList')}</Link>
                                             </Button>
                                         </div>
                                     )}
 
                                     {/* Quick tips */}
                                     <div className="bg-muted/20 rounded-xl p-4 space-y-3 border border-border/50">
-                                        <h3 className="font-semibold text-sm">טיפים לפנייה</h3>
+                                        <h3 className="font-semibold text-sm">{t('tipsTitle')}</h3>
                                         <ul className="space-y-2 text-xs text-muted-foreground">
                                             <li className="flex items-start gap-2">
                                                 <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                                                ציינו את הכלי שמעניין אתכם ורמת הניסיון הקיימת
+                                                {t('tip1')}
                                             </li>
                                             <li className="flex items-start gap-2">
                                                 <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                                                שתפו את הגיל ו/או הגיל של הילד הנרשם
+                                                {t('tip2')}
                                             </li>
                                             <li className="flex items-start gap-2">
                                                 <Star className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                                                ציינו ימים ושעות שנוחים לכם לשיעורים
+                                                {t('tip3')}
                                             </li>
                                         </ul>
                                     </div>

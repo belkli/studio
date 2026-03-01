@@ -5,18 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { format, add, set } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Send, Sparkles } from 'lucide-react';
 import type { EventProduction } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 interface SoundCheckSchedulerProps {
-  event: EventProduction;
-  onUpdate: (updatedEvent: EventProduction) => void;
+    event: EventProduction;
+    onUpdate: (updatedEvent: EventProduction) => void;
 }
 
 export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProps) {
     const { toast } = useToast();
+    const dateLocale = useDateLocale();
 
     const handleTimeChange = (performanceId: string, time: string) => {
         const updatedSchedule = event.soundCheckSchedule?.map(slot =>
@@ -39,7 +40,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
         onUpdate({ ...event, soundCheckSchedule: newSchedule });
         toast({ title: "לו\"ז חזרות נוצר בהצלחה" });
     };
-    
+
     const handleSendSchedule = () => {
         toast({
             title: "לוח הזמנים נשלח!",
@@ -55,7 +56,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
             <CardContent className="space-y-4">
                 {event.dressRehearsalDate && (
                     <p className="text-sm">
-                        <span className="font-semibold">חזרה גנרלית:</span> {format(new Date(event.dressRehearsalDate), 'EEEE, dd/MM/yyyy', { locale: he })}
+                        <span className="font-semibold">חזרה גנרלית:</span> {format(new Date(event.dressRehearsalDate), 'EEEE, dd/MM/yyyy', { locale: dateLocale })}
                     </p>
                 )}
                 <Button variant="outline" size="sm" onClick={autoGenerateSchedule} className="w-full">
@@ -87,7 +88,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
                                     </TableRow>
                                 );
                             })}
-                             {event.program.length === 0 && (
+                            {event.program.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={2} className="text-center h-24">
                                         שבץ מבצעים כדי ליצור לו"ז חזרות.
@@ -99,7 +100,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
                 </div>
             </CardContent>
             <CardFooter>
-                 <Button className="w-full" onClick={handleSendSchedule} disabled={!event.soundCheckSchedule || event.soundCheckSchedule.length === 0}>
+                <Button className="w-full" onClick={handleSendSchedule} disabled={!event.soundCheckSchedule || event.soundCheckSchedule.length === 0}>
                     <Send className="me-2 h-4 w-4" />
                     שלח לו"ז למבצעים
                 </Button>

@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Clock, Music, Share2, Tag } from "lucide-react";
 import Link from 'next/link';
 import { format } from "date-fns";
-import { he } from "date-fns/locale";
+import { useDateLocale } from '@/hooks/use-date-locale';
+import { useTranslations } from 'next-intl';
 import type { EmptySlot } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,11 +17,13 @@ interface SlotPromotionCardProps {
 
 export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
     const { toast } = useToast();
+    const t = useTranslations('SlotPromotionCard');
+    const dateLocale = useDateLocale();
 
     const handleShare = async () => {
         const shareData = {
-            title: `שיעור מוזיקה פנוי!`,
-            text: `מצאתי שיעור ${slot.instrument} פנוי עם ${slot.teacher.name} במחיר מיוחד של ₪${slot.promotionalPrice}!`,
+            title: t('shareTitle'),
+            text: t('shareText', { instrument: slot.instrument, teacher: slot.teacher.name, price: String(slot.promotionalPrice) }),
             url: window.location.href,
         };
         try {
@@ -30,16 +33,16 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                 // Fallback for desktop
                 await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
                 toast({
-                    title: "הקישור הועתק!",
-                    description: "תוכל/י לשתף אותו עם חברים.",
+                    title: t('linkCopied'),
+                    description: t('linkCopiedDesc'),
                 });
             }
         } catch (error) {
             console.error('Error sharing:', error);
             toast({
                 variant: 'destructive',
-                title: "שגיאה בשיתוף",
-                description: "לא ניתן היה לשתף את הקישור.",
+                title: t('shareError'),
+                description: t('shareErrorDesc'),
             });
         }
     };
@@ -63,29 +66,29 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{format(slot.startTime, "EEEE, HH:mm", { locale: he })}</span>
+                    <span>{format(slot.startTime, "EEEE, HH:mm", { locale: dateLocale })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <Tag className="h-4 w-4 text-muted-foreground" />
-                    <Badge variant="destructive">הזדמנות של הרגע האחרונה!</Badge>
+                    <Badge variant="destructive">{t('lastMinute')}</Badge>
                 </div>
             </CardContent>
             <CardFooter className="flex-col items-stretch gap-2">
                 <div className="text-center">
                     <span className="text-2xl font-bold text-accent">₪{slot.promotionalPrice}</span>
                     <span className="text-sm text-muted-foreground line-through ms-2">₪{slot.basePrice}</span>
-                    <span className="text-sm font-bold text-green-600 ms-2">({slot.discount}% הנחה)</span>
+                    <span className="text-sm font-bold text-green-600 ms-2">{t('discount', { percent: String(slot.discount) })}</span>
                 </div>
                 <div className="flex gap-2">
                     <Button asChild className="w-full">
                         <Link href="/register">
-                            הזמן עכשיו
+                            {t('bookNow')}
                             <ArrowLeft className="ms-2 h-4 w-4" />
                         </Link>
                     </Button>
                     <Button variant="outline" size="icon" onClick={handleShare}>
                         <Share2 className="h-4 w-4" />
-                        <span className="sr-only">שתף</span>
+                        <span className="sr-only">{t('shareTitle')}</span>
                     </Button>
                 </div>
             </CardFooter>

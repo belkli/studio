@@ -6,11 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 import { instruments } from "@/lib/data";
+import { useTranslations, useLocale } from 'next-intl';
 
 const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
     const { mockPracticeLogs, users, mockAssignedRepertoire } = useAuth();
+    const t = useTranslations('AcademicReports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
@@ -61,7 +65,7 @@ export function AcademicReports() {
 
         const teacherEngagementData = teachers.map(teacher => {
             const teacherStudents = students.filter(s => s.instruments?.some(i => i.teacherName === teacher.name));
-            if (teacherStudents.length === 0) return { name: teacher.name, engagement: 0 };
+            if (teacherStudents.length === 0) return { name: teacher.name, [t('tooltipEngagement')]: 0 };
 
             const practicedStudents = new Set(
                 mockPracticeLogs
@@ -74,13 +78,13 @@ export function AcademicReports() {
 
             return {
                 name: teacher.name,
-                engagement: (practicedStudents.size / teacherStudents.length) * 100
+                [t('tooltipEngagement')]: (practicedStudents.size / teacherStudents.length) * 100
             };
         });
 
         const instrumentAvgMinutes = instruments.map(instrument => {
             const studentsWithInstrument = students.filter(s => s.instruments?.some(i => i.instrument === instrument));
-            if (studentsWithInstrument.length === 0) return { name: instrument, 'ממוצע דקות': 0 };
+            if (studentsWithInstrument.length === 0) return { name: instrument, [t('avgMinutesProp')]: 0 };
 
             const logsForInstrument = mockPracticeLogs.filter(log => {
                 const logDate = new Date(log.date);
@@ -89,7 +93,7 @@ export function AcademicReports() {
             const totalMinutes = logsForInstrument.reduce((sum, log) => sum + log.durationMinutes, 0);
             return {
                 name: instrument,
-                'ממוצע דקות': studentsWithInstrument.length > 0 ? totalMinutes / studentsWithInstrument.length : 0,
+                [t('avgMinutesProp')]: studentsWithInstrument.length > 0 ? totalMinutes / studentsWithInstrument.length : 0,
             }
         });
 
@@ -101,7 +105,7 @@ export function AcademicReports() {
             engagementByTeacher: teacherEngagementData,
             avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire]);
+    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire, t]);
 
 
     return (
@@ -109,8 +113,8 @@ export function AcademicReports() {
             <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>שיעור מעורבות באימונים</CardTitle>
-                        <CardDescription>אחוז התלמידים שרשמו אימון בשבוע האחרון.</CardDescription>
+                        <CardTitle>{t('engagementRateTitle')}</CardTitle>
+                        <CardDescription>{t('engagementRateDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">
                         <div className="text-5xl font-bold text-primary">{practiceEngagementRate.toFixed(0)}%</div>
@@ -118,8 +122,8 @@ export function AcademicReports() {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>ממוצע דקות אימון</CardTitle>
-                        <CardDescription>לתלמיד מתאמן בשבוע האחרון.</CardDescription>
+                        <CardTitle>{t('avgMinutesTitle')}</CardTitle>
+                        <CardDescription>{t('avgMinutesDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">
                         <div className="text-5xl font-bold text-accent">{averageMinutes.toFixed(0)}</div>
@@ -127,8 +131,8 @@ export function AcademicReports() {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>התקדמות רפרטואר</CardTitle>
-                        <CardDescription>יצירות שהושלמו החודש.</CardDescription>
+                        <CardTitle>{t('repertoireTitle')}</CardTitle>
+                        <CardDescription>{t('repertoireDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center">
                         <div className="text-5xl font-bold">{repertoireAdvancement}</div>
@@ -138,9 +142,9 @@ export function AcademicReports() {
             <div className="grid lg:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>מעורבות באימונים לפי מורה (שבוע אחרון)</CardTitle>
+                        <CardTitle>{t('chartTeacherTitle')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[350px]">
+                    <CardContent className="h-[350px]" dir="ltr">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={engagementByTeacher} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -148,19 +152,19 @@ export function AcademicReports() {
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}%`} />
                                 <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
-                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
-                                    formatter={(value: any) => [`${Number(value).toFixed(0)}%`, 'מעורבות']}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr', borderRadius: 'var(--radius)' }}
+                                    formatter={(value: any) => [`${Number(value).toFixed(0)}%`, t('tooltipEngagement')]}
                                 />
-                                <Bar dataKey="engagement" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey={t('tooltipEngagement')} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>ממוצע דקות אימון חודשי לפי כלי</CardTitle>
+                        <CardTitle>{t('chartInstrumentTitle')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[350px]">
+                    <CardContent className="h-[350px]" dir="ltr">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={avgMinutesByInstrument} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -168,10 +172,10 @@ export function AcademicReports() {
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
                                 <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
-                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl', borderRadius: 'var(--radius)' }}
-                                    formatter={(value: any) => [`${Number(value).toFixed(0)}`, 'ממוצע דקות']}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr', borderRadius: 'var(--radius)' }}
+                                    formatter={(value: any) => [`${Number(value).toFixed(0)}`, t('tooltipAvgMinutes')]}
                                 />
-                                <Bar dataKey="ממוצע דקות" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey={t('avgMinutesProp')} fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -179,16 +183,16 @@ export function AcademicReports() {
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle>תלמידים עם מעורבות נמוכה</CardTitle>
-                    <CardDescription>תלמידים שרשמו הכי פחות זמן אימון בסך הכל.</CardDescription>
+                    <CardTitle>{t('lowEngagementTitle')}</CardTitle>
+                    <CardDescription>{t('lowEngagementDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Table>
+                    <Table dir={isRtl ? 'rtl' : 'ltr'}>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>תלמיד/ה</TableHead>
-                                <TableHead>מורה</TableHead>
-                                <TableHead className="text-left">סה"כ דקות אימון</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colTeacher')}</TableHead>
+                                <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colTotalMinutes')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -202,7 +206,7 @@ export function AcademicReports() {
                                         {student.name}
                                     </TableCell>
                                     <TableCell>{student.instruments?.[0]?.teacherName}</TableCell>
-                                    <TableCell className="text-left font-mono">{totalMinutes} דקות</TableCell>
+                                    <TableCell className={isRtl ? "text-left font-mono" : "text-right font-mono"}>{totalMinutes} {t('minutesUnit')}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

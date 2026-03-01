@@ -12,7 +12,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { GraduationCap, Award, Calendar, ChevronDown, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
+import { useTranslations } from 'next-intl';
 
 const REPERTOIRE_TEMPLATES = {
     'MINISTRY_LEVEL_1': [
@@ -62,6 +63,8 @@ const MOCK_TRACKERS: ExamPrepTracker[] = [
 export function ExamTrackerPanel() {
     const { user, users } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('ExamTracker');
+    const dateLocale = useDateLocale();
 
     // For a real app, mockTrackers would come from context/context state.
     const [trackers, setTrackers] = useState<ExamPrepTracker[]>(MOCK_TRACKERS);
@@ -103,7 +106,7 @@ export function ExamTrackerPanel() {
 
         setTrackers(prev => [...prev, newTracker]);
         setShowNewForm(false);
-        toast({ title: 'מעקב בחינה נפתח בהצלחה' });
+        toast({ title: t('trackerCreated') });
     };
 
     const updateRequirementStatus = (trackerId: string, reqIndex: number, newStatus: string) => {
@@ -129,10 +132,10 @@ export function ExamTrackerPanel() {
 
     const renderStatusBadge = (status: string) => {
         switch (status) {
-            case 'NOT_STARTED': return <Badge variant="outline" className="text-gray-500 bg-gray-50"><Clock className="w-3 h-3 mr-1" /> טרם התחיל</Badge>;
-            case 'IN_PROGRESS': return <Badge variant="secondary" className="text-blue-700 bg-blue-100"><Clock className="w-3 h-3 mr-1" /> בתהליך</Badge>;
-            case 'READY': return <Badge variant="default" className="bg-green-600"><CheckCircle className="w-3 h-3 mr-1" /> מוכן למבחן</Badge>;
-            case 'EXAM_PASSED': return <Badge variant="default" className="bg-purple-600"><Award className="w-3 h-3 mr-1" /> עבר מבחן!</Badge>;
+            case 'NOT_STARTED': return <Badge variant="outline" className="text-gray-500 bg-gray-50"><Clock className="w-3 h-3 mr-1" /> {t('statusNotStarted')}</Badge>;
+            case 'IN_PROGRESS': return <Badge variant="secondary" className="text-blue-700 bg-blue-100"><Clock className="w-3 h-3 mr-1" /> {t('statusInProgress')}</Badge>;
+            case 'READY': return <Badge variant="default" className="bg-green-600"><CheckCircle className="w-3 h-3 mr-1" /> {t('statusReady')}</Badge>;
+            case 'EXAM_PASSED': return <Badge variant="default" className="bg-purple-600"><Award className="w-3 h-3 mr-1" /> {t('statusPassed')}</Badge>;
             default: return null;
         }
     };
@@ -147,45 +150,45 @@ export function ExamTrackerPanel() {
             <div className="flex justify-between items-center">
                 <Button onClick={() => setShowNewForm(!showNewForm)}>
                     <GraduationCap className="h-4 w-4 mr-2" />
-                    {showNewForm ? 'ביטול יצירה' : 'פתח מפת דרכים לבחינה חדשה'}
+                    {showNewForm ? t('cancelCreation') : t('createNewTracker')}
                 </Button>
             </div>
 
             {showNewForm && (
                 <Card className="border-t-4 border-t-primary shadow-sm bg-muted/20">
                     <CardHeader>
-                        <CardTitle>יצירת מעקב לבחינת משרד החינוך</CardTitle>
-                        <CardDescription>בחר תלמיד, כלי וסוג בחינה. ייווצר פלטפורמת מעקב אוטומטית לפי דרישות משרד החינוך המעודכנות.</CardDescription>
+                        <CardTitle>{t('createTrackerTitle')}</CardTitle>
+                        <CardDescription>{t('createTrackerDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
-                            <Label>בחר תלמיד/ה</Label>
+                            <Label>{t('selectStudent')}</Label>
                             <Select dir="rtl" value={selectedStudent} onValueChange={setSelectedStudent}>
-                                <SelectTrigger><SelectValue placeholder="תלמיד/ה..." /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder={t('selectStudentPlaceholder')} /></SelectTrigger>
                                 <SelectContent>
                                     {myStudents.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>כלי נגינה</Label>
-                            <Input value={instrument} onChange={e => setInstrument(e.target.value)} placeholder="פסנתר, כינור..." />
+                            <Label>{t('instrumentLabel')}</Label>
+                            <Input value={instrument} onChange={e => setInstrument(e.target.value)} placeholder={t('instrumentPlaceholder')} />
                         </div>
                         <div className="space-y-2">
-                            <Label>סוג בחינה (לפי סילבוס)</Label>
+                            <Label>{t('examTypeLabel')}</Label>
                             <Select dir="rtl" value={selectedExamType} onValueChange={setSelectedExamType}>
-                                <SelectTrigger><SelectValue placeholder="סוג בחינה..." /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder={t('examTypePlaceholder')} /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="MINISTRY_LEVEL_1">שלב א' (משרד החינוך)</SelectItem>
-                                    <SelectItem value="MINISTRY_LEVEL_2">שלב ב' (משרד החינוך)</SelectItem>
-                                    <SelectItem value="BAGRUT">רסיטל בגרות 5 יח"ל</SelectItem>
-                                    <SelectItem value="OTHER">מותאם אישית</SelectItem>
+                                    <SelectItem value="MINISTRY_LEVEL_1">{t('ministryLevel1')}</SelectItem>
+                                    <SelectItem value="MINISTRY_LEVEL_2">{t('ministryLevel2')}</SelectItem>
+                                    <SelectItem value="BAGRUT">{t('bagrut')}</SelectItem>
+                                    <SelectItem value="OTHER">{t('customExam')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button onClick={handleCreateTracker} disabled={!selectedStudent}>צור תוכנית מעקב</Button>
+                        <Button onClick={handleCreateTracker} disabled={!selectedStudent}>{t('createPlanBtn')}</Button>
                     </CardFooter>
                 </Card>
             )}
@@ -205,16 +208,16 @@ export function ExamTrackerPanel() {
                                     </CardTitle>
                                     <CardDescription className="flex items-center gap-2 mt-2">
                                         <Calendar className="w-4 h-4" />
-                                        תאריך יעד משוער: {tracker.targetExamDate ? format(new Date(tracker.targetExamDate), 'dd/MM/yyyy') : 'טרם נקבע'}
+                                        {t('estimatedTargetDate')} {tracker.targetExamDate ? format(new Date(tracker.targetExamDate), 'PP', { locale: dateLocale }) : t('notSet')}
                                     </CardDescription>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
-                                    <span className="text-sm text-muted-foreground mr-1">מוכנות לבחינה:</span>
+                                    <span className="text-sm text-muted-foreground mr-1">{t('examReadiness')}</span>
                                     <Badge variant="outline" className={`px-3 py-1 text-sm ${tracker.overallReadinessPercent >= 80 ? 'bg-green-100 text-green-800 border-green-300' :
-                                            tracker.overallReadinessPercent >= 40 ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                                                'bg-red-100 text-red-800 border-red-300'
+                                        tracker.overallReadinessPercent >= 40 ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+                                            'bg-red-100 text-red-800 border-red-300'
                                         }`}>
-                                        {tracker.overallReadinessPercent}% מוכן תוכניתית
+                                        {tracker.overallReadinessPercent}{t('percentReady')}
                                     </Badge>
                                 </div>
                             </div>
@@ -223,17 +226,17 @@ export function ExamTrackerPanel() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>קטגוריה</TableHead>
-                                        <TableHead className="w-1/2">פירוט יצירה/משימה</TableHead>
-                                        <TableHead>סטטוס שליטה</TableHead>
-                                        <TableHead>הערות מורה</TableHead>
+                                        <TableHead>{t('colCategory')}</TableHead>
+                                        <TableHead className="w-1/2">{t('colPieceTaskDetails')}</TableHead>
+                                        <TableHead>{t('colMasteryStatus')}</TableHead>
+                                        <TableHead>{t('colTeacherNotes')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {tracker.requirements.map((req, idx) => (
                                         <TableRow key={idx}>
                                             <TableCell>
-                                                <Badge variant="outline">{req.category === 'PIECES' ? 'רפרטואר' : req.category === 'SCALES' ? 'סולמות' : req.category === 'THEORY' ? 'תאוריה' : 'קריאה מהדף'}</Badge>
+                                                <Badge variant="outline">{req.category === 'PIECES' ? t('categoryPiece') : req.category === 'SCALES' ? t('categoryScales') : req.category === 'THEORY' ? t('categoryTheory') : t('categorySightReading')}</Badge>
                                             </TableCell>
                                             <TableCell className="font-medium">{req.description}</TableCell>
                                             <TableCell>
@@ -242,10 +245,10 @@ export function ExamTrackerPanel() {
                                                         {renderStatusBadge(req.status)}
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="NOT_STARTED">טרם התחיל</SelectItem>
-                                                        <SelectItem value="IN_PROGRESS">בתהליך עבודה</SelectItem>
-                                                        <SelectItem value="READY">מוכן למבחן!</SelectItem>
-                                                        <SelectItem value="EXAM_PASSED">עבר מול בוחן</SelectItem>
+                                                        <SelectItem value="NOT_STARTED">{t('valNotStarted')}</SelectItem>
+                                                        <SelectItem value="IN_PROGRESS">{t('valInProgress')}</SelectItem>
+                                                        <SelectItem value="READY">{t('valReady')}</SelectItem>
+                                                        <SelectItem value="EXAM_PASSED">{t('valPassed')}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </TableCell>
@@ -261,8 +264,8 @@ export function ExamTrackerPanel() {
                 {trackers.length === 0 && !showNewForm && (
                     <div className="text-center p-12 bg-muted/10 border rounded-xl border-dashed">
                         <Award className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-foreground">אין מעקבי בחינות פעילים</h3>
-                        <p className="text-muted-foreground max-w-sm mx-auto mt-2">החל לנהל מעקב מקצועי אחר התקדמות תלמידים לבחינות ובגרויות.</p>
+                        <h3 className="text-lg font-medium text-foreground">{t('noActiveTrackersTitle')}</h3>
+                        <p className="text-muted-foreground max-w-sm mx-auto mt-2">{t('noActiveTrackersDesc')}</p>
                     </div>
                 )}
             </div>

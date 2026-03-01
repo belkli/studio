@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Clock, CalendarPlus, Coins } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface StudentMakeupBalance {
     student: User;
@@ -25,7 +26,10 @@ const EXPIRING_SOON_DAYS = 7;
 
 export function AdminMakeupDashboard() {
     const { users, mockLessons, getMakeupCreditBalance } = useAuth();
-    
+    const t = useTranslations('AdminMakeupDashboard');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+
     const makeupBalances = useMemo(() => {
         const studentUsers = users.filter(u => u.role === 'student' && u.approved);
         const balances: StudentMakeupBalance[] = [];
@@ -35,13 +39,13 @@ export function AdminMakeupDashboard() {
             const balance = getMakeupCreditBalance(studentIds);
 
             if (balance > 0) {
-                 const grantedLessons = mockLessons.filter(l => 
-                    l.studentId === student.id && 
+                const grantedLessons = mockLessons.filter(l =>
+                    l.studentId === student.id &&
                     (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
                 ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
-                const usedCredits = mockLessons.filter(l => 
-                    l.studentId === student.id && 
+                const usedCredits = mockLessons.filter(l =>
+                    l.studentId === student.id &&
                     l.type === 'MAKEUP'
                 ).length;
 
@@ -69,14 +73,14 @@ export function AdminMakeupDashboard() {
 
 
     const MakeupTable = ({ balancesToShow }: { balancesToShow: StudentMakeupBalance[] }) => (
-         <Table>
+        <Table dir={isRtl ? 'rtl' : 'ltr'}>
             <TableHeader>
                 <TableRow>
-                    <TableHead>תלמיד/ה</TableHead>
-                    <TableHead>מורה</TableHead>
-                    <TableHead>יתרת זיכויים</TableHead>
-                    <TableHead>תוקף הזיכוי הקרוב</TableHead>
-                    <TableHead className="text-left">פעולות</TableHead>
+                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
+                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colTeacher')}</TableHead>
+                    <TableHead className="text-center">{t('colBalance')}</TableHead>
+                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colExpiry')}</TableHead>
+                    <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -94,33 +98,33 @@ export function AdminMakeupDashboard() {
                                 </Avatar>
                                 {item.student.name}
                             </TableCell>
-                            <TableCell>{item.teacherName || 'לא משויך'}</TableCell>
+                            <TableCell className={isRtl ? "text-right" : "text-left"}>{item.teacherName || t('unassigned')}</TableCell>
                             <TableCell className="text-center font-semibold">{item.balance}</TableCell>
-                            <TableCell>
+                            <TableCell className={isRtl ? "text-right" : "text-left"}>
                                 <Badge variant={isExpiringSoon ? 'destructive' : 'secondary'}>
-                                    פג בעוד {daysUntilExpiry} ימים
+                                    {t('expiresInDays', { days: daysUntilExpiry })}
                                 </Badge>
                             </TableCell>
-                             <TableCell className="text-left">
+                            <TableCell className={isRtl ? "text-left" : "text-right"}>
                                 <Button variant="outline" size="sm" disabled>
-                                    <CalendarPlus className="ms-2 h-4 w-4" />
-                                    קבע שיעור השלמה
+                                    <CalendarPlus className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
+                                    {t('scheduleBtn')}
                                 </Button>
-                                 <Button variant="ghost" size="sm" disabled className="me-2">
-                                    <Clock className="ms-2 h-4 w-4" />
-                                    הארך תוקף
+                                <Button variant="ghost" size="sm" disabled className={isRtl ? "me-2" : "ms-2"}>
+                                    <Clock className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
+                                    {t('extendBtn')}
                                 </Button>
                             </TableCell>
                         </TableRow>
                     )
                 }) : (
-                     <TableRow>
+                    <TableRow>
                         <TableCell colSpan={5} className="p-0">
-                           <EmptyState
+                            <EmptyState
                                 icon={Coins}
-                                title="אין יתרות להצגה"
-                                description="נראה שכל התלמידים מנצלים את שיעורי ההשלמה שלהם בזמן."
-                           />
+                                title={t('emptyTitle')}
+                                description={t('emptyDesc')}
+                            />
                         </TableCell>
                     </TableRow>
                 )}
@@ -129,33 +133,33 @@ export function AdminMakeupDashboard() {
     );
 
     return (
-        <Tabs defaultValue="all">
+        <Tabs defaultValue="all" dir={isRtl ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="all">כלל היתרות</TabsTrigger>
+                <TabsTrigger value="all">{t('tabAll')}</TabsTrigger>
                 <TabsTrigger value="expiring">
-                    פג תוקף בקרוב
-                    {expiringSoonBalances.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-destructive rounded-full">{expiringSoonBalances.length}</span>}
+                    {t('tabExpiring')}
+                    {expiringSoonBalances.length > 0 && <span className={isRtl ? "ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-destructive rounded-full" : "me-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-destructive rounded-full"}>{expiringSoonBalances.length}</span>}
                 </TabsTrigger>
             </TabsList>
             <Card className="mt-4">
-                 <TabsContent value="all" className="m-0">
+                <TabsContent value="all" className="m-0">
                     <CardHeader>
-                        <CardTitle>כלל יתרות שיעורי ההשלמה</CardTitle>
-                        <CardDescription>רשימת כל התלמידים עם זיכויים לשיעורי השלמה.</CardDescription>
+                        <CardTitle>{t('titleAll')}</CardTitle>
+                        <CardDescription>{t('descAll')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <MakeupTable balancesToShow={makeupBalances} />
                     </CardContent>
-                 </TabsContent>
-                 <TabsContent value="expiring" className="m-0">
+                </TabsContent>
+                <TabsContent value="expiring" className="m-0">
                     <CardHeader>
-                        <CardTitle>זיכויים שפג תוקפם בקרוב</CardTitle>
-                        <CardDescription>זיכויים שיפוג תוקפם ב-{EXPIRING_SOON_DAYS} הימים הקרובים.</CardDescription>
+                        <CardTitle>{t('titleExpiring')}</CardTitle>
+                        <CardDescription>{t('descExpiring', { days: EXPIRING_SOON_DAYS })}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <MakeupTable balancesToShow={expiringSoonBalances} />
                     </CardContent>
-                 </TabsContent>
+                </TabsContent>
             </Card>
         </Tabs>
     );

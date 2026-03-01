@@ -11,20 +11,26 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Save } from "lucide-react";
+import { useTranslations, useLocale } from 'next-intl';
 
-const policySchema = z.object({
-    studentNoticeHoursRequired: z.coerce.number().min(0, "חובה להזין מספר שעות חיובי."),
+const getPolicySchema = (t: any) => z.object({
+    studentNoticeHoursRequired: z.coerce.number().min(0, t('errors.positiveHours')),
     studentCancellationCredit: z.enum(['FULL', 'NONE']),
     studentLateCancelCredit: z.enum(['FULL', 'NONE']),
-    makeupCreditExpiryDays: z.coerce.number().min(0, "חובה להזין מספר ימים חיובי."),
-    maxMakeupsPerTerm: z.coerce.number().min(0, "חובה להזין מספר חיובי."),
+    makeupCreditExpiryDays: z.coerce.number().min(0, t('errors.positiveDays')),
+    maxMakeupsPerTerm: z.coerce.number().min(0, t('errors.positiveNumber')),
 });
 
-type PolicyFormData = z.infer<typeof policySchema>;
+type PolicyFormData = z.infer<ReturnType<typeof getPolicySchema>>;
 
 export function CancellationPolicySettings() {
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('CancellationPolicySettings');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+
+    const policySchema = getPolicySchema(t);
 
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
@@ -46,42 +52,42 @@ export function CancellationPolicySettings() {
             noShowCredit: 'NONE', // This is non-configurable for now
         };
         updateConservatorium({ ...currentConservatorium, cancellationPolicy: updatedPolicy as any });
-        toast({ title: 'מדיניות הביטולים עודכנה בהצלחה!' });
+        toast({ title: t('successToast') });
         form.reset(data); // Reset dirty state
     };
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} dir={isRtl ? 'rtl' : 'ltr'}>
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>כללי ביטול תלמידים</CardTitle>
+                            <CardTitle>{t('studentRulesTitle')}</CardTitle>
                         </CardHeader>
                         <CardContent className="grid md:grid-cols-2 gap-6">
                             <FormField name="studentNoticeHoursRequired" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>שעות התראה נדרשות לביטול עם זיכוי</FormLabel>
+                                    <FormLabel>{t('noticeHoursLabel')}</FormLabel>
                                     <Input type="number" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField name="studentCancellationCredit" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>זיכוי עבור ביטול בזמן</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                    <FormLabel>{t('cancellationCreditLabel')}</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                                         <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                                        <SelectContent><SelectItem value="FULL">זיכוי מלא</SelectItem><SelectItem value="NONE">ללא זיכוי</SelectItem></SelectContent>
+                                        <SelectContent><SelectItem value="FULL">{t('options.FULL')}</SelectItem><SelectItem value="NONE">{t('options.NONE')}</SelectItem></SelectContent>
                                     </Select>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField name="studentLateCancelCredit" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>זיכוי עבור ביטול מאוחר</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                    <FormLabel>{t('lateCancelCreditLabel')}</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                                         <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                                        <SelectContent><SelectItem value="FULL">זיכוי מלא (לא מומלץ)</SelectItem><SelectItem value="NONE">ללא זיכוי</SelectItem></SelectContent>
+                                        <SelectContent><SelectItem value="FULL">{t('options.FULL_NOT_RECOMMENDED')}</SelectItem><SelectItem value="NONE">{t('options.NONE')}</SelectItem></SelectContent>
                                     </Select>
                                     <FormMessage />
                                 </FormItem>
@@ -90,19 +96,19 @@ export function CancellationPolicySettings() {
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle>כללי שיעורי השלמה</CardTitle>
+                            <CardTitle>{t('makeupRulesTitle')}</CardTitle>
                         </CardHeader>
                         <CardContent className="grid md:grid-cols-2 gap-6">
                             <FormField name="makeupCreditExpiryDays" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>תוקף זיכוי להשלמה (בימים)</FormLabel>
+                                    <FormLabel>{t('makeupExpiryLabel')}</FormLabel>
                                     <Input type="number" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField name="maxMakeupsPerTerm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>מקסימום שיעורי השלמה לסמסטר</FormLabel>
+                                    <FormLabel>{t('maxMakeupsLabel')}</FormLabel>
                                     <Input type="number" {...field} />
                                     <FormMessage />
                                 </FormItem>
@@ -110,10 +116,10 @@ export function CancellationPolicySettings() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="flex justify-end mt-6">
+                <div className={`flex ${isRtl ? 'justify-end' : 'justify-start'} mt-6`}>
                     <Button type="submit" disabled={!form.formState.isDirty}>
-                        <Save className="me-2 h-4 w-4" />
-                        שמור שינויים
+                        <Save className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+                        {t('saveChanges')}
                     </Button>
                 </div>
             </form>

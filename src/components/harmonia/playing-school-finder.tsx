@@ -1,0 +1,256 @@
+
+'use client';
+
+import { useState, useMemo } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, Music, School, ArrowRight, Info, Mail, Phone, User as UserIcon, Sparkles, ChevronDown } from "lucide-react";
+import { Link, useRouter } from "@/i18n/routing";
+import { useTranslations } from 'next-intl';
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Mock data for partnerships
+const mockPartnerships = [
+    {
+        id: 'ps-1',
+        schoolName: 'תיכון הדרים',
+        schoolSymbol: '44570001',
+        city: 'הוד השרון',
+        instruments: ['פסנתר', 'כינור', 'חליל צד'],
+        programType: 'GROUP',
+        status: 'ACTIVE'
+    },
+    {
+        id: 'ps-2',
+        schoolName: 'תיכון חדש',
+        schoolSymbol: '12345678',
+        city: 'תל אביב',
+        instruments: ['גיטרה', 'תופים'],
+        programType: 'INDIVIDUAL',
+        status: 'ACTIVE'
+    },
+    {
+        id: 'ps-3',
+        schoolName: 'תיכון הראשונים',
+        schoolSymbol: '87654321',
+        city: 'הרצליה',
+        instruments: ['פסנתר', 'צ׳לו'],
+        programType: 'GROUP',
+        status: 'ACTIVE'
+    },
+    {
+        id: 'ps-4',
+        schoolName: 'בית ספר לאמנויות',
+        schoolSymbol: '11223344',
+        city: 'ירושלים',
+        instruments: ['שירה', 'פסנתר', 'כינור'],
+        programType: 'GROUP',
+        status: 'ACTIVE'
+    }
+];
+
+interface PlayingSchoolFinderProps {
+    className?: string;
+}
+
+export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
+    const t = useTranslations('PlayingSchool.finder');
+    const [search, setSearch] = useState('');
+    const [selectedInstrument, setSelectedInstrument] = useState<string>('all');
+    const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+    const [submittedLead, setSubmittedLead] = useState(false);
+    const router = useRouter();
+
+    const allInstruments = useMemo(() => {
+        const instruments = new Set<string>();
+        mockPartnerships.forEach(p => p.instruments.forEach(i => instruments.add(i)));
+        return Array.from(instruments).sort();
+    }, []);
+
+    const filteredSchools = useMemo(() => {
+        return mockPartnerships.filter(p => {
+            const matchesSearch = p.schoolName.includes(search) ||
+                p.city.includes(search) ||
+                p.schoolSymbol.includes(search);
+
+            const matchesInstrument = selectedInstrument === 'all' ||
+                p.instruments.includes(selectedInstrument);
+
+            return matchesSearch && matchesInstrument;
+        });
+    }, [search, selectedInstrument]);
+
+    const handleLeadSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmittingLead(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        setIsSubmittingLead(false);
+        setSubmittedLead(true);
+        toast({
+            title: t('enquirySuccessTitle'),
+            description: t('enquirySuccessDesc'),
+        });
+    };
+
+    return (
+        <div className={cn("space-y-12", className)}>
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 relative group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-indigo-600 transition-colors" />
+                    <Input
+                        placeholder={t('searchPlaceholder')}
+                        className="pl-10 h-14 text-lg shadow-xl shadow-indigo-600/5 border-slate-200 focus-visible:ring-indigo-500/20"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <div className="relative">
+                    <Select value={selectedInstrument} onValueChange={setSelectedInstrument}>
+                        <SelectTrigger className="h-14 bg-white shadow-xl shadow-indigo-600/5 border-slate-200 font-semibold text-slate-700 focus:ring-indigo-500/20">
+                            <div className="flex items-center gap-2">
+                                <Music className="h-4 w-4 text-indigo-400" />
+                                <SelectValue placeholder={t('filterByInstrument')} />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allInstruments') || 'All Instruments'}</SelectItem>
+                            {allInstruments.map(inst => (
+                                <SelectItem key={inst} value={inst}>{inst}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {filteredSchools.map((school) => (
+                    <Card key={school.id} className="hover:shadow-2xl transition-all duration-500 border-indigo-50 group bg-white/80 backdrop-blur-sm overflow-hidden flex flex-col">
+                        <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <CardHeader className="flex-1">
+                            <div className="flex justify-between items-start mb-4">
+                                <Badge className="bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100 transition-colors">
+                                    {school.programType === 'GROUP' ? t('groupProgram') : t('individualProgram')}
+                                </Badge>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    #{school.schoolSymbol}
+                                </span>
+                            </div>
+                            <CardTitle className="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{school.schoolName}</CardTitle>
+                            <CardDescription className="flex items-center gap-1.5 font-semibold text-slate-500 pt-1">
+                                <MapPin className="h-4 w-4 text-indigo-400" />
+                                {school.city}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-3">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <Music className="h-3 w-3" />
+                                    {t('offeredInstruments')}
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {school.instruments.map(inst => (
+                                        <Badge key={inst} variant="outline" className="text-xs font-bold py-1 px-2.5 border-slate-200 text-slate-600 bg-white">
+                                            {inst}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="pt-2 gap-3 pb-6">
+                            <Button
+                                className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-bold text-md shadow-lg shadow-indigo-600/20 group/btn"
+                                onClick={() => router.push(`/register/school?token=mock-token-${school.schoolSymbol}`)}
+                            >
+                                {t('applyNow')}
+                                <ArrowRight className="h-5 w-5 ms-2 group-hover/btn:translate-x-1 transition-transform" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200" title={t('learnMore')}>
+                                <Info className="h-5 w-5" />
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                ))}
+            </div>
+
+            {filteredSchools.length === 0 && (
+                <div className="text-center py-24 bg-slate-50/50 rounded-[40px] border-2 border-dashed border-slate-200/50">
+                    <div className="h-20 w-20 rounded-3xl bg-white shadow-sm flex items-center justify-center mx-auto mb-6">
+                        <School className="h-10 w-10 text-slate-300" />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900">{t('noResults')}</h3>
+                    <p className="text-slate-500 font-medium max-w-sm mx-auto mt-2">{t('noResultsSub')}</p>
+                </div>
+            )}
+
+            {/* Interest Form */}
+            <div className="mt-24 p-12 rounded-[40px] bg-indigo-600 text-white shadow-2xl shadow-indigo-600/30 relative overflow-hidden group">
+                <Sparkles className="absolute -top-10 -right-10 h-64 w-64 text-white/5 rotate-12 group-hover:scale-110 transition-transform duration-1000" />
+                <div className="relative z-10 grid lg:grid-cols-5 gap-12 items-center">
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
+                            <UserIcon className="h-6 w-6 text-white" />
+                        </div>
+                        <h2 className="text-4xl font-black leading-tight tracking-tight">{t('interestedTitle')}</h2>
+                        <p className="text-xl text-indigo-100 font-medium leading-relaxed">
+                            {t('interestedDesc')}
+                        </p>
+                    </div>
+
+                    <div className="lg:col-span-3">
+                        {submittedLead ? (
+                            <div className="bg-white/10 backdrop-blur-md p-12 rounded-3xl border border-white/20 text-center space-y-6 animate-in fade-in zoom-in duration-500">
+                                <div className="mx-auto w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-white">
+                                    <Sparkles className="h-10 w-10 animate-pulse" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-3xl font-bold">{t('enquirySuccessTitle')}</h3>
+                                    <p className="text-xl text-indigo-100">{t('enquirySuccessDesc')}</p>
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setSubmittedLead(false)}
+                                    className="mt-4 bg-white text-indigo-600 hover:bg-white/90"
+                                >
+                                    {t('sendAnotherMessage') || 'Send another inquiry'}
+                                </Button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleLeadSubmit} className="bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/20 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Input required placeholder={t('parentName')} className="h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-xl focus:ring-white/30" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Input required type="email" placeholder={t('parentEmail')} className="h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-xl focus:ring-white/30" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Input required placeholder={t('parentPhone')} className="h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-xl focus:ring-white/30" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Input required placeholder={t('childSchoolSymbol')} className="h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-xl focus:ring-white/30" />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmittingLead}
+                                    variant="secondary"
+                                    className="md:col-span-2 h-14 rounded-xl font-black text-lg bg-white text-indigo-600 hover:bg-slate-50 hover:scale-[1.01] transition-all shadow-xl shadow-black/10"
+                                >
+                                    {isSubmittingLead ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" />
+                                            <span>{t('sending') || 'Sending...'}</span>
+                                        </div>
+                                    ) : t('sendEnquiry')}
+                                </Button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

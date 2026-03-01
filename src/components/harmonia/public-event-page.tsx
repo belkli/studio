@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Calendar, Clock, MapPin, Ticket, Minus, Plus, Users, Music } from 'lucide-react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { useTranslations } from 'next-intl';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 export function PublicEventPage() {
     const params = useParams();
@@ -21,6 +21,7 @@ export function PublicEventPage() {
     const { toast } = useToast();
     const [ticketCount, setTicketCount] = useState(1);
     const t = useTranslations('PublicEventPage');
+    const dateLocale = useDateLocale();
 
     const event = useMemo(() => mockEvents.find(e => e.id === eventId), [mockEvents, eventId]);
     const heroImage = PlaceHolderImages.find(img => img.id === 'event-wedding');
@@ -84,7 +85,7 @@ export function PublicEventPage() {
                                 <CardTitle>{t('eventDetails')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
-                                <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-muted-foreground" /><span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: he })}</span></div>
+                                <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-muted-foreground" /><span>{format(new Date(event.eventDate), 'EEEE, dd MMMM yyyy', { locale: dateLocale })}</span></div>
                                 <div className="flex items-center gap-3"><Clock className="h-4 w-4 text-muted-foreground" /><span>{event.startTime}</span></div>
                                 <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-muted-foreground" /><span>{event.venue}</span></div>
                             </CardContent>

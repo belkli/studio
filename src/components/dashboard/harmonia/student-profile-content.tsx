@@ -11,7 +11,7 @@ import { Link } from "@/i18n/routing";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement, LessonNote } from "@/lib/types";
 import { format, formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useMemo, useState } from "react";
 import { useTranslations } from 'next-intl';
 
@@ -31,14 +31,21 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
             return <Trophy className="h-6 w-6 text-yellow-500" />;
         case 'YEARS_ENROLLED_1':
             return <CalendarCheck2 className="h-6 w-6 text-blue-500" />;
+        case 'FIRST_PLAYING_SCHOOL_LESSON':
+            return <School className="h-6 w-6 text-indigo-500" />;
+        case 'INSTRUMENT_COLLECTED':
+            return <CheckCircle2 className="h-6 w-6 text-emerald-500" />;
         default:
             return <Star className="h-6 w-6 text-gray-500" />;
     }
 };
 
+import { School, Building, MapPin } from 'lucide-react';
+
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
     const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
+    const dateLocale = useDateLocale();
     const t = useTranslations("StudentDashboard");
 
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
@@ -148,6 +155,60 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                 </CardHeader>
             </Card>
 
+            {student.accountType === 'PLAYING_SCHOOL' && student.playingSchoolInfo && (
+                <Card className="border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-white shadow-sm">
+                    <CardHeader className="pb-3">
+                        <CardTitle className="text-lg flex items-center gap-2 text-indigo-700">
+                            <School className="h-5 w-5" />
+                            {t('schoolProgram')}
+                        </CardTitle>
+                        <CardDescription>
+                            {student.playingSchoolInfo.schoolName} — {student.playingSchoolInfo.programType} Program
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{t('schoolSymbol')}</p>
+                            <p className="text-sm font-semibold flex items-center gap-1.5">
+                                <Building className="h-3.5 w-3.5 text-indigo-400" />
+                                {student.playingSchoolInfo.schoolSymbol}
+                            </p>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{t('instrumentStatus')}</p>
+                            <div className="flex items-center gap-1.5">
+                                {student.playingSchoolInfo.instrumentReceived ? (
+                                    <>
+                                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                        <span className="text-sm font-medium">{t('received')}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Clock className="h-4 w-4 text-orange-400" />
+                                        <span className="text-sm font-medium">{t('pendingCollection')}</span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        {student.playingSchoolInfo.lessonDay && (
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase">{t('lessonDay')}</p>
+                                <p className="text-sm font-semibold flex items-center gap-1.5">
+                                    <CalendarIcon className="h-3.5 w-3.5 text-indigo-400" />
+                                    {student.playingSchoolInfo.lessonDay}
+                                </p>
+                            </div>
+                        )}
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{t('programType')}</p>
+                            <Badge variant="secondary" className="bg-indigo-100 text-indigo-700 border-indigo-200">
+                                {student.playingSchoolInfo.programType}
+                            </Badge>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
@@ -227,12 +288,12 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             {upcomingLessons.length > 0 ? upcomingLessons.map(lesson => (
                                 <div key={lesson.id} className="flex items-start gap-3 text-sm">
                                     <div className="flex-shrink-0 flex flex-col items-center justify-center bg-muted w-12 h-12 rounded-md">
-                                        <span className="text-xs font-bold uppercase text-red-600">{format(new Date(lesson.startTime), 'MMM', { locale: he })}</span>
+                                        <span className="text-xs font-bold uppercase text-red-600">{format(new Date(lesson.startTime), 'MMM', { locale: dateLocale })}</span>
                                         <span className="text-lg font-bold">{format(new Date(lesson.startTime), 'dd')}</span>
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-semibold">{lesson.instrument}</p>
-                                        <p className="text-xs text-muted-foreground">{format(new Date(lesson.startTime), 'EEEE, HH:mm', { locale: he })}</p>
+                                        <p className="text-xs text-muted-foreground">{format(new Date(lesson.startTime), 'EEEE, HH:mm', { locale: dateLocale })}</p>
                                     </div>
                                 </div>
                             )) : (
@@ -272,7 +333,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <CardContent className="space-y-4">
                             {userNotes.length > 0 ? userNotes.slice(0, 2).map(note => (
                                 <div key={note.id} className="text-sm border-b pb-3 last:border-b-0 last:pb-0">
-                                    <p className="text-muted-foreground text-xs">{formatDistanceToNow(new Date(note.createdAt), { addSuffix: true, locale: he })}</p>
+                                    <p className="text-muted-foreground text-xs">{formatDistanceToNow(new Date(note.createdAt), { addSuffix: true, locale: dateLocale })}</p>
                                     <p className="mt-1">{note.summary}</p>
                                     {note.homeworkAssignments && note.homeworkAssignments.length > 0 && (
                                         <ul className="mt-2 text-xs list-disc list-inside text-muted-foreground marker:text-primary/50">
@@ -303,7 +364,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                         <p className="text-xs text-muted-foreground">{ach.description}</p>
                                     </div>
                                     <div className="text-xs text-muted-foreground whitespace-nowrap">
-                                        {formatDistanceToNow(new Date(ach.achievedAt), { addSuffix: true, locale: he })}
+                                        {formatDistanceToNow(new Date(ach.achievedAt), { addSuffix: true, locale: dateLocale })}
                                     </div>
                                 </div>
                             ))}

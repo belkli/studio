@@ -7,13 +7,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, CheckCheck } from 'lucide-react';
 import type { Notification } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';
 import { EmptyState } from '@/components/ui/empty-state';
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
+    const dateLocale = useDateLocale();
     return (
         <Link href={notification.link} className={cn(
             "block p-4 rounded-lg border transition-colors hover:bg-muted/50",
@@ -28,7 +30,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
                     <p className="text-sm text-muted-foreground">{notification.message}</p>
                 </div>
                 <div className="text-xs text-muted-foreground whitespace-nowrap">
-                    {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true, locale: he })}
+                    {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true, locale: dateLocale })}
                 </div>
             </div>
         </Link>
@@ -38,6 +40,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
 export default function NotificationsPage() {
     const { user, updateUser } = useAuth();
     const [currentTab, setCurrentTab] = useState('all');
+    const t = useTranslations('AdminPages.notifications');
 
     const handleMarkAllRead = () => {
         if (!user || !user.notifications) return;
@@ -47,9 +50,9 @@ export default function NotificationsPage() {
         };
         updateUser(updatedUser);
     };
-    
+
     const unreadCount = useMemo(() => user?.notifications?.filter(n => !n.read).length || 0, [user?.notifications]);
-    
+
     const filteredNotifications = useMemo(() => {
         if (!user?.notifications) return [];
         const sortedNotifications = [...user.notifications].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -66,22 +69,22 @@ export default function NotificationsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">התראות</h1>
-                    <p className="text-muted-foreground">כל העדכונים וההודעות שלך במקום אחד.</p>
+                    <h1 className="text-2xl font-bold">{t('title')}</h1>
+                    <p className="text-muted-foreground">{t('subtitle')}</p>
                 </div>
                 <Button variant="outline" onClick={handleMarkAllRead} disabled={unreadCount === 0}>
                     <CheckCheck className="me-2 h-4 w-4" />
-                    סמן הכל כנקרא
+                    {t('markAllRead')}
                 </Button>
             </div>
-            
+
             <Card>
                 <CardHeader className="p-0 border-b">
                     <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
                         <TabsList className="grid w-full grid-cols-2 rounded-t-lg rounded-b-none h-auto p-0">
-                            <TabsTrigger value="all" className="py-3 rounded-t-lg rounded-b-none data-[state=active]:shadow-none data-[state=active]:border-b-2 border-b-primary">הכל</TabsTrigger>
+                            <TabsTrigger value="all" className="py-3 rounded-t-lg rounded-b-none data-[state=active]:shadow-none data-[state=active]:border-b-2 border-b-primary">{t('all')}</TabsTrigger>
                             <TabsTrigger value="unread" className="py-3 rounded-t-lg rounded-b-none data-[state=active]:shadow-none data-[state=active]:border-b-2 border-b-primary">
-                                לא נקראו
+                                {t('unread')}
                                 {unreadCount > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">{unreadCount}</span>}
                             </TabsTrigger>
                         </TabsList>
@@ -90,14 +93,14 @@ export default function NotificationsPage() {
                 <CardContent className="p-6">
                     <div className="space-y-4">
                         {filteredNotifications.length > 0 ? (
-                             filteredNotifications.map(notification => (
+                            filteredNotifications.map(notification => (
                                 <NotificationItem key={notification.id} notification={notification} />
-                             ))
+                            ))
                         ) : (
                             <EmptyState
                                 icon={Bell}
-                                title={currentTab === 'unread' ? 'אין התראות חדשות' : 'אין התראות להצגה'}
-                                description={currentTab === 'unread' ? 'כל ההתראות שלך מעודכנות.' : 'כאשר יהיו עדכונים חדשים, הם יופיעו כאן.'}
+                                title={currentTab === 'unread' ? t('noNewNotifications') : t('noNotifications')}
+                                description={currentTab === 'unread' ? t('allUpdated') : t('newUpdatesAppearHere')}
                                 className="py-12"
                             />
                         )}

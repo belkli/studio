@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Save, Loader } from 'lucide-react';
 import { format } from 'date-fns';
-
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';
 
 export type SaveState = 'idle' | 'saving' | 'success' | 'error';
@@ -28,13 +28,13 @@ export function SaveStatusBar({ isDirty, saveState, lastSaved, onSave }: SaveSta
       return { text: `❌ ${t('error')}`, color: 'text-destructive' };
     }
     if (saveState === 'success' && lastSaved) {
-      return { text: `✓ ${t('savedAt', { time: format(lastSaved, 'HH:mm') })}`, color: 'text-green-600' };
+      return { text: `✓ ${t('savedAt', { time: format(lastSaved, 'HH:mm', { locale: dateLocale }) })}`, color: 'text-green-600' };
     }
     if (isDirty) {
       return { text: `⚠️ ${t('unsavedChanges')}`, color: 'text-yellow-600' };
     }
     if (lastSaved) {
-      return { text: `✓ ${t('savedAt', { time: format(lastSaved, 'HH:mm') })}`, color: 'text-muted-foreground' };
+      return { text: `✓ ${t('savedAt', { time: format(lastSaved, 'HH:mm', { locale: dateLocale }) })}`, color: 'text-muted-foreground' };
     }
     return { text: '', color: '' };
   };

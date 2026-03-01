@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function RoomManagementDialog({
   branch,
@@ -22,6 +23,9 @@ export function RoomManagementDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const { mockRooms, addRoom, updateRoom, deleteRoom } = useAuth();
+  const t = useTranslations('RoomManagementDialog');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -75,40 +79,40 @@ export function RoomManagementDialog({
   };
 
   const handleDelete = (roomId: string) => {
-    if (confirm('האם אתה בטוח שברצונך למחוק חדר זה?')) {
+    if (confirm(t('confirmDelete'))) {
       deleteRoom(roomId);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={(val) => { onOpenChange(val); if (!val) setIsFormOpen(false); }}>
-      <DialogContent className="max-w-4xl" dir="rtl">
+      <DialogContent className="max-w-4xl" dir={isRtl ? 'rtl' : 'ltr'}>
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>ניהול חדרים - {branch?.name}</DialogTitle>
+          <DialogTitle>{t('title', { branchName: branch?.name || '' })}</DialogTitle>
           {!isFormOpen && (
             <Button size="sm" onClick={() => { setEditingRoom(null); setIsFormOpen(true); }}>
               <PlusCircle className="me-2 h-4 w-4" />
-              הוספת חדר
+              {t('addBtn')}
             </Button>
           )}
         </DialogHeader>
 
         {isFormOpen ? (
           <div className="space-y-4 py-4">
-            <h3 className="font-semibold">{editingRoom ? 'עריכת חדר' : 'חדר חדש'}</h3>
+            <h3 className="font-semibold">{editingRoom ? t('editMode') : t('newMode')}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>שם החדר</Label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="לדוגמה: חדר מס' 1" />
+                <Label>{t('nameLabel')}</Label>
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder={t('namePlaceholder')} />
               </div>
               <div className="space-y-2">
-                <Label>קיבולת (מספר אנשים)</Label>
+                <Label>{t('capacityLabel')}</Label>
                 <Input type="number" min="0" value={capacity} onChange={e => setCapacity(parseInt(e.target.value) || 0)} />
               </div>
               <div className="space-y-2 col-span-2">
-                <Label>ציוד</Label>
+                <Label>{t('equipmentLabel')}</Label>
                 <div className="flex flex-wrap gap-2 mb-2 min-h-[40px] p-2 border rounded-md border-input bg-background/50">
-                  {equipmentList.length === 0 && <span className="text-muted-foreground text-sm py-1">לחץ Enter לאחר הקלדת שם הציוד...</span>}
+                  {equipmentList.length === 0 && <span className="text-muted-foreground text-sm py-1">{t('equipTip1')}</span>}
                   {equipmentList.map((item, index) => (
                     <Badge key={index} variant="secondary" className="gap-1 pr-1 py-1">
                       {item}
@@ -134,17 +138,17 @@ export function RoomManagementDialog({
                       setEquipmentInput('');
                     }
                   }}
-                  placeholder="הקלד שם ציוד ולחץ Enter..."
+                  placeholder={t('equipTip2')}
                 />
               </div>
               <div className="space-y-2 col-span-2">
-                <Label>תיאור</Label>
-                <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="תיאור כללי של החדר וייעודו..." />
+                <Label>{t('descLabel')}</Label>
+                <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder={t('descPlaceholder')} />
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="ghost" onClick={() => { setIsFormOpen(false); setEditingRoom(null); }}>ביטול</Button>
-              <Button onClick={handleSave} disabled={!name}>שמירה</Button>
+              <Button variant="ghost" onClick={() => { setIsFormOpen(false); setEditingRoom(null); }}>{t('cancelBtn')}</Button>
+              <Button onClick={handleSave} disabled={!name}>{t('saveBtn')}</Button>
             </div>
           </div>
         ) : (
@@ -152,10 +156,10 @@ export function RoomManagementDialog({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>שם החדר</TableHead>
-                  <TableHead>קיבולת</TableHead>
-                  <TableHead>ציוד</TableHead>
-                  <TableHead className="text-left">פעולות</TableHead>
+                  <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colName')}</TableHead>
+                  <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colCapacity')}</TableHead>
+                  <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colEquipment')}</TableHead>
+                  <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -164,17 +168,17 @@ export function RoomManagementDialog({
                     <TableCell className="font-medium">{room.name}</TableCell>
                     <TableCell>{room.capacity || '-'}</TableCell>
                     <TableCell className="max-w-[200px] truncate">{room.equipment?.join(', ') || '-'}</TableCell>
-                    <TableCell className="text-left">
-                      <DropdownMenu dir="rtl">
+                    <TableCell className={isRtl ? "text-left" : "text-right"}>
+                      <DropdownMenu dir={isRtl ? 'rtl' : 'ltr'}>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           <DropdownMenuItem onClick={() => setEditingRoom(room)}>
-                            <Edit className="me-2 h-4 w-4" /> עריכה
+                            <Edit className="me-2 h-4 w-4" /> {t('actionEdit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(room.id)}>
-                            <Trash2 className="me-2 h-4 w-4" /> מחיקה
+                            <Trash2 className="me-2 h-4 w-4" /> {t('actionDelete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -182,7 +186,7 @@ export function RoomManagementDialog({
                   </TableRow>
                 ))}
                 {branchRooms.length === 0 && (
-                  <TableRow><TableCell colSpan={4} className="text-center h-24">אין חדרים מוגדרים לסניף זה.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="text-center h-24">{t('emptyState')}</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>

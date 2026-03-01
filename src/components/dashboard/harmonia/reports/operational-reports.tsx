@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useMemo } from 'react';
 import { getDay, format, startOfWeek } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations, useLocale } from 'next-intl';
 import { RoomOccupancyHeatmap } from "./room-occupancy-heatmap";
 
@@ -14,6 +14,7 @@ export function OperationalReports() {
     const t = useTranslations('Reports');
     const { mockLessons, users } = useAuth();
     const mockTeachers = users.filter(u => u.role === 'teacher');
+    const dateLocale = useDateLocale();
     const locale = useLocale();
 
     const {
@@ -34,7 +35,6 @@ export function OperationalReports() {
         // Cancellations by day
         const now = new Date();
         const days = [];
-        const dateLocale = locale === 'he' ? he : undefined;
 
         for (let i = 0; i < 7; i++) {
             days.push(format(startOfWeek(now, { weekStartsOn: 0 }).setDate(startOfWeek(now, { weekStartsOn: 0 }).getDate() + i), 'EEEE', { locale: dateLocale }));

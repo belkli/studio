@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/hooks/use-auth';
 import type { DayOfWeek, TimeRange, User, Room, EmptySlot } from '@/lib/types';
 import { addDays, getDay, startOfHour, isAfter, isSameDay, setHours, setMinutes } from 'date-fns';
@@ -31,6 +32,7 @@ function getDemandLevel(date: Date): SlotDemandLevel {
 }
 
 export function AvailableSlotsMarketplace() {
+    const t = useTranslations('AvailableNow');
     const { users, mockLessons } = useAuth();
     const [filters, setFilters] = useState({ instrument: 'all', duration: 'all', conservatoriumId: 'all' });
     const [isLoading, setIsLoading] = useState(true);
@@ -123,7 +125,7 @@ export function AvailableSlotsMarketplace() {
         return (
             <div className="flex flex-col items-center justify-center text-muted-foreground p-12">
                 <Loader2 className="h-10 w-10 animate-spin mb-4" />
-                <p>מחפש הזדמנויות של הרגע האחרון...</p>
+                <p>{t('loadingSlots')}</p>
             </div>
         );
     }
@@ -131,25 +133,25 @@ export function AvailableSlotsMarketplace() {
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row gap-4 items-center p-4 rounded-lg border bg-card">
-                <h3 className="font-semibold text-lg flex-shrink-0">סינון תוצאות</h3>
+                <h3 className="font-semibold text-lg flex-shrink-0">{t('filterResults')}</h3>
                 <div className="flex flex-wrap items-center gap-4">
                     <Select dir="rtl" value={filters.conservatoriumId} onValueChange={(v) => handleFilterChange('conservatoriumId', v)}>
-                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="כל הקונסרבטוריונים" /></SelectTrigger>
+                        <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('allConservatoriums')} /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">כל הקונסרבטוריונים</SelectItem>
+                            <SelectItem value="all">{t('allConservatoriums')}</SelectItem>
                             {conservatoriums.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}>
-                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="כל הכלים" /></SelectTrigger>
-                        <SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
+                        <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('allInstruments')} /></SelectTrigger>
+                        <SelectContent><SelectItem value="all">{t('allInstruments')}</SelectItem>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
                     </Select>
                     <Select dir="rtl" value={filters.duration} onValueChange={(v) => handleFilterChange('duration', v)}>
-                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="כל אורך שיעור" /></SelectTrigger>
+                        <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('allDurations')} /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">כל אורך שיעור</SelectItem>
-                            <SelectItem value="45">45 דקות</SelectItem>
-                            <SelectItem value="60">60 דקות</SelectItem>
+                            <SelectItem value="all">{t('allDurations')}</SelectItem>
+                            <SelectItem value="45">{t('duration45')}</SelectItem>
+                            <SelectItem value="60">{t('duration60')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -163,8 +165,8 @@ export function AvailableSlotsMarketplace() {
                 </div>
             ) : (
                 <div className="text-center text-muted-foreground py-16">
-                    <h3 className="text-xl font-semibold">לא נמצאו שיעורים פנויים כרגע</h3>
-                    <p className="mt-2">נסה/י לשנות את אפשרויות הסינון או לחזור מאוחר יותר.</p>
+                    <h3 className="text-xl font-semibold">{t('noSlotsFound')}</h3>
+                    <p className="mt-2">{t('noSlotsDesc')}</p>
                 </div>
             )}
         </div>

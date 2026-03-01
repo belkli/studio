@@ -6,29 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, UserPlus, Send, DollarSign, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AssignMusicianDialog } from './assign-musician-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { SendQuoteDialog } from './send-quote-dialog';
+import { useTranslations } from 'next-intl';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
-
-const pipelineStages: { id: PerformanceBookingStatus; title: string }[] = [
-    { id: 'INQUIRY_RECEIVED', title: 'פנייה חדשה' },
-    { id: 'ADMIN_REVIEWING', title: 'בבדיקת מנהל' },
-    { id: 'MUSICIANS_CONFIRMED', title: 'מוזיקאים שובצו' },
-    { id: 'QUOTE_SENT', title: 'הצעה נשלחה' },
-    { id: 'DEPOSIT_PAID', title: 'שולם פיקדון' },
-    { id: 'BOOKING_CONFIRMED', title: 'הזמנה מאושרת' },
-    { id: 'EVENT_COMPLETED', title: 'הסתיים' },
-];
-
-const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPaid, onConfirmBooking }: { 
-    booking: PerformanceBooking; 
+const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPaid, onConfirmBooking, t, dateLocale }: {
+    booking: PerformanceBooking;
     onAssignClick: () => void;
     onSendQuoteClick: () => void;
-    onMarkDepositPaid: () => void; 
+    onMarkDepositPaid: () => void;
     onConfirmBooking: () => void;
+    t: any;
+    dateLocale: any;
 }) => (
     <Card className="mb-4">
         <CardHeader className="p-4">
@@ -39,31 +31,31 @@ const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPa
                 </div>
                 <DropdownMenu dir="rtl">
                     <DropdownMenuTrigger asChild>
-                         <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuItem onClick={onAssignClick}>
                             <UserPlus className="w-4 h-4 me-2" />
-                            שבץ מוזיקאים
+                            {t('actionAssignMusicians')}
                         </DropdownMenuItem>
                         {booking.status === 'MUSICIANS_CONFIRMED' && (
                             <DropdownMenuItem onClick={onSendQuoteClick}>
                                 <Send className="w-4 h-4 me-2 text-blue-500" />
-                                שלח הצעת מחיר
+                                {t('actionSendQuote')}
                             </DropdownMenuItem>
                         )}
                         {booking.status === 'QUOTE_SENT' && (
-                             <DropdownMenuItem onClick={onMarkDepositPaid}>
+                            <DropdownMenuItem onClick={onMarkDepositPaid}>
                                 <DollarSign className="w-4 h-4 me-2 text-green-500" />
-                                סמן פיקדון שולם
+                                {t('actionMarkDepositPaid')}
                             </DropdownMenuItem>
                         )}
                         {booking.status === 'DEPOSIT_PAID' && (
-                             <DropdownMenuItem onClick={onConfirmBooking}>
+                            <DropdownMenuItem onClick={onConfirmBooking}>
                                 <CheckCircle2 className="w-4 h-4 me-2 text-indigo-500" />
-                                אשר הזמנה סופית
+                                {t('actionConfirmBooking')}
                             </DropdownMenuItem>
                         )}
                     </DropdownMenuContent>
@@ -71,11 +63,11 @@ const BookingCard = ({ booking, onAssignClick, onSendQuoteClick, onMarkDepositPa
             </div>
         </CardHeader>
         <CardContent className="p-4 pt-0 text-sm space-y-2">
-            <p><strong>תאריך:</strong> {format(new Date(booking.eventDate), 'dd/MM/yyyy')} @ {booking.eventTime}</p>
-            <p><strong>סוג:</strong> {booking.eventType}</p>
-            <p><strong>הצעת מחיר:</strong> ₪{booking.totalQuote.toLocaleString()}</p>
+            <p><strong>{t('dateLabel')}</strong> {format(new Date(booking.eventDate), 'dd/MM/yyyy', { locale: dateLocale })} @ {booking.eventTime}</p>
+            <p><strong>{t('typeLabel')}</strong> {booking.eventType}</p>
+            <p><strong>{t('quoteLabel')}</strong> {t('currencySymbol')}{booking.totalQuote.toLocaleString()}</p>
             {booking.assignedMusicians && booking.assignedMusicians.length > 0 && (
-                <p><strong>משובצים:</strong> {booking.assignedMusicians.map(m => m.name).join(', ')}</p>
+                <p><strong>{t('assignedLabel')}</strong> {booking.assignedMusicians.map(m => m.name).join(', ')}</p>
             )}
         </CardContent>
     </Card>
@@ -88,6 +80,19 @@ export function PerformanceBookingDashboard() {
     const [selectedBooking, setSelectedBooking] = useState<PerformanceBooking | null>(null);
     const [quoteBooking, setQuoteBooking] = useState<PerformanceBooking | null>(null);
 
+    const t = useTranslations('PerformanceBooking');
+    const dateLocale = useDateLocale();
+
+    const pipelineStages: { id: PerformanceBookingStatus; title: string }[] = useMemo(() => [
+        { id: 'INQUIRY_RECEIVED', title: t('stageInquiryReceived') },
+        { id: 'ADMIN_REVIEWING', title: t('stageAdminReviewing') },
+        { id: 'MUSICIANS_CONFIRMED', title: t('stageMusiciansConfirmed') },
+        { id: 'QUOTE_SENT', title: t('stageQuoteSent') },
+        { id: 'DEPOSIT_PAID', title: t('stageDepositPaid') },
+        { id: 'BOOKING_CONFIRMED', title: t('stageBookingConfirmed') },
+        { id: 'EVENT_COMPLETED', title: t('stageEventCompleted') },
+    ], [t]);
+
     const bookingsByStage = useMemo(() => {
         const stages: Record<string, PerformanceBooking[]> = {};
         pipelineStages.forEach(stage => stages[stage.id] = []);
@@ -99,21 +104,21 @@ export function PerformanceBookingDashboard() {
                 }
             });
         return stages;
-    }, [mockPerformanceBookings, user]);
+    }, [mockPerformanceBookings, user, pipelineStages]);
 
     const handleAssignClick = (booking: PerformanceBooking) => {
         setSelectedBooking(booking);
         setAssignDialogOpen(true);
     };
-    
+
     const handleAssignConfirm = (bookingId: string, musicianIds: string[]) => {
         assignMusiciansToPerformance(bookingId, musicianIds);
         toast({
-          title: 'המוזיקאים שובצו בהצלחה!',
-          description: `${musicianIds.length} מוזיקאים שובצו לאירוע.`,
+            title: t('musiciansAssignedTitle'),
+            description: t('musiciansAssignedDesc', { count: musicianIds.length }),
         });
-      };
-    
+    };
+
     const handleSendQuoteClick = (booking: PerformanceBooking) => {
         setQuoteBooking(booking);
     };
@@ -121,8 +126,8 @@ export function PerformanceBookingDashboard() {
     const handleConfirmSendQuote = (bookingId: string, message: string) => {
         updatePerformanceBookingStatus(bookingId, 'QUOTE_SENT');
         toast({
-            title: 'הצעת מחיר נשלחה',
-            description: `ההצעה עבור "${quoteBooking?.eventName}" נשלחה ללקוח.`,
+            title: t('quoteSentTitle'),
+            description: t('quoteSentDesc', { eventName: quoteBooking?.eventName || '' }),
         });
         setQuoteBooking(null);
     }
@@ -130,16 +135,16 @@ export function PerformanceBookingDashboard() {
     const handleMarkDepositPaid = (booking: PerformanceBooking) => {
         updatePerformanceBookingStatus(booking.id, 'DEPOSIT_PAID');
         toast({
-          title: 'פיקדון עודכן',
-          description: `ההזמנה עבור "${booking.eventName}" עודכנה.`,
+            title: t('depositUpdatedTitle'),
+            description: t('depositUpdatedDesc', { eventName: booking.eventName }),
         });
     };
-    
+
     const handleConfirmBooking = (booking: PerformanceBooking) => {
         updatePerformanceBookingStatus(booking.id, 'BOOKING_CONFIRMED');
         toast({
-          title: 'ההזמנה אושרה',
-          description: `ההזמנה עבור "${booking.eventName}" אושרה סופית.`,
+            title: t('bookingConfirmedTitle'),
+            description: t('bookingConfirmedDesc', { eventName: booking.eventName }),
         });
     };
 
@@ -152,27 +157,29 @@ export function PerformanceBookingDashboard() {
                         <div className="bg-muted/50 rounded-lg p-2 h-full">
                             {bookingsByStage[stage.id]?.length > 0 ? (
                                 bookingsByStage[stage.id].map(booking => (
-                                    <BookingCard 
-                                        key={booking.id} 
-                                        booking={booking} 
+                                    <BookingCard
+                                        key={booking.id}
+                                        booking={booking}
                                         onAssignClick={() => handleAssignClick(booking)}
                                         onSendQuoteClick={() => handleSendQuoteClick(booking)}
                                         onMarkDepositPaid={() => handleMarkDepositPaid(booking)}
                                         onConfirmBooking={() => handleConfirmBooking(booking)}
+                                        t={t}
+                                        dateLocale={dateLocale}
                                     />
                                 ))
                             ) : (
                                 <div className="flex items-center justify-center h-24 text-sm text-muted-foreground">
-                                    אין הזמנות בשלב זה.
+                                    {t('noBookingsInStage')}
                                 </div>
                             )}
                         </div>
                     </div>
                 ))}
             </div>
-            <AssignMusicianDialog 
-                booking={selectedBooking} 
-                open={assignDialogOpen} 
+            <AssignMusicianDialog
+                booking={selectedBooking}
+                open={assignDialogOpen}
                 onOpenChange={setAssignDialogOpen}
                 onConfirm={handleAssignConfirm}
             />

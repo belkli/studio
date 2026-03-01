@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,9 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { School, Users, DollarSign, Plus, ExternalLink, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { School, Users, DollarSign, Plus, ExternalLink, CheckCircle, Clock, XCircle, Share2, BarChart3, UserPlus, Mail } from 'lucide-react';
+import { Link } from '@/i18n/routing';
 import { useToast } from '@/hooks/use-toast';
 import type { SchoolPartnership, PartnershipStatus, SubsidyModel } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 // ── Mock data ─────────────────────────────────────────────────────────────────
 
@@ -84,7 +86,7 @@ const statusConfig: Record<PartnershipStatus, { labelKey: string; variant: 'defa
 
 // ── Create Partnership Dialog ─────────────────────────────────────────────────
 
-function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnership) => void }) {
+function CreatePartnershipDialog({ onCreated, isRtl }: { onCreated: (p: SchoolPartnership) => void, isRtl: boolean }) {
     const { toast } = useToast();
     const t = useTranslations('PlayingSchool');
     const [open, setOpen] = useState(false);
@@ -131,9 +133,9 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" />{t('addPartnership')}</Button>
+                <Button><Plus className={isRtl ? "h-4 w-4 ml-2" : "h-4 w-4 mr-2"} />{t('addPartnership')}</Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader>
                     <DialogTitle>{t('createPartnershipTitle')}</DialogTitle>
                     <DialogDescription>{t('createPartnershipDesc')}</DialogDescription>
@@ -161,7 +163,7 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
                     </div>
                     <div className="space-y-2">
                         <Label>{t('subsidyModelLvl')}</Label>
-                        <Select value={subsidyModel} onValueChange={v => setSubsidyModel(v as SubsidyModel)}>
+                        <Select value={subsidyModel} onValueChange={v => setSubsidyModel(v as SubsidyModel)} dir={isRtl ? 'rtl' : 'ltr'}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="FULL_MUNICIPAL">{t('subsidyModel.FULL_MUNICIPAL')}</SelectItem>
@@ -183,9 +185,78 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
                         <Input type="number" value={parentContribution} onChange={e => setParentContribution(e.target.value)} min={0} />
                     </div>
                 </div>
-                <DialogFooter>
+                <DialogFooter className={cn(isRtl && "sm:justify-start")}>
                     <Button variant="outline" onClick={() => setOpen(false)}>{t('cancel')}</Button>
                     <Button onClick={handleSubmit}>{t('create')}</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// ── Invite Coordinator Dialog ─────────────────────────────────────────────────
+
+function InviteCoordinatorDialog({ partnershipId, schoolName, isRtl }: { partnershipId: string, schoolName: string, isRtl: boolean }) {
+    const { toast } = useToast();
+    const t = useTranslations('PlayingSchool');
+    const [open, setOpen] = useState(false);
+    const [email, setEmail] = useState('');
+    const [isSending, setIsSending] = useState(false);
+
+    const handleSubmit = async () => {
+        if (!email || !email.includes('@')) {
+            toast({ variant: 'destructive', title: 'Invalid Email', description: 'Please enter a valid email address.' });
+            return;
+        }
+
+        setIsSending(true);
+        try {
+            const { inviteSchoolCoordinator } = await import('@/app/actions');
+            const result = await inviteSchoolCoordinator({ partnershipId, email });
+            toast({ title: 'Invitation Sent', description: result.message });
+            setOpen(false);
+        } catch (err) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to send invitation.' });
+        } finally {
+            setIsSending(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
+                    <UserPlus className="h-4 w-4 me-1" />
+                    {t('inviteBtn')}
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md" dir={isRtl ? 'rtl' : 'ltr'}>
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <Mail className="h-5 w-5 text-indigo-600" />
+                        {t('inviteCoordinatorTitle')}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {t('inviteCoordinatorDesc', { schoolName })}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="email">{t('coordinatorEmail')}</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="coordinator@school.edu"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <DialogFooter className={cn(isRtl && "sm:justify-start")}>
+                    <Button variant="outline" onClick={() => setOpen(false)}>{t('cancel')}</Button>
+                    <Button onClick={handleSubmit} disabled={isSending}>
+                        {isSending ? "Sending..." : t('sendInvite')}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -196,6 +267,8 @@ function CreatePartnershipDialog({ onCreated }: { onCreated: (p: SchoolPartnersh
 
 export function SchoolPartnershipDashboard() {
     const t = useTranslations('PlayingSchool');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [partnerships, setPartnerships] = useState<SchoolPartnership[]>(MOCK_PARTNERSHIPS);
     const [activeTab, setActiveTab] = useState('partnerships');
 
@@ -218,7 +291,7 @@ export function SchoolPartnershipDashboard() {
                     </h1>
                     <p className="text-muted-foreground mt-1">{t('adminSubtitle')}</p>
                 </div>
-                <CreatePartnershipDialog onCreated={handleCreated} />
+                <CreatePartnershipDialog onCreated={handleCreated} isRtl={isRtl} />
             </div>
 
             {/* Summary Cards */}
@@ -256,7 +329,7 @@ export function SchoolPartnershipDashboard() {
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={setActiveTab} dir={isRtl ? 'rtl' : 'ltr'}>
                 <TabsList>
                     <TabsTrigger value="partnerships">{t('tabs.partnerships')}</TabsTrigger>
                     <TabsTrigger value="billing">{t('tabs.billing')}</TabsTrigger>
@@ -269,15 +342,15 @@ export function SchoolPartnershipDashboard() {
                             <CardDescription>{t('partnershipListDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Table>
+                            <Table dir={isRtl ? 'rtl' : 'ltr'}>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('table.school')}</TableHead>
-                                        <TableHead>{t('table.symbol')}</TableHead>
-                                        <TableHead>{t('table.model')}</TableHead>
-                                        <TableHead>{t('table.students')}</TableHead>
-                                        <TableHead>{t('table.status')}</TableHead>
-                                        <TableHead>{t('table.actions')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.school')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.symbol')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.model')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.students')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.status')}</TableHead>
+                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -299,9 +372,22 @@ export function SchoolPartnershipDashboard() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant="ghost" size="sm">
-                                                    <ExternalLink className="h-4 w-4" />
-                                                </Button>
+                                                <div className="flex items-center gap-2">
+                                                    <Button variant="ghost" size="sm" asChild>
+                                                        <Link href={`/dashboard/admin/playing-school/distribute?partnershipId=${p.id}`}>
+                                                            <BarChart3 className="h-4 w-4 me-1" />
+                                                            {t('distributeBtn')}
+                                                        </Link>
+                                                    </Button>
+                                                    <InviteCoordinatorDialog
+                                                        partnershipId={p.id}
+                                                        schoolName={p.schoolName}
+                                                        isRtl={isRtl}
+                                                    />
+                                                    <Button variant="ghost" size="sm">
+                                                        <ExternalLink className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}

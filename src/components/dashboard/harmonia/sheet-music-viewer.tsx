@@ -7,12 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Library, Maximize2, X, FileMusic, ListMusic } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useTranslations, useLocale } from 'next-intl';
 
 // A placeholder PDF viewer component logic
 export function SheetMusicViewer() {
     const { user, mockAssignedRepertoire, compositions } = useAuth();
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const t = useTranslations('SheetMusicViewer');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     // Filter and join repertoire assigned to this student
     const myRepertoire = useMemo(() => {
@@ -31,30 +35,30 @@ export function SheetMusicViewer() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6" dir={isRtl ? 'rtl' : 'ltr'}>
 
             {/* Sidebar / List of pieces */}
             <Card className="lg:col-span-1 shadow-sm flex flex-col h-[calc(100vh-140px)]">
                 <CardHeader className="pb-3 shrink-0">
-                    <CardTitle className="text-lg flex items-center gap-2"> <Library className="w-5 h-5 text-primary" /> התיקייה שלי</CardTitle>
-                    <CardDescription>היצירות והתרגילים שניתנו לך.</CardDescription>
+                    <CardTitle className="text-lg flex items-center gap-2"> <Library className="w-5 h-5 text-primary" /> {t('myFolder')}</CardTitle>
+                    <CardDescription>{t('myFolderDesc')}</CardDescription>
                 </CardHeader>
                 <ScrollArea className="flex-1 px-4 pb-4">
                     <div className="space-y-2">
                         {myRepertoire.length === 0 ? (
-                            <div className="text-center p-4 text-muted-foreground bg-muted/30 rounded-lg text-sm">לא הוגדרו יצירות. המורה יכול/ה להקצות לך משימות דרך פורטל המורים.</div>
+                            <div className="text-center p-4 text-muted-foreground bg-muted/30 rounded-lg text-sm">{t('noPieces')}</div>
                         ) : (
                             myRepertoire.map(piece => (
                                 <button
                                     key={piece.id}
                                     onClick={() => handleViewPiece(piece.id)}
-                                    className={`w-full text-right p-3 rounded-lg border transition-all ${selectedPieceId === piece.id ? 'bg-primary/5 border-primary shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}
+                                    className={`w-full ${isRtl ? 'text-right' : 'text-left'} p-3 rounded-lg border transition-all ${selectedPieceId === piece.id ? 'bg-primary/5 border-primary shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}
                                 >
-                                    <div className="font-medium text-sm">{(piece as any).compositionDetails?.title || 'יצירה'}</div>
+                                    <div className="font-medium text-sm">{(piece as any).compositionDetails?.title || t('piece')}</div>
                                     <div className="text-xs text-muted-foreground mt-1 truncate">{(piece as any).compositionDetails?.composer}</div>
                                     <div className="flex gap-1 mt-2">
                                         <Badge variant="outline" className="text-[10px] px-1 font-normal opacity-70">
-                                            {piece.status === 'COMPLETED' ? 'הושלם' : piece.status === 'LEARNING' ? 'למידה' : 'ליטוש'}
+                                            {t(`statuses.${piece.status}`)}
                                         </Badge>
                                     </div>
                                 </button>
@@ -70,10 +74,10 @@ export function SheetMusicViewer() {
                     <>
                         <CardHeader className="bg-muted/30 border-b flex flex-row items-center justify-between py-3 px-6 shrink-0">
                             <div>
-                                <CardTitle>{(activePiece as any).compositionDetails?.title || 'ללא כותרת'}</CardTitle>
+                                <CardTitle>{(activePiece as any).compositionDetails?.title || t('untitled')}</CardTitle>
                                 <CardDescription>{(activePiece as any).compositionDetails?.composer}</CardDescription>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(true)} title="מסך מלא">
+                            <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(true)} title={t('fullscreen')}>
                                 <Maximize2 className="h-5 w-5" />
                             </Button>
                         </CardHeader>
@@ -83,14 +87,14 @@ export function SheetMusicViewer() {
                                 {((activePiece as any).compositionDetails)?.pdfUrl ? (
                                     <div className="text-muted-foreground flex flex-col items-center gap-3">
                                         <FileMusic className="h-16 w-16 opacity-50" />
-                                        <span className="font-semibold">{(activePiece as any).compositionDetails?.title} - דף תווים</span>
-                                        <span className="text-sm opacity-70">(סימולטור מציג PDF. בפועל יוצג רכיב Viewer הנתמך ב-Mobile/Desktop)</span>
+                                        <span className="font-semibold">{t('sheetMusic', { title: (activePiece as any).compositionDetails?.title })}</span>
+                                        <span className="text-sm opacity-70">{t('pdfSimulator')}</span>
                                     </div>
                                 ) : (
                                     <div className="text-muted-foreground flex flex-col items-center gap-3 p-8 text-center">
                                         <ListMusic className="h-12 w-12 opacity-30" />
-                                        <p>אין קובץ תווים מצורף ליצירה זו.</p>
-                                        <p className="text-sm">תיאור היצירה: {((activePiece as any).compositionDetails)?.description}</p>
+                                        <p>{t('noPdfAttached')}</p>
+                                        <p className="text-sm">{t('pieceDescription', { description: ((activePiece as any).compositionDetails)?.description })}</p>
                                     </div>
                                 )}
                             </div>
@@ -99,17 +103,17 @@ export function SheetMusicViewer() {
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
                         <Library className="h-16 w-16 mb-4 opacity-20" />
-                        <h3 className="text-xl font-medium text-foreground mb-2">בחר יצירה כדי להציג את התווים</h3>
-                        <p>כל התווים, הליוויים וסיכומי השיעור של המורה זמינים כאן.</p>
+                        <h3 className="text-xl font-medium text-foreground mb-2">{t('selectPieceTitle')}</h3>
+                        <p>{t('selectPieceDesc')}</p>
                     </div>
                 )}
             </Card>
 
             {/* Fullscreen Dialog */}
             <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-                <DialogContent className="max-w-[100vw] w-screen max-h-[100vh] h-screen p-0 m-0 border-none sm:rounded-none flex flex-col">
+                <DialogContent className="max-w-[100vw] w-screen max-h-[100vh] h-screen p-0 m-0 border-none sm:rounded-none flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                     <div className="bg-black text-white p-3 flex justify-between items-center shrink-0">
-                        <span className="font-medium mr-4">{(activePiece as any)?.compositionDetails?.title} - {(activePiece as any)?.compositionDetails?.composer}</span>
+                        <span className={`font-medium ${isRtl ? 'ml-4' : 'mr-4'}`}>{(activePiece as any)?.compositionDetails?.title} - {(activePiece as any)?.compositionDetails?.composer}</span>
                         <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(false)} className="text-white hover:bg-white/20">
                             <X className="h-5 w-5" />
                         </Button>
@@ -121,8 +125,8 @@ export function SheetMusicViewer() {
                             <h3 className="text-xl text-muted-foreground mt-2">{(activePiece as any)?.compositionDetails?.composer}</h3>
 
                             <div className="mt-12 w-full text-center border-t pt-8 text-muted-foreground relative">
-                                <Badge variant="outline" className="text-xl absolute -top-4 left-1/2 -translate-x-1/2 bg-white">Full Screen Viewer</Badge>
-                                <p>תמיכה בהחלקת עמוד (Swipe), זום פנימה עם שתי אצבעות (Pinch-to-zoom)</p>
+                                <Badge variant="outline" className={`text-xl absolute -top-4 ${isRtl ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'} bg-white`}>{t('fullScreenViewer')}</Badge>
+                                <p>{t('fullScreenSupport')}</p>
                             </div>
                         </div>
                     </div>

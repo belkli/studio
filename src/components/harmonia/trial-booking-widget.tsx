@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { add, set, format, getDay, isBefore } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -41,6 +41,7 @@ const stepIcons = [Music, HeartHandshake, Calendar, Contact, ShieldCheck];
 export function TrialBookingWidget() {
     const t = useTranslations('TrialBooking');
     const locale = useLocale();
+    const dateLocale = useDateLocale();
     const { toast } = useToast();
     const { addLesson, users } = useAuth();
 
@@ -171,7 +172,7 @@ export function TrialBookingWidget() {
                                 {currentStep === 1 && <FormField name="teacherId" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('teacher')}</FormLabel> <Combobox options={teacherOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('teacherPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 2 && (
                                     <div className="grid md:grid-cols-2 gap-8">
-                                        <FormField name="date" control={form.control} render={({ field }) => (<FormItem className="flex justify-center"><FormControl><UICalendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => isBefore(date, new Date())} initialFocus locale={locale === 'he' ? he : undefined} className="rounded-md border" /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField name="date" control={form.control} render={({ field }) => (<FormItem className="flex justify-center"><FormControl><UICalendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => isBefore(date, new Date())} initialFocus locale={dateLocale} className="rounded-md border" /></FormControl><FormMessage /></FormItem>)} />
                                         <FormField name="time" control={form.control} render={({ field }) => (<FormItem> <FormLabel>{t('availableSlots')}</FormLabel> <FormControl> <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md"> {isLoadingSlots ? <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : availableSlots.length === 0 ? <p className="text-center text-sm text-muted-foreground p-4">{t('noSlots')}</p> : availableSlots.map(slot => (<FormItem key={slot}> <FormControl> <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl"> <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" /> <span className="font-mono">{slot}</span> </label> </FormControl> </FormItem>))} </RadioGroup> </FormControl> <FormMessage /> </FormItem>)} />
                                     </div>
                                 )}

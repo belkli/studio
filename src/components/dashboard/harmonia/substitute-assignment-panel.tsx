@@ -3,13 +3,14 @@ import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { LessonSlot, User, DayOfWeek } from '@/lib/types';
 import { format, getDay, isFuture } from 'date-fns';
-import { he } from 'date-fns/locale';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/ui/empty-state';
 import { UserCog } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface AffectedLesson extends LessonSlot {
     originalTeacher?: User;
@@ -20,10 +21,14 @@ interface AffectedLesson extends LessonSlot {
 export function SubstituteAssignmentPanel() {
     const { users, mockLessons, assignSubstitute } = useAuth();
     const { toast } = useToast();
+    const t = useTranslations('SubstituteAssignmentPanel');
+    const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
         const teachers = users.filter(u => u.role === 'teacher');
-        
+
         const affected = mockLessons
             .filter(lesson => lesson.status === 'CANCELLED_TEACHER' && isFuture(new Date(lesson.startTime)))
             .map(lesson => {
@@ -45,13 +50,13 @@ export function SubstituteAssignmentPanel() {
                     const endHour = parseInt(dayAvailability.endTime.split(':')[0]);
                     if (lessonHour < startHour || lessonHour >= endHour) return false;
 
-                    const isBooked = mockLessons.some(l => 
+                    const isBooked = mockLessons.some(l =>
                         l.teacherId === teacher.id &&
                         new Date(l.startTime).getTime() === lessonDate.getTime() &&
                         l.status === 'SCHEDULED'
                     );
                     if (isBooked) return false;
-                    
+
                     return true;
                 });
 
@@ -62,8 +67,8 @@ export function SubstituteAssignmentPanel() {
                     availableSubstitutes,
                 };
             });
-        
-        return affected.sort((a,b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+
+        return affected.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
     }, [mockLessons, users]);
 
@@ -72,66 +77,66 @@ export function SubstituteAssignmentPanel() {
         const student = lesson?.student;
         const newTeacher = users.find(u => u.id === newTeacherId);
 
-        if(!lesson || !student || !newTeacher) {
-            toast({ variant: 'destructive', title: 'שגיאה בשיבוץ' });
+        if (!lesson || !student || !newTeacher) {
+            toast({ variant: 'destructive', title: t('errors.assignmentError') });
             return;
         }
 
         assignSubstitute(lessonId, newTeacherId);
-        
+
         toast({
-            title: 'מורה מחליף שובץ בהצלחה!',
-            description: `${newTeacher.name} שובץ/ה לשיעור של ${student.name}.`,
+            title: t('successToast.title'),
+            description: t('successToast.description', { teacherName: newTeacher.name, studentName: student.name }),
         });
     }
 
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
-                <CardTitle>שיעורים הדורשים שיבוץ מחליף</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
                     {lessonsNeedingSub.length > 0
-                        ? `נמצאו ${lessonsNeedingSub.length} שיעורים מבוטלים שניתן לשבץ להם מורה מחליף.`
-                        : 'אין כרגע שיעורים מבוטלים הדורשים שיבוץ מורה מחליף.'
+                        ? t('descriptionWithCount', { count: lessonsNeedingSub.length })
+                        : t('descriptionEmpty')
                     }
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Table>
+                <Table dir={isRtl ? 'rtl' : 'ltr'}>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>מועד השיעור</TableHead>
-                            <TableHead>תלמיד</TableHead>
-                            <TableHead>כלי</TableHead>
-                            <TableHead>מורה מקורי</TableHead>
-                            <TableHead className="w-[300px]">שבץ מחליף</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.date')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.student')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.instrument')}</TableHead>
+                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.originalTeacher')}</TableHead>
+                            <TableHead className={isRtl ? 'w-[300px] text-right' : 'w-[300px] text-left'}>{t('table.assignSubstitute')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {lessonsNeedingSub.length === 0 ? (
-                             <TableRow>
+                            <TableRow>
                                 <TableCell colSpan={5} className="p-0">
-                                   <EmptyState
+                                    <EmptyState
                                         icon={UserCog}
-                                        title="אין שיעורים לשיבוץ"
-                                        description="לא נמצאו שיעורים שבוטלו על ידי מורים ודורשים שיבוץ מחליף."
+                                        title={t('emptyState.title')}
+                                        description={t('emptyState.description')}
                                         className="py-12"
-                                   />
+                                    />
                                 </TableCell>
                             </TableRow>
                         ) : (
                             lessonsNeedingSub.map(lesson => (
                                 <TableRow key={lesson.id}>
-                                    <TableCell>{format(new Date(lesson.startTime), "EEEE, dd/MM, HH:mm", { locale: he })}</TableCell>
+                                    <TableCell>{format(new Date(lesson.startTime), "EEEE, dd/MM, HH:mm", { locale: dateLocale })}</TableCell>
                                     <TableCell>{lesson.student?.name}</TableCell>
                                     <TableCell>{lesson.instrument}</TableCell>
                                     <TableCell>{lesson.originalTeacher?.name}</TableCell>
                                     <TableCell>
                                         {lesson.availableSubstitutes.length > 0 ? (
                                             <div className="flex items-center gap-2">
-                                                <Select dir="rtl" onValueChange={(teacherId) => handleAssignSubstitute(lesson.id, teacherId)}>
+                                                <Select dir={isRtl ? 'rtl' : 'ltr'} onValueChange={(teacherId) => handleAssignSubstitute(lesson.id, teacherId)}>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="בחר מורה מחליף..." />
+                                                        <SelectValue placeholder={t('selectPlaceholder')} />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {lesson.availableSubstitutes.map(sub => (
@@ -141,7 +146,7 @@ export function SubstituteAssignmentPanel() {
                                                 </Select>
                                             </div>
                                         ) : (
-                                            <span className="text-sm text-muted-foreground">אין מורים פנויים</span>
+                                            <span className="text-sm text-muted-foreground">{t('noAvailableTeachers')}</span>
                                         )}
                                     </TableCell>
                                 </TableRow>

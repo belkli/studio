@@ -7,9 +7,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 import { Users, Calendar, DollarSign, Activity } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { useTranslations, useLocale } from 'next-intl';
 
 export function TeacherReportsDashboard() {
     const { user: teacher, users, mockLessons, mockPracticeLogs, mockFormSubmissions } = useAuth();
+    const t = useTranslations('TeacherReports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const assignedStudents = useMemo(() => {
         if (!teacher || !teacher.students) return [];
@@ -74,50 +78,50 @@ export function TeacherReportsDashboard() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">תלמידים פעילים</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('activeStudentsTitle')}</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{assignedStudents.length}</div>
-                        <p className="text-xs text-muted-foreground">תלמידים תחת הדרכתך</p>
+                        <p className="text-xs text-muted-foreground">{t('activeStudentsDesc')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">שיעורים החודש</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('lessonsThisMonthTitle')}</CardTitle>
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.lessonsThisMonth}</div>
-                        <p className="text-xs text-muted-foreground">{stats.cancellationsThisMonth} ביטולים</p>
+                        <p className="text-xs text-muted-foreground">{t('cancellationsDesc', { count: stats.cancellationsThisMonth })}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">הכנסות החודש (אומדן)</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('earningsThisMonthTitle')}</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">₪{stats.earningsThisMonth.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">מבוסס על שיעורים שהושלמו</p>
+                        <div className="text-2xl font-bold">{t('currencySymbol')}{stats.earningsThisMonth.toLocaleString()}</div>
+                        <p className="text-xs text-muted-foreground">{t('earningsDesc')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">מעורבות באימונים</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('practiceEngagementTitle')}</CardTitle>
                         <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.practiceEngagement.toFixed(0)}%</div>
-                        <p className="text-xs text-muted-foreground">תלמידים שרשמו אימון החודש</p>
+                        <p className="text-xs text-muted-foreground">{t('practiceEngagementDesc')}</p>
                     </CardContent>
                 </Card>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>מעורבות תלמידים באימונים</CardTitle>
-                    <CardDescription>סה"כ דקות אימון רשומות לכל תלמיד/ה.</CardDescription>
+                    <CardTitle>{t('barChartTitle')}</CardTitle>
+                    <CardDescription>{t('barChartDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -127,8 +131,8 @@ export function TeacherReportsDashboard() {
                             <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} tickLine={false} axisLine={false} />
                             <Tooltip
                                 cursor={{ fill: 'hsl(var(--muted))' }}
-                                contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
-                                formatter={(value: any) => [`${Number(value)} דקות`, 'זמן אימון כולל']}
+                                contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr' }}
+                                formatter={(value: any) => [`${Number(value)} ${t('minutesSuffix')}`, t('totalPracticeTimeTooltip')]}
                             />
                             <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20} />
                         </BarChart>
@@ -138,39 +142,39 @@ export function TeacherReportsDashboard() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>בחינות ובגרויות קרובות</CardTitle>
-                    <CardDescription>סקירת סטטוס הגשות של תלמידיך.</CardDescription>
+                    <CardTitle>{t('upcomingExamsTitle')}</CardTitle>
+                    <CardDescription>{t('upcomingExamsDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>תלמיד/ה</TableHead>
-                                <TableHead>סוג הגשה</TableHead>
-                                <TableHead>תאריך הגשה</TableHead>
-                                <TableHead>סטטוס</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colType')}</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colDate')}</TableHead>
+                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStatus')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {stats.upcomingExams.length > 0 ? stats.upcomingExams.map((form) => (
                                 <TableRow key={form.id}>
-                                    <TableCell className="font-medium flex items-center gap-2">
+                                    <TableCell className={`font-medium flex items-center gap-2 ${isRtl ? 'text-right' : 'text-left'}`}>
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage src={users.find(u => u.id === form.studentId)?.avatarUrl} />
                                             <AvatarFallback>{form.studentName.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         {form.studentName}
                                     </TableCell>
-                                    <TableCell>{form.formType}</TableCell>
-                                    <TableCell>{form.submissionDate}</TableCell>
-                                    <TableCell>
+                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>{form.formType}</TableCell>
+                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>{form.submissionDate}</TableCell>
+                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>
                                         <span className="text-sm text-muted-foreground">{form.status}</span>
                                     </TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                                        אין הגשות לבחינות בתקופה הקרובה.
+                                        {t('noUpcomingExams')}
                                     </TableCell>
                                 </TableRow>
                             )}

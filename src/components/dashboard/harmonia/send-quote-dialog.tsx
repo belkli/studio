@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { PerformanceBooking } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from 'next-intl';
 
 interface SendQuoteDialogProps {
   booking: PerformanceBooking | null;
@@ -16,6 +17,7 @@ interface SendQuoteDialogProps {
 
 export function SendQuoteDialog({ booking, open, onOpenChange, onConfirm }: SendQuoteDialogProps) {
   const [message, setMessage] = useState('');
+  const t = useTranslations('PerformanceBooking');
 
   if (!booking) return null;
 
@@ -28,24 +30,24 @@ export function SendQuoteDialog({ booking, open, onOpenChange, onConfirm }: Send
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent dir="rtl" className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>שליחת הצעת מחיר</DialogTitle>
+          <DialogTitle>{t('dialogSendQuoteTitle')}</DialogTitle>
           <DialogDescription>
-            שלח הצעת מחיר רשמית עבור אירוע: {booking.eventName}
+            {t('dialogSendQuoteDesc', { eventName: booking.eventName })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="p-4 border rounded-lg bg-muted/50 space-y-2">
-            <p><strong>לקוח:</strong> {booking.clientName}</p>
-            <p><strong>אימייל:</strong> {booking.clientEmail}</p>
+            <p><strong>{t('dialogClientLabel')}</strong> {booking.clientName}</p>
+            <p><strong>{t('dialogEmailLabel')}</strong> {booking.clientEmail}</p>
             <Separator />
-            <p><strong>הרכב:</strong> {booking.assignedMusicians?.map(m => m.name).join(', ')}</p>
-            <p className="text-xl font-bold">סה"כ הצעה: ₪{booking.totalQuote.toLocaleString()}</p>
+            <p><strong>{t('dialogEnsembleLabel')}</strong> {booking.assignedMusicians?.map(m => m.name).join(', ')}</p>
+            <p className="text-xl font-bold">{t('dialogTotalQuoteLabel')} {t('currencySymbol')}{booking.totalQuote.toLocaleString()}</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quote-message">הודעה אישית (אופציונלי)</Label>
+            <Label htmlFor="quote-message">{t('dialogPersonalMsgLabel')}</Label>
             <Textarea
               id="quote-message"
-              placeholder="לדוגמה: הצעת המחיר כוללת הגברה בסיסית. נשמח לעמוד לשירותכם..."
+              placeholder={t('dialogPersonalMsgPlaceholder')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
@@ -53,8 +55,8 @@ export function SendQuoteDialog({ booking, open, onOpenChange, onConfirm }: Send
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleConfirm}>שלח הצעה</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('dialogCancelBtn')}</Button>
+          <Button onClick={handleConfirm}>{t('dialogSendQuoteBtn')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

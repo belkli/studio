@@ -17,6 +17,7 @@ import {
     Building2, Star, Users, BookOpen, X, Navigation2, MessageCircle
 } from "lucide-react";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { getLocalizedConservatorium } from "@/lib/utils/localized-content";
 
 // Haversine distance in km
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -71,15 +72,14 @@ function getAccentColor(id: string): string {
 function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium; distance?: number; onClick: () => void }) {
     const t = useTranslations('AboutPage');
     const locale = useLocale();
-    const gradient = getCardGradient(cons.id);
-    const accent = getAccentColor(cons.id);
-    const heroPhoto = cons.photoUrls?.[0];
+    const localizedCons = getLocalizedConservatorium(cons, locale);
+    const gradient = getCardGradient(localizedCons.id);
+    const accent = getAccentColor(localizedCons.id);
+    const heroPhoto = localizedCons.photoUrls?.[0];
 
-    // Pick translated name
-    const translation = cons.translations?.[locale as any];
-    const name = translation?.name || (locale === 'en' ? cons.nameEn : cons.name) || cons.name;
-    const city = (locale === 'en' ? cons.location?.cityEn : cons.location?.city) || cons.location?.city;
-    const about = translation?.about || cons.about;
+    const name = localizedCons.name;
+    const city = localizedCons.location?.city;
+    const about = localizedCons.about;
 
     return (
         <button
@@ -99,7 +99,7 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
                 {distance !== undefined && (
                     <div className="absolute top-3 start-3 bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1 flex items-center gap-1.5 text-xs font-semibold">
                         <Navigation2 className="h-3 w-3 text-primary" />
-                        <span>{distance < 1 ? `${Math.round(distance * 1000)}מ'` : `${distance.toFixed(1)}ק"מ`}</span>
+                        <span>{distance < 1 ? t('unitMeters', { count: Math.round(distance * 1000) }) : t('unitKm', { count: distance.toFixed(1) })}</span>
                     </div>
                 )}
             </div>
@@ -108,7 +108,6 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
             <div className="p-5 space-y-3">
                 <div>
                     <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">{name}</h3>
-                    {(locale === 'en' ? cons.nameEn : '') && <p className="text-xs text-muted-foreground mt-0.5">{cons.nameEn}</p>}
                 </div>
 
                 {city && (
@@ -159,18 +158,19 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
 
     if (!cons) return null;
 
-    const translation = cons.translations?.[locale as any];
-    const name = translation?.name || (locale === 'en' ? cons.nameEn : cons.name) || cons.name;
-    const about = translation?.about || cons.about;
-    const openingHours = translation?.openingHours || cons.openingHours;
+    const localizedCons = getLocalizedConservatorium(cons, locale);
+    const translation = localizedCons.translations?.[locale as keyof typeof localizedCons.translations];
+    const name = localizedCons.name;
+    const about = localizedCons.about;
+    const openingHours = localizedCons.openingHours;
 
     // We might need to translate roles for management
-    const managerRole = translation?.manager?.role || cons.manager?.role;
-    const coordRole = translation?.pedagogicalCoordinator?.role || cons.pedagogicalCoordinator?.role;
-    const managerBio = translation?.manager?.bio || cons.manager?.bio;
-    const coordBio = translation?.pedagogicalCoordinator?.bio || cons.pedagogicalCoordinator?.bio;
+    const managerRole = translation?.manager?.role || localizedCons.manager?.role;
+    const coordRole = translation?.pedagogicalCoordinator?.role || localizedCons.pedagogicalCoordinator?.role;
+    const managerBio = translation?.manager?.bio || localizedCons.manager?.bio;
+    const coordBio = translation?.pedagogicalCoordinator?.bio || localizedCons.pedagogicalCoordinator?.bio;
 
-    const accent = getAccentColor(cons.id);
+    const accent = getAccentColor(localizedCons.id);
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -203,7 +203,6 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                     <div>
                         <DialogHeader className="text-start space-y-1">
                             <DialogTitle className="text-2xl font-bold leading-tight">{name}</DialogTitle>
-                            {(locale === 'en' ? '' : cons.nameEn) && <p className="text-muted-foreground">{cons.nameEn}</p>}
                         </DialogHeader>
                     </div>
 
@@ -216,10 +215,10 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                     <Phone className={`h-4 w-4 ${accent}`} />
                                     {t('contactDetails')}
                                 </h4>
-                                {(locale === 'en' ? cons.location?.cityEn : cons.location?.city) && (
+                                {localizedCons.location?.city && (
                                     <div className="flex items-center gap-2 text-sm">
                                         <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                                        <span>{cons.location?.address || (locale === 'en' ? cons.location?.cityEn : cons.location?.city)}</span>
+                                        <span>{localizedCons.location?.address || localizedCons.location?.city}</span>
                                     </div>
                                 )}
                                 {cons.tel && (
@@ -249,7 +248,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 {cons.officialSite && (
                                     <a href={cons.officialSite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
                                         <Globe className="h-3.5 w-3.5 flex-shrink-0" />
-                                        <span>אתר רשמי</span>
+                                        <span>{t('officialSite')}</span>
                                         <ExternalLink className="h-3 w-3" />
                                     </a>
                                 )}
@@ -266,7 +265,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 <div className="bg-muted/30 rounded-xl p-4">
                                     <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
                                         <Star className={`h-4 w-4 ${accent}`} />
-                                        הנהלה
+                                        {t('management')}
                                     </h4>
                                     <div className="flex items-start gap-3">
                                         <Avatar className="h-10 w-10 border-2 border-border">
@@ -442,15 +441,23 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
     );
 }
 
-const ALL_DEPARTMENTS = Array.from(
-    new Set(conservatoriums.flatMap(c => c.departments?.map(d => d.name) || []))
-).sort();
 
 export default function AboutPage() {
     const t = useTranslations('AboutPage');
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
     const locale = useLocale();
+
+    const localizedConservatoriums = useMemo(() => {
+        return conservatoriums.map(c => getLocalizedConservatorium(c, locale));
+    }, [locale]);
+
+    const allDepartments = useMemo(() => {
+        const uniqueNames = Array.from(
+            new Set(localizedConservatoriums.flatMap(c => c.departments?.map(d => d.name) || []))
+        ).sort();
+        return uniqueNames;
+    }, [localizedConservatoriums]);
 
     const [search, setSearch] = useState('');
     const [citySearch, setCitySearch] = useState('');
@@ -481,13 +488,12 @@ export default function AboutPage() {
     }, [userLocation, citySearch]);
 
     const filteredAndSorted = useMemo(() => {
-        let list = conservatoriums.filter(c => {
+        let list = localizedConservatoriums.filter(c => {
             const q = search.toLowerCase();
-            const translation = c.translations?.[locale as any];
-            const name = translation?.name || (locale === 'en' ? c.nameEn : c.name) || c.name;
-            const city = (locale === 'en' ? c.location?.cityEn : c.location?.city) || c.location?.city;
+            const name = c.name || '';
+            const city = c.location?.city || '';
 
-            const nameMatch = name.toLowerCase().includes(q) || (c.nameEn?.toLowerCase().includes(q)) || (city?.toLowerCase().includes(q)) || (c.location?.cityEn?.toLowerCase().includes(q));
+            const nameMatch = name.toLowerCase().includes(q) || (city.toLowerCase().includes(q));
             const deptMatch = !deptFilter || c.departments?.some(d => d.name === deptFilter);
             return nameMatch && deptMatch;
         });
@@ -588,7 +594,7 @@ export default function AboutPage() {
                             >
                                 {t('allDepartments')}
                             </button>
-                            {ALL_DEPARTMENTS.slice(0, 15).map(dept => (
+                            {allDepartments.slice(0, 15).map(dept => (
                                 <button
                                     key={dept}
                                     onClick={() => setDeptFilter(deptFilter === dept ? '' : dept)}

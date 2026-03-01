@@ -6,9 +6,11 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { ScheduleCalendar } from "@/components/dashboard/harmonia/schedule-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useTranslations } from "next-intl";
 
 export default function SchedulePage() {
     const { user, mockLessons } = useAuth();
+    const t = useTranslations("AdminPages.schedule");
     if (!user) return null;
 
     const relevantLessons = useMemo(() => {
@@ -17,9 +19,9 @@ export default function SchedulePage() {
         const userIsTeacher = user.role === 'teacher';
 
         return mockLessons.filter(lesson => {
-            if(userIsStudent) return lesson.studentId === user.id;
-            if(userIsParent) return user.childIds?.includes(lesson.studentId);
-            if(userIsTeacher) return lesson.teacherId === user.id;
+            if (userIsStudent) return lesson.studentId === user.id;
+            if (userIsParent) return user.childIds?.includes(lesson.studentId);
+            if (userIsTeacher) return lesson.teacherId === user.id;
             return true; // for admins, show all
         });
 
@@ -30,7 +32,7 @@ export default function SchedulePage() {
     const today = new Date();
     const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
     const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-    
+
     const weekLessons = relevantLessons.filter(l => {
         const lessonDate = new Date(l.startTime);
         return lessonDate >= startOfWeek && lessonDate <= endOfWeek;
@@ -39,30 +41,30 @@ export default function SchedulePage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                 <div>
-                    <h1 className="text-2xl font-bold">מערכת שעות שבועית</h1>
-                    <p className="text-muted-foreground">צפה ונהל את השיעורים, ההזמנות והזמינות שלך.</p>
+                <div>
+                    <h1 className="text-2xl font-bold">{t('weeklySchedule')}</h1>
+                    <p className="text-muted-foreground">{t('subtitle')}</p>
                 </div>
-                 <Button asChild>
+                <Button asChild>
                     <Link href="/dashboard/schedule/book">
                         <PlusCircle className="ms-2 h-4 w-4" />
-                        הזמן שיעור חדש
+                        {t('bookNewLesson')}
                     </Link>
                 </Button>
             </div>
-            
+
             {weekLessons.length > 0 ? (
                 <ScheduleCalendar lessons={weekLessons} />
             ) : (
                 <EmptyState
                     icon={Calendar}
-                    title="אין שיעורים מתוכננים"
-                    description="מערכת השעות שלך לשבוע הקרוב ריקה. אפשר להזמין שיעור חדש."
+                    title={t('noLessonsTitle')}
+                    description={t('noLessonsDesc')}
                     action={
                         <Button asChild>
                             <Link href="/dashboard/schedule/book">
                                 <PlusCircle className="ms-2 h-4 w-4" />
-                                הזמן שיעור חדש
+                                {t('bookNewLesson')}
                             </Link>
                         </Button>
                     }
