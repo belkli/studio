@@ -13,6 +13,7 @@ import type { FormStatus } from "@/lib/types";
 
 export default function FormsPage() {
     const t = useTranslations('FormsPage');
+    const tCommon = useTranslations('Common.shared');
     const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -61,10 +62,10 @@ export default function FormsPage() {
                         <TabsTrigger value="drafts">{t('tabs.drafts')}</TabsTrigger>
                     </TabsList>
                     <div className="relative w-full max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="search"
-                            placeholder={t('searchPlaceholder')}
+                            placeholder={tCommon('search')}
                             className="w-full rounded-lg bg-muted ps-10"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}

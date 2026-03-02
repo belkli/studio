@@ -67,12 +67,12 @@ export default function PendingApprovalPage() {
                 <CardFooter className="flex flex-col sm:flex-row gap-3 pt-6 border-t">
                     <Button variant="outline" className="w-full sm:flex-1" asChild>
                         <Link href="/">
-                            <Home className="mr-2 h-4 w-4" />
+                            <Home className="me-2 h-4 w-4" />
                             {t('backToSite')}
                         </Link>
                     </Button>
                     <Button variant="ghost" className="w-full sm:flex-1 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={logout}>
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className="me-2 h-4 w-4" />
                         {t('logout')}
                     </Button>
                 </CardFooter>

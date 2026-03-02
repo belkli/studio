@@ -7,7 +7,8 @@
     "reviewForms": "مراجعة النماذج",
     "viewPayrollDrafts": "عرض مسودات الرواتب",
     "sendAnnouncement": "إرسال إعلان",
-    "issueCredit": "إصدار رصيد يدوي"
+    "issueCredit": "إصدار رصيد يدوي",
+    "welcomeFem": "ברוכה הבאה, {name}"
   },
   "KeyMetrics": {
     "activeStudents": "الطلاب النشطون",
@@ -61,7 +62,8 @@
     "next": "التالي",
     "submit": "إرسال التسجيل",
     "trialLesson": "درس تجريبي",
-    "profile": "تعديل الملف الشخصي"
+    "profile": "تعديل الملف الشخصي",
+    "switchLanguage": "تبديل اللغة"
   },
   "Common": {
     "name": "الاسم",
@@ -87,7 +89,10 @@
       "studentName": "اسم الطالب",
       "formType": "نوع النموذج",
       "submissionDate": "تاريخ التقديم",
-      "grade": "الصف"
+      "grade": "الصف",
+      "openMenu": "فتح القائمة",
+      "search": "بحث...",
+      "switchLanguage": "تبديل اللغة"
     },
     "translationEditor": {
       "stale": "الترجمة غير محدثة",
@@ -103,6 +108,13 @@
         "arabic": "العربية",
         "russian": "الروسية"
       }
+    },
+    "saveStatusBar": {
+      "saving": "جارٍ الحفظ",
+      "error": "خطأ",
+      "savedAt": "تم الحفظ في",
+      "unsavedChanges": "هناك تغييرات غير محفوظة",
+      "saveDraft": "حفظ كمسودة"
     }
   },
   "HomePage": {
@@ -113,6 +125,13 @@
     "learnMoreBtn": "اعرف المزيد",
     "copyright": "جميع الحقوق محفوظة.",
     "privacyPolicy": "سياسة الخصوصية"
+  },
+  "HelpCenter": {
+    "title": "مركز مساعدة هارمونيا",
+    "subtitle": "كيف يمكننا مساعدتك اليوم؟",
+    "searchPlaceholder": "ابحث في المقالات...",
+    "resultsTitle": "نتائج البحث عن \"{query}\"",
+    "noResults": "لم يتم العثور على مقالات مطابقة."
   },
   "AvailableNow": {
     "title": "الدروس المتاحة لليوم وغداً",
@@ -460,7 +479,11 @@
     "applyForAid": "تقدم بطلب للحصول على منحة",
     "packageExpiringNotice": "باقتك على وشك الانتهاء!",
     "packageExpiringDesc": "تبقت {days} أيام حتى تنتهي باقتك في تاريخ {date}.",
-    "renewNow": "انقر هنا للتجديد والحفاظ على مكانك."
+    "renewNow": "انقر هنا للتجديد والحفاظ على مكانك.",
+    "status": "Status",
+    "active": "Active",
+    "credits": "Credits",
+    "payNow": "Pay Now"
   },
   "Invoices": {
     "invoiceNumber": "رقم الفاتورة",
@@ -1132,7 +1155,15 @@
       "approved": "تمت الموافقة",
       "drafts": "المسودات"
     },
-    "noForms": "لا توجد نماذج لعرضها"
+    "noForms": "لا توجد نماذج لعرضها",
+    "table": {
+      "studentName": "اسم الطالب",
+      "formType": "نوع النموذج",
+      "status": "الحالة",
+      "submissionDate": "تاريخ التقديم",
+      "actions": "الإجراءات",
+      "view": "عرض"
+    }
   },
   "Auth": {
     "pageTitle": "تسجيل الدخول",
@@ -1161,7 +1192,14 @@
       "loginFailedDesc": "لا يوجد مستخدم مسجل بهذا البريد.",
       "magicLinkSent": "تم إرسال الرابط!",
       "magicLinkSentDesc": "تحقق من صندوق بريدك للرابط السحري."
-    }
+    },
+    "oauthComingSoon": "تسجيل الدخول الخارجي قريبًا",
+    "oauthComingSoonDesc": "تسجيل الدخول عبر Google/Microsoft غير متاح بعد.",
+    "enterEmailFirst": "يرجى إدخال البريد الإلكتروني أولًا",
+    "passwordResetSent": "تم إرسال رابط إعادة تعيين كلمة المرور",
+    "passwordResetSentDesc": "تحقق من بريدك الوارد لمتابعة التعليمات.",
+    "emailPlaceholder": "name@example.com",
+    "demoModeNotice": "وضع العرض: أي بريد إلكتروني من قائمة المستخدمين التجريبية سيتم تسجيل دخوله. لا يتم التحقق من كلمة المرور."
   },
   "NewForm": {
     "title": "نموذج / طلب جديد",
@@ -1173,29 +1211,76 @@
     "custom": "نموذج مخصص",
     "customDesc": "نموذج مقدم من الكونسرفتوار.",
     "noTemplates": "لا توجد قوالب متاحة",
-    "createForm": "إنشاء النموذج"
+    "createForm": "إنشاء النموذج",
+    "validation": {
+      "required": "هذا الحقل مطلوب"
+    },
+    "types": {
+      "recital": "ريسيتال",
+      "kenes": "مؤتمر",
+      "exam_registration": "تسجيل لامتحان"
+    },
+    "successTitle": "تم إنشاء نموذج {type}",
+    "successDesc": "تم حفظ النموذج بنجاح.",
+    "loading": "جارٍ التحميل...",
+    "pleaseSelectStudent": "يرجى اختيار طالب/ة للمتابعة.",
+    "selectionTitle": "اختيار تفاصيل النموذج",
+    "formType": "نوع النموذج",
+    "selectType": "اختر نوع النموذج",
+    "selectStudent": "الطالب/ة",
+    "selectStudentPlaceholder": "اختر الطالب/ة"
   },
   "TrialBooking": {
     "pageTitle": "حجز درس تجريبي",
-    "subtitle": "جرب درساً مع أحد معلمينا قبل التسجيل.",
-    "selectTeacher": "اختيار المعلم",
-    "selectDate": "اختيار التاريخ",
-    "selectTime": "اختيار الوقت",
-    "noSlots": "لا توجد أوقات متاحة في هذا اليوم.",
+    "subtitle": "جرّب درسًا مع أحد المدرسين قبل الالتزام.",
+    "selectTeacher": "اختر المدرس",
+    "selectDate": "اختر التاريخ",
+    "selectTime": "اختر الوقت",
+    "noSlots": "لا توجد مواعيد متاحة لهذا التاريخ.",
     "confirm": "تأكيد الحجز",
-    "loading": "جاري تحميل الأوقات...",
-    "successTitle": "تم الحجز!",
-    "successDesc": "تم حجز الدرس التجريبي مع {name} بتاريخ {date}.",
-    "instrument": "آلة النفخ أو الموسيقى",
-    "instrumentPlaceholder": "حدد الأداة الموسيقية...",
+    "loading": "جارٍ تحميل المواعيد المتاحة...",
+    "successTitle": "تم حجز الدرس التجريبي",
+    "successDesc": "تم تحديد درسك التجريبي مع {name} بتاريخ {date}.",
+    "instrument": "الآلة الموسيقية",
+    "instrumentPlaceholder": "اختر الآلة...",
     "validation": {
-      "instrumentRequired": "يجب اختيار آلة موسيقية.",
-      "dateRequired": "يجب اختيار تاريخ.",
-      "timeRequired": "يجب اختيار وقت.",
-      "nameRequired": "الاسم حقل إلزامي.",
+      "instrumentRequired": "يرجى اختيار آلة موسيقية.",
+      "dateRequired": "يرجى اختيار تاريخ.",
+      "timeRequired": "يرجى اختيار وقت.",
+      "nameRequired": "الاسم مطلوب.",
       "phoneInvalid": "رقم الهاتف غير صالح.",
       "emailInvalid": "البريد الإلكتروني غير صالح."
-    }
+    },
+    "steps": {
+      "instrument": "الآلة",
+      "teacher": "المدرس",
+      "schedule": "الموعد",
+      "details": "البيانات",
+      "payment": "الدفع"
+    },
+    "success": {
+      "title": "تم تأكيد الحجز",
+      "description": "تم حجز الدرس التجريبي بنجاح.",
+      "confirmation": "تأكيد",
+      "info": "ستصلك رسالة تأكيد تحتوي على جميع التفاصيل."
+    },
+    "title": "حجز درس تجريبي",
+    "teacher": "المدرس",
+    "teacherPlaceholder": "اختر المدرس",
+    "availableSlots": "المواعيد المتاحة",
+    "details": {
+      "name": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني"
+    },
+    "payment": {
+      "title": "الدفع",
+      "price": "السعر",
+      "mock": "هذه عملية دفع تجريبية.",
+      "button": "الدفع وإكمال الحجز"
+    },
+    "back": "السابق",
+    "next": "التالي"
   },
   "PlayingSchool": {
     "pageTitle": "إدارة مدرسة العزف",
@@ -1356,7 +1441,8 @@
       "schoolFound": "تم العثور على المدرسة",
       "schoolNotFound": "المدرسة غير موجودة",
       "tokenLabel": "رمز التسجيل",
-      "submit": "إكمال التسجيل"
+      "submit": "إكمال التسجيل",
+      "backToFinder": "Back to School Finder"
     },
     "admin": {
       "tokenPanel": {
@@ -1391,7 +1477,8 @@
       "scheduleTitle": "الجدول",
       "noUpcoming": "لا توجد دروس قادمة",
       "viewDetails": "عرض تفاصيل البرنامج الكاملة",
-      "registrationDate": "مسجل منذ"
+      "registrationDate": "مسجل منذ",
+      "excellenceNominated": "Excellence Nominated"
     },
     "finder": {
       "title": "البحث عن مدرسة العزف",
@@ -1401,7 +1488,15 @@
       "noResultsSub": "حاول ضبط شروط البحث",
       "schoolSymbol": "رمز المدرسة",
       "city": "المدينة",
-      "instruments": "الآلات",
+      "instruments": {
+        "piano": "Piano",
+        "violin": "Violin",
+        "flute": "Flute",
+        "guitar": "Guitar",
+        "drums": "Drums",
+        "cello": "Cello",
+        "voice": "Voice"
+      },
       "programType": "نوع البرنامج",
       "applyNow": "قدم الآن",
       "learnMore": "اعرف المزيد",
@@ -1417,7 +1512,12 @@
       "enquirySuccessDesc": "شكراً! سيتواصل معك فريق الشراكات لدينا قريباً.",
       "groupProgram": "برنامج جماعي",
       "individualProgram": "برنامج فردي",
-      "offeredInstruments": "الآلات الموسيقية المتاحة"
+      "offeredInstruments": "الآلات الموسيقية المتاحة",
+      "filterByInstrument": "Filter by instrument",
+      "allInstruments": "All Instruments",
+      "sendAnotherMessage": "Send another inquiry",
+      "sending": "Sending...",
+      "instrumentsLabel": "Instruments"
     },
     "distributeBtn": "توزيع",
     "inviteBtn": "دعوة",
@@ -1464,7 +1564,8 @@
       "class2c": "2ج",
       "date1": "5 مارس 2026",
       "date2": "12 مارس 2026",
-      "date3": "19 مارس 2026"
+      "date3": "19 مارس 2026",
+      "grade": "כיתה ב'"
     }
   },
   "EnrollmentWizard": {
@@ -1527,7 +1628,9 @@
       "joinWaitlist": "الانضمام إلى قائمة الانتظار",
       "goBack": "بدلاً من ذلك، يمكنك العودة وتغيير التفضيلات.",
       "matchPercentage": "مطابقة {percent}%",
-      "whyLearnWith": "لماذا تتعلم مع {name}؟"
+      "whyLearnWith": "لماذا تتعلم مع {name}؟",
+      "errorTitle": "Error Title",
+      "errorDesc": "Error Desc"
     },
     "success": {
       "adminTitle": "تم تسجيل الطالب بنجاح!",
@@ -1629,7 +1732,8 @@
       "firstLesson": "الدرس الأول",
       "price": "السعر",
       "notSelected": "لم يتم الاختيار",
-      "later": "سيتم تحديده لاحقًا"
+      "later": "سيتم تحديده لاحقًا",
+      "atTime": "At Time"
     }
   },
   "LessonManagement": {
@@ -1792,7 +1896,11 @@
       "FIRST_PLAYING_SCHOOL_LESSON_DESC": "شارك في أول درس من برنامج 'العزف في المدرسة'!",
       "INSTRUMENT_COLLECTED": "جاهز للبداية",
       "INSTRUMENT_COLLECTED_DESC": "تم استلام الآلة الموسيقية للبرنامج بنجاح."
-    }
+    },
+    "fullSchedule": "Full Schedule",
+    "recentPractices": "Recent Practices",
+    "allPractices": "All Practices",
+    "noRecentTeacherNotes": "No Recent Teacher Notes"
   },
   "PublicEventPage": {
     "orderComplete": "اكتمل الطلب!",
@@ -2345,21 +2453,24 @@
         "sc1": "سلمان ماجور وصغير (حتى 2 علامة/بيمول)",
         "pc1": "قطعة من الحقبة الباروكية (مثل باخ آنا ماغدالينا)",
         "pc2": "الحركة الأولى من سوناتينا",
-        "sr1": "قراءة سريعة لمستوى مبتدئ"
+        "sr1": "قراءة سريعة لمستوى مبتدئ",
+        "pc3": "יצירה רומנטית/מודרנית"
       },
       "level2": {
         "sc1": "سلالم ماجور وصغير (حتى 4 علامات/بيمولات)",
         "pc1": "بريلود وفوغ / اختراع ثنائي",
         "pc2": "حركة سوناتا كاملة",
         "pc3": "قطعة رومانسية/حديثة",
-        "sr1": "قراءة سريعة متقدمة"
+        "sr1": "قراءة سريعة متقدمة",
+        "pc4": "יצירה מודרנית/עכשווית"
       },
       "bagrut": {
         "pc1": "عرض نضج 5 وحدات - برنامج كامل (45 دقيقة)",
         "th1": "تحليل نظري للبرنامج للوحدة الأولى"
       },
       "other": {
-        "pc1": "متطلب شخصي"
+        "pc1": "متطلب شخصي",
+        "sr1": "קריאה מן הדף"
       }
     }
   },
@@ -2394,7 +2505,13 @@
       "adminAlerts": "وكيل التنبيهات الإدارية",
       "adminAlertsDesc": "يراقب النظام باستمرار ويرصد المشكلات التشغيلية قبل أن تتفاقم.",
       "leadNurture": "وكيل رعاية العملاء المحتملين",
-      "leadNurtureDesc": "يُجري متابعات تلقائية ومخصصة مع الطلاب الذين سجلوا لدرس تجريبي ولم يكملوا اشتراكاً."
+      "leadNurtureDesc": "يُجري متابعات تلقائية ومخصصة مع الطلاب الذين سجلوا لدرس تجريبي ولم يكملوا اشتراكاً.",
+      "lessonNotes": "סוכן הערות שיעור",
+      "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+      "scheduler": "סוכן תזמון",
+      "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות",
+      "practiceReminder": "תזכורות תרגול",
+      "practiceReminderDesc": "שליחת תזכורות אוטומטיות לתלמידים לתרגל"
     }
   },
   "ProgressPage": {
@@ -2533,7 +2650,9 @@
     "gradeLevel": "الصف/المستوى",
     "approvalDate": "تاريخ الموافقة",
     "view": "عرض",
-    "noApprovedForms": "لم يتم العثور على نماذج معتمدة للتصدير."
+    "noApprovedForms": "لم يتم العثور على نماذج معتمدة للتصدير.",
+    "status": "Status",
+    "actions": "Actions"
   },
   "Walkthrough": {
     "title": "جولة في النظام",
@@ -3192,5 +3311,249 @@
     "teachingLanguages": "لغات التدريس",
     "savingTranslations": "يتم تحديث الترجمات...",
     "saveChanges": "حفظ التغييرات"
+  },
+  "ExcellenceTrack": {
+    "successTitle": "تم تأكيد التسجيل",
+    "declineTitle": "تم رفض العرض",
+    "offerTitle": "دعوة لمسار التميز",
+    "offerSubtitle": "تم ترشيحك للبرنامج المتقدم للتميز.",
+    "offerDescription": "يتضمن هذا المسار تعليمًا متقدمًا وفرص أداء وتوجيهًا شخصيًا.",
+    "benefits": "مزايا البرنامج",
+    "tuitionTitle": "الرسوم الدراسية",
+    "tuitionDescription": "الرسوم الشهرية للمسار.",
+    "declineReasonLabel": "سبب الرفض",
+    "notInterestedReason": "غير مهتم حاليًا",
+    "acceptBtn": "قبول الدعوة",
+    "declineBtn": "رفض"
+  },
+  "SuggestionButton": {
+    "successTitle": "تم إنشاء الاقتراحات",
+    "successDesc": "أنشأنا توصيات بناءً على المحتوى الذي أدخلته.",
+    "noSuggestionsTitle": "لا توجد اقتراحات",
+    "noSuggestionsDesc": "لم يتم العثور على اقتراحات إضافية لهذا الحقل.",
+    "errorTitle": "تعذر إنشاء الاقتراحات",
+    "errorDesc": "يرجى المحاولة مرة أخرى بعد قليل.",
+    "buttonText": "اقترح عبر الذكاء الاصطناعي"
+  },
+  "RecitalForm": {
+    "validation": {
+      "requiredComposer": "يجب إدخال اسم المؤلف.",
+      "requiredTitle": "يجب إدخال عنوان القطعة.",
+      "invalidDuration": "يجب أن تكون المدة بصيغة MM:SS.",
+      "requiredGenre": "يجب اختيار النمط.",
+      "requiredAcademicYear": "يجب اختيار السنة الدراسية.",
+      "requiredGrade": "يجب اختيار الصف.",
+      "requiredInstrument": "يجب اختيار الآلة.",
+      "minRepertoire": "يجب إضافة قطعة واحدة على الأقل.",
+      "maxRepertoire": "يمكن إضافة حتى خمس قطع."
+    },
+    "schoolSymbol": "رمز المدرسة",
+    "compositionItem": "عنصر قطعة",
+    "deleteItem": "حذف العنصر",
+    "composer": "المؤلف",
+    "selectComposer": "اختر المؤلف",
+    "compositionTitle": "عنوان القطعة",
+    "selectComposition": "اختر القطعة",
+    "genre": "النمط",
+    "selectGenre": "اختر النمط",
+    "duration": "المدة",
+    "studentDetails": "بيانات الطالب",
+    "studentName": "اسم الطالب",
+    "idNumber": "رقم الهوية",
+    "grade": "الصف",
+    "city": "المدينة",
+    "phone": "الهاتف",
+    "gender": "الجنس",
+    "schoolDetails": "بيانات المدرسة",
+    "schoolName": "اسم المدرسة",
+    "hasMusicMajor": "يوجد تخصص موسيقى",
+    "isMajorParticipant": "مشارك في التخصص",
+    "instrumentDetails": "بيانات الآلة",
+    "instrument": "الآلة",
+    "yearsOfStudy": "سنوات الدراسة",
+    "yearsWithTeacher": "سنوات مع المدرس",
+    "teacherName": "اسم المدرس",
+    "repertoire": "الريبرتوار",
+    "addComposition": "إضافة قطعة",
+    "cancel": "إلغاء",
+    "resubmit": "إعادة إرسال",
+    "submit": "إرسال"
+  },
+  "KenesForm": {
+    "validation": {
+      "requiredComposer": "يجب إدخال اسم المؤلف.",
+      "requiredTitle": "يجب إدخال عنوان القطعة.",
+      "invalidDuration": "يجب أن تكون المدة بصيغة MM:SS.",
+      "requiredGenre": "يجب اختيار النمط.",
+      "requiredAcademicYear": "يجب اختيار السنة الدراسية.",
+      "requiredConservatorium": "يجب إدخال اسم المعهد.",
+      "requiredEventName": "يجب إدخال اسم الحدث.",
+      "requiredEventDate": "يجب إدخال تاريخ الحدث.",
+      "requiredLocation": "يجب إدخال الموقع.",
+      "requiredConductor": "يجب إدخال اسم قائد الأوركسترا.",
+      "requiredNumParticipants": "يجب إدخال عدد المشاركين.",
+      "minRepertoire": "يجب إضافة قطعة واحدة على الأقل.",
+      "maxRepertoire": "يمكن إضافة حتى عشر قطع."
+    },
+    "compositionItem": "عنصر قطعة",
+    "deleteItem": "حذف العنصر",
+    "composer": "المؤلف",
+    "selectComposer": "اختر المؤلف",
+    "compositionTitle": "عنوان القطعة",
+    "selectComposition": "اختر القطعة",
+    "genre": "النمط",
+    "selectGenre": "اختر النمط",
+    "duration": "المدة",
+    "title": "نموذج مؤتمر / فعالية",
+    "academicYear": "السنة الدراسية",
+    "conservatorium": "المعهد",
+    "eventDetails": "تفاصيل الفعالية",
+    "eventName": "اسم الفعالية",
+    "eventDate": "تاريخ الفعالية",
+    "location": "الموقع",
+    "ensembleDetails": "تفاصيل الفرقة",
+    "conductor": "قائد الأوركسترا",
+    "accompanist": "المرافق",
+    "numParticipants": "عدد المشاركين",
+    "program": "البرنامج",
+    "addComposition": "إضافة قطعة",
+    "maxReached": "تم الوصول للحد الأقصى",
+    "totalDuration": "المدة الإجمالية",
+    "logisticalNeeds": "الاحتياجات اللوجستية",
+    "logisticalNeedsPlaceholder": "ترتيب المسرح، متطلبات تقنية، إتاحة، إلخ.",
+    "pricing": "التسعير",
+    "pricingExplainTitle": "كيف يتم احتساب السعر",
+    "pricingExplainDesc": "يتم احتساب السعر حسب درجة المعهد وحجم الفرقة ومدة البرنامج.",
+    "conservatoriumTier": "درجة المعهد",
+    "tierPrefix": "درجة",
+    "ensembleSize": "حجم الفرقة",
+    "durationLabel": "المدة",
+    "minutes": "دقائق",
+    "totalPrice": "السعر الإجمالي",
+    "cancel": "إلغاء",
+    "resubmit": "إعادة إرسال",
+    "submit": "إرسال"
+  },
+  "ExamRegistrationForm": {
+    "validation": {
+      "requiredComposer": "يجب إدخال اسم المؤلف.",
+      "requiredTitle": "يجب إدخال عنوان القطعة.",
+      "invalidDuration": "يجب أن تكون المدة بصيغة MM:SS.",
+      "requiredGenre": "يجب اختيار النمط.",
+      "requiredInstrument": "يجب اختيار الآلة.",
+      "requiredLevel": "يجب اختيار مستوى الامتحان.",
+      "requiredType": "يجب اختيار نوع الامتحان.",
+      "minRepertoire": "يجب إضافة قطعة واحدة على الأقل.",
+      "maxRepertoire": "يمكن إضافة حتى خمس قطع.",
+      "requiredDeclaration": "يجب الموافقة على تصريح المدرس."
+    },
+    "compositionItem": "عنصر قطعة",
+    "deleteItem": "حذف العنصر",
+    "composer": "المؤلف",
+    "selectComposer": "اختر المؤلف",
+    "compositionTitle": "عنوان القطعة",
+    "selectComposition": "اختر القطعة",
+    "genre": "النمط",
+    "selectGenre": "اختر النمط",
+    "duration": "المدة",
+    "studentAndInstrument": "الطالب والآلة",
+    "studentName": "اسم الطالب",
+    "idNumber": "رقم الهوية",
+    "instrument": "الآلة",
+    "examDetails": "تفاصيل الامتحان",
+    "examLevel": "مستوى الامتحان",
+    "selectLevel": "اختر المستوى",
+    "examType": "نوع الامتحان",
+    "selectType": "اختر النوع",
+    "preferredDateRange": "نطاق تاريخ مفضل",
+    "dateRangePlaceholder": "اختر نطاق التاريخ المفضل",
+    "repertoire": "الريبرتوار",
+    "addComposition": "إضافة قطعة",
+    "teacherDeclarationTitle": "تصريح المدرس",
+    "teacherDeclarationText": "أؤكد أن الطالب جاهز لمستوى الامتحان المطلوب.",
+    "cancel": "إلغاء",
+    "resubmit": "إعادة إرسال",
+    "submit": "إرسال"
+  },
+  "StudentPractice": {
+    "durationMustBePositive": "يجب أن تكون مدة التمرين أكبر من صفر.",
+    "practiceLoggedTitle": "تم تسجيل التمرين",
+    "pointsEarnedDesc": "حصلت على {points} نقطة لهذه الجلسة.",
+    "streakTitle": "سلسلة التمرين",
+    "daysLabel": "أيام",
+    "keepPracticing": "استمر في التمرين!",
+    "timePracticed": "وقت التمرين",
+    "minutesLabel": "دقائق",
+    "equivToHours": "يعادل {hours} ساعات",
+    "generationPoints": "النقاط",
+    "ranking": "الترتيب",
+    "logNewPracticeTitle": "تسجيل جلسة تمرين جديدة",
+    "logNewPracticeDesc": "سجّل ما تمرّنت عليه اليوم.",
+    "whatDidYouPractice": "ماذا تمرّنت؟",
+    "selectPiece": "اختر قطعة",
+    "noTasksDefined": "لا توجد قطع محددة",
+    "pieceLabel": "القطعة",
+    "generalPractice": "تمرين عام",
+    "durationLabel": "المدة (بالدقائق)",
+    "personalNotesLabel": "ملاحظات شخصية",
+    "notesPlaceholder": "كيف كانت جلسة التمرين اليوم؟",
+    "videoAttached": "تم إرفاق فيديو",
+    "attachVideo": "إرفاق فيديو",
+    "bonusPoints": "نقاط إضافية",
+    "sendReportBtn": "إرسال التقرير",
+    "weeklyProgress": "التقدم الأسبوعي",
+    "chartMinAbbrev": "د",
+    "chartTooltipTime": "{value} دقيقة",
+    "myPracticeLog": "سجل التمرين الخاص بي",
+    "colDate": "التاريخ",
+    "colTopic": "الموضوع",
+    "colDuration": "المدة",
+    "colFeedback": "الملاحظات",
+    "noLogsFound": "لا توجد سجلات تمرين بعد.",
+    "unknownPiece": "قطعة غير معروفة",
+    "systemFeedback": "ملاحظات النظام",
+    "ptsLabel": "نق"
+  },
+  "AiMatchmaker": {
+    "stepGoal": "الهدف",
+    "stepStyle": "أسلوب التعلم",
+    "stepPersonality": "شخصية المعلّم",
+    "stepResults": "نتائج المطابقة",
+    "title": "مطابقة المعلّم بالذكاء الاصطناعي",
+    "description": "أجب عن بعض الأسئلة القصيرة وسنقترح لك المعلّم الأنسب.",
+    "analyzingTitle": "نحلّل تفضيلاتك",
+    "analyzingDesc": "نقارن إجاباتك بملفات المعلّمين للعثور على أفضل تطابق.",
+    "qGoalTitle": "ما هو هدفك الأساسي؟",
+    "qGoalA1": "التعلم للمتعة والتطور الشخصي",
+    "qGoalA2": "التقدم بشكل مهني",
+    "qGoalA3": "الاستعداد للامتحانات والاختبارات",
+    "qStyleTitle": "ما أسلوب التدريس المناسب لك؟",
+    "qStyleA1": "منهجي وخطوة بخطوة",
+    "qStyleA2": "مرن ومتكيف",
+    "qStyleA3": "تحدّي وطموح",
+    "qPersonalityTitle": "أي نوع من المعلّمين تفضّل؟",
+    "qPersonalityA1": "صبور وداعم",
+    "qPersonalityA2": "صارم ودقيق",
+    "qPersonalityA3": "إبداعي وملهم",
+    "qOtherTitle": "هل هناك شيء آخر يجب أن نعرفه؟",
+    "qOtherPlaceholder": "اكتب تفضيلاتك أو أهدافك أو أي احتياجات خاصة...",
+    "matchFoundTitle": "تم العثور على أفضل مطابقة",
+    "matchFoundDesc": "بناءً على إجاباتك، هذا هو المعلّم الأنسب لك.",
+    "topMatchLabel": "أفضل مطابقة",
+    "ronitName": "رونيت ليفي",
+    "ronitTitle": "مدرّسة بيانو، تحضير للحفلات والامتحانات",
+    "ronitTag1": "إرشاد صبور",
+    "ronitTag2": "تقدم منهجي",
+    "ronitTag3": "تركيز على الأداء",
+    "whyRonitLabel": "لماذا رونيت؟",
+    "whyRonitDesc": "أسلوبها في التدريس يتوافق مع أهدافك وطريقة تعلمك.",
+    "bookTrialBtn": "احجز درسًا تجريبيًا",
+    "runnerUpLabel": "بديل قوي",
+    "danName": "دان كوهين",
+    "danTitle": "مدرّس بيانو، جاز وارتجال",
+    "viewProfileBtn": "عرض الملف الشخصي",
+    "prevBtn": "السابق",
+    "findTeacherBtn": "اعثر على معلّمي",
+    "nextBtn": "التالي"
   }
 }

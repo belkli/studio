@@ -14,6 +14,7 @@ import { Menu } from 'lucide-react';
 export function PublicNavbar() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
+    const tCommon = useTranslations('Common.shared');
     const pathname = usePathname();
     const locale = useLocale();
     const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
@@ -78,16 +79,16 @@ export function PublicNavbar() {
             <div className="md:hidden flex items-center">
                 <LanguageSwitcher />
                 {!mounted ? (
-                    <Button variant="ghost" size="icon" disabled aria-label="Open menu">
+                    <Button variant="ghost" size="icon" disabled aria-label={tCommon('openMenu')}>
                         <Menu className="h-5 w-5" />
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">{tCommon('openMenu')}</span>
                     </Button>
                 ) : (
                     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon">
                                 <Menu className="h-5 w-5" />
-                                <span className="sr-only">Open menu</span>
+                                <span className="sr-only">{tCommon('openMenu')}</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side={dir === 'rtl' ? 'right' : 'left'} className="w-3/4">

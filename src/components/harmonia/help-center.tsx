@@ -1,11 +1,14 @@
 'use client';
+
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, BookOpen } from 'lucide-react';
 import { helpArticles, helpCategories } from '@/lib/help-articles';
 import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
 export function HelpCenter() {
+    const t = useTranslations('HelpCenter');
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredArticles = searchTerm
@@ -19,13 +22,13 @@ export function HelpCenter() {
     return (
         <div className="space-y-8">
             <div className="text-center py-12 bg-muted/50 rounded-lg">
-                <h1 className="text-4xl font-bold tracking-tight">מרכז העזרה של הרמוניה</h1>
-                <p className="mt-4 text-lg text-muted-foreground">איך נוכל לעזור לך היום?</p>
+                <h1 className="text-4xl font-bold tracking-tight">{t('title')}</h1>
+                <p className="mt-4 text-lg text-muted-foreground">{t('subtitle')}</p>
                 <div className="mt-6 relative max-w-xl mx-auto">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
                         type="search"
-                        placeholder="חפש מאמרים..."
+                        placeholder={t('searchPlaceholder')}
                         className="w-full h-12 text-lg ps-12"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -35,7 +38,7 @@ export function HelpCenter() {
 
              {searchTerm ? (
                  <div className="space-y-4">
-                     <h2 className="text-2xl font-semibold">תוצאות חיפוש עבור "{searchTerm}"</h2>
+                     <h2 className="text-2xl font-semibold">{t('resultsTitle', { query: searchTerm })}</h2>
                      {filteredArticles.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                            {filteredArticles.map(article => (
@@ -48,7 +51,7 @@ export function HelpCenter() {
                            ))}
                         </div>
                      ) : (
-                        <p>לא נמצאו מאמרים תואמים.</p>
+                        <p>{t('noResults')}</p>
                      )}
                  </div>
              ) : (

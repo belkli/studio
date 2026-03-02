@@ -62,7 +62,8 @@
     "back": "חזרה",
     "next": "הבא",
     "submit": "סיים הרשמה",
-    "trialLesson": "שיעור ניסיון"
+    "trialLesson": "שיעור ניסיון",
+    "switchLanguage": "החלפת שפה"
   },
   "Common": {
     "name": "שם",
@@ -88,7 +89,10 @@
       "studentName": "שם התלמיד/ה",
       "formType": "סוג טופס",
       "submissionDate": "תאריך הגשה",
-      "grade": "כיתה"
+      "grade": "כיתה",
+      "openMenu": "פתח תפריט",
+      "search": "חיפוש...",
+      "switchLanguage": "החלפת שפה"
     },
     "translationEditor": {
       "stale": "תרגום לא מעודכן",
@@ -104,6 +108,13 @@
         "arabic": "ערבית",
         "russian": "רוסית"
       }
+    },
+    "saveStatusBar": {
+      "saving": "שומר",
+      "error": "שגיאה",
+      "savedAt": "נשמר בשעה",
+      "unsavedChanges": "יש שינויים שלא נשמרו",
+      "saveDraft": "שמירת טיוטה"
     }
   },
   "HomePage": {
@@ -114,6 +125,13 @@
     "learnMoreBtn": "מידע נוסף",
     "copyright": "כל הזכויות שמורות.",
     "privacyPolicy": "מדיניות פרטיות"
+  },
+  "HelpCenter": {
+    "title": "מרכז העזרה של הרמוניה",
+    "subtitle": "איך נוכל לעזור לך היום?",
+    "searchPlaceholder": "חפש מאמרים...",
+    "resultsTitle": "תוצאות חיפוש עבור \"{query}\"",
+    "noResults": "לא נמצאו מאמרים תואמים."
   },
   "AvailableNow": {
     "title": "שיעורים פנויים להיום ומחר",
@@ -461,7 +479,11 @@
     "applyForAid": "הגש בקשה למלגה",
     "packageExpiringNotice": "החבילה שלך עומדת לפוג!",
     "packageExpiringDesc": "נותרו {days} ימים עד שהחבילה שלך תפוג בתאריך {date}.",
-    "renewNow": "לחץ כאן כדי לחדש ולשמור על מקומך."
+    "renewNow": "לחץ כאן כדי לחדש ולשמור על מקומך.",
+    "status": "Status",
+    "active": "Active",
+    "credits": "Credits",
+    "payNow": "Pay Now"
   },
   "Invoices": {
     "invoiceNumber": "מספר חשבונית",
@@ -982,7 +1004,8 @@
       "EXAM_REGISTRATION": "רישום למבחן שלב",
       "COMPOSITION_SUBMISSION": "הגשת יצירה מקורית",
       "RECITAL": "אישור תוכנית רסיטל",
-      "SCHOLARSHIP": "בקשת מלגה"
+      "SCHOLARSHIP": "בקשת מלגה",
+      "OTHER": "نموذج الوزارة"
     },
     "inboxTitle": "תיבת אישורים",
     "pending": "ממתינים ({count})",
@@ -1132,7 +1155,15 @@
       "approved": "מאושר",
       "drafts": "טיוטות"
     },
-    "noForms": "אין טפסים להצגה"
+    "noForms": "אין טפסים להצגה",
+    "table": {
+      "studentName": "שם תלמיד/ה",
+      "formType": "סוג טופס",
+      "status": "סטטוס",
+      "submissionDate": "תאריך הגשה",
+      "actions": "פעולות",
+      "view": "צפייה"
+    }
   },
   "Auth": {
     "pageTitle": "התחברות",
@@ -1161,7 +1192,14 @@
       "loginFailedDesc": "לא נמצא משתמש עם האימייל שסופק.",
       "magicLinkSent": "קישור ההתחברות נשלח!",
       "magicLinkSentDesc": "בדוק את תיבת הדואר הנכנס שלך לקבלת קישור ההתחברות."
-    }
+    },
+    "oauthComingSoon": "התחברות חיצונית בקרוב",
+    "oauthComingSoonDesc": "התחברות עם Google/Microsoft עדיין לא זמינה.",
+    "enterEmailFirst": "אנא הזן/י קודם כתובת אימייל",
+    "passwordResetSent": "קישור לאיפוס סיסמה נשלח",
+    "passwordResetSentDesc": "בדוק/בדקי את תיבת הדואר שלך להמשך.",
+    "emailPlaceholder": "name@example.com",
+    "demoModeNotice": "מצב הדגמה: כל אימייל מרשימת המשתמשים המדומה יתחבר. אין בדיקת סיסמה."
   },
   "NewForm": {
     "title": "טופס / בקשה חדשה",
@@ -1173,29 +1211,76 @@
     "custom": "טופס מותאם אישית",
     "customDesc": "הגש טופס המבוסס על תבנית שנוצרה על ידי הקונסרבטוריון.",
     "noTemplates": "אין תבניות של טפסים זמינות.",
-    "createForm": "צור טופס"
+    "createForm": "צור טופס",
+    "validation": {
+      "required": "שדה זה הוא חובה"
+    },
+    "types": {
+      "recital": "רסיטל",
+      "kenes": "כנס",
+      "exam_registration": "רישום לבחינה"
+    },
+    "successTitle": "טופס {type} נוצר בהצלחה",
+    "successDesc": "הטופס נשמר בהצלחה.",
+    "loading": "טוען...",
+    "pleaseSelectStudent": "יש לבחור תלמיד/ה כדי להמשיך.",
+    "selectionTitle": "בחירת פרטי טופס",
+    "formType": "סוג טופס",
+    "selectType": "בחר סוג טופס",
+    "selectStudent": "תלמיד/ה",
+    "selectStudentPlaceholder": "בחר תלמיד/ה"
   },
   "TrialBooking": {
     "pageTitle": "קביעת שיעור ניסיון",
-    "subtitle": "הזמן שיעור היכרות עם אחד ממורינו לפני הרשמה.",
-    "selectTeacher": "בחר מורה",
-    "selectDate": "בחר תאריך",
-    "selectTime": "בחר שעה",
-    "noSlots": "אין שעות זמינות בתאריך זה.",
-    "confirm": "אשר הזמנה",
+    "subtitle": "התנסו בשיעור עם אחד המורים לפני התחייבות.",
+    "selectTeacher": "בחירת מורה",
+    "selectDate": "בחירת תאריך",
+    "selectTime": "בחירת שעה",
+    "noSlots": "אין שעות פנויות לתאריך זה.",
+    "confirm": "אישור הזמנה",
     "loading": "טוען שעות פנויות...",
-    "successTitle": "שיעור ניסיון נקבע!",
-    "successDesc": "שיעור הניסיון שלך עם {name} תואם לתאריך {date}.",
+    "successTitle": "שיעור הניסיון נקבע",
+    "successDesc": "שיעור הניסיון עם {name} נקבע לתאריך {date}.",
     "instrument": "כלי נגינה",
-    "instrumentPlaceholder": "בחר כלי...",
+    "instrumentPlaceholder": "בחר/י כלי...",
     "validation": {
-      "instrumentRequired": "חובה לבחור כלי נגינה.",
-      "dateRequired": "חובה לבחור תאריך.",
-      "timeRequired": "חובה לבחור שעה.",
+      "instrumentRequired": "יש לבחור כלי נגינה.",
+      "dateRequired": "יש לבחור תאריך.",
+      "timeRequired": "יש לבחור שעה.",
       "nameRequired": "שם הוא שדה חובה.",
-      "phoneInvalid": "מספר טלפון לא תקין.",
-      "emailInvalid": "אימייל לא תקין."
-    }
+      "phoneInvalid": "מספר הטלפון אינו תקין.",
+      "emailInvalid": "כתובת האימייל אינה תקינה."
+    },
+    "steps": {
+      "instrument": "כלי נגינה",
+      "teacher": "מורה",
+      "schedule": "מועד",
+      "details": "פרטים",
+      "payment": "תשלום"
+    },
+    "success": {
+      "title": "ההזמנה אושרה",
+      "description": "שיעור הניסיון נקבע בהצלחה.",
+      "confirmation": "אישור",
+      "info": "פרטי האישור יישלחו אליך בהודעה."
+    },
+    "title": "קביעת שיעור ניסיון",
+    "teacher": "מורה",
+    "teacherPlaceholder": "בחר/י מורה",
+    "availableSlots": "שעות פנויות",
+    "details": {
+      "name": "שם מלא",
+      "phone": "טלפון",
+      "email": "אימייל"
+    },
+    "payment": {
+      "title": "תשלום",
+      "price": "מחיר",
+      "mock": "זהו תהליך תשלום לדוגמה.",
+      "button": "לתשלום וסיום הזמנה"
+    },
+    "back": "חזרה",
+    "next": "המשך"
   },
   "PlayingSchool": {
     "pageTitle": "ניהול בית ספר מנגן",
@@ -1392,7 +1477,8 @@
       "scheduleTitle": "מערכת שעות",
       "noUpcoming": "אין שיעורים קרובים",
       "viewDetails": "צפה בפרטי התוכנית המלאים",
-      "registrationDate": "רשום מאז"
+      "registrationDate": "רשום מאז",
+      "excellenceNominated": "Excellence Nominated"
     },
     "finder": {
       "title": "מצא בית ספר מנגן",
@@ -1542,7 +1628,9 @@
       "joinWaitlist": "הצטרף לרשימת ההמתנה",
       "goBack": "לחילופין, תוכל/י לחזור אחורה ולשנות את העדפות המערכת.",
       "matchPercentage": "{percent}% התאמה",
-      "whyLearnWith": "למה כדאי ללמוד עם {name}?"
+      "whyLearnWith": "למה כדאי ללמוד עם {name}?",
+      "errorTitle": "Error Title",
+      "errorDesc": "Error Desc"
     },
     "success": {
       "adminTitle": "התלמיד נרשם בהצלחה!",
@@ -1644,7 +1732,8 @@
       "firstLesson": "שיעור ראשון",
       "price": "מחיר",
       "notSelected": "לא נבחר",
-      "later": "ייקבע בהמשך"
+      "later": "ייקבע בהמשך",
+      "atTime": "At Time"
     }
   },
   "LessonManagement": {
@@ -1807,7 +1896,11 @@
       "FIRST_PLAYING_SCHOOL_LESSON_DESC": "השתתפ/ה בשיעור הראשון של תוכנית 'נגן בבית הספר'!",
       "INSTRUMENT_COLLECTED": "מוכן/ה להתחיל",
       "INSTRUMENT_COLLECTED_DESC": "קיבל/ה בהצלחה את כלי הנגינה לתוכנית."
-    }
+    },
+    "fullSchedule": "Full Schedule",
+    "recentPractices": "Recent Practices",
+    "allPractices": "All Practices",
+    "noRecentTeacherNotes": "No Recent Teacher Notes"
   },
   "PublicEventPage": {
     "orderComplete": "ההזמנה הושלמה!",
@@ -2557,7 +2650,9 @@
     "gradeLevel": "כיתה/רמה",
     "approvalDate": "תאריך אישור",
     "view": "צפה",
-    "noApprovedForms": "לא נמצאו טפסים מאושרים לייצוא."
+    "noApprovedForms": "לא נמצאו טפסים מאושרים לייצוא.",
+    "status": "Status",
+    "actions": "Actions"
   },
   "Walkthrough": {
     "title": "סיור במערכת",
@@ -3216,5 +3311,249 @@
     "teachingLanguages": "שפות הוראה",
     "savingTranslations": "מעדכן תרגומים...",
     "saveChanges": "שמור שינויים"
+  },
+  "ExcellenceTrack": {
+    "successTitle": "ההרשמה אושרה",
+    "declineTitle": "ההצעה נדחתה",
+    "offerTitle": "הזמנה למסלול מצוינות",
+    "offerSubtitle": "הנך מועמד/ת למסלול המתקדם.",
+    "offerDescription": "המסלול כולל הוראה מורחבת, הזדמנויות במה וליווי אישי מותאם.",
+    "benefits": "יתרונות המסלול",
+    "tuitionTitle": "שכר לימוד",
+    "tuitionDescription": "שכר לימוד חודשי למסלול.",
+    "declineReasonLabel": "סיבת הדחייה",
+    "notInterestedReason": "לא מעוניין/ת בשלב זה",
+    "acceptBtn": "אישור ההזמנה",
+    "declineBtn": "דחייה"
+  },
+  "SuggestionButton": {
+    "successTitle": "ההצעות נוצרו בהצלחה",
+    "successDesc": "יצרנו המלצות על בסיס התוכן שהוזן.",
+    "noSuggestionsTitle": "לא נמצאו הצעות",
+    "noSuggestionsDesc": "לא נמצאו הצעות נוספות לשדה זה.",
+    "errorTitle": "לא ניתן ליצור הצעות",
+    "errorDesc": "נא לנסות שוב בעוד רגע.",
+    "buttonText": "הצע באמצעות AI"
+  },
+  "RecitalForm": {
+    "validation": {
+      "requiredComposer": "יש להזין מלחין.",
+      "requiredTitle": "יש להזין שם יצירה.",
+      "invalidDuration": "משך היצירה חייב להיות בפורמט MM:SS.",
+      "requiredGenre": "יש לבחור סגנון.",
+      "requiredAcademicYear": "יש לבחור שנת לימודים.",
+      "requiredGrade": "יש לבחור כיתה.",
+      "requiredInstrument": "יש לבחור כלי נגינה.",
+      "minRepertoire": "יש להוסיף לפחות יצירה אחת.",
+      "maxRepertoire": "ניתן להוסיף עד חמש יצירות."
+    },
+    "schoolSymbol": "סמל מוסד",
+    "compositionItem": "פריט יצירה",
+    "deleteItem": "מחיקת פריט",
+    "composer": "מלחין",
+    "selectComposer": "בחר/י מלחין",
+    "compositionTitle": "שם היצירה",
+    "selectComposition": "בחר/י יצירה",
+    "genre": "סגנון",
+    "selectGenre": "בחר/י סגנון",
+    "duration": "משך",
+    "studentDetails": "פרטי תלמיד/ה",
+    "studentName": "שם תלמיד/ה",
+    "idNumber": "תעודת זהות",
+    "grade": "כיתה",
+    "city": "עיר",
+    "phone": "טלפון",
+    "gender": "מגדר",
+    "schoolDetails": "פרטי בית הספר",
+    "schoolName": "שם בית הספר",
+    "hasMusicMajor": "במגמת מוזיקה",
+    "isMajorParticipant": "משתתף/ת במגמה",
+    "instrumentDetails": "פרטי כלי הנגינה",
+    "instrument": "כלי נגינה",
+    "yearsOfStudy": "שנות לימוד",
+    "yearsWithTeacher": "שנים עם המורה",
+    "teacherName": "שם המורה",
+    "repertoire": "רפרטואר",
+    "addComposition": "הוספת יצירה",
+    "cancel": "ביטול",
+    "resubmit": "הגשה מחדש",
+    "submit": "הגשה"
+  },
+  "KenesForm": {
+    "validation": {
+      "requiredComposer": "יש להזין מלחין.",
+      "requiredTitle": "יש להזין שם יצירה.",
+      "invalidDuration": "משך היצירה חייב להיות בפורמט MM:SS.",
+      "requiredGenre": "יש לבחור סגנון.",
+      "requiredAcademicYear": "יש לבחור שנת לימודים.",
+      "requiredConservatorium": "יש להזין שם קונסרבטוריון.",
+      "requiredEventName": "יש להזין שם אירוע.",
+      "requiredEventDate": "יש להזין תאריך אירוע.",
+      "requiredLocation": "יש להזין מיקום.",
+      "requiredConductor": "יש להזין שם מנצח/ת.",
+      "requiredNumParticipants": "יש להזין מספר משתתפים.",
+      "minRepertoire": "יש להוסיף לפחות יצירה אחת.",
+      "maxRepertoire": "ניתן להוסיף עד עשר יצירות."
+    },
+    "compositionItem": "פריט יצירה",
+    "deleteItem": "מחיקת פריט",
+    "composer": "מלחין",
+    "selectComposer": "בחר/י מלחין",
+    "compositionTitle": "שם היצירה",
+    "selectComposition": "בחר/י יצירה",
+    "genre": "סגנון",
+    "selectGenre": "בחר/י סגנון",
+    "duration": "משך",
+    "title": "טופס כנס / אירוע",
+    "academicYear": "שנת לימודים",
+    "conservatorium": "קונסרבטוריון",
+    "eventDetails": "פרטי האירוע",
+    "eventName": "שם האירוע",
+    "eventDate": "תאריך האירוע",
+    "location": "מיקום",
+    "ensembleDetails": "פרטי ההרכב",
+    "conductor": "מנצח/ת",
+    "accompanist": "מלווה",
+    "numParticipants": "מספר משתתפים",
+    "program": "תוכנית",
+    "addComposition": "הוספת יצירה",
+    "maxReached": "הגעת למקסימום המותר",
+    "totalDuration": "משך כולל",
+    "logisticalNeeds": "צרכים לוגיסטיים",
+    "logisticalNeedsPlaceholder": "סידור במה, ציוד טכני, נגישות וכדומה.",
+    "pricing": "תמחור",
+    "pricingExplainTitle": "איך המחיר מחושב",
+    "pricingExplainDesc": "המחיר מחושב לפי דרגת הקונסרבטוריון, גודל ההרכב ומשך התוכנית.",
+    "conservatoriumTier": "דרגת קונסרבטוריון",
+    "tierPrefix": "דרגה",
+    "ensembleSize": "גודל ההרכב",
+    "durationLabel": "משך",
+    "minutes": "דקות",
+    "totalPrice": "מחיר כולל",
+    "cancel": "ביטול",
+    "resubmit": "הגשה מחדש",
+    "submit": "הגשה"
+  },
+  "ExamRegistrationForm": {
+    "validation": {
+      "requiredComposer": "יש להזין מלחין.",
+      "requiredTitle": "יש להזין שם יצירה.",
+      "invalidDuration": "משך היצירה חייב להיות בפורמט MM:SS.",
+      "requiredGenre": "יש לבחור סגנון.",
+      "requiredInstrument": "יש לבחור כלי נגינה.",
+      "requiredLevel": "יש לבחור רמת בחינה.",
+      "requiredType": "יש לבחור סוג בחינה.",
+      "minRepertoire": "יש להוסיף לפחות יצירה אחת.",
+      "maxRepertoire": "ניתן להוסיף עד חמש יצירות.",
+      "requiredDeclaration": "יש לאשר את הצהרת המורה."
+    },
+    "compositionItem": "פריט יצירה",
+    "deleteItem": "מחיקת פריט",
+    "composer": "מלחין",
+    "selectComposer": "בחר/י מלחין",
+    "compositionTitle": "שם היצירה",
+    "selectComposition": "בחר/י יצירה",
+    "genre": "סגנון",
+    "selectGenre": "בחר/י סגנון",
+    "duration": "משך",
+    "studentAndInstrument": "תלמיד/ה וכלי נגינה",
+    "studentName": "שם תלמיד/ה",
+    "idNumber": "תעודת זהות",
+    "instrument": "כלי נגינה",
+    "examDetails": "פרטי הבחינה",
+    "examLevel": "רמת בחינה",
+    "selectLevel": "בחר/י רמה",
+    "examType": "סוג בחינה",
+    "selectType": "בחר/י סוג",
+    "preferredDateRange": "טווח תאריכים מועדף",
+    "dateRangePlaceholder": "בחר/י טווח תאריכים",
+    "repertoire": "רפרטואר",
+    "addComposition": "הוספת יצירה",
+    "teacherDeclarationTitle": "הצהרת מורה",
+    "teacherDeclarationText": "אני מאשר/ת שהתלמיד/ה מוכן/ה לרמת הבחינה המבוקשת.",
+    "cancel": "ביטול",
+    "resubmit": "הגשה מחדש",
+    "submit": "הגשה"
+  },
+  "StudentPractice": {
+    "durationMustBePositive": "משך התרגול חייב להיות גדול מאפס.",
+    "practiceLoggedTitle": "התרגול נשמר",
+    "pointsEarnedDesc": "צברת {points} נקודות עבור התרגול הזה.",
+    "streakTitle": "רצף תרגול",
+    "daysLabel": "ימים",
+    "keepPracticing": "להמשיך לתרגל!",
+    "timePracticed": "זמן תרגול",
+    "minutesLabel": "דקות",
+    "equivToHours": "שווה ערך ל-{hours} שעות",
+    "generationPoints": "נקודות",
+    "ranking": "דירוג",
+    "logNewPracticeTitle": "רישום תרגול חדש",
+    "logNewPracticeDesc": "יש לרשום מה תרגלת היום.",
+    "whatDidYouPractice": "מה תרגלת?",
+    "selectPiece": "בחר/י יצירה",
+    "noTasksDefined": "אין יצירות שהוגדרו",
+    "pieceLabel": "יצירה",
+    "generalPractice": "תרגול כללי",
+    "durationLabel": "משך (בדקות)",
+    "personalNotesLabel": "הערות אישיות",
+    "notesPlaceholder": "איך עבר התרגול היום?",
+    "videoAttached": "מצורף וידאו",
+    "attachVideo": "צירוף וידאו",
+    "bonusPoints": "נקודות בונוס",
+    "sendReportBtn": "שליחת דיווח",
+    "weeklyProgress": "התקדמות שבועית",
+    "chartMinAbbrev": "דק׳",
+    "chartTooltipTime": "{value} דקות",
+    "myPracticeLog": "יומן התרגול שלי",
+    "colDate": "תאריך",
+    "colTopic": "נושא",
+    "colDuration": "משך",
+    "colFeedback": "משוב",
+    "noLogsFound": "עדיין אין תיעוד תרגולים.",
+    "unknownPiece": "יצירה לא ידועה",
+    "systemFeedback": "משוב מערכת",
+    "ptsLabel": "נק׳"
+  },
+  "AiMatchmaker": {
+    "stepGoal": "מטרה",
+    "stepStyle": "סגנון למידה",
+    "stepPersonality": "אופי המורה",
+    "stepResults": "תוצאות התאמה",
+    "title": "התאמת מורה חכמה",
+    "description": "ענה/י על כמה שאלות קצרות ונציע לך את המורה המתאים ביותר.",
+    "analyzingTitle": "מנתחים את ההעדפות שלך",
+    "analyzingDesc": "אנחנו משווים את התשובות שלך לפרופילי ההוראה כדי למצוא את ההתאמה הטובה ביותר.",
+    "qGoalTitle": "מה המטרה המרכזית שלך?",
+    "qGoalA1": "ללמוד להנאה ולהתפתחות אישית",
+    "qGoalA2": "להתקדם ברמה מקצועית",
+    "qGoalA3": "להתכונן לבחינות ואודישנים",
+    "qStyleTitle": "איזה סגנון הוראה מתאים לך?",
+    "qStyleA1": "מובנה ומדורג",
+    "qStyleA2": "גמיש ומותאם אישית",
+    "qStyleA3": "מאתגר ושאפתני",
+    "qPersonalityTitle": "איזה סוג מורה מתאים לך?",
+    "qPersonalityA1": "סבלני ומעודד",
+    "qPersonalityA2": "תובעני ומדויק",
+    "qPersonalityA3": "יצירתי ומעורר השראה",
+    "qOtherTitle": "יש משהו נוסף שחשוב לנו לדעת?",
+    "qOtherPlaceholder": "אפשר לשתף העדפות, מטרות או צרכים מיוחדים...",
+    "matchFoundTitle": "נמצאה התאמה מצוינת",
+    "matchFoundDesc": "על בסיס התשובות שלך, זו ההתאמה החזקה ביותר.",
+    "topMatchLabel": "ההתאמה המובילה",
+    "ronitName": "רונית לוי",
+    "ronitTitle": "מורה לפסנתר, הכנה לרסיטלים ובחינות",
+    "ronitTag1": "ליווי סבלני",
+    "ronitTag2": "התקדמות מובנית",
+    "ronitTag3": "מיקוד בביצוע",
+    "whyRonitLabel": "למה רונית?",
+    "whyRonitDesc": "שיטת ההוראה שלה תואמת את המטרות והעדפות הלמידה שלך.",
+    "bookTrialBtn": "קביעת שיעור ניסיון",
+    "runnerUpLabel": "אפשרות חזקה נוספת",
+    "danName": "דן כהן",
+    "danTitle": "מורה לפסנתר, ג׳אז ואימפרוביזציה",
+    "viewProfileBtn": "לצפייה בפרופיל",
+    "prevBtn": "חזרה",
+    "findTeacherBtn": "מצאו לי מורה",
+    "nextBtn": "המשך"
   }
 }

@@ -98,7 +98,7 @@ export function LoginForm() {
         {process.env.NODE_ENV !== 'production' && (
           <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded p-3 text-xs mb-6 flex items-start gap-2">
             <Icons.help className="h-4 w-4 shrink-0 mt-0.5" />
-            <span>⚠️ Demo mode: Any email from the mock list logs in. No password is checked.</span>
+            <span>{t('demoModeNotice')}</span>
           </div>
         )}
         <Tabs defaultValue="email" className="w-full" dir={dir}>
@@ -110,7 +110,7 @@ export function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">{t('emailLabel')}</Label>
-                <Input id="email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="email" type="email" placeholder={t('emailPlaceholder')} required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -130,7 +130,7 @@ export function LoginForm() {
             <form onSubmit={handleMagicLink} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="magic-email">{t('emailLabel')}</Label>
-                <Input id="magic-email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input id="magic-email" type="email" placeholder={t('emailPlaceholder')} required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? t('sending') : t('sendMagicLink')}
