@@ -30,9 +30,9 @@ export default function FormsPage() {
     // Show New Form button only for students and teachers who can create forms
     const canCreateForm = user?.role === 'student' || user?.role === 'teacher';
 
-    const pendingStatuses: FormStatus[] = ['ממתין לאישור מורה', 'ממתין לאישור מנהל', 'נדרש תיקון'];
-    const approvedStatuses: FormStatus[] = ['מאושר', 'מאושר סופית'];
-    const draftStatuses: FormStatus[] = ['טיוטה'];
+    const pendingStatuses: FormStatus[] = ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED'];
+    const approvedStatuses: FormStatus[] = ['APPROVED', 'FINAL_APPROVED'];
+    const draftStatuses: FormStatus[] = ['DRAFT'];
 
     return (
         <div className="space-y-6">

@@ -59,7 +59,8 @@ interface PlayingSchoolFinderProps {
 
 export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
     const t = useTranslations('PlayingSchool.finder');
-    const locale = useRouter().locale || 'he';
+    const router = useRouter();
+    const locale = (router as any).locale || 'he';
     const isRtl = locale === 'he' || locale === 'ar';
     const NextIcon = isRtl ? ChevronDown : ArrowRight; // Context dependent, but let's use a standard next arrow
 
@@ -67,7 +68,6 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
     const [selectedInstrument, setSelectedInstrument] = useState<string>('all');
     const [isSubmittingLead, setIsSubmittingLead] = useState(false);
     const [submittedLead, setSubmittedLead] = useState(false);
-    const router = useRouter();
 
     const allInstruments = useMemo(() => {
         const instruments = new Set<string>();

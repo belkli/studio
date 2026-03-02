@@ -25,7 +25,7 @@ export function AdminCommandCenter() {
 
         const pendingForms = mockFormSubmissions.filter(f =>
             f.conservatoriumId === user.conservatoriumId &&
-            (f.status === 'ממתין לאישור מנהל' || f.status === 'נדרש תיקון')
+            (f.status === 'PENDING_ADMIN' || f.status === 'REVISION_REQUIRED')
         ).length;
 
         const draftPayrolls = mockPayrolls.filter(p => p.status === 'DRAFT').length;

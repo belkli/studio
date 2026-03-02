@@ -6,6 +6,7 @@ import type {
     ConservatoriumProfileTranslation,
     Conservatorium,
     UserTranslations,
+    User,
     TranslationMeta,
 } from '@/lib/types';
 import { computeConservatoriumSourceHash, computeUserSourceHash } from '@/lib/utils/translation-hash';
@@ -153,15 +154,19 @@ Output JSON:`;
 }
 
 export async function translateUserBio(
-    bio: string,
-    role?: string,
-    locales: TargetLocale[] = ['en', 'ar', 'ru']
+    user: Partial<User>,
+    locales: TargetLocale[] = ['en', 'ar', 'ru'],
+    existingTranslations?: UserTranslations,
+    existingOverrides?: TranslationMeta['overrides']
 ): Promise<{
     success: boolean;
     translations?: UserTranslations;
     meta?: Omit<TranslationMeta, 'overrides'>;
     error?: string;
 }> {
+    const bio = user.bio || '';
+    const role = user.role || '';
+    
     const prompt = `
 Translate the following music teacher's biography and job title from Hebrew to ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
 
@@ -173,7 +178,7 @@ Return ONLY valid JSON in this structure, no markdown:
 }
 
 Hebrew bio: ${bio}
-Hebrew role/title: ${role ?? ''}
+Hebrew role/title: ${role}
 `;
     try {
         const result = await model.generateContent(prompt);
@@ -183,10 +188,26 @@ Hebrew role/title: ${role ?? ''}
 
         const translations: UserTranslations = {};
         for (const locale of locales) {
-            if (raw[locale]) translations[locale] = {
-                bio: raw[locale].bio || undefined,
-                role: raw[locale].role || undefined,
-            };
+            if (raw[locale]) {
+                const translation: { bio?: string; role?: string } = {
+                    bio: raw[locale].bio || undefined,
+                    role: raw[locale].role || undefined,
+                };
+                
+                const overriddenFields = existingOverrides?.[locale] ?? [];
+                if (overriddenFields.length > 0 && existingTranslations?.[locale]) {
+                    const existing = existingTranslations[locale]!;
+                    for (const field of overriddenFields) {
+                        if (field === 'bio' && existing.bio) {
+                            translation.bio = existing.bio;
+                        }
+                        if (field === 'role' && existing.role) {
+                            translation.role = existing.role;
+                        }
+                    }
+                }
+                translations[locale] = translation;
+            }
         }
 
         return {
@@ -194,7 +215,7 @@ Hebrew role/title: ${role ?? ''}
             translations,
             meta: {
                 lastTranslatedAt: new Date().toISOString(),
-                sourceHash: computeUserSourceHash(bio, role),
+                sourceHash: computeUserSourceHash(user.bio || '', user.role),
                 translatedBy: 'AI',
                 aiModel: 'gemini-1.5-flash',
             }

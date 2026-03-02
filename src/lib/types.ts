@@ -330,6 +330,7 @@ export type UserTranslations = {
 };
 
 export type User = {
+  createdAt: string | number | Date;
   id: string;
   name: string;
   email: string;
@@ -783,6 +784,9 @@ export type Room = {
 export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
 
 export type PayrollSummary = {
+  conservatoriumId: string;
+  paymentDate: boolean;
+  totalAmount: number;
   id: string;
   teacherId: string;
   teacherName: string;

@@ -93,7 +93,7 @@ const ApprovalsTable = ({
                 </TableHeader>
                 <TableBody>
                     {forms.map(form => {
-                        const canRevise = (user?.role === 'conservatorium_admin' || user?.role === 'site_admin') && form.status === 'נדרש תיקון';
+                        const canRevise = (user?.role === 'conservatorium_admin' || user?.role === 'site_admin') && form.status === 'REVISION_REQUIRED';
 
                         return (
                             <TableRow key={form.id} data-state={selectedRows.includes(form.id) ? "selected" : ""}>
@@ -162,29 +162,29 @@ export default function ApprovalsPage() {
         if (!user) return { myQueue: [], allPending: [] };
 
         const myQueueForms: FormSubmission[] = [];
-        const allPendingForms = mockFormSubmissions.filter(form => form.status !== 'טיוטה' && form.status !== 'נדחה' && form.status !== 'מאושר סופית');
+        const allPendingForms = mockFormSubmissions.filter(form => form.status !== 'DRAFT' && form.status !== 'REJECTED' && form.status !== 'FINAL_APPROVED');
 
         mockFormSubmissions.forEach(form => {
             let isInMyQueue = false;
 
             switch (user.role) {
                 case 'teacher':
-                    if (form.status === 'ממתין לאישור מורה' && user.students?.includes(form.studentId)) {
+                    if (form.status === 'PENDING_TEACHER' && user.students?.includes(form.studentId)) {
                         isInMyQueue = true;
                     }
                     break;
                 case 'conservatorium_admin':
-                    if ((form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') && form.conservatoriumId === user.conservatoriumId) {
+                    if ((form.status === 'PENDING_ADMIN' || form.status === 'REVISION_REQUIRED') && form.conservatoriumId === user.conservatoriumId) {
                         isInMyQueue = true;
                     }
                     break;
                 case 'site_admin':
-                    if (form.status === 'ממתין לאישור מנהל' || form.status === 'נדרש תיקון') {
+                    if (form.status === 'PENDING_ADMIN' || form.status === 'REVISION_REQUIRED') {
                         isInMyQueue = true;
                     }
                     break;
                 case 'ministry_director':
-                    if (form.status === 'מאושר') {
+                    if (form.status === 'APPROVED') {
                         isInMyQueue = true;
                     }
                     break;
@@ -199,9 +199,9 @@ export default function ApprovalsPage() {
 
     const handleApprove = (form: FormSubmission) => {
         let nextStatus: FormSubmission['status'] | null = null;
-        if (form.status === 'ממתין לאישור מורה') nextStatus = 'ממתין לאישור מנהל';
-        if (form.status === 'ממתין לאישור מנהל') nextStatus = 'מאושר';
-        if (form.status === 'מאושר' && user?.role === 'ministry_director') nextStatus = 'מאושר סופית';
+        if (form.status === 'PENDING_TEACHER') nextStatus = 'PENDING_ADMIN';
+        if (form.status === 'PENDING_ADMIN') nextStatus = 'APPROVED';
+        if (form.status === 'APPROVED' && user?.role === 'ministry_director') nextStatus = 'FINAL_APPROVED';
 
         if (nextStatus) {
             updateForm({ ...form, status: nextStatus });
@@ -210,13 +210,13 @@ export default function ApprovalsPage() {
     };
 
     const handleReject = (form: FormSubmission) => {
-        let newStatus: FormSubmission['status'] = 'נדחה';
-        if (form.status === 'מאושר' && user?.role === 'ministry_director') {
-            newStatus = 'נדרש תיקון';
+        let newStatus: FormSubmission['status'] = 'REJECTED';
+        if (form.status === 'APPROVED' && user?.role === 'ministry_director') {
+            newStatus = 'REVISION_REQUIRED';
         }
         updateForm({ ...form, status: newStatus });
-        const titleKey = newStatus === 'נדחה' ? 'formRejected' : 'formNeedsRevision';
-        const action = newStatus === 'נדחה' ? 'rejected' : 'returned for revisions';
+        const titleKey = newStatus === 'REJECTED' ? 'formRejected' : 'formNeedsRevision';
+        const action = newStatus === 'REJECTED' ? 'rejected' : 'returned for revisions';
         toast({ variant: "destructive", title: t(titleKey), description: t('formRejectedDesc', { name: form.studentName, action }) });
     };
 

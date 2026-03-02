@@ -19,6 +19,7 @@ interface SaveStatusBarProps {
 export function SaveStatusBar({ isDirty, saveState, lastSaved, onSave }: SaveStatusBarProps) {
   const t = useTranslations('Common.saveStatusBar');
   const isSaving = saveState === 'saving';
+  const dateLocale = useDateLocale();
 
   const getStatus = () => {
     if (saveState === 'saving') {

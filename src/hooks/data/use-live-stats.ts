@@ -1,85 +1,92 @@
-/**
- * @fileoverview Admin dashboard live stats hook.
- * SDD-P1 specifies a single aggregated stats document to prevent
- * N+1 queries on the admin dashboard. This hook reads from mock data
- * and computes stats locally. In production, it will read from
- * conservatoriums/{cid}/stats/live — a single Firestore document.
- */
-'use client';
-
-import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { ConservatoriumLiveStats } from '@/lib/types';
+import { useMemo } from 'react';
+import type { FormStatus, FormSubmission, User } from '@/lib/types';
+import { isThisWeek, isToday } from 'date-fns';
 
-export function useLiveStats(): { stats: ConservatoriumLiveStats | null; isLoading: boolean } {
-    const { user, mockLessons, mockInvoices, mockFormSubmissions, mockMakeupCredits } = useAuth();
+export function useLiveStats() {
+    const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
 
-    const stats = useMemo((): ConservatoriumLiveStats | null => {
-        if (!user || user.role !== 'conservatorium_admin') return null;
+    const stats = useMemo(() => {
+        if (!user) {
+            return {
+                pendingUsers: 0,
+                pendingForms: 0,
+                draftPayrolls: 0,
+                approvedFormsThisWeek: 0,
+                paidOutThisWeek: 0,
+                activeStudents: 0,
+                newStudentsToday: 0,
+                activeTeachers: 0,
+                newTeachersToday: 0,
+                formsPendingTeacher: 0,
+                formsPendingAdmin: 0,
+                formsInRevision: 0,
+                totalForms: 0,
+                totalPaidOut: 0,
+            };
+        }
 
-        const now = new Date();
-        const weekStart = new Date(now);
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Sunday
-        weekStart.setHours(0, 0, 0, 0);
-        const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekEnd.getDate() + 7);
+        const conservatoriumId = user.conservatoriumId;
 
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        // Filter data for the current conservatorium
+        const conservatoriumUsers = users.filter(u => u.conservatoriumId === conservatoriumId);
+        const conservatoriumForms = mockFormSubmissions.filter(f => f.conservatoriumId === conservatoriumId);
+        const conservatoriumPayrolls = mockPayrolls.filter(p => p.conservatoriumId === conservatoriumId);
 
-        const cid = user.conservatoriumId;
-        const cidLessons = (mockLessons ?? []).filter(l => l.conservatoriumId === cid);
-        const cidInvoices = (mockInvoices ?? []).filter(i => i.conservatoriumId === cid);
+        // User stats
+        const pendingUsers = conservatoriumUsers.filter(u => !u.approved).length;
+        const activeStudents = conservatoriumUsers.filter(u => u.role === 'student' && u.approved).length;
+        const newStudentsToday = conservatoriumUsers.filter(u => u.role === 'student' && u.approved && u.createdAt && isToday(new Date(u.createdAt))).length;
+        const activeTeachers = conservatoriumUsers.filter(u => u.role === 'teacher' && u.approved).length;
+        const newTeachersToday = conservatoriumUsers.filter(u => u.role === 'teacher' && u.approved && u.createdAt && isToday(new Date(u.createdAt))).length;
 
-        const scheduledThisWeek = cidLessons.filter(l => {
-            const d = new Date(l.startTime);
-            return d >= weekStart && d < weekEnd && l.status === 'SCHEDULED';
-        });
+        // Form stats
+        const formStatusCounts = conservatoriumForms.reduce((acc, form) => {
+            acc[form.status] = (acc[form.status] || 0) + 1;
+            return acc;
+        }, {} as Record<FormStatus, number>);
 
-        const completedThisWeek = cidLessons.filter(l => {
-            const d = new Date(l.startTime);
-            return d >= weekStart && d < weekEnd && l.status === 'COMPLETED';
-        });
+        const pendingForms = conservatoriumForms.filter(f => 
+            f.status === 'PENDING_TEACHER' || f.status === 'PENDING_ADMIN'
+        ).length;
+        
+        const approvedFormsThisWeek = conservatoriumForms.filter(f => 
+            (f.status === 'APPROVED' || f.status === 'FINAL_APPROVED') && f.signedAt && isThisWeek(new Date(f.signedAt))
+        ).length;
 
-        const completedThisMonth = cidLessons.filter(l => {
-            const d = new Date(l.startTime);
-            return d >= monthStart && d <= monthEnd && l.status === 'COMPLETED';
-        });
+        // Payroll stats
+        const draftPayrolls = conservatoriumPayrolls.filter(p => p.status === 'DRAFT').length;
+        const paidOutThisWeek = conservatoriumPayrolls.reduce((acc, p) => {
+            if (p.status === 'PAID' && p.paymentDate && isThisWeek(new Date(p.paymentDate))) {
+                return acc + p.totalAmount;
+            }
+            return acc;
+        }, 0);
+        const totalPaidOut = conservatoriumPayrolls.reduce((acc, p) => {
+            if (p.status === 'PAID' && p.paymentDate) {
+                return acc + p.totalAmount;
+            }
+            return acc;
+        }, 0);
 
-        const lessonHoursThisMonth = completedThisMonth.reduce(
-            (sum, l) => sum + (l.durationMinutes / 60), 0
-        );
-
-        const paidThisMonth = cidInvoices.filter(
-            i => i.status === 'PAID' && i.paidAt && new Date(i.paidAt) >= monthStart
-        );
-        const revenueCollected = paidThisMonth.reduce((sum, i) => sum + i.total, 0);
-
-        const pendingForms = (mockFormSubmissions ?? []).filter(
-            f => f.conservatoriumId === cid && (f.status === 'ממתין לאישור מורה' || f.status === 'ממתין לאישור מנהל')
-        );
-
-        const openCredits = (mockMakeupCredits ?? []).filter(
-            c => c.status === 'AVAILABLE'
-        );
 
         return {
-            activeStudents: 0, // Would need users collection scan — use counter
-            lessonsScheduledThisWeek: scheduledThisWeek.length,
-            lessonsCompletedThisWeek: completedThisWeek.length,
-            lessonsCompletedThisMonth: completedThisMonth.length,
-            lessonHoursThisMonth: Math.round(lessonHoursThisMonth * 10) / 10,
-            revenueCollectedThisMonth: revenueCollected,
-            revenueExpectedThisMonth: cidInvoices.filter(
-                i => (i.status === 'SENT' || i.status === 'OVERDUE') && new Date(i.dueDate) <= monthEnd
-            ).reduce((sum, i) => sum + i.total, 0),
-            pendingApprovals: pendingForms.length,
-            openMakeupCredits: openCredits.length,
-            teachersSickToday: 0,
-            paymentFailuresLast24h: 0,
-            updatedAt: now.toISOString(),
+            pendingUsers,
+            pendingForms,
+            draftPayrolls,
+            approvedFormsThisWeek,
+            paidOutThisWeek,
+            activeStudents,
+            newStudentsToday,
+            activeTeachers,
+            newTeachersToday,
+            formsPendingTeacher: formStatusCounts['PENDING_TEACHER'] || 0,
+            formsPendingAdmin: formStatusCounts['PENDING_ADMIN'] || 0,
+            formsInRevision: formStatusCounts['REVISION_REQUIRED'] || 0,
+            totalForms: conservatoriumForms.length,
+            totalPaidOut
         };
-    }, [user, mockLessons, mockInvoices, mockFormSubmissions, mockMakeupCredits]);
+    }, [user, users, mockFormSubmissions, mockPayrolls]);
 
-    return { stats, isLoading: false };
+    return stats;
 }

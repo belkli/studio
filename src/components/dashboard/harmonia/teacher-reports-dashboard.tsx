@@ -8,16 +8,17 @@ import { useMemo } from "react";
 import { Users, Calendar, DollarSign, Activity } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { useTranslations, useLocale } from 'next-intl';
+import type { User, PracticeLog, FormSubmission } from "@/lib/types";
 
 export function TeacherReportsDashboard() {
-    const { user: teacher, users, mockLessons, mockPracticeLogs, mockFormSubmissions } = useAuth();
+    const { user: teacher, users, mockLessons, mockPracticeLogs, mockFormSubmissions }: { user: User | null, users: User[], mockLessons: any[], mockPracticeLogs: PracticeLog[], mockFormSubmissions: FormSubmission[] } = useAuth();
     const t = useTranslations('TeacherReports');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
     const assignedStudents = useMemo(() => {
         if (!teacher || !teacher.students) return [];
-        return users.filter(u => teacher.students!.includes(u.id));
+        return users.filter((u: User) => teacher.students!.includes(u.id));
     }, [teacher, users]);
 
     const stats = useMemo(() => {
@@ -27,12 +28,12 @@ export function TeacherReportsDashboard() {
         const start = startOfMonth(now);
         const end = endOfMonth(now);
 
-        const lessonsThisMonth = mockLessons.filter(l => {
+        const lessonsThisMonth = mockLessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && l.status === 'COMPLETED';
         });
 
-        const cancellationsThisMonth = mockLessons.filter(l => {
+        const cancellationsThisMonth = mockLessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && (l.status.startsWith('CANCELLED'));
         });
@@ -40,17 +41,17 @@ export function TeacherReportsDashboard() {
         // Mock earnings calculation
         const earningsThisMonth = lessonsThisMonth.length * 150; // Assuming 150 per lesson
 
-        const studentsWhoPracticed = new Set(mockPracticeLogs.filter(log => {
+        const studentsWhoPracticed = new Set(mockPracticeLogs.filter((log: PracticeLog) => {
             const logDate = new Date(log.date);
-            return isWithinInterval(logDate, { start, end }) && assignedStudents.some(s => s.id === log.studentId);
-        }).map(log => log.studentId));
+            return isWithinInterval(logDate, { start, end }) && assignedStudents.some((s: User) => s.id === log.studentId);
+        }).map((log: PracticeLog) => log.studentId));
 
         const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
 
-        const upcomingExams = mockFormSubmissions.filter(f =>
+        const upcomingExams = mockFormSubmissions.filter((f: FormSubmission) =>
             (f.formType === 'רסיטל בגרות' || f.formType === 'הרשמה לבחינה') &&
-            assignedStudents.some(s => s.id === f.studentId) &&
-            f.status !== 'נדחה' && f.status !== 'טיוטה'
+            assignedStudents.some((s: User) => s.id === f.studentId) &&
+            f.status !== 'REJECTED' && f.status !== 'DRAFT'
         );
 
         return {
@@ -63,12 +64,12 @@ export function TeacherReportsDashboard() {
     }, [teacher, mockLessons, mockPracticeLogs, assignedStudents, mockFormSubmissions]);
 
     const practiceEngagementData = useMemo(() => {
-        return assignedStudents.map(student => {
+        return assignedStudents.map((student: User) => {
             const totalMinutes = mockPracticeLogs
-                .filter(log => log.studentId === student.id)
-                .reduce((sum, log) => sum + log.durationMinutes, 0);
+                .filter((log: PracticeLog) => log.studentId === student.id)
+                .reduce((sum: number, log: PracticeLog) => sum + log.durationMinutes, 0);
             return { name: student.name.split(' ')[0], minutes: totalMinutes };
-        }).sort((a, b) => b.minutes - a.minutes);
+        }).sort((a: { name: string, minutes: number }, b: { name: string, minutes: number }) => b.minutes - a.minutes);
     }, [assignedStudents, mockPracticeLogs]);
 
     if (!teacher) return null;
@@ -156,11 +157,11 @@ export function TeacherReportsDashboard() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {stats.upcomingExams.length > 0 ? stats.upcomingExams.map((form) => (
+                            {stats.upcomingExams.length > 0 ? stats.upcomingExams.map((form: FormSubmission) => (
                                 <TableRow key={form.id}>
                                     <TableCell className={`font-medium flex items-center gap-2 ${isRtl ? 'text-right' : 'text-left'}`}>
                                         <Avatar className="h-8 w-8">
-                                            <AvatarImage src={users.find(u => u.id === form.studentId)?.avatarUrl} />
+                                            <AvatarImage src={users.find((u: User) => u.id === form.studentId)?.avatarUrl} />
                                             <AvatarFallback>{form.studentName.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         {form.studentName}

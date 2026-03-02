@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { conservatoriums, instruments } from '@/lib/data';
 
-const ministryViewableStatuses: FormStatus[] = ['מאושר', 'נדרש תיקון', 'מאושר סופית'];
+const ministryViewableStatuses: FormStatus[] = ['APPROVED', 'REVISION_REQUIRED', 'FINAL_APPROVED'];
 
 export default function MinistryDashboard() {
   const { user, users, mockFormSubmissions: allForms } = useAuth();

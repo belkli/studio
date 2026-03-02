@@ -177,7 +177,7 @@ export function TeacherDashboard() {
 
     const pendingApprovals = useMemo(() => {
         return mockFormSubmissions.filter(form =>
-            form.status === 'ממתין לאישור מורה' &&
+            form.status === 'PENDING_TEACHER' &&
             user.students?.includes(form.studentId)
         )
     }, [mockFormSubmissions, user.students]);

@@ -60,10 +60,10 @@ export default function FormDetailsPage() {
             return { isTeacherApproval: false, isAdminFinalApproval: false, isMinistryApproval: false, isRevisable: false };
         }
         return {
-            isTeacherApproval: user.role === 'teacher' && form.status === 'ממתין לאישור מורה',
-            isAdminFinalApproval: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'ממתין לאישור מנהל',
-            isMinistryApproval: user.role === 'ministry_director' && form.status === 'מאושר',
-            isRevisable: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'נדרש תיקון',
+            isTeacherApproval: user.role === 'teacher' && form.status === 'PENDING_TEACHER',
+            isAdminFinalApproval: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'PENDING_ADMIN',
+            isMinistryApproval: user.role === 'ministry_director' && form.status === 'APPROVED',
+            isRevisable: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'REVISION_REQUIRED',
         }
     }, [user, form]);
 
@@ -177,19 +177,19 @@ export default function FormDetailsPage() {
 
 
     const handleTeacherApprove = () => {
-        const updatedForm = { ...form, status: 'ממתין לאישור מנהל' as FormStatus };
+        const updatedForm = { ...form, status: 'PENDING_ADMIN' as FormStatus };
         updateForm(updatedForm);
         toast({ title: tt("approved"), description: tt("approvedDesc", { name: form.studentName }) });
     }
 
     const handleTeacherReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' as FormStatus };
+        const updatedForm = { ...form, status: 'REJECTED' as FormStatus };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: tt("rejected"), description: tt("rejectedDesc", { name: form.studentName }) });
     }
 
     const handleAdminReject = () => {
-        const updatedForm = { ...form, status: 'נדחה' as FormStatus };
+        const updatedForm = { ...form, status: 'REJECTED' as FormStatus };
         updateForm(updatedForm);
         toast({ variant: "destructive", title: tt("rejected"), description: tt("rejectedDesc", { name: form.studentName }) });
     }
@@ -204,7 +204,7 @@ export default function FormDetailsPage() {
             return;
         }
         const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
-        const updatedForm = { ...form, status: 'מאושר' as FormStatus, signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
+        const updatedForm = { ...form, status: 'APPROVED' as FormStatus, signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
         updateForm(updatedForm);
 
         toast({ title: tt("signed"), description: tt("signedDesc", { name: form.studentName }) });
@@ -212,13 +212,13 @@ export default function FormDetailsPage() {
     }
 
     const handleMinistryFinalApprove = () => {
-        const updatedForm = { ...form, status: 'מאושר סופית' as FormStatus };
+        const updatedForm = { ...form, status: 'FINAL_APPROVED' as FormStatus };
         updateForm(updatedForm);
         toast({ title: tt("ministryApprove"), description: tt("ministryApproveDesc", { name: form.studentName }) });
     }
 
     const handleMinistryRequestChanges = () => {
-        const updatedForm = { ...form, status: 'נדרש תיקון' as FormStatus, ministryComment: ministryRejectionReason };
+        const updatedForm = { ...form, status: 'REVISION_REQUIRED' as FormStatus, ministryComment: ministryRejectionReason };
         updateForm(updatedForm);
         setMinistryRejectionDialogOpen(false);
         toast({ variant: "destructive", title: tt("changesRequested"), description: tt("changesRequestedDesc", { name: form.studentName }) });
@@ -239,7 +239,7 @@ export default function FormDetailsPage() {
             ...form,
             ...data,
             totalDuration: totalDurationFormatted,
-            status: 'מאושר', // Send back for ministry approval
+            status: 'APPROVED',
             ministryComment: undefined,
         };
         updateForm(updatedForm);
@@ -262,7 +262,7 @@ export default function FormDetailsPage() {
             </li>
         ];
 
-        if (form.status === 'ממתין לאישור מורה') {
+        if (form.status === 'PENDING_TEACHER') {
             history.push(
                 <li key="teacher-pending" className="flex items-start gap-3">
                     <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
@@ -271,7 +271,7 @@ export default function FormDetailsPage() {
                     </div>
                 </li>
             );
-        } else if (['ממתין לאישור מנהל', 'מאושר', 'מאושר סופית', 'נדרש תיקון', 'נדחה'].includes(form.status)) {
+        } else if (['PENDING_ADMIN', 'APPROVED', 'FINAL_APPROVED', 'REVISION_REQUIRED', 'REJECTED'].includes(form.status)) {
             history.push(
                 <li key="teacher-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
@@ -282,7 +282,7 @@ export default function FormDetailsPage() {
             );
         }
 
-        if (form.status === 'ממתין לאישור מנהל') {
+        if (form.status === 'PENDING_ADMIN') {
             history.push(
                 <li key="admin-pending" className="flex items-start gap-3">
                     <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
@@ -291,7 +291,7 @@ export default function FormDetailsPage() {
                     </div>
                 </li>
             );
-        } else if (['מאושר', 'מאושר סופית', 'נדרש תיקון'].includes(form.status)) {
+        } else if (['APPROVED', 'FINAL_APPROVED', 'REVISION_REQUIRED'].includes(form.status)) {
             history.push(
                 <li key="admin-approved" className="flex items-start gap-3">
                     <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center"><Check size={14} /></div>
@@ -303,7 +303,7 @@ export default function FormDetailsPage() {
             );
         }
 
-        if (form.status === 'נדרש תיקון') {
+        if (form.status === 'REVISION_REQUIRED') {
             history.push(
                 <li key="ministry-rejected" className="flex items-start gap-3">
                     <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center"><ShieldAlert size={14} /></div>
@@ -312,7 +312,7 @@ export default function FormDetailsPage() {
                     </div>
                 </li>
             );
-        } else if (form.status === 'מאושר סופית') {
+        } else if (form.status === 'FINAL_APPROVED') {
             history.push(
                 <li key="ministry-approved" className="flex items-start gap-3">
                     <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center"><CircleCheckBig size={14} /></div>
@@ -324,7 +324,7 @@ export default function FormDetailsPage() {
         }
 
 
-        if (form.status === 'נדחה') {
+        if (form.status === 'REJECTED') {
             history.push(
                 <li key="rejected" className="flex items-start gap-3">
                     <div className="bg-red-100 text-red-700 rounded-full h-6 w-6 flex items-center justify-center"><ThumbsDown size={14} /></div>
@@ -355,7 +355,7 @@ export default function FormDetailsPage() {
                             {t('fixAndResubmit')}
                         </Button>
                     )}
-                    {(form.status === 'מאושר' || form.status === 'מאושר סופית') && (
+                    {(form.status === 'APPROVED' || form.status === 'FINAL_APPROVED') && (
                         <Button onClick={() => generatePdf(form)} variant="outline">
                             <Download className="ms-2 h-4 w-4" />
                             {t('downloadPdf')}

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Video, MessageSquare, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { he } from 'date-fns/locale';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import type { PracticeVideo, User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';

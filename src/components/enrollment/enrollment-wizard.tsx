@@ -755,7 +755,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                           <div className="grid gap-2 max-h-48 overflow-y-auto p-1">
                             {filteredSchools.map((s) => (
                               <Button
-                                key={s.id}
+                                key={s.symbol}
                                 variant="outline"
                                 className="justify-start h-auto py-3 px-4 text-right"
                                 onClick={() => router.push(`/register/school?token=mock-token-${s.symbol}`)}
@@ -763,7 +763,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                               >
                                 <div className="flex flex-col items-start gap-1">
                                   <span className="font-medium">{s.name}</span>
-                                  <span className="text-xs text-muted-foreground">Symbol: {s.symbol} • {s.city}</span>
+                                  <span className="text-xs text-muted-foreground">Symbol: {s.symbol}</span>
                                 </div>
                               </Button>
                             ))}

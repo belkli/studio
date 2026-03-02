@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Download } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 
-const exportableStatuses: FormStatus[] = ['מאושר'];
+const exportableStatuses: FormStatus[] = ['APPROVED'];
 
 export default function MinistryExportPage() {
   const { user, users, mockFormSubmissions } = useAuth();
