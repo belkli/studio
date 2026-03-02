@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { FormSubmission } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { Eye, Check, ThumbsDown, Edit, Download, MoreHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StatusBadge } from '@/components/ui/status-badge';

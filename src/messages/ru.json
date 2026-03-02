@@ -1,6 +1,7 @@
 {
   "AdminDashboard": {
     "welcome": "Добро пожаловать, {name}",
+    "welcomeFem": "Добро пожаловать, {name}",
     "controlCenter": "Это ваш центр управления для {name}.",
     "quickActions": "Быстрые действия",
     "approveEnrollments": "Одобрить регистрации",
@@ -1441,6 +1442,26 @@
       "childSchoolSymbol": "Код школы ребенка",
       "sendEnquiry": "Отправить запрос",
       "enquirySent": "Запрос успешно отправлен!"
+    },
+    "mock": {
+      "schoolName": "Школа ОРТ Рамат-Ган",
+      "teacherName": "Михаль Коэн",
+      "instrument": "Флейта",
+      "lessonDay": "Среда",
+      "room": "Музыкальный класс 3",
+      "student1": "Даниэль Леви",
+      "student2": "Ноа Шамир",
+      "student3": "Йонатан Барак",
+      "student4": "Майя Ибрагим",
+      "student5": "Омер Исраэли",
+      "grade2": "2-й",
+      "grade3": "3-й",
+      "grade": "Класс",
+      "class1b": "1Б",
+      "class2c": "2В",
+      "date1": "5 марта 2026",
+      "date2": "12 марта 2026",
+      "date3": "19 марта 2026"
     }
   },
   "LessonManagement": {
@@ -1859,6 +1880,17 @@
       "PASSED": "Сдан",
       "FAILED": "Не сдан",
       "PENDING_RESULTS": "Ожидание результатов"
+    },
+    "repTemplates": {
+      "level1": {
+        "pc3": "Piece of choice"
+      },
+      "level2": {
+        "pc4": "Piece of choice"
+      },
+      "other": {
+        "sr1": "Sight-reading"
+      }
     }
   },
   "AiAgents": {
@@ -1872,7 +1904,11 @@
     "schedulerDesc": "Автоматическая оптимизация расписания",
     "enabled": "Включено",
     "disabled": "Выключено",
-    "configure": "Настроить"
+    "configure": "Настроить",
+    "agents": {
+      "practiceReminder": "Practice Reminder",
+      "practiceReminderDesc": "Sends reminders to students who have not practiced."
+    }
   },
   "ProgressPage": {
     "title": "Прогресс",
@@ -1937,5 +1973,8 @@
     "today": "Сегодня",
     "tomorrow": "Завтра",
     "minuteLesson": "Урок {min} мин"
+  },
+  "EventDetails": {
+    "statusCancelled": "Cancelled"
   }
 }

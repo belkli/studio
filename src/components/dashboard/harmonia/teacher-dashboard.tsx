@@ -16,6 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { SickLeaveModal } from "./sick-leave-modal";
+import { WeeklyCalendar } from "./weekly-calendar";
 
 function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (lessonId: string, status: SlotStatus) => void }) {
     const isPast = new Date(lesson.startTime) < new Date();
@@ -169,11 +170,7 @@ export function TeacherDashboard() {
 
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
 
-    const today = new Date();
-    const todayLessons = mockLessons.filter(lesson =>
-        lesson.teacherId === user.id &&
-        new Date(lesson.startTime).toDateString() === today.toDateString()
-    ).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+    const teacherLessons = mockLessons.filter(lesson => lesson.teacherId === user.id);
 
     const pendingApprovals = useMemo(() => {
         return mockFormSubmissions.filter(form =>
@@ -224,96 +221,88 @@ export function TeacherDashboard() {
             </div>
 
             <div className="grid lg:grid-cols-3 gap-6">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                    <Card className="col-span-4">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-xl font-bold">{t('todaysLessons')}</CardTitle>
+                <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('weeklySchedule')}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <WeeklyCalendar lessons={teacherLessons} students={assignedStudents} />
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="space-y-4">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between py-2">
+                            <div>
+                                <CardTitle className="text-lg font-bold">
+                                    {t('pendingApprovals', { count: pendingApprovals.length })}
+                                </CardTitle>
+                                <CardDescription>{t('pendingApprovalsDesc')}</CardDescription>
+                            </div>
+                            <Button variant="outline" size="sm" asChild>
+                                <Link href="/dashboard/forms?status=pending">{t('viewAllApprovals')}</Link>
+                            </Button>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {todayLessons.length > 0 ? (
-                                    todayLessons.map((lesson) => (
-                                        <TodaysLessonCard key={lesson.id} lesson={lesson} student={assignedStudents.find(s => s.id === lesson.studentId)} onAttendance={handleAttendance} />
-                                    ))
+                                {pendingApprovals.length > 0 ? (
+                                    pendingApprovals.slice(0, 3).map((form) => {
+                                        const student = users.find(u => u.id === form.studentId);
+                                        return (
+                                            <div key={form.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                                                <div className="grid gap-1">
+                                                    <p className="font-medium">{form.studentName}</p>
+                                                    <p className="text-xs text-muted-foreground">{form.formType} - {form.submissionDate}</p>
+                                                </div>
+                                                <Button size="sm" variant="ghost" asChild>
+                                                    <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
+                                                </Button>
+                                            </div>
+                                        )
+                                    })
                                 ) : (
-                                    <p className="text-muted-foreground py-4 text-center">{t('noLessons')}</p>
+                                    <p className="text-muted-foreground py-4 text-center">{t('noPendingApprovals')}</p>
                                 )}
                             </div>
                         </CardContent>
                     </Card>
 
-                    <div className="col-span-3 space-y-4">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between py-2">
-                                <div>
-                                    <CardTitle className="text-lg font-bold">
-                                        {t('pendingApprovals', { count: pendingApprovals.length })}
-                                    </CardTitle>
-                                    <CardDescription>{t('pendingApprovalsDesc')}</CardDescription>
-                                </div>
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href="/dashboard/forms?status=pending">{t('viewAllApprovals')}</Link>
-                                </Button>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {pendingApprovals.length > 0 ? (
-                                        pendingApprovals.slice(0, 3).map((form) => {
-                                            const student = users.find(u => u.id === form.studentId);
-                                            return (
-                                                <div key={form.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                                                    <div className="grid gap-1">
-                                                        <p className="font-medium">{form.studentName}</p>
-                                                        <p className="text-xs text-muted-foreground">{form.formType} - {form.submissionDate}</p>
-                                                    </div>
-                                                    <Button size="sm" variant="ghost" asChild>
-                                                        <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
-                                                    </Button>
-                                                </div>
-                                            )
-                                        })
-                                    ) : (
-                                        <p className="text-muted-foreground py-4 text-center">{t('noPendingApprovals')}</p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between py-2">
-                                <div>
-                                    <CardTitle className="text-lg font-bold">
-                                        {t('upcomingPerformances')}
-                                    </CardTitle>
-                                    <CardDescription>{t('upcomingPerformancesDesc')}</CardDescription>
-                                </div>
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href="/dashboard/performances">{t('viewAll')}</Link>
-                                </Button>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {teacherPerformances.length > 0 ? (
-                                        teacherPerformances.slice(0, 3).map((event) => (
-                                            <div key={event.id} className="flex items-center gap-3 border-b pb-2 last:border-0 last:pb-0">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                                    <Music className="h-5 w-5" />
-                                                </div>
-                                                <div className="grid gap-1">
-                                                    <p className="font-medium">{event.name}</p>
-                                                    <p className="text-xs text-muted-foreground">
-                                                        {event.eventDate} | {event.startTime} | {event.venue}
-                                                    </p>
-                                                </div>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between py-2">
+                            <div>
+                                <CardTitle className="text-lg font-bold">
+                                    {t('upcomingPerformances')}
+                                </CardTitle>
+                                <CardDescription>{t('upcomingPerformancesDesc')}</CardDescription>
+                            </div>
+                            <Button variant="outline" size="sm" asChild>
+                                <Link href="/dashboard/performances">{t('viewAll')}</Link>
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {teacherPerformances.length > 0 ? (
+                                    teacherPerformances.slice(0, 3).map((event) => (
+                                        <div key={event.id} className="flex items-center gap-3 border-b pb-2 last:border-0 last:pb-0">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                                <Music className="h-5 w-5" />
                                             </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-muted-foreground py-4 text-center">{t('noUpcomingPerformances')}</p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                                            <div className="grid gap-1">
+                                                <p className="font-medium">{event.name}</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {event.eventDate} | {event.startTime} | {event.venue}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-muted-foreground py-4 text-center">{t('noUpcomingPerformances')}</p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
 

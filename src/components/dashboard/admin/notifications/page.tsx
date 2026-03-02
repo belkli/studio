@@ -3,7 +3,7 @@
 
 import { NotificationPreferences } from "@/components/dashboard/harmonia/notification-preferences";
 import { Button } from "@/components/ui/button";
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { ArrowLeft } from "lucide-react";
 
 export default function NotificationSettingsPage() {

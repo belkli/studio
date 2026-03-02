@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { QrCode, Share2, MessageCircle, Copy, Check, ExternalLink, BarChart3, Filter, Users, TrendingUp, Handshake } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useAdminGuard } from "@/hooks/use-admin-guard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MOCK_FUNNEL = [
     { label: 'Leads (Finder)', value: 450, color: 'bg-slate-200' },
@@ -19,6 +21,7 @@ const MOCK_FUNNEL = [
 ];
 
 export default function PlayingSchoolDistributionPage() {
+    const { user, isLoading } = useAdminGuard();
     const t = useTranslations('PlayingSchool.admin');
     const [copied, setCopied] = useState<string | null>(null);
 
@@ -34,6 +37,23 @@ export default function PlayingSchoolDistributionPage() {
         const message = encodeURIComponent(`Hi! Registration for the music program at ${school} is now open! Sign up here: ${url}`);
         window.open(`https://wa.me/?text=${message}`, '_blank');
     };
+
+    if (isLoading || !user) {
+        return (
+            <div className="space-y-8 p-8">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <Skeleton className="h-8 w-72" />
+                        <Skeleton className="h-5 w-96 mt-2" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <Skeleton className="h-64 lg:col-span-1" />
+                    <Skeleton className="h-64 lg:col-span-2" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 p-8">
@@ -66,7 +86,7 @@ export default function PlayingSchoolDistributionPage() {
                                 </div>
                                 <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                     <div
-                                        className={step.color}
+                                        className={`${step.color} h-2 rounded-full`}
                                         style={{ width: `${(step.value / MOCK_FUNNEL[0].value) * 100}%` }}
                                     />
                                 </div>

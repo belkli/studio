@@ -11,7 +11,7 @@ import type { HelpAssistantResponse } from '@/ai/flows/help-assistant-flow';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 
 interface Message {

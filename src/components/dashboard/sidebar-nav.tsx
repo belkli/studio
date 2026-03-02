@@ -31,7 +31,7 @@ import {
   Banknote, ListChecks, Presentation, GanttChartSquare, Music,
   ShieldQuestion, CalendarPlus, HandCoins, GraduationCap,
   FileText, PencilRuler, MessageCircleQuestion, ChevronRight,
-  Book, User, Bot, Users,
+  Book, User, Bot, Users, Gift,
   // NEW icons — SDD-NAV-01 §3 Icon Rationalisation
   Music2, HeartHandshake, Dumbbell, CalendarSearch, CalendarDays,
   CalendarRange, CalendarCheck, TrendingUp, CreditCard,
@@ -49,6 +49,7 @@ import { cn } from '@/lib/utils';
 import type { Notification, UserRole } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
+import { Badge } from '@/components/ui/badge';
 
 // ─────────────────────────── Types ───────────────────────────────────────────
 
@@ -321,7 +322,7 @@ type LinkItem = {
 export function SidebarNav() {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
+  const { user, logout, updateUser, newFeaturesEnabled, hasSeenNewFeatures } = useAuth();
 
   // Track which groups are collapsed (keyed by labelKey)
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(
@@ -387,7 +388,7 @@ export function SidebarNav() {
               const active = pathname === link.href || (link.href !== '/dashboard' && pathname.startsWith(link.href));
               return (
                 <SidebarMenuItem key={link.href} id={link.id}>
-                  <Link href={link.href} passHref>
+                  <Link href={link.href}>
                     <SidebarMenuButton isActive={active}>
                       <link.icon />
                       <span>{link.label}</span>
@@ -447,7 +448,7 @@ export function SidebarNav() {
                   <SidebarMenu>
                     {group.items.map(item => (
                       <SidebarMenuItem key={item.href} id={item.id}>
-                        <Link href={item.href} passHref>
+                        <Link href={item.href}>
                           <SidebarMenuButton isActive={isActive(item.href)}>
                             <item.icon className="h-4 w-4" />
                             <span>{t(item.labelKey)}</span>
@@ -502,8 +503,19 @@ export function SidebarNav() {
 
         <SidebarSeparator />
         <SidebarMenu>
+            <SidebarMenuItem>
+                <Link href="/dashboard/whats-new">
+                    <SidebarMenuButton id="nav-whats-new" isActive={pathname.startsWith('/dashboard/whats-new')} tooltip={t('whatsNew')}>
+                        <Gift />
+                        <span className="flex items-center justify-between w-full">
+                            {t('whatsNew')}
+                            {!hasSeenNewFeatures && <Badge variant="secondary" className="h-5">{t('newBadge')}</Badge>}
+                        </span>
+                    </SidebarMenuButton>
+                </Link>
+            </SidebarMenuItem>
           <SidebarMenuItem>
-            <Link href="/dashboard/settings" passHref>
+            <Link href="/dashboard/settings">
               <SidebarMenuButton id="nav-settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip={t('settings')}>
                 <Settings />
                 <span>{t('settings')}</span>

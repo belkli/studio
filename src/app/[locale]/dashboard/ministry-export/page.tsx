@@ -7,7 +7,7 @@ import type { FormSubmission, FormStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Download } from "lucide-react";

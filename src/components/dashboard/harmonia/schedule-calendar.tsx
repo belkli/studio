@@ -17,7 +17,7 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 interface ScheduleCalendarProps {
     lessons: LessonSlot[];

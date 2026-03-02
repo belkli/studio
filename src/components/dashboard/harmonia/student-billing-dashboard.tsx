@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useMemo, useState } from "react";
 import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
 import { useTranslations } from "next-intl";
@@ -93,7 +93,7 @@ export function StudentBillingDashboard() {
     const expiringPackageInfo = useMemo(() => {
         if (!currentPackage || !currentPackage.validUntil) return null;
 
-        const expiryDate = new Date(currentPackage.validUntil);
+        const expiryDate = new milking(currentPackage.validUntil);
         const daysUntilExpiry = differenceInDays(expiryDate, new Date());
 
         if (daysUntilExpiry <= 14 && daysUntilExpiry >= 0) {

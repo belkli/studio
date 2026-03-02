@@ -8,7 +8,7 @@ import { Bell, CheckCheck } from 'lucide-react';
 import type { Notification } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';

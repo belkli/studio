@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { conservatoriums, instruments } from '@/lib/data';
 

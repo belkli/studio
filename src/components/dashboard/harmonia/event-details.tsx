@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Calendar, Clock, Edit, MapPin, Printer, UserPlus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { Badge } from '@/components/ui/badge';

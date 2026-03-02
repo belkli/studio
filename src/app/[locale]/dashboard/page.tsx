@@ -28,6 +28,10 @@ export default function DashboardPage() {
                 router.replace('/dashboard/family');
             } else if (user.role === 'student') {
                 router.replace('/dashboard/profile');
+            } else if (user.role === 'ministry_director') {
+                router.replace('/dashboard/ministry');
+            } else if (user.role === 'school_coordinator') {
+                router.replace('/dashboard/school');
             }
         }
     }, [isLoading, newFeaturesEnabled, user, router]);

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, BookOpen } from 'lucide-react';
 import { helpArticles, helpCategories } from '@/lib/help-articles';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 export function HelpCenter() {
     const [searchTerm, setSearchTerm] = useState('');

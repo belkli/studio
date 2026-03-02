@@ -2,7 +2,7 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { Calendar, Clock, MapPin, Ticket, ArrowLeft, AlertTriangle, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';

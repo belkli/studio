@@ -2,7 +2,7 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { ArrowLeft } from "lucide-react";
 import { CancellationPolicySettings } from "@/components/dashboard/harmonia/cancellation-policy-settings";
 

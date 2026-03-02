@@ -9,7 +9,7 @@ import { Calendar, Music, Pencil, Activity, Target, MessageSquare, Package as Pa
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
