@@ -4,15 +4,44 @@ import '../globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
+import { Rubik } from 'next/font/google';
 
-export const metadata: Metadata = {
-  title: 'הַרמוֹנְיָה',
-  description: 'מערכת ניהול קונסרבטוריונים למוזיקה',
-};
+const rubik = Rubik({
+    subsets: ['latin', 'hebrew', 'cyrillic'],
+    weight: ['400', '700'],
+    variable: '--font-rubik',
+    display: 'swap',
+});
+
+export async function generateMetadata({ params }: { params: Promise<{locale: string}> }): Promise<Metadata> {
+    const { locale } = await params;
+    const t = await getTranslations({ locale, namespace: 'Metadata' });
+    
+    return {
+        title: {
+            template: `%s | ${t('siteName')}`,
+            default: t('siteName'),
+        },
+        description: t('siteDescription'),
+        openGraph: {
+            siteName: t('siteName'),
+            locale: locale,
+            type: 'website',
+        },
+        alternates: {
+            languages: {
+                'he': '/he',
+                'en': '/en',
+                'ar': '/ar',
+                'ru': '/ru',
+            },
+        },
+    };
+}
 
 export default async function RootLayout({
   children,
@@ -32,15 +61,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={dir}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-body antialiased">
+      <body className={`${rubik.variable} font-body antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
             {children}
