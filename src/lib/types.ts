@@ -785,7 +785,7 @@ export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
 
 export type PayrollSummary = {
   conservatoriumId: string;
-  paymentDate: boolean;
+  paymentDate?: string;
   totalAmount: number;
   id: string;
   teacherId: string;
@@ -1583,4 +1583,3 @@ export type PlayingSchoolInterestLead = {
   notes?: string;
   createdAt: string;
 };
-
