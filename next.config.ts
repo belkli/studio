@@ -3,13 +3,32 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+// SEC-H02: Content Security Policy
+// 'unsafe-eval' needed for Next.js dev mode HMR only — removed in production.
+const ContentSecurityPolicy = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ''} https://apis.google.com https://secure.cardcom.solutions`,
+  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+  `font-src 'self' https://fonts.gstatic.com`,
+  `img-src 'self' data: blob: https://placehold.co https://images.unsplash.com https://i.pravatar.cc https://picsum.photos https://api.qrserver.com`,
+  `connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com`,
+  `frame-src 'self' https://secure.cardcom.solutions`,
+  `frame-ancestors 'self'`,
+  `form-action 'self'`,
+  `base-uri 'self'`,
+  `upgrade-insecure-requests`,
+].join('; ');
+
 const securityHeaders = [
-    { key: 'X-DNS-Prefetch-Control', value: 'on' },
-    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-    { key: 'X-Content-Type-Options', value: 'nosniff' },
-    { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
-    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+  { key: 'Content-Security-Policy', value: ContentSecurityPolicy },
 ];
 
 const nextConfig: NextConfig = {
@@ -22,14 +41,12 @@ const nextConfig: NextConfig = {
     '127.0.0.1:9002'
   ],
   async headers() {
-      return [
-          {
-              source: '/(.*)',
-              headers: securityHeaders,
-          },
-      ];
-  },
-  typescript: {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ];
   },
   images: {
     remotePatterns: [

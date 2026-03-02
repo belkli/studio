@@ -22,7 +22,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { isValidIsraeliID } from "@/lib/utils";
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const roleTranslations = (t: any): Record<UserRole, string> => ({
     admin: t('roles.conservatorium_admin'),
@@ -60,6 +60,8 @@ export default function UsersPage() {
     const { toast } = useToast();
     const searchParams = useSearchParams();
     const t = useTranslations('UserManagement');
+    const locale = useLocale();
+    const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
     const { users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const defaultTab = searchParams.get('tab') || 'approved';
 
@@ -240,7 +242,7 @@ export default function UsersPage() {
             </Tabs>
 
             <AlertDialog open={!!selectedUserToReject} onOpenChange={(isOpen) => !isOpen && setSelectedUserToReject(null)}>
-                <AlertDialogContent dir="rtl">
+                <AlertDialogContent dir={dir}>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('rejectUserTitle', { name: selectedUserToReject?.name || '' })}</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -258,7 +260,7 @@ export default function UsersPage() {
             </AlertDialog>
 
             <Dialog open={!!editingUser} onOpenChange={(isOpen) => !isOpen && setEditingUser(null)}>
-                <DialogContent dir="rtl" className="sm:max-w-xl">
+                <DialogContent dir={dir} className="sm:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>{t('editUser', { name: editingUser?.name || '' })}</DialogTitle>
                     </DialogHeader>

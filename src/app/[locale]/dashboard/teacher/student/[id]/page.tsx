@@ -179,7 +179,13 @@ export default function TeacherStudentProfilePage() {
             teacherName: teacher.name,
             instrument: student.instruments?.[0]?.instrument || 'כלי נגינה',
             period: 'סמסטר אביב 2024',
-            practiceLogs: studentLogs.map(l => ({ ...l, date: l.date.split('T')[0] })),
+            practiceLogs: studentLogs.map(l => ({
+                date: l.date.split('T')[0],
+                durationMinutes: l.durationMinutes,
+                pieces: l.pieces?.map(p => ({ title: p.title })) || [],
+                mood: l.mood || 'OKAY',
+                studentNote: l.studentNote,
+            })),
             lessonNotes: studentNotes.map(n => ({ createdAt: n.createdAt.split('T')[0], summary: n.summary, homeworkAssignments: n.homeworkAssignments })),
             repertoire: studentRepertoire.map(r => ({ compositionId: r.compositionId, status: r.status })),
         };

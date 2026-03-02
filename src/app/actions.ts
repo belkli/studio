@@ -1,4 +1,4 @@
-// @ts-nocheck
+// SEC-H05/QA-M01: @ts-nocheck removed — TypeScript must remain active in this security-critical file.
 'use server';
 /**
  * @fileoverview Server Actions for the Harmonia application.
@@ -310,8 +310,14 @@ export const createPlayingSchoolEnrollment = withAuth(
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Simulate payment redirect URL (Cardcom pattern)
-    const redirectUrl = `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=12345&ReturnValue=${data.token}`;
+    // Production: Use CARDCOM_TERMINAL_NUMBER from environment — never hardcode credentials
+    const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
+    if (!terminalNumber) {
+      console.warn('[Cardcom] CARDCOM_TERMINAL_NUMBER is not configured — using mock redirect');
+    }
+    const redirectUrl = terminalNumber
+      ? `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${data.token}`
+      : `/payment/mock?token=${data.token}`; // Fallback for local dev
 
     return {
       success: true,
@@ -332,9 +338,12 @@ export const getPlayingSchoolPaymentUrl = withAuth(
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Simulate Cardcom payment URL
+    // Production: Use CARDCOM_TERMINAL_NUMBER from environment — never hardcode credentials
+    const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
     return {
-      url: `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=12345&InvoiceId=${invoiceId}&Operation=Payment`,
+      url: terminalNumber
+        ? `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&InvoiceId=${invoiceId}&Operation=Payment`
+        : `/payment/mock?invoice=${invoiceId}`, // Fallback for local dev
     };
   }
 );
@@ -386,8 +395,9 @@ export const inviteSchoolCoordinator = withAuth(
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Generate a mock invitation token
-    const token = `INV_${Math.random().toString(36).substring(7).toUpperCase()}`;
+    // SEC-L01: Use cryptographically secure random bytes — Math.random() is NOT cryptographically secure
+    const { randomBytes } = await import('crypto');
+    const token = `INV_${randomBytes(16).toString('hex').toUpperCase()}`;
 
     return {
       success: true,

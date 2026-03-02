@@ -12,7 +12,7 @@
 
 The Harmonia platform stores PII of minors (students under 18, including recordings, medical/financial data), operates under Israeli **PDPPA (Personal Data Protection Act)** and **Ministry of Education regulations**, and processes real payments via Cardcom. This combination makes security failures legally significant, not just operational risks.
 
-**16 security issues** were identified. The most critical: authentication is by email alone with no password check, user roles are stored in mutable client-side `localStorage` enabling privilege escalation, several admin pages have zero authorization guards, the QR code API proxies external content with no token validation, and the `verifyAuth()` function unconditionally returns `true` — meaning all server actions are unauthenticated.
+**18 security issues** were identified. The most critical: authentication is by email alone with no password check, user roles are stored in mutable client-side `localStorage` enabling privilege escalation, several admin pages have zero authorization guards, the QR code API proxies external content with no token validation, and the `verifyAuth()` function unconditionally returns `true` — meaning all server actions are unauthenticated.
 
 ---
 
@@ -507,18 +507,16 @@ if (!process.env.CARDCOM_TERMINAL_NUMBER) {
 
 **Severity:** 🟠 High  
 **File:** `next.config.ts`  
-**Impact:** Type errors in auth guards, role checks, and data access functions are silently suppressed, potentially hiding logic errors that create security vulnerabilities.
+**Impact:** Type errors in auth guards, role checks, and data access functions could be silently suppressed, potentially hiding logic errors that create security vulnerabilities.
 
-**Fix:**
-```ts
-// next.config.ts — Remove the empty typescript block or explicitly disallow ignoreBuildErrors
-const nextConfig: NextConfig = {
-    // Remove this entirely or ensure ignoreBuildErrors is NOT present:
-    // typescript: { ignoreBuildErrors: true }, ← REMOVE
-};
+**Status:** ✅ Already resolved — `next.config.ts` no longer contains `ignoreBuildErrors: true`. The `typescript: {}` block does not suppress errors.
+
+**Remaining Action:** Run a full typecheck to confirm zero type errors under strict mode:
+```bash
+npx tsc --noEmit
 ```
 
-Then run `tsc --noEmit` and fix all type errors before deployment.
+Ensure that no future changes re-introduce `ignoreBuildErrors: true` to `next.config.ts`. This should be enforced in code review.
 
 ---
 
@@ -609,12 +607,13 @@ match /conservatoriums/{cid}/feedback/{studentId}/{logId}/{file} {
                     request.auth.uid == studentId
                     || request.auth.token.role == 'conservatorium_admin'
                     || (request.auth.token.role == 'teacher'
-                        && request.auth.uid == logId.split('_')[0]) // Only the teacher who created the log
+                        && request.resource.metadata.teacherId == request.auth.uid)
+                        // Preferred: store teacherId in file metadata at upload time
+                        // (more robust than relying on logId naming conventions)
                 );
-    // For a cleaner approach, store teacherId in file metadata and check:
-    // || (request.auth.token.role == 'teacher'
-    //     && request.resource.metadata.teacherId == request.auth.uid)
 ```
+
+> **Note on the `logId.split('_')[0]` approach:** An earlier draft of this fix used `logId.split('_')[0]` to extract the teacher ID from the log document name. This is fragile and depends on a naming convention that may not be enforced. The metadata-based approach above is the recommended implementation — store `teacherId` as a custom metadata field when uploading the feedback file.
 
 ---
 
@@ -779,26 +778,26 @@ The platform handles PII of minors (students under 18), which triggers heightene
 
 ## Security Issue Summary
 
-| ID | Severity | CVSS | Category | Effort |
-|----|----------|------|----------|--------|
-| SEC-C01 | 🔴 Critical | 9.8 | Auth Bypass | High (Firebase) |
-| SEC-C02 | 🔴 Critical | 9.1 | Privilege Escalation | High |
-| SEC-C03 | 🔴 Critical | 9.8 | Missing Auth | Medium |
-| SEC-C04 | 🔴 Critical | 8.8 | Broken Access | Low |
-| SEC-C05 | 🔴 Critical | 7.5 | SSRF/QR Injection | Low |
-| SEC-H01 | 🟠 High | 7.3 | Route Protection | Medium |
-| SEC-H02 | 🟠 High | 6.5 | Missing CSP | Low |
-| SEC-H03 | 🟠 High | 6.8 | Session Hijacking | Medium |
-| SEC-H04 | 🟠 High | 7.0 | Hardcoded Credentials | Low |
-| SEC-H05 | 🟠 High | 6.0 | Type Safety | Low |
-| SEC-M01 | 🟡 Medium | 5.3 | Brute Force | Medium |
-| SEC-M02 | 🟡 Medium | 5.0 | Payment Risk | Low |
-| SEC-M03 | 🟡 Medium | 4.3 | Data Exposure | Low |
-| SEC-M04 | 🟡 Medium | 4.3 | Data Exposure | Low |
-| SEC-M05 | 🟡 Medium | 3.7 | Trust Erosion | Low |
-| SEC-L01 | 🟢 Low | 3.1 | Crypto | Low |
-| SEC-L02 | 🟢 Low | 2.4 | Business Logic | Medium |
-| SEC-L03 | 🟢 Low | 2.1 | CSRF | Low |
+| ID | Severity | CVSS | Category | Effort | Status |
+|----|----------|------|----------|--------|--------|
+| SEC-C01 | 🔴 Critical | 9.8 | Auth Bypass | High (Firebase) | Open |
+| SEC-C02 | 🔴 Critical | 9.1 | Privilege Escalation | High | Open |
+| SEC-C03 | 🔴 Critical | 9.8 | Missing Auth | Medium | Open |
+| SEC-C04 | 🔴 Critical | 8.8 | Broken Access | Low | Open |
+| SEC-C05 | 🔴 Critical | 7.5 | SSRF/QR Injection | Low | Open |
+| SEC-H01 | 🟠 High | 7.3 | Route Protection | Medium | Open |
+| SEC-H02 | 🟠 High | 6.5 | Missing CSP | Low | Open |
+| SEC-H03 | 🟠 High | 6.8 | Session Hijacking | Medium | Open |
+| SEC-H04 | 🟠 High | 7.0 | Hardcoded Credentials | Low | Open |
+| SEC-H05 | 🟠 High | 6.0 | Type Safety | Low | ✅ Resolved |
+| SEC-M01 | 🟡 Medium | 5.3 | Brute Force | Medium | Open |
+| SEC-M02 | 🟡 Medium | 5.0 | Payment Risk | Low | Open |
+| SEC-M03 | 🟡 Medium | 4.3 | Data Exposure | Low | Open |
+| SEC-M04 | 🟡 Medium | 4.3 | Data Exposure | Low | Open |
+| SEC-M05 | 🟡 Medium | 3.7 | Trust Erosion | Low | Open |
+| SEC-L01 | 🟢 Low | 3.1 | Crypto | Low | Open |
+| SEC-L02 | 🟢 Low | 2.4 | Business Logic | Medium | Open |
+| SEC-L03 | 🟢 Low | 2.1 | CSRF | Low | Open |
 
 ---
 

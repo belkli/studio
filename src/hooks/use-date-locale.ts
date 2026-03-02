@@ -1,3 +1,4 @@
+'use client';
 import { useLocale } from 'next-intl';
 import { he, ar, ru, enUS } from 'date-fns/locale';
 

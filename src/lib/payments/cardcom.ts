@@ -15,14 +15,19 @@
 import type { Invoice, InstallmentOption } from '@/lib/types';
 
 // ── Configuration ────────────────────────────────────────────
+const IS_SANDBOX = process.env.CARDCOM_SANDBOX === 'true';
 const CARDCOM_CONFIG = {
-    apiUrl: process.env.CARDCOM_SANDBOX === 'true'
-        ? 'https://secure.cardcom.solutions/api/v11/LowProfile/Create'
-        : 'https://secure.cardcom.solutions/api/v11/LowProfile/Create',
-    terminalNumber: process.env.CARDCOM_TERMINAL_NUMBER ?? '',
+    // SEC-M02: Sandbox and production MUST use different URLs/terminals
+    apiUrl: IS_SANDBOX
+        ? 'https://sandbox.cardcom.solutions/api/v11/LowProfile/Create'  // Sandbox — test only
+        : 'https://secure.cardcom.solutions/api/v11/LowProfile/Create',  // Production — real charges
+    terminalNumber: IS_SANDBOX
+        ? (process.env.CARDCOM_SANDBOX_TERMINAL_NUMBER ?? '')            // Separate sandbox terminal
+        : (process.env.CARDCOM_TERMINAL_NUMBER ?? ''),
     apiName: process.env.CARDCOM_API_NAME ?? '',
     apiPassword: process.env.CARDCOM_API_PASSWORD ?? '',
 };
+
 
 // ── Types ────────────────────────────────────────────────────
 export interface CardcomPaymentPageRequest {

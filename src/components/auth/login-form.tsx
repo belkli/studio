@@ -47,6 +47,15 @@ export function LoginForm() {
       })
       return;
     }
+    // QA-H01: Validate password field before submitting
+    if (!password) {
+      toast({
+        variant: 'destructive',
+        title: t('toasts.missingPassword') ?? 'Password required',
+        description: t('toasts.missingPasswordDesc') ?? 'Please enter your password.',
+      })
+      return;
+    }
     setLoading(true)
 
     setTimeout(() => { // Simulate network delay
@@ -75,16 +84,26 @@ export function LoginForm() {
     }, 500);
   }
 
+  // QA-H02: Validate email before loading, always reset loading in finally block
   const handleMagicLink = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!email) {
+      toast({ variant: 'destructive', title: t('toasts.missingEmail'), description: t('toasts.missingEmailDesc') })
+      return;
+    }
     setLoading(true)
     setTimeout(() => {
-      toast({
-        title: t('toasts.magicLinkSent'),
-        description: t('toasts.magicLinkSentDesc'),
-        variant: "default",
-      })
-      setLoading(false)
+      try {
+        toast({
+          title: t('toasts.magicLinkSent'),
+          description: t('toasts.magicLinkSentDesc'),
+          variant: "default",
+        })
+      } catch {
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not send magic link. Try again.' })
+      } finally {
+        setLoading(false) // Always reset — user can never get stuck
+      }
     }, 1000)
   }
 
@@ -149,13 +168,13 @@ export function LoginForm() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading}>
+          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading} className="opacity-70">
             <Icons.google className="me-2 h-4 w-4" />
-            Google
+            Google (Soon)
           </Button>
-          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading}>
+          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading} className="opacity-70">
             <Icons.microsoft className="me-2 h-4 w-4" />
-            Microsoft
+            Microsoft (Soon)
           </Button>
         </div>
       </CardContent>

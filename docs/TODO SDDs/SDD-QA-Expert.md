@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-The Harmonia platform is a feature-complete prototype with excellent UI coverage, strong i18n scaffolding, and well-structured Zod validation schemas. However, **18 significant issues** were found spanning critical functional defects, broken user flows, missing error recovery, and UX consistency problems. The most critical issues are: TypeScript errors silently suppressed in production builds, duplicated components causing double-firing of UI logic, and several role-routing failures that cause users to land on wrong or inaccessible pages.
+The Harmonia platform is a feature-complete prototype with excellent UI coverage, strong i18n scaffolding, and well-structured Zod validation schemas. However, **19 significant issues** were found spanning critical functional defects, broken user flows, missing error recovery, and UX consistency problems. The most critical issues are: TypeScript errors silently suppressed in production builds, duplicated components causing double-firing of UI logic, and several role-routing failures that cause users to land on wrong or inaccessible pages.
 
 ---
 
@@ -21,48 +21,12 @@ The Harmonia platform is a feature-complete prototype with excellent UI coverage
 ### QA-C01 — TypeScript Build Errors Silently Suppressed
 
 **Severity:** 🔴 Critical  
-**Files:** `next.config.ts`, `src/hooks/use-walkthrough.tsx`  
+**Files:** `next.config.ts`, ~~`src/hooks/use-walkthrough.tsx`~~ *(already deleted)*  
 **Impact:** Type-unsafe code ships to production. Runtime crashes or silent logic errors possible.
 
-**Root Cause:**  
-`next.config.ts` contains `typescript: {}` which previously had `ignoreBuildErrors: true`. The `typecheck_output.txt` file in the repo documents unresolved TS2741 errors in the legacy `use-walkthrough.tsx` file (missing `school_coordinator` key in `stepsConfig`). The old file was never deleted after the new `walkthrough-manager.tsx` was created.
+**Status:** ✅ Partially resolved — `src/hooks/use-walkthrough.tsx` has been deleted and `use-walkthrough` imports are no longer present in the codebase. The `next.config.ts` file no longer contains `ignoreBuildErrors: true`.
 
-**Evidence:**
-```ts
-// next.config.ts
-typescript: {
-  // ignoreBuildErrors: true  ← was here, masks real errors
-},
-```
-
-```
-// typecheck_output.txt — TS2741 error:
-// src/hooks/use-walkthrough.tsx(72,3): error TS2741:
-// Property 'school_coordinator' is missing in type ...
-```
-
-**Fix — Step 1: Delete the orphaned file**
-```bash
-rm src/hooks/use-walkthrough.tsx
-```
-
-**Fix — Step 2: Verify no remaining imports**
-```bash
-grep -rn "from.*use-walkthrough" src/
-```
-
-**Fix — Step 3: Enforce strict TypeScript in next.config.ts**
-```ts
-// next.config.ts
-const nextConfig: NextConfig = {
-  typescript: {
-    // Do NOT add ignoreBuildErrors here — fix errors at source
-  },
-  // ...
-};
-```
-
-**Fix — Step 4: Ensure walkthrough-manager.tsx covers all roles**
+**Remaining Action — Step 1: Ensure walkthrough-manager.tsx covers all roles**
 ```tsx
 // src/components/dashboard/walkthrough-manager.tsx
 // Verify stepsConfig includes all UserRole values:
@@ -79,35 +43,32 @@ const stepsConfig: Record<UserRole, DriveStep[]> = {
 };
 ```
 
+**Remaining Action — Step 2: Keep TypeScript strict in next.config.ts**
+```ts
+// next.config.ts
+const nextConfig: NextConfig = {
+  typescript: {
+    // Do NOT add ignoreBuildErrors here — fix errors at source
+  },
+  // ...
+};
+```
+
 ---
 
 ### QA-C02 — WalkthroughManager Renders Twice on Every Dashboard Page
 
 **Severity:** 🔴 Critical  
-**Files:** `src/app/[locale]/layout.tsx` (line ~50), `src/app/[locale]/dashboard/layout.tsx` (line 24)  
+**Files:** `src/app/[locale]/layout.tsx`, `src/app/[locale]/dashboard/layout.tsx` (line 29)  
 **Impact:** Onboarding walkthrough fires twice simultaneously for new users. Double toasts, double DOM overlays, double state transitions.
 
-**Evidence:**
+**Status:** ✅ Already resolved — `WalkthroughManager` is currently **only** imported and rendered in `src/app/[locale]/dashboard/layout.tsx` (line 2 import, line 29 usage). It is **not** present in the root locale layout. No action required.
+
+**Expected state (confirmed current):**
 ```tsx
-// src/app/[locale]/layout.tsx — has WalkthroughManager
-<WalkthroughManager />  // ← instance #1
-
-// src/app/[locale]/dashboard/layout.tsx — ALSO has it
-<WalkthroughManager />  // ← instance #2 (duplicate)
-```
-
-**Fix:** Remove `WalkthroughManager` from the root locale layout entirely. The walkthrough only applies to authenticated dashboard users, so it belongs exclusively in the dashboard layout.
-
-```tsx
-// src/app/[locale]/layout.tsx — REMOVE these lines:
-// import { WalkthroughManager } from '@/components/dashboard/walkthrough-manager';
+// src/app/[locale]/dashboard/layout.tsx — ONLY location:
+import { WalkthroughManager } from '@/components/dashboard/walkthrough-manager';
 // ...
-// <WalkthroughManager />
-```
-
-Keep only in:
-```tsx
-// src/app/[locale]/dashboard/layout.tsx — KEEP:
 <WalkthroughManager />
 ```
 
@@ -497,17 +458,14 @@ export function PublicNavbar() {
 
 ---
 
-### QA-M01 — `@ts-nocheck` on the Most Sensitive Admin Page
+### QA-M01 — `@ts-nocheck` on Server Actions File
 
 **Severity:** 🟡 Medium  
-**Files:** `src/app/[locale]/dashboard/users/page.tsx`, `src/app/actions.ts`  
-**Impact:** TypeScript is completely disabled on the user management and server actions files — the two most critical files in the application for security and data integrity.
+**Files:** `src/app/actions.ts` *(confirmed)*, ~~`src/app/[locale]/dashboard/users/page.tsx`~~ *(no longer has `@ts-nocheck`)*  
+**Impact:** TypeScript is completely disabled on the server actions file — a critical file for security and data integrity.
 
-**Fix:** Remove `// @ts-nocheck` from both files and resolve the underlying errors:
+**Fix:** Remove `// @ts-nocheck` from `src/app/actions.ts` (line 1) and resolve the underlying errors:
 ```tsx
-// src/app/[locale]/dashboard/users/page.tsx — DELETE line 1:
-// @ts-nocheck  ← REMOVE THIS
-
 // src/app/actions.ts — DELETE line 1:
 // @ts-nocheck  ← REMOVE THIS
 ```
@@ -675,27 +633,17 @@ const getMakeupCreditBalance = (studentIds: string[]) => {
 
 **Severity:** 🟡 Medium  
 **File:** `src/lib/types.ts`, multiple comparison sites  
-**Impact:** `FormStatus` is defined as Hebrew string literals (`'ממתין לאישור מורה'`). These are used in 42+ conditional comparisons. Any locale change or typo silently breaks approval workflows.
+**Impact:** `FormStatus` was previously defined as Hebrew string literals. Any locale change or typo would silently break approval workflows.
 
-**Fix — Update `src/lib/types.ts`:**
+**Status:** ✅ Already resolved — `FormStatus` in `src/lib/types.ts` (line 424) is already defined using English enum keys:
 ```ts
-// BEFORE:
-export type FormStatus = 'טיוטה' | 'ממתין לאישור מורה' | 'ממתין לאישור מנהל' | 'מאושר' | 'נדחה' | 'נדרש תיקון' | 'מאושר סופית';
-
-// AFTER:
-export type FormStatus =
-    | 'DRAFT'
-    | 'PENDING_TEACHER'
-    | 'PENDING_ADMIN'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'REVISION_REQUIRED'
-    | 'FINAL_APPROVED';
+// CURRENT STATE (src/lib/types.ts line 424) — already correct:
+export type FormStatus = 'DRAFT' | 'PENDING_TEACHER' | 'PENDING_ADMIN' | 'APPROVED' | 'REJECTED' | 'REVISION_REQUIRED' | 'FINAL_APPROVED';
 ```
 
-**Fix — Create a translation map (used in display only):**
+**Remaining Action — Ensure a display translation map exists:**
 ```tsx
-// src/lib/utils/form-status.ts
+// src/lib/utils/form-status.ts — create if not present
 export const FORM_STATUS_KEYS: Record<FormStatus, string> = {
     DRAFT: 'formStatus.draft',
     PENDING_TEACHER: 'formStatus.pendingTeacher',
@@ -707,19 +655,12 @@ export const FORM_STATUS_KEYS: Record<FormStatus, string> = {
 };
 ```
 
-**Fix — Update all comparison sites (42 instances):**
-```tsx
-// BEFORE:
-if (form.status === 'ממתין לאישור מורה') { ... }
-
-// AFTER:
-if (form.status === 'PENDING_TEACHER') { ... }
-```
-
-**Fix — Update `src/lib/data.ts` mock data:**
-```ts
-// All mock form submissions must use the new keys
-{ id: 'form-1', status: 'PENDING_TEACHER', ... }
+**Remaining Action — Verify no hardcoded Hebrew status comparisons remain:**
+```bash
+# Search for any remaining Hebrew status string comparisons:
+grep -rn "=== 'ממתין" src/
+grep -rn "=== 'טיוטה" src/
+grep -rn "=== 'מאושר" src/
 ```
 
 ---
@@ -731,7 +672,8 @@ if (form.status === 'PENDING_TEACHER') { ... }
 ### QA-L01 — Copyright Year Hardcoded as 2024
 
 **Severity:** 🟢 Low  
-**Files:** `src/app/[locale]/events/[id]/page.tsx`, `src/app/page.tsx`
+**Files:** `src/app/[locale]/events/[id]/page.tsx`  
+*(Note: `src/app/page.tsx` should be deleted per QA-C04 — do not fix copyright there)*
 
 **Fix:**
 ```tsx
@@ -830,27 +772,27 @@ const handleDeleteInstrument = (instrument: InstrumentInventory) => {
 
 ## Issue Summary Table
 
-| ID | Severity | Category | File(s) | Effort |
-|----|----------|----------|---------|--------|
-| QA-C01 | 🔴 Critical | Build | `next.config.ts`, `use-walkthrough.tsx` | Low |
-| QA-C02 | 🔴 Critical | Rendering | Both layouts | Trivial |
-| QA-C03 | 🔴 Critical | Routing | `dashboard/page.tsx` | Low |
-| QA-C04 | 🔴 Critical | Routing | `app/page.tsx`, `app/dashboard/` | Trivial |
-| QA-H01 | 🟠 High | Auth | `login-form.tsx` | Low |
-| QA-H02 | 🟠 High | UX | `login-form.tsx` | Low |
-| QA-H03 | 🟠 High | React | `users/page.tsx` | Low |
-| QA-H04 | 🟠 High | Reliability | All pages | Medium |
-| QA-H05 | 🟠 High | UX/Mobile | `public-navbar.tsx` | Low |
-| QA-M01 | 🟡 Medium | Type Safety | `users/page.tsx`, `actions.ts` | Medium |
-| QA-M02 | 🟡 Medium | Business Logic | `cancel-lesson-dialog.tsx` | Medium |
-| QA-M03 | 🟡 Medium | UX | `events/[id]/page.tsx` | Trivial |
-| QA-M04 | 🟡 Medium | i18n | `forms/[id]/page.tsx` | Low |
-| QA-M05 | 🟡 Medium | Business Logic | `use-auth.tsx` | Low |
-| QA-M06 | 🟡 Medium | i18n/Logic | `types.ts` + 42 sites | High |
-| QA-L01 | 🟢 Low | Content | Events/Home pages | Trivial |
-| QA-L02 | 🟢 Low | Routing | Multiple | Medium |
-| QA-L03 | 🟢 Low | Logic | `use-auth.tsx` | Low |
-| QA-L04 | 🟢 Low | UX | Instrument dashboard | Low |
+| ID | Severity | Category | File(s) | Effort | Status |
+|----|----------|----------|---------|--------|--------|
+| QA-C01 | 🔴 Critical | Build | `next.config.ts`, ~~`use-walkthrough.tsx`~~ | Low | ✅ Partially resolved |
+| QA-C02 | 🔴 Critical | Rendering | `dashboard/layout.tsx` | Trivial | ✅ Already resolved |
+| QA-C03 | 🔴 Critical | Routing | `dashboard/page.tsx` | Low | Open |
+| QA-C04 | 🔴 Critical | Routing | `app/page.tsx`, `app/dashboard/` | Trivial | Open |
+| QA-H01 | 🟠 High | Auth | `login-form.tsx` | Low | Open |
+| QA-H02 | 🟠 High | UX | `login-form.tsx` | Low | Open |
+| QA-H03 | 🟠 High | React | `users/page.tsx` | Low | Open |
+| QA-H04 | 🟠 High | Reliability | All pages | Medium | Open |
+| QA-H05 | 🟠 High | UX/Mobile | `public-navbar.tsx` | Low | Open |
+| QA-M01 | 🟡 Medium | Type Safety | `actions.ts` *(not users/page.tsx)* | Medium | Open |
+| QA-M02 | 🟡 Medium | Business Logic | `cancel-lesson-dialog.tsx` | Medium | Open |
+| QA-M03 | 🟡 Medium | UX | `events/[id]/page.tsx` | Trivial | Open |
+| QA-M04 | 🟡 Medium | i18n | `forms/[id]/page.tsx` | Low | Open |
+| QA-M05 | 🟡 Medium | Business Logic | `use-auth.tsx` | Low | Open |
+| QA-M06 | 🟡 Medium | i18n/Logic | `types.ts` (verify display map) | Low | ✅ Mostly resolved |
+| QA-L01 | 🟢 Low | Content | `events/[id]/page.tsx` *(not app/page.tsx)* | Trivial | Open |
+| QA-L02 | 🟢 Low | Routing | Multiple | Medium | Open |
+| QA-L03 | 🟢 Low | Logic | `use-auth.tsx` | Low | Open |
+| QA-L04 | 🟢 Low | UX | Instrument dashboard | Low | Open |
 
 ---
 
