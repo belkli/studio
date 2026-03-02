@@ -8,7 +8,6 @@ import { StatusBadge } from "../ui/status-badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "next-intl";
 
-
 export function FormsList({
     statusFilter,
     searchQuery
@@ -17,10 +16,10 @@ export function FormsList({
     searchQuery?: string
 }) {
     const t = useTranslations('FormsPage');
+    const tc = useTranslations('Common.shared');
     const { user, mockFormSubmissions } = useAuth();
     let forms = user ? mockFormSubmissions : [];
 
-    // ... filtering unchanged ...
     if (user) {
         if (user.role === 'student') {
             forms = forms.filter(f => f.studentId === user.id);
@@ -46,37 +45,37 @@ export function FormsList({
     }
 
     if (forms.length === 0) {
-        return <p className="p-4 text-muted-foreground text-center">{t('noForms')}</p>
+        return <p className="p-4 text-muted-foreground text-center">{t('noForms')}</p>;
     }
 
     return (
         <Table className="w-full">
             <TableHeader>
                 <TableRow>
-                    <TableHead>{t('table.studentName')}</TableHead>
-                    <TableHead>{t('table.formType')}</TableHead>
-                    <TableHead>{t('table.status')}</TableHead>
-                    <TableHead>{t('table.submissionDate')}</TableHead>
-                    <TableHead className="text-left"><span className="sr-only">{t('table.actions')}</span></TableHead>
+                    <TableHead>{tc('studentName')}</TableHead>
+                    <TableHead>{tc('formType')}</TableHead>
+                    <TableHead>{tc('status')}</TableHead>
+                    <TableHead>{tc('submissionDate')}</TableHead>
+                    <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {forms.map((form) => (
                     <TableRow key={form.id}>
                         <TableCell className="font-medium truncate">{form.studentName}</TableCell>
-                        <TableCell className="truncate">{form.formType}{form.grade && ` - כיתה ${form.grade}`}</TableCell>
+                        <TableCell className="truncate">{form.formType}{form.grade && ` - ${tc('grade')} ${form.grade}`}</TableCell>
                         <TableCell>
                             <StatusBadge status={form.status} />
                         </TableCell>
                         <TableCell>{form.submissionDate}</TableCell>
                         <TableCell className="text-left">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/forms/${form.id}`}>{t('table.view')}</Link>
+                                <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                             </Button>
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
-    )
+    );
 }

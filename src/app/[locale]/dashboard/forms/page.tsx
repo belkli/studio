@@ -27,8 +27,12 @@ export default function FormsPage() {
         }
     };
 
-    // Show New Form button only for students and teachers who can create forms
-    const canCreateForm = user?.role === 'student' || user?.role === 'teacher';
+    // Allow users who can submit forms directly from dashboard.
+    const canCreateForm =
+        user?.role === 'student' ||
+        user?.role === 'teacher' ||
+        user?.role === 'conservatorium_admin' ||
+        user?.role === 'site_admin';
 
     const pendingStatuses: FormStatus[] = ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED'];
     const approvedStatuses: FormStatus[] = ['APPROVED', 'FINAL_APPROVED'];

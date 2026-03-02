@@ -77,7 +77,34 @@
     "error": "שגיאה",
     "saveFailed": "השמירה נכשלה",
     "deleteFailed": "המחיקה נכשלה",
-    "noData": "אין נתונים להצגה"
+    "noData": "אין נתונים להצגה",
+    "shared": {
+      "save": "שמור",
+      "cancel": "ביטול",
+      "loading": "טוען...",
+      "status": "סטטוס",
+      "actions": "פעולות",
+      "view": "צפה",
+      "studentName": "שם התלמיד/ה",
+      "formType": "סוג טופס",
+      "submissionDate": "תאריך הגשה",
+      "grade": "כיתה"
+    },
+    "translationEditor": {
+      "stale": "תרגום לא מעודכן",
+      "aiTranslating": "מתרגם באמצעות AI...",
+      "sourceContent": "תוכן מקור (עברית)",
+      "human": "אנושי",
+      "ai": "AI",
+      "cancel": "ביטול",
+      "override": "דריסה",
+      "noTranslationYet": "אין תרגום עדיין",
+      "language": {
+        "english": "אנגלית",
+        "arabic": "ערבית",
+        "russian": "רוסית"
+      }
+    }
   },
   "HomePage": {
     "title": "הַרמוֹנְיָה",
@@ -154,7 +181,8 @@
       "SCHEDULED": "מתוכנן",
       "ATTENDED": "הגיע/ה",
       "NO_SHOW": "לא הגיע/ה"
-    }
+    },
+    "childAge": "Child age"
   },
   "MusiciansForHire": {
     "heroTitle": "מוזיקאים מקצועיים לאירועים שלא נשכחים",
@@ -584,7 +612,11 @@
       "myStudents": "התלמידים שלי ({count})",
       "myStudentsDesc": "סקירה מהירה של כל התלמידים שלך",
       "attendanceMarked": "הנוכחות עודכנה",
-      "lessonUpdated": "סטטוס השיעור עודכן בהצלחה."
+      "lessonUpdated": "סטטוס השיעור עודכן בהצלחה.",
+      "weeklySchedule": "Weekly schedule",
+      "Calendar": {
+        "today": "Today"
+      }
     }
   },
   "Sidebar": {
@@ -664,7 +696,9 @@
     "groupFinanceAdmin": "כספים ומנהלה",
     "groupMinistryOverview": "סקירת משרד החינוך",
     "groupPlayingSchool": "בית ספר מנגן",
-    "groupMySchool": "בית הספר שלי"
+    "groupMySchool": "בית הספר שלי",
+    "whatsNew": "מה חדש",
+    "newBadge": "חדש"
   },
   "MessagesPage": {
     "title": "הודעות",
@@ -1029,7 +1063,53 @@
       "publicProfile": "פרופיל ציבורי",
       "pricing": "הגדרות תמחור",
       "cancellation": "מדיניות ביטולים",
-      "manageAI": "ניהול תכונות AI"
+      "manageAI": "ניהול תכונות AI",
+      "profileEditor": {
+        "contact": {
+          "title": "פרטי קשר",
+          "description": "איך תלמידים והורים פוטנציאליים יכולים ליצור איתכם קשר.",
+          "mainPhone": "טלפון ראשי",
+          "whatsapp": "מספר וואטסאפ",
+          "primaryEmail": "אימייל ראשי",
+          "secondaryEmail": "אימייל נוסף",
+          "website": "אתר רשמי"
+        },
+        "location": {
+          "title": "מיקום",
+          "description": "היכן אתם נמצאים?",
+          "cityHebrew": "עיר (עברית)",
+          "cityEnglish": "עיר (אנגלית)",
+          "fullAddress": "כתובת מלאה"
+        },
+        "team": {
+          "title": "צוות מוביל",
+          "description": "דמויות מפתח בקונסרבטוריון.",
+          "manager": "מנהל/ת",
+          "pedagogicalCoordinator": "רכז/ת פדגוגי/ת",
+          "photoUrl": "קישור לתמונה",
+          "nameHebrew": "שם (עברית)",
+          "titleRole": "תפקיד / תיאור תפקיד",
+          "shortBio": "ביוגרפיה קצרה",
+          "managerNamePlaceholder": "שם המנהל/ת",
+          "coordinatorNamePlaceholder": "שם הרכז/ת"
+        },
+        "social": {
+          "title": "קישורי רשתות חברתיות",
+          "description": "חברו את הנוכחות הדיגיטלית שלכם.",
+          "facebook": "קישור לפייסבוק",
+          "instagram": "קישור לאינסטגרם",
+          "youtube": "קישור לערוץ יוטיוב",
+          "tiktok": "קישור לטיקטוק"
+        },
+        "media": {
+          "title": "תמונות ומדיה",
+          "description": "תמונות שמוצגות בפרופיל הציבורי.",
+          "headerImage": "קישור לתמונת כותרת",
+          "galleryImage1": "קישור לתמונת גלריה 1",
+          "galleryImage2": "קישור לתמונת גלריה 2",
+          "galleryImage3": "קישור לתמונת גלריה 3"
+        }
+      }
     },
     "notifications": {
       "title": "העדפות התראות",
@@ -1107,7 +1187,15 @@
     "successTitle": "שיעור ניסיון נקבע!",
     "successDesc": "שיעור הניסיון שלך עם {name} תואם לתאריך {date}.",
     "instrument": "כלי נגינה",
-    "instrumentPlaceholder": "בחר כלי..."
+    "instrumentPlaceholder": "בחר כלי...",
+    "validation": {
+      "instrumentRequired": "חובה לבחור כלי נגינה.",
+      "dateRequired": "חובה לבחור תאריך.",
+      "timeRequired": "חובה לבחור שעה.",
+      "nameRequired": "שם הוא שדה חובה.",
+      "phoneInvalid": "מספר טלפון לא תקין.",
+      "emailInvalid": "אימייל לא תקין."
+    }
   },
   "PlayingSchool": {
     "pageTitle": "ניהול בית ספר מנגן",
@@ -3098,5 +3186,35 @@
     "questions": "שאלות? צור קשר עם {support}",
     "welcomeTitle": "ברוך הבא/ה!",
     "welcomeDesc": "ההזמנה התקבלה. בואו נגדיר את לוח הבקרה של בית ספרך."
+  },
+  "Metadata": {
+    "siteName": "הַרמוֹנְיָה",
+    "siteDescription": "מערכת ניהול חכמה לקונסרבטוריונים מתקדמים."
+  },
+  "AiAlerts": {
+    "title": "התראות AI",
+    "subtitle": "המלצות פרואקטיביות על בסיס הנתונים שלך.",
+    "noAlerts": "כרגע אין התראות חשובות.",
+    "viewAll": "לכל ההתראות"
+  },
+  "TeacherProfileEditor": {
+    "validation": {
+      "nameMin": "שם חייב להכיל לפחות 2 תווים.",
+      "emailInvalid": "כתובת אימייל לא תקינה.",
+      "bioMax": "ביוגרפיה יכולה להכיל עד 500 תווים."
+    },
+    "toasts": {
+      "translatingTitle": "מעדכן תרגומים...",
+      "translatingDesc": "ה-AI מעדכן את הביוגרפיה שלך בשפות נוספות.",
+      "saved": "הפרופיל עודכן בהצלחה!"
+    },
+    "description": "ערוך את פרטי הפרופיל שלך.",
+    "fullName": "שם מלא",
+    "email": "אימייל",
+    "shortBio": "ביוגרפיה קצרה",
+    "specialties": "התמחויות",
+    "teachingLanguages": "שפות הוראה",
+    "savingTranslations": "מעדכן תרגומים...",
+    "saveChanges": "שמור שינויים"
   }
 }

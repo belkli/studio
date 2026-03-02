@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,8 +17,73 @@ import { translateConservatoriumProfile } from '@/app/actions/translate';
 import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
 import { computeConservatoriumSourceHash } from '@/lib/utils/translation-hash';
 
+const PROFILE_UI_TEXT = {
+    en: {
+        pageTitle: 'Public Profile (About Us)',
+        pageDesc: 'Manage the multilingual profile shown on the public directory.',
+        forceRetranslate: 'Force Re-translate',
+        contentChanged: 'Content Changed',
+        syncingTranslations: 'Updating AI translations to match your new content...',
+        profileSaved: 'Profile Saved',
+        profileSavedDesc: 'The conservatorium public profile has been updated.',
+        errorSaving: 'Error Saving',
+        errorSavingDesc: 'Failed to update the profile.',
+        translationsUpdated: 'Translations Updated',
+        tabs: { basic: 'Basic Info', contact: 'Contact', location: 'Location', team: 'Team', social: 'Social', media: 'Media' },
+        basic: { title: 'Basic Information', desc: 'Primary details about the conservatorium.', pendingSync: 'Pending Sync', name: 'Conservatorium Name', about: 'About Us (Description)', foundedYear: 'Founded Year', foundedYearPlaceholder: 'e.g 1995' },
+        footer: { cancel: 'Cancel', saving: 'Saving...', saveProfile: 'Save Profile' },
+    },
+    he: {
+        pageTitle: 'פרופיל ציבורי (אודותינו)',
+        pageDesc: 'ניהול הפרופיל הרב-לשוני שמוצג בספרייה הציבורית.',
+        forceRetranslate: 'תרגם מחדש',
+        contentChanged: 'התוכן השתנה',
+        syncingTranslations: 'מעדכן תרגומי AI בהתאם לתוכן החדש...',
+        profileSaved: 'הפרופיל נשמר',
+        profileSavedDesc: 'הפרופיל הציבורי של הקונסרבטוריון עודכן.',
+        errorSaving: 'שגיאה בשמירה',
+        errorSavingDesc: 'שמירת הפרופיל נכשלה.',
+        translationsUpdated: 'התרגומים עודכנו',
+        tabs: { basic: 'מידע בסיסי', contact: 'יצירת קשר', location: 'מיקום', team: 'צוות', social: 'רשתות', media: 'מדיה' },
+        basic: { title: 'מידע בסיסי', desc: 'פרטים ראשיים על הקונסרבטוריון.', pendingSync: 'ממתין לסנכרון', name: 'שם הקונסרבטוריון', about: 'אודות (תיאור)', foundedYear: 'שנת הקמה', foundedYearPlaceholder: 'למשל 1995' },
+        footer: { cancel: 'ביטול', saving: 'שומר...', saveProfile: 'שמור פרופיל' },
+    },
+    ar: {
+        pageTitle: 'الملف العام (من نحن)',
+        pageDesc: 'إدارة الملف متعدد اللغات المعروض في الدليل العام.',
+        forceRetranslate: 'إعادة الترجمة',
+        contentChanged: 'تم تغيير المحتوى',
+        syncingTranslations: 'يتم تحديث ترجمات الذكاء الاصطناعي لتطابق المحتوى الجديد...',
+        profileSaved: 'تم حفظ الملف',
+        profileSavedDesc: 'تم تحديث الملف العام للكونسرفاتوار.',
+        errorSaving: 'خطأ أثناء الحفظ',
+        errorSavingDesc: 'فشل تحديث الملف.',
+        translationsUpdated: 'تم تحديث الترجمات',
+        tabs: { basic: 'معلومات أساسية', contact: 'التواصل', location: 'الموقع', team: 'الفريق', social: 'اجتماعي', media: 'وسائط' },
+        basic: { title: 'معلومات أساسية', desc: 'التفاصيل الأساسية عن الكونسرفاتوار.', pendingSync: 'بانتظار المزامنة', name: 'اسم الكونسرفاتوار', about: 'من نحن (الوصف)', foundedYear: 'سنة التأسيس', foundedYearPlaceholder: 'مثال 1995' },
+        footer: { cancel: 'إلغاء', saving: 'جارٍ الحفظ...', saveProfile: 'حفظ الملف' },
+    },
+    ru: {
+        pageTitle: 'Публичный профиль (О нас)',
+        pageDesc: 'Управляйте многоязычным профилем в публичном каталоге.',
+        forceRetranslate: 'Перевести заново',
+        contentChanged: 'Контент изменен',
+        syncingTranslations: 'Обновляем AI-переводы в соответствии с новым контентом...',
+        profileSaved: 'Профиль сохранен',
+        profileSavedDesc: 'Публичный профиль консерватории обновлен.',
+        errorSaving: 'Ошибка сохранения',
+        errorSavingDesc: 'Не удалось обновить профиль.',
+        translationsUpdated: 'Переводы обновлены',
+        tabs: { basic: 'Основное', contact: 'Контакты', location: 'Локация', team: 'Команда', social: 'Соцсети', media: 'Медиа' },
+        basic: { title: 'Основная информация', desc: 'Основные сведения о консерватории.', pendingSync: 'Ожидает синхронизации', name: 'Название консерватории', about: 'О нас (описание)', foundedYear: 'Год основания', foundedYearPlaceholder: 'например, 1995' },
+        footer: { cancel: 'Отмена', saving: 'Сохранение...', saveProfile: 'Сохранить профиль' },
+    },
+} as const;
+
 export default function ConservatoriumProfileEditor() {
     const t = useTranslations('SettingsPage.conservatorium');
+    const locale = useLocale() as keyof typeof PROFILE_UI_TEXT;
+    const ui = PROFILE_UI_TEXT[locale] ?? PROFILE_UI_TEXT.en;
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
@@ -50,8 +115,8 @@ export default function ConservatoriumProfileEditor() {
         if (isStale) {
             setIsTranslating(true);
             toast({
-                title: 'Content Changed',
-                description: 'Updating AI translations to match your new content...',
+                title: ui.contentChanged,
+                description: ui.syncingTranslations,
             });
 
             const result = await translateConservatoriumProfile(
@@ -77,14 +142,14 @@ export default function ConservatoriumProfileEditor() {
         try {
             await updateConservatorium(finalData);
             toast({
-                title: 'Profile Saved',
-                description: 'The conservatorium public profile has been updated.',
+                title: ui.profileSaved,
+                description: ui.profileSavedDesc,
             });
         } catch (error) {
             toast({
                 variant: 'destructive',
-                title: 'Error Saving',
-                description: 'Failed to update the profile.',
+                title: ui.errorSaving,
+                description: ui.errorSavingDesc,
             });
         } finally {
             setIsSaving(false);
@@ -109,7 +174,7 @@ export default function ConservatoriumProfileEditor() {
                     overrides: prev.translationMeta?.overrides
                 }
             }));
-            toast({ title: 'Translations Updated' });
+            toast({ title: ui.translationsUpdated });
         }
         setIsTranslating(false);
     };
@@ -189,8 +254,8 @@ export default function ConservatoriumProfileEditor() {
         <div className="space-y-6 pb-20">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold">Public Profile (About Us)</h1>
-                    <p className="text-muted-foreground">Manage the multilingual profile shown on the public directory.</p>
+                    <h1 className="text-2xl font-bold">{ui.pageTitle}</h1>
+                    <p className="text-muted-foreground">{ui.pageDesc}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button
@@ -201,7 +266,7 @@ export default function ConservatoriumProfileEditor() {
                         disabled={isTranslating}
                     >
                         {isTranslating ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                        Force Re-translate
+                        {ui.forceRetranslate}
                     </Button>
                 </div>
             </div>
@@ -209,31 +274,31 @@ export default function ConservatoriumProfileEditor() {
             <form onSubmit={handleSave}>
                 <Tabs defaultValue="basic" className="w-full">
                     <TabsList className="flex flex-wrap h-auto mb-6 bg-muted/50 p-1">
-                        <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> Basic Info</TabsTrigger>
-                        <TabsTrigger value="contact" className="flex items-center gap-2"><Contact className="w-4 h-4" /> Contact</TabsTrigger>
-                        <TabsTrigger value="location" className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Location</TabsTrigger>
-                        <TabsTrigger value="team" className="flex items-center gap-2"><Users className="w-4 h-4" /> Team</TabsTrigger>
-                        <TabsTrigger value="social" className="flex items-center gap-2"><Share2 className="w-4 h-4" /> Social</TabsTrigger>
-                        <TabsTrigger value="media" className="flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Media</TabsTrigger>
+                        <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {ui.tabs.basic}</TabsTrigger>
+                        <TabsTrigger value="contact" className="flex items-center gap-2"><Contact className="w-4 h-4" /> {ui.tabs.contact}</TabsTrigger>
+                        <TabsTrigger value="location" className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {ui.tabs.location}</TabsTrigger>
+                        <TabsTrigger value="team" className="flex items-center gap-2"><Users className="w-4 h-4" /> {ui.tabs.team}</TabsTrigger>
+                        <TabsTrigger value="social" className="flex items-center gap-2"><Share2 className="w-4 h-4" /> {ui.tabs.social}</TabsTrigger>
+                        <TabsTrigger value="media" className="flex items-center gap-2"><ImageIcon className="w-4 h-4" /> {ui.tabs.media}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="basic" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0">
                                 <div>
-                                    <CardTitle>Basic Information</CardTitle>
-                                    <CardDescription>Primary details about the conservatorium.</CardDescription>
+                                    <CardTitle>{ui.basic.title}</CardTitle>
+                                    <CardDescription>{ui.basic.desc}</CardDescription>
                                 </div>
                                 {computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash && (
                                     <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 gap-1 h-6">
                                         <Sparkles className="w-3 h-3" />
-                                        Pending Sync
+                                        {ui.basic.pendingSync}
                                     </Badge>
                                 )}
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <TranslatedFieldInput
-                                    label="Conservatorium Name"
+                                    label={ui.basic.name}
                                     value={formData.name || ''}
                                     translations={{
                                         en: formData.translations?.en?.name || formData.nameEn,
@@ -251,7 +316,7 @@ export default function ConservatoriumProfileEditor() {
                                 />
 
                                 <TranslatedFieldInput
-                                    label="About Us (Description)"
+                                    label={ui.basic.about}
                                     value={formData.about || ''}
                                     translations={{
                                         en: formData.translations?.en?.about,
@@ -270,12 +335,12 @@ export default function ConservatoriumProfileEditor() {
                                 />
 
                                 <div className="space-y-2 max-w-sm">
-                                    <Label>Founded Year</Label>
+                                    <Label>{ui.basic.foundedYear}</Label>
                                     <Input
                                         type="number"
                                         value={formData.foundedYear || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, foundedYear: parseInt(e.target.value) }))}
-                                        placeholder="e.g 1995"
+                                        placeholder={ui.basic.foundedYearPlaceholder}
                                     />
                                 </div>
                             </CardContent>
@@ -285,13 +350,13 @@ export default function ConservatoriumProfileEditor() {
                     <TabsContent value="contact" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Contact Details</CardTitle>
-                                <CardDescription>How prospective students and parents can reach you.</CardDescription>
+                                <CardTitle>{t('profileEditor.contact.title')}</CardTitle>
+                                <CardDescription>{t('profileEditor.contact.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Main Phone</Label>
+                                        <Label>{t('profileEditor.contact.mainPhone')}</Label>
                                         <Input
                                             type="tel"
                                             value={formData.tel || ''}
@@ -300,7 +365,7 @@ export default function ConservatoriumProfileEditor() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>WhatsApp Number</Label>
+                                        <Label>{t('profileEditor.contact.whatsapp')}</Label>
                                         <Input
                                             type="tel"
                                             value={formData.socialMedia?.whatsapp || ''}
@@ -309,7 +374,7 @@ export default function ConservatoriumProfileEditor() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Primary Email</Label>
+                                        <Label>{t('profileEditor.contact.primaryEmail')}</Label>
                                         <Input
                                             type="email"
                                             value={formData.email || ''}
@@ -318,7 +383,7 @@ export default function ConservatoriumProfileEditor() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Secondary Email</Label>
+                                        <Label>{t('profileEditor.contact.secondaryEmail')}</Label>
                                         <Input
                                             type="email"
                                             value={formData.secondaryEmail || ''}
@@ -328,7 +393,7 @@ export default function ConservatoriumProfileEditor() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Official Website</Label>
+                                    <Label>{t('profileEditor.contact.website')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.officialSite || ''}
@@ -361,13 +426,13 @@ export default function ConservatoriumProfileEditor() {
                     <TabsContent value="location" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Location</CardTitle>
-                                <CardDescription>Where are you located?</CardDescription>
+                                <CardTitle>{t('profileEditor.location.title')}</CardTitle>
+                                <CardDescription>{t('profileEditor.location.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>City (Hebrew)</Label>
+                                        <Label>{t('profileEditor.location.cityHebrew')}</Label>
                                         <Input
                                             value={formData.location?.city || ''}
                                             onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, city: e.target.value } }))}
@@ -375,7 +440,7 @@ export default function ConservatoriumProfileEditor() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>City (English)</Label>
+                                        <Label>{t('profileEditor.location.cityEnglish')}</Label>
                                         <Input
                                             value={formData.location?.cityEn || ''}
                                             onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, cityEn: e.target.value } }))}
@@ -384,7 +449,7 @@ export default function ConservatoriumProfileEditor() {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Full Address</Label>
+                                    <Label>{t('profileEditor.location.fullAddress')}</Label>
                                     <Input
                                         value={formData.location?.address || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, address: e.target.value } }))}
@@ -398,17 +463,17 @@ export default function ConservatoriumProfileEditor() {
                     <TabsContent value="team" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Leadership Team</CardTitle>
-                                <CardDescription>Key figures in the conservatorium.</CardDescription>
+                                <CardTitle>{t('profileEditor.team.title')}</CardTitle>
+                                <CardDescription>{t('profileEditor.team.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-8">
                                 <div className="space-y-6 border rounded-xl p-6 bg-muted/20">
                                     <div className="flex items-center gap-2">
-                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">Manager</Badge>
+                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">{t('profileEditor.team.manager')}</Badge>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Photo URL</Label>
+                                            <Label>{t('profileEditor.team.photoUrl')}</Label>
                                             <Input
                                                 value={formData.manager?.photoUrl || ''}
                                                 onChange={e => updateManager('photoUrl', e.target.value)}
@@ -416,17 +481,17 @@ export default function ConservatoriumProfileEditor() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Name (Hebrew)</Label>
+                                            <Label>{t('profileEditor.team.nameHebrew')}</Label>
                                             <Input
                                                 value={formData.manager?.name || ''}
                                                 onChange={e => updateManager('name', e.target.value)}
-                                                placeholder="Manager's Name"
+                                                placeholder={t('profileEditor.team.managerNamePlaceholder')}
                                             />
                                         </div>
                                     </div>
 
                                     <TranslatedFieldInput
-                                        label="Title / Role"
+                                        label={t('profileEditor.team.titleRole')}
                                         value={formData.manager?.role || ''}
                                         translations={{
                                             en: formData.translations?.en?.manager?.role,
@@ -441,7 +506,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
 
                                     <TranslatedFieldInput
-                                        label="Short Bio"
+                                        label={t('profileEditor.team.shortBio')}
                                         value={formData.manager?.bio || ''}
                                         translations={{
                                             en: formData.translations?.en?.manager?.bio,
@@ -459,21 +524,21 @@ export default function ConservatoriumProfileEditor() {
 
                                 <div className="space-y-6 border rounded-xl p-6 bg-muted/20">
                                     <div className="flex items-center gap-2">
-                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">Pedagogical Coordinator</Badge>
+                                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">{t('profileEditor.team.pedagogicalCoordinator')}</Badge>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Name (Hebrew)</Label>
+                                            <Label>{t('profileEditor.team.nameHebrew')}</Label>
                                             <Input
                                                 value={formData.pedagogicalCoordinator?.name || ''}
                                                 onChange={e => updatePedagogical('name', e.target.value)}
-                                                placeholder="Coordinator's Name"
+                                                placeholder={t('profileEditor.team.coordinatorNamePlaceholder')}
                                             />
                                         </div>
                                     </div>
 
                                     <TranslatedFieldInput
-                                        label="Title / Role"
+                                        label={t('profileEditor.team.titleRole')}
                                         value={formData.pedagogicalCoordinator?.role || ''}
                                         translations={{
                                             en: formData.translations?.en?.pedagogicalCoordinator?.role,
@@ -488,7 +553,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
 
                                     <TranslatedFieldInput
-                                        label="Short Bio"
+                                        label={t('profileEditor.team.shortBio')}
                                         value={formData.pedagogicalCoordinator?.bio || ''}
                                         translations={{
                                             en: formData.translations?.en?.pedagogicalCoordinator?.bio,
@@ -510,12 +575,12 @@ export default function ConservatoriumProfileEditor() {
                     <TabsContent value="social" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Social Media Links</CardTitle>
-                                <CardDescription>Connect your online presence.</CardDescription>
+                                <CardTitle>{t('profileEditor.social.title')}</CardTitle>
+                                <CardDescription>{t('profileEditor.social.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Facebook URL</Label>
+                                    <Label>{t('profileEditor.social.facebook')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.socialMedia?.facebook || ''}
@@ -524,7 +589,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Instagram URL</Label>
+                                    <Label>{t('profileEditor.social.instagram')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.socialMedia?.instagram || ''}
@@ -533,7 +598,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>YouTube Channel URL</Label>
+                                    <Label>{t('profileEditor.social.youtube')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.socialMedia?.youtube || ''}
@@ -542,7 +607,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>TikTok URL</Label>
+                                    <Label>{t('profileEditor.social.tiktok')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.socialMedia?.tiktok || ''}
@@ -557,12 +622,12 @@ export default function ConservatoriumProfileEditor() {
                     <TabsContent value="media" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Photos & Media</CardTitle>
-                                <CardDescription>Images displayed on your public profile.</CardDescription>
+                                <CardTitle>{t('profileEditor.media.title')}</CardTitle>
+                                <CardDescription>{t('profileEditor.media.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Header Image URL</Label>
+                                    <Label>{t('profileEditor.media.headerImage')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.photoUrls?.[0] || ''}
@@ -571,7 +636,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Gallery Image 1 URL</Label>
+                                    <Label>{t('profileEditor.media.galleryImage1')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.photoUrls?.[1] || ''}
@@ -584,7 +649,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Gallery Image 2 URL</Label>
+                                    <Label>{t('profileEditor.media.galleryImage2')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.photoUrls?.[2] || ''}
@@ -597,7 +662,7 @@ export default function ConservatoriumProfileEditor() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Gallery Image 3 URL</Label>
+                                    <Label>{t('profileEditor.media.galleryImage3')}</Label>
                                     <Input
                                         type="url"
                                         value={formData.photoUrls?.[3] || ''}
@@ -615,9 +680,9 @@ export default function ConservatoriumProfileEditor() {
                 </Tabs>
 
                 <div className="fixed bottom-0 left-0 right-0 p-4 border-t bg-background/80 backdrop-blur-sm shadow-md flex justify-end gap-2 z-10 w-full sm:w-[calc(100%-16rem)] sm:ml-64 transition-all">
-                    <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>Cancel</Button>
+                    <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>{ui.footer.cancel}</Button>
                     <Button type="submit" disabled={isSaving || isTranslating}>
-                        {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> Saving...</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> Save Profile</span>}
+                        {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> {ui.footer.saving}</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {ui.footer.saveProfile}</span>}
                     </Button>
                 </div>
             </form>

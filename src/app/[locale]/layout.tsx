@@ -19,7 +19,15 @@ const rubik = Rubik({
 
 export async function generateMetadata({ params }: { params: Promise<{locale: string}> }): Promise<Metadata> {
     const { locale } = await params;
-    const t = await getTranslations({ locale, namespace: 'Metadata' });
+    let t: ((key: 'siteName' | 'siteDescription') => string);
+    try {
+        const translations = await getTranslations({ locale, namespace: 'Metadata' });
+        t = (key) => translations(key);
+    } catch {
+        t = (key) => key === 'siteDescription'
+            ? 'Advanced management platform for modern music schools and conservatories.'
+            : 'Harmonia';
+    }
     
     return {
         title: {

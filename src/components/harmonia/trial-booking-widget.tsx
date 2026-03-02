@@ -24,17 +24,17 @@ import { Stepper } from "@/components/ui/stepper";
 import { instruments, mockTeachers } from "@/lib/data";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 
-const trialSchema = z.object({
-    instrument: z.string().min(1, "חובה לבחור כלי נגינה."),
+const getTrialSchema = (t: ReturnType<typeof useTranslations>) => z.object({
+    instrument: z.string().min(1, t('validation.instrumentRequired')),
     teacherId: z.string().optional(),
-    date: z.date().nullable().refine(val => !!val, { message: "חובה לבחור תאריך." }),
-    time: z.string().min(1, "חובה לבחור שעה."),
-    name: z.string().min(2, "שם הוא שדה חובה."),
-    phone: z.string().min(9, "מספר טלפון לא תקין."),
-    email: z.string().email("אימייל לא תקין."),
+    date: z.date().nullable().refine(val => !!val, { message: t('validation.dateRequired') }),
+    time: z.string().min(1, t('validation.timeRequired')),
+    name: z.string().min(2, t('validation.nameRequired')),
+    phone: z.string().min(9, t('validation.phoneInvalid')),
+    email: z.string().email(t('validation.emailInvalid')),
 });
 
-type TrialFormData = z.infer<typeof trialSchema>;
+type TrialFormData = z.infer<ReturnType<typeof getTrialSchema>>;
 
 const stepIcons = [Music, HeartHandshake, Calendar, Contact, ShieldCheck];
 
@@ -57,7 +57,7 @@ export function TrialBookingWidget() {
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const form = useForm<TrialFormData>({
-        resolver: zodResolver(trialSchema) as any,
+        resolver: zodResolver(getTrialSchema(t)) as any,
         defaultValues: { date: new Date() },
     });
 

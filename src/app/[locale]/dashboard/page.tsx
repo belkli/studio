@@ -1,16 +1,24 @@
 'use client';
 import { OverviewCards } from "@/components/dashboard/overview-cards";
 import { RecentForms } from "@/components/dashboard/recent-forms";
-import { AdminCommandCenter } from "@/components/dashboard/harmonia/admin-command-center";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { PlusCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useRouter } from "@/i18n/routing";
 import { useEffect } from "react";
-import { TeacherDashboard } from "@/components/dashboard/harmonia/teacher-dashboard";
-import StudentProfilePage from "./profile/page";
 import { useTranslations } from 'next-intl';
+import dynamic from "next/dynamic";
+
+const AdminCommandCenter = dynamic(
+    () => import("@/components/dashboard/harmonia/admin-command-center").then((m) => m.AdminCommandCenter),
+    { ssr: false }
+);
+
+const TeacherDashboard = dynamic(
+    () => import("@/components/dashboard/harmonia/teacher-dashboard").then((m) => m.TeacherDashboard),
+    { ssr: false }
+);
 
 
 export default function DashboardPage() {

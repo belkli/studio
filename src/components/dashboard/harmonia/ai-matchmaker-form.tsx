@@ -9,10 +9,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Bot, UserPlus, Sparkles, Music, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export function AiMatchmakerForm() {
     const t = useTranslations('AiMatchmaker');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const STEPS = [
         { id: 'goal', title: t('stepGoal') },
@@ -89,7 +91,7 @@ export function AiMatchmakerForm() {
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
                         <div className="space-y-4">
                             <Label className="text-lg font-semibold">{t('qGoalTitle')}</Label>
-                            <RadioGroup dir="rtl" value={answers['goal'] || ''} onValueChange={(val) => handleSelectOption('goal', val)}>
+                            <RadioGroup dir={isRtl ? 'rtl' : 'ltr'} value={answers['goal'] || ''} onValueChange={(val) => handleSelectOption('goal', val)}>
                                 <div className="grid gap-3">
                                     <Label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50">
                                         <RadioGroupItem value="fun" /> <span>{t('qGoalA1')}</span>
@@ -108,7 +110,7 @@ export function AiMatchmakerForm() {
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
                         <div className="space-y-4">
                             <Label className="text-lg font-semibold">{t('qStyleTitle')}</Label>
-                            <RadioGroup dir="rtl" value={answers['style'] || ''} onValueChange={(val) => handleSelectOption('style', val)}>
+                            <RadioGroup dir={isRtl ? 'rtl' : 'ltr'} value={answers['style'] || ''} onValueChange={(val) => handleSelectOption('style', val)}>
                                 <div className="grid gap-3">
                                     <Label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50">
                                         <RadioGroupItem value="structured" /> <span>{t('qStyleA1')}</span>
@@ -127,7 +129,7 @@ export function AiMatchmakerForm() {
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
                         <div className="space-y-4">
                             <Label className="text-lg font-semibold">{t('qPersonalityTitle')}</Label>
-                            <RadioGroup dir="rtl" value={answers['personality'] || ''} onValueChange={(val) => handleSelectOption('personality', val)}>
+                            <RadioGroup dir={isRtl ? 'rtl' : 'ltr'} value={answers['personality'] || ''} onValueChange={(val) => handleSelectOption('personality', val)}>
                                 <div className="grid gap-3">
                                     <Label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 cursor-pointer [&:has([data-state=checked])]:border-purple-600 [&:has([data-state=checked])]:bg-purple-50">
                                         <RadioGroupItem value="patient" /> <span>{t('qPersonalityA1')}</span>
@@ -176,7 +178,10 @@ export function AiMatchmakerForm() {
                                         </p>
                                     </div>
                                 </div>
-                                <Button className="w-full mt-6 bg-green-600 hover:bg-green-700">{t('bookTrialBtn')} <ArrowLeft className="w-4 h-4 ml-2" /></Button>
+                                <Button className="w-full mt-6 bg-green-600 hover:bg-green-700">
+                                    {t('bookTrialBtn')}
+                                    {isRtl ? <ArrowLeft className="w-4 h-4 ms-2" /> : <ArrowRight className="w-4 h-4 ms-2" />}
+                                </Button>
                             </div>
 
                             {/* Runner Up */}
@@ -207,9 +212,12 @@ export function AiMatchmakerForm() {
                     </Button>
                     <Button onClick={handleNext} disabled={!answers[STEPS[currentStep].id]}>
                         {currentStep === STEPS.length - 2 ? (
-                            <><Sparkles className="w-4 h-4 mr-2" /> {t('findTeacherBtn')}</>
+                            <><Sparkles className="w-4 h-4 me-2" /> {t('findTeacherBtn')}</>
                         ) : (
-                            <>{t('nextBtn')} <ArrowLeft className="w-4 h-4 ml-2" /></>
+                            <>
+                                {t('nextBtn')}
+                                {isRtl ? <ArrowLeft className="w-4 h-4 ms-2" /> : <ArrowRight className="w-4 h-4 ms-2" />}
+                            </>
                         )}
                     </Button>
                 </CardFooter>

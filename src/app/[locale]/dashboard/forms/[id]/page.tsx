@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { useRef, useState, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
@@ -52,6 +52,8 @@ export default function FormDetailsPage() {
     const ts = useTranslations('Status');
     const tl = useTranslations('Forms.labels');
     const tt = useTranslations('Forms.toasts');
+    const locale = useLocale();
+    const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
 
     const form = useMemo(() => forms.find(f => f.id === formId), [forms, formId]);
 
@@ -620,7 +622,7 @@ export default function FormDetailsPage() {
             </div>
 
             <AlertDialog open={isSignatureDialogOpen} onOpenChange={setSignatureDialogOpen}>
-                <AlertDialogContent dir="rtl" className="sm:max-w-2xl">
+                <AlertDialogContent dir={dir} className="sm:max-w-2xl">
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('signatureDialogTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -646,7 +648,7 @@ export default function FormDetailsPage() {
             </AlertDialog>
 
             <AlertDialog open={isMinistryRejectionDialogOpen} onOpenChange={setMinistryRejectionDialogOpen}>
-                <AlertDialogContent dir="rtl">
+                <AlertDialogContent dir={dir}>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('ministryChangesTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>

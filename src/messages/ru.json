@@ -77,7 +77,34 @@
     "error": "Ошибка",
     "saveFailed": "Не удалось сохранить",
     "deleteFailed": "Не удалось удалить",
-    "noData": "Нет данных"
+    "noData": "Нет данных",
+    "shared": {
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "loading": "Загрузка...",
+      "status": "Статус",
+      "actions": "Действия",
+      "view": "Просмотр",
+      "studentName": "Имя студента",
+      "formType": "Тип формы",
+      "submissionDate": "Дата подачи",
+      "grade": "Класс"
+    },
+    "translationEditor": {
+      "stale": "Перевод устарел",
+      "aiTranslating": "Перевод с помощью ИИ...",
+      "sourceContent": "Исходный контент (иврит)",
+      "human": "Человек",
+      "ai": "ИИ",
+      "cancel": "Отмена",
+      "override": "Переопределить",
+      "noTranslationYet": "Пока нет перевода",
+      "language": {
+        "english": "Английский",
+        "arabic": "Арабский",
+        "russian": "Русский"
+      }
+    }
   },
   "HomePage": {
     "title": "Гармония",
@@ -144,7 +171,8 @@
       "SCHEDULED": "Запланировано",
       "ATTENDED": "Присутствовал",
       "NO_SHOW": "Неявка"
-    }
+    },
+    "childAge": "Child age"
   },
   "MusiciansForHire": {
     "heroTitle": "Профессиональные музыканты для незабываемых событий",
@@ -731,7 +759,11 @@
       "myStudents": "Мои студенты ({count})",
       "myStudentsDesc": "Краткий обзор всех ваших студентов",
       "attendanceMarked": "Посещаемость обновлена",
-      "lessonUpdated": "Статус урока успешно обновлен."
+      "lessonUpdated": "Статус урока успешно обновлен.",
+      "weeklySchedule": "Weekly schedule",
+      "Calendar": {
+        "today": "Today"
+      }
     }
   },
   "Sidebar": {
@@ -811,7 +843,9 @@
     "groupFinanceAdmin": "Финансы и Администрирование",
     "groupMinistryOverview": "Обзор Министерства",
     "groupPlayingSchool": "Музыкальная Школа (Внутри ОО)",
-    "groupMySchool": "Моя Школа"
+    "groupMySchool": "Моя Школа",
+    "whatsNew": "Что нового",
+    "newBadge": "Новое"
   },
   "MessagesPage": {
     "title": "Сообщения",
@@ -1150,7 +1184,53 @@
       "publicProfile": "Публичный профиль",
       "pricing": "Настройки цен",
       "cancellation": "Политика отмены",
-      "manageAI": "Функции ИИ"
+      "manageAI": "Функции ИИ",
+      "profileEditor": {
+        "contact": {
+          "title": "Контактная информация",
+          "description": "Как потенциальные ученики и родители могут с вами связаться.",
+          "mainPhone": "Основной телефон",
+          "whatsapp": "Номер WhatsApp",
+          "primaryEmail": "Основной email",
+          "secondaryEmail": "Дополнительный email",
+          "website": "Официальный сайт"
+        },
+        "location": {
+          "title": "Локация",
+          "description": "Где вы находитесь?",
+          "cityHebrew": "Город (иврит)",
+          "cityEnglish": "Город (английский)",
+          "fullAddress": "Полный адрес"
+        },
+        "team": {
+          "title": "Руководящая команда",
+          "description": "Ключевые сотрудники консерватории.",
+          "manager": "Руководитель",
+          "pedagogicalCoordinator": "Педагогический координатор",
+          "photoUrl": "URL фото",
+          "nameHebrew": "Имя (иврит)",
+          "titleRole": "Должность / роль",
+          "shortBio": "Краткая биография",
+          "managerNamePlaceholder": "Имя руководителя",
+          "coordinatorNamePlaceholder": "Имя координатора"
+        },
+        "social": {
+          "title": "Ссылки на соцсети",
+          "description": "Подключите ваше онлайн-присутствие.",
+          "facebook": "URL Facebook",
+          "instagram": "URL Instagram",
+          "youtube": "URL канала YouTube",
+          "tiktok": "URL TikTok"
+        },
+        "media": {
+          "title": "Фото и медиа",
+          "description": "Изображения, отображаемые в публичном профиле.",
+          "headerImage": "URL изображения шапки",
+          "galleryImage1": "URL изображения галереи 1",
+          "galleryImage2": "URL изображения галереи 2",
+          "galleryImage3": "URL изображения галереи 3"
+        }
+      }
     },
     "notifications": {
       "title": "Настройки уведомлений",
@@ -1228,7 +1308,15 @@
     "successTitle": "Пробный Урок Забронирован!",
     "successDesc": "Ваш урок с {name} назначен на {date}.",
     "instrument": "Инструмент",
-    "instrumentPlaceholder": "Выберите инструмент..."
+    "instrumentPlaceholder": "Выберите инструмент...",
+    "validation": {
+      "instrumentRequired": "Выберите музыкальный инструмент.",
+      "dateRequired": "Выберите дату.",
+      "timeRequired": "Выберите время.",
+      "nameRequired": "Имя обязательно.",
+      "phoneInvalid": "Неверный номер телефона.",
+      "emailInvalid": "Неверный адрес электронной почты."
+    }
   },
   "PlayingSchool": {
     "pageTitle": "Управление Играющей Школой",
@@ -1976,5 +2064,35 @@
   },
   "EventDetails": {
     "statusCancelled": "Cancelled"
+  },
+  "Metadata": {
+    "siteName": "Гармония",
+    "siteDescription": "Умная платформа управления для современных консерваторий."
+  },
+  "AiAlerts": {
+    "title": "AI-оповещения",
+    "subtitle": "Проактивные рекомендации на основе ваших данных.",
+    "noAlerts": "Сейчас нет важных оповещений.",
+    "viewAll": "Показать все оповещения"
+  },
+  "TeacherProfileEditor": {
+    "validation": {
+      "nameMin": "Имя должно содержать не менее 2 символов.",
+      "emailInvalid": "Некорректный адрес электронной почты.",
+      "bioMax": "Биография может содержать до 500 символов."
+    },
+    "toasts": {
+      "translatingTitle": "Обновляем переводы...",
+      "translatingDesc": "ИИ обновляет вашу биографию на дополнительных языках.",
+      "saved": "Профиль успешно обновлен!"
+    },
+    "description": "Отредактируйте данные вашего профиля.",
+    "fullName": "Полное имя",
+    "email": "Email",
+    "shortBio": "Краткая биография",
+    "specialties": "Специализации",
+    "teachingLanguages": "Языки преподавания",
+    "savingTranslations": "Обновляем переводы...",
+    "saveChanges": "Сохранить изменения"
   }
 }

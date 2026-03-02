@@ -107,10 +107,10 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
         <div className={cn("space-y-12", className)}>
             <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-indigo-600 transition-colors" />
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-indigo-600 transition-colors" />
                     <Input
                         placeholder={t('searchPlaceholder')}
-                        className="pl-10 h-14 text-lg shadow-xl shadow-indigo-600/5 border-slate-200 focus-visible:ring-indigo-500/20"
+                        className="ps-10 h-14 text-lg shadow-xl shadow-indigo-600/5 border-slate-200 focus-visible:ring-indigo-500/20"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />

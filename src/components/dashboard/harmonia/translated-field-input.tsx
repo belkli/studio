@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Edit2, Globe, Check, Sparkles, User, History } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface TranslatedFieldInputProps {
     label: string;
@@ -38,6 +39,7 @@ export function TranslatedFieldInput({
     isTranslating = false,
     overriddenLocales = []
 }: TranslatedFieldInputProps) {
+    const t = useTranslations('Common.translationEditor');
     const [activeLocale, setActiveLocale] = useState<string | null>(null);
     const [editingValue, setEditingValue] = useState<string>('');
 
@@ -54,9 +56,9 @@ export function TranslatedFieldInput({
     };
 
     const locales = [
-        { id: 'en', label: 'English', dir: 'ltr' },
-        { id: 'ar', label: 'Arabic', dir: 'rtl' },
-        { id: 'ru', label: 'Russian', dir: 'ltr' }
+        { id: 'en', label: t('language.english'), dir: 'ltr' },
+        { id: 'ar', label: t('language.arabic'), dir: 'rtl' },
+        { id: 'ru', label: t('language.russian'), dir: 'ltr' }
     ];
 
     return (
@@ -66,13 +68,13 @@ export function TranslatedFieldInput({
                 {isStale && !isTranslating && (
                     <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 gap-1 animate-pulse">
                         <History className="w-3 h-3" />
-                        Translation Stale
+                        {t('stale')}
                     </Badge>
                 )}
                 {isTranslating && (
                     <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 gap-1">
                         <Sparkles className="w-3 h-3 animate-spin" />
-                        AI Translating...
+                        {t('aiTranslating')}
                     </Badge>
                 )}
             </div>
@@ -81,7 +83,7 @@ export function TranslatedFieldInput({
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase">HE</Badge>
-                    <span className="text-xs text-muted-foreground">Source Content</span>
+                    <span className="text-xs text-muted-foreground">{t('sourceContent')}</span>
                 </div>
                 {isTextArea ? (
                     <Textarea
@@ -121,12 +123,12 @@ export function TranslatedFieldInput({
                                     {isOverridden ? (
                                         <Badge variant="outline" className="px-1 py-0 h-4 text-[9px] bg-green-50 text-green-700 border-green-200 gap-1">
                                             <User className="w-2.5 h-2.5" />
-                                            Human
+                                            {t('human')}
                                         </Badge>
                                     ) : currentText ? (
                                         <Badge variant="outline" className="px-1 py-0 h-4 text-[9px] bg-blue-50 text-blue-700 border-blue-200 gap-1">
                                             <Sparkles className="w-2.5 h-2.5 text-blue-400" />
-                                            AI
+                                            {t('ai')}
                                         </Badge>
                                     ) : null}
 
@@ -164,11 +166,11 @@ export function TranslatedFieldInput({
                                     )}
                                     <div className="flex justify-end gap-1">
                                         <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => setActiveLocale(null)}>
-                                            Cancel
+                                            {t('cancel')}
                                         </Button>
                                         <Button size="sm" className="h-7 px-2 text-xs gap-1" onClick={handleSave}>
                                             <Check className="w-3 h-3" />
-                                            Override
+                                            {t('override')}
                                         </Button>
                                     </div>
                                 </div>
@@ -181,7 +183,7 @@ export function TranslatedFieldInput({
                                     dir={lang.dir as any}
                                     onClick={() => handleEdit(lang.id)}
                                 >
-                                    {currentText || 'No translation yet'}
+                                    {currentText || t('noTranslationYet')}
                                 </div>
                             )}
                         </div>

@@ -10,7 +10,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { add, differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
 
@@ -115,6 +115,14 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  * It initializes and manages all application state, simulating a full backend.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const setAuthCookie = () => {
+    document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
+  };
+
+  const clearAuthCookie = () => {
+    document.cookie = 'harmonia-user=; path=/; max-age=0; samesite=lax';
+  };
+
   // State for the currently logged-in user
   const [user, setUser] = useState<User | null>(null);
   // State for all mock data sets
@@ -186,11 +194,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const VALID_ROLES = ['student', 'teacher', 'parent', 'conservatorium_admin', 'site_admin', 'ministry_director', 'school_coordinator'];
         if (VALID_ROLES.includes(parsedData?.role)) {
           setUser(parsedData);
+          setAuthCookie();
         } else {
           localStorage.removeItem('harmonia-user');
+          clearAuthCookie();
         }
       } catch (e) {
         localStorage.removeItem('harmonia-user');
+        clearAuthCookie();
       }
     }
     setIsLoading(false);
@@ -206,6 +217,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (foundUser) {
       if (foundUser.approved) {
         localStorage.setItem('harmonia-user', JSON.stringify(foundUser));
+        setAuthCookie();
         setUser(foundUser);
         router.push('/dashboard');
         return { user: foundUser, status: 'approved' };
@@ -222,6 +234,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const logout = () => {
     localStorage.removeItem('harmonia-user');
+    clearAuthCookie();
     setUser(null);
     router.push('/login');
   };
@@ -274,6 +287,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (user?.id === updatedUser.id) {
       setUser(updatedUser);
       localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
+      setAuthCookie();
     }
   };
 
@@ -735,6 +749,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const updatedUser = { ...user, hasSeenWalkthrough: true };
       setUser(updatedUser);
       localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
+      setAuthCookie();
     }
   };
 

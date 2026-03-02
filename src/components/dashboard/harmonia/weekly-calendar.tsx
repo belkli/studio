@@ -4,7 +4,7 @@ import type { LessonSlot, User } from "@/lib/types";
 import { useCalendar } from "@/hooks/use-calendar";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format, isToday } from "date-fns";
+import { addMinutes, format, isToday } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
@@ -13,7 +13,7 @@ const timeSlots = Array.from({ length: 15 }, (_, i) => `${(i + 8).toString().pad
 
 const CalendarEvent = ({ lesson, student }: { lesson: LessonSlot, student: User | undefined }) => {
     const start = new Date(lesson.startTime);
-    const end = new Date(lesson.endTime);
+    const end = addMinutes(start, lesson.durationMinutes);
     const top = (start.getHours() - 8 + start.getMinutes() / 60) * 60; // 8 AM offset, in minutes
     const height = ((end.getTime() - start.getTime()) / (1000 * 60)); // duration in minutes
 

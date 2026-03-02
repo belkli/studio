@@ -1,7 +1,6 @@
-// @ts-nocheck
 'use client';
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -26,18 +25,21 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 const roleTranslations = (t: any): Record<UserRole, string> => ({
+    admin: t('roles.conservatorium_admin'),
+    superadmin: t('roles.site_admin'),
     student: t('roles.student'),
     teacher: t('roles.teacher'),
     parent: t('roles.parent'),
     conservatorium_admin: t('roles.conservatorium_admin'),
     site_admin: t('roles.site_admin'),
-    ministry_director: t('roles.ministry_director')
+    ministry_director: t('roles.ministry_director'),
+    school_coordinator: t('roles.school_coordinator')
 });
 
 const getEditUserSchema = (t: any) => z.object({
     name: z.string().min(2, t('validation.nameMin')),
     email: z.string().email(t('validation.emailInvalid')),
-    role: z.enum(["student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director"]),
+    role: z.enum(["admin", "superadmin", "student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director", "school_coordinator"]),
     grade: z.string().optional(),
     idNumber: z.string().refine(isValidIsraeliID, t('validation.idInvalid')),
     phone: z.string().min(9, t('validation.phoneInvalid')).optional(),
@@ -49,13 +51,16 @@ const getEditUserSchema = (t: any) => z.object({
     })).optional(),
 });
 
-type EditUserFormData = z.infer<ReturnType<typeof getEditUserSchema>>;
+type EditUserSchema = ReturnType<typeof getEditUserSchema>;
+type EditUserFormValues = z.input<EditUserSchema>;
+type EditUserFormData = z.output<EditUserSchema>;
 
 export default function UsersPage() {
-    const { user: currentUser, isLoading, users } = useAdminGuard();
+    const { user: currentUser, isLoading } = useAdminGuard();
+    const { toast } = useToast();
     const searchParams = useSearchParams();
     const t = useTranslations('UserManagement');
-    const { approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
+    const { users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const defaultTab = searchParams.get('tab') || 'approved';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -138,7 +143,6 @@ export default function UsersPage() {
     }
 
     const handleApprove = (user: User) => {
-        const { toast } = useToast();
         approveUser(user.id);
         toast({ title: t('userApproved'), description: t('userApprovedDesc', { name: user.name }) });
     };
@@ -153,12 +157,15 @@ export default function UsersPage() {
 
     const handleUpdateUser = (updatedData: EditUserFormData) => {
         if (!editingUser) return;
-        const { toast } = useToast();
 
         const finalUpdatedUser: User = {
             ...editingUser,
-            ...updatedData,
-        };
+            ...(updatedData as Partial<User>),
+            instruments: updatedData.instruments?.map((instrument) => ({
+                ...instrument,
+                yearsOfStudy: instrument.yearsOfStudy ?? 0,
+            })),
+        } as User;
 
         updateUser(finalUpdatedUser);
         toast({ title: t('userUpdated'), description: t('userUpdatedDesc', { name: finalUpdatedUser.name }) });
@@ -167,7 +174,6 @@ export default function UsersPage() {
 
     const confirmReject = () => {
         if (selectedUserToReject) {
-            const { toast } = useToast();
             rejectUser(selectedUserToReject.id, rejectionReason || t('noReasonProvided'));
             toast({ variant: "destructive", title: t('userRejected'), description: t('userRejectedDesc', { name: selectedUserToReject.name }) });
             setSelectedUserToReject(null);
@@ -359,7 +365,7 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
 
 const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User, onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
     const editSchema = useMemo(() => getEditUserSchema(t), [t]);
-    const form = useForm<EditUserFormData>({
+    const form = useForm<EditUserFormValues, any, EditUserFormData>({
         resolver: zodResolver(editSchema),
         defaultValues: {
             name: user.name || '',
@@ -449,7 +455,13 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                                     <FormItem>
                                         <FormLabel>{t('seniorityYears')}</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} disabled={!canEditSeniority} />
+                                            <Input
+                                                type="number"
+                                                {...field}
+                                                value={Number(field.value ?? 0)}
+                                                onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                                                disabled={!canEditSeniority}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -479,7 +491,7 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                                                         <Input
                                                             type="number"
                                                             {...field}
-                                                            value={field.value ?? 0}
+                                                            value={Number(field.value ?? 0)}
                                                             onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
                                                             disabled={!canEditSeniority}
                                                         />

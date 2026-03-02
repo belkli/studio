@@ -61,7 +61,8 @@
     "back": "Back",
     "next": "Next",
     "submit": "Submit Registration",
-    "trialLesson": "Trial Lesson"
+    "trialLesson": "Trial Lesson",
+    "switchLanguage": "Switch language"
   },
   "Common": {
     "name": "Name",
@@ -76,7 +77,41 @@
     "error": "Error",
     "saveFailed": "Save failed",
     "deleteFailed": "Delete failed",
-    "noData": "No data available"
+    "noData": "No data available",
+    "saveStatusBar": {
+      "saving": "Saving",
+      "error": "Error",
+      "savedAt": "Saved At",
+      "unsavedChanges": "Unsaved Changes",
+      "saveDraft": "Save Draft"
+    },
+    "shared": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "loading": "Loading...",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "studentName": "Student name",
+      "formType": "Form type",
+      "submissionDate": "Submission date",
+      "grade": "Grade"
+    },
+    "translationEditor": {
+      "stale": "Translation stale",
+      "aiTranslating": "AI translating...",
+      "sourceContent": "Source content",
+      "human": "Human",
+      "ai": "AI",
+      "cancel": "Cancel",
+      "override": "Override",
+      "noTranslationYet": "No translation yet",
+      "language": {
+        "english": "English",
+        "arabic": "Arabic",
+        "russian": "Russian"
+      }
+    }
   },
   "HomePage": {
     "title": "Harmonia",
@@ -153,11 +188,12 @@
       "SCHEDULED": "Scheduled",
       "ATTENDED": "Attended",
       "NO_SHOW": "No-Show"
-    }
+    },
+    "childAge": "Child age"
   },
   "MusiciansForHire": {
     "heroTitle": "Professional Musicians for Unforgettable Events",
-    "heroSubtitle": "All musicians from Harmonia Ã¢â‚¬â€ vetted, reliable, and fully insured.",
+    "heroSubtitle": "All musicians from Harmonia - vetted, reliable, and fully insured.",
     "getQuote": "Get an Instant Quote",
     "features": {
       "experienced": "Experienced & Vetted",
@@ -209,7 +245,7 @@
       "previous": "Previous",
       "next": "Next",
       "quoteTitle": "Your Estimated Quote",
-      "quotePrice": "Ã¢â€šÂª{price}",
+      "quotePrice": "₪{price}",
       "quoteDetails": "{ensemble} for {duration} hours",
       "submitRequest": "Submit Booking Request"
     },
@@ -264,7 +300,7 @@
     "email": "Email",
     "emailPlaceholder": "For receipt delivery",
     "anonymous": "I prefer to remain anonymous (no receipt)",
-    "submitButton": "Donate Ã¢â€šÂª{amount}"
+    "submitButton": "Donate ₪{amount}"
   },
   "Forms": {
     "formDetails": "Form Details",
@@ -378,7 +414,7 @@
     "revenueMonth": "Total Revenue (Month)",
     "revenueVsLastMonth": "{percent}% from last month",
     "overdueCharges": "Overdue Charges",
-    "totalOverdueAmount": "Total {amount} Ã¢â€šÂª overdue",
+    "totalOverdueAmount": "Total {amount} ₪ overdue",
     "collectionRate": "Collection Rate",
     "activeStudents": "Active Students",
     "studentsChange": "{count} from last month",
@@ -425,7 +461,11 @@
     "applyForAid": "Apply for Scholarship",
     "packageExpiringNotice": "Your package is about to expire!",
     "packageExpiringDesc": "There are {days} days left until your package expires on {date}.",
-    "renewNow": "Click here to renew and save your spot."
+    "renewNow": "Click here to renew and save your spot.",
+    "status": "Status",
+    "active": "Active",
+    "credits": "Credits",
+    "payNow": "Pay Now"
   },
   "Invoices": {
     "invoiceNumber": "Invoice Number",
@@ -576,7 +616,11 @@
       "myStudents": "My Students ({count})",
       "myStudentsDesc": "Quick overview of all your students",
       "attendanceMarked": "Attendance updated",
-      "lessonUpdated": "Lesson status successfully updated."
+      "lessonUpdated": "Lesson status successfully updated.",
+      "weeklySchedule": "Weekly schedule",
+      "Calendar": {
+        "today": "Today"
+      }
     }
   },
   "Sidebar": {
@@ -656,7 +700,9 @@
     "groupFinanceAdmin": "Finance & Admin",
     "groupMinistryOverview": "Ministry Overview",
     "groupPlayingSchool": "Playing School",
-    "groupMySchool": "My School"
+    "groupMySchool": "My School",
+    "whatsNew": "What's New",
+    "newBadge": "New"
   },
   "MessagesPage": {
     "title": "Messages",
@@ -1021,7 +1067,53 @@
       "publicProfile": "Public Profile",
       "pricing": "Pricing Settings",
       "cancellation": "Cancellation Policy",
-      "manageAI": "Manage AI Features"
+      "manageAI": "Manage AI Features",
+      "profileEditor": {
+        "contact": {
+          "title": "Contact Details",
+          "description": "How prospective students and parents can reach you.",
+          "mainPhone": "Main Phone",
+          "whatsapp": "WhatsApp Number",
+          "primaryEmail": "Primary Email",
+          "secondaryEmail": "Secondary Email",
+          "website": "Official Website"
+        },
+        "location": {
+          "title": "Location",
+          "description": "Where are you located?",
+          "cityHebrew": "City (Hebrew)",
+          "cityEnglish": "City (English)",
+          "fullAddress": "Full Address"
+        },
+        "team": {
+          "title": "Leadership Team",
+          "description": "Key figures in the conservatorium.",
+          "manager": "Manager",
+          "pedagogicalCoordinator": "Pedagogical Coordinator",
+          "photoUrl": "Photo URL",
+          "nameHebrew": "Name (Hebrew)",
+          "titleRole": "Title / Role",
+          "shortBio": "Short Bio",
+          "managerNamePlaceholder": "Manager's Name",
+          "coordinatorNamePlaceholder": "Coordinator's Name"
+        },
+        "social": {
+          "title": "Social Media Links",
+          "description": "Connect your online presence.",
+          "facebook": "Facebook URL",
+          "instagram": "Instagram URL",
+          "youtube": "YouTube Channel URL",
+          "tiktok": "TikTok URL"
+        },
+        "media": {
+          "title": "Photos & Media",
+          "description": "Images displayed on your public profile.",
+          "headerImage": "Header Image URL",
+          "galleryImage1": "Gallery Image 1 URL",
+          "galleryImage2": "Gallery Image 2 URL",
+          "galleryImage3": "Gallery Image 3 URL"
+        }
+      }
     },
     "notifications": {
       "title": "Notification Preferences",
@@ -1044,7 +1136,15 @@
       "approved": "Approved",
       "drafts": "Drafts"
     },
-    "noForms": "No forms to display"
+    "noForms": "No forms to display",
+    "table": {
+      "studentName": "Student Name",
+      "formType": "Form Type",
+      "status": "Status",
+      "submissionDate": "Submission Date",
+      "actions": "Actions",
+      "view": "View"
+    }
   },
   "Auth": {
     "pageTitle": "Login",
@@ -1073,7 +1173,12 @@
       "loginFailedDesc": "No user found with the provided email.",
       "magicLinkSent": "Magic Link Sent!",
       "magicLinkSentDesc": "Check your inbox for the login link."
-    }
+    },
+    "oauthComingSoon": "Oauth Coming Soon",
+    "oauthComingSoonDesc": "Oauth Coming Soon Desc",
+    "enterEmailFirst": "Enter Email First",
+    "passwordResetSent": "Password Reset Sent",
+    "passwordResetSentDesc": "Password Reset Sent Desc"
   },
   "NewForm": {
     "title": "New Form / Request",
@@ -1085,7 +1190,24 @@
     "custom": "Custom Form",
     "customDesc": "Submit a form based on a template created by your conservatory.",
     "noTemplates": "No form templates available.",
-    "createForm": "Create Form"
+    "createForm": "Create Form",
+    "selectionTitle": "Select form details",
+    "formType": "Form type",
+    "selectType": "Select form type",
+    "selectStudent": "Student",
+    "selectStudentPlaceholder": "Select student",
+    "pleaseSelectStudent": "Please select a student to continue.",
+    "loading": "Loading...",
+    "successTitle": "{type} form created",
+    "successDesc": "The form has been saved successfully.",
+    "validation": {
+      "required": "This field is required"
+    },
+    "types": {
+      "recital": "Recital",
+      "kenes": "Kenes",
+      "exam_registration": "Exam registration"
+    }
   },
   "TrialBooking": {
     "pageTitle": "Book a Trial Lesson",
@@ -1099,11 +1221,49 @@
     "successTitle": "Trial Lesson Booked!",
     "successDesc": "Your trial lesson with {name} has been scheduled for {date}.",
     "instrument": "Instrument",
-    "instrumentPlaceholder": "Select instrument..."
+    "instrumentPlaceholder": "Select instrument...",
+    "steps": {
+      "instrument": "Instrument",
+      "teacher": "Teacher",
+      "schedule": "Schedule",
+      "details": "Details",
+      "payment": "Payment"
+    },
+    "success": {
+      "title": "Title",
+      "description": "Description",
+      "confirmation": "Confirmation",
+      "info": "Info"
+    },
+    "title": "Title",
+    "teacher": "Teacher",
+    "teacherPlaceholder": "Teacher Placeholder",
+    "availableSlots": "Available Slots",
+    "details": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "payment": {
+      "title": "Title",
+      "price": "Price",
+      "mock": "Mock",
+      "button": "Button"
+    },
+    "back": "Back",
+    "next": "Next",
+    "validation": {
+      "instrumentRequired": "Please select an instrument.",
+      "dateRequired": "Please select a date.",
+      "timeRequired": "Please select a time.",
+      "nameRequired": "Name is required.",
+      "phoneInvalid": "Phone number is invalid.",
+      "emailInvalid": "Email address is invalid."
+    }
   },
   "PlayingSchool": {
     "pageTitle": "School Partnerships",
-    "coordinatorPageTitle": "My School Ã¢â‚¬â€ Playing School",
+    "coordinatorPageTitle": "My School - Playing School",
     "enrollmentPageTitle": "Registration for Playing School Program",
     "adminSubtitle": "Manage school partnerships, subsidies, and billing.",
     "coordinatorSubtitle": "School Symbol: {symbol}",
@@ -1145,7 +1305,8 @@
       "students": "Students",
       "calendar": "Calendar",
       "messages": "Messages",
-      "billing": "Billing"
+      "billing": "Billing",
+      "partnerships": "Partnerships"
     },
     "table": {
       "school": "School / Name",
@@ -1225,7 +1386,8 @@
       "viewDetails": "View Full Program Details",
       "registrationDate": "Enrolled since",
       "scheduleTitle": "Schedule",
-      "noUpcoming": "No upcoming lessons"
+      "noUpcoming": "No upcoming lessons",
+      "excellenceNominated": "Excellence Nominated"
     },
     "attendance": {
       "title": "School Program Attendance",
@@ -1344,11 +1506,11 @@
       "termsNote2": "Commitment is for the duration of the school year.",
       "consentLabel": "I agree to the terms and conditions and approve my child's participation in the program.",
       "paymentTitle": "Payment Arrangement",
-      "paymentAmt": "Amount to pay: Ã¢â€šÂª{amount}",
+      "paymentAmt": "Amount to pay: ₪{amount}",
       "payViaSchool": "Payment via School Fees",
       "payViaSchoolDesc": "The charge will be added to your regular school payments.",
       "payOnline": "Credit Card / Bit",
-      "payOnlineDesc": "Safe payment via Cardcom (approx. Ã¢â€šÂª{amount}/month)",
+      "payOnlineDesc": "Safe payment via Cardcom (approx. ₪{amount}/month)",
       "complete": "Complete Registration",
       "success": "Registration Complete!",
       "successDesc": "A confirmation has been sent to {email} and via SMS to {phone}.",
@@ -1416,7 +1578,9 @@
       "joinWaitlist": "Join Waitlist",
       "goBack": "Alternatively, you can go back and change your preferences.",
       "matchPercentage": "{percent}% Match",
-      "whyLearnWith": "Why learn with {name}?"
+      "whyLearnWith": "Why learn with {name}?",
+      "errorTitle": "Error Title",
+      "errorDesc": "Error Desc"
     },
     "success": {
       "adminTitle": "Student Registered Successfully!",
@@ -1485,6 +1649,12 @@
         "MORNING": "Morning (8-13)",
         "AFTERNOON": "Afternoon (13-17)",
         "EVENING": "Evening (17-21)"
+      },
+      "virtual": "Virtual",
+      "virtualOptions": {
+        "yes": "Yes",
+        "no": "No",
+        "only": "Only"
       }
     },
     "validation": {
@@ -1512,7 +1682,8 @@
       "firstLesson": "First Lesson",
       "price": "Price",
       "notSelected": "Not selected",
-      "later": "Will be determined later"
+      "later": "Will be determined later",
+      "atTime": "At Time"
     }
   },
   "LessonManagement": {
@@ -1675,7 +1846,11 @@
       "FIRST_PLAYING_SCHOOL_LESSON_DESC": "Participated in the first lesson of the Playing School program!",
       "INSTRUMENT_COLLECTED": "Ready to Start",
       "INSTRUMENT_COLLECTED_DESC": "Successfully collected the musical instrument for the program."
-    }
+    },
+    "fullSchedule": "Full Schedule",
+    "recentPractices": "Recent Practices",
+    "allPractices": "All Practices",
+    "noRecentTeacherNotes": "No Recent Teacher Notes"
   },
   "PublicEventPage": {
     "orderComplete": "Order Complete!",
@@ -2410,7 +2585,9 @@
     "gradeLevel": "Grade/Level",
     "approvalDate": "Approval Date",
     "view": "View",
-    "noApprovedForms": "No approved forms found for export."
+    "noApprovedForms": "No approved forms found for export.",
+    "status": "Status",
+    "actions": "Actions"
   },
   "Walkthrough": {
     "title": "System Tour",
@@ -2485,7 +2662,7 @@
     "tomorrow": "Tomorrow",
     "minuteLesson": "{min} Minute Lesson",
     "shareTitle": "Available music lesson!",
-    "shareText": "I found an available {instrument} lesson with {teacher} at a special price of Ã¢â€šÂª{price}!",
+    "shareText": "I found an available {instrument} lesson with {teacher} at a special price of ₪{price}!",
     "linkCopied": "Link copied!",
     "linkCopiedDesc": "You can now share it with friends.",
     "shareError": "Sharing error",
@@ -2578,13 +2755,13 @@
     "studentCol": "Student",
     "dateCol": "Date",
     "totalHoursLabel": "Total Hours: {hours}",
-    "grossPayLabel": "Gross Pay: Ã¢â€šÂª{amount}",
+    "grossPayLabel": "Gross Pay: ₪{amount}",
     "noPayrollDataTitle": "No Payroll Data",
     "noPayrollDataDesc": "No payroll reports have been generated for you this month yet.",
     "payslipForMonth": "Payslip for {month}",
     "exportPdfBtn": "Export PDF",
     "lessonDetailsTitle": "Lesson Details ({count})",
-    "currencySymbol": "Ã¢â€šÂª"
+    "currencySymbol": "₪"
   },
   "PerformanceBooking": {
     "stageInquiryReceived": "New Inquiry",
@@ -2624,7 +2801,7 @@
     "dialogPersonalMsgLabel": "Personal Message (Optional)",
     "dialogPersonalMsgPlaceholder": "e.g., The quote includes basic amplification. We look forward to serving you...",
     "dialogSendQuoteBtn": "Send Quote",
-    "currencySymbol": "Ã¢â€šÂª"
+    "currencySymbol": "₪"
   },
   "PracticeLogForm": {
     "errorDateRequired": "You must select a date.",
@@ -2724,7 +2901,7 @@
     "colDate": "Submission Date",
     "colStatus": "Status",
     "noUpcomingExams": "No exam submissions in the near future.",
-    "currencySymbol": "Ã¢â€šÂª"
+    "currencySymbol": "₪"
   },
   "PerformanceProfileEditor": {
     "validationTitleRequired": "Title is required",
@@ -3038,5 +3215,279 @@
     "questions": "Questions? Contact {support}",
     "welcomeTitle": "Welcome!",
     "welcomeDesc": "Invitation accepted. Let's set up your school dashboard."
+  },
+  "Metadata": {
+    "siteName": "Harmony",
+    "siteDescription": "Smart management system for advanced conservatories."
+  },
+  "AiAlerts": {
+    "title": "AI Alerts",
+    "subtitle": "Proactive recommendations from your data.",
+    "noAlerts": "No important alerts right now.",
+    "viewAll": "View all alerts"
+  },
+  "ExcellenceTrack": {
+    "successTitle": "Success Title",
+    "declineTitle": "Decline Title",
+    "offerTitle": "Offer Title",
+    "offerSubtitle": "Offer Subtitle",
+    "offerDescription": "Offer Description",
+    "benefits": "Benefits",
+    "tuitionTitle": "Tuition Title",
+    "tuitionDescription": "Tuition Description",
+    "declineReasonLabel": "Decline Reason Label",
+    "notInterestedReason": "Not Interested Reason",
+    "acceptBtn": "Accept Btn",
+    "declineBtn": "Decline Btn"
+  },
+  "SuggestionButton": {
+    "successTitle": "Success Title",
+    "successDesc": "Success Desc",
+    "noSuggestionsTitle": "No Suggestions Title",
+    "noSuggestionsDesc": "No Suggestions Desc",
+    "errorTitle": "Error Title",
+    "errorDesc": "Error Desc",
+    "buttonText": "Button Text"
+  },
+  "RecitalForm": {
+    "validation": {
+      "requiredComposer": "Required Composer",
+      "requiredTitle": "Required Title",
+      "invalidDuration": "Invalid Duration",
+      "requiredGenre": "Required Genre",
+      "requiredAcademicYear": "Required Academic Year",
+      "requiredGrade": "Required Grade",
+      "requiredInstrument": "Required Instrument",
+      "minRepertoire": "Min Repertoire",
+      "maxRepertoire": "Max Repertoire"
+    },
+    "schoolSymbol": "School Symbol",
+    "compositionItem": "Composition Item",
+    "deleteItem": "Delete Item",
+    "composer": "Composer",
+    "selectComposer": "Select Composer",
+    "compositionTitle": "Composition Title",
+    "selectComposition": "Select Composition",
+    "genre": "Genre",
+    "selectGenre": "Select Genre",
+    "duration": "Duration",
+    "studentDetails": "Student Details",
+    "studentName": "Student Name",
+    "idNumber": "Id Number",
+    "grade": "Grade",
+    "city": "City",
+    "phone": "Phone",
+    "gender": "Gender",
+    "schoolDetails": "School Details",
+    "schoolName": "School Name",
+    "hasMusicMajor": "Has Music Major",
+    "isMajorParticipant": "Is Major Participant",
+    "instrumentDetails": "Instrument Details",
+    "instrument": "Instrument",
+    "yearsOfStudy": "Years Of Study",
+    "yearsWithTeacher": "Years With Teacher",
+    "teacherName": "Teacher Name",
+    "repertoire": "Repertoire",
+    "addComposition": "Add Composition",
+    "cancel": "Cancel",
+    "resubmit": "Resubmit",
+    "submit": "Submit"
+  },
+  "KenesForm": {
+    "validation": {
+      "requiredComposer": "Required Composer",
+      "requiredTitle": "Required Title",
+      "invalidDuration": "Invalid Duration",
+      "requiredGenre": "Required Genre",
+      "requiredAcademicYear": "Required Academic Year",
+      "requiredConservatorium": "Required Conservatorium",
+      "requiredEventName": "Required Event Name",
+      "requiredEventDate": "Required Event Date",
+      "requiredLocation": "Required Location",
+      "requiredConductor": "Required Conductor",
+      "requiredNumParticipants": "Required Num Participants",
+      "minRepertoire": "Min Repertoire",
+      "maxRepertoire": "Max Repertoire"
+    },
+    "compositionItem": "Composition Item",
+    "deleteItem": "Delete Item",
+    "composer": "Composer",
+    "selectComposer": "Select Composer",
+    "compositionTitle": "Composition Title",
+    "selectComposition": "Select Composition",
+    "genre": "Genre",
+    "selectGenre": "Select Genre",
+    "duration": "Duration",
+    "title": "Title",
+    "academicYear": "Academic Year",
+    "conservatorium": "Conservatorium",
+    "eventDetails": "Event Details",
+    "eventName": "Event Name",
+    "eventDate": "Event Date",
+    "location": "Location",
+    "ensembleDetails": "Ensemble Details",
+    "conductor": "Conductor",
+    "accompanist": "Accompanist",
+    "numParticipants": "Num Participants",
+    "program": "Program",
+    "addComposition": "Add Composition",
+    "maxReached": "Max Reached",
+    "totalDuration": "Total Duration",
+    "logisticalNeeds": "Logistical Needs",
+    "logisticalNeedsPlaceholder": "Logistical Needs Placeholder",
+    "pricing": "Pricing",
+    "pricingExplainTitle": "Pricing Explain Title",
+    "pricingExplainDesc": "Pricing Explain Desc",
+    "conservatoriumTier": "Conservatorium Tier",
+    "tierPrefix": "Tier Prefix",
+    "ensembleSize": "Ensemble Size",
+    "durationLabel": "Duration Label",
+    "minutes": "Minutes",
+    "totalPrice": "Total Price",
+    "cancel": "Cancel",
+    "resubmit": "Resubmit",
+    "submit": "Submit"
+  },
+  "ExamRegistrationForm": {
+    "validation": {
+      "requiredComposer": "Required Composer",
+      "requiredTitle": "Required Title",
+      "invalidDuration": "Invalid Duration",
+      "requiredGenre": "Required Genre",
+      "requiredInstrument": "Required Instrument",
+      "requiredLevel": "Required Level",
+      "requiredType": "Required Type",
+      "minRepertoire": "Min Repertoire",
+      "maxRepertoire": "Max Repertoire",
+      "requiredDeclaration": "Required Declaration"
+    },
+    "compositionItem": "Composition Item",
+    "deleteItem": "Delete Item",
+    "composer": "Composer",
+    "selectComposer": "Select Composer",
+    "compositionTitle": "Composition Title",
+    "selectComposition": "Select Composition",
+    "genre": "Genre",
+    "selectGenre": "Select Genre",
+    "duration": "Duration",
+    "studentAndInstrument": "Student And Instrument",
+    "studentName": "Student Name",
+    "idNumber": "Id Number",
+    "instrument": "Instrument",
+    "examDetails": "Exam Details",
+    "examLevel": "Exam Level",
+    "selectLevel": "Select Level",
+    "examType": "Exam Type",
+    "selectType": "Select Type",
+    "preferredDateRange": "Preferred Date Range",
+    "dateRangePlaceholder": "Date Range Placeholder",
+    "repertoire": "Repertoire",
+    "addComposition": "Add Composition",
+    "teacherDeclarationTitle": "Teacher Declaration Title",
+    "teacherDeclarationText": "Teacher Declaration Text",
+    "cancel": "Cancel",
+    "resubmit": "Resubmit",
+    "submit": "Submit"
+  },
+  "StudentPractice": {
+    "durationMustBePositive": "Duration Must Be Positive",
+    "practiceLoggedTitle": "Practice Logged Title",
+    "pointsEarnedDesc": "Points Earned Desc",
+    "streakTitle": "Streak Title",
+    "daysLabel": "Days Label",
+    "keepPracticing": "Keep Practicing",
+    "timePracticed": "Time Practiced",
+    "minutesLabel": "Minutes Label",
+    "equivToHours": "Equiv To Hours",
+    "generationPoints": "Generation Points",
+    "ranking": "Ranking",
+    "logNewPracticeTitle": "Log New Practice Title",
+    "logNewPracticeDesc": "Log New Practice Desc",
+    "whatDidYouPractice": "What Did You Practice",
+    "selectPiece": "Select Piece",
+    "noTasksDefined": "No Tasks Defined",
+    "pieceLabel": "Piece Label",
+    "generalPractice": "General Practice",
+    "durationLabel": "Duration Label",
+    "personalNotesLabel": "Personal Notes Label",
+    "notesPlaceholder": "Notes Placeholder",
+    "videoAttached": "Video Attached",
+    "attachVideo": "Attach Video",
+    "bonusPoints": "Bonus Points",
+    "sendReportBtn": "Send Report Btn",
+    "weeklyProgress": "Weekly Progress",
+    "chartMinAbbrev": "Chart Min Abbrev",
+    "chartTooltipTime": "Chart Tooltip Time",
+    "myPracticeLog": "My Practice Log",
+    "colDate": "Col Date",
+    "colTopic": "Col Topic",
+    "colDuration": "Col Duration",
+    "colFeedback": "Col Feedback",
+    "noLogsFound": "No Logs Found",
+    "unknownPiece": "Unknown Piece",
+    "systemFeedback": "System Feedback",
+    "ptsLabel": "Pts Label"
+  },
+  "AiMatchmaker": {
+    "stepGoal": "Step Goal",
+    "stepStyle": "Step Style",
+    "stepPersonality": "Step Personality",
+    "stepResults": "Step Results",
+    "title": "Title",
+    "description": "Description",
+    "analyzingTitle": "Analyzing Title",
+    "analyzingDesc": "Analyzing Desc",
+    "qGoalTitle": "Q Goal Title",
+    "qGoalA1": "Q Goal A1",
+    "qGoalA2": "Q Goal A2",
+    "qGoalA3": "Q Goal A3",
+    "qStyleTitle": "Q Style Title",
+    "qStyleA1": "Q Style A1",
+    "qStyleA2": "Q Style A2",
+    "qStyleA3": "Q Style A3",
+    "qPersonalityTitle": "Q Personality Title",
+    "qPersonalityA1": "Q Personality A1",
+    "qPersonalityA2": "Q Personality A2",
+    "qPersonalityA3": "Q Personality A3",
+    "qOtherTitle": "Q Other Title",
+    "qOtherPlaceholder": "Q Other Placeholder",
+    "matchFoundTitle": "Match Found Title",
+    "matchFoundDesc": "Match Found Desc",
+    "topMatchLabel": "Top Match Label",
+    "ronitName": "Ronit Name",
+    "ronitTitle": "Ronit Title",
+    "ronitTag1": "Ronit Tag1",
+    "ronitTag2": "Ronit Tag2",
+    "ronitTag3": "Ronit Tag3",
+    "whyRonitLabel": "Why Ronit Label",
+    "whyRonitDesc": "Why Ronit Desc",
+    "bookTrialBtn": "Book Trial Btn",
+    "runnerUpLabel": "Runner Up Label",
+    "danName": "Dan Name",
+    "danTitle": "Dan Title",
+    "viewProfileBtn": "View Profile Btn",
+    "prevBtn": "Prev Btn",
+    "findTeacherBtn": "Find Teacher Btn",
+    "nextBtn": "Next Btn"
+  },
+  "TeacherProfileEditor": {
+    "validation": {
+      "nameMin": "Name must contain at least 2 characters.",
+      "emailInvalid": "Invalid email address.",
+      "bioMax": "Bio can contain up to 500 characters."
+    },
+    "toasts": {
+      "translatingTitle": "Updating translations...",
+      "translatingDesc": "AI is updating your bio in additional languages.",
+      "saved": "Profile updated successfully!"
+    },
+    "description": "Edit your profile details.",
+    "fullName": "Full name",
+    "email": "Email",
+    "shortBio": "Short bio",
+    "specialties": "Specialties",
+    "teachingLanguages": "Teaching languages",
+    "savingTranslations": "Updating translations...",
+    "saveChanges": "Save changes"
   }
 }

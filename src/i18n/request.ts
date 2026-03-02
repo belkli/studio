@@ -25,8 +25,9 @@ function deepMerge(base: any, override: any): any {
 }
 
 
-export default getRequestConfig(async ({ locale: requestLocale }) => {
-    let locale = requestLocale;
+export default getRequestConfig(async ({ requestLocale }) => {
+    const resolvedLocale = await requestLocale;
+    let locale = resolvedLocale;
     
     // Validate that the incoming `locale` parameter is valid
     if (!locale || !routing.locales.includes(locale as any)) {

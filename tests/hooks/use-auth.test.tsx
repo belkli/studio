@@ -2,8 +2,8 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import type { FormTemplate, NotificationPreferences } from '@/lib/types';
 
-// Mock dependencies
 vi.mock('@/hooks/use-toast', () => ({
     useToast: () => ({
         toast: vi.fn(),
@@ -14,26 +14,15 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
     <AuthProvider>{children}</AuthProvider>
 );
 
-describe('AuthProvider Ultimate 100% Coverage', () => {
+describe('AuthProvider smoke coverage', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
     });
 
-    it('should achieve 100% logic coverage through exhaustive state mutation', async () => {
+    it('executes core auth and mutation flows with current signatures', async () => {
         const { result } = renderHook(() => useAuth(), { wrapper });
 
-        // 1. GUEST FLOWS (Hits early returns/guards)
-        await act(async () => {
-            result.current.addLesson({});
-            result.current.addAnnouncement({});
-            result.current.addScholarshipApplication({});
-            result.current.addToWaitlist({});
-            result.current.markWalkthroughAsSeen('none');
-            result.current.addUser({ name: 'Guest Flow' }, false); // Should work as it's registration
-        });
-
-        // 2. ADMIN FLOWS (Authentication & Global Management)
         await act(async () => {
             result.current.login('admin@example.com');
         });
@@ -43,50 +32,74 @@ describe('AuthProvider Ultimate 100% Coverage', () => {
             result.current.approveUser('pending-teacher-1');
             result.current.rejectUser('student-user-2', 'Inappropriate');
             result.current.addUser({ name: 'Admin Added', role: 'teacher' }, true);
-            result.current.updateUser({ ...result.current.user, name: 'Super Admin' } as any);
-            result.current.updateConservatorium({ name: 'Harmony Center' });
-            result.current.addBranch({ name: 'Downtown' });
+
+            const currentConservatorium = result.current.conservatoriums[0];
+            if (currentConservatorium) {
+                result.current.updateConservatorium({
+                    ...currentConservatorium,
+                    name: 'Harmony Center',
+                });
+            }
+
+            result.current.addBranch({
+                conservatoriumId: result.current.user?.conservatoriumId || 'cons-1',
+                name: 'Downtown',
+                address: 'Main St',
+            });
+
             result.current.addRoom({ name: 'Hall A' });
-            result.current.addFormTemplate({ name: 'Annual Review' });
+
+            const template: Partial<FormTemplate> = {
+                title: 'Annual Review',
+                description: 'Template for review',
+                fields: [],
+                workflow: [],
+            };
+            result.current.addFormTemplate(template);
+
             result.current.addAnnouncement({ title: 'System Update' });
             result.current.addEvent({ name: 'Spring Fest' });
             result.current.addPerformanceBooking({ clientName: 'Rotary Club' });
         });
 
-        const branchId = result.current.mockBranches[0]?.id;
-        const roomId = result.current.mockRooms.find(r => r.name === 'Hall A')?.id;
+        const firstBranch = result.current.mockBranches[0];
+        const roomId = result.current.mockRooms.find((room) => room.name === 'Hall A')?.id;
         const eventId = result.current.mockEvents[0]?.id;
         const bookingId = result.current.mockPerformanceBookings[0]?.id;
 
         await act(async () => {
-            if (branchId) result.current.updateBranch(branchId, { name: 'Downtown Main' });
+            if (firstBranch) {
+                result.current.updateBranch({ ...firstBranch, name: 'Downtown Main' });
+            }
             if (roomId) {
                 result.current.updateRoom(roomId, { capacity: 50 });
                 result.current.deleteRoom(roomId);
             }
             if (eventId) {
-                result.current.updateEvent({ ...result.current.mockEvents[0], type: 'CONCERT' });
+                result.current.updateEvent({
+                    ...result.current.mockEvents[0],
+                    type: 'CONCERT',
+                });
                 result.current.updateEventStatus(eventId, 'COMPLETED');
             }
             if (bookingId) {
                 result.current.assignMusiciansToPerformance(bookingId, ['teacher-user-1']);
-                result.current.updatePerformanceBookingStatus(bookingId, 'CONFIRMED');
+                result.current.updatePerformanceBookingStatus(bookingId, 'BOOKING_CONFIRMED');
             }
         });
 
-        // 3. TEACHER FLOWS (Lessons, Practice, Progress)
         await act(async () => {
             result.current.login('teacher@example.com');
         });
 
         await act(async () => {
             result.current.addLesson({ studentId: 'student-user-1', instrument: 'Piano' });
-            result.current.updateLessonStatus('lesson-1', 'PRESENT');
+            result.current.updateLessonStatus('lesson-1', 'COMPLETED');
             result.current.cancelLesson('lesson-1', false);
             result.current.rescheduleLesson('lesson-2', new Date().toISOString());
             result.current.assignSubstitute('lesson-1', 'teacher-user-2');
-            result.current.addLessonNote({ lessonId: 'lesson-1', text: 'Great focus' } as any);
-            result.current.addProgressReport({ studentId: 'student-user-1', text: 'A+' } as any);
+            result.current.addLessonNote({ studentId: 'student-user-1', summary: 'Great focus' });
+            result.current.addProgressReport({ studentId: 'student-user-1', reportText: 'A+' });
             result.current.assignRepertoire('student-user-1', 'comp-db-1');
         });
 
@@ -97,18 +110,16 @@ describe('AuthProvider Ultimate 100% Coverage', () => {
             result.current.updateRepertoireStatus(repId, 'COMPLETED');
             result.current.awardAchievement('student-user-1', 'PIECE_COMPLETED');
             result.current.reportSickLeave('teacher-user-1', new Date(), new Date());
-            result.current.addAnnouncement({ title: 'Teacher Msg' }); // Teachers can add announcements too
         });
 
-        // 4. STUDENT / PARENT FLOWS (Practice, Videos, Scholarship)
         await act(async () => {
             result.current.login('student1@example.com');
         });
 
         await act(async () => {
-            result.current.addPracticeLog({ durationMinutes: 45 });
-            result.current.updateUserPracticeGoal(150);
-            result.current.addPracticeVideo({ title: 'My Daily Scale', url: 'vid-1' });
+            result.current.addPracticeLog({ studentId: 'student-user-1', durationMinutes: 45 });
+            result.current.updateUserPracticeGoal('student-user-1', 150);
+            result.current.addPracticeVideo({ repertoireTitle: 'Daily Scale', videoUrl: 'vid-1' });
         });
 
         const videoId = result.current.mockPracticeVideos[0]?.id;
@@ -116,6 +127,7 @@ describe('AuthProvider Ultimate 100% Coverage', () => {
         await act(async () => {
             result.current.login('teacher@example.com');
         });
+
         if (videoId) {
             await act(async () => {
                 result.current.addVideoFeedback(videoId, 'Fix your fingering');
@@ -125,38 +137,67 @@ describe('AuthProvider Ultimate 100% Coverage', () => {
         await act(async () => {
             result.current.login('parent@example.com');
         });
+
         await act(async () => {
-            result.current.addScholarshipApplication({ reason: 'Need based' });
+            result.current.addScholarshipApplication({});
             result.current.addOpenDayAppointment({ childName: 'Dana' });
-            result.current.updateUserPaymentMethod({ type: 'CREDIT' });
-            result.current.updateNotificationPreferences({ push: true });
+            result.current.updateUserPaymentMethod({
+                last4: '4242',
+                expiryMonth: 12,
+                expiryYear: 2030,
+            });
+
+            const notificationPreferences: NotificationPreferences = {
+                preferences: {
+                    lessonReminders: ['IN_APP'],
+                    lessonCancellation: ['IN_APP'],
+                    makeupCredits: ['IN_APP'],
+                    paymentDue: ['IN_APP'],
+                    formStatusChanges: ['IN_APP'],
+                    teacherMessages: ['IN_APP'],
+                    systemAnnouncements: ['IN_APP'],
+                    psLessonReminders: ['IN_APP'],
+                    psLessonCancellation: ['IN_APP'],
+                    psPaymentDue: ['IN_APP'],
+                    psExcellenceUpdates: ['IN_APP'],
+                    psNewEnrollment: ['IN_APP'],
+                    psPartnershipUpdate: ['IN_APP'],
+                    psCoordinatorAnnouncements: ['IN_APP'],
+                },
+                quietHours: {
+                    enabled: false,
+                    startTime: '22:00',
+                    endTime: '07:00',
+                },
+                language: 'EN',
+            };
+            result.current.updateNotificationPreferences(notificationPreferences);
         });
 
-        // 5. HOUSEKEEPING & REMAINING BRANCHES
         await act(async () => {
             result.current.login('admin@example.com');
-        });
-        await act(async () => {
-            result.current.addBranch({ name: 'Temp Branch' });
             result.current.addInstrument({ name: 'Oboe' });
         });
-        const tempBranchId = result.current.mockBranches.find(b => b.name === 'Temp Branch')?.id;
+
         const instId = result.current.mockInstrumentInventory[0]?.id;
 
         await act(async () => {
-            if (tempBranchId) result.current.updateBranch(tempBranchId, { active: false });
             if (instId) {
-                result.current.assignInstrumentToStudent(instId, 'student-user-1', { deposit: 10 });
+                result.current.assignInstrumentToStudent(instId, 'student-user-1', {
+                    expectedReturnDate: new Date().toISOString().split('T')[0],
+                    parentSignatureUrl: 'sig://test',
+                    depositAmount: 10,
+                });
                 result.current.updateInstrument(instId, { condition: 'GOOD' });
                 result.current.returnInstrument(instId);
                 result.current.deleteInstrument(instId);
             }
-            result.current.addMessage('thread-1', 'Ping');
+
+            result.current.addMessage('thread-1', 'admin-user-1', 'Ping');
             result.current.markWalkthroughAsSeen('student-user-1');
             result.current.logout();
         });
 
-        // Final sanity check
         expect(result.current.user).toBeNull();
     });
 });

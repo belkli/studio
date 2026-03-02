@@ -32,6 +32,7 @@ type FormTypeData = {
 export function NewForm() {
   const t = useTranslations('NewForm');
   const locale = useLocale();
+  const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
   const { toast } = useToast();
   const { user, users, mockFormSubmissions, updateForm, mockFormTemplates } = useAuth();
   const router = useRouter();
@@ -96,7 +97,7 @@ export function NewForm() {
 
     const newSubmission = {
       id: `form-${Date.now()}`,
-      status: user?.role === 'student' ? 'ממתין לאישור מורה' : 'ממתין לאישור מנהל',
+      status: user?.role === 'student' ? 'PENDING_TEACHER' : 'PENDING_ADMIN',
       studentId: finalStudentId,
       studentName: users.find(u => u.id === finalStudentId)?.name ?? '',
       submissionDate: new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'he-IL'),
@@ -215,7 +216,7 @@ export function NewForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('formType')}</FormLabel>
-                      <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select dir={dir} onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder={t('selectType')} />
@@ -238,7 +239,7 @@ export function NewForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('selectStudent')}</FormLabel>
-                      <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select dir={dir} onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder={t('selectStudentPlaceholder')} />

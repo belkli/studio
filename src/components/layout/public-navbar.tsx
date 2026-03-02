@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 
@@ -17,6 +18,11 @@ export function PublicNavbar() {
     const locale = useLocale();
     const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const navItems = [
         { href: '/available-now', label: tNav('lessons') },
@@ -71,35 +77,42 @@ export function PublicNavbar() {
             
             <div className="md:hidden flex items-center">
                 <LanguageSwitcher />
-                <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                    <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Menu className="h-5 w-5" />
-                            <span className="sr-only">Open menu</span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side={dir === 'rtl' ? 'right' : 'left'} className="w-3/4">
-                        <div className="flex flex-col gap-4 mt-8">
-                             <Link href="/" className="flex items-center justify-start mb-4" onClick={() => setMobileOpen(false)}>
-                                <Icons.logo className="h-6 w-6 text-primary" />
-                                <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
-                            </Link>
-                            {navItems.map(item => (
-                                <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-                                    className={cn("text-lg font-medium", isActive(item.href) ? "text-primary" : "text-foreground/80")}>
-                                    {item.label}
+                {!mounted ? (
+                    <Button variant="ghost" size="icon" disabled aria-label="Open menu">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Open menu</span>
+                    </Button>
+                ) : (
+                    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Open menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side={dir === 'rtl' ? 'right' : 'left'} className="w-3/4">
+                            <div className="flex flex-col gap-4 mt-8">
+                                 <Link href="/" className="flex items-center justify-start mb-4" onClick={() => setMobileOpen(false)}>
+                                    <Icons.logo className="h-6 w-6 text-primary" />
+                                    <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
                                 </Link>
-                            ))}
-                            <hr className="my-4" />
-                            <Button asChild variant="outline">
-                                <Link href="/login" onClick={() => setMobileOpen(false)}>{tNav('login')}</Link>
-                            </Button>
-                            <Button asChild>
-                                <Link href="/register" onClick={() => setMobileOpen(false)}>{tNav('register')}</Link>
-                            </Button>
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                                {navItems.map(item => (
+                                    <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
+                                        className={cn("text-lg font-medium", isActive(item.href) ? "text-primary" : "text-foreground/80")}>
+                                        {item.label}
+                                    </Link>
+                                ))}
+                                <hr className="my-4" />
+                                <Button asChild variant="outline">
+                                    <Link href="/login" onClick={() => setMobileOpen(false)}>{tNav('login')}</Link>
+                                </Button>
+                                <Button asChild>
+                                    <Link href="/register" onClick={() => setMobileOpen(false)}>{tNav('register')}</Link>
+                                </Button>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                )}
             </div>
         </header>
     );

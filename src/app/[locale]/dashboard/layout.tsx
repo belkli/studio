@@ -6,14 +6,19 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+  const sidebarSide = locale === 'he' || locale === 'ar' ? 'right' : 'left';
+
   return (
     <SidebarProvider>
-      <Sidebar side="left" collapsible="icon">
+      <Sidebar side={sidebarSide} collapsible="icon">
         <SidebarNav />
       </Sidebar>
       <SidebarInset>

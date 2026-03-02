@@ -30,7 +30,7 @@ import {
   BrainCircuit, Megaphone, UserPlus, Download, Coins, UserCog,
   Banknote, ListChecks, Presentation, GanttChartSquare, Music,
   ShieldQuestion, CalendarPlus, HandCoins, GraduationCap,
-  FileText, PencilRuler, MessageCircleQuestion, ChevronRight,
+  FileText, PencilRuler, MessageCircleQuestion, ChevronDown,
   Book, User, Bot, Users, Gift,
   // NEW icons — SDD-NAV-01 §3 Icon Rationalisation
   Music2, HeartHandshake, Dumbbell, CalendarSearch, CalendarDays,
@@ -322,7 +322,7 @@ type LinkItem = {
 export function SidebarNav() {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  const { user, logout, updateUser, newFeaturesEnabled, hasSeenNewFeatures } = useAuth();
+  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
 
   // Track which groups are collapsed (keyed by labelKey)
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(
@@ -345,6 +345,7 @@ export function SidebarNav() {
   if (!user) return null;
 
   const userRole = user.role;
+  const hasSeenNewFeatures = (user as any).hasSeenNewFeatures ?? true;
   const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
 
   const handleNotificationsOpen = () => {
@@ -438,9 +439,9 @@ export function SidebarNav() {
                   <group.icon className="h-3.5 w-3.5" />
                   {t(group.labelKey)}
                 </span>
-                <ChevronRight className={cn(
+                <ChevronDown className={cn(
                   'h-3.5 w-3.5 transition-transform duration-200',
-                  !isCollapsed && 'rotate-90'
+                  isCollapsed && '-rotate-90'
                 )} />
               </SidebarGroupLabel>
               {!isCollapsed && (

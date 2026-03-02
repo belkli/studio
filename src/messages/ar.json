@@ -76,7 +76,34 @@
     "cancel": "إلغاء",
     "saving": "جاري الحفظ...",
     "actions": "إجراءات",
-    "noData": "لا توجد بيانات متاحة"
+    "noData": "لا توجد بيانات متاحة",
+    "shared": {
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "loading": "جارٍ التحميل...",
+      "status": "الحالة",
+      "actions": "الإجراءات",
+      "view": "عرض",
+      "studentName": "اسم الطالب",
+      "formType": "نوع النموذج",
+      "submissionDate": "تاريخ التقديم",
+      "grade": "الصف"
+    },
+    "translationEditor": {
+      "stale": "الترجمة غير محدثة",
+      "aiTranslating": "يتم الترجمة بالذكاء الاصطناعي...",
+      "sourceContent": "المحتوى الأصلي (عبري)",
+      "human": "بشري",
+      "ai": "AI",
+      "cancel": "إلغاء",
+      "override": "استبدال",
+      "noTranslationYet": "لم تتم الترجمة بعد",
+      "language": {
+        "english": "الإنجليزية",
+        "arabic": "العربية",
+        "russian": "الروسية"
+      }
+    }
   },
   "HomePage": {
     "title": "هارمونيا",
@@ -153,7 +180,8 @@
       "SCHEDULED": "مجدول",
       "ATTENDED": "حضر/ت",
       "NO_SHOW": "لم يحضر/تحضر"
-    }
+    },
+    "childAge": "Child age"
   },
   "MusiciansForHire": {
     "heroTitle": "موسيقيون محترفون لأحداث لا تُنسى",
@@ -583,7 +611,11 @@
       "myStudents": "طُلابي ({count})",
       "myStudentsDesc": "نظرة سريعة على جميع طلابك",
       "attendanceMarked": "تم تسجيل الحضور",
-      "lessonUpdated": "تم تحديث حالة الدرس بنجاح."
+      "lessonUpdated": "تم تحديث حالة الدرس بنجاح.",
+      "weeklySchedule": "Weekly schedule",
+      "Calendar": {
+        "today": "Today"
+      }
     }
   },
   "Sidebar": {
@@ -663,7 +695,9 @@
     "groupFinanceAdmin": "المالية والإدارة",
     "groupMinistryOverview": "نظرة الوزارة",
     "groupPlayingSchool": "المدرسة العازفة",
-    "groupMySchool": "مدرستي"
+    "groupMySchool": "مدرستي",
+    "whatsNew": "ما الجديد",
+    "newBadge": "جديد"
   },
   "MessagesPage": {
     "title": "الرسائل",
@@ -1029,7 +1063,53 @@
       "publicProfile": "الملف الشخصي العام",
       "pricing": "إعدادات التسعير",
       "cancellation": "سياسة الإلغاء",
-      "manageAI": "إدارة ميزات الذكاء الاصطناعي"
+      "manageAI": "إدارة ميزات الذكاء الاصطناعي",
+      "profileEditor": {
+        "contact": {
+          "title": "تفاصيل التواصل",
+          "description": "كيف يمكن للطلاب والأهالي المحتملين التواصل معكم.",
+          "mainPhone": "الهاتف الرئيسي",
+          "whatsapp": "رقم واتساب",
+          "primaryEmail": "البريد الإلكتروني الأساسي",
+          "secondaryEmail": "بريد إلكتروني إضافي",
+          "website": "الموقع الرسمي"
+        },
+        "location": {
+          "title": "الموقع",
+          "description": "أين يقع المعهد؟",
+          "cityHebrew": "المدينة (بالعبرية)",
+          "cityEnglish": "المدينة (بالإنجليزية)",
+          "fullAddress": "العنوان الكامل"
+        },
+        "team": {
+          "title": "فريق الإدارة",
+          "description": "الشخصيات الأساسية في المعهد.",
+          "manager": "المدير/ة",
+          "pedagogicalCoordinator": "المنسق/ة التربوي/ة",
+          "photoUrl": "رابط الصورة",
+          "nameHebrew": "الاسم (بالعبرية)",
+          "titleRole": "المنصب / الدور",
+          "shortBio": "نبذة قصيرة",
+          "managerNamePlaceholder": "اسم المدير/ة",
+          "coordinatorNamePlaceholder": "اسم المنسق/ة"
+        },
+        "social": {
+          "title": "روابط الشبكات الاجتماعية",
+          "description": "اربطوا حضوركم الرقمي.",
+          "facebook": "رابط فيسبوك",
+          "instagram": "رابط إنستغرام",
+          "youtube": "رابط قناة يوتيوب",
+          "tiktok": "رابط تيك توك"
+        },
+        "media": {
+          "title": "الصور والوسائط",
+          "description": "الصور المعروضة في ملفكم العام.",
+          "headerImage": "رابط صورة الغلاف",
+          "galleryImage1": "رابط صورة المعرض 1",
+          "galleryImage2": "رابط صورة المعرض 2",
+          "galleryImage3": "رابط صورة المعرض 3"
+        }
+      }
     },
     "notifications": {
       "title": "تفضيلات الإشعارات",
@@ -1107,7 +1187,15 @@
     "successTitle": "تم الحجز!",
     "successDesc": "تم حجز الدرس التجريبي مع {name} بتاريخ {date}.",
     "instrument": "آلة النفخ أو الموسيقى",
-    "instrumentPlaceholder": "حدد الأداة الموسيقية..."
+    "instrumentPlaceholder": "حدد الأداة الموسيقية...",
+    "validation": {
+      "instrumentRequired": "يجب اختيار آلة موسيقية.",
+      "dateRequired": "يجب اختيار تاريخ.",
+      "timeRequired": "يجب اختيار وقت.",
+      "nameRequired": "الاسم حقل إلزامي.",
+      "phoneInvalid": "رقم الهاتف غير صالح.",
+      "emailInvalid": "البريد الإلكتروني غير صالح."
+    }
   },
   "PlayingSchool": {
     "pageTitle": "إدارة مدرسة العزف",
@@ -3074,5 +3162,35 @@
     "questions": "أسئلة؟ تواصل مع {support}",
     "welcomeTitle": "مرحباً!",
     "welcomeDesc": "تم قبول الدعوة. لنقم بإعداد لوحة تحكم مدرستك."
+  },
+  "Metadata": {
+    "siteName": "هارمونيا",
+    "siteDescription": "منصة إدارة ذكية للمعاهد الموسيقية المتقدمة."
+  },
+  "AiAlerts": {
+    "title": "تنبيهات AI",
+    "subtitle": "توصيات استباقية بناءً على بياناتك.",
+    "noAlerts": "لا توجد تنبيهات مهمة حالياً.",
+    "viewAll": "عرض كل التنبيهات"
+  },
+  "TeacherProfileEditor": {
+    "validation": {
+      "nameMin": "يجب أن يحتوي الاسم على حرفين على الأقل.",
+      "emailInvalid": "عنوان البريد الإلكتروني غير صالح.",
+      "bioMax": "يمكن أن تحتوي النبذة على 500 حرف كحد أقصى."
+    },
+    "toasts": {
+      "translatingTitle": "يتم تحديث الترجمات...",
+      "translatingDesc": "يقوم الذكاء الاصطناعي بتحديث سيرتك الذاتية بلغات إضافية.",
+      "saved": "تم تحديث الملف الشخصي بنجاح!"
+    },
+    "description": "قم بتحرير تفاصيل ملفك الشخصي.",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "shortBio": "نبذة قصيرة",
+    "specialties": "التخصصات",
+    "teachingLanguages": "لغات التدريس",
+    "savingTranslations": "يتم تحديث الترجمات...",
+    "saveChanges": "حفظ التغييرات"
   }
 }

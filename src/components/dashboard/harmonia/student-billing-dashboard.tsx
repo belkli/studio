@@ -93,7 +93,7 @@ export function StudentBillingDashboard() {
     const expiringPackageInfo = useMemo(() => {
         if (!currentPackage || !currentPackage.validUntil) return null;
 
-        const expiryDate = new milking(currentPackage.validUntil);
+        const expiryDate = new Date(currentPackage.validUntil);
         const daysUntilExpiry = differenceInDays(expiryDate, new Date());
 
         if (daysUntilExpiry <= 14 && daysUntilExpiry >= 0) {
