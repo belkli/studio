@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { Link, useRouter } from '@/i18n/routing';
-import { CheckCircle, ChevronLeft, ChevronRight, School, Loader2 } from 'lucide-react';
+import { CheckCircle, ChevronLeft, ChevronRight, Loader2, School } from 'lucide-react';
 
 // ── Mock school data (derived from token) ────────────────────────────────────
 

@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { addMinutes, format, isToday } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { useDateLocale } from "@/hooks/use-date-locale";
 
 const timeSlots = Array.from({ length: 15 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`); // 8 AM to 10 PM
 
@@ -35,6 +36,11 @@ const CalendarEvent = ({ lesson, student }: { lesson: LessonSlot, student: User 
 export const WeeklyCalendar = ({ lessons, students }: { lessons: LessonSlot[], students: User[] }) => {
     const { days, weekDisplay, nextWeek, prevWeek, returnToToday } = useCalendar();
     const t = useTranslations('Dashboard.Teacher.Calendar');
+    const locale = useLocale();
+    const dateLocale = useDateLocale();
+    const isRTL = locale === 'he' || locale === 'ar';
+
+    const displayDays = isRTL ? [...days].reverse() : days;
 
     return (
         <div className="w-full">
@@ -42,20 +48,24 @@ export const WeeklyCalendar = ({ lessons, students }: { lessons: LessonSlot[], s
                 <div className="flex items-center gap-4">
                     <Button onClick={returnToToday} variant="outline">{t('today')}</Button>
                     <div className="flex items-center gap-2">
-                        <Button onClick={prevWeek} variant="ghost" size="icon"><ChevronRight className="h-4 w-4" /></Button>
-                        <span className="text-lg font-semibold w-40 text-center">{weekDisplay}</span>
-                        <Button onClick={nextWeek} variant="ghost" size="icon"><ChevronLeft className="h-4 w-4" /></Button>
+                        <Button onClick={prevWeek} variant="ghost" size="icon">
+                            {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Button>
+                        <span className="text-lg font-semibold w-48 text-center">{weekDisplay}</span>
+                        <Button onClick={nextWeek} variant="ghost" size="icon">
+                            {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                        </Button>
                     </div>
                 </div>
             </div>
             <div className="grid grid-cols-7 border-t border-l rounded-lg overflow-hidden">
-                {days.map(day => (
+                {displayDays.map(day => (
                     <div key={day.toString()} className="border-r">
                         <div className={cn(
                             "text-center py-2 border-b",
                             isToday(day) && "bg-primary/10 text-primary font-bold"
                         )}>
-                            <p>{format(day, 'EEE')}</p>
+                            <p className="text-xs uppercase text-muted-foreground">{format(day, 'EEE', { locale: dateLocale })}</p>
                             <p className="text-2xl">{format(day, 'd')}</p>
                         </div>
                         <div className="relative h-[720px]"> {/* 12 hours * 60px/hour */}
@@ -76,5 +86,5 @@ export const WeeklyCalendar = ({ lessons, students }: { lessons: LessonSlot[], s
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};

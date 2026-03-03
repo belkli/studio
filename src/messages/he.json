@@ -599,6 +599,7 @@
       "logout": "התנתק"
     },
     "Teacher": {
+      "room": "חדר {number}",
       "markAttendance": "סמן נוכחות",
       "markNoShow": "סמן אי-הגעה (בתשלום)",
       "markAbsence": "סמן היעדרות מוצדקת",
@@ -635,9 +636,9 @@
       "myStudentsDesc": "סקירה מהירה של כל התלמידים שלך",
       "attendanceMarked": "הנוכחות עודכנה",
       "lessonUpdated": "סטטוס השיעור עודכן בהצלחה.",
-      "weeklySchedule": "Weekly schedule",
+      "weeklySchedule": "מערכת שעות שבועית",
       "Calendar": {
-        "today": "Today"
+        "today": "היום"
       }
     }
   },

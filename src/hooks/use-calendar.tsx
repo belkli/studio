@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { add, sub, startOfWeek, endOfWeek, eachDayOfInterval, format } from 'date-fns';
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, addWeeks, subWeeks } from 'date-fns';
+import { useDateLocale } from './use-date-locale';
 
 export const useCalendar = (initialDate: Date = new Date()) => {
     const [currentDate, setCurrentDate] = useState(initialDate);
@@ -15,22 +16,24 @@ export const useCalendar = (initialDate: Date = new Date()) => {
     });
 
     const nextWeek = () => {
-        setCurrentDate(add(currentDate, { weeks: 1 }));
+        setCurrentDate(addWeeks(currentDate, 1));
     };
 
     const prevWeek = () => {
-        setCurrentDate(sub(currentDate, { weeks: 1 }));
+        setCurrentDate(subWeeks(currentDate, 1));
     };
 
     const returnToToday = () => {
         setCurrentDate(new Date());
     };
 
+    const dateLocale = useDateLocale();
+
     const weekDisplay = useMemo(() => {
-        const startMonth = format(startOfCurrentWeek, 'MMMM');
-        const endMonth = format(endOfCurrentWeek, 'MMMM');
-        const startYear = format(startOfCurrentWeek, 'yyyy');
-        const endYear = format(endOfCurrentWeek, 'yyyy');
+        const startMonth = format(startOfCurrentWeek, 'MMMM', { locale: dateLocale });
+        const endMonth = format(endOfCurrentWeek, 'MMMM', { locale: dateLocale });
+        const startYear = format(startOfCurrentWeek, 'yyyy', { locale: dateLocale });
+        const endYear = format(endOfCurrentWeek, 'yyyy', { locale: dateLocale });
 
         if (startYear !== endYear) {
             return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
@@ -39,7 +42,7 @@ export const useCalendar = (initialDate: Date = new Date()) => {
             return `${startMonth} - ${endMonth} ${startYear}`;
         }
         return `${startMonth} ${startYear}`;
-    }, [startOfCurrentWeek, endOfCurrentWeek]);
+    }, [startOfCurrentWeek, endOfCurrentWeek, dateLocale]);
 
 
     return {

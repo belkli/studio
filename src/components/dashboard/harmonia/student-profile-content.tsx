@@ -13,7 +13,7 @@ import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achie
 import { format, formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useMemo, useState } from "react";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const statusTranslations: Record<RepertoireStatus, string> = {
     LEARNING: 'למידה',
@@ -46,6 +46,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
     const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const dateLocale = useDateLocale();
+    const locale = useLocale();
     const t = useTranslations("StudentDashboard");
 
     const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
@@ -312,7 +313,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             {userLogs.slice(0, 3).map(log => (
                                 <div key={log.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
                                     <div>
-                                        <p className="font-medium">{new Date(log.date).toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                                        <p className="font-medium">{new Date(log.date).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                                         <p className="text-xs text-muted-foreground">{(log.pieces ?? []).map(p => p.title).join(', ')}</p>
                                     </div>
                                     <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
@@ -370,7 +371,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             ))}
                         </div>
                     ) : (
-                        <p className="text-center text-muted-foreground py-8">אין עדיין הישגים להצגה. המשיכו להתאמן!</p>
+                        <p className="text-center text-muted-foreground py-8">{t('noAchievements')}</p>
                     )}
                 </CardContent>
             </Card>

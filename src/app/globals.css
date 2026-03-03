@@ -304,6 +304,14 @@
 
 [dir="rtl"] .driver-popover .driver-popover-footer {
   justify-content: space-between;
+  flex-direction: row-reverse !important;
+}
+
+.driver-popover .driver-popover-footer {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 8px;
 }
 
 [dir="rtl"] .driver-popover .driver-close-btn {

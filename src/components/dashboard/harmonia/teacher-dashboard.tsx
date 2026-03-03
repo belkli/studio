@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
+import { useLocale, useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
@@ -13,7 +14,6 @@ import { format } from "date-fns";
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { SickLeaveModal } from "./sick-leave-modal";
 import { WeeklyCalendar } from "./weekly-calendar";
@@ -24,6 +24,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
     const isCompleted = lesson.status === 'COMPLETED';
 
     const t = useTranslations("Dashboard.Teacher");
+    const locale = useLocale();
 
     const attendanceButtons = (
         <>
@@ -58,7 +59,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
 
     return (
         <div className="flex items-center gap-4 p-3 rounded-lg border">
-            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</span>
             <Avatar>
                 <AvatarImage src={student?.avatarUrl} />
                 <AvatarFallback>{student?.name.charAt(0)}</AvatarFallback>
@@ -66,7 +67,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
             <div className="flex-1">
                 <p className="font-semibold">{student?.name}</p>
                 <p className="text-sm text-muted-foreground">
-                    {lesson.instrument}, חדר {lesson.roomId || '?'}
+                    {lesson.instrument}, {t('room', { number: lesson.roomId || '?' })}
                 </p>
             </div>
             <div className="flex gap-2">
@@ -163,6 +164,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
 
 export function TeacherDashboard() {
     const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages, updateLessonStatus } = useAuth();
+    const locale = useLocale();
     const { toast } = useToast();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
 

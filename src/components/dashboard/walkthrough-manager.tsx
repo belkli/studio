@@ -79,12 +79,16 @@ export function useWalkthrough() {
             showProgress: true,
             progressText: '{{current}} / {{total}}',
             steps: steps,
+            nextBtnText: t('next'),
+            prevBtnText: t('back'),
+            doneBtnText: t('done'),
             onDestroyed: () => {
                 markWalkthroughAsSeen(user.id);
+                const tutorialFinished = localStorage.getItem('tutorial-finished');
+                if (!tutorialFinished) {
+                    localStorage.setItem('tutorial-finished', 'true');
+                }
             },
-            nextBtnText: t('nextBtn'),
-            prevBtnText: t('prevBtn'),
-            doneBtnText: t('doneBtn'),
         });
 
         const timer = setTimeout(() => {

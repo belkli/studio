@@ -599,6 +599,7 @@
       "logout": "Logout"
     },
     "Teacher": {
+      "room": "Room {number}",
       "markAttendance": "Mark Attendance",
       "markNoShow": "Mark No Show (Paid)",
       "markAbsence": "Mark Excused Absence",
