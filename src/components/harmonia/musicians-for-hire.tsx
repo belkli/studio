@@ -62,6 +62,8 @@ const MusicianCard = ({ musician: originalMusician }: { musician: User }) => {
 
 export function MusiciansForHire() {
     const t = useTranslations('MusiciansForHire');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { users } = useAuth();
     const heroImage = PlaceHolderImages.find(img => img.id === 'musicians-hero');
 
@@ -102,7 +104,7 @@ export function MusiciansForHire() {
             </section>
 
             <section className="py-12 md:py-20 bg-muted/30">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div className="flex flex-col items-center gap-3">
                             <BadgeCheck className="h-10 w-10 text-primary" />
@@ -124,7 +126,7 @@ export function MusiciansForHire() {
             </section>
 
             <section className="py-12 md:py-20">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('occasionsTitle')}</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('occasionsSubtitle')}</p>
@@ -138,7 +140,7 @@ export function MusiciansForHire() {
             </section>
 
             <section id="quote-configurator" className="py-12 md:py-24 bg-muted/30">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('configuratorTitle')}</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('configuratorSubtitle')}</p>
@@ -150,7 +152,7 @@ export function MusiciansForHire() {
                         <CardContent>
                             {currentStep === 0 && (
                                 <div className="space-y-4 grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2"><Label>{t('form.eventType')}</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder={t('form.eventPlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="wedding">{t('occasion.wedding')}</SelectItem><SelectItem value="corporate">{t('occasion.corporate')}</SelectItem><SelectItem value="private">{t('occasion.private')}</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>{t('form.eventType')}</Label><Select dir={isRtl ? 'rtl' : 'ltr'}><SelectTrigger><SelectValue placeholder={t('form.eventPlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="wedding">{t('occasion.wedding')}</SelectItem><SelectItem value="corporate">{t('occasion.corporate')}</SelectItem><SelectItem value="private">{t('occasion.private')}</SelectItem></SelectContent></Select></div>
                                     <div className="space-y-2"><Label>{t('form.date')}</Label><Input type="date" /></div>
                                     <div className="space-y-2"><Label>{t('form.location')}</Label><Input placeholder={t('form.locationPlaceholder')} /></div>
                                     <div className="space-y-2"><Label>{t('form.duration')}</Label><Input type="number" defaultValue={2} /></div>
@@ -158,8 +160,8 @@ export function MusiciansForHire() {
                             )}
                             {currentStep === 1 && (
                                 <div className="space-y-4 grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2"><Label>{t('form.ensembleSize')}</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder={t('form.ensemblePlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="solo">{t('form.ensemble.solo')}</SelectItem><SelectItem value="duo">{t('form.ensemble.duo')}</SelectItem><SelectItem value="trio">{t('form.ensemble.trio')}</SelectItem><SelectItem value="quartet">{t('form.ensemble.quartet')}</SelectItem></SelectContent></Select></div>
-                                    <div className="space-y-2"><Label>{t('form.genre')}</Label><Select dir="rtl"><SelectTrigger><SelectValue placeholder={t('form.genrePlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="classical">{t('form.genres.classical')}</SelectItem><SelectItem value="jazz">{t('form.genres.jazz')}</SelectItem><SelectItem value="israeli">{t('form.genres.israeli')}</SelectItem><SelectItem value="pop">{t('form.genres.pop')}</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>{t('form.ensembleSize')}</Label><Select dir={isRtl ? 'rtl' : 'ltr'}><SelectTrigger><SelectValue placeholder={t('form.ensemblePlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="solo">{t('form.ensemble.solo')}</SelectItem><SelectItem value="duo">{t('form.ensemble.duo')}</SelectItem><SelectItem value="trio">{t('form.ensemble.trio')}</SelectItem><SelectItem value="quartet">{t('form.ensemble.quartet')}</SelectItem></SelectContent></Select></div>
+                                    <div className="space-y-2"><Label>{t('form.genre')}</Label><Select dir={isRtl ? 'rtl' : 'ltr'}><SelectTrigger><SelectValue placeholder={t('form.genrePlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="classical">{t('form.genres.classical')}</SelectItem><SelectItem value="jazz">{t('form.genres.jazz')}</SelectItem><SelectItem value="israeli">{t('form.genres.israeli')}</SelectItem><SelectItem value="pop">{t('form.genres.pop')}</SelectItem></SelectContent></Select></div>
                                     <div className="md:col-span-2 space-y-2">
                                         <Label>{t('form.requests')}</Label>
                                         <Textarea placeholder={t('form.requestsPlaceholder')} />
@@ -170,7 +172,7 @@ export function MusiciansForHire() {
                                 <div className="text-center space-y-4 p-8">
                                     <p className="text-muted-foreground">{t('form.quoteTitle')}</p>
                                     <p className="text-5xl font-bold">{t('form.quotePrice', { price: '2,800' })}</p>
-                                    <p className="text-sm text-muted-foreground">{t('form.quoteDetails', { ensemble: "דואט קלאסי", duration: 3 })}</p>
+                                    <p className="text-sm text-muted-foreground">{t('form.quoteDetails', { ensemble: t('form.ensemble.duo'), duration: 3 })}</p>
                                     <Button size="lg" className="mt-4">{t('form.submitRequest')}</Button>
                                 </div>
                             )}
@@ -184,7 +186,7 @@ export function MusiciansForHire() {
             </section>
 
             <section className="py-12 md:py-20">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('musiciansTitle')}</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('musiciansSubtitle')}</p>

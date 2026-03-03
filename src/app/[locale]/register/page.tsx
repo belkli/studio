@@ -20,11 +20,11 @@ export default async function RegisterPage({
         return (
             <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
                 <PublicNavbar />
-                <main className="flex flex-1 items-center justify-center px-4 pt-20 pb-8">
-                    <RegistrationSessionGuard storageKey="register-session:token">
-                        <PlayingSchoolEnrollmentWizard token={token} />
-                    </RegistrationSessionGuard>
-                </main>
+            <main className="flex flex-1 items-start justify-center px-4 pt-20 pb-8">
+                <RegistrationSessionGuard storageKey="register-session:token">
+                    <PlayingSchoolEnrollmentWizard token={token} />
+                </RegistrationSessionGuard>
+            </main>
                 <footer className="text-center text-xs text-muted-foreground pb-6">
                     <Link href="/accessibility" className="underline underline-offset-4">
                         {tAccessibility('footerLink')}
@@ -37,7 +37,7 @@ export default async function RegisterPage({
     return (
         <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
             <PublicNavbar />
-            <main className="flex flex-1 items-center justify-center px-4 pt-20 pb-8">
+            <main className="flex flex-1 items-start justify-center px-4 pt-20 pb-8">
                 <RegistrationSessionGuard storageKey="register-session:default">
                     <EnrollmentWizard />
                 </RegistrationSessionGuard>

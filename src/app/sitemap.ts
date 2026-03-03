@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const locales = ['he', 'en', 'ar', 'ru'];
-    const publicRoutes = ['', '/about', '/available-now', '/musicians', '/donate', '/open-day', '/contact'];
+    const publicRoutes = ['', '/about', '/available-now', '/musicians', '/donate', '/open-day', '/contact', '/privacy', '/accessibility'];
     
     const entries: MetadataRoute.Sitemap = [];
     for (const locale of locales) {

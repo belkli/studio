@@ -12,7 +12,7 @@ const ContentSecurityPolicy = [
   `script-src 'self' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ''} https://apis.google.com https://secure.cardcom.solutions`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
-  `img-src 'self' data: blob: https://placehold.co https://images.unsplash.com https://i.pravatar.cc https://picsum.photos https://api.qrserver.com`,
+  `img-src 'self' data: blob: https://placehold.co https://images.unsplash.com https://i.pravatar.cc https://picsum.photos https://api.qrserver.com https://www.icm.org.il https://raananamusic.com https://alumahod.com https://teo.org.il https://i.ytimg.com`,
   `connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com`,
   `frame-src 'self' https://secure.cardcom.solutions`,
   `frame-ancestors 'self'`,
@@ -33,6 +33,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   /* config options here */
+  turbopack: {
+    root: process.cwd(),
+  },
   allowedDevOrigins: [
     '192.168.1.11',
     '192.168.1.11:9002',
@@ -71,6 +74,36 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'i.pravatar.cc',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.icm.org.il',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raananamusic.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'alumahod.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'teo.org.il',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
         port: '',
         pathname: '/**',
       },

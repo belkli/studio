@@ -268,6 +268,13 @@ export type ConservatoriumBranchInfo = {
   manager?: string;
 };
 
+export type ConservatoriumPolicyContact = {
+  name?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
+};
+
 export type SocialMediaLinks = {
   facebook?: string;
   instagram?: string;
@@ -391,6 +398,8 @@ export type User = {
   translationMeta?: TranslationMeta;
   accountType?: AccountType;
   playingSchoolInfo?: PlayingSchoolInfo;
+  isDelegatedAdmin?: boolean;
+  isPrimaryConservatoriumAdmin?: boolean;
 };
 
 export type Conservatorium = {
@@ -421,6 +430,8 @@ export type Conservatorium = {
   programs?: string[];
   ensembles?: string[];
   socialMedia?: SocialMediaLinks;
+  privacyContact?: ConservatoriumPolicyContact;
+  accessibilityContact?: ConservatoriumPolicyContact;
   photoUrls?: string[];
   translations?: ConservatoriumTranslations;
   translationMeta?: TranslationMeta;

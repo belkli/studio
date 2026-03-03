@@ -6,6 +6,8 @@ const intlProxy = createMiddleware({
   locales: routing.locales,
   defaultLocale: routing.defaultLocale,
   localePrefix: routing.localePrefix,
+  localeDetection: false,
+  localeCookie: false,
 });
 
 const PROTECTED_PATHS = ['/dashboard'];

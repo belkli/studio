@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
+import { Accessibility } from 'lucide-react';
 
 type A11yPrefs = {
   fontScale: number;
@@ -195,7 +196,8 @@ export function AccessibilityPanel() {
         onPointerMove={onTogglePointerMove}
         onPointerUp={onTogglePointerUp}
       >
-        {t('openShort')}
+        <Accessibility className="a11y-toggle-icon" aria-hidden />
+        <span>{t('openShort')}</span>
       </button>
 
       {open && (

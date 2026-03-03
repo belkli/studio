@@ -1,5 +1,6 @@
 'use client';
-import { useTranslations } from 'next-intl';
+import { useMemo, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { isValidIsraeliID } from "@/lib/utils";
+import { createDonationCheckout } from '@/app/actions';
 
 const StudentStoryCard = ({ imageId, name, age, instrument, story, donateLabel }: { imageId: string, name: string, age: number, instrument: string, story: string, donateLabel: string }) => {
     const image = PlaceHolderImages.find(img => img.id === imageId);
@@ -34,7 +36,51 @@ const StudentStoryCard = ({ imageId, name, age, instrument, story, donateLabel }
 
 export function DonationLandingPage() {
     const t = useTranslations('DonatePage');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const heroImage = PlaceHolderImages.find(img => img.id === 'donate-hero');
+    const [amountChoice, setAmountChoice] = useState('250');
+    const [customAmount, setCustomAmount] = useState('');
+    const [frequency, setFrequency] = useState<'once' | 'monthly' | 'yearly'>('once');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const configuredMethods = useMemo(() => {
+        const fromEnv = (process.env.NEXT_PUBLIC_PAYMENT_METHODS || '')
+            .split(',')
+            .map(v => v.trim().toUpperCase())
+            .filter(Boolean);
+        const supported = ['CARDCOM', 'PELECARD', 'HYP', 'TRANZILA', 'STRIPE'];
+        const normalized = fromEnv.filter(v => supported.includes(v));
+        return normalized.length > 0 ? normalized : ['CARDCOM'];
+    }, []);
+
+    const selectedAmount = amountChoice === 'other' ? Number(customAmount || 0) : Number(amountChoice);
+
+    const handleDonateSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (selectedAmount <= 0) return;
+
+        const formData = new FormData(event.currentTarget);
+        const donorName = String(formData.get('donorName') || '');
+        const donorEmail = String(formData.get('donorEmail') || '');
+        const donorId = String(formData.get('donorId') || '');
+        if (donorId && !isValidIsraeliID(donorId)) return;
+
+        setIsSubmitting(true);
+        try {
+            const { url } = await createDonationCheckout({
+                amount: selectedAmount,
+                frequency,
+                donorName,
+                donorEmail: donorEmail || undefined,
+                donorId: donorId || undefined,
+            });
+            window.location.href = url;
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <>
             <section className="relative w-full h-[60vh] flex items-center justify-center text-center text-white">
@@ -60,7 +106,7 @@ export function DonationLandingPage() {
             </section>
 
             <section className="py-12 md:py-24 bg-muted/30">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         <div className="flex flex-col items-center gap-2">
                             <HeartHandshake className="h-10 w-10 text-primary" />
@@ -87,7 +133,7 @@ export function DonationLandingPage() {
             </section>
 
             <section className="py-12 md:py-24">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('storiesTitle')}</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('storiesSubtitle')}</p>
@@ -101,7 +147,7 @@ export function DonationLandingPage() {
             </section>
 
             <section id="donate-form" className="py-12 md:py-24 bg-muted/30">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="grid lg:grid-cols-2 gap-12">
                         <div className="space-y-4">
                             <h2 className="text-3xl md:text-4xl font-bold">{t('donateFormTitle')}</h2>
@@ -119,10 +165,10 @@ export function DonationLandingPage() {
                         </div>
 
                         <Card className="p-6">
-                            <form className="space-y-6">
+                            <form className="space-y-6" onSubmit={handleDonateSubmit}>
                                 <div className="space-y-2">
                                     <Label>{t('selectAmount')}</Label>
-                                    <RadioGroup dir="rtl" defaultValue="250" className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                    <RadioGroup value={amountChoice} onValueChange={setAmountChoice} dir={isRtl ? 'rtl' : 'ltr'} className="grid grid-cols-2 md:grid-cols-4 gap-2">
                                         {['100', '250', '500'].map(val => (
                                             <Label key={val} htmlFor={`amount-${val}`} className="border cursor-pointer rounded-md p-3 text-center has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
                                                 <RadioGroupItem value={val} id={`amount-${val}`} className="sr-only" />
@@ -134,11 +180,22 @@ export function DonationLandingPage() {
                                             {t('other')}
                                         </Label>
                                     </RadioGroup>
+                                    {amountChoice === 'other' && (
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            value={customAmount}
+                                            onChange={(e) => setCustomAmount(e.target.value)}
+                                            placeholder="100"
+                                            dir="ltr"
+                                            className="text-left"
+                                        />
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>{t('frequency')}</Label>
-                                    <Select dir="rtl" defaultValue="once">
+                                    <Select dir={isRtl ? 'rtl' : 'ltr'} value={frequency} onValueChange={(v: 'once' | 'monthly' | 'yearly') => setFrequency(v)}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="once">{t('frequencyOnce')}</SelectItem>
@@ -146,6 +203,7 @@ export function DonationLandingPage() {
                                             <SelectItem value="yearly">{t('frequencyYearly')}</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    <p className="text-xs text-muted-foreground">{configuredMethods.join(' / ')}</p>
                                 </div>
 
                                 <div className="space-y-2">
@@ -165,7 +223,9 @@ export function DonationLandingPage() {
                                     <div className="flex items-center space-x-2 space-x-reverse"><Checkbox id="anonymous" /><Label htmlFor="anonymous">{t('anonymous')}</Label></div>
                                 </div>
 
-                                <Button type="submit" className="w-full" size="lg">{t('submitButton', { amount: '250' })}</Button>
+                                <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || selectedAmount <= 0}>
+                                    {t('submitButton', { amount: String(selectedAmount || 0) })}
+                                </Button>
                             </form>
                         </Card>
 

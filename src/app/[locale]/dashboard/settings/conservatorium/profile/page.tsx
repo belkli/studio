@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Languages, Plus, Trash2 } from 'lucide-react';
-import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember } from '@/lib/types';
+import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember, ConservatoriumPolicyContact } from '@/lib/types';
 import { translateConservatoriumProfile } from '@/app/actions/translate';
 import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
 import { computeConservatoriumSourceHash } from '@/lib/utils/translation-hash';
@@ -85,6 +85,13 @@ export default function ConservatoriumProfileEditor() {
     const locale = useLocale() as keyof typeof PROFILE_UI_TEXT;
     const isRtl = locale === 'he' || locale === 'ar';
     const ui = PROFILE_UI_TEXT[locale] ?? PROFILE_UI_TEXT.en;
+    const resetLabel = locale === 'he'
+        ? 'נקה שינויים'
+        : locale === 'ar'
+            ? 'مسح التغييرات'
+            : locale === 'ru'
+                ? 'Сбросить изменения'
+                : 'Reset changes';
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
@@ -236,6 +243,20 @@ export default function ConservatoriumProfileEditor() {
             ...prev,
             socialMedia: {
                 ...prev.socialMedia,
+                [key]: value
+            }
+        }));
+    };
+
+    const updatePolicyContact = (
+        section: 'privacyContact' | 'accessibilityContact',
+        key: keyof ConservatoriumPolicyContact,
+        value: string
+    ) => {
+        setFormData(prev => ({
+            ...prev,
+            [section]: {
+                ...(prev[section] || {}),
                 [key]: value
             }
         }));
@@ -474,6 +495,80 @@ export default function ConservatoriumProfileEditor() {
                                         .filter(([_, fields]) => fields.includes('openingHours'))
                                         .map(([loc]) => loc)}
                                 />
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+                                        <h3 className="font-semibold text-sm">{t('profileEditor.contact.privacyContactTitle')}</h3>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactName')}</Label>
+                                            <Input
+                                                value={formData.privacyContact?.name || ''}
+                                                onChange={e => updatePolicyContact('privacyContact', 'name', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactNamePlaceholder')}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactEmail')}</Label>
+                                            <Input
+                                                type="email"
+                                                dir="ltr"
+                                                className="text-left"
+                                                value={formData.privacyContact?.email || ''}
+                                                onChange={e => updatePolicyContact('privacyContact', 'email', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactEmailPlaceholder')}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactPhone')}</Label>
+                                            <Input
+                                                type="tel"
+                                                dir="ltr"
+                                                className="text-left"
+                                                value={formData.privacyContact?.phone || ''}
+                                                onChange={e => updatePolicyContact('privacyContact', 'phone', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactPhonePlaceholder')}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+                                        <h3 className="font-semibold text-sm">{t('profileEditor.contact.accessibilityContactTitle')}</h3>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactName')}</Label>
+                                            <Input
+                                                value={formData.accessibilityContact?.name || ''}
+                                                onChange={e => updatePolicyContact('accessibilityContact', 'name', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactNamePlaceholder')}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactEmail')}</Label>
+                                            <Input
+                                                type="email"
+                                                dir="ltr"
+                                                className="text-left"
+                                                value={formData.accessibilityContact?.email || ''}
+                                                onChange={e => updatePolicyContact('accessibilityContact', 'email', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactEmailPlaceholder')}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('profileEditor.contact.contactPhone')}</Label>
+                                            <Input
+                                                type="tel"
+                                                dir="ltr"
+                                                className="text-left"
+                                                value={formData.accessibilityContact?.phone || ''}
+                                                onChange={e => updatePolicyContact('accessibilityContact', 'phone', e.target.value)}
+                                                placeholder={t('profileEditor.contact.contactPhonePlaceholder')}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p className="text-xs text-muted-foreground">
+                                    {t('profileEditor.contact.fallbackHint')}
+                                </p>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -841,7 +936,7 @@ export default function ConservatoriumProfileEditor() {
 
                 <div className="sticky bottom-0 z-20 border rounded-lg bg-background/95 backdrop-blur-sm p-3 flex items-center justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>
-                        {ui.footer.cancel}
+                        {resetLabel}
                     </Button>
                     <Button type="submit" disabled={isSaving || isTranslating}>
                         {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> {ui.footer.saving}</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {ui.footer.saveProfile}</span>}

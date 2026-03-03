@@ -25,11 +25,11 @@ export default async function DashboardLayout({
         <Sidebar side={sidebarSide} collapsible="icon">
           <SidebarNav />
         </Sidebar>
-        <SidebarInset className="overflow-hidden" dir="ltr">
-          <div
-            className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8 flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden"
-            dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
-          >
+        <SidebarInset
+          className="overflow-y-auto overflow-x-hidden"
+          dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
+        >
+          <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6 lg:p-8">
             <div className="flex-1">{children}</div>
             <footer className="mt-8 border-t pt-4 text-sm text-muted-foreground">
               <Link href="/accessibility" className="underline underline-offset-4">

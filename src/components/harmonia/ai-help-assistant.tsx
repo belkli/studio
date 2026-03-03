@@ -131,7 +131,7 @@ export function AiHelpAssistant() {
         <>
             <Button
                 id="help-button"
-                className="fixed bottom-6 end-6 z-[70] h-14 w-14 rounded-full shadow-lg"
+                className="fixed bottom-6 right-6 z-[64] h-14 w-14 rounded-full shadow-lg"
                 size="icon"
                 onClick={() => setIsOpen(true)}
             >
@@ -202,7 +202,10 @@ export function AiHelpAssistant() {
                             <Button
                                 type="submit"
                                 size="icon"
-                                className="absolute left-1.5 top-1/2 -translate-y-1/2 h-7 w-7"
+                                className={cn(
+                                    "absolute top-1/2 h-7 w-7 -translate-y-1/2",
+                                    locale === 'he' || locale === 'ar' ? 'left-1.5' : 'right-1.5'
+                                )}
                                 onClick={() => handleSendMessage()}
                                 disabled={isLoading || !input.trim()}
                             >

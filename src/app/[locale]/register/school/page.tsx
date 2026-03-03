@@ -14,7 +14,7 @@ export default function SchoolRegisterPage() {
     return (
         <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
             <PublicNavbar />
-            <main className="flex flex-1 items-center justify-center px-4 pt-20 pb-8">
+            <main className="flex flex-1 items-start justify-center px-4 pt-20 pb-8">
                 <PlayingSchoolEnrollmentWizard token={token} />
             </main>
             <footer className="text-center text-xs text-muted-foreground pb-6">

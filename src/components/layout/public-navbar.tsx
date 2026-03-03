@@ -46,7 +46,12 @@ export function PublicNavbar() {
                 <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
             </Link>
 
-            <nav className="hidden md:flex gap-4 sm:gap-6 ms-8 me-auto">
+            <nav
+                className={cn(
+                    "hidden md:flex flex-1 gap-4 sm:gap-6",
+                    dir === 'rtl' ? "justify-end pe-8" : "justify-start ps-8"
+                )}
+            >
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
@@ -63,7 +68,7 @@ export function PublicNavbar() {
 
             <div className="flex-grow md:hidden" />
 
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2 shrink-0">
                 <LanguageSwitcher />
                 <Button asChild variant="ghost">
                     <Link href="/login">{tNav('login')}</Link>

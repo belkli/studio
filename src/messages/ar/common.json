@@ -116,7 +116,23 @@
     "contactResponseValue": "حتى 5 أيام عمل",
     "alternativeTitle": "وصول بديل",
     "alternativeDescription": "إذا تعذّر الوصول إلى محتوى معين، تواصل معنا وسنوفر صيغة بديلة.",
-    "lastUpdated": "آخر تحديث: 3 مارس 2026"
+    "lastUpdated": "آخر تحديث: 3 مارس 2026",
+    "contactDirectoryTitle": "Accessibility Contacts by Conservatorium",
+    "contactDirectoryDescription": "Each conservatorium can define a dedicated accessibility contact. If not configured, the primary conservatorium admin is shown.",
+    "contactDirectoryEmpty": "No conservatorium contacts were found.",
+    "directoryHeaders": {
+      "conservatorium": "Conservatorium",
+      "contact": "Contact",
+      "role": "Role",
+      "email": "Email",
+      "phone": "Phone",
+      "source": "Source"
+    },
+    "sources": {
+      "configured": "Configured contact",
+      "primaryAdmin": "Primary conservatorium admin",
+      "defaults": "Conservatorium default details"
+    }
   },
   "RegistrationSession": {
     "remaining": "وقت الجلسة: {time}",
@@ -750,5 +766,73 @@
     "lastMinute": "فرصة اللحظة الأخيرة!",
     "discount": "خصم {percent}%",
     "bookNow": "احجز الآن"
+  },
+  "PrivacyPage": {
+    "title": "Privacy Statement and Terms of Use",
+    "intro": "Harmonia respects your privacy and processes personal data only for clear educational, operational, and legal purposes.",
+    "footerLink": "Privacy statement",
+    "generalTitle": "General",
+    "generalBody": "This policy explains how the site collects, uses, stores, secures, and shares personal data when using Harmonia services.",
+    "lawfulBasisTitle": "Legal Basis",
+    "lawfulBasisBody": "Data is processed under applicable law, contractual necessity, legitimate interests, and consent where required.",
+    "dataTitle": "Data We Collect",
+    "dataItems": {
+      "item1": "Identification and contact data such as name, phone, and email.",
+      "item2": "Service data such as registrations, attendance, payments, and requests.",
+      "item3": "Technical data such as browser type, device information, and IP address.",
+      "item4": "Communication records including support and contact form messages."
+    },
+    "useTitle": "How We Use Data",
+    "useItems": {
+      "item1": "Provide requested educational and administrative services.",
+      "item2": "Authenticate users, protect accounts, and prevent abuse.",
+      "item3": "Improve product quality, operations, and user support.",
+      "item4": "Meet legal, accounting, and regulatory obligations."
+    },
+    "sharingTitle": "Sharing and Processors",
+    "sharingBody": "Personal data is shared only with authorized processors and service providers under contractual confidentiality and security obligations.",
+    "transfersTitle": "Cross-Border Transfers",
+    "transfersBody": "If data is transferred outside Israel, appropriate safeguards are applied according to applicable law.",
+    "securityTitle": "Security Controls",
+    "securityBody": "We apply access control, encryption in transit where relevant, logging, backups, and operational monitoring. No system can guarantee absolute security.",
+    "rightsTitle": "Your Rights",
+    "rightsItems": {
+      "item1": "Request access to your personal data.",
+      "item2": "Request correction of inaccurate or outdated data.",
+      "item3": "Request deletion where legally permitted.",
+      "item4": "Object to direct marketing communications."
+    },
+    "retentionTitle": "Retention",
+    "retentionBody": "Data is retained only as long as required for service delivery, legal compliance, and audit requirements.",
+    "cookiesTitle": "Cookies",
+    "cookiesBody": "The site uses cookies and similar technologies for functionality, analytics, and performance. Browser settings can be used to manage cookie preferences.",
+    "minorsTitle": "Children and Minors",
+    "minorsBody": "When services involve minors, data is processed under the role and responsibility of legal guardians and authorized staff.",
+    "updatesTitle": "Policy Updates",
+    "updatesBody": "This statement may be updated from time to time. The latest version and date are always published on this page.",
+    "termsTitle": "Terms of Use Summary",
+    "termsBody": "By using the site, users agree to lawful use only, accurate data submission, and non-abuse of systems, content, or accounts.",
+    "contactTitle": "Privacy Contact",
+    "contactDescription": "For privacy requests, correction, deletion, or clarification, contact the relevant conservatorium contact listed below.",
+    "contactResponseLabel": "Response time",
+    "contactResponseValue": "Up to 30 days (up to 60 days in justified cases)",
+    "contactDirectoryTitle": "Privacy Contacts by Conservatorium",
+    "contactDirectoryDescription": "If a dedicated privacy contact is not configured, Harmonia shows the primary conservatorium admin contact.",
+    "contactDirectoryEmpty": "No conservatorium contacts were found.",
+    "directoryHeaders": {
+      "conservatorium": "Conservatorium",
+      "contact": "Contact",
+      "role": "Role",
+      "email": "Email",
+      "phone": "Phone",
+      "source": "Source"
+    },
+    "sources": {
+      "configured": "Configured contact",
+      "primaryAdmin": "Primary conservatorium admin",
+      "defaults": "Conservatorium default details"
+    },
+    "legalNote": "This statement is provided for transparency and does not replace legal advice tailored to your organization.",
+    "lastUpdated": "Last updated: March 3, 2026"
   }
 }

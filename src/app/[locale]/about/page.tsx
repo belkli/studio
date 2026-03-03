@@ -93,7 +93,7 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
                     <img
                         src={heroPhoto}
                         alt={name}
-                        className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 group-hover:scale-105"
+                        className="absolute inset-0 h-full w-full object-cover opacity-60 transition-opacity duration-500 group-hover:scale-105 group-hover:opacity-80"
                         onError={() => setImageError(true)}
                     />
                 ) : (
@@ -172,7 +172,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
                 <DialogHeader className="text-start">
                     <DialogTitle className="text-2xl font-bold">{name}</DialogTitle>
                 </DialogHeader>
@@ -184,9 +184,9 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                         <div className="space-y-2">
                             <h4 className="font-semibold">{t('contactDetails')}</h4>
                             {localizedCons.location?.city && <p>{localizedCons.location?.address || localizedCons.location?.city}</p>}
-                            {cons.tel && <a href={'tel:' + cons.tel} className="hover:underline">{cons.tel}</a>}
-                            {cons.email && <a href={'mailto:' + cons.email} className="hover:underline break-all">{cons.email}</a>}
-                            {cons.secondaryEmail && <a href={'mailto:' + cons.secondaryEmail} className="hover:underline break-all">{cons.secondaryEmail}</a>}
+                            {cons.tel && <a href={'tel:' + cons.tel} className="hover:underline" dir="ltr">{cons.tel}</a>}
+                            {cons.email && <a href={'mailto:' + cons.email} className="hover:underline break-all" dir="ltr">{cons.email}</a>}
+                            {cons.secondaryEmail && <a href={'mailto:' + cons.secondaryEmail} className="hover:underline break-all" dir="ltr">{cons.secondaryEmail}</a>}
                             {openingHours && <p>{openingHours}</p>}
                         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
 import { Check, CircleDot, type LucideIcon } from "lucide-react";
 
 interface Step {
@@ -15,19 +16,21 @@ interface StepperProps {
 }
 
 export function Stepper({ steps, currentStep }: StepperProps) {
+  const locale = useLocale();
+  const isRtl = locale === "he" || locale === "ar";
+
   return (
     <nav aria-label="Progress">
-      <ol role="list" className="flex items-center" dir="rtl">
+      <ol role="list" className="flex items-start" dir={isRtl ? "rtl" : "ltr"}>
         {steps.map((step, stepIdx) => (
-          <li
-            key={step.id}
-            className={cn("relative", stepIdx !== steps.length - 1 ? "flex-1" : "")}
-          >
+          <li key={step.id} className={cn("relative min-w-0", stepIdx !== steps.length - 1 ? "flex-1" : "")}>
             {stepIdx < currentStep ? (
               <>
-                <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                  <div className="h-0.5 w-full bg-primary" />
-                </div>
+                {stepIdx !== steps.length - 1 && (
+                  <div className="absolute inset-x-4 top-4 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-primary" />
+                  </div>
+                )}
                 <div
                   className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary"
                 >
@@ -37,9 +40,11 @@ export function Stepper({ steps, currentStep }: StepperProps) {
               </>
             ) : stepIdx === currentStep ? (
               <>
-                <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                  <div className="h-0.5 w-full bg-gray-200" />
-                </div>
+                {stepIdx !== steps.length - 1 && (
+                  <div className="absolute inset-x-4 top-4 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-gray-200" />
+                  </div>
+                )}
                 <div
                   className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background"
                   aria-current="step"
@@ -50,9 +55,11 @@ export function Stepper({ steps, currentStep }: StepperProps) {
               </>
             ) : (
               <>
-                <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                  <div className="h-0.5 w-full bg-gray-200" />
-                </div>
+                {stepIdx !== steps.length - 1 && (
+                  <div className="absolute inset-x-4 top-4 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-gray-200" />
+                  </div>
+                )}
                 <div
                   className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-background hover:border-gray-400"
                 >
@@ -61,7 +68,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 </div>
               </>
             )}
-            <p className="absolute -bottom-6 w-max right-1/2 translate-x-1/2 text-center text-xs mt-2 font-medium text-muted-foreground">{step.title}</p>
+            <p className="mt-2 max-w-full truncate text-center text-xs font-medium text-muted-foreground">{step.title}</p>
           </li>
         ))}
       </ol>

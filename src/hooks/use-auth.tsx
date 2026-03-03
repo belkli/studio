@@ -754,11 +754,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addUser = (userData: Partial<User>, isAdminFlow = false): User => {
+    const isConservatoriumAdmin = userData.role === 'conservatorium_admin';
     const newUser: User = {
       id: `user-${Date.now()}`,
       approved: isAdminFlow, // Admins auto-approve
       avatarUrl: 'https://i.pravatar.cc/150?u=' + Date.now(),
       achievements: [],
+      ...(isConservatoriumAdmin ? {
+        isDelegatedAdmin: userData.isDelegatedAdmin ?? true,
+        isPrimaryConservatoriumAdmin: userData.isPrimaryConservatoriumAdmin ?? false,
+      } : {}),
       ...userData,
     } as User;
     setUsers(prev => [...prev, newUser]);

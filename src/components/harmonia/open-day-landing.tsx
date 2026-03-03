@@ -14,7 +14,7 @@ import { format, add, setHours, setMinutes, isBefore } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Separator } from '@/components/ui/separator';
 
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
@@ -33,6 +33,8 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
 export function OpenDayLandingPage() {
     const { mockOpenDayEvents, mockOpenDayAppointments, addOpenDayAppointment } = useAuth();
     const t = useTranslations('OpenDay');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
     const { toast } = useToast();
     const heroImage = PlaceHolderImages.find(img => img.id === 'open-day-hero');
@@ -131,7 +133,7 @@ export function OpenDayLandingPage() {
                 </div>
             </section>
             <section className="py-12 md:py-20 bg-muted/30">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('featuresTitle')}</h2>
                     </div>
@@ -144,7 +146,7 @@ export function OpenDayLandingPage() {
             </section>
 
             <section className="py-12 md:py-24" id="register">
-                <div className="container px-4 md:px-6">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('formTitle')}</h2>
                         <p className="max-w-2xl mx-auto text-muted-foreground">{t('formSubtitle')}</p>
@@ -153,7 +155,7 @@ export function OpenDayLandingPage() {
                     {!activeEvent ? (
                         <div className="space-y-6 max-w-5xl mx-auto">
                             <div className="flex justify-end mb-4">
-                                <Select dir="rtl" value={cityFilter} onValueChange={setCityFilter}>
+                                <Select dir={isRtl ? 'rtl' : 'ltr'} value={cityFilter} onValueChange={setCityFilter}>
                                     <SelectTrigger className="w-[300px]">
                                         <SelectValue placeholder={t('filterByBranch')} />
                                     </SelectTrigger>
@@ -174,11 +176,11 @@ export function OpenDayLandingPage() {
                                             </CardHeader>
                                             <CardContent className="flex-1">
                                                 <div className="flex items-center text-sm text-muted-foreground mb-2">
-                                                    <Calendar className="ml-2 h-4 w-4" />
+                                                    <Calendar className="me-2 h-4 w-4" />
                                                     {format(new Date(event.date), 'dd/MM/yyyy')}
                                                 </div>
                                                 <div className="flex items-center text-sm text-muted-foreground">
-                                                    <Clock className="ml-2 h-4 w-4" />
+                                                    <Clock className="me-2 h-4 w-4" />
                                                     {event.startTime} - {event.endTime}
                                                 </div>
                                             </CardContent>
@@ -201,7 +203,7 @@ export function OpenDayLandingPage() {
                         <Card className="max-w-4xl mx-auto relative">
                             <Button
                                 variant="ghost"
-                                className="absolute right-4 top-4 text-muted-foreground"
+                                className="absolute end-4 top-4 text-muted-foreground"
                                 onClick={() => {
                                     setSelectedEventId(null);
                                     setSelectedTime('');
@@ -231,7 +233,7 @@ export function OpenDayLandingPage() {
                                             <div className="space-y-2"><Label htmlFor="childName">{t('childName')}</Label><Input id="childName" name="childName" required /></div>
                                             <div className="space-y-2"><Label htmlFor="childAge">{t('childAge')}</Label><Input id="childAge" name="childAge" type="number" required /></div>
                                         </div>
-                                        <div className="space-y-2"><Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label><Select name="instrumentInterest" required><SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
+                                        <div className="space-y-2"><Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label><Select dir={isRtl ? 'rtl' : 'ltr'} name="instrumentInterest" required><SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger><SelectContent>{instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select></div>
                                     </div>
                                     <div className="space-y-6">
                                         <h3 className="font-semibold text-lg">{t('selectTime')}</h3>

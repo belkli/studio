@@ -82,7 +82,14 @@ const AlumnusSchema = z.object({
 
 const DeleteAlumnusSchema = z.string();
 
-const ResolveTokenSchema = z.string();
+const AppLocaleSchema = z.enum(['he', 'en', 'ar', 'ru']);
+const ResolveTokenSchema = z.union([
+  z.string(),
+  z.object({
+    token: z.string(),
+    locale: AppLocaleSchema.optional(),
+  }),
+]);
 const CreateEnrollmentSchema = z.object({
   token: z.string(),
   registrationType: z.string(),
@@ -93,7 +100,7 @@ const CreateEnrollmentSchema = z.object({
   paymentMethod: z.string().optional(),
 });
 
-const SUPPORTED_PAYMENT_PROVIDERS = ['CARDCOM', 'PELECARD', 'HYP', 'TRANZILA'] as const;
+const SUPPORTED_PAYMENT_PROVIDERS = ['CARDCOM', 'PELECARD', 'HYP', 'TRANZILA', 'STRIPE'] as const;
 type PaymentProvider = (typeof SUPPORTED_PAYMENT_PROVIDERS)[number];
 
 function isPaymentProvider(value: string): value is PaymentProvider {
@@ -148,6 +155,15 @@ function buildPaymentRedirectUrl(provider: PaymentProvider, token: string) {
     return `https://pay.hyp.co.il/?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${encodeURIComponent(token)}`;
   }
 
+  if (provider === 'STRIPE') {
+    const publicKey = process.env.STRIPE_PUBLISHABLE_KEY;
+    if (!publicKey) {
+      console.warn('[Stripe] STRIPE_PUBLISHABLE_KEY is not configured - using mock redirect');
+      return `/payment/mock?token=${token}&gateway=stripe`;
+    }
+    return `/payment/mock?token=${token}&gateway=stripe`;
+  }
+
   const terminalNumber = process.env.TRANZILA_TERMINAL_NUMBER;
   if (!terminalNumber) {
     console.warn('[Tranzila] TRANZILA_TERMINAL_NUMBER is not configured - using mock redirect');
@@ -164,6 +180,142 @@ const InviteCoordinatorSchema = z.object({
   partnershipId: z.string(),
   email: z.string().email(),
 });
+const CreateDonationCheckoutSchema = z.object({
+  amount: z.number().positive(),
+  frequency: z.enum(['once', 'monthly', 'yearly']).default('once'),
+  donorName: z.string().optional(),
+  donorEmail: z.string().email().optional(),
+  donorId: z.string().optional(),
+});
+
+type AppLocale = z.infer<typeof AppLocaleSchema>;
+
+type PlayingSchoolTokenRecord = {
+  id: string;
+  symbol: string;
+  names: Record<AppLocale, string>;
+  conservatorium: Record<AppLocale, string>;
+  city: Record<AppLocale, string>;
+  instrument: Record<AppLocale, string>;
+  grades: Record<AppLocale, string>;
+  gradeOptions: string[];
+  lessonDay: Record<AppLocale, string>;
+  basePrice: number;
+  monthlyPrice: number;
+  subsidies: {
+    municipal: number;
+    ministry: number;
+  };
+  parentContribution: number;
+};
+
+const PLAYING_SCHOOL_TOKEN_MAP: Record<string, PlayingSchoolTokenRecord> = {
+  '44570001': {
+    id: 'ps-44570001',
+    symbol: '44570001',
+    names: {
+      he: 'תיכון הדרים',
+      en: 'Hadarim High School',
+      ar: 'ثانوية هدريم',
+      ru: 'Школа Хадарим',
+    },
+    conservatorium: {
+      he: 'הקונסרבטוריון הישראלי למוסיקה, תל אביב',
+      en: 'Israeli Conservatory of Music, Tel Aviv',
+      ar: 'المعهد الإسرائيلي للموسيقى - تل أبيب',
+      ru: 'Израильская консерватория, Тель-Авив',
+    },
+    city: { he: 'הוד השרון', en: 'Hod HaSharon', ar: 'هود هشارون', ru: 'Ход-ха-Шарон' },
+    instrument: { he: 'חליל', en: 'Flute', ar: 'فلوت', ru: 'Флейта' },
+    grades: { he: 'כיתות ב׳-ו׳', en: '2nd-6th grade', ar: 'الصفوف 2-6', ru: '2-6 классы' },
+    gradeOptions: ['2', '3', '4', '5', '6'],
+    lessonDay: { he: 'שלישי', en: 'Tuesday', ar: 'الثلاثاء', ru: 'Вторник' },
+    basePrice: 1800,
+    monthlyPrice: 150,
+    subsidies: { municipal: 500, ministry: 300 },
+    parentContribution: 1000,
+  },
+  '12345678': {
+    id: 'ps-12345678',
+    symbol: '12345678',
+    names: {
+      he: 'תיכון חדש',
+      en: 'Tichon Hadash',
+      ar: 'ثانوية جديدة',
+      ru: 'Тихон Хадаш',
+    },
+    conservatorium: {
+      he: 'קונסרבטוריון הוד השרון - אלומה',
+      en: 'Hod HaSharon Conservatory - Aluma',
+      ar: 'كونسرفاتوار هود هشارون - ألوما',
+      ru: 'Консерватория Ход-ха-Шарон - Алума',
+    },
+    city: { he: 'תל אביב', en: 'Tel Aviv', ar: 'تل أبيب', ru: 'Тель-Авив' },
+    instrument: { he: 'גיטרה', en: 'Guitar', ar: 'غيتار', ru: 'Гитара' },
+    grades: { he: 'כיתות ג׳-ו׳', en: '3rd-6th grade', ar: 'الصفوف 3-6', ru: '3-6 классы' },
+    gradeOptions: ['3', '4', '5', '6'],
+    lessonDay: { he: 'רביעי', en: 'Wednesday', ar: 'الأربعاء', ru: 'Среда' },
+    basePrice: 1700,
+    monthlyPrice: 140,
+    subsidies: { municipal: 450, ministry: 300 },
+    parentContribution: 950,
+  },
+  '87654321': {
+    id: 'ps-87654321',
+    symbol: '87654321',
+    names: {
+      he: 'תיכון הראשונים',
+      en: 'Harishonim High School',
+      ar: 'ثانوية هريشونيم',
+      ru: 'Школа ХаРишоним',
+    },
+    conservatorium: {
+      he: 'הקונסרבטוריון למוסיקה, רעננה',
+      en: 'Raanana Music Conservatory',
+      ar: 'كونسرفاتوار رعنانا للموسيقى',
+      ru: 'Музыкальная консерватория Раананы',
+    },
+    city: { he: 'הרצליה', en: 'Herzliya', ar: 'هرتسليا', ru: 'Герцлия' },
+    instrument: { he: 'צ׳לו', en: 'Cello', ar: 'تشيلو', ru: 'Виолончель' },
+    grades: { he: 'כיתות ב׳-ה׳', en: '2nd-5th grade', ar: 'الصفوف 2-5', ru: '2-5 классы' },
+    gradeOptions: ['2', '3', '4', '5'],
+    lessonDay: { he: 'שני', en: 'Monday', ar: 'الاثنين', ru: 'Понедельник' },
+    basePrice: 1600,
+    monthlyPrice: 130,
+    subsidies: { municipal: 450, ministry: 250 },
+    parentContribution: 900,
+  },
+  '11223344': {
+    id: 'ps-11223344',
+    symbol: '11223344',
+    names: {
+      he: 'בית ספר לאמנויות',
+      en: 'School of Arts',
+      ar: 'مدرسة الفنون',
+      ru: 'Школа искусств',
+    },
+    conservatorium: {
+      he: 'מרכז פס למוסיקה רעננה',
+      en: 'Pas Music Center Raanana',
+      ar: 'مركز باس للموسيقى - رعنانا',
+      ru: 'Музыкальный центр PAS, Раанана',
+    },
+    city: { he: 'ירושלים', en: 'Jerusalem', ar: 'القدس', ru: 'Иерусалим' },
+    instrument: { he: 'פיתוח קול', en: 'Voice', ar: 'غناء', ru: 'Вокал' },
+    grades: { he: 'כיתות ז׳-י׳', en: '7th-10th grade', ar: 'الصفوف 7-10', ru: '7-10 классы' },
+    gradeOptions: ['7', '8', '9', '10'],
+    lessonDay: { he: 'חמישי', en: 'Thursday', ar: 'الخميس', ru: 'Четверг' },
+    basePrice: 2000,
+    monthlyPrice: 170,
+    subsidies: { municipal: 600, ministry: 350 },
+    parentContribution: 1050,
+  },
+};
+
+function parsePlayingSchoolToken(input: z.infer<typeof ResolveTokenSchema>) {
+  if (typeof input === 'string') return { token: input, locale: 'he' as AppLocale };
+  return { token: input.token, locale: (input.locale || 'he') as AppLocale };
+}
 
 
 // Secure Server Actions wrapped with Authentication & Zod Validation
@@ -333,31 +485,37 @@ export const deleteAlumnus = withAuth(
  */
 export const resolvePlayingSchoolToken = withAuth(
   ResolveTokenSchema,
-  async (token: string) => {
-    // Mock token resolution logic
-    console.log('Resolving token:', token);
+  async (input: z.infer<typeof ResolveTokenSchema>) => {
+    const { token, locale } = parsePlayingSchoolToken(input);
+    console.log('Resolving token:', token, 'locale:', locale);
 
-    // Simulating token lookup
     if (token === 'INVALID') {
       throw new Error('Invalid token');
     }
 
-    // Returning mock school info
+    const symbolFromToken = token.startsWith('mock-token-') ? token.replace('mock-token-', '') : token;
+    const resolved = PLAYING_SCHOOL_TOKEN_MAP[symbolFromToken];
+    if (!resolved) {
+      throw new Error('Invalid token');
+    }
+
     return {
-      id: 'sch-1',
-      name: 'ORT Ramat Gan',
-      symbol: '123456',
-      city: 'Ramat Gan',
-      instrument: 'Flute',
-      grades: '2nd - 6th',
-      lessonDay: 'Tuesday',
-      basePrice: 1800,
-      monthlyPrice: 150,
+      id: resolved.id,
+      name: resolved.names[locale],
+      conservatorium: resolved.conservatorium[locale],
+      symbol: resolved.symbol,
+      city: resolved.city[locale],
+      instrument: resolved.instrument[locale],
+      grades: resolved.grades[locale],
+      gradeOptions: resolved.gradeOptions,
+      lessonDay: resolved.lessonDay[locale],
+      basePrice: resolved.basePrice,
+      monthlyPrice: resolved.monthlyPrice,
       subsidies: {
-        municipal: 300,
-        ministry: 500,
+        municipal: resolved.subsidies.municipal,
+        ministry: resolved.subsidies.ministry,
       },
-      parentContribution: 1000,
+      parentContribution: resolved.parentContribution,
     };
   }
 );
@@ -479,5 +637,27 @@ export const inviteSchoolCoordinator = withAuth(
       invitationUrl: `https://harmony.app/accept-invite/${token}`,
       message: `Invitation sent successfully to ${data.email}`,
     };
+  }
+);
+
+/**
+ * Creates a checkout URL for public donation payments using the configured gateway provider.
+ */
+export const createDonationCheckout = withAuth(
+  CreateDonationCheckoutSchema,
+  async (data: z.infer<typeof CreateDonationCheckoutSchema>) => {
+    const provider = getPaymentProvider();
+    const donationToken = `donation-${Date.now()}`;
+    const url = buildPaymentRedirectUrl(provider, donationToken);
+
+    console.log('[Donation] Checkout created', {
+      provider,
+      amount: data.amount,
+      frequency: data.frequency,
+      donorName: data.donorName,
+      donorEmail: data.donorEmail,
+    });
+
+    return { url, provider };
   }
 );

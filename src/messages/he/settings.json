@@ -14,7 +14,16 @@
           "secondaryEmail": "אימייל נוסף",
           "title": "פרטי קשר",
           "website": "אתר רשמי",
-          "whatsapp": "מספר וואטסאפ"
+          "whatsapp": "מספר וואטסאפ",
+          "privacyContactTitle": "Privacy Statement Contact",
+          "accessibilityContactTitle": "Accessibility Statement Contact",
+          "contactName": "Contact Name",
+          "contactEmail": "Contact Email",
+          "contactPhone": "Contact Phone",
+          "contactNamePlaceholder": "e.g. Dana Cohen",
+          "contactEmailPlaceholder": "e.g. privacy@conservatory.org.il",
+          "contactPhonePlaceholder": "e.g. 03-1234567",
+          "fallbackHint": "If these fields are empty, the legal statements automatically display the primary conservatorium admin contact."
         },
         "location": {
           "cityEnglish": "עיר (אנגלית)",
