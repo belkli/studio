@@ -83,6 +83,7 @@ const PROFILE_UI_TEXT = {
 export default function ConservatoriumProfileEditor() {
     const t = useTranslations('SettingsPage.conservatorium');
     const locale = useLocale() as keyof typeof PROFILE_UI_TEXT;
+    const isRtl = locale === 'he' || locale === 'ar';
     const ui = PROFILE_UI_TEXT[locale] ?? PROFILE_UI_TEXT.en;
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
@@ -295,7 +296,7 @@ export default function ConservatoriumProfileEditor() {
     };
 
     return (
-        <div className="space-y-6 pb-20">
+        <div className="space-y-6 pb-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold">{ui.pageTitle}</h1>
@@ -315,9 +316,9 @@ export default function ConservatoriumProfileEditor() {
                 </div>
             </div>
 
-            <form onSubmit={handleSave}>
+            <form onSubmit={handleSave} className="space-y-6">
                 <Tabs defaultValue="basic" className="w-full">
-                    <TabsList className="flex flex-wrap h-auto mb-6 bg-muted/50 p-1">
+                    <TabsList className="flex h-auto mb-6 bg-muted/50 p-1 overflow-x-auto">
                         <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {ui.tabs.basic}</TabsTrigger>
                         <TabsTrigger value="contact" className="flex items-center gap-2"><Contact className="w-4 h-4" /> {ui.tabs.contact}</TabsTrigger>
                         <TabsTrigger value="location" className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {ui.tabs.location}</TabsTrigger>
@@ -399,42 +400,50 @@ export default function ConservatoriumProfileEditor() {
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>{t('profileEditor.contact.mainPhone')}</Label>
-                                        <Input
-                                            type="tel"
-                                            value={formData.tel || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, tel: e.target.value }))}
-                                            placeholder="e.g 03-1234567"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>{t('profileEditor.contact.whatsapp')}</Label>
-                                        <Input
-                                            type="tel"
-                                            value={formData.socialMedia?.whatsapp || ''}
-                                            onChange={e => updateSocial('whatsapp', e.target.value)}
-                                            placeholder="e.g 054-1234567"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>{t('profileEditor.contact.primaryEmail')}</Label>
-                                        <Input
-                                            type="email"
-                                            value={formData.email || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                                            placeholder="e.g office@conservatory.co.il"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>{t('profileEditor.contact.secondaryEmail')}</Label>
-                                        <Input
-                                            type="email"
-                                            value={formData.secondaryEmail || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, secondaryEmail: e.target.value }))}
-                                            placeholder="Optional"
-                                        />
-                                    </div>
+                                <div className="space-y-2">
+                                    <Label>{t('profileEditor.contact.mainPhone')}</Label>
+                                    <Input
+                                        type="tel"
+                                        value={formData.tel || ''}
+                                        onChange={e => setFormData(prev => ({ ...prev, tel: e.target.value }))}
+                                        placeholder="e.g 03-1234567"
+                                        dir="ltr"
+                                        className="text-left"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>{t('profileEditor.contact.whatsapp')}</Label>
+                                    <Input
+                                        type="tel"
+                                        value={formData.socialMedia?.whatsapp || ''}
+                                        onChange={e => updateSocial('whatsapp', e.target.value)}
+                                        placeholder="e.g 054-1234567"
+                                        dir="ltr"
+                                        className="text-left"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>{t('profileEditor.contact.primaryEmail')}</Label>
+                                    <Input
+                                        type="email"
+                                        value={formData.email || ''}
+                                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                                        placeholder="e.g office@conservatory.co.il"
+                                        dir="ltr"
+                                        className="text-left"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>{t('profileEditor.contact.secondaryEmail')}</Label>
+                                    <Input
+                                        type="email"
+                                        value={formData.secondaryEmail || ''}
+                                        onChange={e => setFormData(prev => ({ ...prev, secondaryEmail: e.target.value }))}
+                                        placeholder="Optional"
+                                        dir="ltr"
+                                        className="text-left"
+                                    />
+                                </div>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>{t('profileEditor.contact.website')}</Label>
@@ -443,6 +452,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.officialSite || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, officialSite: e.target.value }))}
                                         placeholder="https://www..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
 
@@ -694,7 +705,7 @@ export default function ConservatoriumProfileEditor() {
                                     className="w-full border-dashed"
                                     onClick={addLeadingTeamMember}
                                 >
-                                    <Plus className="w-4 h-4 mr-2" />
+                                    <Plus className="w-4 h-4 me-2" />
                                     {t('profileEditor.team.addMember') || 'Add Team Member'}
                                 </Button>
 
@@ -719,6 +730,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.socialMedia?.facebook || ''}
                                         onChange={e => updateSocial('facebook', e.target.value)}
                                         placeholder="https://facebook.com/..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -728,6 +741,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.socialMedia?.instagram || ''}
                                         onChange={e => updateSocial('instagram', e.target.value)}
                                         placeholder="https://instagram.com/..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -737,6 +752,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.socialMedia?.youtube || ''}
                                         onChange={e => updateSocial('youtube', e.target.value)}
                                         placeholder="https://youtube.com/..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -746,6 +763,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.socialMedia?.tiktok || ''}
                                         onChange={e => updateSocial('tiktok', e.target.value)}
                                         placeholder="https://tiktok.com/@..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                             </CardContent>
@@ -766,6 +785,8 @@ export default function ConservatoriumProfileEditor() {
                                         value={formData.photoUrls?.[0] || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, photoUrls: [e.target.value, ...(prev.photoUrls?.slice(1) || [])] }))}
                                         placeholder="https://..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -779,6 +800,8 @@ export default function ConservatoriumProfileEditor() {
                                             return { ...prev, photoUrls: photos };
                                         })}
                                         placeholder="https://..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -792,6 +815,8 @@ export default function ConservatoriumProfileEditor() {
                                             return { ...prev, photoUrls: photos };
                                         })}
                                         placeholder="https://..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -805,6 +830,8 @@ export default function ConservatoriumProfileEditor() {
                                             return { ...prev, photoUrls: photos };
                                         })}
                                         placeholder="https://..."
+                                        dir="ltr"
+                                        className="text-left"
                                     />
                                 </div>
                             </CardContent>
@@ -812,8 +839,10 @@ export default function ConservatoriumProfileEditor() {
                     </TabsContent>
                 </Tabs>
 
-                <div className="fixed bottom-0 left-0 right-0 p-4 border-t bg-background/80 backdrop-blur-sm shadow-md flex justify-end gap-2 z-10 w-full sm:w-[calc(100%-16rem)] sm:ml-64 transition-all">
-                    <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>{ui.footer.cancel}</Button>
+                <div className="sticky bottom-0 z-20 border rounded-lg bg-background/95 backdrop-blur-sm p-3 flex items-center justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>
+                        {ui.footer.cancel}
+                    </Button>
                     <Button type="submit" disabled={isSaving || isTranslating}>
                         {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> {ui.footer.saving}</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {ui.footer.saveProfile}</span>}
                     </Button>

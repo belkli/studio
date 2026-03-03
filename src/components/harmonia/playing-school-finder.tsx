@@ -6,9 +6,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Music, School, ArrowRight, Info, Mail, Phone, User as UserIcon, Sparkles, ChevronDown } from "lucide-react";
-import { Link, useRouter } from "@/i18n/routing";
-import { useTranslations } from 'next-intl';
+import { Search, MapPin, Music, School, ArrowRight, ArrowLeft, Info, User as UserIcon, Sparkles } from "lucide-react";
+import { useRouter } from "@/i18n/routing";
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,9 +60,8 @@ interface PlayingSchoolFinderProps {
 export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
     const t = useTranslations('PlayingSchool.finder');
     const router = useRouter();
-    const locale = (router as any).locale || 'he';
+    const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const NextIcon = isRtl ? ChevronDown : ArrowRight; // Context dependent, but let's use a standard next arrow
 
     const [search, setSearch] = useState('');
     const [selectedInstrument, setSelectedInstrument] = useState<string>('all');
@@ -100,8 +99,6 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
             description: t('enquirySuccessDesc'),
         });
     };
-
-    const ArrowIcon = isRtl ? () => <ArrowRight className="h-5 w-5 me-2 group-hover/btn:-translate-x-1 transition-transform rotate-180" /> : () => <ArrowRight className="h-5 w-5 ms-2 group-hover/btn:translate-x-1 transition-transform" />;
 
     return (
         <div className={cn("space-y-12", className)}>
@@ -172,8 +169,12 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
                                 className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-bold text-md shadow-lg shadow-indigo-600/20 group/btn"
                                 onClick={() => router.push(`/register/school?token=mock-token-${school.schoolSymbol}`)}
                             >
+                                {isRtl ? (
+                                    <ArrowLeft className="h-5 w-5 me-2 group-hover/btn:-translate-x-1 transition-transform" />
+                                ) : (
+                                    <ArrowRight className="h-5 w-5 me-2 group-hover/btn:translate-x-1 transition-transform" />
+                                )}
                                 {t('applyNow')}
-                                <ArrowIcon />
                             </Button>
                             <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200" title={t('learnMore')}>
                                 <Info className="h-5 w-5" />

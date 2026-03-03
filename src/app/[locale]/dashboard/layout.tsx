@@ -20,21 +20,26 @@ export default async function DashboardLayout({
   const tAccessibility = await getTranslations({ locale, namespace: 'AccessibilityPage' });
 
   return (
-    <SidebarProvider>
-      <Sidebar side={sidebarSide} collapsible="icon">
-        <SidebarNav />
-      </Sidebar>
-      <SidebarInset>
-        <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8 flex min-h-dvh flex-col">
-          <div className="flex-1">{children}</div>
-          <footer className="mt-8 border-t pt-4 text-sm text-muted-foreground">
-            <Link href="/accessibility" className="underline underline-offset-4">
-              {tAccessibility('footerLink')}
-            </Link>
-          </footer>
-        </div>
-      </SidebarInset>
-      <WalkthroughManager />
-    </SidebarProvider>
+    <div className="h-[100svh] overflow-hidden">
+      <SidebarProvider>
+        <Sidebar side={sidebarSide} collapsible="icon">
+          <SidebarNav />
+        </Sidebar>
+        <SidebarInset className="overflow-hidden" dir="ltr">
+          <div
+            className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8 flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden"
+            dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
+          >
+            <div className="flex-1">{children}</div>
+            <footer className="mt-8 border-t pt-4 text-sm text-muted-foreground">
+              <Link href="/accessibility" className="underline underline-offset-4">
+                {tAccessibility('footerLink')}
+              </Link>
+            </footer>
+          </div>
+        </SidebarInset>
+        <WalkthroughManager />
+      </SidebarProvider>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import { PlayingSchoolEnrollmentWizard } from '@/components/harmonia/playing-sch
 import { RegistrationSessionGuard } from '@/components/registration/session-guard';
 import { Link } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
+import { PublicNavbar } from '@/components/layout/public-navbar';
 
 export default async function RegisterPage({
   params,
@@ -17,13 +18,14 @@ export default async function RegisterPage({
 
     if (token) {
         return (
-            <div className="flex flex-col min-h-dvh py-12 bg-gradient-to-br from-indigo-50/50 via-background to-background">
-                <main className="flex flex-1 items-center justify-center px-4">
-                <RegistrationSessionGuard storageKey="register-session:token">
-                    <PlayingSchoolEnrollmentWizard token={token} />
-                </RegistrationSessionGuard>
+            <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
+                <PublicNavbar />
+                <main className="flex flex-1 items-center justify-center px-4 pt-20 pb-8">
+                    <RegistrationSessionGuard storageKey="register-session:token">
+                        <PlayingSchoolEnrollmentWizard token={token} />
+                    </RegistrationSessionGuard>
                 </main>
-                <footer className="text-center text-xs text-muted-foreground">
+                <footer className="text-center text-xs text-muted-foreground pb-6">
                     <Link href="/accessibility" className="underline underline-offset-4">
                         {tAccessibility('footerLink')}
                     </Link>
@@ -33,13 +35,14 @@ export default async function RegisterPage({
     }
 
     return (
-        <div className="flex flex-col min-h-dvh py-12 bg-gradient-to-br from-indigo-50/50 via-background to-background">
-            <main className="flex flex-1 items-center justify-center px-4">
+        <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
+            <PublicNavbar />
+            <main className="flex flex-1 items-center justify-center px-4 pt-20 pb-8">
                 <RegistrationSessionGuard storageKey="register-session:default">
                     <EnrollmentWizard />
                 </RegistrationSessionGuard>
             </main>
-            <footer className="text-center text-xs text-muted-foreground">
+            <footer className="text-center text-xs text-muted-foreground pb-6">
                 <Link href="/accessibility" className="underline underline-offset-4">
                     {tAccessibility('footerLink')}
                 </Link>

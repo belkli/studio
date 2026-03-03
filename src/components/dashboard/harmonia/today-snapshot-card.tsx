@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations, useLocale } from 'next-intl';
@@ -9,6 +9,7 @@ import { useTranslations, useLocale } from 'next-intl';
 export function TodaySnapshotCard() {
     const t = useTranslations('TodaySnapshot');
     const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { mockLessons, users, mockInvoices } = useAuth();
 
     const today = new Date();
@@ -62,7 +63,11 @@ export function TodaySnapshotCard() {
                 <Button variant="outline" className="w-full" asChild>
                     <Link href="/dashboard/schedule">
                         {t('fullSchedule')}
-                        <ArrowLeft className="ms-2 h-4 w-4 rtl:rotate-180" />
+                        {isRtl ? (
+                            <ArrowLeft className="ms-2 h-4 w-4" />
+                        ) : (
+                            <ArrowRight className="ms-2 h-4 w-4" />
+                        )}
                     </Link>
                 </Button>
             </CardContent>

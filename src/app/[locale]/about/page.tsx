@@ -5,7 +5,6 @@ import { PublicFooter } from "@/components/layout/public-footer";
 import { Icons } from "@/components/icons";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -72,10 +71,12 @@ function getAccentColor(id: string): string {
 function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium; distance?: number; onClick: () => void }) {
     const t = useTranslations('AboutPage');
     const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const localizedCons = getLocalizedConservatorium(cons, locale);
     const gradient = getCardGradient(localizedCons.id);
     const accent = getAccentColor(localizedCons.id);
     const heroPhoto = localizedCons.photoUrls?.[0];
+    const [imageError, setImageError] = useState(false);
 
     const name = localizedCons.name;
     const city = localizedCons.location?.city;
@@ -88,8 +89,13 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
         >
             {/* Hero strip */}
             <div className={`relative h-32 bg-gradient-to-br ${gradient} overflow-hidden`}>
-                {heroPhoto ? (
-                    <img src={heroPhoto} alt={name} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 group-hover:scale-105" />
+                {heroPhoto && !imageError ? (
+                    <img
+                        src={heroPhoto}
+                        alt={name}
+                        className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 group-hover:scale-105"
+                        onError={() => setImageError(true)}
+                    />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <Music2 className={`h-16 w-16 ${accent} opacity-20 group-hover:opacity-30 transition-opacity`} />
@@ -145,7 +151,7 @@ function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium;
                             <span className="flex items-center gap-1 text-xs"><Users className="h-3 w-3" />{cons.teachers.length}</span>
                         )}
                     </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <ChevronRight className={`h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors ${isRtl ? 'rotate-180' : ''}`} />
                 </div>
             </div>
         </button>

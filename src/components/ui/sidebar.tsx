@@ -324,8 +324,9 @@ const SidebarInset = React.forwardRef<
   return (
     <main
       ref={ref}
+      data-sidebar="inset"
       className={cn(
-        "relative flex h-full flex-1 flex-col overflow-y-auto bg-background transition-[margin] duration-200 ease-linear",
+        "relative flex h-full flex-1 flex-col overflow-hidden bg-background transition-[margin] duration-200 ease-linear",
         // Default sidebar variant margins
         "md:peer-data-[side=left]:[margin-inline-start:var(--sidebar-width)]",
         "md:peer-data-[side=right]:[margin-inline-end:var(--sidebar-width)]",
@@ -416,7 +417,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden overscroll-contain group-data-[collapsible=icon]:overflow-hidden",
         className
       )}
       {...props}

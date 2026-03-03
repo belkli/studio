@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslations } from 'next-intl';
 
 type A11yPrefs = {
@@ -14,6 +15,7 @@ type A11yPrefs = {
 };
 
 const STORAGE_KEY = 'harmonia.a11y.prefs.v1';
+const POSITION_KEY = 'harmonia.a11y.position.v1';
 const DEFAULT_PREFS: A11yPrefs = {
   fontScale: 100,
   highContrast: false,
@@ -43,8 +45,11 @@ export function AccessibilityPanel() {
   const t = useTranslations('AccessibilityWidget');
   const [open, setOpen] = useState(false);
   const [prefs, setPrefs] = useState<A11yPrefs>(DEFAULT_PREFS);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
+  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -57,6 +62,49 @@ export function AccessibilityPanel() {
     } catch {
       applyPrefs(DEFAULT_PREFS);
     }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = localStorage.getItem(POSITION_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { x?: number; y?: number };
+        if (typeof parsed.x === 'number' && typeof parsed.y === 'number') {
+          setPosition({ x: parsed.x, y: parsed.y });
+          return;
+        }
+      }
+    } catch {
+      // Ignore invalid saved position.
+    }
+    setPosition({ x: 16, y: Math.max(16, window.innerHeight - 80) });
+  }, []);
+
+  useEffect(() => {
+    if (!position) return;
+    try {
+      localStorage.setItem(POSITION_KEY, JSON.stringify(position));
+    } catch {
+      // Ignore storage failures.
+    }
+  }, [position]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onResize = () => {
+      setPosition((prev) => {
+        if (!prev) return prev;
+        const maxX = Math.max(8, window.innerWidth - 72);
+        const maxY = Math.max(8, window.innerHeight - 72);
+        return {
+          x: Math.max(8, Math.min(prev.x, maxX)),
+          y: Math.max(8, Math.min(prev.y, maxY)),
+        };
+      });
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useEffect(() => {
@@ -88,8 +136,50 @@ export function AccessibilityPanel() {
     setPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
+  const onTogglePointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (!position) return;
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX - position.x,
+      startY: event.clientY - position.y,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onTogglePointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const nextX = event.clientX - drag.startX;
+    const nextY = event.clientY - drag.startY;
+    const maxX = Math.max(8, window.innerWidth - 72);
+    const maxY = Math.max(8, window.innerHeight - 72);
+    const x = Math.max(8, Math.min(nextX, maxX));
+    const y = Math.max(8, Math.min(nextY, maxY));
+
+    if (Math.abs(event.movementX) > 1 || Math.abs(event.movementY) > 1) {
+      drag.moved = true;
+      suppressClickRef.current = true;
+    }
+    setPosition({ x, y });
+  };
+
+  const onTogglePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    dragStateRef.current = null;
+    setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 0);
+  };
+
   return (
-    <div className="a11y-widget-root">
+    <div
+      className="a11y-widget-root"
+      style={position ? { left: `${position.x}px`, top: `${position.y}px` } : undefined}
+    >
       <button
         ref={toggleRef}
         type="button"
@@ -97,7 +187,13 @@ export function AccessibilityPanel() {
         aria-expanded={open}
         aria-controls="a11y-widget-panel"
         aria-label={t('openButton')}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          if (suppressClickRef.current) return;
+          setOpen((v) => !v);
+        }}
+        onPointerDown={onTogglePointerDown}
+        onPointerMove={onTogglePointerMove}
+        onPointerUp={onTogglePointerUp}
       >
         {t('openShort')}
       </button>

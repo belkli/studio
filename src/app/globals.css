@@ -268,8 +268,10 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  flex-wrap: nowrap !important;
 }
 
+.driver-popover .driver-popover-close-btn,
 .driver-popover .driver-close-btn {
   background: none;
   border: 0;
@@ -287,6 +289,10 @@
   padding: 6px 12px;
   cursor: pointer;
   white-space: nowrap;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
 }
 
 .driver-popover button:focus {
@@ -333,11 +339,6 @@
   border-right-color: hsl(var(--popover));
 }
 
-[dir="rtl"] .driver-popover .driver-popover-footer {
-  justify-content: space-between;
-  flex-direction: row-reverse !important;
-}
-
 .driver-popover .driver-popover-footer {
   display: flex !important;
   flex-direction: row !important;
@@ -345,9 +346,27 @@
   gap: 8px;
 }
 
+[dir="rtl"] .driver-popover .driver-popover-footer {
+  justify-content: space-between;
+}
+
+[dir="rtl"] .driver-popover .driver-popover-close-btn,
 [dir="rtl"] .driver-popover .driver-close-btn {
   right: auto;
   left: 15px;
+}
+
+.driver-popover .driver-popover-navigation-btns {
+  display: flex !important;
+  flex-grow: 1;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.driver-popover .driver-popover-progress-text,
+#driver-progress-text {
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 /* Shadcn/UI integration */
@@ -399,8 +418,8 @@
 /* Native accessibility controls (widget-like, no paid overlay). */
 .a11y-widget-root {
   position: fixed;
-  inset-inline-start: 1rem;
-  bottom: 1rem;
+  left: 1rem;
+  top: calc(100vh - 5rem);
   z-index: 65;
 }
 
@@ -411,19 +430,27 @@
   border-radius: 999px;
   padding: 0.55rem 0.85rem;
   font-weight: 700;
+  touch-action: none;
 }
 
 .a11y-panel {
   width: min(92vw, 360px);
   max-height: min(75vh, 620px);
   overflow: auto;
-  margin-top: 0.5rem;
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.5rem);
   border: 1px solid hsl(var(--border));
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   border-radius: 0.75rem;
   padding: 0.85rem;
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.2);
+}
+
+[dir="rtl"] .a11y-panel {
+  left: auto;
+  right: 0;
 }
 
 .a11y-panel-header {
@@ -526,4 +553,15 @@ html.a11y-monochrome.a11y-invert-colors body {
 
 html.a11y-high-contrast.a11y-monochrome.a11y-invert-colors body {
   filter: contrast(1.25) grayscale(1) invert(1) hue-rotate(180deg);
+}
+
+/* Keep dashboard scrollbars on the visual right in RTL while preserving RTL content flow. */
+[dir="rtl"] [data-sidebar="content"],
+[dir="rtl"] [data-sidebar="inset"] {
+  direction: ltr;
+}
+
+[dir="rtl"] [data-sidebar="content"] > *,
+[dir="rtl"] [data-sidebar="inset"] > * {
+  direction: rtl;
 }
