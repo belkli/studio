@@ -193,19 +193,19 @@ const siteAdminNotifications: Notification[] = [];
 
 // --- Mock Users ---
 const studentUser: User = {
-    id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [{ instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },], approved: true, notifications: studentNotifications, weeklyPracticeGoal: 120, achievements: [], createdAt: new Date().toISOString(),
+    id: 'student-user-1', name: 'אריאל לוי', email: 'student@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student', idNumber: '111111111', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2006-05-10', city: 'הוד השרון', gender: 'זכר', phone: '050-1111111', grade: 'יב', conservatoriumStudyYears: 10, instruments: [{ instrument: 'פסנתר', teacherName: 'מרים כהן', yearsOfStudy: 10 },], approved: true, notifications: studentNotifications, weeklyPracticeGoal: 120, achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 const studentUser2: User = {
-    id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [{ instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },], approved: true, notifications: [], weeklyPracticeGoal: 90, achievements: [], createdAt: new Date().toISOString(),
+    id: 'student-user-2', name: 'תמר ישראלי', email: 'student2@example.com', role: 'student', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=student2', idNumber: '222222222', schoolName: 'תיכון הדרים, הוד השרון', schoolSymbol: '44570001', birthDate: '2007-02-15', city: 'כפר סבא', gender: 'נקבה', phone: '052-2222222', grade: 'יא', conservatoriumStudyYears: 8, instruments: [{ instrument: 'כינור', teacherName: 'מרים כהן', yearsOfStudy: 8 }, { instrument: 'חליל צד', teacherName: 'דוד המלך', yearsOfStudy: 2 },], approved: true, notifications: [], weeklyPracticeGoal: 90, achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 const otherStudent: User = {
-    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [{ instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },], approved: true, notifications: [], achievements: [], createdAt: new Date().toISOString(),
+    id: 'other-student-1', name: 'יונתן כץ', email: 'other.student@example.com', role: 'student', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', avatarUrl: 'https://i.pravatar.cc/150?u=other-student', idNumber: '333333333', schoolName: 'תיכון קלעי, גבעתיים', schoolSymbol: '99887766', birthDate: '2006-08-10', city: 'גבעתיים', gender: 'זכר', phone: '054-3333333', grade: 'יב', conservatoriumStudyYears: 6, instruments: [{ instrument: 'גיטרה', teacherName: 'גלית שפירא', yearsOfStudy: 6 },], approved: true, notifications: [], achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 const pendingTeacher: User = {
-    id: 'pending-teacher-1', name: 'ישראל ישראלי', email: 'pending.teacher@example.com', role: 'teacher', conservatoriumId: 'cons-1', conservatoriumName: 'קונסרבטוריון הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher', approved: false, notifications: [], achievements: [], createdAt: new Date().toISOString(),
+    id: 'pending-teacher-1', name: 'ישראל ישראלי', email: 'pending.teacher@example.com', role: 'teacher', conservatoriumId: 'cons-1', conservatoriumName: 'קונסרבטוריון הוד השרון', avatarUrl: 'https://i.pravatar.cc/150?u=pending-teacher', approved: false, notifications: [], achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 export const mockTeachers: Partial<User>[] = [
@@ -225,7 +225,7 @@ export const mockTeachers: Partial<User>[] = [
             performanceGenres: ['CLASSICAL', 'JAZZ', 'FILM_MUSIC'],
             videoLinks: [{ title: 'Chopin Nocturne', url: 'https://youtube.com' }]
         },
-        createdAt: new Date().toISOString(),
+        createdAt: '2024-03-03T12:00:00.000Z',
     },
     {
         id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com', avatarUrl: 'musician-david',
@@ -238,7 +238,7 @@ export const mockTeachers: Partial<User>[] = [
         performanceProfile: {
             isOptedIn: false,
         },
-        createdAt: new Date().toISOString(),
+        createdAt: '2024-03-03T12:00:00.000Z',
     },
     {
         id: 'teacher-user-3', name: 'גלית שפירא', email: 'teacher3@example.com', avatarUrl: 'musician-galit',
@@ -253,13 +253,13 @@ export const mockTeachers: Partial<User>[] = [
             adminApproved: false,
             headline: 'גיטריסטית קלאסית ויוצרת',
         },
-        createdAt: new Date().toISOString(),
+        createdAt: '2024-03-03T12:00:00.000Z',
     },
 ];
 
-const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id], approved: true, notifications: teacherNotifications, achievements: [], createdAt: new Date().toISOString() } as User;
-const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], maxStudents: 15, achievements: [], createdAt: new Date().toISOString() } as User;
-const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18, achievements: [], createdAt: new Date().toISOString() } as User;
+const teacherUser = { ...mockTeachers[0], id: 'teacher-user-1', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '444444444', phone: '054-4444444', students: [studentUser.id, studentUser2.id], approved: true, notifications: teacherNotifications, achievements: [], createdAt: '2024-03-03T12:00:00.000Z' } as User;
+const teacherUser2 = { ...mockTeachers[1], id: 'teacher-user-2', role: 'teacher', conservatoriumId: 'cons-15', conservatoriumName: 'הוד השרון', idNumber: '555555555', phone: '054-5555555', students: [studentUser2.id], approved: true, notifications: [], maxStudents: 15, achievements: [], createdAt: '2024-03-03T12:00:00.000Z' } as User;
+const teacherUser3 = { ...mockTeachers[2], id: 'teacher-user-3', role: 'teacher', conservatoriumId: 'cons-12', conservatoriumName: 'גבעתיים', idNumber: '666666666', phone: '054-6666666', students: [otherStudent.id], approved: true, notifications: [], maxStudents: 18, achievements: [], createdAt: '2024-03-03T12:00:00.000Z' } as User;
 
 // Generate Conservatorium Admins from the JSON file, adding the logged-in user for "הוד השרון"
 const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
@@ -278,7 +278,7 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
             approved: true,
             notifications: adminNotifications,
             achievements: [],
-            createdAt: new Date().toISOString(),
+            createdAt: '2024-03-03T12:00:00.000Z',
         };
     }
     return {
@@ -295,17 +295,17 @@ const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
         approved: true,
         notifications: [],
         achievements: [],
-        createdAt: new Date().toISOString(),
+        createdAt: '2024-03-03T12:00:00.000Z',
     }
 });
 
 
 export const siteAdminUser: User = {
-    id: 'site-admin-user-1', name: 'דנה המנהלת', email: 'site.admin@example.com', role: 'site_admin', conservatoriumId: 'global', conservatoriumName: 'מנהל מערכת', avatarUrl: 'https://i.pravatar.cc/150?u=site-admin', idNumber: '999999999', phone: '054-9999999', approved: true, notifications: siteAdminNotifications, achievements: [], createdAt: new Date().toISOString(),
+    id: 'site-admin-user-1', name: 'דנה המנהלת', email: 'site.admin@example.com', role: 'site_admin', conservatoriumId: 'global', conservatoriumName: 'מנהל מערכת', avatarUrl: 'https://i.pravatar.cc/150?u=site-admin', idNumber: '999999999', phone: '054-9999999', approved: true, notifications: siteAdminNotifications, achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 export const ministryDirectorUser: User = {
-    id: 'ministry-director-user-1', name: 'יעקב הלוי', email: 'ministry.director@example.com', role: 'ministry_director', conservatoriumId: 'ministry', conservatoriumName: 'משרד החינוך', avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director', idNumber: '123456789', phone: '052-1234567', approved: true, notifications: [], achievements: [], createdAt: new Date().toISOString(),
+    id: 'ministry-director-user-1', name: 'יעקב הלוי', email: 'ministry.director@example.com', role: 'ministry_director', conservatoriumId: 'ministry', conservatoriumName: 'משרד החינוך', avatarUrl: 'https://i.pravatar.cc/150?u=ministry-director', idNumber: '123456789', phone: '052-1234567', approved: true, notifications: [], achievements: [], createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 const parentUser: User = {
@@ -322,7 +322,7 @@ const parentUser: User = {
     notifications: [],
     achievements: [],
     students: [studentUser.id],
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 export const mockUsers: User[] = [
@@ -348,9 +348,9 @@ export const mockFormSubmissions: FormSubmission[] = [
 ];
 export const mockPackages: Package[] = [];
 export const mockLessons: LessonSlot[] = [
-    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 1)).setHours(16, 0, 0, 0)).toISOString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false },
-    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 2)).setHours(17, 0, 0, 0)).toISOString(), durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-1' },
-    { id: 'lesson-3', conservatoriumId: 'cons-12', teacherId: 'teacher-user-3', studentId: 'other-student-1', instrument: 'גיטרה', startTime: new Date(new Date(new Date().setDate(new Date().getDate() + 3)).setHours(15, 0, 0, 0)).toISOString(), durationMinutes: 45, type: 'RECURRING', bookingSource: 'ADMIN', roomId: 'room-5', isVirtual: true, meetingLink: 'https://zoom.us/j/1234567890', status: 'SCHEDULED', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), isCreditConsumed: false, branchId: 'branch-2' },
+    { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2024-03-04T16:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false },
+    { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: '2024-03-05T17:00:00.000Z', durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false, branchId: 'branch-1' },
+    { id: 'lesson-3', conservatoriumId: 'cons-12', teacherId: 'teacher-user-3', studentId: 'other-student-1', instrument: 'גיטרה', startTime: '2024-03-06T15:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'ADMIN', roomId: 'room-5', isVirtual: true, meetingLink: 'https://zoom.us/j/1234567890', status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false, branchId: 'branch-2' },
 ];
 export const mockInvoices: Invoice[] = [];
 export const mockPracticeLogs: PracticeLog[] = [];
@@ -368,7 +368,7 @@ export const mockEvents: EventProduction[] = [
         name: 'קונצרט אביב 2024',
         type: 'RECITAL',
         venue: 'אולם קונצרטים קטן',
-        eventDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().split('T')[0],
+        eventDate: '2024-03-18T12:00:00.000Z'.split('T')[0],
         startTime: '18:30',
         status: 'OPEN_REGISTRATION',
         program: [
@@ -385,7 +385,7 @@ export const mockOpenDayEvents: OpenDayEvent[] = [
         id: 'open-day-1',
         conservatoriumId: 'cons-15',
         name: 'יום פתוח אביב 2024',
-        date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
+        date: '2024-03-17T12:00:00.000Z'.split('T')[0],
         startTime: '10:00',
         endTime: '14:00',
         appointmentDuration: 20,
@@ -402,9 +402,9 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
         childName: 'אורי',
         childAge: 8,
         instrumentInterest: 'פסנתר',
-        appointmentTime: new Date(new Date(new Date().setDate(new Date().getDate() + 14)).setHours(10, 20, 0, 0)).toISOString(),
+        appointmentTime: '2024-03-17T10:00:00.000Z',
         status: 'SCHEDULED',
-        registeredAt: new Date().toISOString(),
+        registeredAt: '2024-03-03T12:00:00.000Z',
     }
 ];
 

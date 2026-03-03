@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Languages } from 'lucide-react';
+import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Languages, Plus, Trash2 } from 'lucide-react';
 import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember } from '@/lib/types';
 import { translateConservatoriumProfile } from '@/app/actions/translate';
 import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
@@ -187,8 +187,18 @@ export default function ConservatoriumProfileEditor() {
             // Deep update for nested fields like manager.role
             const newLocaleData = { ...localeData };
             if (field.includes('.')) {
-                const [parent, child] = field.split('.');
-                newLocaleData[parent] = { ...newLocaleData[parent], [child]: value };
+                const parts = field.split('.');
+                if (parts.length === 2) {
+                    newLocaleData[parts[0]] = { ...newLocaleData[parts[0]], [parts[1]]: value };
+                } else if (parts.length === 3 && parts[0] === 'leadingTeam') {
+                    const idx = parseInt(parts[1], 10);
+                    const key = parts[2];
+                    const arr = [...(newLocaleData.leadingTeam || [])];
+                    if (!arr[idx]) arr[idx] = {};
+                    arr[idx] = { ...arr[idx], [key]: value };
+                    newLocaleData.leadingTeam = arr;
+                }
+
             } else {
                 newLocaleData[field] = value;
             }
@@ -248,6 +258,29 @@ export default function ConservatoriumProfileEditor() {
                 [key]: value
             } as ConservatoriumStaffMember
         }));
+    };
+
+    const updateLeadingTeamMember = (index: number, key: string, value: string) => {
+        setFormData(prev => {
+            const team = [...(prev.leadingTeam || [])];
+            team[index] = { ...team[index], [key]: value };
+            return { ...prev, leadingTeam: team };
+        });
+    };
+
+    const addLeadingTeamMember = () => {
+        setFormData(prev => ({
+            ...prev,
+            leadingTeam: [...(prev.leadingTeam || []), { name: '', role: '', bio: '', photoUrl: '' }]
+        }));
+    };
+
+    const removeLeadingTeamMember = (index: number) => {
+        setFormData(prev => {
+            const team = [...(prev.leadingTeam || [])];
+            team.splice(index, 1);
+            return { ...prev, leadingTeam: team };
+        });
     };
 
     return (
@@ -567,6 +600,89 @@ export default function ConservatoriumProfileEditor() {
                                         isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
                                         isTranslating={isTranslating}
                                     />
+                                </div>
+
+                                {/* Dynamic Leading Team */}
+                                {formData.leadingTeam?.map((member, index) => (
+                                    <div key={index} className="space-y-6 border rounded-xl p-6 bg-muted/10 relative">
+                                        <div className="flex items-center justify-between">
+                                            <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">
+                                                {t('profileEditor.team.additionalMember') || 'Team Member'} {index + 1}
+                                            </Badge>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                                onClick={() => removeLeadingTeamMember(index)}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>{t('profileEditor.team.photoUrl')}</Label>
+                                                <Input
+                                                    value={member.photoUrl || ''}
+                                                    onChange={e => updateLeadingTeamMember(index, 'photoUrl', e.target.value)}
+                                                    placeholder="https://..."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>{t('profileEditor.team.nameHebrew')}</Label>
+                                                <Input
+                                                    value={member.name || ''}
+                                                    onChange={e => updateLeadingTeamMember(index, 'name', e.target.value)}
+                                                    placeholder="e.g. Yossi Cohen"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <TranslatedFieldInput
+                                            label={t('profileEditor.team.titleRole')}
+                                            value={member.role || ''}
+                                            translations={{
+                                                en: formData.translations?.en?.leadingTeam?.[index]?.role,
+                                                ar: formData.translations?.ar?.leadingTeam?.[index]?.role,
+                                                ru: formData.translations?.ru?.leadingTeam?.[index]?.role,
+                                            }}
+                                            fieldKey={`leadingTeam.${index}.role`}
+                                            onSourceChange={(val) => updateLeadingTeamMember(index, 'role', val)}
+                                            onTranslationChange={(loc, val) => handleTranslationChange(`leadingTeam.${index}.role`, loc, val)}
+                                            isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                            isTranslating={isTranslating}
+                                        />
+
+                                        <TranslatedFieldInput
+                                            label={t('profileEditor.team.shortBio')}
+                                            value={member.bio || ''}
+                                            translations={{
+                                                en: formData.translations?.en?.leadingTeam?.[index]?.bio,
+                                                ar: formData.translations?.ar?.leadingTeam?.[index]?.bio,
+                                                ru: formData.translations?.ru?.leadingTeam?.[index]?.bio,
+                                            }}
+                                            fieldKey={`leadingTeam.${index}.bio`}
+                                            isTextArea
+                                            onSourceChange={(val) => updateLeadingTeamMember(index, 'bio', val)}
+                                            onTranslationChange={(loc, val) => handleTranslationChange(`leadingTeam.${index}.bio`, loc, val)}
+                                            isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
+                                            isTranslating={isTranslating}
+                                        />
+                                    </div>
+                                ))}
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full border-dashed"
+                                    onClick={addLeadingTeamMember}
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    {t('profileEditor.team.addMember') || 'Add Team Member'}
+                                </Button>
+
+                                <div className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
+                                    {t('profileEditor.team.note') || 'Note: The legacy Manager and Pedagogical fields above remain indefinitely supported.'}
                                 </div>
                             </CardContent>
                         </Card>

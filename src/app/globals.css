@@ -233,9 +233,10 @@
 
 .driver-popover .driver-popover-footer {
   padding: 10px 20px;
-  text-align: right;
-  direction: ltr;
-  /* Ensure footer buttons are LTR */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .driver-popover .driver-close-btn {
@@ -254,14 +255,11 @@
   border-radius: 0.5rem;
   padding: 6px 12px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .driver-popover button:focus {
   outline: none;
-}
-
-.driver-popover button.driver-next-btn {
-  margin-left: 5px;
 }
 
 #driver-progress-text {
@@ -305,12 +303,7 @@
 }
 
 [dir="rtl"] .driver-popover .driver-popover-footer {
-  text-align: left;
-}
-
-[dir="rtl"] .driver-popover button.driver-next-btn {
-  margin-left: 0;
-  margin-right: 5px;
+  justify-content: space-between;
 }
 
 [dir="rtl"] .driver-popover .driver-close-btn {

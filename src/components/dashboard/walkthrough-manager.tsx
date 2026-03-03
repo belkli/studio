@@ -77,6 +77,7 @@ export function useWalkthrough() {
 
         const driverObj = driver({
             showProgress: true,
+            progressText: '{{current}} / {{total}}',
             steps: steps,
             onDestroyed: () => {
                 markWalkthroughAsSeen(user.id);
@@ -90,7 +91,14 @@ export function useWalkthrough() {
             driverObj.drive();
         }, 1500);
 
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(timer);
+            try {
+                driverObj.destroy();
+            } catch (e) {
+                // Ignore errors if already destroyed
+            }
+        };
     }, [user, markWalkthroughAsSeen, stepsConfig, t]);
 }
 

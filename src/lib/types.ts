@@ -290,6 +290,10 @@ export type ConservatoriumProfileTranslation = {
     role?: string;
     bio?: string;
   };
+  leadingTeam?: Array<{
+    role?: string;
+    bio?: string;
+  }>;
   departments?: Array<{
     name: string;
   }>;
@@ -410,6 +414,7 @@ export type Conservatorium = {
   location?: ConservatoriumLocation;
   manager?: ConservatoriumStaffMember;
   pedagogicalCoordinator?: ConservatoriumStaffMember;
+  leadingTeam?: ConservatoriumStaffMember[];
   departments?: ConservatoriumDepartment[];
   branchesInfo?: ConservatoriumBranchInfo[];
   teachers?: TeacherDirectoryProfile[];
