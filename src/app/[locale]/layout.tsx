@@ -66,13 +66,17 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
+  const skipToMainLabel = (messages as any)?.Common?.shared?.skipToMain || 'Skip to main content';
 
   return (
     <html lang={locale} dir={dir}>
       <body className={`${rubik.variable} font-body antialiased`}>
+        <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            {children}
+            <main id="main-content" tabIndex={-1}>
+              {children}
+            </main>
             <Toaster />
             <AiHelpAssistant />
           </AuthProvider>

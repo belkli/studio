@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -37,6 +37,7 @@ const getTrialSchema = (t: ReturnType<typeof useTranslations>) => z.object({
 type TrialFormData = z.infer<ReturnType<typeof getTrialSchema>>;
 
 const stepIcons = [Music, HeartHandshake, Calendar, Contact, ShieldCheck];
+const TRIAL_DRAFT_STORAGE_PREFIX = 'trial-booking-draft:v1';
 
 export function TrialBookingWidget() {
     const t = useTranslations('TrialBooking');
@@ -60,6 +61,61 @@ export function TrialBookingWidget() {
         resolver: zodResolver(getTrialSchema(t)) as any,
         defaultValues: { date: new Date() },
     });
+
+    const draftStorageKey = `${TRIAL_DRAFT_STORAGE_PREFIX}:${locale}`;
+
+    const clearDraft = useCallback(() => {
+        if (typeof window === 'undefined') return;
+        localStorage.removeItem(draftStorageKey);
+    }, [draftStorageKey]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const raw = localStorage.getItem(draftStorageKey);
+        if (!raw) return;
+
+        try {
+            const draft = JSON.parse(raw);
+            const values = draft?.values ?? {};
+            form.reset({
+                ...values,
+                date: values?.date ? new Date(values.date) : new Date(),
+            });
+            if (typeof draft?.step === 'number' && draft.step >= 0 && draft.step < steps.length) {
+                setCurrentStep(draft.step);
+            }
+        } catch {
+            localStorage.removeItem(draftStorageKey);
+        }
+    }, [draftStorageKey, form, steps.length]);
+
+    const persistDraft = useCallback(() => {
+        if (typeof window === 'undefined' || isSubmitted) return;
+        const values = form.getValues();
+        localStorage.setItem(
+            draftStorageKey,
+            JSON.stringify({
+                savedAt: new Date().toISOString(),
+                step: currentStep,
+                values: {
+                    ...values,
+                    date: values.date instanceof Date ? values.date.toISOString() : values.date ?? null,
+                },
+            })
+        );
+    }, [currentStep, draftStorageKey, form, isSubmitted]);
+
+    useEffect(() => {
+        if (isSubmitted) return;
+        const interval = window.setInterval(persistDraft, 30_000);
+        return () => window.clearInterval(interval);
+    }, [isSubmitted, persistDraft]);
+
+    useEffect(() => {
+        if (!isSubmitted) {
+            persistDraft();
+        }
+    }, [currentStep, isSubmitted, persistDraft]);
 
     const teacherId = form.watch('teacherId');
     const selectedDate = form.watch('date');
@@ -120,6 +176,7 @@ export function TrialBookingWidget() {
     };
 
     const onSubmit = (data: TrialFormData) => {
+        clearDraft();
         setIsSubmitted(true);
         // This is a mock submission
         toast({

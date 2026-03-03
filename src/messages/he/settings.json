@@ -1,0 +1,246 @@
+{
+  "SettingsPage": {
+    "conservatorium": {
+      "cancellation": "מדיניות ביטולים",
+      "description": "ניהול תכונות אינטגרציה.",
+      "manageAI": "ניהול תכונות AI",
+      "manageFeatures": "ניהול פרופיל",
+      "pricing": "הגדרות תמחור",
+      "profileEditor": {
+        "contact": {
+          "description": "איך תלמידים והורים פוטנציאליים יכולים ליצור איתכם קשר.",
+          "mainPhone": "טלפון ראשי",
+          "primaryEmail": "אימייל ראשי",
+          "secondaryEmail": "אימייל נוסף",
+          "title": "פרטי קשר",
+          "website": "אתר רשמי",
+          "whatsapp": "מספר וואטסאפ"
+        },
+        "location": {
+          "cityEnglish": "עיר (אנגלית)",
+          "cityHebrew": "עיר (עברית)",
+          "description": "היכן אתם נמצאים?",
+          "fullAddress": "כתובת מלאה",
+          "title": "מיקום"
+        },
+        "media": {
+          "description": "תמונות שמוצגות בפרופיל הציבורי.",
+          "galleryImage1": "קישור לתמונת גלריה 1",
+          "galleryImage2": "קישור לתמונת גלריה 2",
+          "galleryImage3": "קישור לתמונת גלריה 3",
+          "headerImage": "קישור לתמונת כותרת",
+          "title": "תמונות ומדיה"
+        },
+        "social": {
+          "description": "חברו את הנוכחות הדיגיטלית שלכם.",
+          "facebook": "קישור לפייסבוק",
+          "instagram": "קישור לאינסטגרם",
+          "tiktok": "קישור לטיקטוק",
+          "title": "קישורי רשתות חברתיות",
+          "youtube": "קישור לערוץ יוטיוב"
+        },
+        "team": {
+          "coordinatorNamePlaceholder": "שם הרכז/ת",
+          "description": "דמויות מפתח בקונסרבטוריון.",
+          "manager": "מנהל/ת",
+          "managerNamePlaceholder": "שם המנהל/ת",
+          "nameHebrew": "שם (עברית)",
+          "pedagogicalCoordinator": "רכז/ת פדגוגי/ת",
+          "photoUrl": "קישור לתמונה",
+          "shortBio": "ביוגרפיה קצרה",
+          "title": "צוות מוביל",
+          "titleRole": "תפקיד / תיאור תפקיד"
+        }
+      },
+      "publicProfile": "פרופיל ציבורי",
+      "title": "הגדרות קונסרבטוריון"
+    },
+    "notifications": {
+      "description": "בחר על מה ברצונך לקבל התראה.",
+      "manage": "ניהול התראות",
+      "prompt": "הגדר כיצד תקבל התראות.",
+      "title": "העדפות התראות"
+    },
+    "password": {
+      "current": "סיסמה נוכחית",
+      "description": "שנה את הסיסמה שלך.",
+      "new": "סיסמה חדשה",
+      "success": "הסיסמה עודכנה",
+      "successDesc": "הסיסמה שלך שונתה בהצלחה.",
+      "title": "עדכון סיסמה",
+      "update": "עדכן סיסמה"
+    },
+    "profile": {
+      "description": "עדכן את פרטי הפרופיל שלך.",
+      "email": "אימייל",
+      "name": "שם",
+      "save": "שמור פרופיל",
+      "success": "הפרופיל נשמר",
+      "successDesc": "הפרופיל שלך עודכן בהצלחה.",
+      "title": "מידע פרופיל"
+    },
+    "subtitle": "ניהול הגדרות המערכת והעדפות החשבון שלך.",
+    "title": "הגדרות"
+  },
+  "CancellationPolicy": {
+    "lateCancelCredit": "זיכוי לביטול באיחור",
+    "makeupExpiryDays": "ימי תפוגה לזיכוי השלמה",
+    "maxMakeupsPerTerm": "מקסימום השלמות לתקופה",
+    "noShowCredit": "זיכוי לאי-הגעה",
+    "noticeHours": "שעות הודעה מוקדמת נדרשות",
+    "onTimeCancelCredit": "זיכוי לביטול בזמן",
+    "save": "שמור מדיניות",
+    "saved": "המדיניות נשמרה",
+    "subtitle": "קבע את כללי הביטול לקונסרבטוריון",
+    "title": "מדיניות ביטולים"
+  },
+  "PricingSettings": {
+    "baseRates": {
+      "description": "קבע את מחיר הבסיס לשיעור בודד לפי משך זמן.",
+      "min30": "שיעור 30 דקות",
+      "min45": "שיעור 45 דקות",
+      "min60": "שיעור 60 דקות",
+      "title": "תעריפי בסיס לשיעורים"
+    },
+    "comparison": {
+      "addressMin": "הכתובת חייבת להכיל לפחות {min} תווים.",
+      "branch": "קונסרבטוריון",
+      "description": "צפייה בתמחור של קונסרבטוריונים אחרים לצורך השוואה והתאמה.",
+      "min30": "30 דק'",
+      "min45": "45 דק'",
+      "min60": "60 דק'",
+      "nameMin": "שם הסניף חייב להכיל לפחות {min} תווים.",
+      "pack5": "חבילת 5",
+      "title": "השוואת תעריפי שלוחות",
+      "yearly": "שנתי"
+    },
+    "discounts": {
+      "description": "הגדר אחוזי הנחה עבור חבילות וזכאויות אחרות.",
+      "pack10": "הנחה על חבילת 10",
+      "pack5": "הנחה על חבילת 5",
+      "sibling": "הנחת אחים",
+      "title": "הנחות על חבילות",
+      "yearly": "הנחה שנתית"
+    },
+    "save": "שמור שינויים",
+    "special": {
+      "adHoc": "תוספת לשיעור חד-פעמי",
+      "title": "תמחור מיוחד",
+      "trial": "מחיר שיעור ניסיון"
+    },
+    "success": "הגדרות התמחור עודכנו בהצלחה!",
+    "validation": {
+      "percent": "ההנחה חייבת להיות בין 0 ל-100",
+      "positive": "המחיר חייב להיות חיובי"
+    }
+  },
+  "NotificationPreferences": {
+    "additionalSettingsTitle": "הגדרות נוספות",
+    "channelEmail": "אימייל",
+    "channelInApp": "באפליקציה",
+    "channelPreferencesDesc": "בחר כיצד ברצונך לקבל כל סוג התראה.",
+    "channelPreferencesTitle": "העדפות ערוצים",
+    "channels": {
+      "EMAIL": "אימייל",
+      "IN_APP": "באפליקציה",
+      "SMS": "מסרון (SMS)",
+      "WHATSAPP": "ווטסאפ"
+    },
+    "channelSms": "מסרון (SMS)",
+    "channelWhatsapp": "ווטסאפ",
+    "enableQuietHoursDesc": "השהה התראות לא דחופות (SMS, ווטסאפ) בשעות מוגדרות.",
+    "enableQuietHoursLabel": "הפעל שעות שקט",
+    "endTimeLabel": "שעת סיום",
+    "formStatusChanges": "שינויי סטטוס טפסים",
+    "from": "מ-",
+    "invalidFormat": "פורמט לא תקין",
+    "langArabic": "ערבית",
+    "langEnglish": "אנגלית",
+    "langHebrew": "עברית",
+    "langRussian": "רוסית",
+    "language": "שפת התראות",
+    "lessonCancellation": "ביטולי שיעורים",
+    "lessonReminders": "תזכורות שיעורים",
+    "makeupCredits": "זיכויי שיעורי השלמה",
+    "notificationLanguageLabel": "שפת התראות",
+    "notificationTypeHeader": "סוג התראה",
+    "paymentDue": "תשלומים וחיובים",
+    "preferencesUpdatedDesc": "העדפות ההתראות שלך נשמרו.",
+    "preferencesUpdatedTitle": "העדפות עודכנו",
+    "psCoordinatorAnnouncements": "הכרזות רכז/ת",
+    "psExcellenceUpdates": "עדכוני מצוינות - נגן בבית הספר",
+    "psLessonCancellation": "ביטול שיעור - נגן בבית הספר",
+    "psLessonReminders": "תזכורות שיעור - נגן בבית הספר",
+    "psNewEnrollment": "רישום חדש - נגן בבית הספר",
+    "psPartnershipUpdate": "עדכוני שותפות",
+    "psPaymentDue": "תשלום - נגן בבית הספר",
+    "quietHours": "שעות שקט",
+    "quietHoursDesc": "לא יישלחו התראות בין",
+    "save": "שמור העדפות",
+    "saveChangesBtn": "שמור שינויים",
+    "saved": "העדפות נשמרו",
+    "startTimeLabel": "שעת התחלה",
+    "subtitle": "בחר כיצד ועל מה לקבל התראות",
+    "systemAnnouncements": "הכרזות מערכת",
+    "teacherMessages": "הודעות מורה",
+    "title": "העדפות התראות",
+    "to": "עד",
+    "types": {
+      "formStatusChanges": "עדכוני סטטוס טפסים",
+      "lessonCancellation": "ביטולי שיעורים",
+      "lessonReminders": "תזכורות שיעורים",
+      "makeupCredits": "זיכויי השלמה",
+      "paymentDue": "תשלומים",
+      "psExcellenceUpdates": "עדכוני מסלול מצוינות",
+      "psLessonCancellation": "ביטולי שיעורי בית ספר מנגן",
+      "psLessonReminders": "תזכורות שיעורי בית ספר מנגן",
+      "psPaymentDue": "תשלומי בית ספר מנגן",
+      "systemAnnouncements": "הכרזות מערכת",
+      "teacherMessages": "הודעות מורה"
+    }
+  },
+  "Branches": {
+    "actions": "פעולות",
+    "addDesc": "הזן את פרטי הסניף החדש.",
+    "addNew": "הוסף סניף חדש",
+    "address": "כתובת",
+    "addressPlaceholder": "לדוגמה: רחוב הכלניות 15, פתח תקווה",
+    "addTitle": "הוספת סניף חדש",
+    "branchName": "שם הסניף",
+    "conservatorium": "קונסרבטוריון",
+    "description": "{count} סניפים פעילים במערכת.",
+    "editDesc": "עדכן את פרטי הסניף להלן.",
+    "editTitle": "עריכת סניף",
+    "fullAddress": "כתובת מלאה",
+    "namePlaceholder": "לדוגמה: שלוחה צפונית",
+    "saveBranch": "שמור סניף",
+    "successAdd": "סניף חדש נוסף בהצלחה",
+    "successUpdate": "הסניף עודכן בהצלחה",
+    "title": "ניהול סניפים",
+    "validation": {
+      "addressMin": "הכתובת חייבת להכיל לפחות {min} תווים.",
+      "nameMin": "שם הסניף חייב להכיל לפחות {min} תווים."
+    }
+  },
+  "CancellationPolicySettings": {
+    "cancellationCreditLabel": "זיכוי לביטול בזמן",
+    "errors": {
+      "positiveDays": "יש להזין מספר חיובי של ימים.",
+      "positiveHours": "יש להזין מספר חיובי של שעות.",
+      "positiveNumber": "יש להזין מספר חיובי."
+    },
+    "lateCancelCreditLabel": "זיכוי לביטול באיחור",
+    "makeupExpiryLabel": "תפוגת זיכוי השלמה (בימים)",
+    "makeupRulesTitle": "כללי שיעורי השלמה",
+    "maxMakeupsLabel": "מקסימום שיעורי השלמה לתקופה",
+    "noticeHoursLabel": "שעות הודעה מוקדמת נדרשות לביטול עם זיכוי",
+    "options": {
+      "FULL": "זיכוי מלא",
+      "FULL_NOT_RECOMMENDED": "זיכוי מלא (לא מומלץ)",
+      "NONE": "ללא זיכוי"
+    },
+    "saveChanges": "שמור שינויים",
+    "studentRulesTitle": "כללי ביטול תלמיד",
+    "successToast": "מדיניות הביטולים עודכנה בהצלחה!"
+  }
+}

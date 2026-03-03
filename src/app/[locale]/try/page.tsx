@@ -5,11 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { RegistrationSessionGuard } from '@/components/registration/session-guard';
+import { PublicFooter } from '@/components/layout/public-footer';
 
 export default function TryPage() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
     const tTrial = useTranslations('TrialBooking');
+    const tAccessibility = useTranslations('AccessibilityPage');
 
     return (
         <div className="flex flex-col min-h-dvh bg-gradient-to-br from-indigo-50/50 via-background to-background">
@@ -30,8 +33,16 @@ export default function TryPage() {
                 </div>
             </header>
             <main className="flex-1 flex items-center justify-center py-20">
-                <TrialBookingWidget />
+                <RegistrationSessionGuard storageKey="register-session:trial">
+                    <TrialBookingWidget />
+                </RegistrationSessionGuard>
             </main>
+            <div className="text-center text-xs text-muted-foreground pb-3">
+                <Link href="/accessibility" className="underline underline-offset-4">
+                    {tAccessibility('footerLink')}
+                </Link>
+            </div>
+            <PublicFooter />
         </div>
     );
 }

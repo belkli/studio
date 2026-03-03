@@ -1,6 +1,8 @@
 
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 // Helper function to deeply merge two objects.
 // This is used to merge the fallback messages with the locale-specific messages.
@@ -24,6 +26,41 @@ function deepMerge(base: any, override: any): any {
     return result;
 }
 
+async function readJsonFileIfExists(filePath: string) {
+    try {
+        const raw = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(raw);
+    } catch {
+        return {};
+    }
+}
+
+async function loadLocaleMessages(locale: string) {
+    const rootFile = path.resolve('src/messages', `${locale}.json`);
+    const rootMessages = await readJsonFileIfExists(rootFile);
+    const splitDir = path.resolve('src/messages', locale);
+
+    let merged = { ...rootMessages };
+
+    try {
+        const entries = await fs.readdir(splitDir, { withFileTypes: true });
+        const splitFiles = entries
+            .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+            .map((entry) => entry.name)
+            .sort((a, b) => a.localeCompare(b, 'en'));
+
+        for (const fileName of splitFiles) {
+            const filePath = path.join(splitDir, fileName);
+            const splitMessages = await readJsonFileIfExists(filePath);
+            merged = deepMerge(merged, splitMessages);
+        }
+    } catch {
+        // Locale split directory does not exist yet; root file is enough.
+    }
+
+    return merged;
+}
+
 
 export default getRequestConfig(async ({ requestLocale }) => {
     const resolvedLocale = await requestLocale;
@@ -34,11 +71,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
         locale = routing.defaultLocale;
     }
 
-    // Load the messages for the requested locale.
-    const messages = (await import(`../messages/${locale}.json`)).default;
+    // Load locale root + optional split bundles.
+    const messages = await loadLocaleMessages(locale);
     
-    // Always load English as the fallback language.
-    const fallbackMessages = (await import('../messages/en.json')).default;
+    // Always load English (root + split) as fallback language.
+    const fallbackMessages = await loadLocaleMessages('en');
     
     return {
         locale,

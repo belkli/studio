@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 export function PublicFooter() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
+    const tAccessibility = useTranslations('AccessibilityPage');
 
     return (
         <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t mt-auto">
@@ -18,6 +19,9 @@ export function PublicFooter() {
                 </Link>
                 <Link href="/contact" className="text-xs hover:underline underline-offset-4" prefetch={false}>
                     {tNav('contact')}
+                </Link>
+                <Link href="/accessibility" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+                    {tAccessibility('footerLink')}
                 </Link>
             </nav>
         </footer>

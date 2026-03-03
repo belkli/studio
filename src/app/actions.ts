@@ -92,6 +92,69 @@ const CreateEnrollmentSchema = z.object({
   instrument: z.string(),
   paymentMethod: z.string().optional(),
 });
+
+const SUPPORTED_PAYMENT_PROVIDERS = ['CARDCOM', 'PELECARD', 'HYP', 'TRANZILA'] as const;
+type PaymentProvider = (typeof SUPPORTED_PAYMENT_PROVIDERS)[number];
+
+function isPaymentProvider(value: string): value is PaymentProvider {
+  return (SUPPORTED_PAYMENT_PROVIDERS as readonly string[]).includes(value);
+}
+
+function getPaymentProvider(requestedProvider?: string): PaymentProvider {
+  const normalizedRequested = (requestedProvider || '').trim().toUpperCase();
+  if (isPaymentProvider(normalizedRequested)) return normalizedRequested;
+  if (normalizedRequested && normalizedRequested !== 'ONLINE') {
+    console.warn(`[Payment] Unsupported provider "${normalizedRequested}". Falling back to configured default.`);
+  }
+
+  const normalizedDefault = (process.env.PAYMENT_GATEWAY_PROVIDER || '').trim().toUpperCase();
+  if (isPaymentProvider(normalizedDefault)) return normalizedDefault;
+
+  return 'CARDCOM';
+}
+
+function buildPaymentRedirectUrl(provider: PaymentProvider, token: string) {
+  const template = process.env.PAYMENT_GATEWAY_REDIRECT_TEMPLATE;
+  if (template?.includes('{token}')) {
+    return template
+      .replaceAll('{provider}', provider.toLowerCase())
+      .replaceAll('{token}', encodeURIComponent(token));
+  }
+
+  if (provider === 'CARDCOM') {
+    const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
+    if (!terminalNumber) {
+      console.warn('[Cardcom] CARDCOM_TERMINAL_NUMBER is not configured - using mock redirect');
+      return `/payment/mock?token=${token}&gateway=cardcom`;
+    }
+    return `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${encodeURIComponent(token)}`;
+  }
+
+  if (provider === 'PELECARD') {
+    const terminalNumber = process.env.PELECARD_TERMINAL_NUMBER;
+    if (!terminalNumber) {
+      console.warn('[PeleCard] PELECARD_TERMINAL_NUMBER is not configured - using mock redirect');
+      return `/payment/mock?token=${token}&gateway=pelecard`;
+    }
+    return `https://gateway.pelecard.biz/payment?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${encodeURIComponent(token)}`;
+  }
+
+  if (provider === 'HYP') {
+    const terminalNumber = process.env.HYP_TERMINAL_NUMBER;
+    if (!terminalNumber) {
+      console.warn('[HYP] HYP_TERMINAL_NUMBER is not configured - using mock redirect');
+      return `/payment/mock?token=${token}&gateway=hyp`;
+    }
+    return `https://pay.hyp.co.il/?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${encodeURIComponent(token)}`;
+  }
+
+  const terminalNumber = process.env.TRANZILA_TERMINAL_NUMBER;
+  if (!terminalNumber) {
+    console.warn('[Tranzila] TRANZILA_TERMINAL_NUMBER is not configured - using mock redirect');
+    return `/payment/mock?token=${token}&gateway=tranzila`;
+  }
+  return `https://direct.tranzila.com/${encodeURIComponent(terminalNumber)}/iframe.php?sum=0&user1=${encodeURIComponent(token)}`;
+}
 const GetPaymentUrlSchema = z.string();
 const ExcellenceTrackResponseSchema = z.object({
   studentId: z.string(),
@@ -309,15 +372,11 @@ export const createPlayingSchoolEnrollment = withAuth(
 
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Production: Use CARDCOM_TERMINAL_NUMBER from environment — never hardcode credentials
-    const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
-    if (!terminalNumber) {
-      console.warn('[Cardcom] CARDCOM_TERMINAL_NUMBER is not configured — using mock redirect');
-    }
-    const redirectUrl = terminalNumber
-      ? `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&ReturnValue=${data.token}`
-      : `/payment/mock?token=${data.token}`; // Fallback for local dev
+    const paymentMethod = (data.paymentMethod || '').trim().toUpperCase();
+    const redirectUrl =
+      paymentMethod && paymentMethod !== 'SCHOOL_FEES'
+        ? buildPaymentRedirectUrl(getPaymentProvider(paymentMethod), data.token)
+        : undefined;
 
     return {
       success: true,
@@ -339,11 +398,27 @@ export const getPlayingSchoolPaymentUrl = withAuth(
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Production: Use CARDCOM_TERMINAL_NUMBER from environment — never hardcode credentials
-    const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
+    const provider = getPaymentProvider();
+    const invoiceTemplate = process.env.PAYMENT_GATEWAY_INVOICE_TEMPLATE;
+    if (invoiceTemplate?.includes('{invoiceId}')) {
+      return {
+        url: invoiceTemplate
+          .replaceAll('{provider}', provider.toLowerCase())
+          .replaceAll('{invoiceId}', encodeURIComponent(invoiceId)),
+      };
+    }
+
+    if (provider === 'CARDCOM') {
+      const terminalNumber = process.env.CARDCOM_TERMINAL_NUMBER;
+      return {
+        url: terminalNumber
+          ? `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&InvoiceId=${invoiceId}&Operation=Payment`
+          : `/payment/mock?invoice=${invoiceId}&gateway=cardcom`,
+      };
+    }
+
     return {
-      url: terminalNumber
-        ? `https://secure.cardcom.solutions/External/LowProfile/Create.aspx?TerminalNumber=${encodeURIComponent(terminalNumber)}&InvoiceId=${invoiceId}&Operation=Payment`
-        : `/payment/mock?invoice=${invoiceId}`, // Fallback for local dev
+      url: `/payment/mock?invoice=${invoiceId}&gateway=${provider.toLowerCase()}`,
     };
   }
 );

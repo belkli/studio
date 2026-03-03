@@ -1,0 +1,340 @@
+{
+  "AdminDashboard": {
+    "welcome": "Welcome, {name}",
+    "controlCenter": "This is your control center for {name}.",
+    "quickActions": "Quick Actions",
+    "approveEnrollments": "Approve Enrollments",
+    "reviewForms": "Review Forms",
+    "viewPayrollDrafts": "View Payroll Drafts",
+    "sendAnnouncement": "Send Announcement",
+    "issueCredit": "Issue Manual Credit",
+    "welcomeFem": "ברוכה הבאה, {name}"
+  },
+  "AdminPages": {
+    "approvals": {
+      "title": "Pending Approvals",
+      "subtitle": "Forms and documents requiring your approval",
+      "noApprovals": "No pending requests",
+      "filter": "Filter by type"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "subtitle": "View and manage your lessons, bookings, and availability.",
+      "today": "Today",
+      "week": "Week",
+      "month": "Month",
+      "noLessons": "No scheduled lessons",
+      "weeklySchedule": "Weekly Schedule",
+      "bookNewLesson": "Book new lesson",
+      "noLessonsTitle": "No scheduled lessons",
+      "noLessonsDesc": "Your schedule for the upcoming week is empty. You can book a new lesson."
+    },
+    "branches": {
+      "subtitle": "View, add, and edit conservatorium branches.",
+      "noPermission": "You do not have permission to view this page.",
+      "title": "ניהול סניפים",
+      "addBranch": "הוסף סניף",
+      "noBranches": "לא הוגדרו סניפים"
+    },
+    "announcements": {
+      "title": "Announcements & News",
+      "subtitle": "Send messages to students, parents, and teachers",
+      "newAnnouncement": "New Announcement",
+      "noAnnouncements": "No announcements"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "All your updates and messages in one place.",
+      "markAllRead": "Mark all as read",
+      "all": "All",
+      "unread": "Unread",
+      "noNewNotifications": "No new notifications",
+      "noNotifications": "No notifications to show",
+      "allUpdated": "All your notifications are up to date.",
+      "newUpdatesAppearHere": "When there are new updates, they will appear here."
+    },
+    "formBuilder": {
+      "title": "Dynamic Form Builder",
+      "subtitle": "Create and edit custom form templates for your institution.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "makeups": {
+      "subtitle": "View and manage makeup lesson balances for all students in the conservatorium.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "notificationsLog": {
+      "title": "Notification Log",
+      "titleSystem": "System Notification Log",
+      "subtitle": "View all outgoing notifications sent to users.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "openDay": {
+      "subtitle": "Track registrants and manage meetings for the open day event.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "payroll": {
+      "title": "Teacher Payroll Management",
+      "header": "Payroll Preparation - Teachers",
+      "subtitle": "Review, approve, and manage monthly payroll reports for teachers.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "performances": {
+      "subtitle": "Track bookings, manage assignments, and handle payments for musician performances.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "rentals": {
+      "subtitle": "Track instrument inventory, manage loans and returns.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "substitute": {
+      "subtitle": "Manage substitute teacher assignments for lessons canceled due to teacher absence.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "waitlists": {
+      "title": "Waitlists",
+      "header": "Waitlist Management",
+      "subtitle": "View and manage students waiting for a vacancy with teachers.",
+      "noPermission": "You do not have permission to view this page."
+    },
+    "ministry": {
+      "title": "Ministry of Education District Portal",
+      "subtitle": "Manage and approve requests, recitals, and scholarships submitted by conservatories.",
+      "noPermission": "You do not have permission to view this page."
+    }
+  },
+  "AdminAlerts": {
+    "teacherCapacityTitle": "High Teacher Capacity: {name}",
+    "teacherCapacityDesc": "Teacher is at {percent}% occupancy. Consider closing registration.",
+    "manageTeachers": "Manage Teachers",
+    "studentDisengagedTitle": "Student at risk of dropout: {name}",
+    "studentDisengagedDesc": "No practice logged in the last 30 days and {count} absences marked.",
+    "viewProfile": "View Profile",
+    "makeupBacklogTitle": "High makeup lesson balance: {name}",
+    "makeupBacklogDesc": "Student has a balance of {count} makeup lessons. Encourage scheduling.",
+    "viewMakeups": "View Makeup Board",
+    "paymentSpikeTitle": "Multiple Overdue Charges",
+    "paymentSpikeDesc": "There are {count} unpaid invoices. Please follow up.",
+    "goToBilling": "Go to Billing",
+    "substituteNeededTitle": "Substitute Placement Needed",
+    "substituteNeededDesc": "{count} lessons cancelled due to teacher absence and require a substitute.",
+    "assignSubstitutes": "Assign Substitutes",
+    "promoteSlotTitle": "Opportunity to fill empty slot",
+    "promoteSlotDesc": "{instrument} lesson with {name} on {day} is available.",
+    "promoteSlot": "Promote Lesson"
+  },
+  "AdminCalendarPanel": {
+    "typeNationalHoliday": "National Holiday",
+    "typeConservatoriumClosure": "Conservatorium Closure",
+    "typeExamPeriod": "Exam Period",
+    "typeOther": "Other",
+    "importingHebcal": "Importing Israeli Holidays (Hebcal)...",
+    "importedSuccess": "Successfully imported {count} holidays.",
+    "holidayRemoved": "Holiday removed from calendar",
+    "panelTitle": "Vacations and Holidays ({count})",
+    "panelDescription": "Dates when the booking calendar is blocked and no new lessons can be scheduled.",
+    "importHebcalBtn": "Import from Hebcal",
+    "newHolidayBtn": "New Holiday/Closure",
+    "colDate": "Date",
+    "colName": "Holiday Name",
+    "colType": "Type",
+    "colRelevance": "Relevance",
+    "colActions": "Actions",
+    "noHolidays": "No holidays or closures have been defined.",
+    "relevanceAll": "Entire Conservatorium",
+    "relevanceSome": "Specific Teachers"
+  },
+  "AdminMakeupDashboard": {
+    "colStudent": "Student",
+    "colTeacher": "Teacher",
+    "colBalance": "Credit Balance",
+    "colExpiry": "Nearest Credit Expiry",
+    "colActions": "Actions",
+    "unassigned": "Unassigned",
+    "expiresInDays": "Expires in {days} days",
+    "scheduleBtn": "Schedule Makeup Lesson",
+    "extendBtn": "Extend Expiry",
+    "emptyTitle": "No balances to display",
+    "emptyDesc": "It seems all students are using their makeup lessons on time.",
+    "tabAll": "All Balances",
+    "tabExpiring": "Expiring Soon",
+    "titleAll": "All Makeup Lesson Balances",
+    "descAll": "List of all students with makeup lesson credits.",
+    "titleExpiring": "Credits Expiring Soon",
+    "descExpiring": "Credits expiring in the next {days} days."
+  },
+  "AdminOpenDay": {
+    "title": "Open Day Management",
+    "subtitle": "Track attendees and manage appointments for the Open Day event.",
+    "appointmentTime": "Appointment Time",
+    "familyName": "Family Name",
+    "childName": "Child's Name",
+    "instrumentInterest": "Instrument of Interest",
+    "contactDetails": "Contact Details",
+    "status": "Status",
+    "noAppointments": "No families have registered yet.",
+    "statuses": {
+      "SCHEDULED": "Scheduled",
+      "ATTENDED": "Attended",
+      "NO_SHOW": "No-Show"
+    },
+    "childAge": "Child age"
+  },
+  "AdminScholarships": {
+    "title": "Scholarship Management",
+    "subtitle": "Review and manage scholarship applications from students",
+    "newApplications": "New Applications",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "approveApp": "Approve Application",
+    "rejectApp": "Reject Application",
+    "viewApplication": "View Application",
+    "noApplications": "No pending applications",
+    "applicantName": "Applicant Name",
+    "instrument": "Instrument",
+    "amount": "Requested Amount",
+    "reason": "Reason",
+    "noPermission": "You do not have permission to view this page.",
+    "fundManagement": "Scholarship Fund Management",
+    "fundManagementDesc": "Track donation funds and approve student financial aid applications.",
+    "exportDonations": "Export Donations Report (Section 46)",
+    "addManualDonation": "Add Manual Donation",
+    "totalFundThisYear": "Total Fund This Year",
+    "yearOverYear": "+{percent}% from last year",
+    "approvedScholarships": "Approved Scholarships",
+    "forStudents": "For {count} different students",
+    "pendingApplications": "Pending Applications",
+    "totalDemand": "Total demand: ₪{amount}",
+    "scholarshipApplications": "Scholarship Applications",
+    "scholarshipApplicationsDesc": "Manage scholarship applications submitted by students. Click an application to view attached documents and reasoning.",
+    "searchStudent": "Search student name...",
+    "student": "Student",
+    "submissionDate": "Submission Date",
+    "priorityScore": "Priority Score",
+    "status": "Status",
+    "actions": "Actions",
+    "statuses": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "DOCUMENTS_PENDING": "Documents Pending",
+      "UNDER_REVIEW": "Under Review",
+      "APPROVED": "Approved",
+      "PARTIALLY_APPROVED": "Partially Approved",
+      "WAITLISTED": "Waitlisted",
+      "REJECTED": "Rejected",
+      "EXPIRED": "Expired"
+    }
+  },
+  "AiAgents": {
+    "title": "AI Agents",
+    "subtitle": "Smart AI-powered tools for conservatory management",
+    "matchmaker": "AI Matchmaker",
+    "matchmakerDesc": "Automatic matching of students to teachers based on preferences",
+    "lessonNotes": "AI Lesson Notes",
+    "lessonNotesDesc": "Automatic generation of lesson summaries and homework",
+    "scheduler": "AI Scheduler",
+    "schedulerDesc": "Automated schedule optimization",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "configure": "Configure",
+    "settingUpdated": "Setting updated",
+    "agentToggled": "Agent {name} has been {state}.",
+    "activated": "activated",
+    "deactivated": "deactivated",
+    "noPermission": "You do not have permission to view this page.",
+    "loadingSettings": "Loading settings...",
+    "manageAutomations": "Manage the system's automations and smart agents.",
+    "agents": {
+      "matchmaker": "Matchmaker Agent",
+      "matchmakerDesc": "Automatically matches new students to the most suitable available teachers based on musical profile, goals, and availability.",
+      "compositionSuggester": "Composition Suggestion Agent",
+      "compositionSuggesterDesc": "Suggests relevant compositions for repertoire based on student level, goals, and already selected pieces.",
+      "reschedule": "Rescheduling Concierge Agent",
+      "rescheduleDesc": "Automatically handles lesson cancellation and rescheduling requests via WhatsApp or chat.",
+      "progressReport": "Progress Report Agent",
+      "progressReportDesc": "Generates initial drafts of periodic progress reports for teachers, based on practice logs and lesson notes.",
+      "adminAlerts": "Admin Alerts Agent",
+      "adminAlertsDesc": "Continuously monitors the system and surfaces operational issues before they become crises.",
+      "leadNurture": "Lead Nurturing Agent",
+      "leadNurtureDesc": "Performs automatic, personalized follow-ups with students who registered for a trial lesson but did not continue to a package.",
+      "lessonNotes": "סוכן הערות שיעור",
+      "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+      "scheduler": "סוכן תזמון",
+      "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות",
+      "practiceReminder": "תזכורות תרגול",
+      "practiceReminderDesc": "שליחת תזכורות אוטומטיות לתלמידים לתרגל"
+    }
+  },
+  "AiAlerts": {
+    "title": "AI Alerts",
+    "subtitle": "Proactive recommendations from your data.",
+    "noAlerts": "No important alerts right now.",
+    "viewAll": "View all alerts"
+  },
+  "SubstituteAssignmentPanel": {
+    "title": "Substitute Assignment Panel",
+    "descriptionWithCount": "Found {count} cancelled lessons that require a substitute teacher.",
+    "descriptionEmpty": "There are currently no cancelled lessons that require a substitute teacher.",
+    "table": {
+      "date": "Date & Time",
+      "student": "Student",
+      "instrument": "Instrument",
+      "originalTeacher": "Original Teacher",
+      "assignSubstitute": "Assign Substitute"
+    },
+    "emptyState": {
+      "title": "No Lessons for Assignment",
+      "description": "No lessons were found that were cancelled by teachers and require a substitute assignment."
+    },
+    "errors": {
+      "assignmentError": "Assignment Error"
+    },
+    "successToast": {
+      "title": "Substitute Teacher Assigned!",
+      "description": "{teacherName} was successfully assigned to {studentName}'s lesson."
+    },
+    "noAvailableTeachers": "No available teachers",
+    "selectPlaceholder": "Select substitute teacher..."
+  },
+  "TodaySnapshot": {
+    "title": "Daily Snapshot",
+    "subtitle": "What's happening today in the conservatory.",
+    "lessonsToday": "Today's Lessons ({count})",
+    "noLessons": "No lessons scheduled for today.",
+    "billingIssues": "Billing Issues",
+    "noBillingIssues": "No billing issues at the moment.",
+    "overdue": "Overdue",
+    "fullSchedule": "To Full Schedule",
+    "room": "Room {number}",
+    "notAssigned": "Not Assigned"
+  },
+  "KeyMetrics": {
+    "activeStudents": "Active Students",
+    "lessonsThisWeek": "Lessons This Week",
+    "pendingApprovals": "Pending Approvals",
+    "aiAlerts": "AI Alerts"
+  },
+  "NotificationAuditLog": {
+    "title": "Outgoing Notifications Log",
+    "description": "List of all notifications sent from the system. Statuses are simulated.",
+    "table": {
+      "user": "User",
+      "channel": "Channel",
+      "subject": "Subject",
+      "status": "Status",
+      "time": "Time"
+    },
+    "channels": {
+      "IN_APP": "System",
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "WHATSAPP": "WhatsApp"
+    },
+    "statuses": {
+      "SENT": "Sent",
+      "DELIVERED": "Delivered",
+      "FAILED": "Failed",
+      "OPTED_OUT": "Opted Out"
+    },
+    "unknownUser": "Unknown"
+  }
+}

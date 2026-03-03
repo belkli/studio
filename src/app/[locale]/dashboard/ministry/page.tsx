@@ -18,6 +18,7 @@ const ministryViewableStatuses: FormStatus[] = ['APPROVED', 'REVISION_REQUIRED',
 export default function MinistryDashboard() {
   const { user, users, mockFormSubmissions: allForms } = useAuth();
   const t = useTranslations('Ministry');
+  const tc = useTranslations('Common.shared');
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     formType: 'all',
@@ -143,11 +144,11 @@ export default function MinistryDashboard() {
               <TableRow>
                 <TableHead>{t('studentName')}</TableHead>
                 <TableHead>{t('conservatorium')}</TableHead>
-                <TableHead>{t('formType')}</TableHead>
-                <TableHead>{t('grade')}</TableHead>
-                <TableHead>{t('status')}</TableHead>
-                <TableHead>{t('submissionDate')}</TableHead>
-                <TableHead className="text-left"><span className="sr-only">{t('actions')}</span></TableHead>
+                <TableHead>{tc('formType')}</TableHead>
+                <TableHead>{tc('grade')}</TableHead>
+                <TableHead>{tc('status')}</TableHead>
+                <TableHead>{tc('submissionDate')}</TableHead>
+                <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

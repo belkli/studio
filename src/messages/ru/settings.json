@@ -1,0 +1,246 @@
+{
+  "SettingsPage": {
+    "conservatorium": {
+      "cancellation": "Политика отмены",
+      "description": "Управление функциями консерватории.",
+      "manageAI": "Функции ИИ",
+      "manageFeatures": "Управление профилем",
+      "pricing": "Настройки цен",
+      "profileEditor": {
+        "contact": {
+          "description": "Как потенциальные ученики и родители могут с вами связаться.",
+          "mainPhone": "Основной телефон",
+          "primaryEmail": "Основной email",
+          "secondaryEmail": "Дополнительный email",
+          "title": "Контактная информация",
+          "website": "Официальный сайт",
+          "whatsapp": "Номер WhatsApp"
+        },
+        "location": {
+          "cityEnglish": "Город (английский)",
+          "cityHebrew": "Город (иврит)",
+          "description": "Где вы находитесь?",
+          "fullAddress": "Полный адрес",
+          "title": "Локация"
+        },
+        "media": {
+          "description": "Изображения, отображаемые в публичном профиле.",
+          "galleryImage1": "URL изображения галереи 1",
+          "galleryImage2": "URL изображения галереи 2",
+          "galleryImage3": "URL изображения галереи 3",
+          "headerImage": "URL изображения шапки",
+          "title": "Фото и медиа"
+        },
+        "social": {
+          "description": "Подключите ваше онлайн-присутствие.",
+          "facebook": "URL Facebook",
+          "instagram": "URL Instagram",
+          "tiktok": "URL TikTok",
+          "title": "Ссылки на соцсети",
+          "youtube": "URL канала YouTube"
+        },
+        "team": {
+          "coordinatorNamePlaceholder": "Имя координатора",
+          "description": "Ключевые сотрудники консерватории.",
+          "manager": "Руководитель",
+          "managerNamePlaceholder": "Имя руководителя",
+          "nameHebrew": "Имя (иврит)",
+          "pedagogicalCoordinator": "Педагогический координатор",
+          "photoUrl": "URL фото",
+          "shortBio": "Краткая биография",
+          "title": "Руководящая команда",
+          "titleRole": "Должность / роль"
+        }
+      },
+      "publicProfile": "Публичный профиль",
+      "title": "Настройки консерватории"
+    },
+    "notifications": {
+      "description": "Выберите, о чем вы хотите получать уведомления.",
+      "manage": "Управление уведомлениями",
+      "prompt": "Настройте получение оповещений.",
+      "title": "Настройки уведомлений"
+    },
+    "password": {
+      "current": "Текущий пароль",
+      "description": "Измените ваш пароль.",
+      "new": "Новый пароль",
+      "success": "Пароль обновлен",
+      "successDesc": "Ваш пароль был успешно изменен.",
+      "title": "Обновить пароль",
+      "update": "Обновить пароль"
+    },
+    "profile": {
+      "description": "Обновите данные вашего профиля.",
+      "email": "Электронная почта",
+      "name": "Имя",
+      "save": "Сохранить профиль",
+      "success": "Профиль сохранен",
+      "successDesc": "Ваш профиль был успешно обновлен.",
+      "title": "Информация профиля"
+    },
+    "subtitle": "Управление настройками системы и аккаунта.",
+    "title": "Настройки"
+  },
+  "CancellationPolicy": {
+    "lateCancelCredit": "Компенсация за позднюю отмену",
+    "makeupExpiryDays": "Срок действия компенсации (в днях)",
+    "maxMakeupsPerTerm": "Максимум компенсаций в семестр",
+    "noShowCredit": "Компенсация за неявку",
+    "noticeHours": "Требуемое время уведомления",
+    "onTimeCancelCredit": "Компенсация за своевременную отмену",
+    "save": "Сохранить политику",
+    "saved": "Политика сохранена",
+    "subtitle": "Настройте правила отмены для консерватории",
+    "title": "Правила отмены"
+  },
+  "PricingSettings": {
+    "baseRates": {
+      "description": "Установите базовую цену за один урок по продолжительности.",
+      "min30": "Урок 30 минут",
+      "min45": "Урок 45 минут",
+      "min60": "Урок 60 минут",
+      "title": "Базовые тарифы на уроки"
+    },
+    "comparison": {
+      "addressMin": "Адрес должен содержать не менее {min} символов.",
+      "branch": "Консерватория",
+      "description": "Просмотр цен других консерваторий для сравнения и согласования.",
+      "min30": "30 мин",
+      "min45": "45 мин",
+      "min60": "60 мин",
+      "nameMin": "Название филиала должно содержать не менее {min} символов.",
+      "pack5": "Пакет 5",
+      "title": "Сравнение тарифов филиалов",
+      "yearly": "Годовой"
+    },
+    "discounts": {
+      "description": "Определите процентные скидки для пакетов и других прав.",
+      "pack10": "Скидка на 10-пакет",
+      "pack5": "Скидка на 5-пакет",
+      "sibling": "Скидка для братьев и сестер",
+      "title": "Скидки на пакеты",
+      "yearly": "Годовая скидка"
+    },
+    "save": "Сохранить изменения",
+    "special": {
+      "adHoc": "Наценка за разовое бронирование",
+      "title": "Специальные цены",
+      "trial": "Цена пробного урока"
+    },
+    "success": "Настройки цен успешно обновлены!",
+    "validation": {
+      "percent": "Скидка должна быть в диапазоне 0-100",
+      "positive": "Цена должна быть положительной"
+    }
+  },
+  "NotificationPreferences": {
+    "additionalSettingsTitle": "Additional Settings",
+    "channelEmail": "Электронная почта",
+    "channelInApp": "In App",
+    "channelPreferencesDesc": "Choose how you would like to receive each type of notification.",
+    "channelPreferencesTitle": "Channel Preferences",
+    "channels": {
+      "EMAIL": "Электронная почта",
+      "IN_APP": "В приложении",
+      "SMS": "SMS",
+      "WHATSAPP": "WhatsApp"
+    },
+    "channelSms": "SMS",
+    "channelWhatsapp": "WhatsApp",
+    "enableQuietHoursDesc": "Pause non-urgent notifications (SMS, WhatsApp) during specified hours.",
+    "enableQuietHoursLabel": "Enable Quiet Hours",
+    "endTimeLabel": "End Time",
+    "formStatusChanges": "Form Status Changes",
+    "from": "С",
+    "invalidFormat": "Invalid format",
+    "langArabic": "Арабский",
+    "langEnglish": "Английский",
+    "langHebrew": "Hebrew",
+    "langRussian": "Русский",
+    "language": "Язык уведомлений",
+    "lessonCancellation": "Отмена уроков",
+    "lessonReminders": "Напоминания об уроках",
+    "makeupCredits": "Makeup Lesson Credits",
+    "notificationLanguageLabel": "Язык уведомлений",
+    "notificationTypeHeader": "Notification Type",
+    "paymentDue": "Payments and Billing",
+    "preferencesUpdatedDesc": "Your notification preferences have been saved.",
+    "preferencesUpdatedTitle": "Preferences Updated",
+    "psCoordinatorAnnouncements": "Coordinator Announcements",
+    "psExcellenceUpdates": "PS Excellence Updates",
+    "psLessonCancellation": "PS Lesson Cancellation",
+    "psLessonReminders": "PS Lesson Reminders",
+    "psNewEnrollment": "New PS Enrollment",
+    "psPartnershipUpdate": "Partnership Updates",
+    "psPaymentDue": "PS Payment Due",
+    "quietHours": "Тихие часы",
+    "quietHoursDesc": "Уведомления не будут отправляться в период",
+    "save": "Сохранить настройки",
+    "saveChangesBtn": "Сохранить изменения",
+    "saved": "Настройки сохранены",
+    "startTimeLabel": "Start Time",
+    "subtitle": "Выберите, как и о чем вы хотите получать уведомления",
+    "systemAnnouncements": "Системные объявления",
+    "teacherMessages": "Сообщения от учителей",
+    "title": "Настройки уведомлений",
+    "to": "До",
+    "types": {
+      "formStatusChanges": "Обновления статусов форм",
+      "lessonCancellation": "Отмена уроков",
+      "lessonReminders": "Напоминания об уроках",
+      "makeupCredits": "Компенсационные уроки",
+      "paymentDue": "Платежи",
+      "psExcellenceUpdates": "Обновления программы развития",
+      "psLessonCancellation": "Отмены уроков в Играющей Школе",
+      "psLessonReminders": "Напоминания об уроках в Играющей Школе",
+      "psPaymentDue": "Платежи Играющей Школы",
+      "systemAnnouncements": "Системные объявления",
+      "teacherMessages": "Сообщения от учителей"
+    }
+  },
+  "Branches": {
+    "actions": "Действия",
+    "addDesc": "Введите данные нового филиала.",
+    "addNew": "Добавить новый филиал",
+    "address": "Адрес",
+    "addressPlaceholder": "например, ул. Хакаланиот, 15, Петах-Тиква",
+    "addTitle": "Добавить новый филиал",
+    "branchName": "Название филиала",
+    "conservatorium": "Консерватория",
+    "description": "{count} активных филиалов в системе.",
+    "editDesc": "Обновите данные филиала ниже.",
+    "editTitle": "Редактировать филиал",
+    "fullAddress": "Полный адрес",
+    "namePlaceholder": "например, Северный филиал",
+    "saveBranch": "Сохранить филиал",
+    "successAdd": "Новый филиал успешно добавлен",
+    "successUpdate": "Филиал успешно обновлен",
+    "title": "Управление филиалами",
+    "validation": {
+      "addressMin": "Адрес должен содержать не менее {min} символов.",
+      "nameMin": "Название филиала должно содержать не менее {min} символов."
+    }
+  },
+  "CancellationPolicySettings": {
+    "cancellationCreditLabel": "Credit for on-time cancellation",
+    "errors": {
+      "positiveDays": "Must enter a positive number of days.",
+      "positiveHours": "Must enter a positive number of hours.",
+      "positiveNumber": "Must enter a positive number."
+    },
+    "lateCancelCreditLabel": "Credit for late cancellation",
+    "makeupExpiryLabel": "Makeup credit expiry (in days)",
+    "makeupRulesTitle": "Makeup Lesson Rules",
+    "maxMakeupsLabel": "Maximum makeup lessons per term",
+    "noticeHoursLabel": "Notice hours required for cancellation with credit",
+    "options": {
+      "FULL": "Full Credit",
+      "FULL_NOT_RECOMMENDED": "Full Credit (Not Recommended)",
+      "NONE": "No Credit"
+    },
+    "saveChanges": "Сохранить изменения",
+    "studentRulesTitle": "Student Cancellation Rules",
+    "successToast": "Cancellation policy updated successfully!"
+  }
+}

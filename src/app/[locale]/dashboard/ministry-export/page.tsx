@@ -19,6 +19,7 @@ export default function MinistryExportPage() {
   const { user, users, mockFormSubmissions } = useAuth();
   const { toast } = useToast();
   const t = useTranslations('MinistryExport');
+  const tc = useTranslations('Common.shared');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const formsForExport = useMemo(() => {
@@ -137,12 +138,12 @@ export default function MinistryExportPage() {
                   />
                 </TableHead>
                 <TableHead>{t('studentName')}</TableHead>
-                <TableHead>{t('formType')}</TableHead>
+                <TableHead>{tc('formType')}</TableHead>
                 <TableHead>{t('idNumber')}</TableHead>
                 <TableHead>{t('gradeLevel')}</TableHead>
-                <TableHead>{t('status')}</TableHead>
+                <TableHead>{tc('status')}</TableHead>
                 <TableHead>{t('approvalDate')}</TableHead>
-                <TableHead className="text-left"><span className="sr-only">{t('actions')}</span></TableHead>
+                <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -167,7 +168,7 @@ export default function MinistryExportPage() {
                     <TableCell>{form.signedAt || new Date(form.submissionDate).toLocaleDateString('he-IL')}</TableCell>
                     <TableCell className="text-left">
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
+                        <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                       </Button>
                     </TableCell>
                   </TableRow>

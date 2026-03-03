@@ -1,0 +1,246 @@
+{
+  "SettingsPage": {
+    "title": "Settings",
+    "subtitle": "Manage your system settings along with your account settings.",
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your profile details.",
+      "name": "Name",
+      "email": "Email",
+      "save": "Save Profile",
+      "success": "Profile saved",
+      "successDesc": "Your profile has been updated successfully."
+    },
+    "password": {
+      "title": "Update Password",
+      "description": "Change your password.",
+      "current": "Current Password",
+      "new": "New Password",
+      "update": "Update Password",
+      "success": "Password updated",
+      "successDesc": "Your password has been changed successfully."
+    },
+    "conservatorium": {
+      "title": "Conservatory Settings",
+      "description": "Manage conservatory features and integrations.",
+      "manageFeatures": "Manage Profile",
+      "publicProfile": "Public Profile",
+      "pricing": "Pricing Settings",
+      "cancellation": "Cancellation Policy",
+      "manageAI": "Manage AI Features",
+      "profileEditor": {
+        "contact": {
+          "title": "Contact Details",
+          "description": "How prospective students and parents can reach you.",
+          "mainPhone": "Main Phone",
+          "whatsapp": "WhatsApp Number",
+          "primaryEmail": "Primary Email",
+          "secondaryEmail": "Secondary Email",
+          "website": "Official Website"
+        },
+        "location": {
+          "title": "Location",
+          "description": "Where are you located?",
+          "cityHebrew": "City (Hebrew)",
+          "cityEnglish": "City (English)",
+          "fullAddress": "Full Address"
+        },
+        "team": {
+          "title": "Leadership Team",
+          "description": "Key figures in the conservatorium.",
+          "manager": "Manager",
+          "pedagogicalCoordinator": "Pedagogical Coordinator",
+          "photoUrl": "Photo URL",
+          "nameHebrew": "Name (Hebrew)",
+          "titleRole": "Title / Role",
+          "shortBio": "Short Bio",
+          "managerNamePlaceholder": "Manager's Name",
+          "coordinatorNamePlaceholder": "Coordinator's Name"
+        },
+        "social": {
+          "title": "Social Media Links",
+          "description": "Connect your online presence.",
+          "facebook": "Facebook URL",
+          "instagram": "Instagram URL",
+          "youtube": "YouTube Channel URL",
+          "tiktok": "TikTok URL"
+        },
+        "media": {
+          "title": "Photos & Media",
+          "description": "Images displayed on your public profile.",
+          "headerImage": "Header Image URL",
+          "galleryImage1": "Gallery Image 1 URL",
+          "galleryImage2": "Gallery Image 2 URL",
+          "galleryImage3": "Gallery Image 3 URL"
+        }
+      }
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Choose what you want to be notified about.",
+      "prompt": "Configure how you receive alerts.",
+      "manage": "Manage Notifications"
+    }
+  },
+  "CancellationPolicy": {
+    "title": "Cancellation Policy",
+    "subtitle": "Set the cancellation rules for the conservatory",
+    "noticeHours": "Required Advance Notice Hours",
+    "onTimeCancelCredit": "Credit for On-Time Cancellation",
+    "lateCancelCredit": "Credit for Late Cancellation",
+    "noShowCredit": "Credit for No-Show",
+    "makeupExpiryDays": "Makeup Credit Expiry Days",
+    "maxMakeupsPerTerm": "Max Makeups Per Term",
+    "save": "Save Policy",
+    "saved": "Policy saved"
+  },
+  "PricingSettings": {
+    "success": "Pricing settings updated successfully!",
+    "validation": {
+      "positive": "Price must be positive",
+      "percent": "Discount must be between 0-100"
+    },
+    "baseRates": {
+      "title": "Base Lesson Rates",
+      "description": "Set the base price for a single lesson by duration.",
+      "min30": "30 Min Lesson",
+      "min45": "45 Min Lesson",
+      "min60": "60 Min Lesson"
+    },
+    "discounts": {
+      "title": "Package Discounts",
+      "description": "Define discount percentages for packages and other eligibilities.",
+      "pack5": "5-Pack Discount",
+      "pack10": "10-Pack Discount",
+      "yearly": "Yearly Discount",
+      "sibling": "Sibling Discount"
+    },
+    "special": {
+      "title": "Special Pricing",
+      "trial": "Trial Lesson Price",
+      "adHoc": "Ad-Hoc Lesson Premium"
+    },
+    "save": "Save Changes",
+    "comparison": {
+      "title": "Branch Rate Comparison",
+      "description": "View pricing of other conservatoriums for comparison and alignment.",
+      "branch": "Conservatory",
+      "min30": "30 Min",
+      "min45": "45 Min",
+      "min60": "60 Min",
+      "pack5": "5-Pack",
+      "yearly": "Yearly",
+      "nameMin": "Branch name must be at least {min} characters.",
+      "addressMin": "Address must be at least {min} characters."
+    }
+  },
+  "NotificationPreferences": {
+    "title": "Notification Preferences",
+    "subtitle": "Choose how and what you receive notifications for",
+    "channels": {
+      "IN_APP": "In-App",
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "WHATSAPP": "WhatsApp"
+    },
+    "types": {
+      "lessonReminders": "Lesson Reminders",
+      "lessonCancellation": "Lesson Cancellations",
+      "makeupCredits": "Makeup Credits",
+      "paymentDue": "Payments",
+      "formStatusChanges": "Form Status Updates",
+      "teacherMessages": "Teacher Messages",
+      "systemAnnouncements": "System Announcements",
+      "psLessonReminders": "Playing School Lesson Reminders",
+      "psLessonCancellation": "Playing School Cancellations",
+      "psPaymentDue": "Playing School Payments",
+      "psExcellenceUpdates": "Excellence Track Updates"
+    },
+    "quietHours": "Quiet Hours",
+    "quietHoursDesc": "Notifications will not be sent between",
+    "from": "From",
+    "to": "To",
+    "language": "Notification Language",
+    "save": "Save Preferences",
+    "saved": "Preferences saved",
+    "invalidFormat": "Invalid format",
+    "lessonReminders": "Lesson Reminders",
+    "lessonCancellation": "Lesson Cancellations",
+    "makeupCredits": "Makeup Lesson Credits",
+    "paymentDue": "Payments and Billing",
+    "formStatusChanges": "Form Status Changes",
+    "teacherMessages": "Teacher Messages",
+    "systemAnnouncements": "System Announcements",
+    "channelInApp": "In App",
+    "channelEmail": "Email",
+    "channelSms": "SMS",
+    "channelWhatsapp": "WhatsApp",
+    "psLessonReminders": "PS Lesson Reminders",
+    "psLessonCancellation": "PS Lesson Cancellation",
+    "psPaymentDue": "PS Payment Due",
+    "psExcellenceUpdates": "PS Excellence Updates",
+    "psNewEnrollment": "New PS Enrollment",
+    "psPartnershipUpdate": "Partnership Updates",
+    "psCoordinatorAnnouncements": "Coordinator Announcements",
+    "preferencesUpdatedTitle": "Preferences Updated",
+    "preferencesUpdatedDesc": "Your notification preferences have been saved.",
+    "channelPreferencesTitle": "Channel Preferences",
+    "channelPreferencesDesc": "Choose how you would like to receive each type of notification.",
+    "notificationTypeHeader": "Notification Type",
+    "additionalSettingsTitle": "Additional Settings",
+    "enableQuietHoursLabel": "Enable Quiet Hours",
+    "enableQuietHoursDesc": "Pause non-urgent notifications (SMS, WhatsApp) during specified hours.",
+    "startTimeLabel": "Start Time",
+    "endTimeLabel": "End Time",
+    "notificationLanguageLabel": "Notification Language",
+    "langHebrew": "Hebrew",
+    "langEnglish": "English",
+    "langArabic": "Arabic",
+    "langRussian": "Russian",
+    "saveChangesBtn": "Save Changes"
+  },
+  "Branches": {
+    "title": "Branch Management",
+    "description": "{count} active branches in the system.",
+    "addNew": "Add New Branch",
+    "branchName": "Branch Name",
+    "address": "Address",
+    "conservatorium": "Conservatory",
+    "actions": "Actions",
+    "successUpdate": "Branch updated successfully",
+    "successAdd": "New branch added successfully",
+    "editTitle": "Edit Branch",
+    "addTitle": "Add New Branch",
+    "editDesc": "Update the branch details below.",
+    "addDesc": "Enter the details for the new branch.",
+    "fullAddress": "Full Address",
+    "namePlaceholder": "e.g. North Branch",
+    "addressPlaceholder": "e.g. 15 Hacalaniot St, Petah Tikva",
+    "saveBranch": "Save Branch",
+    "validation": {
+      "nameMin": "Branch name must be at least {min} characters.",
+      "addressMin": "Address must be at least {min} characters."
+    }
+  },
+  "CancellationPolicySettings": {
+    "studentRulesTitle": "Student Cancellation Rules",
+    "noticeHoursLabel": "Notice hours required for cancellation with credit",
+    "cancellationCreditLabel": "Credit for on-time cancellation",
+    "lateCancelCreditLabel": "Credit for late cancellation",
+    "makeupRulesTitle": "Makeup Lesson Rules",
+    "makeupExpiryLabel": "Makeup credit expiry (in days)",
+    "maxMakeupsLabel": "Maximum makeup lessons per term",
+    "saveChanges": "Save Changes",
+    "successToast": "Cancellation policy updated successfully!",
+    "options": {
+      "FULL": "Full Credit",
+      "NONE": "No Credit",
+      "FULL_NOT_RECOMMENDED": "Full Credit (Not Recommended)"
+    },
+    "errors": {
+      "positiveHours": "Must enter a positive number of hours.",
+      "positiveDays": "Must enter a positive number of days.",
+      "positiveNumber": "Must enter a positive number."
+    }
+  }
+}

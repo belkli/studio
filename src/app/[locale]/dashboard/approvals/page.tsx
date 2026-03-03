@@ -29,6 +29,7 @@ const ApprovalsTable = ({
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
     const { user } = useAuth();
     const t = useTranslations("ApprovalsPage");
+    const tc = useTranslations('Common.shared');
 
     const handleSelectAll = (checked: boolean | string) => {
         if (checked) {
@@ -84,11 +85,11 @@ const ApprovalsTable = ({
                                 aria-label="Select all"
                             />
                         </TableHead>
-                        <TableHead>{t('studentName')}</TableHead>
+                        <TableHead>{tc('studentName')}</TableHead>
                         <TableHead>{t('type')}</TableHead>
                         <TableHead>{t('conservatorium')}</TableHead>
-                        <TableHead>{t('status')}</TableHead>
-                        <TableHead className="text-left">{t('actions')}</TableHead>
+                        <TableHead>{tc('status')}</TableHead>
+                        <TableHead className="text-left">{tc('actions')}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -115,7 +116,7 @@ const ApprovalsTable = ({
                                         <Button asChild variant="outline" size="sm">
                                             <Link href={`/dashboard/forms/${form.id}`}>
                                                 <Eye className="ms-1 h-4 w-4" />
-                                                {t('view')}
+                                                {tc('view')}
                                             </Link>
                                         </Button>
 

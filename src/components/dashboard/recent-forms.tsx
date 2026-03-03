@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 export function RecentForms() {
     const t = useTranslations('Dashboard.recentForms');
+    const tc = useTranslations('Common.shared');
     const { user, mockFormSubmissions } = useAuth();
 
     if (!user) {
@@ -66,11 +67,11 @@ export function RecentForms() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            {user.role !== 'student' && <TableHead>{t('studentName')}</TableHead>}
-                            <TableHead>{t('formType')}</TableHead>
-                            <TableHead>{t('status')}</TableHead>
-                            <TableHead>{t('submissionDate')}</TableHead>
-                            <TableHead><span className="sr-only">{t('actions')}</span></TableHead>
+                            {user.role !== 'student' && <TableHead>{tc('studentName')}</TableHead>}
+                            <TableHead>{tc('formType')}</TableHead>
+                            <TableHead>{tc('status')}</TableHead>
+                            <TableHead>{tc('submissionDate')}</TableHead>
+                            <TableHead><span className="sr-only">{tc('actions')}</span></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -84,7 +85,7 @@ export function RecentForms() {
                                 <TableCell>{form.submissionDate}</TableCell>
                                 <TableCell className="text-left">
                                     <Button variant="outline" size="sm" asChild>
-                                        <Link href={`/dashboard/forms/${form.id}`}>{t('view')}</Link>
+                                        <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                                     </Button>
                                 </TableCell>
                             </TableRow>

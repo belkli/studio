@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { resolvePlayingSchoolToken, createPlayingSchoolEnrollment } from '@/app/actions';
 import { toast } from '@/hooks/use-toast';
@@ -35,6 +35,9 @@ const MOCK_SCHOOL_INFO = {
 // ── Step types ────────────────────────────────────────────────────────────────
 
 type Step = 1 | 2 | 3 | 4 | 5;
+type PaymentMethod = 'SCHOOL_FEES' | 'ONLINE' | 'CARDCOM' | 'PELECARD' | 'HYP';
+const TERMS_VERSION = '2026.03';
+const TERMS_UPDATED_ISO = '2026-03-01';
 
 function StepIndicator({ current }: { current: Step }) {
     const t = useTranslations('PlayingSchool');
@@ -94,14 +97,15 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
             try {
                 const info = await resolvePlayingSchoolToken(token);
                 setSchoolInfo(info);
+                setInstrument(info.instrument || '');
             } catch (err) {
-                toast({ variant: 'destructive', title: 'Invalid Token', description: 'The school registration link is invalid or expired.' });
+                toast({ variant: 'destructive', title: t('wizard.invalidTokenTitle'), description: t('wizard.invalidTokenDesc') });
             } finally {
                 setIsLoading(false);
             }
         }
         fetchSchool();
-    }, [token]);
+    }, [token, t]);
 
     // Form state
     const [studentName, setStudentName] = useState('');
@@ -112,11 +116,18 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
     const [parentPhone, setParentPhone] = useState('');
     const [parentEmail, setParentEmail] = useState('');
     const [parentId, setParentId] = useState('');
-    const [instrument, setInstrument] = useState('חליל');
+    const [instrument, setInstrument] = useState('');
     const [consent, setConsent] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState<'SCHOOL_FEES' | 'CARDCOM'>('SCHOOL_FEES');
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('SCHOOL_FEES');
 
-    const { costBreakdown } = MOCK_SCHOOL_INFO;
+    const termsUpdatedAt = useMemo(
+      () =>
+        new Intl.DateTimeFormat(
+          locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
+          { day: '2-digit', month: '2-digit', year: 'numeric' }
+        ).format(new Date(TERMS_UPDATED_ISO)),
+      [locale]
+    );
 
     const next = () => {
         console.log('Advancing from step', step);
@@ -137,13 +148,13 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                 paymentMethod
             });
 
-            if (result.success && result.redirectUrl && paymentMethod === 'CARDCOM') {
+            if (result.success && result.redirectUrl && paymentMethod !== 'SCHOOL_FEES') {
                 window.location.href = result.redirectUrl;
             } else {
                 setSubmitted(true);
             }
         } catch (err) {
-            toast({ variant: 'destructive', title: 'Submission Error', description: 'There was an error processing your enrollment. Please try again.' });
+            toast({ variant: 'destructive', title: t('wizard.submissionErrorTitle'), description: t('wizard.submissionErrorDesc') });
         } finally {
             setIsSubmitting(false);
         }
@@ -155,7 +166,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                 <Card className="max-w-md w-full text-center shadow-xl p-8">
                     <div className="flex flex-col items-center gap-4">
                         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                        <p className="text-muted-foreground">Loading school information...</p>
+                        <p className="text-muted-foreground">{t('wizard.loadingSchoolInfo')}</p>
                     </div>
                 </Card>
             </div>
@@ -166,7 +177,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
                 <Card className="max-w-md w-full text-center shadow-xl p-8">
-                    <p className="text-destructive font-medium">Error loading school profile. Please check your token and try again.</p>
+                    <p className="text-destructive font-medium">{t('wizard.loadProfileError')}</p>
                 </Card>
             </div>
         );
@@ -200,7 +211,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                         className="text-xs font-bold text-primary hover:underline flex items-center gap-1 mb-4 bg-primary/10 px-3 py-1.5 rounded-full transition-colors"
                     >
                         {isRtl ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-                        {t('wizard.backToFinder') || 'Back to School Finder'}
+                        {t('wizard.backToFinder')}
                     </Link>
                     <div className="flex items-center justify-center gap-2 mb-2">
                         <School className="h-6 w-6 text-primary" />
@@ -325,12 +336,14 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                     <Select value={instrument} onValueChange={setInstrument}>
                                         <SelectTrigger><SelectValue /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="חליל">{t('wizard.instrument')}</SelectItem> {/* In real app would use instrument list */}
+                                            <SelectItem value={schoolInfo.instrument}>{schoolInfo.instrument}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="rounded-lg border p-4 text-sm text-muted-foreground space-y-2">
                                     <p className="font-medium text-foreground">{t('wizard.termsTitle')}</p>
+                                    <p className="text-xs">{t('wizard.termsVersion', { version: TERMS_VERSION })}</p>
+                                    <p className="text-xs">{t('wizard.termsUpdatedAt', { date: termsUpdatedAt })}</p>
                                     <p>{t('wizard.termsNote1')}</p>
                                     <p>{t('wizard.termsNote2')}</p>
                                 </div>
@@ -368,16 +381,37 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                                         </div>
                                     </div>
                                     <div
-                                        className={cn('flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors', paymentMethod === 'CARDCOM' && 'border-primary bg-primary/5')}
-                                        onClick={() => setPaymentMethod('CARDCOM')}
+                                        className={cn('flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors', paymentMethod === 'ONLINE' && 'border-primary bg-primary/5')}
+                                        onClick={() => setPaymentMethod('ONLINE')}
                                     >
-                                        <div className={cn('w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0', paymentMethod === 'CARDCOM' ? 'border-primary bg-primary' : 'border-muted-foreground')} />
+                                        <div className={cn('w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0', paymentMethod === 'ONLINE' ? 'border-primary bg-primary' : 'border-muted-foreground')} />
                                         <div>
                                             <p className="font-medium">{t('wizard.payOnline')}</p>
                                             <p className="text-sm text-muted-foreground">{t('wizard.payOnlineDesc', { amount: Math.round(schoolInfo.parentContribution / 10) })}</p>
                                         </div>
                                     </div>
+                                    <div
+                                        className={cn('flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors', paymentMethod === 'PELECARD' && 'border-primary bg-primary/5')}
+                                        onClick={() => setPaymentMethod('PELECARD')}
+                                    >
+                                        <div className={cn('w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0', paymentMethod === 'PELECARD' ? 'border-primary bg-primary' : 'border-muted-foreground')} />
+                                        <div>
+                                            <p className="font-medium">{t('wizard.payViaPelecard')}</p>
+                                            <p className="text-sm text-muted-foreground">{t('wizard.payViaPelecardDesc')}</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={cn('flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors', paymentMethod === 'HYP' && 'border-primary bg-primary/5')}
+                                        onClick={() => setPaymentMethod('HYP')}
+                                    >
+                                        <div className={cn('w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0', paymentMethod === 'HYP' ? 'border-primary bg-primary' : 'border-muted-foreground')} />
+                                        <div>
+                                            <p className="font-medium">{t('wizard.payViaHyp')}</p>
+                                            <p className="text-sm text-muted-foreground">{t('wizard.payViaHypDesc')}</p>
+                                        </div>
+                                    </div>
                                 </div>
+                                <p className="text-xs text-muted-foreground">{t('wizard.paymentProviderNote')}</p>
                                 <div className="flex gap-2 pt-2">
                                     <Button type="button" variant="outline" onClick={prev} className="flex-1"><PrevIcon className={cn(isRtl ? "me-2" : "ms-2", "h-4 w-4")} />{t('wizard.prev')}</Button>
                                     <Button type="button" className="flex-1" onClick={handleSubmit} disabled={isSubmitting}>

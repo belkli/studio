@@ -10,7 +10,10 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "i18n:audit": "node scripts/i18n/audit.mjs --strict",
+    "i18n:fix": "node scripts/i18n/fix.mjs",
+    "i18n:autofill": "node scripts/i18n/autofill-contamination.mjs --apply"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.29.0",

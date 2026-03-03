@@ -1,0 +1,340 @@
+{
+  "AdminDashboard": {
+    "approveEnrollments": "الموافقة على التسجيلات",
+    "controlCenter": "هذا هو مركز التحكم الخاص بك بـ {name}.",
+    "issueCredit": "إصدار رصيد يدوي",
+    "quickActions": "إجراءات سريعة",
+    "reviewForms": "مراجعة النماذج",
+    "sendAnnouncement": "إرسال إعلان",
+    "viewPayrollDrafts": "عرض مسودات الرواتب",
+    "welcome": "أهلاً بك، {name}",
+    "welcomeFem": "ברוכה הבאה, {name}"
+  },
+  "AdminPages": {
+    "announcements": {
+      "newAnnouncement": "إعلان جديد",
+      "noAnnouncements": "لا توجد إعلانات",
+      "subtitle": "إرسال رسائل للطلاب وأولياء الأمور والمعلمين",
+      "title": "الإعلانات والأخبار"
+    },
+    "approvals": {
+      "filter": "تصفية حسب النوع",
+      "noApprovals": "لا توجد طلبات معلقة",
+      "subtitle": "النماذج والمستندات التي تتطلب موافقتك",
+      "title": "الموافقات المعلقة"
+    },
+    "branches": {
+      "addBranch": "إضافة فرع",
+      "noBranches": "لا توجد فروع محددة",
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "إدارة فروع المعهد",
+      "title": "إدارة الفروع"
+    },
+    "formBuilder": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "إنشاء وتعديل قوالب نماذج مخصصة لمؤسستك",
+      "title": "منشئ النماذج الديناميكي"
+    },
+    "makeups": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "عرض وإدارة أرصدة الدروس التعويضية لجميع الطلاب في الكونسرفتوار."
+    },
+    "ministry": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "إدارة واعتماد الطلبات، الحفلات الموسيقية، المنح الدراسية والامتحانات المقدمة من الكونسرفتوارات.",
+      "title": "بوابة مديرا مكاتب وزارة التعليم - هارمونيا"
+    },
+    "notifications": {
+      "all": "الكل",
+      "allUpdated": "جميع إشعاراتك محدّثة.",
+      "markAllRead": "تحديد الكل كمقروء",
+      "newUpdatesAppearHere": "عند وجود تحديثات جديدة، ستظهر هنا.",
+      "noNewNotifications": "لا توجد إشعارات جديدة",
+      "noNotifications": "لا توجد إشعارات لعرضها",
+      "subtitle": "جميع تحديثاتك ورسائلك في مكان واحد.",
+      "title": "الإشعارات",
+      "unread": "غير مقروء"
+    },
+    "notificationsLog": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "عرض جميع الإشعارات الصادرة من النظام.",
+      "title": "سجل الإشعارات",
+      "titleSystem": "سجل إشعارات النظام"
+    },
+    "openDay": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "تتبع المسجلين وإدارة الاجتماعات لفعالية اليوم المفتوح."
+    },
+    "payroll": {
+      "header": "إعداد الرواتب - المعلمون",
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "مراجعة واعتماد تقارير الرواتب الشهرية للمعلمين.",
+      "title": "إدارة رواتب المعلمين"
+    },
+    "performances": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "تتبع الحجوزات وإدارة التعيينات والمدفوعات لعروض الموسيقيين."
+    },
+    "rentals": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "تتبع مخزون الآلات وإدارة الإعارات والمرتجعات."
+    },
+    "schedule": {
+      "bookNewLesson": "حجز درس جديد",
+      "month": "شهر",
+      "noLessons": "لا توجد دروس مجدولة",
+      "noLessonsDesc": "جدولك للأسبوع القادم فارغ. يمكنك حجز درس جديد.",
+      "noLessonsTitle": "لا توجد دروس مجدولة",
+      "subtitle": "جدولة الدروس والأحداث",
+      "title": "الجدول الزمني",
+      "today": "اليوم",
+      "week": "أسبوع",
+      "weeklySchedule": "الجدول الأسبوعي"
+    },
+    "substitute": {
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "إدارة تعيينات المعلمين البدلاء للدروس الملغاة بسبب غياب المعلم."
+    },
+    "waitlists": {
+      "header": "إدارة قوائم الانتظار",
+      "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+      "subtitle": "عرض وإدارة الطلاب المنتظرين للتسجيل.",
+      "title": "قوائم الانتظار"
+    }
+  },
+  "AdminAlerts": {
+    "assignSubstitutes": "تعيين المعلمين البدلاء",
+    "goToBilling": "انتقل إلى الفوترة",
+    "makeupBacklogDesc": "للطالب رصيد {count} دروس تعويضية. يرجى تشجيع تحديد المواعيد.",
+    "makeupBacklogTitle": "رصيد دروس تعويضية عالٍ: {name}",
+    "manageTeachers": "إدارة المعلمين",
+    "paymentSpikeDesc": "توجد {count} فواتير لم تدفع في وقتها. يرجى المتابعة.",
+    "paymentSpikeTitle": "تعدد التحصيلات المتأخرة",
+    "promoteSlot": "ترويج الدرس",
+    "promoteSlotDesc": "درس {instrument} مع {name} يوم {day} متاح.",
+    "promoteSlotTitle": "فرصة لملء نافذة شاغرة",
+    "studentDisengagedDesc": "لم يتم تسجيل أي تمرين في آخر 30 يوماً وتم تسجيل {count} غيابات.",
+    "studentDisengagedTitle": "طالب معرض لخطر الانقطاع: {name}",
+    "substituteNeededDesc": "تم إلغاء {count} دروس بسبب غياب المعلم وتتطلب تعيين معلم بديل.",
+    "substituteNeededTitle": "مطلوب تعيين بديل",
+    "teacherCapacityDesc": "المعلم بنسبة إشغال {percent}%. يرجى النظر في إغلاق التسجيل.",
+    "teacherCapacityTitle": "قدرة المعلم عالية: {name}",
+    "viewMakeups": "عرض لوحة التعويضات",
+    "viewProfile": "عرض الملف الشخصي"
+  },
+  "AdminCalendarPanel": {
+    "colActions": "إجراءات",
+    "colDate": "التاريخ",
+    "colName": "اسم العطلة",
+    "colRelevance": "الصلة",
+    "colType": "النوع",
+    "holidayRemoved": "تمت إزالة العطلة من التقويم",
+    "importedSuccess": "تم استيراد {count} أعياد بنجاح.",
+    "importHebcalBtn": "استيراد من Hebcal",
+    "importingHebcal": "استيراد الأعياد الإسرائيلية (Hebcal)...",
+    "newHolidayBtn": "عطلة/إغلاق جديد",
+    "noHolidays": "لم يتم تحديد أعياد أو إغلاقات.",
+    "panelDescription": "التواريخ التي يكون فيها تقويم الحجز محجوزاً ولا يمكن جدولة دروس جديدة.",
+    "panelTitle": "الإجازات والأعياد ({count})",
+    "relevanceAll": "الكونسرفتوار بأكمله",
+    "relevanceSome": "معلمون محددون",
+    "typeConservatoriumClosure": "إغلاق الكونسرفتوار",
+    "typeExamPeriod": "فترة الامتحانات",
+    "typeNationalHoliday": "عطلة وطنية",
+    "typeOther": "أخرى"
+  },
+  "AdminMakeupDashboard": {
+    "colActions": "إجراءات",
+    "colBalance": "رصيد الائتمان",
+    "colExpiry": "أقرب انتهاء صلاحية ائتمان",
+    "colStudent": "الطالب",
+    "colTeacher": "المعلم",
+    "descAll": "قائمة بجميع الطلاب الذين لديهم رصيد دروس تعويضية.",
+    "descExpiring": "الأرصدة التي تنتهي في الأيام {days} القادمة.",
+    "emptyDesc": "يبدو أن جميع الطلاب يستخدمون دروسهم التعويضية في الوقت المناسب.",
+    "emptyTitle": "لا توجد أرصدة للعرض",
+    "expiresInDays": "ينتهي خلال {days} أيام",
+    "extendBtn": "تمديد الصلاحية",
+    "scheduleBtn": "جدولة درس تعويضي",
+    "tabAll": "جميع الأرصدة",
+    "tabExpiring": "تنتهي قريباً",
+    "titleAll": "جميع أرصدة الدروس التعويضية",
+    "titleExpiring": "الأرصدة التي تنتهي قريباً",
+    "unassigned": "غير مخصص"
+  },
+  "AdminOpenDay": {
+    "appointmentTime": "وقت الموعد",
+    "childAge": "عمر الطفل",
+    "childName": "اسم الطفل/ة",
+    "contactDetails": "تفاصيل الاتصال",
+    "familyName": "اسم العائلة",
+    "instrumentInterest": "الآلة محل الاهتمام",
+    "noAppointments": "لم تسجل أي عائلات بعد.",
+    "status": "الحالة",
+    "statuses": {
+      "ATTENDED": "حضر/ت",
+      "NO_SHOW": "لم يحضر/تحضر",
+      "SCHEDULED": "مجدول"
+    },
+    "subtitle": "تتبع الحاضرين وقم بإدارة المواعيد لحدث اليوم المفتوح.",
+    "title": "إدارة اليوم المفتوح"
+  },
+  "AdminScholarships": {
+    "actions": "إجراءات",
+    "addManualDonation": "إضافة تبرع يدوي",
+    "amount": "المبلغ المطلوب",
+    "applicantName": "اسم مقدم الطلب",
+    "approveApp": "الموافقة على الطلب",
+    "approved": "تمت الموافقة",
+    "approvedScholarships": "المنح الدراسية المعتمدة",
+    "exportDonations": "تصدير تقرير التبرعات (البند 46)",
+    "forStudents": "لـ {count} طلاب مختلفين",
+    "fundManagement": "إدارة صندوق المنح الدراسية",
+    "fundManagementDesc": "تتبع أموال التبرعات والموافقة على طلبات المساعدة المالية للطلاب.",
+    "instrument": "الآلة",
+    "newApplications": "الطلبات الجديدة",
+    "noApplications": "لا توجد طلبات معلقة",
+    "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+    "pendingApplications": "الطلبات المعلقة",
+    "priorityScore": "درجة الأولوية",
+    "reason": "السبب",
+    "rejectApp": "رفض الطلب",
+    "rejected": "مرفوضة",
+    "scholarshipApplications": "طلبات المنح الدراسية",
+    "scholarshipApplicationsDesc": "إدارة طلبات المنح الدراسية المقدمة من الطلاب. انقر على طلب لعرض المستندات المرفقة.",
+    "searchStudent": "البحث باسم الطالب...",
+    "status": "الحالة",
+    "statuses": {
+      "APPROVED": "موافق عليه",
+      "DOCUMENTS_PENDING": "في انتظار المستندات",
+      "DRAFT": "مسودة",
+      "EXPIRED": "منتهي الصلاحية",
+      "PARTIALLY_APPROVED": "موافق عليه جزئياً",
+      "REJECTED": "مرفوض",
+      "SUBMITTED": "مقدَّم",
+      "UNDER_REVIEW": "قيد المراجعة",
+      "WAITLISTED": "في قائمة الانتظار"
+    },
+    "student": "الطالب",
+    "submissionDate": "تاريخ التقديم",
+    "subtitle": "مراجعة وإدارة طلبات المنح الدراسية من الطلاب",
+    "title": "إدارة المنح الدراسية",
+    "totalDemand": "إجمالي الطلب: ₪{amount}",
+    "totalFundThisYear": "إجمالي الصندوق هذا العام",
+    "viewApplication": "عرض الطلب",
+    "yearOverYear": "+{percent}% عن العام الماضي"
+  },
+  "AiAgents": {
+    "activated": "تفعيل",
+    "agents": {
+      "adminAlerts": "وكيل التنبيهات الإدارية",
+      "adminAlertsDesc": "يراقب النظام باستمرار ويرصد المشكلات التشغيلية قبل أن تتفاقم.",
+      "compositionSuggester": "وكيل اقتراح التراكيب الموسيقية",
+      "compositionSuggesterDesc": "يقترح تراكيب موسيقية مناسبة للرديف بناءً على مستوى الطالب وأهدافه والقطع المختارة مسبقاً.",
+      "leadNurture": "وكيل رعاية العملاء المحتملين",
+      "leadNurtureDesc": "يُجري متابعات تلقائية ومخصصة مع الطلاب الذين سجلوا لدرس تجريبي ولم يكملوا اشتراكاً.",
+      "lessonNotes": "סוכן הערות שיעור",
+      "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+      "matchmaker": "وكيل المطابقة",
+      "matchmakerDesc": "يطابق تلقائياً الطلاب الجدد مع أنسب المعلمين المتاحين بناءً على الملف الموسيقي والأهداف والتوفر.",
+      "practiceReminder": "תזכורות תרגול",
+      "practiceReminderDesc": "שליחת תזכורות אוטומטיות לתלמידים לתרגל",
+      "progressReport": "وكيل تقرير التقدم",
+      "progressReportDesc": "ينشئ مسودات أولية لتقارير التقدم الدورية للمعلمين بناءً على سجلات التدريب وملاحظات الدروس.",
+      "reschedule": "وكيل إعادة الجدولة",
+      "rescheduleDesc": "يتولى تلقائياً طلبات إلغاء الدروس وإعادة جدولتها عبر واتساب أو الدردشة.",
+      "scheduler": "סוכן תזמון",
+      "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות"
+    },
+    "agentToggled": "تم {state} الوكيل \"{name}\".",
+    "configure": "تكوين",
+    "deactivated": "تعطيل",
+    "disabled": "معطل",
+    "enabled": "مفعل",
+    "lessonNotes": "ملاحظات الدروس الذكية",
+    "lessonNotesDesc": "إنشاء تلقائي لملخصات الدروس والواجبات",
+    "loadingSettings": "جارٍ تحميل الإعدادات...",
+    "manageAutomations": "إدارة أتمتة النظام والوكلاء الذكيين.",
+    "matchmaker": "المطابقة الذكية",
+    "matchmakerDesc": "مطابقة تلقائية للطلاب مع المعلمين حسب التفضيلات",
+    "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+    "scheduler": "المجدول الذكي",
+    "schedulerDesc": "التحسين التلقائي للجدول الزمني",
+    "settingUpdated": "تم تحديث الإعداد",
+    "subtitle": "أدوات ذكية مدعومة بالذكاء الاصطناعي لإدارة المعهد",
+    "title": "وكلاء الذكاء الاصطناعي"
+  },
+  "AiAlerts": {
+    "noAlerts": "لا توجد تنبيهات مهمة حالياً.",
+    "subtitle": "توصيات استباقية بناءً على بياناتك.",
+    "title": "تنبيهات AI",
+    "viewAll": "عرض كل التنبيهات"
+  },
+  "SubstituteAssignmentPanel": {
+    "descriptionEmpty": "لا توجد حالياً دروس ملغاة تتطلب معلماً بديلاً.",
+    "descriptionWithCount": "تم العثور على {count} دروس ملغاة تتطلب معلماً بديلاً.",
+    "emptyState": {
+      "description": "لم يتم العثور على دروس ألغاها المعلمون وتتطلب تعيين بديل.",
+      "title": "لا توجد دروس للتعيين"
+    },
+    "errors": {
+      "assignmentError": "خطأ في التعيين"
+    },
+    "noAvailableTeachers": "لا يوجد معلمون متاحون",
+    "selectPlaceholder": "اختر معلماً بديلاً...",
+    "successToast": {
+      "description": "تم تعيين {teacherName} بنجاح لدرس {studentName}.",
+      "title": "تم تعيين المعلم البديل!"
+    },
+    "table": {
+      "assignSubstitute": "تعيين بديل",
+      "date": "التاريخ والوقت",
+      "instrument": "الآلة الموسيقية",
+      "originalTeacher": "المعلم الأصلي",
+      "student": "الطالب"
+    },
+    "title": "لوحة تعيين المعلم البديل"
+  },
+  "TodaySnapshot": {
+    "billingIssues": "مشاكل الفوترة",
+    "fullSchedule": "إلى الجدول الكامل",
+    "lessonsToday": "دروس اليوم ({count})",
+    "noBillingIssues": "لا توجد مشاكل في الفوترة حالياً.",
+    "noLessons": "لا توجد دروس مقررة اليوم.",
+    "notAssigned": "غير معين",
+    "overdue": "متأخر",
+    "room": "غرفة {number}",
+    "subtitle": "ماذا يحدث اليوم في الكونسرفتوار.",
+    "title": "نظرة عامة يومية"
+  },
+  "KeyMetrics": {
+    "activeStudents": "الطلاب النشطون",
+    "aiAlerts": "تنبيهات AI",
+    "lessonsThisWeek": "دروس هذا الأسبوع",
+    "pendingApprovals": "الموافقات المعلقة"
+  },
+  "NotificationAuditLog": {
+    "channels": {
+      "EMAIL": "البريد الإلكتروني",
+      "IN_APP": "النظام",
+      "SMS": "رسالة قصيرة",
+      "WHATSAPP": "واتساب"
+    },
+    "description": "قائمة بجميع الإشعارات المرسلة من النظام. الحالات محاكاة.",
+    "statuses": {
+      "DELIVERED": "تم التسليم",
+      "FAILED": "فشل",
+      "OPTED_OUT": "إلغاء الاشتراك",
+      "SENT": "تم الإرسال"
+    },
+    "table": {
+      "channel": "القناة",
+      "status": "الحالة",
+      "subject": "الموضوع",
+      "time": "الوقت",
+      "user": "المستخدم"
+    },
+    "title": "سجل الإشعارات الصادرة",
+    "unknownUser": "غير معروف"
+  }
+}

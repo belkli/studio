@@ -1,0 +1,340 @@
+{
+  "AdminDashboard": {
+    "approveEnrollments": "אשר הרשמות",
+    "controlCenter": "זהו מרכז הבקרה שלך עבור {name}.",
+    "issueCredit": "הנפק זיכוי ידני",
+    "quickActions": "פעולות מהירות",
+    "reviewForms": "בדוק טפסים",
+    "sendAnnouncement": "שלח הכרזה",
+    "viewPayrollDrafts": "צפה בטיוטות שכר",
+    "welcome": "ברוך הבא, {name}",
+    "welcomeFem": "ברוכה הבאה, {name}"
+  },
+  "AdminPages": {
+    "announcements": {
+      "newAnnouncement": "הכרזה חדשה",
+      "noAnnouncements": "אין הכרזות",
+      "subtitle": "שלח הודעות לתלמידים, הורים ומורים",
+      "title": "הכרזות וחדשות"
+    },
+    "approvals": {
+      "filter": "סנן לפי סוג",
+      "noApprovals": "אין בקשות ממתינות",
+      "subtitle": "טפסים ומסמכים הדורשים את אישורך",
+      "title": "אישורים ממתינים"
+    },
+    "branches": {
+      "addBranch": "הוסף סניף",
+      "noBranches": "לא הוגדרו סניפים",
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "ניהול סניפי הקונסרבטוריון",
+      "title": "ניהול סניפים"
+    },
+    "formBuilder": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "צור וערוך תבניות טפסים מותאמות אישית",
+      "title": "בנאי טפסים דינמי"
+    },
+    "makeups": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "צפה ונהל את יתרות שיעורי ההשלמה לכל התלמידים בקונסרבטוריון"
+    },
+    "ministry": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "ניהול ואישור בקשות, רסיטלים, מלגות ומבחני שלב המוגשים על ידי הקונסרבטוריונים.",
+      "title": "פורטל משרד החינוך מחוז – הרמוניה"
+    },
+    "notifications": {
+      "all": "הכל",
+      "allUpdated": "כל ההתראות סומנו כנקראו",
+      "markAllRead": "סמן הכל כנקרא",
+      "newUpdatesAppearHere": "עדכונים חדשים יופיעו כאן",
+      "noNewNotifications": "אין התראות חדשות",
+      "noNotifications": "אין התראות",
+      "subtitle": "כל העדכונים וההודעות שלך במקום אחד",
+      "title": "התראות",
+      "unread": "לא נקרא"
+    },
+    "notificationsLog": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "רשימת כל ההתראות שנשלחו",
+      "title": "יומן התראות",
+      "titleSystem": "יומן התראות מערכת"
+    },
+    "openDay": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "עקוב אחר הנרשמים ונהל פגישות לאירוע היום הפתוח."
+    },
+    "payroll": {
+      "header": "הכנת שכר - מורים",
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "הכנת ואישור תלושי שכר למורים",
+      "title": "ניהול שכר מורים"
+    },
+    "performances": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "עקוב אחר הזמנות, נהל שיבוצים וטפל בתשלומים עבור מוזיקאים."
+    },
+    "rentals": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "עקוב אחר מלאי הכלים, נהל השאלות והחזרות."
+    },
+    "schedule": {
+      "bookNewLesson": "הזמן שיעור חדש",
+      "month": "חודש",
+      "noLessons": "אין שיעורים מתוכננים",
+      "noLessonsDesc": "המערכת לשבוע הקרוב ריקה. ניתן להזמין שיעור חדש.",
+      "noLessonsTitle": "אין שיעורים מתוכננים",
+      "subtitle": "תיזמון שיעורים ואירועים",
+      "title": "מערכת שעות",
+      "today": "היום",
+      "week": "שבוע",
+      "weeklySchedule": "מערכת שעות שבועית"
+    },
+    "substitute": {
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "נהל שיבוצי מורים מחליפים לשיעורים שבוטלו."
+    },
+    "waitlists": {
+      "header": "ניהול רשימות המתנה",
+      "noPermission": "אין לך הרשאה לצפות בדף זה.",
+      "subtitle": "צפה ונהל תלמידים הממתינים לשיבוץ.",
+      "title": "רשימות המתנה"
+    }
+  },
+  "AdminAlerts": {
+    "assignSubstitutes": "שבץ מורים מחליפים",
+    "goToBilling": "עבור לחיובים",
+    "makeupBacklogDesc": "לתלמיד/ה יתרה של {count} שיעורי השלמה. יש לעודד קביעת שיעורים.",
+    "makeupBacklogTitle": "יתרת שיעורי השלמה גבוהה: {name}",
+    "manageTeachers": "נהל מורים",
+    "paymentSpikeDesc": "קיימות {count} חשבוניות שלא שולמו בזמן. יש לבצע מעקב.",
+    "paymentSpikeTitle": "ריבוי חיובים בפיגור",
+    "promoteSlot": "קדם שיעור",
+    "promoteSlotDesc": "שיעור {instrument} עם {name} ביום {day} פנוי.",
+    "promoteSlotTitle": "הזדמנות למילוי חלון פנוי",
+    "studentDisengagedDesc": "לא נרשם אימון ב-30 הימים האחרונים וסומנו {count} היעדרויות.",
+    "studentDisengagedTitle": "תלמיד/ה בסיכון נשירה: {name}",
+    "substituteNeededDesc": "{count} שיעורים בוטלו עקב היעדרות מורה ודורשים שיבוץ מורה מחליף.",
+    "substituteNeededTitle": "דרוש שיבוץ מחליף/ה",
+    "teacherCapacityDesc": "המורה בתפוסה של {percent}%. יש לשקול סגירת הרשמה.",
+    "teacherCapacityTitle": "קיבולת מורה גבוהה: {name}",
+    "viewMakeups": "צפה בלוח ההשלמות",
+    "viewProfile": "צפה בפרופיל"
+  },
+  "AdminCalendarPanel": {
+    "colActions": "פעולות",
+    "colDate": "תאריך",
+    "colName": "שם החג",
+    "colRelevance": "רלוונטיות",
+    "colType": "סוג",
+    "holidayRemoved": "החג הוסר מהלוח",
+    "importedSuccess": "יובאו בהצלחה {count} חגים.",
+    "importHebcalBtn": "ייבא מ-Hebcal",
+    "importingHebcal": "מייבא חגים ישראליים (Hebcal)...",
+    "newHolidayBtn": "חג/סגירה חדשה",
+    "noHolidays": "לא הוגדרו חגים או סגירות.",
+    "panelDescription": "תאריכים שבהם לוח ההזמנות חסום ולא ניתן לקבוע שיעורים חדשים.",
+    "panelTitle": "חופשות וחגים ({count})",
+    "relevanceAll": "כל הקונסרבטוריון",
+    "relevanceSome": "מורים ספציפיים",
+    "typeConservatoriumClosure": "סגירת קונסרבטוריון",
+    "typeExamPeriod": "תקופת בחינות",
+    "typeNationalHoliday": "חג לאומי",
+    "typeOther": "אחר"
+  },
+  "AdminMakeupDashboard": {
+    "colActions": "פעולות",
+    "colBalance": "יתרת זיכויים",
+    "colExpiry": "תפוגת זיכוי קרובה",
+    "colStudent": "תלמיד/ה",
+    "colTeacher": "מורה",
+    "descAll": "רשימת כל התלמידים עם זיכויי שיעורי השלמה.",
+    "descExpiring": "זיכויים הפגים ב-{days} הימים הקרובים.",
+    "emptyDesc": "נראה שכל התלמידים מנצלים את שיעורי ההשלמה שלהם בזמן.",
+    "emptyTitle": "אין יתרות להצגה",
+    "expiresInDays": "פג בעוד {days} ימים",
+    "extendBtn": "הארך תוקף",
+    "scheduleBtn": "קבע שיעור השלמה",
+    "tabAll": "כל היתרות",
+    "tabExpiring": "פגים בקרוב",
+    "titleAll": "כל יתרות שיעורי ההשלמה",
+    "titleExpiring": "זיכויים הפגים בקרוב",
+    "unassigned": "לא משויך"
+  },
+  "AdminOpenDay": {
+    "appointmentTime": "שעת פגישה",
+    "childAge": "גיל הילד/ה",
+    "childName": "שם הילד/ה",
+    "contactDetails": "פרטי קשר",
+    "familyName": "שם משפחה",
+    "instrumentInterest": "כלי עניין",
+    "noAppointments": "טרם נרשמו משפחות.",
+    "status": "סטטוס",
+    "statuses": {
+      "ATTENDED": "הגיע/ה",
+      "NO_SHOW": "לא הגיע/ה",
+      "SCHEDULED": "מתוכנן"
+    },
+    "subtitle": "עקוב אחר הנרשמים ונהל את הפגישות לאירוע היום הפתוח.",
+    "title": "ניהול יום פתוח"
+  },
+  "AdminScholarships": {
+    "actions": "פעולות",
+    "addManualDonation": "הוסף תרומה ידנית",
+    "amount": "סכום מבוקש",
+    "applicantName": "שם המבקש/ת",
+    "approveApp": "אשר בקשה",
+    "approved": "מאושרות",
+    "approvedScholarships": "מלגות שאושרו",
+    "exportDonations": "ייצוא דוח תרומות (סעיף 46)",
+    "forStudents": "עבור {count} תלמידים שונים",
+    "fundManagement": "ניהול קרן המלגות",
+    "fundManagementDesc": "עקוב אחר כספי התרומות ואשר בקשות סיוע כלכלי מתלמידים.",
+    "instrument": "כלי נגינה",
+    "newApplications": "בקשות חדשות",
+    "noApplications": "אין בקשות ממתינות",
+    "noPermission": "אין לך הרשאה לצפות בדף זה.",
+    "pendingApplications": "בקשות ממתינות",
+    "priorityScore": "ציון עדיפות",
+    "reason": "נימוק",
+    "rejectApp": "דחה בקשה",
+    "rejected": "נדחות",
+    "scholarshipApplications": "בקשות מלגה",
+    "scholarshipApplicationsDesc": "נהל בקשות מלגה שהוגשו על ידי תלמידים. לחץ על בקשה לצפייה.",
+    "searchStudent": "חיפוש שם תלמיד/ה...",
+    "status": "סטטוס",
+    "statuses": {
+      "APPROVED": "מאושר",
+      "DOCUMENTS_PENDING": "ממתין למסמכים",
+      "DRAFT": "טיוטה",
+      "EXPIRED": "פג תוקף",
+      "PARTIALLY_APPROVED": "אושר חלקית",
+      "REJECTED": "נדחה",
+      "SUBMITTED": "הוגש",
+      "UNDER_REVIEW": "בבחינה",
+      "WAITLISTED": "ברשימת המתנה"
+    },
+    "student": "תלמיד/ה",
+    "submissionDate": "תאריך הגשה",
+    "subtitle": "סקירה וניהול בקשות מלגה מתלמידים",
+    "title": "ניהול מלגות",
+    "totalDemand": "ביקוש כולל: ₪{amount}",
+    "totalFundThisYear": "סך הקרן השנה",
+    "viewApplication": "צפה בבקשה",
+    "yearOverYear": "+{percent}% מהשנה שעברה"
+  },
+  "AiAgents": {
+    "activated": "הופעל",
+    "agents": {
+      "adminAlerts": "התראות מנהל",
+      "adminAlertsDesc": "מזהה ומתריע על בעיות תפעוליות בזמן אמת",
+      "compositionSuggester": "מציע קומפוזיציות",
+      "compositionSuggesterDesc": "מציע יצירות מתאימות לרמת התלמיד ומטרותיו",
+      "leadNurture": "טיפוח לידים",
+      "leadNurtureDesc": "מתקשר עם לידים חדשים ומלווה אותם עד להרשמה",
+      "lessonNotes": "סוכן הערות שיעור",
+      "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+      "matchmaker": "סוכן שידוך",
+      "matchmakerDesc": "מתאים אוטומטית תלמידים חדשים למורים לפי העדפות",
+      "practiceReminder": "תזכורות תרגול",
+      "practiceReminderDesc": "שליחת תזכורות אוטומטיות לתלמידים לתרגל",
+      "progressReport": "דוח התקדמות",
+      "progressReportDesc": "מייצר דוחות התקדמות תקופתיים לתלמידים",
+      "reschedule": "סוכן תזמון מחדש",
+      "rescheduleDesc": "מתזמן מחדש שיעורים שבוטלו אוטומטית",
+      "scheduler": "סוכן תזמון",
+      "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות"
+    },
+    "agentToggled": "הסוכן \"{name}\" {state}.",
+    "configure": "הגדר",
+    "deactivated": "הושבת",
+    "disabled": "לא פעיל",
+    "enabled": "פעיל",
+    "lessonNotes": "הערות שיעור AI",
+    "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+    "loadingSettings": "טוען הגדרות...",
+    "manageAutomations": "נהל את האוטומציות והסוכנים החכמים של המערכת.",
+    "matchmaker": "שדכן AI",
+    "matchmakerDesc": "התאמה אוטומטית של תלמידים למורים על פי העדפות",
+    "noPermission": "אין לך הרשאה לצפות בדף זה.",
+    "scheduler": "מתזמן AI",
+    "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות",
+    "settingUpdated": "ההגדרה עודכנה",
+    "subtitle": "כלים חכמים המבוססים על AI לניהול קונסרבטוריון",
+    "title": "סוכני AI"
+  },
+  "AiAlerts": {
+    "noAlerts": "כרגע אין התראות חשובות.",
+    "subtitle": "המלצות פרואקטיביות על בסיס הנתונים שלך.",
+    "title": "התראות AI",
+    "viewAll": "לכל ההתראות"
+  },
+  "SubstituteAssignmentPanel": {
+    "descriptionEmpty": "אין כרגע שיעורים שבוטלו הדורשים מורה מחליף.",
+    "descriptionWithCount": "נמצאו {count} שיעורים שבוטלו הדורשים מורה מחליף.",
+    "emptyState": {
+      "description": "לא נמצאו שיעורים שבוטלו על ידי מורים הדורשים שיבוץ מחליף.",
+      "title": "אין שיעורים לשיבוץ"
+    },
+    "errors": {
+      "assignmentError": "שגיאת שיבוץ"
+    },
+    "noAvailableTeachers": "אין מורים זמינים",
+    "selectPlaceholder": "בחר מורה מחליף...",
+    "successToast": {
+      "description": "{teacherName} שובץ/ה בהצלחה לשיעורו/ה של {studentName}.",
+      "title": "מורה מחליף שובץ!"
+    },
+    "table": {
+      "assignSubstitute": "שבץ מחליף",
+      "date": "תאריך ושעה",
+      "instrument": "כלי נגינה",
+      "originalTeacher": "מורה מקורי",
+      "student": "תלמיד/ה"
+    },
+    "title": "פאנל שיבוץ מחליפים"
+  },
+  "TodaySnapshot": {
+    "billingIssues": "בעיות בגבייה",
+    "fullSchedule": "למערכת השעות המלאה",
+    "lessonsToday": "השיעורים להיום ({count})",
+    "noBillingIssues": "אין בעיות בגבייה כרגע.",
+    "noLessons": "אין שיעורים מתוכננים להיום.",
+    "notAssigned": "לא שויך",
+    "overdue": "בפיגור",
+    "room": "חדר {number}",
+    "subtitle": "מה קורה היום בקונסרבטוריון.",
+    "title": "תמונת מצב יומית"
+  },
+  "KeyMetrics": {
+    "activeStudents": "תלמידים פעילים",
+    "aiAlerts": "התראות AI",
+    "lessonsThisWeek": "שיעורים השבוע",
+    "pendingApprovals": "אישורים ממתינים"
+  },
+  "NotificationAuditLog": {
+    "channels": {
+      "EMAIL": "אימייל",
+      "IN_APP": "מערכת",
+      "SMS": "מסרון (SMS)",
+      "WHATSAPP": "ווטסאפ"
+    },
+    "description": "רשימת כל ההתראות שנשלחו מהמערכת. הסטטוסים הם מדומים.",
+    "statuses": {
+      "DELIVERED": "נמסר",
+      "FAILED": "נכשל",
+      "OPTED_OUT": "ביטל הסכמה",
+      "SENT": "נשלח"
+    },
+    "table": {
+      "channel": "ערוץ",
+      "status": "סטטוס",
+      "subject": "נושא",
+      "time": "זמן",
+      "user": "משתמש"
+    },
+    "title": "יומן התראות יוצאות",
+    "unknownUser": "לא ידוע"
+  }
+}

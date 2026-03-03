@@ -1,0 +1,129 @@
+{
+  "Common": {
+    "actions": "פעולות",
+    "cancel": "ביטול",
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק?",
+    "delete": "מחק",
+    "deleteFailed": "המחיקה נכשלה",
+    "edit": "ערוך",
+    "error": "שגיאה",
+    "name": "שם",
+    "noData": "אין נתונים להצגה",
+    "save": "שמור",
+    "saveFailed": "השמירה נכשלה",
+    "saveStatusBar": {
+      "error": "שגיאה",
+      "savedAt": "נשמר בשעה",
+      "saveDraft": "שמירת טיוטה",
+      "saving": "שומר",
+      "unsavedChanges": "יש שינויים שלא נשמרו"
+    },
+    "saving": "שומר...",
+    "shared": {
+      "actions": "פעולות",
+      "cancel": "ביטול",
+      "formType": "סוג טופס",
+      "grade": "כיתה",
+      "loading": "טוען...",
+      "openMenu": "פתח תפריט",
+      "save": "שמור",
+      "search": "חיפוש...",
+      "status": "סטטוס",
+      "studentName": "שם התלמיד/ה",
+      "submissionDate": "תאריך הגשה",
+      "switchLanguage": "החלפת שפה",
+      "view": "צפה",
+      "skipToMain": "דלג לתוכן הראשי"
+    },
+    "success": "הצלחה",
+    "translationEditor": {
+      "ai": "AI",
+      "aiTranslating": "מתרגם באמצעות AI...",
+      "cancel": "ביטול",
+      "human": "אנושי",
+      "language": {
+        "arabic": "ערבית",
+        "english": "אנגלית",
+        "russian": "רוסית"
+      },
+      "noTranslationYet": "אין תרגום עדיין",
+      "override": "דריסה",
+      "sourceContent": "תוכן מקור (עברית)",
+      "stale": "תרגום לא מעודכן"
+    }
+  },
+  "Status": {
+    "DRAFT": "טיוטה",
+    "PENDING_TEACHER": "ממתין לאישור מורה",
+    "PENDING_ADMIN": "ממתין לאישור מנהל",
+    "APPROVED": "מאושר",
+    "REJECTED": "נדחה",
+    "REVISION_REQUIRED": "נדרש תיקון",
+    "FINAL_APPROVED": "מאושר סופית",
+    "history": {
+      "approvedAdmin": "אושר ונחתם על ידי {name}",
+      "approvedTeacher": "אושר על ידי {name}",
+      "ministryApproved": "אושר סופית על ידי משרד החינוך",
+      "ministryRejected": "הוחזר לתיקונים על ידי משרד החינוך",
+      "pendingAdmin": "ממתין לאישור של {name} (מנהל)",
+      "pendingTeacher": "ממתין לאישור של {name} (מורה)",
+      "rejected": "הטופס נדחה",
+      "submitted": "הטופס הוגש על ידי {name}"
+    }
+  },
+  "Navigation": {
+    "about": "אודות",
+    "back": "חזרה",
+    "contact": "צור קשר",
+    "dashboard": "לוח בקרה",
+    "donate": "תרומה",
+    "lessons": "שיעורים פנויים",
+    "login": "כניסה",
+    "musicians": "מוזיקאים",
+    "next": "הבא",
+    "openDay": "יום פתוח",
+    "profile": "עריכת פרופיל",
+    "register": "הרשמה",
+    "submit": "סיים הרשמה",
+    "switchLanguage": "החלפת שפה",
+    "trialLesson": "שיעור ניסיון"
+  },
+  "AccessibilityPage": {
+    "title": "הצהרת נגישות",
+    "intro": "אתר הרמוניה מחויב לנגישות דיגיטלית בהתאם לתקן WCAG 2.1 ברמה AA ולתקן הישראלי IS 5568.",
+    "footerLink": "הצהרת נגישות",
+    "measuresTitle": "אמצעי נגישות",
+    "measures": {
+      "keyboard": "תמיכה מלאה בניווט מקלדת בכל הזרימות המרכזיות.",
+      "screenReaders": "תמיכה בקוראי מסך נפוצים (NVDA, JAWS, VoiceOver).",
+      "zoom": "התוכן נשאר שימושי גם בהגדלה של 200% ללא פגיעה בפונקציונליות.",
+      "contrast": "ניגודיות צבעים מיושמת לטובת קריאות.",
+      "forms": "שדות טפסים כוללים תוויות, הודעות ולידציה וקישור ברור לשגיאות.",
+      "alt": "לתמונות ואייקונים מצורף טקסט חלופי לפי הצורך."
+    },
+    "knownLimitationsTitle": "מגבלות ידועות",
+    "knownLimitations": "חלק מהמודולים עדיין נמצאים בתהליך שיפור נגישות. פניות משתמשים בנושא מטופלות בעדיפות גבוהה.",
+    "contactTitle": "יצירת קשר בנושא נגישות",
+    "contactDescription": "אם נתקלתם בבעיית נגישות, ניתן לפנות לרכז/ת הנגישות שלנו.",
+    "contactEmailLabel": "דוא\"ל",
+    "contactResponseLabel": "זמן תגובה",
+    "contactResponseValue": "עד 5 ימי עסקים",
+    "alternativeTitle": "חלופה נגישה",
+    "alternativeDescription": "אם לא ניתן לגשת לתוכן מסוים, פנו אלינו ונספק חלופה נגישה.",
+    "lastUpdated": "עודכן לאחרונה: 3 במרץ 2026"
+  },
+  "RegistrationSession": {
+    "remaining": "זמן סשן: {time}",
+    "warningTitle": "הסשן עומד להסתיים",
+    "warningDescription": "סשן ההרשמה יפוג בעוד כ-{minutes} דקות. ניתן להאריך כדי לא לאבד התקדמות.",
+    "continueWithoutExtending": "המשך",
+    "extend": "הארכת סשן",
+    "expiredTitle": "הסשן הסתיים",
+    "expiredDescription": "סשן ההרשמה הסתיים מטעמי אבטחה. ניתן להתחיל סשן חדש כדי להמשיך.",
+    "restart": "התחלת סשן חדש"
+  },
+  "Metadata": {
+    "siteDescription": "מערכת ניהול חכמה לקונסרבטוריונים מתקדמים.",
+    "siteName": "הַרמוֹנְיָה"
+  }
+}

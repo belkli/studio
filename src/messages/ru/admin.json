@@ -1,0 +1,340 @@
+{
+  "AdminDashboard": {
+    "approveEnrollments": "Одобрить регистрации",
+    "controlCenter": "Это ваш центр управления для {name}.",
+    "issueCredit": "Выдать кредит вручную",
+    "quickActions": "Быстрые действия",
+    "reviewForms": "Проверить формы",
+    "sendAnnouncement": "Отправить объявление",
+    "viewPayrollDrafts": "Черновики зарплат",
+    "welcome": "Добро пожаловать, {name}",
+    "welcomeFem": "Добро пожаловать, {name}"
+  },
+  "AdminPages": {
+    "announcements": {
+      "newAnnouncement": "Новое объявление",
+      "noAnnouncements": "Нет объявлений",
+      "subtitle": "Отправка сообщений ученикам, родителям и учителям",
+      "title": "Объявления и Новости"
+    },
+    "approvals": {
+      "filter": "Фильтр по типу",
+      "noApprovals": "Нет ожидающих запросов",
+      "subtitle": "Формы и документы, требующие одобрения",
+      "title": "Ожидающие одобрения"
+    },
+    "branches": {
+      "addBranch": "Добавить филиал",
+      "noBranches": "Филиалы не определены",
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Управление филиалами консерватории",
+      "title": "Управление филиалами"
+    },
+    "formBuilder": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Создавайте и редактируйте настраиваемые шаблоны форм для вашего учреждения.",
+      "title": "Динамический конструктор форм"
+    },
+    "makeups": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Просматривайте и управляйте балансом компенсационных уроков для всех студентов консерватории."
+    },
+    "ministry": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Управление и утверждение запросов, концертов, стипендий и экзаменов, поданных консерваториями.",
+      "title": "Портал Министерства образования - Район Гармония"
+    },
+    "notifications": {
+      "all": "Все",
+      "allUpdated": "All your notifications are up to date.",
+      "markAllRead": "Mark all as read",
+      "newUpdatesAppearHere": "When there are new updates, they will appear here.",
+      "noNewNotifications": "Нет новых уведомлений",
+      "noNotifications": "No notifications to show",
+      "subtitle": "All your updates and messages in one place.",
+      "title": "Уведомления",
+      "unread": "Unread"
+    },
+    "notificationsLog": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Просмотр всех исходящих уведомлений, отправленных пользователям.",
+      "title": "Журнал уведомлений",
+      "titleSystem": "Системный журнал уведомлений"
+    },
+    "openDay": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Отслеживайте зарегистрированных и управляйте встречами для дня открытых дверей."
+    },
+    "payroll": {
+      "header": "Подготовка выплат - Учителя",
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Проверка, утверждение и управление ежемесячными отчетами о выплатах для учителей.",
+      "title": "Управление выплатами учителям"
+    },
+    "performances": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Отслеживайте бронирования, управляйте назначениями и обрабатывайте платежи за выступления музыкантов."
+    },
+    "rentals": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Отслеживайте инвентарь инструментов, управляйте выдачей и возвратами."
+    },
+    "schedule": {
+      "bookNewLesson": "Book new lesson",
+      "month": "Месяц",
+      "noLessons": "Нет запланированных уроков",
+      "noLessonsDesc": "Your schedule for the upcoming week is empty. You can book a new lesson.",
+      "noLessonsTitle": "Нет запланированных уроков",
+      "subtitle": "Планирование уроков и мероприятий",
+      "title": "Расписание",
+      "today": "Сегодня",
+      "week": "Неделя",
+      "weeklySchedule": "Weekly Schedule"
+    },
+    "substitute": {
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Управляйте назначениями замещающих учителей для уроков, отмененных из-за отсутствия учителя."
+    },
+    "waitlists": {
+      "header": "Управление списками ожидания",
+      "noPermission": "У вас нет прав для просмотра этой страницы.",
+      "subtitle": "Просматривайте и управляйте студентами, ожидающими вакансии у учителей.",
+      "title": "Списки ожидания"
+    }
+  },
+  "AdminAlerts": {
+    "assignSubstitutes": "Назначить замены",
+    "goToBilling": "Перейти к оплате",
+    "makeupBacklogDesc": "У ученика осталось {count} дополнительных уроков. Рекомендуется назначить даты.",
+    "makeupBacklogTitle": "Высокий баланс дополнительных уроков: {name}",
+    "manageTeachers": "Управление учителями",
+    "paymentSpikeDesc": "Есть {count} неоплаченных счетов. Требуется проверка.",
+    "paymentSpikeTitle": "Множество долгов по оплате",
+    "promoteSlot": "Продвигать урок",
+    "promoteSlotDesc": "Урок {instrument} с {name} в {day} свободен.",
+    "promoteSlotTitle": "Возможность заполнить окно",
+    "studentDisengagedDesc": "Нет записей о практике за последние 30 дней и отмечено {count} пропусков.",
+    "studentDisengagedTitle": "Ученик под риском отсева: {name}",
+    "substituteNeededDesc": "{count} уроков отменено из-за отсутствия учителя, требуется замена.",
+    "substituteNeededTitle": "Требуется замена учителя",
+    "teacherCapacityDesc": "Учитель загружен на {percent}%. Рекомендуется закрыть регистрацию.",
+    "teacherCapacityTitle": "Высокая занятость учителя: {name}",
+    "viewMakeups": "Список отработок",
+    "viewProfile": "Посмотреть профиль"
+  },
+  "AdminCalendarPanel": {
+    "colActions": "Действия",
+    "colDate": "Дата",
+    "colName": "Holiday Name",
+    "colRelevance": "Relevance",
+    "colType": "Type",
+    "holidayRemoved": "Holiday removed from calendar",
+    "importedSuccess": "Successfully imported {count} holidays.",
+    "importHebcalBtn": "Import from Hebcal",
+    "importingHebcal": "Importing Israeli Holidays (Hebcal)...",
+    "newHolidayBtn": "New Holiday/Closure",
+    "noHolidays": "No holidays or closures have been defined.",
+    "panelDescription": "Dates when the booking calendar is blocked and no new lessons can be scheduled.",
+    "panelTitle": "Vacations and Holidays ({count})",
+    "relevanceAll": "Entire Conservatorium",
+    "relevanceSome": "Specific Teachers",
+    "typeConservatoriumClosure": "Conservatorium Closure",
+    "typeExamPeriod": "Exam Period",
+    "typeNationalHoliday": "National Holiday",
+    "typeOther": "Другое"
+  },
+  "AdminMakeupDashboard": {
+    "colActions": "Действия",
+    "colBalance": "Credit Balance",
+    "colExpiry": "Nearest Credit Expiry",
+    "colStudent": "Student",
+    "colTeacher": "Teacher",
+    "descAll": "List of all students with makeup lesson credits.",
+    "descExpiring": "Credits expiring in the next {days} days.",
+    "emptyDesc": "It seems all students are using their makeup lessons on time.",
+    "emptyTitle": "No balances to display",
+    "expiresInDays": "Expires in {days} days",
+    "extendBtn": "Extend Expiry",
+    "scheduleBtn": "Schedule Makeup Lesson",
+    "tabAll": "All Balances",
+    "tabExpiring": "Expiring Soon",
+    "titleAll": "All Makeup Lesson Balances",
+    "titleExpiring": "Credits Expiring Soon",
+    "unassigned": "Unassigned"
+  },
+  "AdminOpenDay": {
+    "appointmentTime": "Время встречи",
+    "childAge": "Child age",
+    "childName": "Имя ребенка",
+    "contactDetails": "Контактные данные",
+    "familyName": "Фамилия",
+    "instrumentInterest": "Интересующий инструмент",
+    "noAppointments": "Семьи еще не зарегистрировались.",
+    "status": "Статус",
+    "statuses": {
+      "ATTENDED": "Присутствовал",
+      "NO_SHOW": "Неявка",
+      "SCHEDULED": "Запланировано"
+    },
+    "subtitle": "Отслеживайте посетителей и управляйте встречами на мероприятии Дня открытых дверей.",
+    "title": "Управление Днем открытых дверей"
+  },
+  "AdminScholarships": {
+    "actions": "Действия",
+    "addManualDonation": "Add Manual Donation",
+    "amount": "Запрашиваемая сумма",
+    "applicantName": "Имя заявителя",
+    "approveApp": "Одобрить заявку",
+    "approved": "Одобренные",
+    "approvedScholarships": "Approved Scholarships",
+    "exportDonations": "Export Donations Report (Section 46)",
+    "forStudents": "For {count} different students",
+    "fundManagement": "Scholarship Fund Management",
+    "fundManagementDesc": "Track donation funds and approve student financial aid applications.",
+    "instrument": "Инструмент",
+    "newApplications": "Новые заявки",
+    "noApplications": "Нет ожидающих заявок",
+    "noPermission": "У вас нет прав для просмотра этой страницы.",
+    "pendingApplications": "Pending Applications",
+    "priorityScore": "Priority Score",
+    "reason": "Причина",
+    "rejectApp": "Отклонить заявку",
+    "rejected": "Отклоненные",
+    "scholarshipApplications": "Scholarship Applications",
+    "scholarshipApplicationsDesc": "Manage scholarship applications submitted by students. Click an application to view attached documents and reasoning.",
+    "searchStudent": "Search student name...",
+    "status": "Статус",
+    "statuses": {
+      "APPROVED": "Approved",
+      "DOCUMENTS_PENDING": "Documents Pending",
+      "DRAFT": "Черновик",
+      "EXPIRED": "Истек срок",
+      "PARTIALLY_APPROVED": "Partially Approved",
+      "REJECTED": "Rejected",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "WAITLISTED": "Waitlisted"
+    },
+    "student": "Student",
+    "submissionDate": "Дата подачи",
+    "subtitle": "Просматривайте и управляйте заявками на стипендию",
+    "title": "Управление стипендиями",
+    "totalDemand": "Total demand: ₪{amount}",
+    "totalFundThisYear": "Total Fund This Year",
+    "viewApplication": "Посмотреть заявку",
+    "yearOverYear": "+{percent}% from last year"
+  },
+  "AiAgents": {
+    "activated": "activated",
+    "agents": {
+      "adminAlerts": "Admin Alerts Agent",
+      "adminAlertsDesc": "Continuously monitors the system and surfaces operational issues before they become crises.",
+      "compositionSuggester": "Composition Suggestion Agent",
+      "compositionSuggesterDesc": "Suggests relevant compositions for repertoire based on student level, goals, and already selected pieces.",
+      "leadNurture": "Lead Nurturing Agent",
+      "leadNurtureDesc": "Performs automatic, personalized follow-ups with students who registered for a trial lesson but did not continue to a package.",
+      "lessonNotes": "סוכן הערות שיעור",
+      "lessonNotesDesc": "יצירה אוטומטית של סיכומי שיעור ושיעורי בית",
+      "matchmaker": "Matchmaker Agent",
+      "matchmakerDesc": "Automatically matches new students to the most suitable available teachers based on musical profile, goals, and availability.",
+      "practiceReminder": "Practice Reminder",
+      "practiceReminderDesc": "Sends reminders to students who have not practiced.",
+      "progressReport": "Progress Report Agent",
+      "progressReportDesc": "Generates initial drafts of periodic progress reports for teachers, based on practice logs and lesson notes.",
+      "reschedule": "Rescheduling Concierge Agent",
+      "rescheduleDesc": "Automatically handles lesson cancellation and rescheduling requests via WhatsApp or chat.",
+      "scheduler": "סוכן תזמון",
+      "schedulerDesc": "אופטימיזציה אוטומטית של מערכת השעות"
+    },
+    "agentToggled": "Agent {name} has been {state}.",
+    "configure": "Настроить",
+    "deactivated": "deactivated",
+    "disabled": "Выключено",
+    "enabled": "Включено",
+    "lessonNotes": "AI Заметки к урокам",
+    "lessonNotesDesc": "Автоматическое создание сводок уроков и домашних заданий",
+    "loadingSettings": "Loading settings...",
+    "manageAutomations": "Manage the system's automations and smart agents.",
+    "matchmaker": "AI Подбор",
+    "matchmakerDesc": "Автоматический подбор учителей и учеников по предпочтениям",
+    "noPermission": "У вас нет прав для просмотра этой страницы.",
+    "scheduler": "AI Расписание",
+    "schedulerDesc": "Автоматическая оптимизация расписания",
+    "settingUpdated": "Setting updated",
+    "subtitle": "Умные AI-инструменты для управления консерваторией",
+    "title": "AI Агенты"
+  },
+  "AiAlerts": {
+    "noAlerts": "Сейчас нет важных оповещений.",
+    "subtitle": "Проактивные рекомендации на основе ваших данных.",
+    "title": "AI-оповещения",
+    "viewAll": "Показать все оповещения"
+  },
+  "SubstituteAssignmentPanel": {
+    "descriptionEmpty": "There are currently no cancelled lessons that require a substitute teacher.",
+    "descriptionWithCount": "Found {count} cancelled lessons that require a substitute teacher.",
+    "emptyState": {
+      "description": "No lessons were found that were cancelled by teachers and require a substitute assignment.",
+      "title": "No Lessons for Assignment"
+    },
+    "errors": {
+      "assignmentError": "Assignment Error"
+    },
+    "noAvailableTeachers": "No available teachers",
+    "selectPlaceholder": "Select substitute teacher...",
+    "successToast": {
+      "description": "{teacherName} was successfully assigned to {studentName}'s lesson.",
+      "title": "Substitute Teacher Assigned!"
+    },
+    "table": {
+      "assignSubstitute": "Assign Substitute",
+      "date": "Date & Time",
+      "instrument": "Инструмент",
+      "originalTeacher": "Original Teacher",
+      "student": "Student"
+    },
+    "title": "Substitute Assignment Panel"
+  },
+  "TodaySnapshot": {
+    "billingIssues": "Проблемы с оплатой",
+    "fullSchedule": "К полному расписанию",
+    "lessonsToday": "Уроки на сегодня ({count})",
+    "noBillingIssues": "На данный момент проблем с оплатой нет.",
+    "noLessons": "На сегодня уроков не запланировано.",
+    "notAssigned": "Не назначен",
+    "overdue": "Просрочено",
+    "room": "Кабинет {number}",
+    "subtitle": "Что происходит сегодня в консерватории.",
+    "title": "Дневной обзор"
+  },
+  "KeyMetrics": {
+    "activeStudents": "Активные ученики",
+    "aiAlerts": "AI Оповещения",
+    "lessonsThisWeek": "Уроки на этой неделе",
+    "pendingApprovals": "Ожидают подтверждения"
+  },
+  "NotificationAuditLog": {
+    "channels": {
+      "EMAIL": "Электронная почта",
+      "IN_APP": "System",
+      "SMS": "SMS",
+      "WHATSAPP": "WhatsApp"
+    },
+    "description": "List of all notifications sent from the system. Statuses are simulated.",
+    "statuses": {
+      "DELIVERED": "Delivered",
+      "FAILED": "Не сдан",
+      "OPTED_OUT": "Opted Out",
+      "SENT": "Отправлено"
+    },
+    "table": {
+      "channel": "Channel",
+      "status": "Статус",
+      "subject": "Subject",
+      "time": "Time",
+      "user": "User"
+    },
+    "title": "Outgoing Notifications Log",
+    "unknownUser": "Неизвестно"
+  }
+}

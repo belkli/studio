@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -97,7 +97,6 @@ const getFormSchema = (t: any) => z.object({
 
 type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
-const schoolOptions = schools.map(s => ({ value: s.name, label: `${s.name} (סמל: ${s.symbol})` }));
 const conservatoriumOptions = conservatoriums.map(c => ({ value: c.id, label: c.name }));
 
 // These will be localized inside the component
@@ -123,6 +122,8 @@ const getTimeOptions = (t: any) => [
   { id: 'AFTERNOON', label: t('schedule.times_options.AFTERNOON') },
   { id: 'EVENING', label: t('schedule.times_options.EVENING') }
 ];
+
+const ENROLLMENT_DRAFT_STORAGE_PREFIX = 'enrollment-wizard-draft:v1';
 
 const DetailItem = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex justify-between py-1">
@@ -450,6 +451,67 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     },
   });
 
+  const draftStorageKey = `${ENROLLMENT_DRAFT_STORAGE_PREFIX}:${locale}:${isAdminFlow ? 'admin' : 'public'}`;
+
+  const clearDraft = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem(draftStorageKey);
+  }, [draftStorageKey]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const raw = localStorage.getItem(draftStorageKey);
+    if (!raw) return;
+
+    try {
+      const draft = JSON.parse(raw);
+      const values = draft?.values ?? {};
+      const restoredValues = {
+        ...values,
+        firstLessonDate: values?.firstLessonDate ? new Date(values.firstLessonDate) : undefined,
+      };
+      form.reset(restoredValues);
+
+      if (typeof draft?.step === 'number' && draft.step >= 0 && draft.step < steps.length) {
+        setStep(draft.step);
+      }
+    } catch {
+      localStorage.removeItem(draftStorageKey);
+    }
+  }, [draftStorageKey, form, steps.length]);
+
+  const persistDraft = useCallback(() => {
+    if (typeof window === 'undefined' || isSubmitted) return;
+    const values = form.getValues();
+    const serializedValues = {
+      ...values,
+      firstLessonDate:
+        values.firstLessonDate instanceof Date ? values.firstLessonDate.toISOString() : values.firstLessonDate ?? null,
+    };
+
+    localStorage.setItem(
+      draftStorageKey,
+      JSON.stringify({
+        savedAt: new Date().toISOString(),
+        step,
+        values: serializedValues,
+      })
+    );
+  }, [draftStorageKey, form, isSubmitted, step]);
+
+  useEffect(() => {
+    if (isSubmitted) return;
+    const interval = window.setInterval(persistDraft, 30_000);
+    return () => window.clearInterval(interval);
+  }, [isSubmitted, persistDraft]);
+
+  useEffect(() => {
+    if (!isSubmitted) {
+      persistDraft();
+    }
+  }, [isSubmitted, persistDraft, step]);
+
   const registrationType = form.watch("registrationType");
   const currentStepId = steps[step].id;
 
@@ -481,7 +543,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       setTeacherMatches(result);
     } catch (error) {
       console.error(error);
-      toast({ variant: 'destructive', title: t('matching.errorTitle', { defaultValue: 'שגיאה בהתאמת מורה' }), description: t('matching.errorDesc', { defaultValue: 'אירעה שגיאה בעת ניסיון התאמת המורה. אנא נסה שוב.' }) });
+      toast({ variant: 'destructive', title: t('matching.errorTitle'), description: t('matching.errorDesc') });
     } finally {
       setIsMatchingLoading(false);
     }
@@ -503,7 +565,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       case 'schedule': fieldsToValidate = ['availableDays', 'availableTimes', 'isVirtualOk']; break;
       case 'matching': fieldsToValidate = ['teacherId']; break;
       case 'package': fieldsToValidate = ['packageId']; break;
-      case 'book': fieldsToValidate = ['firstLessonDate', 'firstLessonTime']; break;
+      case 'booking': fieldsToValidate = ['firstLessonDate', 'firstLessonTime']; break;
       default: break;
     }
 
@@ -564,6 +626,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       preferredTimes: data.availableTimes as TimeRange[],
     });
 
+    clearDraft();
     setIsSubmitted(true);
     toast({
       title: t('toasts.waitlistTitle'),
@@ -620,6 +683,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       });
     }
 
+    clearDraft();
     setIsSubmitted(true);
     toast({
       title: t('toasts.successTitle'),
@@ -657,8 +721,8 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     return (
       <Card className="w-full max-w-4xl mx-4">
         <CardHeader>
-          <CardTitle>רישום תלמיד חדש</CardTitle>
-          <CardDescription>מלא את כל הפרטים כדי לרשום את התלמיד/ה.</CardDescription>
+          <CardTitle>{t('admin.title')}</CardTitle>
+          <CardDescription>{t('admin.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <FormProvider {...form}>
@@ -672,12 +736,41 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
   const formData = form.getValues();
   const selectedPackage = mockPackages.find(p => p.id === formData.packageId);
+  const paymentSchedule = useMemo(() => {
+    if (!selectedPackage) return [];
+
+    const installmentsByType: Record<string, number> = {
+      TRIAL: 1,
+      PACK_5: 5,
+      PACK_10: 10,
+      MONTHLY: 5,
+      YEARLY: 12,
+      ADHOC_SINGLE: 1,
+    };
+
+    const installments = installmentsByType[selectedPackage.type] ?? 1;
+    const amount = Number((selectedPackage.price / installments).toFixed(2));
+    const formatter = new Intl.DateTimeFormat(
+      locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
+      { day: '2-digit', month: '2-digit', year: 'numeric' }
+    );
+
+    return Array.from({ length: installments }, (_, index) => {
+      const dueDate = new Date();
+      dueDate.setMonth(dueDate.getMonth() + index);
+      return {
+        index: index + 1,
+        amount,
+        dueDate: formatter.format(dueDate),
+      };
+    });
+  }, [locale, selectedPackage]);
 
   return (
     <Card className="w-full max-w-4xl mx-4 shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
-          {isAdminFlow ? 'רישום תלמיד חדש (מנהל מערכת)' : t('role.title')}
+          {t('role.title')}
         </CardTitle>
         <CardDescription>{t('role.subtitle')}</CardDescription>
         <div className="pt-4">
@@ -719,7 +812,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                             <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
                               <div className="flex flex-col flex-1 text-right">
                                 <FormLabel className="font-medium cursor-pointer">{t('role.playingSchool')}</FormLabel>
-                                <span className="text-xs text-muted-foreground">For students in municipal "School Playing" programs</span>
+                                <span className="text-xs text-muted-foreground">{t('role.playingSchoolDescription')}</span>
                               </div>
                               <FormControl><RadioGroupItem value="playing_school" /></FormControl>
                             </FormItem>
@@ -740,11 +833,11 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                     )}
 
                     {registrationType === 'playing_school' && (
-                      <div className="space-y-4 pt-4 border-t">
+                        <div className="space-y-4 pt-4 border-t">
                         <div className="space-y-2">
-                          <FormLabel>Find Your School</FormLabel>
+                          <FormLabel>{t('role.findSchool')}</FormLabel>
                           <Input
-                            placeholder="Search by school name or symbol..."
+                            placeholder={t('role.findSchoolPlaceholder')}
                             value={schoolSearch}
                             onChange={(e) => setSchoolSearch(e.target.value)}
                             className="bg-background/50"
@@ -763,7 +856,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                               >
                                 <div className="flex flex-col items-start gap-1">
                                   <span className="font-medium">{s.name}</span>
-                                  <span className="text-xs text-muted-foreground">Symbol: {s.symbol}</span>
+                                  <span className="text-xs text-muted-foreground">{t('role.schoolSymbol', { symbol: s.symbol })}</span>
                                 </div>
                               </Button>
                             ))}
@@ -772,15 +865,15 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
                         <div className="flex items-center gap-2 py-2">
                           <div className="h-px flex-1 bg-border" />
-                          <span className="text-xs text-muted-foreground uppercase">OR</span>
+                          <span className="text-xs text-muted-foreground uppercase">{t('role.or')}</span>
                           <div className="h-px flex-1 bg-border" />
                         </div>
 
                         <div className="space-y-2">
-                          <FormLabel>Already have a registration link or token?</FormLabel>
+                          <FormLabel>{t('role.hasTokenQuestion')}</FormLabel>
                           <div className="flex gap-2">
-                            <Input placeholder="Enter token (e.g. AB123)" className="font-mono bg-background/50" />
-                            <Button variant="secondary" onClick={() => router.push('/register/school?token=AB123')}>Go</Button>
+                            <Input placeholder={t('role.tokenPlaceholder')} className="font-mono bg-background/50" />
+                            <Button variant="secondary" onClick={() => router.push('/register/school?token=AB123')}>{t('role.go')}</Button>
                           </div>
                         </div>
                       </div>
@@ -1003,7 +1096,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                                       </CardHeader>
                                       <CardContent>
                                         <p className="text-2xl font-bold">{pkg.price} ₪</p>
-                                        <p className="text-xs text-muted-foreground">{pkg.type === 'MONTHLY' ? '/חודש' : ''}</p>
+                                        <p className="text-xs text-muted-foreground">{pkg.type === 'MONTHLY' ? t('package.perMonth') : ''}</p>
                                       </CardContent>
                                     </label>
                                   </Card>
@@ -1015,6 +1108,24 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         <FormMessage />
                       </FormItem>
                     )} />
+
+                    {selectedPackage && paymentSchedule.length > 0 && (
+                      <Card className="border-dashed">
+                        <CardHeader>
+                          <CardTitle className="text-base">{t('paymentPlan.title')}</CardTitle>
+                          <CardDescription>{t('paymentPlan.subtitle')}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          {paymentSchedule.map((entry) => (
+                            <div key={entry.index} className="grid grid-cols-3 gap-2 text-sm">
+                              <span>{t('paymentPlan.installment', { index: entry.index })}</span>
+                              <span className="text-muted-foreground">{entry.dueDate}</span>
+                              <span className="font-medium text-right">{entry.amount} ₪</span>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
                 )}
 
@@ -1057,10 +1168,10 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
         <div className="w-full flex justify-between">
           <Button variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>
             <ArrowRight className="h-4 w-4 me-2" />
-            הקודם
+            {t('common.back')}
           </Button>
           <Button onClick={processStep}>
-            {step === steps.length - 1 ? "סיום ושליחה" : "הבא"}
+            {step === steps.length - 1 ? t('common.submit') : t('common.next')}
             {step < steps.length - 1 && <ArrowLeft className="h-4 w-4 ms-2" />}
           </Button>
         </div>

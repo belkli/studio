@@ -1,0 +1,129 @@
+{
+  "Common": {
+    "actions": "إجراءات",
+    "cancel": "إلغاء",
+    "confirmDelete": "هل أنت متأكد أنك تريد الحذف؟",
+    "delete": "حذف",
+    "deleteFailed": "فشل الحذف",
+    "edit": "تعديل",
+    "error": "خطأ",
+    "name": "الاسم",
+    "noData": "لا توجد بيانات متاحة",
+    "save": "حفظ",
+    "saveFailed": "فشل الحفظ",
+    "saveStatusBar": {
+      "error": "خطأ",
+      "savedAt": "تم الحفظ في",
+      "saveDraft": "حفظ كمسودة",
+      "saving": "جارٍ الحفظ",
+      "unsavedChanges": "هناك تغييرات غير محفوظة"
+    },
+    "saving": "جاري الحفظ...",
+    "shared": {
+      "actions": "الإجراءات",
+      "cancel": "إلغاء",
+      "formType": "نوع النموذج",
+      "grade": "الصف",
+      "loading": "جارٍ التحميل...",
+      "openMenu": "فتح القائمة",
+      "save": "حفظ",
+      "search": "بحث...",
+      "status": "الحالة",
+      "studentName": "اسم الطالب",
+      "submissionDate": "تاريخ التقديم",
+      "switchLanguage": "تبديل اللغة",
+      "view": "عرض",
+      "skipToMain": "تخطي إلى المحتوى الرئيسي"
+    },
+    "success": "نجاح",
+    "translationEditor": {
+      "ai": "AI",
+      "aiTranslating": "يتم الترجمة بالذكاء الاصطناعي...",
+      "cancel": "إلغاء",
+      "human": "بشري",
+      "language": {
+        "arabic": "العربية",
+        "english": "الإنجليزية",
+        "russian": "الروسية"
+      },
+      "noTranslationYet": "لم تتم الترجمة بعد",
+      "override": "استبدال",
+      "sourceContent": "المحتوى الأصلي (عبري)",
+      "stale": "الترجمة غير محدثة"
+    }
+  },
+  "Status": {
+    "DRAFT": "مسودة",
+    "PENDING_TEACHER": "في انتظار موافقة المعلم",
+    "PENDING_ADMIN": "في انتظار موافقة المدير",
+    "APPROVED": "معتمد",
+    "REJECTED": "مرفوض",
+    "REVISION_REQUIRED": "يطلب التعديل",
+    "FINAL_APPROVED": "معتمد نهائياً",
+    "history": {
+      "approvedAdmin": "تمت الموافقة والتوقيع من قبل {name}",
+      "approvedTeacher": "تمت الموافقة من قبل {name}",
+      "ministryApproved": "تمت الموافقة النهائية من قبل وزارة التربية والتعليم",
+      "ministryRejected": "تمت الإعادة للتصحيحات من قبل وزارة التربية والتعليم",
+      "pendingAdmin": "في انتظار موافقة {name} (مدير)",
+      "pendingTeacher": "في انتظار موافقة {name} (معلم)",
+      "rejected": "تم رفض النموذج",
+      "submitted": "تم تقديم النموذج من قبل {name}"
+    }
+  },
+  "Navigation": {
+    "about": "من نحن",
+    "back": "رجوع",
+    "contact": "اتصل بنا",
+    "dashboard": "لوحة التحكم",
+    "donate": "تبرع",
+    "lessons": "الدروس المتاحة",
+    "login": "تسجيل الدخول",
+    "musicians": "الموسيقيون",
+    "next": "التالي",
+    "openDay": "يوم مفتوح",
+    "profile": "تعديل الملف الشخصي",
+    "register": "تسجيل",
+    "submit": "إرسال التسجيل",
+    "switchLanguage": "تبديل اللغة",
+    "trialLesson": "درس تجريبي"
+  },
+  "AccessibilityPage": {
+    "title": "بيان إمكانية الوصول",
+    "intro": "منصة هارمونيا ملتزمة بإتاحة الوصول الرقمي وفق معيار WCAG 2.1 AA والمعيار الإسرائيلي IS 5568.",
+    "footerLink": "بيان إمكانية الوصول",
+    "measuresTitle": "إجراءات إمكانية الوصول",
+    "measures": {
+      "keyboard": "دعم كامل للتنقل عبر لوحة المفاتيح في المسارات الرئيسية.",
+      "screenReaders": "دعم لقارئات الشاشة الشائعة (NVDA، JAWS، VoiceOver).",
+      "zoom": "يبقى المحتوى قابلاً للاستخدام عند تكبير 200% دون فقدان الوظائف.",
+      "contrast": "تم تطبيق تباين ألوان مناسب لتحسين القراءة.",
+      "forms": "حقول النماذج تتضمن تسميات ورسائل تحقق وربط واضح بالأخطاء.",
+      "alt": "الصور والأيقونات تتضمن نصوصًا بديلة عند الحاجة."
+    },
+    "knownLimitationsTitle": "قيود معروفة",
+    "knownLimitations": "بعض الوحدات لا تزال قيد التحسين. تُعالج بلاغات الوصول بأولوية عالية ضمن الإصدارات الدورية.",
+    "contactTitle": "التواصل بخصوص إمكانية الوصول",
+    "contactDescription": "إذا واجهت مشكلة في إمكانية الوصول، يرجى التواصل مع مسؤول الإتاحة لدينا.",
+    "contactEmailLabel": "البريد الإلكتروني",
+    "contactResponseLabel": "زمن الاستجابة",
+    "contactResponseValue": "حتى 5 أيام عمل",
+    "alternativeTitle": "وصول بديل",
+    "alternativeDescription": "إذا تعذّر الوصول إلى محتوى معين، تواصل معنا وسنوفر صيغة بديلة.",
+    "lastUpdated": "آخر تحديث: 3 مارس 2026"
+  },
+  "RegistrationSession": {
+    "remaining": "وقت الجلسة: {time}",
+    "warningTitle": "الجلسة على وشك الانتهاء",
+    "warningDescription": "ستنتهي جلسة التسجيل خلال حوالي {minutes} دقائق. مدّد الجلسة لتجنب فقدان التقدم.",
+    "continueWithoutExtending": "متابعة",
+    "extend": "تمديد الجلسة",
+    "expiredTitle": "انتهت الجلسة",
+    "expiredDescription": "انتهت جلسة التسجيل لأسباب أمنية. ابدأ جلسة جديدة للمتابعة.",
+    "restart": "بدء جلسة جديدة"
+  },
+  "Metadata": {
+    "siteDescription": "منصة إدارة ذكية للمعاهد الموسيقية المتقدمة.",
+    "siteName": "هارمونيا"
+  }
+}

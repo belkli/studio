@@ -1,0 +1,246 @@
+{
+  "SettingsPage": {
+    "conservatorium": {
+      "cancellation": "سياسة الإلغاء",
+      "description": "إدارة ميزات المعهد والتكامل.",
+      "manageAI": "إدارة ميزات الذكاء الاصطناعي",
+      "manageFeatures": "إدارة الملف الشخصي",
+      "pricing": "إعدادات التسعير",
+      "profileEditor": {
+        "contact": {
+          "description": "كيف يمكن للطلاب والأهالي المحتملين التواصل معكم.",
+          "mainPhone": "الهاتف الرئيسي",
+          "primaryEmail": "البريد الإلكتروني الأساسي",
+          "secondaryEmail": "بريد إلكتروني إضافي",
+          "title": "تفاصيل التواصل",
+          "website": "الموقع الرسمي",
+          "whatsapp": "رقم واتساب"
+        },
+        "location": {
+          "cityEnglish": "المدينة (بالإنجليزية)",
+          "cityHebrew": "المدينة (بالعبرية)",
+          "description": "أين يقع المعهد؟",
+          "fullAddress": "العنوان الكامل",
+          "title": "الموقع"
+        },
+        "media": {
+          "description": "الصور المعروضة في ملفكم العام.",
+          "galleryImage1": "رابط صورة المعرض 1",
+          "galleryImage2": "رابط صورة المعرض 2",
+          "galleryImage3": "رابط صورة المعرض 3",
+          "headerImage": "رابط صورة الغلاف",
+          "title": "الصور والوسائط"
+        },
+        "social": {
+          "description": "اربطوا حضوركم الرقمي.",
+          "facebook": "رابط فيسبوك",
+          "instagram": "رابط إنستغرام",
+          "tiktok": "رابط تيك توك",
+          "title": "روابط الشبكات الاجتماعية",
+          "youtube": "رابط قناة يوتيوب"
+        },
+        "team": {
+          "coordinatorNamePlaceholder": "اسم المنسق/ة",
+          "description": "الشخصيات الأساسية في المعهد.",
+          "manager": "المدير/ة",
+          "managerNamePlaceholder": "اسم المدير/ة",
+          "nameHebrew": "الاسم (بالعبرية)",
+          "pedagogicalCoordinator": "المنسق/ة التربوي/ة",
+          "photoUrl": "رابط الصورة",
+          "shortBio": "نبذة قصيرة",
+          "title": "فريق الإدارة",
+          "titleRole": "المنصب / الدور"
+        }
+      },
+      "publicProfile": "الملف الشخصي العام",
+      "title": "إعدادات المعهد"
+    },
+    "notifications": {
+      "description": "اختر ما تريد تلقي إشعارات بشأنه.",
+      "manage": "إدارة الإشعارات",
+      "prompt": "تكوين كيفية تلقي التنبيهات.",
+      "title": "تفضيلات الإشعارات"
+    },
+    "password": {
+      "current": "كلمة المرور الحالية",
+      "description": "تغيير كلمة المرور الخاصة بك.",
+      "new": "كلمة المرور الجديدة",
+      "success": "تم تحديث كلمة المرور",
+      "successDesc": "تم تغيير كلمة المرور الخاصة بك بنجاح.",
+      "title": "تحديث كلمة المرور",
+      "update": "تحديث كلمة المرور"
+    },
+    "profile": {
+      "description": "تحديث تفاصيل ملفك الشخصي.",
+      "email": "البريد الإلكتروني",
+      "name": "الاسم",
+      "save": "حفظ الملف الشخصي",
+      "success": "تم حفظ الملف الشخصي",
+      "successDesc": "تم تحديث ملفك الشخصي بنجاح.",
+      "title": "معلومات الملف الشخصي"
+    },
+    "subtitle": "إدارة إعدادات النظام وتفضيلات الحساب.",
+    "title": "الإعدادات"
+  },
+  "CancellationPolicy": {
+    "lateCancelCredit": "رصيد للإلغاء المتأخر",
+    "makeupExpiryDays": "أيام صلاحية رصيد التعويض",
+    "maxMakeupsPerTerm": "الحد الأقصى للتعويضات في الفصل",
+    "noShowCredit": "رصيد لعدم الحضور",
+    "noticeHours": "ساعات الإشعار المسبق المطلوبة",
+    "onTimeCancelCredit": "رصيد للإلغاء في الوقت المحدد",
+    "save": "حفظ السياسة",
+    "saved": "تم حفظ السياسة",
+    "subtitle": "تعيين قواعد الإلغاء للمعهد",
+    "title": "سياسة الإلغاء"
+  },
+  "PricingSettings": {
+    "baseRates": {
+      "description": "حدد السعر الأساسي لدرس واحد حسب المدة.",
+      "min30": "درس 30 دقيقة",
+      "min45": "درس 45 دقيقة",
+      "min60": "درس 60 دقيقة",
+      "title": "الأسعار الأساسية للدروس"
+    },
+    "comparison": {
+      "addressMin": "يجب أن يكون العنوان {min} أحرف على الأقل.",
+      "branch": "المعهد",
+      "description": "عرض أسعار المعاهد الأخرى للمقارنة والمواءمة.",
+      "min30": "30 دقيقة",
+      "min45": "45 دقيقة",
+      "min60": "60 دقيقة",
+      "nameMin": "يجب أن يكون اسم الفرع {min} أحرف على الأقل.",
+      "pack5": "باقة 5",
+      "title": "مقارنة أسعار الفروع",
+      "yearly": "سنوي"
+    },
+    "discounts": {
+      "description": "حدد نسب الخصم للباقات والمؤهلات الأخرى.",
+      "pack10": "خصم باقة 10",
+      "pack5": "خصم باقة 5",
+      "sibling": "خصم الأشقاء",
+      "title": "خصومات الباقات",
+      "yearly": "خصم سنوي"
+    },
+    "save": "حفظ التغييرات",
+    "special": {
+      "adHoc": "علاوة الحجز الفردي",
+      "title": "تسعير خاص",
+      "trial": "سعر الدرس التجريبي"
+    },
+    "success": "تم تحديث إعدادات التسعير بنجاح!",
+    "validation": {
+      "percent": "يجب أن يكون الخصم بين 0-100",
+      "positive": "يجب أن يكون السعر إيجابياً"
+    }
+  },
+  "NotificationPreferences": {
+    "additionalSettingsTitle": "إعدادات إضافية",
+    "channelEmail": "البريد الإلكتروني",
+    "channelInApp": "داخل التطبيق",
+    "channelPreferencesDesc": "اختر كيفية استلام كل نوع من الإشعارات.",
+    "channelPreferencesTitle": "تفضيلات القنوات",
+    "channels": {
+      "EMAIL": "بريد إلكتروني",
+      "IN_APP": "في التطبيق",
+      "SMS": "رسالة قصيرة",
+      "WHATSAPP": "واتساب"
+    },
+    "channelSms": "رسالة قصيرة",
+    "channelWhatsapp": "واتساب",
+    "enableQuietHoursDesc": "إيقاف الإشعارات غير العاجلة (SMS، واتساب) خلال الساعات المحددة.",
+    "enableQuietHoursLabel": "تفعيل ساعات الهدوء",
+    "endTimeLabel": "وقت الانتهاء",
+    "formStatusChanges": "تغييرات حالة النموذج",
+    "from": "من",
+    "invalidFormat": "صيغة غير صالحة",
+    "langArabic": "العربية",
+    "langEnglish": "الإنجليزية",
+    "langHebrew": "العبرية",
+    "langRussian": "الروسية",
+    "language": "لغة الإشعارات",
+    "lessonCancellation": "إلغاء الدروس",
+    "lessonReminders": "تذكيرات الدروس",
+    "makeupCredits": "أرصدة الدروس التعويضية",
+    "notificationLanguageLabel": "لغة الإشعارات",
+    "notificationTypeHeader": "نوع الإشعار",
+    "paymentDue": "المدفوعات والفوترة",
+    "preferencesUpdatedDesc": "تم حفظ تفضيلات الإشعارات الخاصة بك.",
+    "preferencesUpdatedTitle": "تم تحديث التفضيلات",
+    "psCoordinatorAnnouncements": "إعلانات المنسق",
+    "psExcellenceUpdates": "تحديثات التميز - البرنامج المدرسي",
+    "psLessonCancellation": "إلغاء دروس البرنامج المدرسي",
+    "psLessonReminders": "تذكيرات دروس البرنامج المدرسي",
+    "psNewEnrollment": "تسجيل جديد في البرنامج المدرسي",
+    "psPartnershipUpdate": "تحديثات الشراكة",
+    "psPaymentDue": "مدفوعات البرنامج المدرسي",
+    "quietHours": "ساعات الهدوء",
+    "quietHoursDesc": "لن يتم إرسال الإشعارات بين",
+    "save": "حفظ التفضيلات",
+    "saveChangesBtn": "حفظ التغييرات",
+    "saved": "تم حفظ التفضيلات",
+    "startTimeLabel": "وقت البدء",
+    "subtitle": "اختر كيف وماذا تتلقى الإشعارات بشأنه",
+    "systemAnnouncements": "إعلانات النظام",
+    "teacherMessages": "رسائل المعلم",
+    "title": "تفضيلات الإشعارات",
+    "to": "إلى",
+    "types": {
+      "formStatusChanges": "تحديثات حالة النماذج",
+      "lessonCancellation": "إلغاء الدروس",
+      "lessonReminders": "تذكيرات الدروس",
+      "makeupCredits": "دروس التعويض",
+      "paymentDue": "المدفوعات",
+      "psExcellenceUpdates": "تحديثات مسار التميز",
+      "psLessonCancellation": "إلغاءات دروس مدرسة العزف",
+      "psLessonReminders": "تذكيرات دروس مدرسة العزف",
+      "psPaymentDue": "مدفوعات مدرسة العزف",
+      "systemAnnouncements": "إعلانات النظام",
+      "teacherMessages": "رسائل المعلم"
+    }
+  },
+  "Branches": {
+    "actions": "الإجراءات",
+    "addDesc": "أدخل تفاصيل الفرع الجديد.",
+    "addNew": "إضافة فرع جديد",
+    "address": "العنوان",
+    "addressPlaceholder": "مثال: 15 شارع هكالانيوت، بيتح تكفا",
+    "addTitle": "إضافة فرع جديد",
+    "branchName": "اسم الفرع",
+    "conservatorium": "المعهد الموسيقي",
+    "description": "{count} فروع نشطة في النظام.",
+    "editDesc": "تحديث تفاصيل الفرع أدناه.",
+    "editTitle": "تعديل الفرع",
+    "fullAddress": "العنوان الكامل",
+    "namePlaceholder": "مثال: فرع الشمال",
+    "saveBranch": "حفظ الفرع",
+    "successAdd": "تمت إضافة فرع جديد بنجاح",
+    "successUpdate": "تم تحديث الفرع بنجاح",
+    "title": "إدارة الفروع",
+    "validation": {
+      "addressMin": "يجب أن يكون العنوان {min} أحرف على الأقل.",
+      "nameMin": "يجب أن يكون اسم الفرع {min} أحرف على الأقل."
+    }
+  },
+  "CancellationPolicySettings": {
+    "cancellationCreditLabel": "ائتمان للإلغاء في الوقت المناسب",
+    "errors": {
+      "positiveDays": "يجب إدخال عدد أيام موجب.",
+      "positiveHours": "يجب إدخال عدد ساعات موجب.",
+      "positiveNumber": "يجب إدخال عدد موجب."
+    },
+    "lateCancelCreditLabel": "ائتمان للإلغاء المتأخر",
+    "makeupExpiryLabel": "انتهاء صلاحية ائتمان التعويض (بالأيام)",
+    "makeupRulesTitle": "قواعد الدروس التعويضية",
+    "maxMakeupsLabel": "الحد الأقصى للدروس التعويضية لكل فصل دراسي",
+    "noticeHoursLabel": "ساعات الإشعار المطلوبة للإلغاء مع ائتمان",
+    "options": {
+      "FULL": "ائتمان كامل",
+      "FULL_NOT_RECOMMENDED": "ائتمان كامل (غير موصى به)",
+      "NONE": "لا ائتمان"
+    },
+    "saveChanges": "حفظ التغييرات",
+    "studentRulesTitle": "قواعد إلغاء الطالب",
+    "successToast": "تم تحديث سياسة الإلغاء بنجاح!"
+  }
+}
