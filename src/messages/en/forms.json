@@ -86,7 +86,22 @@
     "signHere": "Sign here",
     "clear": "Clear",
     "confirmSignature": "Confirm Signature",
-    "draftSaved": "Draft saved!"
+    "draftSaved": "Draft saved!",
+    "edit": "Edit",
+    "helvetica": "Helvetica",
+    "approved": "Approved",
+    "approvedDesc": "Approved Desc",
+    "rejected": "Rejected",
+    "rejectedDesc": "Rejected Desc",
+    "signatureMissing": "Signature Missing",
+    "signatureMissingDesc": "Signature Missing Desc",
+    "signed": "Signed",
+    "signedDesc": "Signed Desc",
+    "ministryApprove": "Ministry Approve",
+    "ministryApproveDesc": "Ministry Approve Desc",
+    "changesRequested": "Changes Requested",
+    "changesRequestedDesc": "Changes Requested Desc",
+    "resubmitted": "Resubmitted"
   },
   "FormsPage": {
     "title": "Forms & Requests",
@@ -250,7 +265,10 @@
     "teacherDeclarationText": "I confirm that the student is prepared for the requested exam level.",
     "cancel": "Cancel",
     "resubmit": "Resubmit",
-    "submit": "Submit"
+    "submit": "Submit",
+    "types": {
+      "exam_registration": "Exam registration"
+    }
   },
   "RecitalForm": {
     "validation": {
@@ -349,7 +367,12 @@
     "totalPrice": "Total price",
     "cancel": "Cancel",
     "resubmit": "Resubmit",
-    "submit": "Submit"
+    "submit": "Submit",
+    "sizeLabels": {
+      "Small": "Small",
+      "Medium": "Medium",
+      "Large": "Large"
+    }
   },
   "Ministry": {
     "successApprove": "Form approved successfully",
@@ -360,7 +383,7 @@
       "COMPOSITION_SUBMISSION": "Original Composition Submission",
       "RECITAL": "Recital Program Approval",
       "SCHOLARSHIP": "Scholarship Application",
-      "OTHER": "نموذج الوزارة"
+      "OTHER": "Ministry Form"
     },
     "inboxTitle": "Approvals Inbox",
     "pending": "Pending ({count})",
@@ -446,7 +469,9 @@
     "view": "View",
     "noApprovedForms": "No approved forms found for export.",
     "status": "Status",
-    "actions": "Actions"
+    "actions": "Actions",
+    "a": "A",
+    "T": "T"
   },
   "LessonManagement": {
     "studentRequired": "Must select a student.",

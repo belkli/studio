@@ -139,7 +139,9 @@
     },
     "pendingPayment": "ממתין לתשלום",
     "teacherApproveSuccess": "השכר של {name} אושר",
-    "teacherPaidSuccess": "השכר של {name} סומן כ\"שולם\""
+    "teacherPaidSuccess": "השכר של {name} סומן כ\"שולם\"",
+    "helvetica": "הלבטיקה",
+    "a": "A"
   },
   "TeacherPayroll": {
     "amountCol": "סכום",
@@ -160,6 +162,7 @@
     "statusLabel": "סטטוס: {status}",
     "statusPaid": "שולם",
     "studentCol": "תלמיד/ה",
-    "totalHoursLabel": "סך שעות: {hours}"
+    "totalHoursLabel": "סך שעות: {hours}",
+    "helvetica": "הלבטיקה"
   }
 }

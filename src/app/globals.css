@@ -395,3 +395,135 @@
   background: hsl(var(--muted));
   border-color: hsl(var(--border));
 }
+
+/* Native accessibility controls (widget-like, no paid overlay). */
+.a11y-widget-root {
+  position: fixed;
+  inset-inline-start: 1rem;
+  bottom: 1rem;
+  z-index: 65;
+}
+
+.a11y-toggle {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  font-weight: 700;
+}
+
+.a11y-panel {
+  width: min(92vw, 360px);
+  max-height: min(75vh, 620px);
+  overflow: auto;
+  margin-top: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.2);
+}
+
+.a11y-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.a11y-close {
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  border-radius: 0.4rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.a11y-section {
+  margin-top: 0.85rem;
+}
+
+.a11y-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.a11y-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.a11y-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.a11y-row button,
+.a11y-grid button {
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  border-radius: 0.45rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.85rem;
+  min-height: 2rem;
+}
+
+.a11y-toggle:focus-visible,
+.a11y-close:focus-visible,
+.a11y-row button:focus-visible,
+.a11y-grid button:focus-visible,
+.a11y-panel:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+html.a11y-highlight-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
+html.a11y-readable-font body {
+  font-family: Arial, "Noto Sans Hebrew", "Noto Sans Arabic", sans-serif !important;
+}
+
+html.a11y-pause-animations *,
+html.a11y-pause-animations *::before,
+html.a11y-pause-animations *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-high-contrast body {
+  filter: contrast(1.25);
+}
+
+html.a11y-monochrome body {
+  filter: grayscale(1);
+}
+
+html.a11y-invert-colors body {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+html.a11y-high-contrast.a11y-monochrome body {
+  filter: contrast(1.25) grayscale(1);
+}
+
+html.a11y-high-contrast.a11y-invert-colors body {
+  filter: contrast(1.25) invert(1) hue-rotate(180deg);
+}
+
+html.a11y-monochrome.a11y-invert-colors body {
+  filter: grayscale(1) invert(1) hue-rotate(180deg);
+}
+
+html.a11y-high-contrast.a11y-monochrome.a11y-invert-colors body {
+  filter: contrast(1.25) grayscale(1) invert(1) hue-rotate(180deg);
+}

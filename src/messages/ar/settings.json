@@ -49,7 +49,10 @@
           "photoUrl": "رابط الصورة",
           "shortBio": "نبذة قصيرة",
           "title": "فريق الإدارة",
-          "titleRole": "المنصب / الدور"
+          "titleRole": "المنصب / الدور",
+          "additionalMember": "عضو إضافي",
+          "addMember": "إضافة عضو",
+          "note": "ملاحظة"
         }
       },
       "publicProfile": "الملف الشخصي العام",

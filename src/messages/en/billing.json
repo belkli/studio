@@ -139,7 +139,9 @@
       "periodStart": "Start",
       "periodEnd": "End",
       "hilanCode": "Code"
-    }
+    },
+    "helvetica": "Helvetica",
+    "a": "A"
   },
   "TeacherPayroll": {
     "statusDraft": "Under Review",
@@ -160,6 +162,7 @@
     "payslipForMonth": "Payslip for {month}",
     "exportPdfBtn": "Export PDF",
     "lessonDetailsTitle": "Lesson Details ({count})",
-    "currencySymbol": "₪"
+    "currencySymbol": "₪",
+    "helvetica": "Helvetica"
   }
 }

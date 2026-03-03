@@ -35,7 +35,8 @@
     "title": "Найдите свою консерваторию",
     "unitKm": "{count}km",
     "unitMeters": "{count}m",
-    "leadingTeam": "Leading Team"
+    "leadingTeam": "Ведущий Команда",
+    "noDepartments": "Нет Департменц"
   },
   "ContactPage": {
     "allConsList": "К списку всех консерваторий",
@@ -197,11 +198,11 @@
   "PublicProfiles": {
     "aiTranslated": "Переведено ИИ",
     "fieldLabels": {
-      "about": "About",
-      "bio": "Bio",
+      "about": "О",
+      "bio": "Био",
       "name": "Имя",
-      "openingHours": "Opening Hours",
-      "role": "Role"
+      "openingHours": "Время работы Часы",
+      "role": "Роль"
     },
     "humanOverride": "Ручное редактирование",
     "missingTranslation": "Отсутствует перевод",

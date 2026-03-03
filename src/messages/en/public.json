@@ -35,7 +35,8 @@
     "moreTeachers": "Additional Teachers",
     "contactThisCons": "Contact this conservatory",
     "unitMeters": "{count}m",
-    "unitKm": "{count}km"
+    "unitKm": "{count}km",
+    "noDepartments": "No Departments"
   },
   "ContactPage": {
     "title": "Contact Us",

@@ -49,7 +49,10 @@
           "photoUrl": "קישור לתמונה",
           "shortBio": "ביוגרפיה קצרה",
           "title": "צוות מוביל",
-          "titleRole": "תפקיד / תיאור תפקיד"
+          "titleRole": "תפקיד / תיאור תפקיד",
+          "additionalMember": "חבר/ה נוסף/ת",
+          "addMember": "הוספת חבר/ה",
+          "note": "הערה"
         }
       },
       "publicProfile": "פרופיל ציבורי",

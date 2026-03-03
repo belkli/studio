@@ -98,7 +98,7 @@ export function RegistrationSessionGuard({
   return (
     <div className="relative w-full">
       <div
-        className="absolute top-2 right-2 z-20 inline-flex items-center gap-2 rounded-full border bg-background/90 px-3 py-1 text-xs font-medium shadow"
+        className="sticky top-2 z-20 mx-auto mb-3 w-fit inline-flex items-center gap-2 rounded-full border bg-background/95 px-3 py-1 text-xs font-medium shadow"
         aria-live="polite"
       >
         <Clock3 className="h-3.5 w-3.5" />

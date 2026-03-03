@@ -50,7 +50,8 @@
     "weeklyGoalDesc": "התקדמות לקראת היעד שהוגדר",
     "weeklyGoalProgress": "{current} / {goal} דקות",
     "welcomeStudent": "ברוך הבא, {name}",
-    "welcomeTitle": "ברוך הבא, {studentName}!"
+    "welcomeTitle": "ברוך הבא, {studentName}!",
+    "T": "T"
   },
   "StudentBilling": {
     "active": "פעיל",
@@ -118,7 +119,8 @@
     "unknownPiece": "יצירה לא ידועה",
     "videoAttached": "מצורף וידאו",
     "weeklyProgress": "התקדמות שבועית",
-    "whatDidYouPractice": "מה תרגלת?"
+    "whatDidYouPractice": "מה תרגלת?",
+    "T": "T"
   },
   "PracticeLogForm": {
     "dateLabel": "תאריך",
@@ -143,7 +145,8 @@
     "saveBtn": "שמור תרגול",
     "selectChildPlaceholder": "בחר ילד/ה...",
     "successDesc": "כל הכבוד על תרגול של {duration} דקות.",
-    "successTitle": "התרגול נרשם בהצלחה!"
+    "successTitle": "התרגול נרשם בהצלחה!",
+    "T": "T"
   },
   "ProgressPage": {
     "achievements": "הישגים",
@@ -172,7 +175,8 @@
     "totalMinutesCount": "{count} דקות בסך הכל",
     "totalPractice": "סך כל האימונים",
     "weeklyGoal": "יעד שבועי",
-    "weeklyPracticeGoal": "יעד תרגול שבועי"
+    "weeklyPracticeGoal": "יעד תרגול שבועי",
+    "T": "T"
   },
   "SheetMusicViewer": {
     "fullscreen": "מסך מלא",
@@ -279,8 +283,8 @@
     "cardSubtitle": "סיכום שבועי - {start} - {end}",
     "cardTitle": "מוזיקה השבוע עבור {childName}",
     "currentRepertoireTitle": "רפרטואר נוכחי:",
-    "dateFormatEnd": "d בMMM, yyyy",
-    "dateFormatStart": "d בMMM",
+    "dateFormatEnd": "'יום' d 'ב' MMM, yyyy",
+    "dateFormatStart": "'יום' d 'ב' MMM",
     "fullProfileBtn": "פרופיל מלא",
     "genericTeacherName": "מורה",
     "helpAtHomeDesc": "בקש/י מ{childName} לנגן את היצירה שהכי כיף לו/ה כרגע, וחגגו יחד את ההתקדמות!",

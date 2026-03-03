@@ -55,7 +55,10 @@
           "titleRole": "Title / Role",
           "shortBio": "Short Bio",
           "managerNamePlaceholder": "Manager's Name",
-          "coordinatorNamePlaceholder": "Coordinator's Name"
+          "coordinatorNamePlaceholder": "Coordinator's Name",
+          "additionalMember": "Additional Member",
+          "addMember": "Add Member",
+          "note": "Note"
         },
         "social": {
           "title": "Social Media Links",

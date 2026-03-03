@@ -35,7 +35,8 @@
     "teachers": "צוות מורים ({count})",
     "title": "מוצאים את הקונסרבטוריון שלכם",
     "unitKm": "{count}ק\"מ",
-    "unitMeters": "{count}מ'"
+    "unitMeters": "{count}מ'",
+    "noDepartments": "אין מחלקות"
   },
   "ContactPage": {
     "allConsList": "לרשימת כל הקונסרבטוריונים",

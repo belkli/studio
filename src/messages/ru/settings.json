@@ -14,7 +14,7 @@
           "secondaryEmail": "Дополнительный email",
           "title": "Контактная информация",
           "website": "Официальный сайт",
-          "whatsapp": "Номер WhatsApp"
+          "whatsapp": "Номер Ватсап"
         },
         "location": {
           "cityEnglish": "Город (английский)",
@@ -33,11 +33,11 @@
         },
         "social": {
           "description": "Подключите ваше онлайн-присутствие.",
-          "facebook": "URL Facebook",
-          "instagram": "URL Instagram",
-          "tiktok": "URL TikTok",
+          "facebook": "Ссылка на Facebook",
+          "instagram": "Ссылка на Instagram",
+          "tiktok": "Ссылка на TikTok",
           "title": "Ссылки на соцсети",
-          "youtube": "URL канала YouTube"
+          "youtube": "Ссылка на канал YouTube"
         },
         "team": {
           "coordinatorNamePlaceholder": "Имя координатора",
@@ -49,7 +49,10 @@
           "photoUrl": "URL фото",
           "shortBio": "Краткая биография",
           "title": "Руководящая команда",
-          "titleRole": "Должность / роль"
+          "titleRole": "Должность / роль",
+          "additionalMember": "Аддитионал Участник",
+          "addMember": "Добавить Member",
+          "note": "Заметка"
         }
       },
       "publicProfile": "Публичный профиль",
@@ -135,51 +138,51 @@
     }
   },
   "NotificationPreferences": {
-    "additionalSettingsTitle": "Additional Settings",
+    "additionalSettingsTitle": "Additional Настройки",
     "channelEmail": "Электронная почта",
-    "channelInApp": "In App",
-    "channelPreferencesDesc": "Choose how you would like to receive each type of notification.",
-    "channelPreferencesTitle": "Channel Preferences",
+    "channelInApp": "В приложении",
+    "channelPreferencesDesc": "Чоосе хов вы бы лике для рекеиве еач тип оф уведомление.",
+    "channelPreferencesTitle": "Канал Предпочтения",
     "channels": {
       "EMAIL": "Электронная почта",
       "IN_APP": "В приложении",
-      "SMS": "SMS",
-      "WHATSAPP": "WhatsApp"
+      "SMS": "СМС",
+      "WHATSAPP": "Ватсап"
     },
-    "channelSms": "SMS",
-    "channelWhatsapp": "WhatsApp",
-    "enableQuietHoursDesc": "Pause non-urgent notifications (SMS, WhatsApp) during specified hours.",
-    "enableQuietHoursLabel": "Enable Quiet Hours",
-    "endTimeLabel": "End Time",
-    "formStatusChanges": "Form Status Changes",
+    "channelSms": "СМС",
+    "channelWhatsapp": "Ватсап",
+    "enableQuietHoursDesc": "Паусе нон-ургент уведомления (Смс, Ватсап) дуринг спекифиед хоурс.",
+    "enableQuietHoursLabel": "Енабле Куиет Часы",
+    "endTimeLabel": "End Время",
+    "formStatusChanges": "Форма Статус Изменения",
     "from": "С",
-    "invalidFormat": "Invalid format",
+    "invalidFormat": "Некорректно format",
     "langArabic": "Арабский",
     "langEnglish": "Английский",
-    "langHebrew": "Hebrew",
+    "langHebrew": "Иврит",
     "langRussian": "Русский",
     "language": "Язык уведомлений",
     "lessonCancellation": "Отмена уроков",
     "lessonReminders": "Напоминания об уроках",
-    "makeupCredits": "Makeup Lesson Credits",
+    "makeupCredits": "Отработка Урок Credits",
     "notificationLanguageLabel": "Язык уведомлений",
-    "notificationTypeHeader": "Notification Type",
-    "paymentDue": "Payments and Billing",
-    "preferencesUpdatedDesc": "Your notification preferences have been saved.",
-    "preferencesUpdatedTitle": "Preferences Updated",
-    "psCoordinatorAnnouncements": "Coordinator Announcements",
-    "psExcellenceUpdates": "PS Excellence Updates",
-    "psLessonCancellation": "PS Lesson Cancellation",
-    "psLessonReminders": "PS Lesson Reminders",
-    "psNewEnrollment": "New PS Enrollment",
-    "psPartnershipUpdate": "Partnership Updates",
-    "psPaymentDue": "PS Payment Due",
+    "notificationTypeHeader": "Уведомление Type",
+    "paymentDue": "Платежи и Оплата",
+    "preferencesUpdatedDesc": "Your уведомление предпочтения have been saved.",
+    "preferencesUpdatedTitle": "Предпочтения Обновлено",
+    "psCoordinatorAnnouncements": "Координатор Анноункеменц",
+    "psExcellenceUpdates": "ПС Excellence Обновления",
+    "psLessonCancellation": "PS Урок Отмена",
+    "psLessonReminders": "Пс Урок Реминдерс",
+    "psNewEnrollment": "Новый Пс Регистрация",
+    "psPartnershipUpdate": "Partnership Обновления",
+    "psPaymentDue": "PS Оплата Due",
     "quietHours": "Тихие часы",
     "quietHoursDesc": "Уведомления не будут отправляться в период",
     "save": "Сохранить настройки",
     "saveChangesBtn": "Сохранить изменения",
     "saved": "Настройки сохранены",
-    "startTimeLabel": "Start Time",
+    "startTimeLabel": "Start Время",
     "subtitle": "Выберите, как и о чем вы хотите получать уведомления",
     "systemAnnouncements": "Системные объявления",
     "teacherMessages": "Сообщения от учителей",
@@ -223,24 +226,24 @@
     }
   },
   "CancellationPolicySettings": {
-    "cancellationCreditLabel": "Credit for on-time cancellation",
+    "cancellationCreditLabel": "Кредит for on-time отмена",
     "errors": {
-      "positiveDays": "Must enter a positive number of days.",
-      "positiveHours": "Must enter a positive number of hours.",
-      "positiveNumber": "Must enter a positive number."
+      "positiveDays": "Должен ентер а поситиве нумбер оф дни.",
+      "positiveHours": "Должен введите один положительный number из часы.",
+      "positiveNumber": "Должен введите один положительный number."
     },
-    "lateCancelCreditLabel": "Credit for late cancellation",
-    "makeupExpiryLabel": "Makeup credit expiry (in days)",
-    "makeupRulesTitle": "Makeup Lesson Rules",
-    "maxMakeupsLabel": "Maximum makeup lessons per term",
-    "noticeHoursLabel": "Notice hours required for cancellation with credit",
+    "lateCancelCreditLabel": "Кредит for late отмена",
+    "makeupExpiryLabel": "Отработка кредит срок (в дни)",
+    "makeupRulesTitle": "Отработка Урок Rules",
+    "maxMakeupsLabel": "Maximum отработка уроки per term",
+    "noticeHoursLabel": "Notice hours обязательно for отмена with кредит",
     "options": {
-      "FULL": "Full Credit",
-      "FULL_NOT_RECOMMENDED": "Full Credit (Not Recommended)",
-      "NONE": "No Credit"
+      "FULL": "Full Кредит",
+      "FULL_NOT_RECOMMENDED": "Полный Кредит (Нот Рекоммендед)",
+      "NONE": "Нет Кредит"
     },
     "saveChanges": "Сохранить изменения",
-    "studentRulesTitle": "Student Cancellation Rules",
-    "successToast": "Cancellation policy updated successfully!"
+    "studentRulesTitle": "Ученик Отмена Rules",
+    "successToast": "Отмена политика обновлено успешно!"
   }
 }

@@ -50,7 +50,8 @@
     "fullSchedule": "Full Schedule",
     "recentPractices": "Recent Practices",
     "allPractices": "All Practices",
-    "noRecentTeacherNotes": "No Recent Teacher Notes"
+    "noRecentTeacherNotes": "No Recent Teacher Notes",
+    "T": "T"
   },
   "StudentBilling": {
     "packageStatus": "Package Status",
@@ -118,7 +119,8 @@
     "noLogsFound": "No practice logs yet.",
     "unknownPiece": "Unknown piece",
     "systemFeedback": "System feedback",
-    "ptsLabel": "pts"
+    "ptsLabel": "pts",
+    "T": "T"
   },
   "PracticeLogForm": {
     "errorDateRequired": "You must select a date.",
@@ -143,7 +145,8 @@
     "moodHard": "Challenging",
     "notesLabel": "Notes for Teacher (Optional)",
     "notesPlaceholder": "e.g., I had trouble with the transition in measure 24, would love to review it next lesson.",
-    "saveBtn": "Save Practice"
+    "saveBtn": "Save Practice",
+    "T": "T"
   },
   "ProgressPage": {
     "title": "Progress",
@@ -172,7 +175,8 @@
     "practiceLogChartDesc": "Chart showing your daily practice minutes.",
     "minShort": "{value}m",
     "minutesCount": "{count} minutes",
-    "practiceTime": "Practice Time"
+    "practiceTime": "Practice Time",
+    "T": "T"
   },
   "SheetMusicViewer": {
     "myFolder": "My Folder",
@@ -255,7 +259,7 @@
         "pc1": "Baroque period piece (e.g. Bach Anna Magdalena)",
         "pc2": "First movement of a Sonatina",
         "sr1": "Beginner level sight reading",
-        "pc3": "יצירה רומנטית/מודרנית"
+        "pc3": "Romantic/Modern piece"
       },
       "level2": {
         "sc1": "Major and minor scales (up to 4 flats/sharps)",
@@ -263,7 +267,7 @@
         "pc2": "Complete Sonata movement",
         "pc3": "Romantic / Modern period piece",
         "sr1": "Advanced sight reading",
-        "pc4": "יצירה מודרנית/עכשווית"
+        "pc4": "Modern/Contemporary piece"
       },
       "bagrut": {
         "pc1": "5-unit matriculation recital - full program (45 minutes)",
@@ -271,7 +275,7 @@
       },
       "other": {
         "pc1": "Personalized requirement",
-        "sr1": "קריאה מן הדף"
+        "sr1": "Sight-reading"
       }
     }
   },

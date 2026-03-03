@@ -8,6 +8,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
+import { AccessibilityPanel } from '@/components/a11y/accessibility-panel';
 import { Rubik } from 'next/font/google';
 
 const rubik = Rubik({
@@ -77,6 +78,7 @@ export default async function RootLayout({
             <main id="main-content" tabIndex={-1}>
               {children}
             </main>
+            <AccessibilityPanel />
             <Toaster />
             <AiHelpAssistant />
           </AuthProvider>

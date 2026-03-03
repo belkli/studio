@@ -86,7 +86,22 @@
       "signed": "הטופס אושר ונחתם!",
       "signedDesc": "הטופס של {name} אושר סופית."
     },
-    "totalDuration": "משך זמן כולל"
+    "totalDuration": "משך זמן כולל",
+    "edit": "עריכה",
+    "helvetica": "הלבטיקה",
+    "approved": "מאושר",
+    "approvedDesc": "אושר בהצלחה.",
+    "rejected": "נדחה",
+    "rejectedDesc": "נדחה.",
+    "signatureMissing": "חתימה חסרה",
+    "signatureMissingDesc": "נדרשת חתימה להמשך.",
+    "signed": "נחתם",
+    "signedDesc": "המסמך נחתם.",
+    "ministryApprove": "אישור משרד החינוך",
+    "ministryApproveDesc": "נשלח לאישור משרד החינוך.",
+    "changesRequested": "נדרשו שינויים",
+    "changesRequestedDesc": "נדרשו תיקונים לפני אישור.",
+    "resubmitted": "הוגש מחדש"
   },
   "FormsPage": {
     "newForm": "טופס / בקשה חדשה",
@@ -250,6 +265,9 @@
       "requiredLevel": "יש לבחור רמת בחינה.",
       "requiredTitle": "יש להזין שם יצירה.",
       "requiredType": "יש לבחור סוג בחינה."
+    },
+    "types": {
+      "exam_registration": "רישום לבחינה"
     }
   },
   "RecitalForm": {
@@ -349,6 +367,11 @@
       "requiredLocation": "יש להזין מיקום.",
       "requiredNumParticipants": "יש להזין מספר משתתפים.",
       "requiredTitle": "יש להזין שם יצירה."
+    },
+    "sizeLabels": {
+      "Small": "קטנה",
+      "Medium": "בינונית",
+      "Large": "גדולה"
     }
   },
   "Ministry": {
@@ -446,7 +469,9 @@
       "forms": "טפסים",
       "students": "תלמידים"
     },
-    "view": "צפה"
+    "view": "צפה",
+    "a": "A",
+    "T": "T"
   },
   "LessonManagement": {
     "additionalPracticeNote": "הערת תרגול נוספת",

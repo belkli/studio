@@ -139,7 +139,9 @@
     },
     "pendingPayment": "في انتظار الدفع",
     "teacherApproveSuccess": "تم اعتماد راتب {name}",
-    "teacherPaidSuccess": "تم وضع علامة \"تم الدفع\" على راتب {name}"
+    "teacherPaidSuccess": "تم وضع علامة \"تم الدفع\" على راتب {name}",
+    "helvetica": "هيلفيتيكا",
+    "a": "A"
   },
   "TeacherPayroll": {
     "amountCol": "المبلغ",
@@ -160,6 +162,7 @@
     "statusLabel": "الحالة: {status}",
     "statusPaid": "مدفوع",
     "studentCol": "الطالب",
-    "totalHoursLabel": "إجمالي الساعات: {hours}"
+    "totalHoursLabel": "إجمالي الساعات: {hours}",
+    "helvetica": "هيلفيتيكا"
   }
 }

@@ -41,12 +41,12 @@ export function PublicNavbar() {
 
     return (
         <header className="px-4 lg:px-6 h-14 flex items-center bg-background/80 backdrop-blur-sm fixed top-0 w-full z-50 border-b">
-            <Link href="/" className="flex items-center justify-center me-4" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="flex items-center justify-center shrink-0" onClick={() => setMobileOpen(false)}>
                 <Icons.logo className="h-6 w-6 text-primary" />
                 <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
             </Link>
 
-            <nav className="hidden md:flex gap-4 sm:gap-6 mx-auto">
+            <nav className="hidden md:flex gap-4 sm:gap-6 ms-8 me-auto">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}

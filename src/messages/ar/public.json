@@ -35,7 +35,8 @@
     "title": "ابحث عن معهدك الموسيقي",
     "unitKm": "{count}كم",
     "unitMeters": "{count}م",
-    "leadingTeam": "الفريق القيادي"
+    "leadingTeam": "الفريق القيادي",
+    "noDepartments": "لا توجد أقسام"
   },
   "ContactPage": {
     "allConsList": "إلى قائمة جميع الكونسرفتوارات",

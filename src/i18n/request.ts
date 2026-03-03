@@ -36,11 +36,8 @@ async function readJsonFileIfExists(filePath: string) {
 }
 
 async function loadLocaleMessages(locale: string) {
-    const rootFile = path.resolve('src/messages', `${locale}.json`);
-    const rootMessages = await readJsonFileIfExists(rootFile);
     const splitDir = path.resolve('src/messages', locale);
-
-    let merged = { ...rootMessages };
+    let merged = {};
 
     try {
         const entries = await fs.readdir(splitDir, { withFileTypes: true });
@@ -55,7 +52,7 @@ async function loadLocaleMessages(locale: string) {
             merged = deepMerge(merged, splitMessages);
         }
     } catch {
-        // Locale split directory does not exist yet; root file is enough.
+        // Split directory missing; return empty object and let fallback merge handle display safety.
     }
 
     return merged;

@@ -50,7 +50,8 @@
     "weeklyGoalDesc": "التقدم نحو الهدف المحدد",
     "weeklyGoalProgress": "{current} / {goal} دقيقة",
     "welcomeStudent": "مرحباً، {name}",
-    "welcomeTitle": "مرحباً، {studentName}!"
+    "welcomeTitle": "مرحباً، {studentName}!",
+    "T": "T"
   },
   "StudentBilling": {
     "active": "نشط",
@@ -118,7 +119,8 @@
     "unknownPiece": "قطعة غير معروفة",
     "videoAttached": "تم إرفاق فيديو",
     "weeklyProgress": "التقدم الأسبوعي",
-    "whatDidYouPractice": "ماذا تمرّنت؟"
+    "whatDidYouPractice": "ماذا تمرّنت؟",
+    "T": "T"
   },
   "PracticeLogForm": {
     "dateLabel": "التاريخ",
@@ -143,7 +145,8 @@
     "saveBtn": "حفظ التدريب",
     "selectChildPlaceholder": "اختر طفلاً...",
     "successDesc": "أحسنت لتدريبك {duration} دقائق.",
-    "successTitle": "تم تسجيل التدريب بنجاح!"
+    "successTitle": "تم تسجيل التدريب بنجاح!",
+    "T": "T"
   },
   "ProgressPage": {
     "achievements": "الإنجازات",
@@ -172,7 +175,8 @@
     "totalMinutesCount": "{count} دقيقة إجمالاً",
     "totalPractice": "إجمالي التدريب",
     "weeklyGoal": "الهدف الأسبوعي",
-    "weeklyPracticeGoal": "هدف التدريب الأسبوعي"
+    "weeklyPracticeGoal": "هدف التدريب الأسبوعي",
+    "T": "T"
   },
   "SheetMusicViewer": {
     "fullscreen": "ملء الشاشة",
@@ -279,8 +283,8 @@
     "cardSubtitle": "الملخص الأسبوعي - {start} - {end}",
     "cardTitle": "الموسيقى هذا الأسبوع لـ {childName}",
     "currentRepertoireTitle": "الرديف الحالي:",
-    "dateFormatEnd": "MMM d, yyyy",
-    "dateFormatStart": "MMM d",
+    "dateFormatEnd": "'اليوم' d 'من' MMM, yyyy",
+    "dateFormatStart": "'اليوم' d 'من' MMM",
     "fullProfileBtn": "الملف الكامل",
     "genericTeacherName": "المعلم",
     "helpAtHomeDesc": "اطلب من {childName} عزف القطعة التي يستمتع بها أكثر حالياً، واحتفل بتقدمه معه!",
@@ -290,7 +294,7 @@
     "instrumentStatus": "حالة الآلة الموسيقية",
     "lastLessonNotesTitle": "من الدرس الأخير مع {teacherName}:",
     "nextLessonDetails": "{date} - {instrument} مع {teacherName}",
-    "nextLessonTimeFormat": "EEEE, MM/dd 'في' HH:mm",
+    "nextLessonTimeFormat": "EEEE, dd/MM 'الساعة' HH:mm",
     "nextLessonTitle": "الدرس التالي:",
     "noLastLessonNotes": "لا توجد ملاحظات من الدرس الأخير.",
     "noRepertoire": "لم يتم تعيين رديف.",

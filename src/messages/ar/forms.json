@@ -86,7 +86,22 @@
       "signed": "تمت الموافقة والتوقيع على النموذج!",
       "signedDesc": "تمت الموافقة النهائية على نموذج {name}."
     },
-    "totalDuration": "إجمالي مدة الأداء"
+    "totalDuration": "إجمالي مدة الأداء",
+    "edit": "تعديل",
+    "helvetica": "هيلفيتيكا",
+    "approved": "تمت الموافقة",
+    "approvedDesc": "تمت الموافقة بنجاح.",
+    "rejected": "مرفوض",
+    "rejectedDesc": "تم الرفض.",
+    "signatureMissing": "التوقيع مفقود",
+    "signatureMissingDesc": "التوقيع مطلوب للمتابعة.",
+    "signed": "موقّع",
+    "signedDesc": "تم توقيع المستند.",
+    "ministryApprove": "موافقة الوزارة",
+    "ministryApproveDesc": "تم الإرسال لموافقة الوزارة.",
+    "changesRequested": "تم طلب تعديلات",
+    "changesRequestedDesc": "يلزم إجراء تعديلات قبل الموافقة.",
+    "resubmitted": "أُعيد التقديم"
   },
   "FormsPage": {
     "newForm": "نموذج / طلب جديد",
@@ -250,6 +265,9 @@
       "requiredLevel": "يجب اختيار مستوى الامتحان.",
       "requiredTitle": "يجب إدخال عنوان القطعة.",
       "requiredType": "يجب اختيار نوع الامتحان."
+    },
+    "types": {
+      "exam_registration": "تسجيل لامتحان"
     }
   },
   "RecitalForm": {
@@ -349,6 +367,11 @@
       "requiredLocation": "يجب إدخال الموقع.",
       "requiredNumParticipants": "يجب إدخال عدد المشاركين.",
       "requiredTitle": "يجب إدخال عنوان القطعة."
+    },
+    "sizeLabels": {
+      "Small": "صغيرة",
+      "Medium": "متوسطة",
+      "Large": "كبيرة"
     }
   },
   "Ministry": {
@@ -446,7 +469,9 @@
       "forms": "النماذج",
       "students": "الطلاب"
     },
-    "view": "عرض"
+    "view": "عرض",
+    "a": "A",
+    "T": "T"
   },
   "LessonManagement": {
     "additionalPracticeNote": "ملاحظة تدريب إضافية",

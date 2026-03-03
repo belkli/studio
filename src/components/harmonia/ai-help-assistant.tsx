@@ -131,7 +131,7 @@ export function AiHelpAssistant() {
         <>
             <Button
                 id="help-button"
-                className="fixed bottom-6 end-6 h-14 w-14 rounded-full shadow-lg"
+                className="fixed bottom-6 end-6 z-[70] h-14 w-14 rounded-full shadow-lg"
                 size="icon"
                 onClick={() => setIsOpen(true)}
             >

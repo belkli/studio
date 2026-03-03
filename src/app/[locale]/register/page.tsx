@@ -18,7 +18,7 @@ export default async function RegisterPage({
     if (token) {
         return (
             <div className="flex flex-col min-h-dvh py-12 bg-gradient-to-br from-indigo-50/50 via-background to-background">
-                <main className="flex flex-1 items-center justify-center">
+                <main className="flex flex-1 items-center justify-center px-4">
                 <RegistrationSessionGuard storageKey="register-session:token">
                     <PlayingSchoolEnrollmentWizard token={token} />
                 </RegistrationSessionGuard>
@@ -34,7 +34,7 @@ export default async function RegisterPage({
 
     return (
         <div className="flex flex-col min-h-dvh py-12 bg-gradient-to-br from-indigo-50/50 via-background to-background">
-            <main className="flex flex-1 items-center justify-center">
+            <main className="flex flex-1 items-center justify-center px-4">
                 <RegistrationSessionGuard storageKey="register-session:default">
                     <EnrollmentWizard />
                 </RegistrationSessionGuard>

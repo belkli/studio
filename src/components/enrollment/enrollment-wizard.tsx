@@ -431,6 +431,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const formSchema = useMemo(() => getFormSchema(t), [t]);
 
   const [schoolSearch, setSchoolSearch] = useState("");
+  const [playingSchoolToken, setPlayingSchoolToken] = useState("");
   const filteredSchools = useMemo(() => {
     if (!schoolSearch) return [];
     return schools.filter(s =>
@@ -438,6 +439,12 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       s.symbol.toString().includes(schoolSearch)
     );
   }, [schoolSearch]);
+
+  const goToPlayingSchoolByToken = useCallback(() => {
+    const token = playingSchoolToken.trim();
+    if (!token) return;
+    router.push(`/register/school?token=${encodeURIComponent(token)}`);
+  }, [playingSchoolToken, router]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema) as any,
@@ -693,7 +700,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
   if (isSubmitted) {
     return (
-      <Card className="w-full max-w-2xl mx-4 text-center">
+      <Card className="w-full max-w-2xl mx-auto text-center">
         <CardHeader>
           <div className="mx-auto bg-green-100 dark:bg-green-900 rounded-full p-3 w-fit">
             <ShieldCheck className="h-12 w-12 text-accent" />
@@ -719,7 +726,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
   if (isAdminFlow) {
     return (
-      <Card className="w-full max-w-4xl mx-4">
+      <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>{t('admin.title')}</CardTitle>
           <CardDescription>{t('admin.subtitle')}</CardDescription>
@@ -767,7 +774,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   }, [locale, selectedPackage]);
 
   return (
-    <Card className="w-full max-w-4xl mx-4 shadow-xl">
+    <Card className="w-full max-w-4xl mx-auto shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
           {t('role.title')}
@@ -848,6 +855,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                           <div className="grid gap-2 max-h-48 overflow-y-auto p-1">
                             {filteredSchools.map((s) => (
                               <Button
+                                type="button"
                                 key={s.symbol}
                                 variant="outline"
                                 className="justify-start h-auto py-3 px-4 text-right"
@@ -872,8 +880,21 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         <div className="space-y-2">
                           <FormLabel>{t('role.hasTokenQuestion')}</FormLabel>
                           <div className="flex gap-2">
-                            <Input placeholder={t('role.tokenPlaceholder')} className="font-mono bg-background/50" />
-                            <Button variant="secondary" onClick={() => router.push('/register/school?token=AB123')}>{t('role.go')}</Button>
+                            <Input
+                              placeholder={t('role.tokenPlaceholder')}
+                              className="font-mono bg-background/50"
+                              value={playingSchoolToken}
+                              onChange={(e) => setPlayingSchoolToken(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  goToPlayingSchoolByToken();
+                                }
+                              }}
+                            />
+                            <Button type="button" variant="secondary" onClick={goToPlayingSchoolByToken}>
+                              {t('role.go')}
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -1060,7 +1081,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <Button onClick={handleWaitlistSubmit}>
+                          <Button type="button" onClick={handleWaitlistSubmit}>
                             <UserPlus className="me-2 h-4 w-4" />
                             {t('matching.joinWaitlist')}
                           </Button>
@@ -1166,11 +1187,11 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       </CardContent>
       <CardFooter>
         <div className="w-full flex justify-between">
-          <Button variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>
+          <Button type="button" variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>
             <ArrowRight className="h-4 w-4 me-2" />
             {t('common.back')}
           </Button>
-          <Button onClick={processStep}>
+          <Button type="button" onClick={processStep}>
             {step === steps.length - 1 ? t('common.submit') : t('common.next')}
             {step < steps.length - 1 && <ArrowLeft className="h-4 w-4 ms-2" />}
           </Button>
