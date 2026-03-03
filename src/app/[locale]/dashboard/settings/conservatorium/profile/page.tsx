@@ -279,7 +279,18 @@ export default function ConservatoriumProfileEditor() {
         setFormData(prev => {
             const team = [...(prev.leadingTeam || [])];
             team.splice(index, 1);
-            return { ...prev, leadingTeam: team };
+
+            // Clean up translations for this indices
+            const updatedTranslations = { ...prev.translations };
+            ['en', 'ar', 'ru'].forEach(loc => {
+                if ((updatedTranslations as any)[loc]?.leadingTeam) {
+                    const locTeam = [...(updatedTranslations as any)[loc].leadingTeam];
+                    locTeam.splice(index, 1);
+                    (updatedTranslations as any)[loc] = { ...(updatedTranslations as any)[loc], leadingTeam: locTeam };
+                }
+            });
+
+            return { ...prev, leadingTeam: team, translations: updatedTranslations };
         });
     };
 
@@ -651,6 +662,9 @@ export default function ConservatoriumProfileEditor() {
                                             onTranslationChange={(loc, val) => handleTranslationChange(`leadingTeam.${index}.role`, loc, val)}
                                             isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
                                             isTranslating={isTranslating}
+                                            overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
+                                                .filter(([_, fields]) => fields.includes(`leadingTeam.${index}.role`))
+                                                .map(([loc]) => loc)}
                                         />
 
                                         <TranslatedFieldInput
@@ -667,6 +681,9 @@ export default function ConservatoriumProfileEditor() {
                                             onTranslationChange={(loc, val) => handleTranslationChange(`leadingTeam.${index}.bio`, loc, val)}
                                             isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
                                             isTranslating={isTranslating}
+                                            overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
+                                                .filter(([_, fields]) => fields.includes(`leadingTeam.${index}.bio`))
+                                                .map(([loc]) => loc)}
                                         />
                                     </div>
                                 ))}

@@ -260,7 +260,7 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                 )}
                             </div>
 
-                            {/* Manager */}
+                            {/* Management */}
                             {cons.manager && (
                                 <div className="bg-muted/30 rounded-xl p-4">
                                     <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
@@ -295,149 +295,174 @@ function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | 
                                             </div>
                                         </div>
                                     )}
-                                </div>
-                            )}
 
-                            {/* Social */}
-                            {cons.socialMedia && (
-                                <div className="flex items-center gap-3">
-                                    {cons.socialMedia.facebook && (
-                                        <a href={cons.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
-                                            <Facebook className="h-5 w-5" />
-                                        </a>
-                                    )}
-                                    {cons.socialMedia.instagram && (
-                                        <a href={cons.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-500 transition-colors">
-                                            <Instagram className="h-5 w-5" />
-                                        </a>
-                                    )}
-                                    {cons.socialMedia.youtube && (
-                                        <a href={cons.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-500 transition-colors">
-                                            <Youtube className="h-5 w-5" />
-                                        </a>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Right: About & Departments */}
-                        <div className="space-y-4">
-                            {about && (
-                                <div>
-                                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                        <Building2 className={`h-4 w-4 ${accent}`} />
-                                        {t('about')}
-                                    </h4>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{about}</p>
-                                </div>
-                            )}
-
-                            {cons.departments && cons.departments.length > 0 && (
-                                <div>
-                                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                        <Music2 className={`h-4 w-4 ${accent}`} />
-                                        {t('departments')}
-                                    </h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {cons.departments.map((d, i) => (
-                                            <Badge key={i} variant="secondary" className="rounded-full px-3 py-1">
-                                                {d.name}
-                                                {d.headTeacher && <span className="text-muted-foreground ml-1 text-xs">· {d.headTeacher}</span>}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {cons.programs && cons.programs.length > 0 && (
-                                <div>
-                                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                        <BookOpen className={`h-4 w-4 ${accent}`} />
-                                        {t('programs')}
-                                    </h4>
-                                    <ul className="space-y-1.5">
-                                        {cons.programs.map((p, i) => (
-                                            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                <span className={`w-1.5 h-1.5 rounded-full bg-current ${accent} flex-shrink-0`} />
-                                                {p}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Branches */}
-                            {cons.branchesInfo && cons.branchesInfo.length > 0 && (
-                                <div>
-                                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                        <MapPin className={`h-4 w-4 ${accent}`} />
-                                        {t('branches')}
-                                    </h4>
-                                    <div className="space-y-2">
-                                        {cons.branchesInfo.map((b, i) => (
-                                            <div key={i} className="bg-muted/20 rounded-lg p-3 text-sm">
-                                                <p className="font-medium">{b.name}</p>
-                                                {b.address && <p className="text-xs text-muted-foreground mt-0.5">{b.address}</p>}
-                                                {b.tel && <p className="text-xs text-muted-foreground mt-0.5">{b.tel}</p>}
+                                    {/* Leading Team */}
+                                    {localizedCons.leadingTeam && localizedCons.leadingTeam.length > 0 && (
+                                        <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
+                                            <h5 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('leadingTeam')}</h5>
+                                            <div className="space-y-3">
+                                                {localizedCons.leadingTeam.map((member, i) => (
+                                                    <div key={i} className="flex items-start gap-3">
+                                                        <Avatar className="h-9 w-9 border border-border">
+                                                            <AvatarImage src={member.photoUrl} />
+                                                            <AvatarFallback className="text-xs font-bold">
+                                                                {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        <div>
+                                                            <p className="font-medium text-sm">{member.name}</p>
+                                                            {member.role && <p className="text-xs text-muted-foreground">{member.role}</p>}
+                                                            {member.bio && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{member.bio}</p>}
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    {/* Teachers grid */}
-                    {cons.teachers && cons.teachers.length > 0 && (
-                        <div className="border-t border-border pt-6">
-                            <h4 className="font-semibold text-sm mb-4 flex items-center gap-2">
-                                <Users className={`h-4 w-4 ${accent}`} />
-                                {t('teachers', { count: cons.teachers.length })}
-                            </h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                {cons.teachers.slice(0, 12).map((teacher, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-2 text-center group/teacher">
-                                        <Avatar className="h-16 w-16 border-2 border-border group-hover/teacher:border-primary transition-colors">
-                                            <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                                            <AvatarFallback className="text-sm font-bold">
-                                                {teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <p className="font-medium text-xs leading-snug">{teacher.name}</p>
-                                            {teacher.role && <p className="text-xs text-muted-foreground leading-snug mt-0.5">{teacher.role}</p>}
-                                        </div>
-                                    </div>
-                                ))}
-                                {cons.teachers.length > 12 && (
-                                    <div className="flex flex-col items-center justify-center gap-2 text-center">
-                                        <div className="h-16 w-16 rounded-full border-2 border-dashed border-border flex items-center justify-center">
-                                            <span className="text-sm font-bold text-muted-foreground">+{cons.teachers.length - 12}</span>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground">{t('moreTeachers')}</p>
-                                    </div>
+                        {/* Social */}
+                        {cons.socialMedia && (
+                            <div className="flex items-center gap-3">
+                                {cons.socialMedia.facebook && (
+                                    <a href={cons.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors">
+                                        <Facebook className="h-5 w-5" />
+                                    </a>
+                                )}
+                                {cons.socialMedia.instagram && (
+                                    <a href={cons.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-500 transition-colors">
+                                        <Instagram className="h-5 w-5" />
+                                    </a>
+                                )}
+                                {cons.socialMedia.youtube && (
+                                    <a href={cons.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-500 transition-colors">
+                                        <Youtube className="h-5 w-5" />
+                                    </a>
                                 )}
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
-                    {/* CTA */}
-                    <div className="border-t border-border pt-4 flex gap-3">
-                        <Button asChild className="flex-1">
-                            <Link href="/contact">{t('contactThisCons')}</Link>
-                        </Button>
-                        {cons.officialSite && (
-                            <Button asChild variant="outline">
-                                <a href={cons.officialSite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                                    <Globe className="h-4 w-4" />
-                                    {t('officialSite')}
-                                </a>
-                            </Button>
+                    {/* Right: About & Departments */}
+                    <div className="space-y-4">
+                        {about && (
+                            <div>
+                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <Building2 className={`h-4 w-4 ${accent}`} />
+                                    {t('about')}
+                                </h4>
+                                <p className="text-sm text-muted-foreground leading-relaxed">{about}</p>
+                            </div>
+                        )}
+
+                        {cons.departments && cons.departments.length > 0 && (
+                            <div>
+                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <Music2 className={`h-4 w-4 ${accent}`} />
+                                    {t('departments')}
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {cons.departments.map((d, i) => (
+                                        <Badge key={i} variant="secondary" className="rounded-full px-3 py-1">
+                                            {d.name}
+                                            {d.headTeacher && <span className="text-muted-foreground ml-1 text-xs">· {d.headTeacher}</span>}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {cons.programs && cons.programs.length > 0 && (
+                            <div>
+                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <BookOpen className={`h-4 w-4 ${accent}`} />
+                                    {t('programs')}
+                                </h4>
+                                <ul className="space-y-1.5">
+                                    {cons.programs.map((p, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <span className={`w-1.5 h-1.5 rounded-full bg-current ${accent} flex-shrink-0`} />
+                                            {p}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Branches */}
+                        {cons.branchesInfo && cons.branchesInfo.length > 0 && (
+                            <div>
+                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <MapPin className={`h-4 w-4 ${accent}`} />
+                                    {t('branches')}
+                                </h4>
+                                <div className="space-y-2">
+                                    {cons.branchesInfo.map((b, i) => (
+                                        <div key={i} className="bg-muted/20 rounded-lg p-3 text-sm">
+                                            <p className="font-medium">{b.name}</p>
+                                            {b.address && <p className="text-xs text-muted-foreground mt-0.5">{b.address}</p>}
+                                            {b.tel && <p className="text-xs text-muted-foreground mt-0.5">{b.tel}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+
+                {/* Teachers grid */}
+                {cons.teachers && cons.teachers.length > 0 && (
+                    <div className="border-t border-border pt-6">
+                        <h4 className="font-semibold text-sm mb-4 flex items-center gap-2">
+                            <Users className={`h-4 w-4 ${accent}`} />
+                            {t('teachers', { count: cons.teachers.length })}
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            {cons.teachers.slice(0, 12).map((teacher, i) => (
+                                <div key={i} className="flex flex-col items-center gap-2 text-center group/teacher">
+                                    <Avatar className="h-16 w-16 border-2 border-border group-hover/teacher:border-primary transition-colors">
+                                        <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
+                                        <AvatarFallback className="text-sm font-bold">
+                                            {teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-medium text-xs leading-snug">{teacher.name}</p>
+                                        {teacher.role && <p className="text-xs text-muted-foreground leading-snug mt-0.5">{teacher.role}</p>}
+                                    </div>
+                                </div>
+                            ))}
+                            {cons.teachers.length > 12 && (
+                                <div className="flex flex-col items-center justify-center gap-2 text-center">
+                                    <div className="h-16 w-16 rounded-full border-2 border-dashed border-border flex items-center justify-center">
+                                        <span className="text-sm font-bold text-muted-foreground">+{cons.teachers.length - 12}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{t('moreTeachers')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* CTA */}
+                <div className="border-t border-border pt-4 flex gap-3">
+                    <Button asChild className="flex-1">
+                        <Link href="/contact">{t('contactThisCons')}</Link>
+                    </Button>
+                    {cons.officialSite && (
+                        <Button asChild variant="outline">
+                            <a href={cons.officialSite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                                <Globe className="h-4 w-4" />
+                                {t('officialSite')}
+                            </a>
+                        </Button>
+                    )}
+                </div>
+            </div>
+        </DialogContent>
+        </Dialog >
     );
 }
 

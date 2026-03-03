@@ -50,6 +50,11 @@ export function getLocalizedConservatorium(
             name: (localeTranslations?.branchesInfo && localeTranslations.branchesInfo[idx]?.name) || branch.name,
             address: (localeTranslations?.branchesInfo && localeTranslations.branchesInfo[idx]?.address) || branch.address
         })),
+        leadingTeam: cons.leadingTeam?.map((member, idx) => ({
+            ...member,
+            role: (localeTranslations?.leadingTeam && localeTranslations.leadingTeam[idx]?.role) || member.role,
+            bio: (localeTranslations?.leadingTeam && localeTranslations.leadingTeam[idx]?.bio) || member.bio
+        })),
         // Deep copy location to avoid mutating the original
         location: cons.location ? { ...cons.location } : undefined
     };

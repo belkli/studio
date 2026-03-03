@@ -44,6 +44,10 @@ export async function translateConservatoriumProfile(
         managerBio: cons.manager?.bio,
         pedagogicalCoordinatorRole: cons.pedagogicalCoordinator?.role,
         pedagogicalCoordinatorBio: cons.pedagogicalCoordinator?.bio,
+        leadingTeam: cons.leadingTeam?.map(m => ({
+            role: m.role,
+            bio: m.bio
+        })) ?? [],
         departments: cons.departments?.map(d => d.name) ?? [],
         programs: cons.programs ?? [],
         ensembles: cons.ensembles ?? [],
@@ -101,6 +105,12 @@ Output JSON:`;
                     bio: r.pedagogicalCoordinatorBio ?? undefined,
                 };
             }
+            if (r.leadingTeam?.length) {
+                output.leadingTeam = r.leadingTeam.map((m: any) => ({
+                    role: m.role ?? undefined,
+                    bio: m.bio ?? undefined,
+                }));
+            }
             if (r.departments?.length) {
                 output.departments = r.departments.map((name: string) => ({ name }));
             }
@@ -127,7 +137,24 @@ Output JSON:`;
                     if (field === 'manager.bio' && existing.manager?.bio) {
                         output.manager = { ...output.manager, bio: existing.manager.bio };
                     }
-                    // ... repeat for other overrideable fields if needed
+                    if (field === 'pedagogicalCoordinator.role' && existing.pedagogicalCoordinator?.role) {
+                        output.pedagogicalCoordinator = { ...output.pedagogicalCoordinator, role: existing.pedagogicalCoordinator.role };
+                    }
+                    if (field === 'pedagogicalCoordinator.bio' && existing.pedagogicalCoordinator?.bio) {
+                        output.pedagogicalCoordinator = { ...output.pedagogicalCoordinator, bio: existing.pedagogicalCoordinator.bio };
+                    }
+
+                    // Handle leadingTeam overrides
+                    if (field.startsWith('leadingTeam.')) {
+                        const parts = field.split('.');
+                        if (parts.length === 3) {
+                            const idx = parseInt(parts[1], 10);
+                            const key = parts[2] as 'role' | 'bio';
+                            if (output.leadingTeam && output.leadingTeam[idx] && existing.leadingTeam?.[idx]) {
+                                output.leadingTeam[idx][key] = existing.leadingTeam[idx][key];
+                            }
+                        }
+                    }
                 }
             }
 

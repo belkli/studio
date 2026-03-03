@@ -14,6 +14,7 @@ export function computeConservatoriumSourceHash(cons: Partial<Conservatorium>): 
         (cons.programs ?? []).join('|'),
         (cons.ensembles ?? []).join('|'),
         (cons.branchesInfo ?? []).map(b => `${b.name}|${b.address ?? ''}`).join('||'),
+        (cons.leadingTeam ?? []).map(m => `${m.name}|${m.role ?? ''}|${m.bio ?? ''}`).join('||'),
     ].join('\n---\n');
 
     return createHash('sha256').update(sourceFields, 'utf8').digest('hex').slice(0, 16);

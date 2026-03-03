@@ -91,6 +91,19 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
             bio: scraped.pedagogical_coordinator.bio,
             photoUrl: scraped.pedagogical_coordinator.photo_url,
         } : undefined,
+        leadingTeam: scraped.leading_team ? scraped.leading_team.map((m: any) => ({
+            name: m.name,
+            role: m.role,
+            bio: m.bio,
+            photoUrl: m.photo_url,
+        })) : (admin.id === 15 ? [
+            {
+                name: "מיכאל גורביץ'",
+                role: "מנהל אמנותי",
+                bio: "בימאי ומחזאי, חתן פרס ישראל",
+                photoUrl: "https://alumahod.com/wp-content/uploads/2025/11/%D7%9E%D7%99%D7%9B%D7%90%D7%9C-%D7%92%D7%95%D7%A8%D7%91%D7%99%D7%A5.jpg"
+            }
+        ] : undefined),
         departments,
         branchesInfo,
         teachers,
