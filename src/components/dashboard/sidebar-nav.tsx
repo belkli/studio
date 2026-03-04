@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileoverview The main sidebar navigation component for the dashboard.
  * Implements SDD-NAV-01: Navigation Architecture Redesign.
  * Links are grouped into named, collapsible NavGroups per persona.
@@ -32,7 +32,7 @@ import {
   ShieldQuestion, CalendarPlus, HandCoins, GraduationCap,
   FileText, PencilRuler, MessageCircleQuestion, ChevronDown,
   Book, User, Bot, Users, Gift,
-  // NEW icons — SDD-NAV-01 §3 Icon Rationalisation
+  // NEW icons â€” SDD-NAV-01 Â§3 Icon Rationalisation
   Music2, HeartHandshake, Dumbbell, CalendarSearch, CalendarDays,
   CalendarRange, CalendarCheck, TrendingUp, CreditCard,
   UsersRound, ChartNoAxesCombined, Theater, Landmark, School,
@@ -46,18 +46,19 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import type { Notification, UserRole } from '@/lib/types';
+import type { AdminSection, Notification, UserRole } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { Badge } from '@/components/ui/badge';
 
-// ─────────────────────────── Types ───────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type NavItem = {
   href: string;
   labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
   id?: string;
+  section?: AdminSection;
 };
 
 type NavGroup = {
@@ -68,65 +69,65 @@ type NavGroup = {
   items: NavItem[];
 };
 
-// ─────────────────────────── NavGroup Definitions ────────────────────────────
-// SDD-NAV-01 §5.3  — All 5 personas + school_coordinator (SDD-PS §7.1)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ NavGroup Definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// SDD-NAV-01 Â§5.3  â€” All 5 personas + school_coordinator (SDD-PS Â§7.1)
 
 const harmoniaNavGroups: NavGroup[] = [
-  // ───────────────────── ADMIN GROUPS ─────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ADMIN GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupOverview', icon: LayoutDashboard,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
       { href: '/dashboard', labelKey: 'dashboard', icon: LayoutDashboard, id: 'nav-dashboard-admin' },
-      { href: '/dashboard/announcements', labelKey: 'announcements', icon: Megaphone },
+      { href: '/dashboard/announcements', labelKey: 'announcements', icon: Megaphone, section: 'announcements' },
     ],
   },
   {
     labelKey: 'groupPeople', icon: UsersRound,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
-      { href: '/dashboard/users', labelKey: 'userManagement', icon: UsersRound, id: 'nav-users' },
-      { href: '/dashboard/enroll', labelKey: 'newRegistration', icon: UserPlus },
-      { href: '/dashboard/approvals', labelKey: 'approvals', icon: BadgeCheck, id: 'nav-approvals' },
+      { href: '/dashboard/users', labelKey: 'userManagement', icon: UsersRound, id: 'nav-users', section: 'users' },
+      { href: '/dashboard/enroll', labelKey: 'newRegistration', icon: UserPlus, section: 'registrations' },
+      { href: '/dashboard/approvals', labelKey: 'approvals', icon: BadgeCheck, id: 'nav-approvals', section: 'approvals' },
       { href: '/dashboard/admin/substitute', labelKey: 'substitute', icon: UserCog },
-      { href: '/dashboard/admin/scholarships', labelKey: 'manageScholarships', icon: HandCoins },
+      { href: '/dashboard/admin/scholarships', labelKey: 'manageScholarships', icon: HandCoins, section: 'scholarships' },
     ],
   },
   {
     labelKey: 'groupScheduleOps', icon: CalendarRange,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
-      { href: '/dashboard/master-schedule', labelKey: 'masterSchedule', icon: CalendarRange, id: 'nav-master-schedule' },
+      { href: '/dashboard/master-schedule', labelKey: 'masterSchedule', icon: CalendarRange, id: 'nav-master-schedule', section: 'scheduling' },
       { href: '/dashboard/admin/makeups', labelKey: 'adminMakeups', icon: Coins },
       { href: '/dashboard/admin/waitlists', labelKey: 'waitlists', icon: ListChecks },
     ],
   },
   {
     labelKey: 'groupProgramsEvents', icon: Theater,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
-      { href: '/dashboard/events', labelKey: 'events', icon: Theater },
-      { href: '/dashboard/admin/open-day', labelKey: 'manageOpenDay', icon: CalendarPlus },
-      { href: '/dashboard/admin/performances', labelKey: 'performances', icon: Music },
-      { href: '/dashboard/admin/rentals', labelKey: 'rentals', icon: GanttChartSquare },
+      { href: '/dashboard/events', labelKey: 'events', icon: Theater, section: 'events' },
+      { href: '/dashboard/admin/open-day', labelKey: 'manageOpenDay', icon: CalendarPlus, section: 'open-day' },
+      { href: '/dashboard/admin/performances', labelKey: 'performances', icon: Music, section: 'performances' },
+      { href: '/dashboard/admin/rentals', labelKey: 'rentals', icon: GanttChartSquare, section: 'rentals' },
       { href: '/dashboard/admin/branches', labelKey: 'branches', icon: Building },
       { href: '/dashboard/admin/playing-school', labelKey: 'playingSchool', icon: School },
     ],
   },
   {
     labelKey: 'groupFinance', icon: Banknote,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
       { href: '/dashboard/billing', labelKey: 'billing', icon: CreditCard, id: 'nav-billing' },
-      { href: '/dashboard/admin/payroll', labelKey: 'teacherPayroll', icon: Banknote },
+      { href: '/dashboard/admin/payroll', labelKey: 'teacherPayroll', icon: Banknote, section: 'payroll' },
     ],
   },
   {
     labelKey: 'groupIntelligence', icon: ChartNoAxesCombined,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     defaultCollapsed: true,
     items: [
-      { href: '/dashboard/reports', labelKey: 'reportsAnalytics', icon: ChartNoAxesCombined, id: 'nav-reports' },
+      { href: '/dashboard/reports', labelKey: 'reportsAnalytics', icon: ChartNoAxesCombined, id: 'nav-reports', section: 'reports' },
       { href: '/dashboard/ai', labelKey: 'aiAgents', icon: BrainCircuit },
       { href: '/dashboard/admin/form-builder', labelKey: 'formBuilder', icon: PencilRuler },
       { href: '/dashboard/ministry-export', labelKey: 'ministryExport', icon: Download },
@@ -134,23 +135,23 @@ const harmoniaNavGroups: NavGroup[] = [
   },
   {
     labelKey: 'groupCommunication', icon: MessagesSquare,
-    roles: ['conservatorium_admin', 'site_admin'],
+    roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
     items: [
       { href: '/dashboard/messages', labelKey: 'messages', icon: MessagesSquare, id: 'nav-messages' },
       { href: '/dashboard/forms', labelKey: 'formsAndDocs', icon: FileText, id: 'nav-forms' },
       { href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell, id: 'nav-notifications' },
-      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap },
+      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap, section: 'alumni' },
     ],
   },
 
-  // ───────────────────── TEACHER GROUPS ────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TEACHER GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupMyWorkspace', icon: Music2,
     roles: ['teacher'],
     items: [
       { href: '/dashboard/teacher', labelKey: 'teacherDashboard', icon: Music2, id: 'nav-dashboard-teacher' },
       { href: '/dashboard/schedule', labelKey: 'schedule', icon: CalendarDays, id: 'nav-schedule' },
-      { href: '/dashboard/approvals', labelKey: 'approvals', icon: BadgeCheck, id: 'nav-approvals' },
+      { href: '/dashboard/approvals', labelKey: 'approvals', icon: BadgeCheck, id: 'nav-approvals', section: 'approvals' },
     ],
   },
   {
@@ -177,11 +178,11 @@ const harmoniaNavGroups: NavGroup[] = [
       { href: '/dashboard/messages', labelKey: 'messages', icon: MessagesSquare, id: 'nav-messages' },
       { href: '/dashboard/forms', labelKey: 'formsAndDocs', icon: FileText, id: 'nav-forms' },
       { href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell, id: 'nav-notifications' },
-      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap },
+      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap, section: 'alumni' },
     ],
   },
 
-  // ───────────────────── STUDENT GROUPS ────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STUDENT GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupMyLearning', icon: GraduationCap,
     roles: ['student'],
@@ -216,11 +217,11 @@ const harmoniaNavGroups: NavGroup[] = [
     items: [
       { href: '/dashboard/messages', labelKey: 'messages', icon: MessagesSquare, id: 'nav-messages' },
       { href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell, id: 'nav-notifications' },
-      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap },
+      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap, section: 'alumni' },
     ],
   },
 
-  // ───────────────────── PARENT GROUPS ─────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PARENT GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupMyFamily', icon: HeartHandshake,
     roles: ['parent'],
@@ -261,11 +262,11 @@ const harmoniaNavGroups: NavGroup[] = [
     items: [
       { href: '/dashboard/messages', labelKey: 'messages', icon: MessagesSquare, id: 'nav-messages' },
       { href: '/dashboard/notifications', labelKey: 'notifications', icon: Bell, id: 'nav-notifications' },
-      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap },
+      { href: '/dashboard/alumni', labelKey: 'alumni', icon: GraduationCap, section: 'alumni' },
     ],
   },
 
-  // ───────────────────── MINISTRY ──────────────────────────────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MINISTRY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupMinistryOverview', icon: Landmark,
     roles: ['ministry_director'],
@@ -274,7 +275,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // ───────────────────── SCHOOL COORDINATOR (SDD-PS §7.1) ──────────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SCHOOL COORDINATOR (SDD-PS Â§7.1) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   {
     labelKey: 'groupMySchool', icon: School,
     roles: ['school_coordinator'],
@@ -284,7 +285,7 @@ const harmoniaNavGroups: NavGroup[] = [
   },
 ]; // end harmoniaNavGroups
 
-// ─────────────────────────── Notification Item ───────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Notification Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
   const dateLocale = useDateLocale();
@@ -307,7 +308,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
   );
 };
 
-// ─────────────────────────── Legacy type (unchanged) ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Legacy type (unchanged) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type LinkItem = {
   href: string;
@@ -317,7 +318,7 @@ type LinkItem = {
   id?: string;
 };
 
-// ─────────────────────────── Main Component ──────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function SidebarNav() {
   const t = useTranslations('Sidebar');
@@ -362,14 +363,14 @@ export function SidebarNav() {
     pathname === href ||
     (href !== '/dashboard' && href !== '/dashboard/teacher' && pathname.startsWith(href));
 
-  // ── Legacy mode: unchanged flat rendering ──────────────────────────────────
+  // â”€â”€ Legacy mode: unchanged flat rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!newFeaturesEnabled) {
     const legacyLinks: LinkItem[] = [
       { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
       { href: '/dashboard/forms', label: t('myForms'), icon: FileText, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
       { href: '/dashboard/approvals', label: t('approvals'), icon: BadgeCheck, roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
       { href: '/dashboard/library', label: t('library'), icon: Book, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
-      { href: '/dashboard/users', label: t('users'), icon: User, roles: ['conservatorium_admin', 'site_admin'] },
+      { href: '/dashboard/users', label: t('users'), icon: User, roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'] },
       { href: '/dashboard/ministry', label: t('ministry'), icon: Building, roles: ['ministry_director'] },
     ];
 
@@ -414,8 +415,17 @@ export function SidebarNav() {
     );
   }
 
-  // ── New grouped nav ────────────────────────────────────────────────────────
-  const visibleGroups = harmoniaNavGroups.filter(g => g.roles.includes(userRole));
+  // â”€â”€ New grouped nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  const delegatedAllowedSections = new Set<AdminSection>(user.delegatedAdminPermissions ?? []);
+
+  const visibleGroups = harmoniaNavGroups
+    .filter(g => g.roles.includes(userRole))
+    .map(group => {
+      if (userRole !== 'delegated_admin') return group;
+      const allowedItems = group.items.filter(item => !item.section || delegatedAllowedSections.has(item.section));
+      return { ...group, items: allowedItems };
+    })
+    .filter(group => group.items.length > 0);
 
   return (
     <>
@@ -540,3 +550,6 @@ export function SidebarNav() {
     </>
   );
 }
+
+
+

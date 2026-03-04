@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { UserRole, User } from "@/lib/types";
+import type { AdminSection, TeacherAssignment, UserRole, User } from "@/lib/types";
 import { Check, Edit, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,10 +19,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from '@/components/ui/checkbox';
 import { isValidIsraeliID } from "@/lib/utils";
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+
+const ALL_ADMIN_SECTIONS: AdminSection[] = ['users', 'registrations', 'approvals', 'announcements', 'events', 'scheduling', 'rooms', 'rentals', 'scholarships', 'donations', 'reports', 'payroll', 'open-day', 'performances', 'alumni', 'conservatorium-profile'];
+const DAY_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;
+const DURATION_VALUES = [30, 45, 60] as const;
 
 const roleTranslations = (t: any): Record<UserRole, string> => ({
     admin: t('roles.conservatorium_admin'),
@@ -33,13 +38,14 @@ const roleTranslations = (t: any): Record<UserRole, string> => ({
     conservatorium_admin: t('roles.conservatorium_admin'),
     site_admin: t('roles.site_admin'),
     ministry_director: t('roles.ministry_director'),
-    school_coordinator: t('roles.school_coordinator')
+    school_coordinator: t('roles.school_coordinator'),
+    delegated_admin: t('roles.delegated_admin')
 });
 
 const getEditUserSchema = (t: any) => z.object({
     name: z.string().min(2, t('validation.nameMin')),
     email: z.string().email(t('validation.emailInvalid')),
-    role: z.enum(["admin", "superadmin", "student", "teacher", "parent", "conservatorium_admin", "site_admin", "ministry_director", "school_coordinator"]),
+    role: z.enum(["admin", "superadmin", "student", "teacher", "parent", "conservatorium_admin", "delegated_admin", "site_admin", "ministry_director", "school_coordinator"]),
     grade: z.string().optional(),
     idNumber: z.string().refine(isValidIsraeliID, t('validation.idInvalid')),
     phone: z.string().min(9, t('validation.phoneInvalid')).optional(),
@@ -48,6 +54,16 @@ const getEditUserSchema = (t: any) => z.object({
         instrument: z.string(),
         teacherName: z.string(),
         yearsOfStudy: z.coerce.number().min(0, t('validation.yearsPositive')).optional(),
+    })).optional(),
+    teacherInstrumentNames: z.array(z.string()).optional(),
+    delegatedAdminPermissions: z.array(z.enum(ALL_ADMIN_SECTIONS)).optional(),
+    linkedStudentIds: z.array(z.string()).optional(),
+    teacherAssignments: z.array(z.object({
+        teacherId: z.string(),
+        instrument: z.string(),
+        lessonDurationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+        dayOfWeek: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
+        startTime: z.string(),
     })).optional(),
 });
 
@@ -82,7 +98,7 @@ export default function UsersPage() {
         let baseUsers: User[];
         if (currentUser.role === 'site_admin') {
             baseUsers = users.filter(user => user.id !== currentUser.id);
-        } else if (currentUser.role === 'conservatorium_admin') {
+        } else if (currentUser.role === 'conservatorium_admin' || currentUser.role === 'delegated_admin') {
             baseUsers = users.filter(user =>
                 user.conservatoriumId === currentUser.conservatoriumId && user.id !== currentUser.id && user.role !== 'site_admin'
             );
@@ -163,11 +179,46 @@ export default function UsersPage() {
         const finalUpdatedUser: User = {
             ...editingUser,
             ...(updatedData as Partial<User>),
-            instruments: updatedData.instruments?.map((instrument) => ({
+        } as User;
+
+        if (updatedData.role === 'teacher') {
+            finalUpdatedUser.instruments = (updatedData.teacherInstrumentNames || []).map((name) => ({
+                instrument: name,
+                teacherName: updatedData.name,
+                yearsOfStudy: 0,
+            }));
+        }
+
+        if (updatedData.role === 'student') {
+            finalUpdatedUser.instruments = updatedData.instruments?.map((instrument) => ({
                 ...instrument,
                 yearsOfStudy: instrument.yearsOfStudy ?? 0,
-            })),
-        } as User;
+            }));
+            finalUpdatedUser.teacherAssignments = (updatedData.teacherAssignments || []) as TeacherAssignment[];
+        }
+
+        if (updatedData.role === 'delegated_admin') {
+            finalUpdatedUser.delegatedAdminPermissions = updatedData.delegatedAdminPermissions || [];
+        }
+
+        if (updatedData.role === 'parent') {
+            const oldChildIds = editingUser.childIds || [];
+            const newChildIds = updatedData.linkedStudentIds || [];
+            const removedChildIds = oldChildIds.filter((id) => !newChildIds.includes(id));
+            const addedChildIds = newChildIds.filter((id) => !oldChildIds.includes(id));
+
+            removedChildIds.forEach((studentId) => {
+                const student = users.find((u) => u.id === studentId);
+                if (student) updateUser({ ...student, parentId: undefined });
+            });
+
+            addedChildIds.forEach((studentId) => {
+                const student = users.find((u) => u.id === studentId);
+                if (student) updateUser({ ...student, parentId: editingUser.id });
+            });
+
+            finalUpdatedUser.childIds = newChildIds;
+        }
 
         updateUser(finalUpdatedUser);
         toast({ title: t('userUpdated'), description: t('userUpdatedDesc', { name: finalUpdatedUser.name }) });
@@ -186,8 +237,8 @@ export default function UsersPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">{t('title')}</h1>
-                <p className="text-muted-foreground">{t('manageUsers')}</p>
+                <h1 className="text-2xl font-bold text-start">{t('title')}</h1>
+                <p className="text-muted-foreground text-start">{t('manageUsers')}</p>
             </div>
 
             <Tabs defaultValue={defaultTab}>
@@ -212,14 +263,14 @@ export default function UsersPage() {
                         <CardContent>
                             <div className="flex flex-col md:flex-row gap-4 mb-6">
                                 <div className="relative w-full md:flex-grow">
-                                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input type="search" placeholder={t('searchPlaceholder')} className="w-full rounded-lg bg-background pr-10 text-right" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                    <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input type="search" placeholder={t('searchPlaceholder')} className="w-full rounded-lg bg-background pe-10 text-start" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 {showFilters && (
                                     <>
-                                        <Select dir="rtl" value={instrumentFilter} onValueChange={setInstrumentFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allInstruments')}</SelectItem>{availableInstruments.map(inst => <SelectItem key={inst} value={inst}>{inst}</SelectItem>)}</SelectContent></Select>
-                                        <Select dir="rtl" value={teacherFilter} onValueChange={setTeacherFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByTeacher')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allTeachers')}</SelectItem>{availableTeachers.map(teacher => <SelectItem key={teacher} value={teacher}>{teacher}</SelectItem>)}</SelectContent></Select>
-                                        <Select dir="rtl" value={gradeFilter} onValueChange={setGradeFilter}><SelectTrigger className="w-full md:w-[150px]"><SelectValue placeholder={t('filterByGrade')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allGrades')}</SelectItem>{availableGrades.map(grade => <SelectItem key={grade} value={grade}>{grade}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir={dir} value={instrumentFilter} onValueChange={setInstrumentFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allInstruments')}</SelectItem>{availableInstruments.map(inst => <SelectItem key={inst} value={inst}>{inst}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir={dir} value={teacherFilter} onValueChange={setTeacherFilter}><SelectTrigger className="w-full md:w-[200px]"><SelectValue placeholder={t('filterByTeacher')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allTeachers')}</SelectItem>{availableTeachers.map(teacher => <SelectItem key={teacher} value={teacher}>{teacher}</SelectItem>)}</SelectContent></Select>
+                                        <Select dir={dir} value={gradeFilter} onValueChange={setGradeFilter}><SelectTrigger className="w-full md:w-[150px]"><SelectValue placeholder={t('filterByGrade')} /></SelectTrigger><SelectContent><SelectItem value="all">{t('allGrades')}</SelectItem>{availableGrades.map(grade => <SelectItem key={grade} value={grade}>{grade}</SelectItem>)}</SelectContent></Select>
                                     </>
                                 )}
                             </div>
@@ -264,7 +315,7 @@ export default function UsersPage() {
                     <DialogHeader>
                         <DialogTitle>{t('editUser', { name: editingUser?.name || '' })}</DialogTitle>
                     </DialogHeader>
-                    {editingUser && <EditUserForm user={editingUser} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} t={t} />}
+                    {editingUser && <EditUserForm user={editingUser} allUsers={users} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} t={t} />}
                 </DialogContent>
             </Dialog>
 
@@ -274,7 +325,7 @@ export default function UsersPage() {
 
 const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[], currentUser: User, showFilters: boolean, onEdit: (user: User) => void }) => {
     const { toast } = useToast();
-    const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin';
+    const canEdit = currentUser.role === 'site_admin' || currentUser.role === 'conservatorium_admin' || currentUser.role === 'delegated_admin';
     const t = useTranslations('UserManagement');
     const roles = roleTranslations(t);
 
@@ -295,21 +346,21 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
             <TableHeader><TableRow>
                 <TableHead>{t('name')}</TableHead>
                 {showFilters && <TableHead>{t('idNumber')}</TableHead>}
-                <TableHead dir="ltr" className="text-left">{t('email')}</TableHead>
+                <TableHead dir="ltr" className="text-start">{t('email')}</TableHead>
                 {showFilters && <TableHead>{t('phone')}</TableHead>}
                 <TableHead>{t('role')}</TableHead>
                 {showFilters && <TableHead>{t('instrument')}</TableHead>}
                 {showFilters && <TableHead>{t('teacher')}</TableHead>}
                 {showFilters && <TableHead>{t('seniority')}</TableHead>}
                 {currentUser.role === 'site_admin' && <TableHead>{t('conservatorium')}</TableHead>}
-                {canEdit && <TableHead className="text-left">{t('actions')}</TableHead>}
+                {canEdit && <TableHead className="text-start">{t('actions')}</TableHead>}
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         {showFilters && <TableCell>{user.idNumber || '-'}</TableCell>}
-                        <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
+                        <TableCell className="text-start" dir="ltr">{user.email}</TableCell>
                         {showFilters && <TableCell>{user.phone || '-'}</TableCell>}
                         <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">{roles[user.role]}</span></TableCell>
                         {showFilters && (
@@ -321,7 +372,7 @@ const UsersTable = ({ users, currentUser, showFilters, onEdit }: { users: User[]
                         )}
                         {currentUser.role === 'site_admin' && (<TableCell>{user.conservatoriumName}</TableCell>)}
                         {canEdit && (
-                            <TableCell className="text-left">
+                            <TableCell className="text-start">
                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}><Edit className="h-4 w-4" /><span className="sr-only">Edit</span></Button>
                             </TableCell>
                         )}
@@ -343,17 +394,17 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
         <Table>
             <TableHeader><TableRow>
                 <TableHead>{t('name')}</TableHead>
-                <TableHead dir="ltr" className="text-left">{t('email')}</TableHead>
+                <TableHead dir="ltr" className="text-start">{t('email')}</TableHead>
                 <TableHead>{t('requestedRole')}</TableHead>
-                <TableHead className="text-left">{t('actions')}</TableHead>
+                <TableHead className="text-start">{t('actions')}</TableHead>
             </TableRow></TableHeader>
             <TableBody>
                 {users.map((user) => (
                     <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-left" dir="ltr">{user.email}</TableCell>
+                        <TableCell className="text-start" dir="ltr">{user.email}</TableCell>
                         <TableCell><span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">{roles[user.role]}</span></TableCell>
-                        <TableCell className="text-left space-x-2 space-x-reverse">
+                        <TableCell className="text-start flex gap-2">
                             <Button variant="ghost" size="icon" className="text-green-600 hover:text-green-700" onClick={() => onApprove(user)}><Check className="h-4 w-4" /><span className="sr-only">{t('approve')}</span></Button>
                             <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => onReject(user)}><X className="h-4 w-4" /><span className="sr-only">{t('reject')}</span></Button>
                         </TableCell>
@@ -365,8 +416,22 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
 };
 
 
-const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User, onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
+const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { user: User, allUsers: User[], onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
     const editSchema = useMemo(() => getEditUserSchema(t), [t]);
+    const locale = useLocale();
+    const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
+    const [teacherInstrumentSearch, setTeacherInstrumentSearch] = useState('');
+    const [showStudentPicker, setShowStudentPicker] = useState(false);
+    const teacherUsers = useMemo(() => allUsers.filter(u => u.role === 'teacher' && u.conservatoriumId === user.conservatoriumId && u.approved), [allUsers, user.conservatoriumId]);
+    const instrumentPool = useMemo(() => {
+        const values = new Set<string>();
+        allUsers.filter(u => u.conservatoriumId === user.conservatoriumId).forEach(u => {
+            u.instruments?.forEach(inst => values.add(inst.instrument));
+        });
+        return Array.from(values).sort();
+    }, [allUsers, user.conservatoriumId]);
+    const eligibleStudents = useMemo(() => allUsers.filter(u => u.role === 'student' && u.conservatoriumId === user.conservatoriumId && (!u.parentId || u.parentId === user.id)), [allUsers, user.conservatoriumId, user.id]);
+
     const form = useForm<EditUserFormValues, any, EditUserFormData>({
         resolver: zodResolver(editSchema),
         defaultValues: {
@@ -378,8 +443,17 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
             phone: user.phone || '',
             conservatoriumStudyYears: user.conservatoriumStudyYears || 0,
             instruments: user.instruments || [],
+            teacherInstrumentNames: user.instruments?.map(inst => inst.instrument) || [],
+            delegatedAdminPermissions: user.delegatedAdminPermissions || [],
+            linkedStudentIds: user.childIds || [],
+            teacherAssignments: user.teacherAssignments || [],
         },
     });
+
+    const currentRole = form.watch('role');
+    const linkedStudentIds = form.watch('linkedStudentIds') || [];
+    const teacherAssignments = form.watch('teacherAssignments') || [];
+    const selectedTeacherInstrumentNames = form.watch('teacherInstrumentNames') || [];
 
     const canChangeRole = currentUser.role === 'site_admin' || (currentUser.role === 'conservatorium_admin' && user.role !== 'conservatorium_admin');
     const canEditSeniority = currentUser.role === 'conservatorium_admin';
@@ -390,9 +464,9 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">
                     <FormField name="name" render={({ field }) => (<FormItem> <FormLabel>{t('fullNameTitle')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>{t('email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                    <FormField name="phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>{t('email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <FormField name="phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 </div>
 
                 <FormField
@@ -401,12 +475,13 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('role')}</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole} dir="rtl">
+                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!canChangeRole} dir={dir}>
                                 <FormControl>
                                     <SelectTrigger><SelectValue placeholder={t('selectRole')} /></SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                     {currentUser.role === 'site_admin' && <SelectItem value="conservatorium_admin">{t('roles.conservatorium_admin')}</SelectItem>}
+                                    <SelectItem value="delegated_admin">{t('roles.delegated_admin')}</SelectItem>
                                     <SelectItem value="teacher">{t('roles.teacher')}</SelectItem>
                                     <SelectItem value="student">{t('roles.student')}</SelectItem>
                                     <SelectItem value="parent">{t('roles.parent')}</SelectItem>
@@ -416,7 +491,103 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                         </FormItem>
                     )}
                 />
-                {form.watch('role') === 'student' && (
+                {currentRole === 'delegated_admin' && (
+                    <div className="space-y-3 border-t pt-4">
+                        <FormLabel>{t('delegatedPermissions')}</FormLabel>
+                        <p className="text-sm text-muted-foreground">{t('delegatedPermissionsHint')}</p>
+                        {ALL_ADMIN_SECTIONS.map((section) => {
+                            const checked = (form.watch('delegatedAdminPermissions') || []).includes(section);
+                            return (
+                                <div key={section} className="flex items-center gap-3">
+                                    <Checkbox
+                                        id={section}
+                                        checked={checked}
+                                        onCheckedChange={(nextChecked) => {
+                                            const prev = form.getValues('delegatedAdminPermissions') || [];
+                                            const next = nextChecked ? [...prev, section] : prev.filter((item) => item !== section);
+                                            form.setValue('delegatedAdminPermissions', next);
+                                        }}
+                                    />
+                                    <FormLabel htmlFor={section} className="cursor-pointer">{t(`AdminSections.${section.replace(/-/g, '_')}`)}</FormLabel>
+                                </div>
+                            );
+                        })}
+                        <p className="text-xs text-destructive">{t('signDocumentsExcluded')}</p>
+                    </div>
+                )}
+                {currentRole === 'teacher' && (
+                    <div className="space-y-3 border-t pt-4">
+                        <FormLabel>{t('teacherInstruments')}</FormLabel>
+                        <Input value={teacherInstrumentSearch} onChange={(e) => setTeacherInstrumentSearch(e.target.value)} placeholder={t('searchPlaceholder')} />
+                        <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border p-3">
+                            {instrumentPool.filter((item) => item.toLowerCase().includes(teacherInstrumentSearch.toLowerCase())).map((inst) => {
+                                const checked = selectedTeacherInstrumentNames.includes(inst);
+                                return (
+                                    <div key={inst} className="flex items-center gap-3">
+                                        <Checkbox
+                                            id={`teacher-inst-${inst}`}
+                                            checked={checked}
+                                            onCheckedChange={(nextChecked) => {
+                                                const prev = form.getValues('teacherInstrumentNames') || [];
+                                                const next = nextChecked ? [...prev, inst] : prev.filter((item) => item !== inst);
+                                                form.setValue('teacherInstrumentNames', next);
+                                            }}
+                                        />
+                                        <FormLabel htmlFor={`teacher-inst-${inst}`}>{inst}</FormLabel>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+                {currentRole === 'parent' && (
+                    <div className="space-y-3 border-t pt-4">
+                        <div className="flex items-center justify-between">
+                            <FormLabel>{t('linkedStudents')}</FormLabel>
+                            <Button type="button" size="sm" variant="outline" onClick={() => setShowStudentPicker((prev) => !prev)}>{t('addStudent')}</Button>
+                        </div>
+                        {showStudentPicker && (
+                            <div className="max-h-40 space-y-2 overflow-y-auto rounded-md border p-3">
+                                {eligibleStudents.map((student) => {
+                                    const checked = linkedStudentIds.includes(student.id);
+                                    return (
+                                        <div key={student.id} className="flex items-center gap-3">
+                                            <Checkbox
+                                                id={`student-link-${student.id}`}
+                                                checked={checked}
+                                                onCheckedChange={(nextChecked) => {
+                                                    const prev = form.getValues('linkedStudentIds') || [];
+                                                    const next = nextChecked ? [...prev, student.id] : prev.filter((id) => id !== student.id);
+                                                    form.setValue('linkedStudentIds', next);
+                                                }}
+                                            />
+                                            <FormLabel htmlFor={`student-link-${student.id}`}>{student.name}</FormLabel>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        {linkedStudentIds.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">{t('noLinkedStudents')}</p>
+                        ) : (
+                            <div className="space-y-2">
+                                {linkedStudentIds.map((studentId) => {
+                                    const linkedStudent = allUsers.find((item) => item.id === studentId);
+                                    return (
+                                        <div key={studentId} className="flex items-center justify-between rounded border p-2">
+                                            <span>{linkedStudent?.name || studentId}</span>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => form.setValue('linkedStudentIds', linkedStudentIds.filter((id) => id !== studentId))}>
+                                                <X className="h-4 w-4" />
+                                                <span className="sr-only">{t('remove')}</span>
+                                            </Button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {currentRole === 'student' && (
                     <div className="space-y-4 pt-4 mt-4 border-t">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
@@ -425,25 +596,25 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{t('grade')}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                        <Select onValueChange={field.onChange} defaultValue={field.value} dir={dir}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder={t('selectGrade')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="יב">י"ב</SelectItem>
-                                                <SelectItem value="יא">י"א</SelectItem>
-                                                <SelectItem value="י">י'</SelectItem>
-                                                <SelectItem value="ט">ט'</SelectItem>
-                                                <SelectItem value="ח">ח'</SelectItem>
-                                                <SelectItem value="ז">ז'</SelectItem>
-                                                <SelectItem value="ו">ו'</SelectItem>
-                                                <SelectItem value="ה">ה'</SelectItem>
-                                                <SelectItem value="ד">ד'</SelectItem>
-                                                <SelectItem value="ג">ג'</SelectItem>
-                                                <SelectItem value="ב">ב'</SelectItem>
-                                                <SelectItem value="א">א'</SelectItem>
+                                                <SelectItem value="×™×‘">×™"×‘</SelectItem>
+                                                <SelectItem value="×™×">×™"×</SelectItem>
+                                                <SelectItem value="×™">×™'</SelectItem>
+                                                <SelectItem value="×˜">×˜'</SelectItem>
+                                                <SelectItem value="×—">×—'</SelectItem>
+                                                <SelectItem value="×–">×–'</SelectItem>
+                                                <SelectItem value="×•">×•'</SelectItem>
+                                                <SelectItem value="×”">×”'</SelectItem>
+                                                <SelectItem value="×“">×“'</SelectItem>
+                                                <SelectItem value="×’">×’'</SelectItem>
+                                                <SelectItem value="×‘">×‘'</SelectItem>
+                                                <SelectItem value="×">×'</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -508,6 +679,74 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
                         )}
                     </div>
                 )}
+
+                {currentRole === 'student' && (
+                <div className="space-y-3 border-t pt-4">
+                    <div className="flex items-center justify-between">
+                        <FormLabel>{t('teacherAssignments')}</FormLabel>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                                const next = [...teacherAssignments, { teacherId: '', instrument: '', lessonDurationMinutes: 45, dayOfWeek: 0, startTime: '16:00' } as TeacherAssignment];
+                                form.setValue('teacherAssignments', next);
+                            }}
+                        >
+                            {t('addTeacher')}
+                        </Button>
+                    </div>
+
+                    {teacherAssignments.map((assignment, index) => {
+                        const selectedTeacher = teacherUsers.find((item) => item.id === assignment.teacherId);
+                        const teacherInstruments = selectedTeacher?.instruments?.map((item) => item.instrument) || instrumentPool;
+                        return (
+                            <div key={`${assignment.teacherId}-${index}`} className="grid gap-3 rounded border p-3 md:grid-cols-2">
+                                <Select dir={dir} value={assignment.teacherId} onValueChange={(value) => {
+                                    const next = [...teacherAssignments];
+                                    next[index] = { ...next[index], teacherId: value, instrument: '' } as TeacherAssignment;
+                                    form.setValue('teacherAssignments', next);
+                                }}>
+                                    <SelectTrigger><SelectValue placeholder={t('selectTeacher')} /></SelectTrigger>
+                                    <SelectContent>{teacherUsers.map((teacher) => <SelectItem key={teacher.id} value={teacher.id}>{teacher.name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <Select dir={dir} value={assignment.instrument} onValueChange={(value) => {
+                                    const next = [...teacherAssignments];
+                                    next[index] = { ...next[index], instrument: value } as TeacherAssignment;
+                                    form.setValue('teacherAssignments', next);
+                                }}>
+                                    <SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger>
+                                    <SelectContent>{teacherInstruments.map((name) => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <Select dir={dir} value={String(assignment.lessonDurationMinutes)} onValueChange={(value) => {
+                                    const next = [...teacherAssignments];
+                                    next[index] = { ...next[index], lessonDurationMinutes: Number(value) as 30 | 45 | 60 } as TeacherAssignment;
+                                    form.setValue('teacherAssignments', next);
+                                }}>
+                                    <SelectTrigger><SelectValue placeholder={t('duration')} /></SelectTrigger>
+                                    <SelectContent>{DURATION_VALUES.map((duration) => <SelectItem key={duration} value={String(duration)}>{duration}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <Select dir={dir} value={String(assignment.dayOfWeek)} onValueChange={(value) => {
+                                    const next = [...teacherAssignments];
+                                    next[index] = { ...next[index], dayOfWeek: Number(value) as 0 | 1 | 2 | 3 | 4 | 5 | 6 } as TeacherAssignment;
+                                    form.setValue('teacherAssignments', next);
+                                }}>
+                                    <SelectTrigger><SelectValue placeholder={t('dayOfWeek')} /></SelectTrigger>
+                                    <SelectContent>{DAY_VALUES.map((day) => <SelectItem key={day} value={String(day)}>{t(`day_${day}`)}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <Input type="time" value={assignment.startTime} onChange={(e) => {
+                                    const next = [...teacherAssignments];
+                                    next[index] = { ...next[index], startTime: e.target.value } as TeacherAssignment;
+                                    form.setValue('teacherAssignments', next);
+                                }} />
+                                <Button type="button" variant="ghost" className="justify-self-start text-destructive" onClick={() => form.setValue('teacherAssignments', teacherAssignments.filter((_, i) => i !== index))}>
+                                    {t('remove')}
+                                </Button>
+                            </div>
+                        );
+                    })}
+                </div>
+                )}
                 <DialogFooter>
                     <Button type="button" variant="ghost" onClick={onCancel}>{t('cancel')}</Button>
                     <Button type="submit">{t('saveChanges')}</Button>
@@ -516,3 +755,4 @@ const EditUserForm = ({ user, onSubmit, onCancel, currentUser, t }: { user: User
         </FormProvider>
     );
 }
+

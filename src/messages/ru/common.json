@@ -75,7 +75,14 @@
       "ministryRejected": "Отклонено министерством",
       "ministryApproved": "Одобрено министерством",
       "rejected": "Отклонено"
-    }
+    },
+    "PENDING": "Ожидание",
+    "APPROVED": "Одобрено",
+    "REJECTED": "Отклонено",
+    "REVISION_REQUIRED": "Требует правок",
+    "DRAFT": "Черновик",
+    "CANCELLED": "Отменено",
+    "COMPLETED": "Завершено"
   },
   "Navigation": {
     "about": "О нас",

@@ -75,7 +75,14 @@
       "ministryRejected": "مرفوض من الوزارة",
       "ministryApproved": "مقبول من الوزارة",
       "rejected": "مرفوض"
-    }
+    },
+    "PENDING": "قيد الانتظار",
+    "APPROVED": "موافق عليه",
+    "REJECTED": "مرفوض",
+    "REVISION_REQUIRED": "يتطلب مراجعة",
+    "DRAFT": "مسودة",
+    "CANCELLED": "ملغى",
+    "COMPLETED": "مكتمل"
   },
   "Navigation": {
     "about": "من نحن",

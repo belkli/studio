@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type CSSProperties } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Loader2, MessageCircleQuestion, Send, User as UserIcon } from 'lucide-react';
+import { Bot, Loader2, MessageCircleQuestion, Send } from 'lucide-react';
 import { getAiHelpResponse } from '@/app/actions';
 import type { HelpAssistantResponse } from '@/ai/flows/help-assistant-flow';
 import { useAuth } from '@/hooks/use-auth';
@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link, usePathname } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
-
 
 interface Message {
     sender: 'user' | 'bot';
@@ -27,6 +26,8 @@ export function AiHelpAssistant() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [sidebarOffset, setSidebarOffset] = useState('0px');
     const { user } = useAuth();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
@@ -39,44 +40,106 @@ export function AiHelpAssistant() {
         };
     }, []);
 
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 1024px)');
+        const updateDesktopState = () => setIsDesktop(mediaQuery.matches);
+
+        updateDesktopState();
+        mediaQuery.addEventListener('change', updateDesktopState);
+
+        return () => {
+            mediaQuery.removeEventListener('change', updateDesktopState);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!isDesktop || !pathname.includes('/dashboard')) {
+            setSidebarOffset('0px');
+            return;
+        }
+
+        const updateSidebarOffset = () => {
+            const sidebar = document.querySelector('aside[data-state][data-side]');
+            if (!sidebar) {
+                setSidebarOffset('0px');
+                return;
+            }
+
+            const side = sidebar.getAttribute('data-side');
+            if (side !== 'right') {
+                setSidebarOffset('0px');
+                return;
+            }
+
+            const state = sidebar.getAttribute('data-state');
+            const collapsible = sidebar.getAttribute('data-collapsible');
+
+            if (state === 'collapsed' && collapsible === 'icon') {
+                setSidebarOffset('var(--sidebar-width-icon, 3rem)');
+                return;
+            }
+
+            if (state === 'collapsed' && collapsible === 'offcanvas') {
+                setSidebarOffset('0px');
+                return;
+            }
+
+            setSidebarOffset('var(--sidebar-width, 16rem)');
+        };
+
+        updateSidebarOffset();
+
+        const observer = new MutationObserver(updateSidebarOffset);
+        observer.observe(document.body, {
+            subtree: true,
+            attributes: true,
+            childList: true,
+            attributeFilter: ['data-state', 'data-collapsible', 'data-side'],
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [isDesktop, pathname]);
+
     const suggestedQuestions = useMemo(() => {
         const defaultQuestions = [
-            'איך מבטלים שיעור?',
-            'איפה אני רואה את יתרת שיעורי ההשלמה שלי?',
-            'איך מגישים טופס רסיטל?',
-            'כיצד אני מעדכן את הזמינות שלי? (למורים)',
+            '××™×š ×ž×‘×˜×œ×™× ×©×™×¢×•×¨?',
+            '××™×¤×” ×× ×™ ×¨×•××” ××ª ×™×ª×¨×ª ×©×™×¢×•×¨×™ ×”×”×©×œ×ž×” ×©×œ×™?',
+            '××™×š ×ž×’×™×©×™× ×˜×•×¤×¡ ×¨×¡×™×˜×œ?',
+            '×›×™×¦×“ ×× ×™ ×ž×¢×“×›×Ÿ ××ª ×”×–×ž×™× ×•×ª ×©×œ×™? (×œ×ž×•×¨×™×)',
         ];
 
         if (pathname.includes('/dashboard/schedule')) {
             return [
-                'איך אני מזמין שיעור השלמה?',
-                'האם אפשר לבטל שיעור מהשבוע הבא?',
-                'מהי מדיניות הביטולים של הקונסרבטוריון?',
-                'כיצד אוכל לסנכרן את היומן שלי?'
+                '××™×š ×× ×™ ×ž×–×ž×™×Ÿ ×©×™×¢×•×¨ ×”×©×œ×ž×”?',
+                '×”×× ××¤×©×¨ ×œ×‘×˜×œ ×©×™×¢×•×¨ ×ž×”×©×‘×•×¢ ×”×‘×?',
+                '×ž×”×™ ×ž×“×™× ×™×•×ª ×”×‘×™×˜×•×œ×™× ×©×œ ×”×§×•× ×¡×¨×‘×˜×•×¨×™×•×Ÿ?',
+                '×›×™×¦×“ ××•×›×œ ×œ×¡× ×›×¨×Ÿ ××ª ×”×™×•×ž×Ÿ ×©×œ×™?'
             ];
         }
         if (pathname.includes('/dashboard/billing')) {
             return [
-                'איפה אני מוצא את החשבוניות שלי?',
-                'איך מעדכנים פרטי אשראי?',
-                'מתי החיוב הבא שלי צפוי?',
-                'איך עובדת הנחת אחים?'
+                '××™×¤×” ×× ×™ ×ž×•×¦× ××ª ×”×—×©×‘×•× ×™×•×ª ×©×œ×™?',
+                '××™×š ×ž×¢×“×›× ×™× ×¤×¨×˜×™ ××©×¨××™?',
+                '×ž×ª×™ ×”×—×™×•×‘ ×”×‘× ×©×œ×™ ×¦×¤×•×™?',
+                '××™×š ×¢×•×‘×“×ª ×”× ×—×ª ××—×™×?'
             ];
         }
         if (pathname.includes('/dashboard/forms')) {
             return [
-                'כמה זמן לוקח לאשר טופס רסיטל?',
-                'הטופס שלי נדחה, מה עושים?',
-                'איך אני מוריד עותק PDF של טופס מאושר?',
-                'מי צריך לאשר את הטופס שלי?'
+                '×›×ž×” ×–×ž×Ÿ ×œ×•×§×— ×œ××©×¨ ×˜×•×¤×¡ ×¨×¡×™×˜×œ?',
+                '×”×˜×•×¤×¡ ×©×œ×™ × ×“×—×”, ×ž×” ×¢×•×©×™×?',
+                '××™×š ×× ×™ ×ž×•×¨×™×“ ×¢×•×ª×§ PDF ×©×œ ×˜×•×¤×¡ ×ž××•×©×¨?',
+                '×ž×™ ×¦×¨×™×š ×œ××©×¨ ××ª ×”×˜×•×¤×¡ ×©×œ×™?'
             ];
         }
         if (pathname.includes('/dashboard/admin')) {
             return [
-                'איך אני מאשר הרשמה של תלמיד חדש?',
-                'איפה אני מגדיר את מחירי החבילות?',
-                'איך אני שולח הכרזה לכל ההורים?',
-                'איפה אני רואה דוחות כספיים?'
+                '××™×š ×× ×™ ×ž××©×¨ ×”×¨×©×ž×” ×©×œ ×ª×œ×ž×™×“ ×—×“×©?',
+                '××™×¤×” ×× ×™ ×ž×’×“×™×¨ ××ª ×ž×—×™×¨×™ ×”×—×‘×™×œ×•×ª?',
+                '××™×š ×× ×™ ×©×•×œ×— ×”×›×¨×–×” ×œ×›×œ ×”×”×•×¨×™×?',
+                '××™×¤×” ×× ×™ ×¨×•××” ×“×•×—×•×ª ×›×¡×¤×™×™×?'
             ];
         }
         return defaultQuestions;
@@ -118,12 +181,12 @@ export function AiHelpAssistant() {
 
             const botMessage: Message = { sender: 'bot', text: response.answer, response };
             setMessages(prev => [...prev, botMessage]);
-        } catch (error) {
+        } catch (_error) {
             setMessages(prev => [...prev, { sender: 'bot', text: t('errorMessage') }]);
         } finally {
             setIsLoading(false);
         }
-    }, [input, user, t]);
+    }, [input, user, t, locale]);
 
     if (!user || !user.approved) return null;
 
@@ -131,9 +194,10 @@ export function AiHelpAssistant() {
         <>
             <Button
                 id="help-button"
-                className="fixed bottom-6 right-6 z-[64] h-14 w-14 rounded-full shadow-lg"
+                className="fixed z-50 h-14 w-14 rounded-full shadow-lg transition-[bottom,margin-inline-end] bottom-20 [inset-inline-end:1rem] lg:bottom-6 lg:[inset-inline-end:1.5rem]"
                 size="icon"
                 onClick={() => setIsOpen(true)}
+                style={isDesktop ? ({ marginInlineEnd: sidebarOffset } as CSSProperties) : undefined}
             >
                 <MessageCircleQuestion className="h-7 w-7" />
                 <span className="sr-only">{t('openAssistant')}</span>
@@ -152,9 +216,9 @@ export function AiHelpAssistant() {
                     <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
                         <div className="space-y-4 py-4">
                             {messages.map((message, index) => (
-                                <div key={index} className={cn("flex items-start gap-3", message.sender === 'user' ? 'justify-end' : 'justify-start')}>
+                                <div key={index} className={cn('flex items-start gap-3', message.sender === 'user' ? 'justify-end' : 'justify-start')}>
                                     {message.sender === 'bot' && <Avatar className="h-8 w-8"><AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback></Avatar>}
-                                    <div className={cn("rounded-lg px-4 py-2 max-w-[85%]", message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                    <div className={cn('rounded-lg px-4 py-2 max-w-[85%]', message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
                                         <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                                         {message.sender === 'bot' && message.response?.suggestedActions && (
                                             <div className="flex flex-col gap-2 mt-3 border-t pt-3 border-muted-foreground/20">
@@ -202,10 +266,7 @@ export function AiHelpAssistant() {
                             <Button
                                 type="submit"
                                 size="icon"
-                                className={cn(
-                                    "absolute top-1/2 h-7 w-7 -translate-y-1/2",
-                                    locale === 'he' || locale === 'ar' ? 'left-1.5' : 'right-1.5'
-                                )}
+                                className="absolute end-1.5 top-1/2 h-7 w-7 -translate-y-1/2"
                                 onClick={() => handleSendMessage()}
                                 disabled={isLoading || !input.trim()}
                             >
@@ -223,3 +284,5 @@ export function AiHelpAssistant() {
         </>
     );
 }
+
+

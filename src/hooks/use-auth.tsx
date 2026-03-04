@@ -1,4 +1,4 @@
-
+﻿
 /**
  * @fileoverview This is the central authentication and state management provider for the Harmonia application.
  * It uses React Context to provide user authentication status, user data, and all mock data
@@ -176,6 +176,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    let active = true;
+
+    const loadBootstrapData = async () => {
+      try {
+        const response = await fetch('/api/bootstrap', { cache: 'no-store' });
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        if (!active) return;
+
+        if (Array.isArray(payload.users)) setUsers(payload.users);
+        if (Array.isArray(payload.conservatoriums)) setConservatoriums(payload.conservatoriums);
+        if (Array.isArray(payload.lessons)) setMockLessons(payload.lessons);
+        if (Array.isArray(payload.forms)) setMockFormSubmissions(payload.forms);
+        if (Array.isArray(payload.events)) setMockEvents(payload.events);
+        if (Array.isArray(payload.rooms)) setMockRooms(payload.rooms);
+        if (Array.isArray(payload.payrolls)) setMockPayrolls(payload.payrolls);
+
+        if (Array.isArray(payload.users)) {
+          setUser((currentUser) => {
+            if (!currentUser) return currentUser;
+            const matched = payload.users.find((candidate: User) => candidate.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (!matched) return currentUser;
+            localStorage.setItem('harmonia-user', JSON.stringify(matched));
+            setAuthCookie();
+            return matched;
+          });
+        }
+      } catch (error) {
+        console.warn('[auth] bootstrap data fetch failed', error);
+      }
+    };
+
+    void loadBootstrapData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const router = useRouter();
   const { toast } = useToast();
 
@@ -191,7 +232,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedUser) {
       try {
         const parsedData = JSON.parse(storedUser);
-        const VALID_ROLES = ['student', 'teacher', 'parent', 'conservatorium_admin', 'site_admin', 'ministry_director', 'school_coordinator'];
+        const VALID_ROLES = ['student', 'teacher', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin', 'ministry_director', 'school_coordinator'];
         if (VALID_ROLES.includes(parsedData?.role)) {
           setUser(parsedData);
           setAuthCookie();
@@ -356,10 +397,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     switch (type) {
       case 'PIECE_COMPLETED':
-        newAchievement = { id: `ach-${Date.now()}`, type, title: 'יצירה הושלמה!', titleHe: 'יצירה הושלמה!', description: 'כל הכבוד על סיום יצירה חדשה.', icon: '🎵', points: 75, achievedAt: new Date().toISOString() };
+        newAchievement = { id: `ach-${Date.now()}`, type, title: '×™×¦×™×¨×” ×”×•×©×œ×ž×”!', titleHe: '×™×¦×™×¨×” ×”×•×©×œ×ž×”!', description: '×›×œ ×”×›×‘×•×“ ×¢×œ ×¡×™×•× ×™×¦×™×¨×” ×—×“×©×”.', icon: 'ðŸŽµ', points: 75, achievedAt: new Date().toISOString() };
         break;
       case 'PRACTICE_STREAK_7':
-        newAchievement = { id: `ach-${Date.now()}`, type, title: 'רצף אימונים של 7 ימים!', titleHe: 'רצף אימונים של 7 ימים!', description: 'התמדה היא המפתח להצלחה. כל הכבוד!', icon: '🔥', points: 50, achievedAt: new Date().toISOString() };
+        newAchievement = { id: `ach-${Date.now()}`, type, title: '×¨×¦×£ ××™×ž×•× ×™× ×©×œ 7 ×™×ž×™×!', titleHe: '×¨×¦×£ ××™×ž×•× ×™× ×©×œ 7 ×™×ž×™×!', description: '×”×ª×ž×“×” ×”×™× ×”×ž×¤×ª×— ×œ×”×¦×œ×—×”. ×›×œ ×”×›×‘×•×“!', icon: 'ðŸ”¥', points: 50, achievedAt: new Date().toISOString() };
         break;
     }
 
@@ -570,7 +611,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const composition = initialMockData.compositions.find(c => c.id === repertoireItem?.compositionId);
 
     if (!student || !repertoireItem || !composition) {
-      toast({ variant: 'destructive', title: 'שגיאה בהוספת מבצע' });
+      toast({ variant: 'destructive', title: '×©×’×™××” ×‘×”×•×¡×¤×ª ×ž×‘×¦×¢' });
       return;
     }
 
@@ -588,7 +629,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ? { ...event, program: [...event.program, newPerformance] }
         : event
     ));
-    toast({ title: `${student.name} נוסף/ה לתוכנית!` });
+    toast({ title: `${student.name} × ×•×¡×£/×” ×œ×ª×•×›× ×™×ª!` });
   };
   const removePerformanceFromEvent = (eventId: string, performanceId: string) => {
     setMockEvents(prev => prev.map(event =>
@@ -596,7 +637,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ? { ...event, program: event.program.filter(p => p.id !== performanceId) }
         : event
     ));
-    toast({ title: 'הביצוע הוסר מהתוכנית' });
+    toast({ title: '×”×‘×™×¦×•×¢ ×”×•×¡×¨ ×ž×”×ª×•×›× ×™×ª' });
   };
 
   const assignInstrumentToStudent = (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => {
@@ -616,7 +657,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         : inst
     ));
-    toast({ title: 'הכלי הושאל בהצלחה' });
+    toast({ title: '×”×›×œ×™ ×”×•×©××œ ×‘×”×¦×œ×—×”' });
   };
   const returnInstrument = (instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
@@ -624,7 +665,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
         : inst
     ));
-    toast({ title: 'הכלי הוחזר למלאי' });
+    toast({ title: '×”×›×œ×™ ×”×•×—×–×¨ ×œ×ž×œ××™' });
   };
 
   const addInstrument = (instrumentData: Partial<InstrumentInventory>) => {
@@ -635,19 +676,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...instrumentData,
     } as InstrumentInventory;
     setMockInstrumentInventory(prev => [...prev, newInstrument]);
-    toast({ title: 'הכלי התווסף למלאי בהצלחה' });
+    toast({ title: '×”×›×œ×™ ×”×ª×•×•×¡×£ ×œ×ž×œ××™ ×‘×”×¦×œ×—×”' });
   };
 
   const updateInstrument = (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
       inst.id === instrumentId ? { ...inst, ...instrumentData } : inst
     ));
-    toast({ title: 'פרטי הכלי עודכנו בהצלחה' });
+    toast({ title: '×¤×¨×˜×™ ×”×›×œ×™ ×¢×•×“×›× ×• ×‘×”×¦×œ×—×”' });
   };
 
   const deleteInstrument = (instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.filter(inst => inst.id !== instrumentId));
-    toast({ title: 'הכלי נמחק מהמלאי' });
+    toast({ title: '×”×›×œ×™ × ×ž×—×§ ×ž×”×ž×œ××™' });
   };
   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
     if (!user) return;
@@ -722,9 +763,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: `schol-app-${Date.now()}`,
       studentId: student.id,
       studentName: student.name,
-      instrument: student.instruments?.[0]?.instrument || 'לא צוין',
+      instrument: student.instruments?.[0]?.instrument || '×œ× ×¦×•×™×Ÿ',
       conservatoriumId: student.conservatoriumId || 'cons-1',
-      academicYear: 'תשפ"ה',
+      academicYear: '×ª×©×¤"×”',
       status: 'SUBMITTED',
       submittedAt: new Date().toISOString(),
       priorityScore: Math.floor(Math.random() * 50) + 40,
@@ -754,7 +795,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const addUser = (userData: Partial<User>, isAdminFlow = false): User => {
-    const isConservatoriumAdmin = userData.role === 'conservatorium_admin';
+    const isConservatoriumAdmin = userData.role === 'conservatorium_admin' || userData.role === 'delegated_admin';
     const newUser: User = {
       id: `user-${Date.now()}`,
       approved: isAdminFlow, // Admins auto-approve
@@ -788,17 +829,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...roomData
     } as Room;
     setMockRooms(prev => [...prev, newRoom]);
-    toast({ title: 'החדר נוסף בהצלחה' });
+    toast({ title: '×”×—×“×¨ × ×•×¡×£ ×‘×”×¦×œ×—×”' });
   };
 
   const updateRoom = (roomId: string, roomData: Partial<Room>) => {
     setMockRooms(prev => prev.map(r => r.id === roomId ? { ...r, ...roomData } : r));
-    toast({ title: 'פרטי החדר עודכנו' });
+    toast({ title: '×¤×¨×˜×™ ×”×—×“×¨ ×¢×•×“×›× ×•' });
   };
 
   const deleteRoom = (roomId: string) => {
     setMockRooms(prev => prev.filter(r => r.id !== roomId));
-    toast({ title: 'החדר נמחק' });
+    toast({ title: '×”×—×“×¨ × ×ž×—×§' });
   };
 
   const assignRepertoire = (studentId: string, compositionId: string) => {
@@ -934,3 +975,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+

@@ -75,7 +75,14 @@
       "ministryRejected": "Ministry Rejected",
       "ministryApproved": "Ministry Approved",
       "rejected": "Rejected"
-    }
+    },
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "REVISION_REQUIRED": "Revision Required",
+    "DRAFT": "Draft",
+    "CANCELLED": "Cancelled",
+    "COMPLETED": "Completed"
   },
   "Navigation": {
     "dashboard": "Dashboard",

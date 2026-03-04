@@ -550,7 +550,8 @@
       "teacher": "Учитель",
       "parent": "Родитель",
       "ministry_director": "Директор министерства",
-      "school_coordinator": "Школьный координатор"
+      "school_coordinator": "Школьный координатор",
+      "delegated_admin": "Delegated admin"
     },
     "validation": {
       "nameMin": "Имя должно содержать не менее 2 символов.",
@@ -613,6 +614,46 @@
     "seniorityWithTeachers": "Стаж преподавания",
     "teacherName": "Имя преподавателя",
     "yearsSeniority": "Лет стажа",
-    "saveChanges": "Сохранить изменения"
+    "saveChanges": "Сохранить изменения",
+    "delegatedPermissions": "Menu access",
+    "delegatedPermissionsHint": "Choose which sections this delegated admin can manage.",
+    "signDocumentsExcluded": "Sign documents is not available for delegated admins.",
+    "teacherInstruments": "Teacher instruments",
+    "linkedStudents": "Linked students",
+    "addStudent": "Add student",
+    "noLinkedStudents": "No linked students.",
+    "teacherAssignments": "Teacher assignments",
+    "addTeacher": "Add teacher",
+    "remove": "Remove",
+    "dayOfWeek": "Day of week",
+    "startTime": "Start time",
+    "duration": "Duration",
+    "selectTeacher": "Select teacher",
+    "selectInstrument": "Select instrument",
+    "day_0": "Day 0",
+    "day_1": "Day 1",
+    "day_2": "Day 2",
+    "day_3": "Day 3",
+    "day_4": "Day 4",
+    "day_5": "Day 5",
+    "day_6": "Day 6"
+  },
+  "AdminSections": {
+    "users": "users",
+    "registrations": "registrations",
+    "approvals": "approvals",
+    "announcements": "announcements",
+    "events": "events",
+    "scheduling": "scheduling",
+    "rooms": "rooms",
+    "rentals": "rentals",
+    "scholarships": "scholarships",
+    "donations": "donations",
+    "reports": "reports",
+    "payroll": "payroll",
+    "open_day": "open day",
+    "performances": "performances",
+    "alumni": "alumni",
+    "conservatorium_profile": "conservatorium profile"
   }
 }

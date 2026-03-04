@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -13,10 +13,41 @@ import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { routing } from '@/i18n/routing';
 
+type LocaleOption = {
+    code: 'he' | 'en' | 'ru' | 'ar';
+    displayCode: string;
+    flag: string;
+    nativeLabel: string;
+};
+
+const LOCALES: LocaleOption[] = [
+    {
+        code: 'he',
+        displayCode: '\u05E2\u05D1',
+        flag: '\uD83C\uDDEE\uD83C\uDDF1',
+        nativeLabel: '\u05E2\u05D1\u05E8\u05D9\u05EA',
+    },
+    { code: 'en', displayCode: 'EN', flag: '\uD83C\uDDEC\uD83C\uDDE7', nativeLabel: 'English' },
+    {
+        code: 'ru',
+        displayCode: 'RU',
+        flag: '\uD83C\uDDF7\uD83C\uDDFA',
+        nativeLabel: '\u0420\u0443\u0441\u0441\u043A\u0438\u0439',
+    },
+    {
+        code: 'ar',
+        displayCode: 'AR',
+        flag: '\uD83C\uDDF8\uD83C\uDDE6',
+        nativeLabel: '\u0627\u0644\u0639\u0631\u0628\u064A\u0629',
+    },
+];
+
+const LOCALE_STORAGE_KEY = 'harmonia_locale';
+
 export function LanguageSwitcher() {
     const [mounted, setMounted] = React.useState(false);
     const t = useTranslations('Navigation');
-    const locale = useLocale();
+    const locale = useLocale() as LocaleOption['code'];
     const router = useRouter();
     const pathname = usePathname();
 
@@ -44,26 +75,19 @@ export function LanguageSwitcher() {
         }
     }, [t]);
 
-    const handleLocaleChange = (newLocale: string) => {
+    const handleLocaleChange = (newLocale: LocaleOption['code']) => {
         if (newLocale === locale) return;
+        localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
         router.replace(normalizedPathname as any, { locale: newLocale as any });
     };
 
-    const languages = [
-        { code: 'he', label: '\u05e2\u05d1\u05e8\u05d9\u05ea' },
-        { code: 'en', label: 'English' },
-        { code: 'ar', label: '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' },
-        { code: 'ru', label: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439' },
-    ];
-
-    const currentLanguage = languages.find((lang) => lang.code === locale);
+    const currentLanguage = LOCALES.find((lang) => lang.code === locale) ?? LOCALES[1];
 
     if (!mounted) {
-        // Render a static placeholder first to avoid hydration mismatch from Radix IDs.
         return (
             <Button variant="ghost" size="sm" className="gap-2" disabled aria-label={switchLanguageLabel}>
                 <Languages className="h-4 w-4" />
-                <span className="hidden sm:inline-block w-16 h-5 animate-pulse bg-muted rounded-md" />
+                <span className="hidden h-5 w-16 animate-pulse rounded-md bg-muted sm:inline-block" />
             </Button>
         );
     }
@@ -73,20 +97,23 @@ export function LanguageSwitcher() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2" data-testid="language-switcher" aria-label={switchLanguageLabel}>
                     <Languages className="h-4 w-4" />
-                    <span className="hidden sm:inline-block">{currentLanguage?.label}</span>
+                    <span className="hidden sm:inline-block">{`${currentLanguage.flag} ${currentLanguage.displayCode}`}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                {languages.map((lang) => (
+                {LOCALES.map((lang) => (
                     <DropdownMenuItem
                         key={lang.code}
                         onClick={() => handleLocaleChange(lang.code)}
                         className={locale === lang.code ? 'bg-accent' : ''}
                     >
-                        {lang.label}
+                        <span className="me-2">{lang.flag}</span>
+                        <span className="me-2 font-medium">{lang.displayCode}</span>
+                        <span>{lang.nativeLabel}</span>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>
         </DropdownMenu>
     );
 }
+

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo } from 'react';
 import { driver, type DriveStep } from 'driver.js';
@@ -55,6 +55,7 @@ export function useWalkthrough() {
             parent: parentSteps,
             teacher: teacherSteps,
             conservatorium_admin: adminSteps,
+            delegated_admin: adminSteps,
             site_admin: adminSteps,
             school_coordinator: adminSteps,
             ministry_director: [],
@@ -110,3 +111,4 @@ export function WalkthroughManager() {
     useWalkthrough();
     return null;
 }
+

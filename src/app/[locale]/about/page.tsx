@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { conservatoriums } from "@/lib/data";
+import { useAuth } from "@/hooks/use-auth";
 import type { Conservatorium } from "@/lib/types";
 import {
     MapPin, Phone, Mail, Globe, Search, LocateFixed, Music2,
@@ -245,6 +245,7 @@ export default function AboutPage() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
     const locale = useLocale();
+    const { conservatoriums } = useAuth();
 
     const localizedConservatoriums = useMemo(() => {
         return conservatoriums.map(c => getLocalizedConservatorium(c, locale));
@@ -458,3 +459,4 @@ export default function AboutPage() {
         </div>
     );
 }
+

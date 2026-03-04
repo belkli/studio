@@ -1,9 +1,34 @@
-
+﻿
 import type { User as AuthUser } from 'firebase/auth';
 
-export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
+export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
 
 export type AccountType = 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
+export type AdminSection =
+  | 'users'
+  | 'registrations'
+  | 'approvals'
+  | 'announcements'
+  | 'events'
+  | 'scheduling'
+  | 'rooms'
+  | 'rentals'
+  | 'scholarships'
+  | 'donations'
+  | 'reports'
+  | 'payroll'
+  | 'open-day'
+  | 'performances'
+  | 'alumni'
+  | 'conservatorium-profile';
+
+export type TeacherAssignment = {
+  teacherId: string;
+  instrument: string;
+  lessonDurationMinutes: 30 | 45 | 60;
+  dayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  startTime: string;
+};
 
 export type InstrumentInfo = {
   instrument: string;
@@ -88,7 +113,7 @@ export type AchievementType =
   | 'PRACTICE_STREAK_30'         // 30 consecutive days
   | 'TOTAL_HOURS_10'             // 10 cumulative practice hours
   | 'TOTAL_HOURS_50'             // 50 cumulative hours
-  | 'TOTAL_HOURS_100'            // 100 cumulative hours — "Century Club"
+  | 'TOTAL_HOURS_100'            // 100 cumulative hours â€” "Century Club"
   // Repertoire milestones
   | 'PIECE_COMPLETED'            // Any piece marked COMPLETED
   | 'PIECES_COMPLETED_5'         // 5 pieces in lifetime
@@ -357,7 +382,7 @@ export type User = {
   schoolSymbol?: string;
   birthDate?: string;
   enrollmentDate?: string;
-  gender?: 'זכר' | 'נקבה';
+  gender?: string;
   city?: string;
   phone?: string;
   approved: boolean;
@@ -368,7 +393,7 @@ export type User = {
   parentId?: string;    // Link to parent user
   childIds?: string[];  // Link to child users
   students?: string[]; // For teachers/admins to list their students by ID
-  grade?: 'א' | 'ב' | 'ג' | 'ד' | 'ה' | 'ו' | 'ז' | 'ח' | 'ט' | 'י' | 'יא' | 'יב' | 'TBD';
+  grade?: string;
   // Teacher-specific fields from SDD-03 & SDD-13
   bio?: string;
   specialties?: TeacherSpecialty[];
@@ -399,6 +424,8 @@ export type User = {
   accountType?: AccountType;
   playingSchoolInfo?: PlayingSchoolInfo;
   isDelegatedAdmin?: boolean;
+  delegatedAdminPermissions?: AdminSection[];
+  teacherAssignments?: TeacherAssignment[];
   isPrimaryConservatoriumAdmin?: boolean;
 };
 
@@ -490,8 +517,8 @@ export type AdditionalMusicDetails = {
 export type PreviousRepertoire = {
   piece: string;
   composer: string;
-  scope: string; // היקף הביצוע
-  performedByHeart: boolean; // נוגן בע"פ
+  scope: string; // ×”×™×§×£ ×”×‘×™×¦×•×¢
+  performedByHeart: boolean; // × ×•×’×Ÿ ×‘×¢"×¤
 };
 
 
@@ -499,7 +526,7 @@ export type FormSubmission = {
   id: string;
   formType: string;
   academicYear?: string;
-  grade?: 'י' | 'יא' | 'יב';
+  grade?: string;
   conservatoriumName?: string;
   conservatoriumManagerName?: string;
   conservatoriumManagerPhone?: string;
@@ -682,7 +709,7 @@ export type PracticeLog = {
   studentId: string;
   teacherId?: string;
   lessonSlotId?: string;         // related lesson
-  date: string;                  // ISO Date — indexed for range queries
+  date: string;                  // ISO Date â€” indexed for range queries
   durationMinutes: number;
   pieces?: { title: string; composerId?: string; focusArea?: string }[];
   mood?: 'GREAT' | 'OKAY' | 'HARD';
@@ -1023,7 +1050,7 @@ export type EmptySlot = {
 };
 
 // ============================================================
-// SDD Enhancement II — New Types
+// SDD Enhancement II â€” New Types
 // ============================================================
 
 // SDD-P1: Real-Time Dashboard Aggregations
@@ -1084,7 +1111,7 @@ export type TeacherCompensation = {
 export type PayrollExportRow = {
   employeeId: string;
   employeeName: string;
-  idNumber?: string;                    // ת"ז
+  idNumber?: string;                    // ×ª"×–
   employmentType: 'EMPLOYEE' | 'FREELANCE';
   periodStart: string;                  // 'YYYY-MM-DD'
   periodEnd: string;
@@ -1247,34 +1274,34 @@ export type InstrumentCheckout = {
 
 // SDD-P3: Full Achievement Definitions
 export const ACHIEVEMENT_DEFINITIONS: Record<AchievementType, Omit<Achievement, 'id' | 'achievedAt'>> = {
-  PRACTICE_STREAK_7: { type: 'PRACTICE_STREAK_7', title: '7 Days of Practice', titleHe: 'שבוע של תרגול!', description: 'תרגלת 7 ימים ברצף', icon: '🔥', points: 50, },
-  PRACTICE_STREAK_30: { type: 'PRACTICE_STREAK_30', title: '30-Day Streak', titleHe: '30 יום ברצף!', description: 'חודש שלם של תרגול יומי', icon: '🌟', points: 200, },
-  TOTAL_HOURS_10: { type: 'TOTAL_HOURS_10', title: '10 Hours Practiced', titleHe: '10 שעות תרגול', description: 'הגעת ל-10 שעות תרגול מצטברות', icon: '⏱️', points: 100, },
-  TOTAL_HOURS_50: { type: 'TOTAL_HOURS_50', title: '50 Hours Practiced', titleHe: '50 שעות תרגול', description: 'הגעת ל-50 שעות תרגול מצטברות', icon: '🏅', points: 300, },
-  TOTAL_HOURS_100: { type: 'TOTAL_HOURS_100', title: 'Century Club', titleHe: '100 שעות תרגול!', description: 'מועדון המאה — 100 שעות תרגול', icon: '🏆', points: 500, },
-  PIECE_COMPLETED: { type: 'PIECE_COMPLETED', title: 'Piece Completed!', titleHe: 'יצירה הושלמה!', description: 'כל הכבוד על השלמת יצירה', icon: '🎵', points: 75, },
-  PIECES_COMPLETED_5: { type: 'PIECES_COMPLETED_5', title: '5 Pieces Mastered', titleHe: '5 יצירות!', description: 'השלמת 5 יצירות', icon: '🎶', points: 200, },
-  PERFORMANCE_READY: { type: 'PERFORMANCE_READY', title: 'Performance Ready', titleHe: 'מוכן להופעה!', description: 'יצירה ראשונה מוכנה להופעה', icon: '🎤', points: 100, },
-  YEARS_ENROLLED_1: { type: 'YEARS_ENROLLED_1', title: '1 Year Anniversary', titleHe: 'שנה בקונסרבטוריון!', description: 'שנה של לימודי מוזיקה', icon: '🎂', points: 100, },
-  YEARS_ENROLLED_3: { type: 'YEARS_ENROLLED_3', title: '3 Years Strong', titleHe: '3 שנים!', description: 'שלוש שנים של מסירות', icon: '💎', points: 300, },
-  FIRST_RECITAL: { type: 'FIRST_RECITAL', title: 'First Recital!', titleHe: 'הופעה ראשונה!', description: 'ניגנת בהופעה הראשונה שלך', icon: '🎭', points: 150, },
-  FIRST_LESSON: { type: 'FIRST_LESSON', title: 'First Lesson!', titleHe: 'שיעור ראשון!', description: 'השיעור הראשון שלך', icon: '🎹', points: 25, },
-  FORM_SUBMITTED: { type: 'FORM_SUBMITTED', title: 'Form Submitted', titleHe: 'טופס הוגש!', description: 'הגשת טופס ראשון', icon: '📋', points: 10, },
-  EXAM_REGISTERED: { type: 'EXAM_REGISTERED', title: 'Exam Registered', titleHe: 'נרשמת לבחינה!', description: 'נרשמת לבחינה ראשונה', icon: '📝', points: 50, },
-  EXAM_PASSED: { type: 'EXAM_PASSED', title: 'Exam Passed!', titleHe: 'עברת בחינה!', description: 'עברת בחינת משרד החינוך', icon: '🎓', points: 300, },
-  FIRST_PLAYING_SCHOOL_LESSON: { type: 'FIRST_PLAYING_SCHOOL_LESSON', title: 'School Music Debut', titleHe: 'שיעור נגינה ראשון בביה"ס!', description: 'התחלת ללמוד מוזיקה בבית הספר', icon: '🏫', points: 30, },
-  INSTRUMENT_COLLECTED: { type: 'INSTRUMENT_COLLECTED', title: 'Got My Instrument!', titleHe: 'קיבלתי כלי נגינה!', description: 'אספת את כלי הנגינה שלך מהקונסרבטוריון', icon: '🎺', points: 20, },
+  PRACTICE_STREAK_7: { type: 'PRACTICE_STREAK_7', title: '7 Days of Practice', titleHe: '×©×‘×•×¢ ×©×œ ×ª×¨×’×•×œ!', description: '×ª×¨×’×œ×ª 7 ×™×ž×™× ×‘×¨×¦×£', icon: 'ðŸ”¥', points: 50, },
+  PRACTICE_STREAK_30: { type: 'PRACTICE_STREAK_30', title: '30-Day Streak', titleHe: '30 ×™×•× ×‘×¨×¦×£!', description: '×—×•×“×© ×©×œ× ×©×œ ×ª×¨×’×•×œ ×™×•×ž×™', icon: 'ðŸŒŸ', points: 200, },
+  TOTAL_HOURS_10: { type: 'TOTAL_HOURS_10', title: '10 Hours Practiced', titleHe: '10 ×©×¢×•×ª ×ª×¨×’×•×œ', description: '×”×’×¢×ª ×œ-10 ×©×¢×•×ª ×ª×¨×’×•×œ ×ž×¦×˜×‘×¨×•×ª', icon: 'â±ï¸', points: 100, },
+  TOTAL_HOURS_50: { type: 'TOTAL_HOURS_50', title: '50 Hours Practiced', titleHe: '50 ×©×¢×•×ª ×ª×¨×’×•×œ', description: '×”×’×¢×ª ×œ-50 ×©×¢×•×ª ×ª×¨×’×•×œ ×ž×¦×˜×‘×¨×•×ª', icon: 'ðŸ…', points: 300, },
+  TOTAL_HOURS_100: { type: 'TOTAL_HOURS_100', title: 'Century Club', titleHe: '100 ×©×¢×•×ª ×ª×¨×’×•×œ!', description: '×ž×•×¢×“×•×Ÿ ×”×ž××” â€” 100 ×©×¢×•×ª ×ª×¨×’×•×œ', icon: 'ðŸ†', points: 500, },
+  PIECE_COMPLETED: { type: 'PIECE_COMPLETED', title: 'Piece Completed!', titleHe: '×™×¦×™×¨×” ×”×•×©×œ×ž×”!', description: '×›×œ ×”×›×‘×•×“ ×¢×œ ×”×©×œ×ž×ª ×™×¦×™×¨×”', icon: 'ðŸŽµ', points: 75, },
+  PIECES_COMPLETED_5: { type: 'PIECES_COMPLETED_5', title: '5 Pieces Mastered', titleHe: '5 ×™×¦×™×¨×•×ª!', description: '×”×©×œ×ž×ª 5 ×™×¦×™×¨×•×ª', icon: 'ðŸŽ¶', points: 200, },
+  PERFORMANCE_READY: { type: 'PERFORMANCE_READY', title: 'Performance Ready', titleHe: '×ž×•×›×Ÿ ×œ×”×•×¤×¢×”!', description: '×™×¦×™×¨×” ×¨××©×•× ×” ×ž×•×›× ×” ×œ×”×•×¤×¢×”', icon: 'ðŸŽ¤', points: 100, },
+  YEARS_ENROLLED_1: { type: 'YEARS_ENROLLED_1', title: '1 Year Anniversary', titleHe: '×©× ×” ×‘×§×•× ×¡×¨×‘×˜×•×¨×™×•×Ÿ!', description: '×©× ×” ×©×œ ×œ×™×ž×•×“×™ ×ž×•×–×™×§×”', icon: 'ðŸŽ‚', points: 100, },
+  YEARS_ENROLLED_3: { type: 'YEARS_ENROLLED_3', title: '3 Years Strong', titleHe: '3 ×©× ×™×!', description: '×©×œ×•×© ×©× ×™× ×©×œ ×ž×¡×™×¨×•×ª', icon: 'ðŸ’Ž', points: 300, },
+  FIRST_RECITAL: { type: 'FIRST_RECITAL', title: 'First Recital!', titleHe: '×”×•×¤×¢×” ×¨××©×•× ×”!', description: '× ×™×’× ×ª ×‘×”×•×¤×¢×” ×”×¨××©×•× ×” ×©×œ×š', icon: 'ðŸŽ­', points: 150, },
+  FIRST_LESSON: { type: 'FIRST_LESSON', title: 'First Lesson!', titleHe: '×©×™×¢×•×¨ ×¨××©×•×Ÿ!', description: '×”×©×™×¢×•×¨ ×”×¨××©×•×Ÿ ×©×œ×š', icon: 'ðŸŽ¹', points: 25, },
+  FORM_SUBMITTED: { type: 'FORM_SUBMITTED', title: 'Form Submitted', titleHe: '×˜×•×¤×¡ ×”×•×’×©!', description: '×”×’×©×ª ×˜×•×¤×¡ ×¨××©×•×Ÿ', icon: 'ðŸ“‹', points: 10, },
+  EXAM_REGISTERED: { type: 'EXAM_REGISTERED', title: 'Exam Registered', titleHe: '× ×¨×©×ž×ª ×œ×‘×—×™× ×”!', description: '× ×¨×©×ž×ª ×œ×‘×—×™× ×” ×¨××©×•× ×”', icon: 'ðŸ“', points: 50, },
+  EXAM_PASSED: { type: 'EXAM_PASSED', title: 'Exam Passed!', titleHe: '×¢×‘×¨×ª ×‘×—×™× ×”!', description: '×¢×‘×¨×ª ×‘×—×™× ×ª ×ž×©×¨×“ ×”×—×™× ×•×š', icon: 'ðŸŽ“', points: 300, },
+  FIRST_PLAYING_SCHOOL_LESSON: { type: 'FIRST_PLAYING_SCHOOL_LESSON', title: 'School Music Debut', titleHe: '×©×™×¢×•×¨ × ×’×™× ×” ×¨××©×•×Ÿ ×‘×‘×™×”"×¡!', description: '×”×ª×—×œ×ª ×œ×œ×ž×•×“ ×ž×•×–×™×§×” ×‘×‘×™×ª ×”×¡×¤×¨', icon: 'ðŸ«', points: 30, },
+  INSTRUMENT_COLLECTED: { type: 'INSTRUMENT_COLLECTED', title: 'Got My Instrument!', titleHe: '×§×™×‘×œ×ª×™ ×›×œ×™ × ×’×™× ×”!', description: '××¡×¤×ª ××ª ×›×œ×™ ×”× ×’×™× ×” ×©×œ×š ×ž×”×§×•× ×¡×¨×‘×˜×•×¨×™×•×Ÿ', icon: 'ðŸŽº', points: 20, },
 };
 
 // SDD-P3: Student Level Calculator
 export function calculateStudentLevel(achievements: Achievement[]): { level: number; points: number; title: string; titleHe: string } {
   const points = achievements.reduce((sum, a) => sum + (a.points ?? 0), 0);
   const levels = [
-    { level: 1, min: 0, title: 'Beginner', titleHe: 'מתחיל' },
-    { level: 2, min: 100, title: 'Learner', titleHe: 'לומד' },
-    { level: 3, min: 300, title: 'Practitioner', titleHe: 'מתרגל' },
-    { level: 4, min: 700, title: 'Musician', titleHe: 'מוזיקאי' },
-    { level: 5, min: 1500, title: 'Artist', titleHe: 'אמן' },
+    { level: 1, min: 0, title: 'Beginner', titleHe: '×ž×ª×—×™×œ' },
+    { level: 2, min: 100, title: 'Learner', titleHe: '×œ×•×ž×“' },
+    { level: 3, min: 300, title: 'Practitioner', titleHe: '×ž×ª×¨×’×œ' },
+    { level: 4, min: 700, title: 'Musician', titleHe: '×ž×•×–×™×§××™' },
+    { level: 5, min: 1500, title: 'Artist', titleHe: '××ž×Ÿ' },
   ];
   const current = [...levels].reverse().find(l => points >= l.min) ?? levels[0];
   return { level: current.level, points, title: current.title, titleHe: current.titleHe };
@@ -1447,7 +1474,7 @@ export type ComplianceStatusCard = {
 
 // SDD-P5: Ministry Exam Export
 export type MinistryExamRecord = {
-  studentIdNumber: string;              // ת"ז
+  studentIdNumber: string;              // ×ª"×–
   studentFirstName: string;
   studentLastName: string;
   dateOfBirth: string;                  // DD/MM/YYYY
@@ -1465,9 +1492,9 @@ export type MinistryExamRecord = {
 
 // Ministry instrument name mapping (Hebrew)
 export const MINISTRY_INSTRUMENT_NAMES: Record<string, string> = {
-  'PIANO': 'פסנתר', 'VIOLIN': 'כינור', 'CELLO': "צ'לו", 'GUITAR': 'גיטרה',
-  'FLUTE': 'חליל צד', 'CLARINET': 'קלרינט', 'TRUMPET': 'חצוצרה',
-  'SAXOPHONE': 'סקסופון', 'DRUMS': 'תופים', 'VOICE': 'שירה', 'THEORY': 'תאוריה',
+  'PIANO': '×¤×¡× ×ª×¨', 'VIOLIN': '×›×™× ×•×¨', 'CELLO': "×¦'×œ×•", 'GUITAR': '×’×™×˜×¨×”',
+  'FLUTE': '×—×œ×™×œ ×¦×“', 'CLARINET': '×§×œ×¨×™× ×˜', 'TRUMPET': '×—×¦×•×¦×¨×”',
+  'SAXOPHONE': '×¡×§×¡×•×¤×•×Ÿ', 'DRUMS': '×ª×•×¤×™×', 'VOICE': '×©×™×¨×”', 'THEORY': '×ª××•×¨×™×”',
 };
 
 // SDD-P8: AI Job Queue
@@ -1497,7 +1524,7 @@ export type ComplianceLog = {
   retentionPolicyApplied?: number;
 };
 
-// ── SDD-PS: Playing School Program ───────────────────────────────────────────
+// â”€â”€ SDD-PS: Playing School Program â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type PartnershipStatus = 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'ENDED';
 export type SubsidyModel = 'FULL_MUNICIPAL' | 'SPLIT' | 'PARENT_ONLY';
@@ -1599,3 +1626,4 @@ export type PlayingSchoolInterestLead = {
   notes?: string;
   createdAt: string;
 };
+

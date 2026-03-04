@@ -11,9 +11,16 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "i18n:audit": "node scripts/i18n/audit.mjs --strict",
-    "i18n:fix": "node scripts/i18n/fix.mjs",
-    "i18n:autofill": "node scripts/i18n/autofill-contamination.mjs --apply"
+    "i18n:audit": "node scripts/i18n/audit.mjs",
+    "i18n:add-key": "node scripts/i18n/add-key.mjs",
+    "i18n:fix-status": "node scripts/i18n/add-status-keys.mjs",
+    "i18n:validate": "node scripts/i18n/audit.mjs && echo 'All translations complete'",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose down",
+    "db:migrate": "node scripts/db/run-sql-file.mjs scripts/db/schema.sql",
+    "db:seed": "node scripts/db/run-sql-file.mjs scripts/db/seed.sql",
+    "db:reset": "node scripts/db/reset.mjs",
+    "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.29.0",

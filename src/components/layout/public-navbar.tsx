@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Link, usePathname } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
@@ -16,7 +16,7 @@ export function PublicNavbar() {
     const tCommon = useTranslations('Common.shared');
     const pathname = usePathname();
     const locale = useLocale();
-    const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
+    const isRtl = locale === 'he' || locale === 'ar';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -40,25 +40,20 @@ export function PublicNavbar() {
     };
 
     return (
-        <header className="px-4 lg:px-6 h-14 flex items-center bg-background/80 backdrop-blur-sm fixed top-0 w-full z-50 border-b">
-            <Link href="/" className="flex items-center justify-center shrink-0" onClick={() => setMobileOpen(false)}>
+        <header className="fixed top-0 z-50 flex h-14 w-full items-center border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
+            <Link href="/" className="flex shrink-0 items-center justify-center" onClick={() => setMobileOpen(false)}>
                 <Icons.logo className="h-6 w-6 text-primary" />
                 <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
             </Link>
 
-            <nav
-                className={cn(
-                    "hidden md:flex flex-1 gap-4 sm:gap-6",
-                    dir === 'rtl' ? "justify-end pe-8" : "justify-start ps-8"
-                )}
-            >
+            <nav className="hidden flex-1 items-center gap-4 ps-8 sm:gap-6 md:flex">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            "text-sm font-medium transition-colors hover:text-primary underline-offset-4 hover:underline",
-                            isActive(item.href) ? "text-primary" : "text-foreground/80"
+                            'text-sm font-medium underline-offset-4 transition-colors hover:text-primary hover:underline',
+                            isActive(item.href) ? 'text-primary' : 'text-foreground/80'
                         )}
                     >
                         {item.label}
@@ -66,9 +61,7 @@ export function PublicNavbar() {
                 ))}
             </nav>
 
-            <div className="flex-grow md:hidden" />
-
-            <div className="hidden md:flex items-center gap-2 shrink-0">
+            <div className="hidden shrink-0 items-center gap-2 md:flex">
                 <LanguageSwitcher />
                 <Button asChild variant="ghost">
                     <Link href="/login">{tNav('login')}</Link>
@@ -78,7 +71,7 @@ export function PublicNavbar() {
                 </Button>
             </div>
 
-            <div className="md:hidden flex items-center">
+            <div className="ms-auto flex items-center md:hidden">
                 <LanguageSwitcher />
                 {!mounted ? (
                     <Button variant="ghost" size="icon" disabled aria-label={tCommon('openMenu')}>
@@ -93,15 +86,19 @@ export function PublicNavbar() {
                                 <span className="sr-only">{tCommon('openMenu')}</span>
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side={dir === 'rtl' ? 'right' : 'left'} className="w-3/4">
-                            <div className="flex flex-col gap-4 mt-8">
-                                <Link href="/" className="flex items-center justify-start mb-4" onClick={() => setMobileOpen(false)}>
+                        <SheetContent side={isRtl ? 'right' : 'left'} className="w-3/4">
+                            <div className="mt-8 flex flex-col gap-4">
+                                <Link href="/" className="mb-4 flex items-center justify-start" onClick={() => setMobileOpen(false)}>
                                     <Icons.logo className="h-6 w-6 text-primary" />
                                     <span className="ms-2 text-xl font-bold">{tHome('title')}</span>
                                 </Link>
-                                {navItems.map(item => (
-                                    <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-                                        className={cn("text-lg font-medium", isActive(item.href) ? "text-primary" : "text-foreground/80")}>
+                                {navItems.map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn('text-lg font-medium', isActive(item.href) ? 'text-primary' : 'text-foreground/80')}
+                                    >
                                         {item.label}
                                     </Link>
                                 ))}
@@ -120,3 +117,4 @@ export function PublicNavbar() {
         </header>
     );
 }
+

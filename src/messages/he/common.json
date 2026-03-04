@@ -75,7 +75,14 @@
       "ministryRejected": "נדחה במשרד החינוך",
       "ministryApproved": "אושר במשרד החינוך",
       "rejected": "נדחה"
-    }
+    },
+    "PENDING": "ממתין לאישור",
+    "APPROVED": "מאושר",
+    "REJECTED": "נדחה",
+    "REVISION_REQUIRED": "נדרש תיקון",
+    "DRAFT": "טיוטה",
+    "CANCELLED": "בוטל",
+    "COMPLETED": "הושלם"
   },
   "Navigation": {
     "about": "אודות",
