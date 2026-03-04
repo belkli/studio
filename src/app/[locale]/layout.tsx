@@ -19,6 +19,7 @@ const rubik = Rubik({
 });
 
 export async function generateMetadata({ params }: { params: Promise<{locale: string}> }): Promise<Metadata> {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
     const { locale } = await params;
     let t: ((key: 'siteName' | 'siteDescription') => string);
     try {
@@ -31,6 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{locale: st
     }
     
     return {
+        metadataBase: new URL(siteUrl),
         title: {
             template: `%s | ${t('siteName')}`,
             default: t('siteName'),

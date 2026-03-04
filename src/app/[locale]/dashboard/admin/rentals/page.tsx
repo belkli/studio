@@ -1,9 +1,7 @@
-
-'use client';
+﻿'use client';
 
 import { InstrumentRentalDashboard } from "@/components/dashboard/harmonia/instrument-rental-dashboard";
-import { useTranslations } from "next-intl";
-
+import { useLocale, useTranslations } from "next-intl";
 
 import { useAdminGuard } from "@/hooks/use-admin-guard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +10,8 @@ export default function InstrumentRentalsPage() {
     const { user, isLoading } = useAdminGuard();
     const t = useTranslations('Sidebar');
     const tAdmin = useTranslations('AdminPages.rentals');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     if (isLoading || !user) {
         return (
@@ -26,10 +26,10 @@ export default function InstrumentRentalsPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
-                <h1 className="text-2xl font-bold">{t('rentals')}</h1>
-                <p className="text-muted-foreground">{tAdmin('subtitle')}</p>
+                <h1 className="text-2xl font-bold text-start">{t('rentals')}</h1>
+                <p className="text-muted-foreground text-start">{tAdmin('subtitle')}</p>
             </div>
             <InstrumentRentalDashboard />
         </div>

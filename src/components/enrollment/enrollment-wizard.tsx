@@ -7,6 +7,7 @@ import * as z from "zod";
 import { useTranslations, useLocale } from 'next-intl';
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useRouter } from "@/i18n/routing";
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { getTeacherMatches } from "@/app/actions";
@@ -22,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus, Sparkles } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
@@ -31,13 +32,14 @@ import type { StudentGoal, DayOfWeek, TimeRange, User, Package, LessonSlot } fro
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
+import type { OAuthProfile } from '@/lib/auth/oauth';
 
 
 const getParentSchema = (t: any) => z.object({
   parentFirstName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   parentLastName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   parentEmail: z.string().email(t('validation.invalidEmail')),
-  parentIdNumber: z.string().refine(isValidIsraeliID, t('validation.invalidID')),
+  parentIdNumber: z.string().min(1, t('validation.idRequired')).refine(isValidIsraeliID, t('validation.invalidID')),
   parentPhone: z.string().min(9, t('validation.invalidPhone')),
 });
 
@@ -53,7 +55,7 @@ const getSelfSchema = (t: any) => z.object({
   firstName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   lastName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   email: z.string().email(t('validation.invalidEmail')),
-  idNumber: z.string().refine(isValidIsraeliID, t('validation.invalidID')),
+  idNumber: z.string().min(1, t('validation.idRequired')).refine(isValidIsraeliID, t('validation.invalidID')),
   birthDate: z.string().min(1, t('validation.date')),
   phone: z.string().min(9, t('validation.invalidPhone')),
   schoolName: z.string().optional(),
@@ -128,7 +130,7 @@ const ENROLLMENT_DRAFT_STORAGE_PREFIX = 'enrollment-wizard-draft:v1';
 const DetailItem = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex justify-between py-1">
     <span className="text-muted-foreground">{label}:</span>
-    <span className="font-medium text-right">{value || '-'}</span>
+    <span className="font-medium text-start">{value || '-'}</span>
   </div>
 );
 
@@ -248,8 +250,108 @@ const BookFirstLessonStep = () => {
 
 const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void }) => {
   const t = useTranslations('EnrollmentWizard');
+  const locale = useLocale();
   const form = useFormContext<FormData>();
-  const registrationType = form.watch("registrationType");
+  const { toast } = useToast();
+  const registrationType = form.watch('registrationType');
+  const { user, users, conservatoriums: authConservatoriums, conservatoriumInstruments, lessonPackages } = useAuth();
+  const isSiteAdmin = user?.role === 'site_admin';
+  const selectedConservatoriumId = form.watch('conservatorium');
+  const selectedInstrument = form.watch('instrument');
+  const selectedDuration = form.watch('lessonDuration') || 45;
+  const selectedTeacherId = form.watch('teacherId');
+  const dayOptions = getDayOptions(t);
+  const timeOptions = getTimeOptions(t);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [suggestedTeacher, setSuggestedTeacher] = useState<{ id: string; score: number; reasons: string[] } | null>(null);
+
+  useEffect(() => {
+    if (!isSiteAdmin && user?.conservatoriumId) {
+      form.setValue('conservatorium', user.conservatoriumId, { shouldValidate: true });
+    }
+  }, [form, isSiteAdmin, user?.conservatoriumId]);
+
+  const adminConservatoriumOptions = authConservatoriums.map((item) => ({ value: item.id, label: item.name }));
+  const instrumentLabel = (item: { names: { he: string; en: string; ar?: string; ru?: string } }) => {
+    if (locale === 'he') return item.names.he;
+    if (locale === 'ar') return item.names.ar || item.names.en;
+    if (locale === 'ru') return item.names.ru || item.names.en;
+    return item.names.en;
+  };
+
+  const availableInstruments = conservatoriumInstruments
+    .filter((item) => item.isActive && item.availableForRegistration && item.conservatoriumId === selectedConservatoriumId)
+    .map((item) => ({ value: item.names.he, label: instrumentLabel(item) }));
+
+  const availablePackages = lessonPackages.filter((item) => {
+    if (!item.isActive) return false;
+    if (item.conservatoriumId !== selectedConservatoriumId) return false;
+    if (item.durationMinutes !== selectedDuration) return false;
+    if (item.instruments && item.instruments.length > 0) {
+      return item.instruments.includes(selectedInstrument || '');
+    }
+    return true;
+  });
+
+  const availableTeachers = users.filter((item) => {
+    if (item.role !== 'teacher' || !item.approved) return false;
+    if (selectedConservatoriumId && item.conservatoriumId !== selectedConservatoriumId) return false;
+    if (!selectedInstrument) return true;
+    return (item.instruments || []).some((instrument) => instrument.instrument === selectedInstrument);
+  });
+
+  const runTeacherSuggestion = async () => {
+    if (!selectedInstrument || !selectedConservatoriumId) {
+      toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.selectInstrumentFirst') });
+      return;
+    }
+
+    const fallbackBirthDate = registrationType === 'self' ? '2005-01-01' : '2012-01-01';
+    const birthDate = registrationType === 'self'
+      ? (form.getValues('selfDetails.birthDate') || fallbackBirthDate)
+      : (form.getValues('studentDetails.childBirthDate') || fallbackBirthDate);
+
+    const teacherProfiles = availableTeachers.map((item) => ({
+      id: item.id,
+      name: item.name,
+      bio: item.bio || '',
+      specialties: (item.specialties || []).map((specialty) => String(specialty)),
+      teachingLanguages: item.teachingLanguages || [],
+    }));
+
+    if (teacherProfiles.length === 0) {
+      toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.noTeachersForFilters') });
+      return;
+    }
+
+    setIsSuggesting(true);
+    setSuggestedTeacher(null);
+    try {
+      const result = await getTeacherMatches({
+        studentProfile: {
+          instrument: selectedInstrument,
+          level: form.getValues('level'),
+          goals: form.getValues('goals'),
+          preferredDays: form.getValues('availableDays'),
+          preferredTimes: form.getValues('availableTimes'),
+          isVirtualOk: form.getValues('isVirtualOk'),
+          birthDate,
+        },
+        availableTeachers: teacherProfiles,
+        locale,
+      });
+      const topMatch = result.matches[0];
+      if (!topMatch) {
+        toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.noAiSuggestion') });
+        return;
+      }
+      setSuggestedTeacher({ id: topMatch.teacherId, score: topMatch.score, reasons: topMatch.matchReasons });
+    } catch {
+      toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.aiError') });
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
 
   return (
     <FormProvider {...form}>
@@ -258,24 +360,19 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
           <CardHeader>
             <CardTitle>{t('admin.enrollSection')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6" dir="rtl">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2" dir="rtl">
             <FormField name="registrationType" control={form.control} render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormLabel>{t('role.title')}</FormLabel>
                 <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    className="flex flex-col gap-3"
-                    dir="rtl"
-                  >
-                    <FormItem className="flex items-center space-x-2 space-x-reverse justify-start border rounded-md p-4 bg-background/50 hover:bg-accent transition-colors">
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3" dir="rtl">
+                    <FormItem className="flex items-center justify-start space-x-2 space-x-reverse rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="parent" /></FormControl>
-                      <FormLabel className="font-normal flex-1 cursor-pointer">{t('role.parent')}</FormLabel>
+                      <FormLabel className="flex-1 cursor-pointer font-normal">{t('role.parent')}</FormLabel>
                     </FormItem>
-                    <FormItem className="flex items-center space-x-2 space-x-reverse justify-start border rounded-md p-4 bg-background/50 hover:bg-accent transition-colors">
+                    <FormItem className="flex items-center justify-start space-x-2 space-x-reverse rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="self" /></FormControl>
-                      <FormLabel className="font-normal flex-1 cursor-pointer">{t('role.self')}</FormLabel>
+                      <FormLabel className="flex-1 cursor-pointer font-normal">{t('role.self')}</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -285,7 +382,11 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
             <FormField name="conservatorium" render={({ field }) => (
               <FormItem className="flex flex-col" dir="rtl">
                 <FormLabel>{t('role.conservatorium')}</FormLabel>
-                <Combobox options={conservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
+                {isSiteAdmin ? (
+                  <Combobox options={adminConservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
+                ) : (
+                  <div className="rounded-md bg-muted p-3 text-start text-sm">{user?.conservatoriumName}</div>
+                )}
                 <FormMessage />
               </FormItem>
             )} />
@@ -293,15 +394,15 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
         </Card>
 
         {registrationType === 'parent' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader><CardTitle>{t('details.parentTitle')}</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <FormField name="parentDetails.parentFirstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 <FormField name="parentDetails.parentLastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               </CardContent>
             </Card>
             <Card>
@@ -317,29 +418,24 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
         {registrationType === 'self' && (
           <Card>
             <CardHeader><CardTitle>{t('details.selfTitle')}</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField name="selfDetails.firstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               <FormField name="selfDetails.lastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-              <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-              <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+              <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+              <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-              <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+              <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
             </CardContent>
           </Card>
         )}
 
         <Card>
           <CardHeader><CardTitle>{t('musical.title')}</CardTitle></CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormField name="instrument" render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('musical.instrument')}</FormLabel>
-                <Combobox
-                  options={instruments.map(i => ({ value: i, label: i }))}
-                  selectedValue={field.value}
-                  onSelectedValueChange={field.onChange}
-                  placeholder={t('musical.instrumentPlaceholder')}
-                />
+                <Combobox options={availableInstruments} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('musical.instrumentPlaceholder')} />
                 <FormMessage />
               </FormItem>
             )} />
@@ -348,10 +444,10 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                 <FormLabel>{t('musical.level')}</FormLabel>
                 <Combobox
                   options={[
-                    { value: "Beginner", label: t('musical.levels.Beginner') },
-                    { value: "Intermediate", label: t('musical.levels.Intermediate') },
-                    { value: "Advanced", label: t('musical.levels.Advanced') },
-                    { value: "Exam Candidate", label: t('musical.levels.Exam') },
+                    { value: 'Beginner', label: t('musical.levels.Beginner') },
+                    { value: 'Intermediate', label: t('musical.levels.Intermediate') },
+                    { value: 'Advanced', label: t('musical.levels.Advanced') },
+                    { value: 'Exam Candidate', label: t('musical.levels.Exam') },
                   ]}
                   selectedValue={field.value}
                   onSelectedValueChange={field.onChange}
@@ -365,9 +461,9 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                 <FormLabel>{t('musical.duration')}</FormLabel>
                 <Combobox
                   options={[
-                    { value: "30", label: t('musical.minutes', { min: 30 }) },
-                    { value: "45", label: t('musical.minutes', { min: 45 }) },
-                    { value: "60", label: t('musical.minutes', { min: 60 }) },
+                    { value: '30', label: t('musical.minutes', { min: 30 }) },
+                    { value: '45', label: t('musical.minutes', { min: 45 }) },
+                    { value: '60', label: t('musical.minutes', { min: 60 }) },
                   ]}
                   selectedValue={String(field.value)}
                   onSelectedValueChange={(v) => field.onChange(Number(v))}
@@ -379,20 +475,151 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
             <FormField name="packageId" control={form.control} render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('summary.package')}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                <Select onValueChange={field.onChange} value={field.value} dir="rtl">
                   <FormControl>
                     <SelectTrigger dir="rtl"><SelectValue placeholder={t('package.placeholder')} /></SelectTrigger>
                   </FormControl>
                   <SelectContent dir="rtl">
-                    {(useAuth().mockPackages || []).map(p => <SelectItem key={p.id} value={p.id} dir="rtl">{p.title} - {p.price}₪</SelectItem>)}
+                    {availablePackages.map((p) => <SelectItem key={p.id} value={p.id} dir="rtl">{p.names.he} - {p.priceILS} ILS</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )} />
-            <div className="md:col-span-2"><FormField name="password" render={({ field }) => (<FormItem> <FormLabel>{t('details.password')}</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} /></div>
+            <div className="md:col-span-2"><FormField name="password" render={({ field }) => (<FormItem> <FormLabel>{t('details.password')}</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} /></div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader><CardTitle>{t('admin.teacherAssignmentTitle')}</CardTitle></CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">{t('admin.manualAssign')}</p>
+              <FormField name="teacherId" control={form.control} render={({ field }) => (
+                <FormItem>
+                  <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger><SelectValue placeholder={t('admin.selectTeacher')} /></SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableTeachers.map((teacher) => (
+                        <SelectItem key={teacher.id} value={teacher.id}>{teacher.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+
+            <div className="space-y-3 border-t pt-4">
+              <p className="text-sm font-medium">{t('admin.aiSuggest')}</p>
+              <p className="text-xs text-muted-foreground">{t('admin.aiSuggestHint')}</p>
+              <FormField name="availableDays" render={() => (
+                <FormItem>
+                  <FormLabel>{t('schedule.days')}</FormLabel>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {dayOptions.map((day) => (
+                      <FormField
+                        key={day.id}
+                        name="availableDays"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center gap-2 rounded-md border p-2">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(day.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    field.onChange([...(field.value || []), day.id]);
+                                  } else {
+                                    field.onChange((field.value || []).filter((value: string) => value !== day.id));
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">{day.label}</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                  </div>
+                </FormItem>
+              )} />
+
+              <FormField name="availableTimes" render={() => (
+                <FormItem>
+                  <FormLabel>{t('schedule.times')}</FormLabel>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    {timeOptions.map((time) => (
+                      <FormField
+                        key={time.id}
+                        name="availableTimes"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center gap-2 rounded-md border p-2">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(time.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    field.onChange([...(field.value || []), time.id]);
+                                  } else {
+                                    field.onChange((field.value || []).filter((value: string) => value !== time.id));
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">{time.label}</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                  </div>
+                </FormItem>
+              )} />
+
+              <FormField name="isVirtualOk" control={form.control} render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('schedule.virtual')}</FormLabel>
+                  <Select dir="rtl" value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger><SelectValue placeholder={t('schedule.virtual')} /></SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="yes">{t('schedule.virtualOptions.yes')}</SelectItem>
+                      <SelectItem value="no">{t('schedule.virtualOptions.no')}</SelectItem>
+                      <SelectItem value="only">{t('schedule.virtualOptions.only')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )} />
+
+              <Button type="button" variant="outline" onClick={runTeacherSuggestion} disabled={isSuggesting}>
+                {isSuggesting ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Sparkles className="me-2 h-4 w-4" />}
+                {t('admin.getSuggestion')}
+              </Button>
+
+              {suggestedTeacher && (
+                <Card className={cn('border-dashed', selectedTeacherId === suggestedTeacher.id && 'border-primary')}>
+                  <CardHeader>
+                    <CardTitle className="text-base">
+                      {availableTeachers.find((item) => item.id === suggestedTeacher.id)?.name || t('summary.notSelected')}
+                    </CardTitle>
+                    <CardDescription>{t('admin.aiScore', { score: suggestedTeacher.score })}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {suggestedTeacher.reasons.map((reason) => (
+                      <p key={reason} className="text-sm text-muted-foreground">{reason}</p>
+                    ))}
+                    <Button type="button" onClick={() => form.setValue('teacherId', suggestedTeacher.id, { shouldValidate: true })}>
+                      {t('admin.useSuggestion')}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="flex justify-end">
           <Button type="submit">{t('admin.submit')}</Button>
         </div>
@@ -401,9 +628,10 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
   )
 }
 
-export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolean }) {
+export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { isAdminFlow?: boolean; teacherIdFromQuery?: string }) {
   const t = useTranslations('EnrollmentWizard');
   const locale = useLocale();
+  const searchParams = useSearchParams();
 
   const steps = [
     { id: 'role', title: t('steps.role') },
@@ -424,9 +652,11 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [teacherMatches, setTeacherMatches] = useState<MatchTeacherOutput | null>(null);
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
+  const [oauthPrefill, setOauthPrefill] = useState<OAuthProfile | null>(null);
+  const isOauthRegistration = Boolean(oauthPrefill);
   const { toast } = useToast();
   const router = useRouter();
-  const { addUser, mockPackages, addLesson, addToWaitlist } = useAuth();
+  const { user, users, addUser, addLesson, addToWaitlist, lessonPackages, conservatoriumInstruments, conservatoriums: authConservatoriums } = useAuth();
 
   const formSchema = useMemo(() => getFormSchema(t), [t]);
 
@@ -459,6 +689,100 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
   });
 
   const draftStorageKey = `${ENROLLMENT_DRAFT_STORAGE_PREFIX}:${locale}:${isAdminFlow ? 'admin' : 'public'}`;
+  const teacherIdQueryParam = (teacherIdFromQuery || searchParams.get('teacher') || '').trim();
+
+  const resolveTeacherInstrument = useCallback((teacher: User) => {
+    const teacherInstrument = (teacher.instruments || []).find((item) => Boolean(item?.instrument))?.instrument;
+    if (!teacherInstrument) return '';
+
+    const matchedInstrument = conservatoriumInstruments.find((instrument) =>
+      instrument.conservatoriumId === teacher.conservatoriumId &&
+      (
+        instrument.id === teacherInstrument ||
+        instrument.names.he === teacherInstrument ||
+        instrument.names.en === teacherInstrument ||
+        instrument.names.ar === teacherInstrument ||
+        instrument.names.ru === teacherInstrument
+      )
+    );
+
+    if (matchedInstrument) return matchedInstrument.names.he;
+    return teacherInstrument;
+  }, [conservatoriumInstruments]);
+
+
+  useEffect(() => {
+    if (isAdminFlow) return;
+    if (searchParams.get('source') !== 'oauth') return;
+
+    const raw = sessionStorage.getItem('oauth_prefill');
+    if (!raw) return;
+
+    try {
+      const parsed = JSON.parse(raw) as OAuthProfile;
+      if (!parsed.email) return;
+      setOauthPrefill(parsed);
+      form.setValue('registrationType', 'self');
+      form.setValue('selfDetails.firstName', parsed.firstName || '');
+      form.setValue('selfDetails.lastName', parsed.lastName || '');
+      form.setValue('selfDetails.email', parsed.email);
+      form.setValue('parentDetails.parentFirstName', parsed.firstName || '');
+      form.setValue('parentDetails.parentLastName', parsed.lastName || '');
+      form.setValue('parentDetails.parentEmail', parsed.email);
+    } catch {
+      sessionStorage.removeItem('oauth_prefill');
+    }
+  }, [form, isAdminFlow, searchParams]);
+
+  useEffect(() => {
+    if (isAdminFlow) return;
+    if (!teacherIdQueryParam) return;
+
+    const matchedTeacher = users.find((candidate) => candidate.id === teacherIdQueryParam && candidate.role === 'teacher' && candidate.approved);
+    if (!matchedTeacher) return;
+
+    if (matchedTeacher.conservatoriumId) {
+      form.setValue('conservatorium', matchedTeacher.conservatoriumId, { shouldValidate: true });
+    }
+
+    const instrumentFromTeacher = resolveTeacherInstrument(matchedTeacher);
+    if (instrumentFromTeacher) {
+      form.setValue('instrument', instrumentFromTeacher, { shouldValidate: true });
+    }
+
+    form.setValue('teacherId', matchedTeacher.id, { shouldValidate: true });
+  }, [form, isAdminFlow, resolveTeacherInstrument, teacherIdQueryParam, users]);
+
+  const instrumentLabelByLocale = useCallback((item: { names: { he: string; en: string; ar?: string; ru?: string } }) => {
+    if (locale === 'he') return item.names.he;
+    if (locale === 'ar') return item.names.ar || item.names.en;
+    if (locale === 'ru') return item.names.ru || item.names.en;
+    return item.names.en;
+  }, [locale]);
+
+  const selectedConservatoriumId = form.watch('conservatorium');
+  const selectedDuration = form.watch('lessonDuration') || 45;
+  const selectedInstrument = form.watch('instrument');
+
+  const filteredInstrumentOptions = useMemo(() => {
+    const filtered = conservatoriumInstruments
+      .filter((item) => item.isActive && item.availableForRegistration && item.conservatoriumId === selectedConservatoriumId)
+      .map((item) => ({ value: item.names.he, label: instrumentLabelByLocale(item) }));
+
+    return filtered.length > 0 ? filtered : instruments.map((item) => ({ value: item, label: item }));
+  }, [conservatoriumInstruments, selectedConservatoriumId, instrumentLabelByLocale]);
+
+  const filteredPackages = useMemo(() => {
+    return lessonPackages.filter((item) => {
+      if (!item.isActive) return false;
+      if (item.conservatoriumId !== selectedConservatoriumId) return false;
+      if (item.durationMinutes !== selectedDuration) return false;
+      if (item.instruments && item.instruments.length > 0) {
+        return item.instruments.includes(selectedInstrument || '');
+      }
+      return true;
+    });
+  }, [lessonPackages, selectedConservatoriumId, selectedDuration, selectedInstrument]);
 
   const clearDraft = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -567,7 +891,10 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
     let fieldsToValidate: any[] = [];
     switch (currentStepId) {
       case 'role': fieldsToValidate = ['registrationType', 'conservatorium']; break;
-      case 'details': fieldsToValidate = registrationType === 'parent' ? ['parentDetails', 'studentDetails', 'password'] : ['selfDetails', 'password']; break;
+      case 'details':
+        fieldsToValidate = registrationType === 'parent' ? ['parentDetails', 'studentDetails'] : ['selfDetails'];
+        if (!isOauthRegistration) fieldsToValidate.push('password');
+        break;
       case 'musical': fieldsToValidate = ['instrument', 'level', 'lessonDuration']; break;
       case 'schedule': fieldsToValidate = ['availableDays', 'availableTimes', 'isVirtualOk']; break;
       case 'matching': fieldsToValidate = ['teacherId']; break;
@@ -620,7 +947,26 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       return;
     }
 
+    if (oauthPrefill) {
+      const now = new Date().toISOString();
+      newUser.registrationSource = oauthPrefill.provider;
+      newUser.avatarUrl = newUser.avatarUrl || oauthPrefill.avatarUrl;
+      newUser.oauthProviders = [{
+        userId: '',
+        provider: oauthPrefill.provider,
+        providerUserId: oauthPrefill.providerUserId,
+        providerEmail: oauthPrefill.email,
+        linkedAt: now,
+        lastUsedAt: now,
+      }];
+    } else {
+      newUser.registrationSource = newUser.registrationSource || 'email';
+    }
+
     const createdUser = addUser(newUser as any, isAdminFlow);
+    if (oauthPrefill) {
+      createdUser.oauthProviders = (createdUser.oauthProviders || []).map((item) => ({ ...item, userId: createdUser.id }));
+    }
 
     const conservatorium = conservatoriums.find(c => c.name === data.conservatorium);
 
@@ -632,8 +978,10 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       preferredDays: data.availableDays as DayOfWeek[],
       preferredTimes: data.availableTimes as TimeRange[],
     });
-
     clearDraft();
+    if (oauthPrefill) {
+      sessionStorage.removeItem('oauth_prefill');
+    }
     setIsSubmitted(true);
     toast({
       title: t('toasts.waitlistTitle'),
@@ -673,7 +1021,26 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
       return;
     }
 
+    if (oauthPrefill) {
+      const now = new Date().toISOString();
+      newUser.registrationSource = oauthPrefill.provider;
+      newUser.avatarUrl = newUser.avatarUrl || oauthPrefill.avatarUrl;
+      newUser.oauthProviders = [{
+        userId: '',
+        provider: oauthPrefill.provider,
+        providerUserId: oauthPrefill.providerUserId,
+        providerEmail: oauthPrefill.email,
+        linkedAt: now,
+        lastUsedAt: now,
+      }];
+    } else {
+      newUser.registrationSource = newUser.registrationSource || 'email';
+    }
+
     const createdUser = addUser(newUser as any, isAdminFlow);
+    if (oauthPrefill) {
+      createdUser.oauthProviders = (createdUser.oauthProviders || []).map((item) => ({ ...item, userId: createdUser.id }));
+    }
 
 
     if (data.firstLessonDate && data.firstLessonTime) {
@@ -689,8 +1056,10 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
         bookingSource: isAdminFlow ? 'ADMIN' : (data.registrationType === 'parent' ? 'PARENT' : 'STUDENT_SELF'),
       });
     }
-
     clearDraft();
+    if (oauthPrefill) {
+      sessionStorage.removeItem('oauth_prefill');
+    }
     setIsSubmitted(true);
     toast({
       title: t('toasts.successTitle'),
@@ -742,21 +1111,19 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
 
 
   const formData = form.getValues();
-  const selectedPackage = mockPackages.find(p => p.id === formData.packageId);
+  const selectedPackage = filteredPackages.find(p => p.id === formData.packageId);
   const paymentSchedule = useMemo(() => {
     if (!selectedPackage) return [];
 
     const installmentsByType: Record<string, number> = {
-      TRIAL: 1,
-      PACK_5: 5,
-      PACK_10: 10,
-      MONTHLY: 5,
-      YEARLY: 12,
-      ADHOC_SINGLE: 1,
+      single: 1,
+      monthly: 4,
+      semester: 4,
+      annual: 12,
     };
 
     const installments = installmentsByType[selectedPackage.type] ?? 1;
-    const amount = Number((selectedPackage.price / installments).toFixed(2));
+    const amount = Number((selectedPackage.priceILS / installments).toFixed(2));
     const formatter = new Intl.DateTimeFormat(
       locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
       { day: '2-digit', month: '2-digit', year: 'numeric' }
@@ -809,15 +1176,15 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                             dir="rtl"
                           >
                             <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
-                              <FormLabel className="font-normal flex-1 cursor-pointer text-right">{t('role.parent')}</FormLabel>
+                              <FormLabel className="font-normal flex-1 cursor-pointer text-start">{t('role.parent')}</FormLabel>
                               <FormControl><RadioGroupItem value="parent" /></FormControl>
                             </FormItem>
                             <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
-                              <FormLabel className="font-normal flex-1 cursor-pointer text-right">{t('role.self')}</FormLabel>
+                              <FormLabel className="font-normal flex-1 cursor-pointer text-start">{t('role.self')}</FormLabel>
                               <FormControl><RadioGroupItem value="self" /></FormControl>
                             </FormItem>
                             <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
-                              <div className="flex flex-col flex-1 text-right">
+                              <div className="flex flex-col flex-1 text-start">
                                 <FormLabel className="font-medium cursor-pointer">{t('role.playingSchool')}</FormLabel>
                                 <span className="text-xs text-muted-foreground">{t('role.playingSchoolDescription')}</span>
                               </div>
@@ -858,7 +1225,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                                 type="button"
                                 key={s.symbol}
                                 variant="outline"
-                                className="justify-start h-auto py-3 px-4 text-right"
+                                className="justify-start h-auto py-3 px-4 text-start"
                                 onClick={() => router.push(`/register/school?token=mock-token-${s.symbol}`)}
                                 dir="rtl"
                               >
@@ -911,9 +1278,9 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                           <div className="grid grid-cols-2 gap-4">
                             <FormField name="parentDetails.parentFirstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                             <FormField name="parentDetails.parentLastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                            <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                            <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                            <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} readOnly={isOauthRegistration} disabled={isOauthRegistration} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           </div>
                         </div>
                         <div className="space-y-4">
@@ -932,20 +1299,21 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         <div className="grid grid-cols-2 gap-4">
                           <FormField name="selfDetails.firstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           <FormField name="selfDetails.lastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                          <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                          <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                          <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} readOnly={isOauthRegistration} disabled={isOauthRegistration} /></FormControl> <FormMessage /> </FormItem>)} />
+                          <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                          <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                          <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                         </div>
                       </div>
                     )}
-                    <FormField name="password" render={({ field }) => (<FormItem> <FormLabel>{t('details.password')}</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-left" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    {!isOauthRegistration && <FormField name="password" render={({ field }) => (<FormItem> <FormLabel>{t('details.password')}</FormLabel> <FormControl><Input type="password" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />}
+                    {isOauthRegistration && <p className="text-sm text-muted-foreground">{t('details.oauthEmailReadonly')}</p>}
                   </div>
                 )}
 
                 {currentStepId === 'musical' && (
                   <div className="space-y-6">
-                    <FormField name="instrument" render={({ field }) => (<FormItem> <FormLabel>{t('musical.instrument')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.instrumentPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="instrument" render={({ field }) => (<FormItem> <FormLabel>{t('musical.instrument')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.instrumentPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> {filteredInstrumentOptions.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem>)} />
                     <FormField name="level" render={({ field }) => (<FormItem> <FormLabel>{t('musical.level')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.levelPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Beginner">{t('musical.levels.Beginner')}</SelectItem> <SelectItem value="Intermediate">{t('musical.levels.Intermediate')}</SelectItem> <SelectItem value="Advanced">{t('musical.levels.Advanced')}</SelectItem> <SelectItem value="Exam Candidate">{t('musical.levels.Exam')}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
                     <FormField name="previousExperience" render={({ field }) => (<FormItem><FormLabel>{t('musical.experience')}</FormLabel><FormControl><Textarea placeholder={t('musical.experiencePlaceholder')} {...field} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField name="goals" render={() => (
@@ -1101,7 +1469,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         <FormLabel>{t('package.title')}</FormLabel>
                         <FormControl>
                           <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                            {mockPackages.map((pkg: Package) => (
+                            {filteredPackages.map((pkg) => (
                               <FormItem key={pkg.id} className="flex-1">
                                 <FormControl>
                                   <Card className={cn("cursor-pointer hover:bg-muted/50 transition-all", field.value === pkg.id && "border-primary ring-2 ring-primary")}>
@@ -1109,15 +1477,15 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                                       <CardHeader>
                                         <div className="flex justify-between items-start">
                                           <div>
-                                            <CardTitle>{pkg.title}</CardTitle>
-                                            <CardDescription>{pkg.description}</CardDescription>
+                                            <CardTitle>{pkg.names.he}</CardTitle>
+                                            <CardDescription>{pkg.notes || pkg.names.en}</CardDescription>
                                           </div>
                                           <RadioGroupItem value={pkg.id} id={pkg.id} className="ms-4 mt-1" />
                                         </div>
                                       </CardHeader>
                                       <CardContent>
-                                        <p className="text-2xl font-bold">{pkg.price} ₪</p>
-                                        <p className="text-xs text-muted-foreground">{pkg.type === 'MONTHLY' ? t('package.perMonth') : ''}</p>
+                                        <p className="text-2xl font-bold">{pkg.priceILS} ₪</p>
+                                        <p className="text-xs text-muted-foreground">{pkg.type === 'monthly' ? t('package.perMonth') : ''}</p>
                                       </CardContent>
                                     </label>
                                   </Card>
@@ -1141,7 +1509,7 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                             <div key={entry.index} className="grid grid-cols-3 gap-2 text-sm">
                               <span>{t('paymentPlan.installment', { index: entry.index })}</span>
                               <span className="text-muted-foreground">{entry.dueDate}</span>
-                              <span className="font-medium text-right">{entry.amount} ₪</span>
+                              <span className="font-medium text-start">{entry.amount} ₪</span>
                             </div>
                           ))}
                         </CardContent>
@@ -1173,9 +1541,9 @@ export function EnrollmentWizard({ isAdminFlow = false }: { isAdminFlow?: boolea
                         <DetailItem label={t('role.conservatorium')} value={formData.conservatorium} />
                         <DetailItem label={t('musical.instrument')} value={formData.instrument} />
                         <DetailItem label={t('summary.teacher')} value={mockTeachers.find(t => t.id === formData.teacherId)?.name || t('summary.notSelected')} />
-                        <DetailItem label={t('summary.package')} value={selectedPackage?.title} />
+                        <DetailItem label={t('summary.package')} value={selectedPackage?.names.he} />
                         <DetailItem label={t('summary.firstLesson')} value={formData.firstLessonDate && formData.firstLessonTime ? `${format(formData.firstLessonDate, 'dd/MM/yyyy')} ${t('summary.atTime')} ${formData.firstLessonTime}` : t('summary.later')} />
-                        {selectedPackage && <DetailItem label={t('summary.price')} value={`${selectedPackage.price} ₪`} />}
+                        {selectedPackage && <DetailItem label={t('summary.price')} value={`${selectedPackage.priceILS} ₪`} />}
                       </CardContent>
                     </Card>
                   </div>

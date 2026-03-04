@@ -10,12 +10,14 @@ export default async function RegisterPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: { token?: string };
+  searchParams?: Promise<{ token?: string; teacher?: string }>;
 }) {
     const { locale } = await params;
+    const resolvedSearchParams = (await searchParams) ?? {};
     const isRtl = locale === 'he' || locale === 'ar';
     const tAccessibility = await getTranslations({ locale, namespace: 'AccessibilityPage' });
-    const token = searchParams?.token?.trim();
+    const token = resolvedSearchParams.token?.trim();
+    const teacherId = resolvedSearchParams.teacher?.trim();
 
     if (token) {
         return (
@@ -40,7 +42,7 @@ export default async function RegisterPage({
             <PublicNavbar />
             <main className="flex flex-1 items-start justify-center px-4 pb-8 pt-20">
                 <RegistrationSessionGuard storageKey="register-session:default">
-                    <EnrollmentWizard />
+                    <EnrollmentWizard teacherIdFromQuery={teacherId} />
                 </RegistrationSessionGuard>
             </main>
             <footer className="pb-6 text-center text-xs text-muted-foreground">

@@ -10,27 +10,43 @@
         "contact": {
           "description": "Как потенциальные ученики и родители могут с вами связаться.",
           "mainPhone": "Основной телефон",
-          "primaryEmail": "Основной email",
-          "secondaryEmail": "Дополнительный email",
+          "primaryEmail": "Основной адрес электронной почты",
+          "secondaryEmail": "Дополнительный адрес электронной почты",
           "title": "Контактная информация",
           "website": "Официальный сайт",
           "whatsapp": "Номер Ватсап",
-          "privacyContactTitle": "Privacy Statement Contact",
-          "accessibilityContactTitle": "Accessibility Statement Contact",
-          "contactName": "Contact Name",
-          "contactEmail": "Contact Email",
-          "contactPhone": "Contact Phone",
-          "contactNamePlaceholder": "e.g. Dana Cohen",
-          "contactEmailPlaceholder": "e.g. privacy@conservatory.org.il",
-          "contactPhonePlaceholder": "e.g. 03-1234567",
-          "fallbackHint": "If these fields are empty, the legal statements automatically display the primary conservatorium admin contact."
+          "privacyContactTitle": "Заявление о конфиденциальности Контакт",
+          "accessibilityContactTitle": "Заявление о доступности",
+          "contactName": "Контактное имя",
+          "contactEmail": "Контакт Почта",
+          "contactPhone": "Контактный телефон",
+          "contactNamePlaceholder": "например Дана Коэн",
+          "contactEmailPlaceholder": "например Privacy@conservatory.org.il",
+          "contactPhonePlaceholder": "например 03-1234567",
+          "fallbackHint": "Если эти поля пусты, в юридических заявлениях будет указан основной контакт администратора консерватории.",
+          "openingHours": "Время работы Часы",
+          "days": {
+            "sunday": "Воскресенье",
+            "monday": "Понедельник",
+            "tuesday": "Вторник",
+            "wednesday": "Среда",
+            "thursday": "Четверг",
+            "friday": "Пятница",
+            "saturday": "Суббота"
+          }
         },
         "location": {
           "cityEnglish": "Город (английский)",
           "cityHebrew": "Город (иврит)",
           "description": "Где вы находитесь?",
           "fullAddress": "Полный адрес",
-          "title": "Локация"
+          "title": "Локация",
+          "postalCode": "Почтовый индекс",
+          "mapsLink": "URL-адрес Google Карт",
+          "openInMaps": "Открыть в Google Картах",
+          "instrumentsTitle": "Доступные инструменты",
+          "instrumentsAutoHint": "Автоматически заполняется от действующих преподавателей этой консерватории.",
+          "instrumentsEmpty": "В профилях учителей не было обнаружено никаких инструментов."
         },
         "media": {
           "description": "Изображения, отображаемые в публичном профиле.",
@@ -42,9 +58,9 @@
         },
         "social": {
           "description": "Подключите ваше онлайн-присутствие.",
-          "facebook": "Ссылка на Facebook",
-          "instagram": "Ссылка на Instagram",
-          "tiktok": "Ссылка на TikTok",
+          "facebook": "URL-адрес Facebook",
+          "instagram": "URL-адрес Instagram",
+          "tiktok": "URL-адрес ТикТока",
           "title": "Ссылки на соцсети",
           "youtube": "Ссылка на канал YouTube"
         },
@@ -60,12 +76,51 @@
           "title": "Руководящая команда",
           "titleRole": "Должность / роль",
           "additionalMember": "Аддитионал Участник",
-          "addMember": "Добавить Member",
-          "note": "Заметка"
+          "addMember": "Добавить участника",
+          "note": "Заметка",
+          "memberNamePlaceholder": "например Йосси Коэн"
+        },
+        "ui": {
+          "pageTitle": "Публичный профиль (о нас)",
+          "pageDesc": "Управляйте многоязычным профилем, отображаемым в общедоступном каталоге.",
+          "forceRetranslate": "Принудительный повторный перевод",
+          "tabs": {
+            "basic": "Основная информация",
+            "contact": "При необходимости мы свяжемся с вами для получения дополнительной информации.",
+            "location": "Место проведения",
+            "team": "Команда",
+            "social": "Социальные",
+            "media": "СМИ"
+          },
+          "basic": {
+            "title": "Основная информация",
+            "desc": "Основные сведения о консерватории.",
+            "pendingSync": "Ожидает синхронизации",
+            "name": "Название консерватории",
+            "about": "О нас (Описание)",
+            "foundedYear": "Год основания",
+            "foundedYearPlaceholder": "например 1995 год"
+          },
+          "toasts": {
+            "contentChangedTitle": "Содержание изменено",
+            "contentChangedDesc": "Обновление переводов ИИ в соответствии с вашим новым контентом...",
+            "profileSavedTitle": "Профиль сохранен",
+            "profileSavedDesc": "Публичный профиль консерватории обновлен.",
+            "errorSavingTitle": "Ошибка сохранения",
+            "errorSavingDesc": "Не удалось обновить профиль.",
+            "translationsUpdatedTitle": "Переводы обновлены"
+          },
+          "footer": {
+            "resetChanges": "Сбросить изменения",
+            "saving": "Сохранение...",
+            "saveProfile": "Сохранить профиль"
+          }
         }
       },
       "publicProfile": "Публичный профиль",
-      "title": "Настройки консерватории"
+      "title": "Настройки консерватории",
+      "instruments": "Настройки инструмента",
+      "packages": "Настройки пакета"
     },
     "notifications": {
       "description": "Выберите, о чем вы хотите получать уведомления.",
@@ -92,7 +147,63 @@
       "title": "Информация профиля"
     },
     "subtitle": "Управление настройками системы и аккаунта.",
-    "title": "Настройки"
+    "title": "Настройки",
+    "instruments": {
+      "title": "Инструменты",
+      "add": "Добавить инструмент",
+      "listTitle": "Инструменты консерватории",
+      "active": "Активен",
+      "inactive": "Неактивный",
+      "yes": "Да",
+      "no": "Нет",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "nameHe": "Имя (иврит)",
+      "nameEn": "Имя (английское)",
+      "nameRu": "Имя (русское)",
+      "nameAr": "Имя (арабское)",
+      "availableForRegistration": "Доступно для регистрации",
+      "availableForRental": "Доступно для аренды",
+      "isActive": "Активен",
+      "save": "Сохранить"
+    },
+    "packages": {
+      "title": "Пакеты",
+      "add": "Создать пакет",
+      "listTitle": "Пакеты уроков",
+      "active": "Активен",
+      "inactive": "Неактивный",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "nameHe": "Имя (иврит)",
+      "nameEn": "Имя (английское)",
+      "type": "Тип",
+      "monthly": "Ежемесячно",
+      "semester": "Семестр",
+      "annual": "Ежегодный",
+      "single": "Одинокий",
+      "lessonCount": "Уроки",
+      "durationMinutes": "Длительность (минуты)",
+      "price": "Цена (ILS)",
+      "isActive": "Активен",
+      "save": "Сохранить"
+    },
+    "linkedAccounts": {
+      "title": "Связанные аккаунты",
+      "description": "Подключите Google или Microsoft, чтобы войти быстрее.",
+      "link": "Связь",
+      "unlink": "Отсоединить",
+      "linkedTitle": "Аккаунт связан",
+      "linkedDesc": "{provider} был успешно связан.",
+      "unlinkedTitle": "Связь с аккаунтом отключена",
+      "unlinkedDesc": "Связь с {provider} успешно отключена.",
+      "errorTitle": "Не удалось установить связь.",
+      "errorDesc": "Не удалось связать поставщика. Пожалуйста, попробуйте еще раз.",
+      "conflictTitle": "Аккаунт уже существует",
+      "conflictDesc": "Этот адрес электронной почты уже зарегистрирован на: {methods}.",
+      "emailMismatchTitle": "Несоответствие электронной почты",
+      "emailMismatchDesc": "Адрес электронной почты провайдера должен совпадать с адресом электронной почты вашей текущей учетной записи."
+    }
   },
   "CancellationPolicy": {
     "lateCancelCredit": "Компенсация за позднюю отмену",
@@ -147,7 +258,7 @@
     }
   },
   "NotificationPreferences": {
-    "additionalSettingsTitle": "Additional Настройки",
+    "additionalSettingsTitle": "Дополнительные настройки",
     "channelEmail": "Электронная почта",
     "channelInApp": "В приложении",
     "channelPreferencesDesc": "Чоосе хов вы бы лике для рекеиве еач тип оф уведомление.",
@@ -162,10 +273,10 @@
     "channelWhatsapp": "Ватсап",
     "enableQuietHoursDesc": "Паусе нон-ургент уведомления (Смс, Ватсап) дуринг спекифиед хоурс.",
     "enableQuietHoursLabel": "Енабле Куиет Часы",
-    "endTimeLabel": "End Время",
+    "endTimeLabel": "Конец Времени",
     "formStatusChanges": "Форма Статус Изменения",
     "from": "С",
-    "invalidFormat": "Некорректно format",
+    "invalidFormat": "Неверный формат",
     "langArabic": "Арабский",
     "langEnglish": "Английский",
     "langHebrew": "Иврит",
@@ -173,25 +284,25 @@
     "language": "Язык уведомлений",
     "lessonCancellation": "Отмена уроков",
     "lessonReminders": "Напоминания об уроках",
-    "makeupCredits": "Отработка Урок Credits",
+    "makeupCredits": "Кредиты на уроки макияжа",
     "notificationLanguageLabel": "Язык уведомлений",
-    "notificationTypeHeader": "Уведомление Type",
+    "notificationTypeHeader": "Тип уведомления",
     "paymentDue": "Платежи и Оплата",
-    "preferencesUpdatedDesc": "Your уведомление предпочтения have been saved.",
+    "preferencesUpdatedDesc": "Ваши настройки уведомлений сохранены.",
     "preferencesUpdatedTitle": "Предпочтения Обновлено",
     "psCoordinatorAnnouncements": "Координатор Анноункеменц",
-    "psExcellenceUpdates": "ПС Excellence Обновления",
-    "psLessonCancellation": "PS Урок Отмена",
+    "psExcellenceUpdates": "Обновления PS Excellence",
+    "psLessonCancellation": "PS Отмена урока",
     "psLessonReminders": "Пс Урок Реминдерс",
     "psNewEnrollment": "Новый Пс Регистрация",
-    "psPartnershipUpdate": "Partnership Обновления",
-    "psPaymentDue": "PS Оплата Due",
+    "psPartnershipUpdate": "Обновления партнерства",
+    "psPaymentDue": "PS Срок оплаты",
     "quietHours": "Тихие часы",
     "quietHoursDesc": "Уведомления не будут отправляться в период",
     "save": "Сохранить настройки",
     "saveChangesBtn": "Сохранить изменения",
     "saved": "Настройки сохранены",
-    "startTimeLabel": "Start Время",
+    "startTimeLabel": "Время начала",
     "subtitle": "Выберите, как и о чем вы хотите получать уведомления",
     "systemAnnouncements": "Системные объявления",
     "teacherMessages": "Сообщения от учителей",
@@ -235,24 +346,24 @@
     }
   },
   "CancellationPolicySettings": {
-    "cancellationCreditLabel": "Кредит for on-time отмена",
+    "cancellationCreditLabel": "Компенсация за своевременную отмену",
     "errors": {
       "positiveDays": "Должен ентер а поситиве нумбер оф дни.",
-      "positiveHours": "Должен введите один положительный number из часы.",
-      "positiveNumber": "Должен введите один положительный number."
+      "positiveHours": "Необходимо ввести положительное количество часов.",
+      "positiveNumber": "Необходимо ввести положительное число."
     },
-    "lateCancelCreditLabel": "Кредит for late отмена",
+    "lateCancelCreditLabel": "Компенсация за позднюю отмену",
     "makeupExpiryLabel": "Отработка кредит срок (в дни)",
-    "makeupRulesTitle": "Отработка Урок Rules",
-    "maxMakeupsLabel": "Maximum отработка уроки per term",
-    "noticeHoursLabel": "Notice hours обязательно for отмена with кредит",
+    "makeupRulesTitle": "Правила урока макияжа",
+    "maxMakeupsLabel": "Максимальное количество уроков макияжа за семестр",
+    "noticeHoursLabel": "Часы уведомления, необходимые для отмены с кредитом",
     "options": {
-      "FULL": "Full Кредит",
+      "FULL": "Полный кредит",
       "FULL_NOT_RECOMMENDED": "Полный Кредит (Нот Рекоммендед)",
       "NONE": "Нет Кредит"
     },
     "saveChanges": "Сохранить изменения",
-    "studentRulesTitle": "Ученик Отмена Rules",
+    "studentRulesTitle": "Правила отмены обучения для студентов",
     "successToast": "Отмена политика обновлено успешно!"
   }
 }

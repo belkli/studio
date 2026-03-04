@@ -134,12 +134,39 @@ export default function FormDetailsPage() {
                     [formUser?.email, tl('email')],
                 ]);
             }
-            if (form.formType === 'רסיטל בגרות') {
+            if (form.formType === '?????????? ??????????') {
                 addSection(t("schoolDetails"), [
                     [form.schoolDetails?.schoolName, tl('school')],
-                    [form.schoolDetails?.hasMusicMajor ? String(t("labels.yes") || 'כן') : String(t("labels.no") || 'לא'), tl('hasMajor')],
-                    [form.schoolDetails?.isMajorParticipant ? String(t("labels.yes") || 'כן') : String(t("labels.no") || 'לא'), tl('isMajorParticipant')],
+                    [form.schoolDetails?.schoolSymbol, tl('schoolSymbol')],
+                    [form.schoolDetails?.schoolEmail, tl('schoolEmail')],
+                    [form.schoolDetails?.hasMusicMajor ? String(t("labels.yes") || '??') : String(t("labels.no") || '??'), tl('hasMajor')],
+                    [form.schoolDetails?.isMajorParticipant ? String(t("labels.yes") || '??') : String(t("labels.no") || '??'), tl('isMajorParticipant')],
+                    [form.schoolDetails?.plansTheoryExam ? String(t("labels.yes") || '??') : String(t("labels.no") || '??'), tl('plansTheoryExam')],
                 ]);
+
+                addSection(t("instrumentDetails"), [
+                    [form.instrumentDetails?.instrument, tl('instrument')],
+                    [form.instrumentDetails?.yearsOfStudy, tl('yearsOfStudy')],
+                    [form.instrumentDetails?.recitalField, tl('recitalField')],
+                    [form.instrumentDetails?.previousOrOtherInstrument, tl('previousOrOtherInstrument')],
+                ]);
+
+                addSection(t("teacherDetails"), [
+                    [form.teacherDetails?.name, tl('teacherName')],
+                    [form.teacherDetails?.idNumber, tl('teacherIdNumber')],
+                    [form.teacherDetails?.email, tl('teacherEmail')],
+                    [form.teacherDetails?.yearsWithTeacher, tl('yearsWithTeacher')],
+                ]);
+
+                addSection(t("additionalMusicDetails"), [
+                    [form.additionalMusicDetails?.ensembleParticipation, tl('ensembleParticipation')],
+                    [form.additionalMusicDetails?.theoryStudyYears, tl('theoryStudyYears')],
+                    [form.additionalMusicDetails?.orchestraParticipation, tl('orchestraParticipation')],
+                ]);
+
+                if (form.managerNotes) {
+                    addSection(t("managerNotes"), [[form.managerNotes, tl('managerNotes')]]);
+                }
             }
 
             if (form.formType === 'הרשמה לבחינה') {
@@ -426,7 +453,16 @@ export default function FormDetailsPage() {
                                             displayValue = value ? (t('labels.yes') || 'כן') : (t('labels.no') || 'לא');
                                         }
 
-                                        return <DetailItem key={field.id} label={field.label} value={displayValue} />;
+                                        const fieldLabel = typeof field.label === 'string'
+                                            ? field.label
+                                            : locale === 'he'
+                                                ? field.label.he
+                                                : locale === 'ar'
+                                                    ? (field.label.ar || field.label.en)
+                                                    : locale === 'ru'
+                                                        ? (field.label.ru || field.label.en)
+                                                        : field.label.en;
+                                        return <DetailItem key={field.id} label={fieldLabel} value={displayValue} />;
                                     })}
                                 </DetailsCard>
                             )}
@@ -448,21 +484,38 @@ export default function FormDetailsPage() {
                                 <>
                                     <DetailsCard title={t("schoolDetails")} columns={3}>
                                         <DetailItem label={tl('school')} value={form.schoolDetails?.schoolName} />
-                                        <DetailItem label={tl('hasMajor')} value={form.schoolDetails?.hasMusicMajor ? (t('labels.yes') || "כן") : (t('labels.no') || "לא")} />
-                                        <DetailItem label={tl('isMajorParticipant')} value={form.schoolDetails?.isMajorParticipant ? (t('labels.yes') || "כן") : (t('labels.no') || "לא")} />
+                                        <DetailItem label={tl('schoolSymbol')} value={form.schoolDetails?.schoolSymbol} />
+                                        <DetailItem label={tl('schoolEmail')} value={form.schoolDetails?.schoolEmail} />
+                                        <DetailItem label={tl('hasMajor')} value={form.schoolDetails?.hasMusicMajor ? (t('labels.yes') || "??") : (t('labels.no') || "??")} />
+                                        <DetailItem label={tl('isMajorParticipant')} value={form.schoolDetails?.isMajorParticipant ? (t('labels.yes') || "??") : (t('labels.no') || "??")} />
+                                        <DetailItem label={tl('plansTheoryExam')} value={form.schoolDetails?.plansTheoryExam ? (t('labels.yes') || "??") : (t('labels.no') || "??")} />
                                     </DetailsCard>
                                     <DetailsCard title={t("studyDetails")} columns={2}>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
                                             <h4 className="font-semibold text-muted-foreground">{t('instrumentDetails')}</h4>
                                             <DetailItem label={tl('instrument')} value={form.instrumentDetails?.instrument} />
                                             <DetailItem label={tl('yearsOfStudy')} value={form.instrumentDetails?.yearsOfStudy} />
+                                            <DetailItem label={tl('recitalField')} value={form.instrumentDetails?.recitalField} />
+                                            <DetailItem label={tl('previousOrOtherInstrument')} value={form.instrumentDetails?.previousOrOtherInstrument} />
                                         </div>
                                         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
                                             <h4 className="font-semibold text-muted-foreground">{t('teacherDetails')}</h4>
                                             <DetailItem label={tl('teacherName')} value={form.teacherDetails?.name} />
+                                            <DetailItem label={tl('teacherIdNumber')} value={form.teacherDetails?.idNumber} />
+                                            <DetailItem label={tl('teacherEmail')} value={form.teacherDetails?.email} />
                                             <DetailItem label={tl('yearsWithTeacher')} value={form.teacherDetails?.yearsWithTeacher} />
                                         </div>
                                     </DetailsCard>
+                                    <DetailsCard title={t('additionalMusicDetails')} columns={3}>
+                                        <DetailItem label={tl('ensembleParticipation')} value={form.additionalMusicDetails?.ensembleParticipation} />
+                                        <DetailItem label={tl('theoryStudyYears')} value={form.additionalMusicDetails?.theoryStudyYears} />
+                                        <DetailItem label={tl('orchestraParticipation')} value={form.additionalMusicDetails?.orchestraParticipation} />
+                                    </DetailsCard>
+                                    {form.managerNotes && (
+                                        <DetailsCard title={t('managerNotes')} columns={1}>
+                                            <DetailItem label={tl('managerNotes')} value={form.managerNotes} />
+                                        </DetailsCard>
+                                    )}
                                 </>
                             )}
                             {form.formType === 'כנס / אירוע' && (

@@ -1,226 +1,486 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useLocale, useTranslations } from 'next-intl';
+import { z } from 'zod';
+
+import type { Alumnus, Masterclass } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Edit, MoreVertical, Trash2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { AlumnusForm } from './alumnus-form';
-import { Alumnus } from '@/lib/types';
-import { saveAlumnus, deleteAlumnus } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+
+const profileSchema = z.object({
+  displayName: z.string().min(2),
+  graduationYear: z.coerce.number().min(1900),
+  primaryInstrument: z.string().min(2),
+  currentOccupation: z.string().optional(),
+  bioHe: z.string().optional(),
+  bioEn: z.string().optional(),
+  profilePhotoUrl: z.string().url().optional().or(z.literal('')),
+  isPublic: z.boolean(),
+  availableForMasterClasses: z.boolean(),
+});
+
+type ProfileValues = z.infer<typeof profileSchema>;
+
+const masterClassSchema = z.object({
+  titleHe: z.string().min(2),
+  titleEn: z.string().min(2),
+  descriptionHe: z.string().min(2),
+  descriptionEn: z.string().min(2),
+  instrument: z.string().min(2),
+  date: z.string().min(1),
+  startTime: z.string().min(1),
+  durationMinutes: z.coerce.number().min(30),
+  location: z.string().min(2),
+  maxParticipants: z.coerce.number().min(1),
+  includedInPackage: z.boolean(),
+  priceILS: z.coerce.number().min(0).optional(),
+});
+
+type MasterClassValues = z.infer<typeof masterClassSchema>;
+
 export function AlumniPortal() {
-    const t = useTranslations('AlumniPage');
-    const commonT = useTranslations('Common');
-    const { toast } = useToast();
-    const { user, mockAlumni: initialAlumni, mockMasterclasses } = useAuth();
+  const t = useTranslations('AlumniPage');
+  const commonT = useTranslations('Common');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const { toast } = useToast();
 
-    const [alumni, setAlumni] = useState<Alumnus[]>(initialAlumni);
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [selectedAlumnus, setSelectedAlumnus] = useState<Alumnus | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    user,
+    users,
+    mockAlumni,
+    mockMasterclasses,
+    mockMasterClassAllowances,
+    graduateStudent,
+    upsertAlumniProfile,
+    createMasterClass,
+    publishMasterClass,
+    registerToMasterClass,
+  } = useAuth();
 
-    const role = user?.role;
-    const isAdmin = role === 'site_admin' || role === 'conservatorium_admin';
+  const role = user?.role;
+  const isAdmin = role === 'site_admin' || role === 'conservatorium_admin';
 
-    const handleOpenAddDialog = () => {
-        setSelectedAlumnus(null);
-        setIsAddDialogOpen(true);
-    };
+  const [yearFilter, setYearFilter] = useState('all');
+  const [instrumentFilter, setInstrumentFilter] = useState('all');
+  const [graduateStudentId, setGraduateStudentId] = useState('');
+  const [graduateYear, setGraduateYear] = useState(String(new Date().getFullYear()));
 
-    const handleOpenEditDialog = (alumnus: Alumnus) => {
-        setSelectedAlumnus(alumnus);
-        setIsEditDialogOpen(true);
-    };
+  const ownProfile = useMemo(() => {
+    if (!user) return null;
+    return mockAlumni.find((item) => item.userId === user.id) || null;
+  }, [mockAlumni, user]);
 
-    const handleSaveAlumnus = async (data: any) => {
-        setIsSubmitting(true);
-        try {
-            const saved = await saveAlumnus(data);
-            if (data.id) {
-                setAlumni(prev => prev.map(a => a.id === data.id ? saved : a));
-                toast({
-                    title: commonT('success'),
-                    description: t('alumnusUpdated'),
-                });
-            } else {
-                setAlumni(prev => [saved, ...prev]);
-                toast({
-                    title: commonT('success'),
-                    description: t('alumnusAdded'),
-                });
-            }
-            setIsAddDialogOpen(false);
-            setIsEditDialogOpen(false);
-        } catch (error) {
-            toast({
-                title: commonT('error'),
-                description: commonT('saveFailed'),
-                variant: 'destructive',
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+  const canCreateMasterClass = isAdmin || role === 'teacher' || Boolean(ownProfile?.availableForMasterClasses);
 
-    const handleDeleteAlumnus = async (id: string) => {
-        if (!confirm(commonT('confirmDelete'))) return;
+  const publicAlumni = useMemo(() => {
+    return mockAlumni.filter((item) => {
+      if (!item.isPublic) return false;
+      if (yearFilter !== 'all' && String(item.graduationYear) !== yearFilter) return false;
+      if (instrumentFilter !== 'all' && item.primaryInstrument !== instrumentFilter) return false;
+      return true;
+    });
+  }, [instrumentFilter, mockAlumni, yearFilter]);
 
-        try {
-            await deleteAlumnus(id);
-            setAlumni(prev => prev.filter(a => a.id !== id));
-            toast({
-                title: commonT('success'),
-                description: t('alumnusDeleted'),
-            });
-        } catch (error) {
-            toast({
-                title: commonT('error'),
-                description: commonT('deleteFailed'),
-                variant: 'destructive',
-            });
-        }
-    };
+  const reviewQueue = useMemo(() => {
+    if (!user) return [] as Masterclass[];
+    return mockMasterclasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'draft');
+  }, [mockMasterclasses, user]);
 
-    return (
-        <div className="space-y-8">
+  const publishedMasterClasses = useMemo(() => {
+    if (!user) return [] as Masterclass[];
+    return mockMasterclasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'published');
+  }, [mockMasterclasses, user]);
+
+  const allowance = useMemo(() => {
+    if (!user || role !== 'student') return null;
+    return mockMasterClassAllowances.find((item) => item.studentId === user.id && item.conservatoriumId === user.conservatoriumId) || null;
+  }, [mockMasterClassAllowances, role, user]);
+
+  const gradCandidates = useMemo(() => {
+    if (!user) return [];
+    return users.filter((item) => item.role === 'student' && item.conservatoriumId === user.conservatoriumId);
+  }, [user, users]);
+
+  const profileForm = useForm<ProfileValues>({
+    resolver: zodResolver(profileSchema) as any,
+    values: {
+      displayName: ownProfile?.displayName || user?.name || '',
+      graduationYear: ownProfile?.graduationYear || new Date().getFullYear(),
+      primaryInstrument: ownProfile?.primaryInstrument || user?.instruments?.[0]?.instrument || '',
+      currentOccupation: ownProfile?.currentOccupation || '',
+      bioHe: ownProfile?.bio?.he || '',
+      bioEn: ownProfile?.bio?.en || '',
+      profilePhotoUrl: ownProfile?.profilePhotoUrl || '',
+      isPublic: ownProfile?.isPublic || false,
+      availableForMasterClasses: ownProfile?.availableForMasterClasses || false,
+    },
+  });
+
+  const masterClassForm = useForm<MasterClassValues>({
+    resolver: zodResolver(masterClassSchema) as any,
+    defaultValues: {
+      titleHe: '',
+      titleEn: '',
+      descriptionHe: '',
+      descriptionEn: '',
+      instrument: user?.instruments?.[0]?.instrument || '',
+      date: '',
+      startTime: '18:00',
+      durationMinutes: 90,
+      location: '',
+      maxParticipants: 12,
+      includedInPackage: true,
+      priceILS: 0,
+    },
+  });
+
+  const saveProfile = (values: ProfileValues) => {
+    if (!user) return;
+    upsertAlumniProfile({
+      userId: user.id,
+      conservatoriumId: user.conservatoriumId,
+      displayName: values.displayName,
+      graduationYear: values.graduationYear,
+      primaryInstrument: values.primaryInstrument,
+      currentOccupation: values.currentOccupation,
+      bio: { he: values.bioHe, en: values.bioEn },
+      profilePhotoUrl: values.profilePhotoUrl || undefined,
+      isPublic: values.isPublic,
+      availableForMasterClasses: values.availableForMasterClasses,
+    });
+
+    toast({ title: commonT('success'), description: t('profileSaved') });
+  };
+
+  const submitMasterClass = (values: MasterClassValues) => {
+    createMasterClass({
+      title: { he: values.titleHe, en: values.titleEn },
+      description: { he: values.descriptionHe, en: values.descriptionEn },
+      instrument: values.instrument,
+      date: values.date,
+      startTime: values.startTime,
+      durationMinutes: values.durationMinutes,
+      location: values.location,
+      maxParticipants: values.maxParticipants,
+      includedInPackage: values.includedInPackage,
+      priceILS: values.includedInPackage ? undefined : values.priceILS,
+    });
+
+    toast({ title: commonT('success'), description: t('masterClassCreated') });
+    masterClassForm.reset();
+  };
+
+  const onGraduate = () => {
+    if (!graduateStudentId) return;
+    graduateStudent(graduateStudentId, Number(graduateYear));
+    toast({ title: commonT('success'), description: t('graduatedCreated') });
+  };
+
+  const tabs = [
+    { value: 'directory', label: t('directoryTab') },
+    { value: 'profile', label: t('profileTab') },
+    { value: 'masterClasses', label: t('masterClassesTab') },
+    { value: 'review', label: t('reviewTab') },
+  ];
+
+  const orderedTabs = isRtl ? [...tabs].reverse() : tabs;
+
+  return (
+    <div className='space-y-6' dir={isRtl ? 'rtl' : 'ltr'}>
+      <Tabs defaultValue='directory' className='w-full'>
+        <TabsList className='grid w-full grid-cols-4'>
+          {orderedTabs.map((tab) => (
+            <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+          ))}
+        </TabsList>
+
+        <TabsContent value='directory' className='space-y-4'>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('directoryTitle')}</CardTitle>
+              <CardDescription>{t('directorySubtitle')}</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid gap-3 md:grid-cols-2'>
+                <Select value={yearFilter} onValueChange={setYearFilter}>
+                  <SelectTrigger><SelectValue placeholder={t('filterYear')} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='all'>{t('allYears')}</SelectItem>
+                    {Array.from(new Set(mockAlumni.map((item) => String(item.graduationYear)))).sort().map((year) => (
+                      <SelectItem key={year} value={year}>{year}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={instrumentFilter} onValueChange={setInstrumentFilter}>
+                  <SelectTrigger><SelectValue placeholder={t('filterInstrument')} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='all'>{t('allInstruments')}</SelectItem>
+                    {Array.from(new Set(mockAlumni.map((item) => item.primaryInstrument))).sort().map((name) => (
+                      <SelectItem key={name} value={name}>{name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className='grid gap-4 md:grid-cols-2'>
+                {publicAlumni.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublicAlumni')}</p>}
+                {publicAlumni.map((item) => (
+                  <Card key={item.id}>
+                    <CardContent className='space-y-2 p-4'>
+                      <p className='font-semibold'>{item.displayName}</p>
+                      <p className='text-sm text-muted-foreground'>
+                        <span dir='ltr'>{item.graduationYear}</span>
+                        <span aria-hidden='true' className='mx-1'>?</span>
+                        <span dir='ltr'>{item.primaryInstrument}</span>
+                      </p>
+                      {item.currentOccupation && <Badge variant='secondary'>{item.currentOccupation}</Badge>}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value='profile' className='space-y-4'>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('profileTitle')}</CardTitle>
+              <CardDescription>{t('profileSubtitle')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...profileForm}>
+                <form onSubmit={profileForm.handleSubmit(saveProfile as any)} className='space-y-4'>
+                  <div className='grid gap-3 md:grid-cols-2'>
+                    <FormField control={profileForm.control as any} name='displayName' render={({ field }) => (
+                      <FormItem><FormLabel>{t('displayName')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={profileForm.control as any} name='graduationYear' render={({ field }) => (
+                      <FormItem><FormLabel>{t('graduationYear')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+
+                  <div className='grid gap-3 md:grid-cols-2'>
+                    <FormField control={profileForm.control as any} name='primaryInstrument' render={({ field }) => (
+                      <FormItem><FormLabel>{t('primaryInstrument')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={profileForm.control as any} name='currentOccupation' render={({ field }) => (
+                      <FormItem><FormLabel>{t('currentOccupation')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+
+                  <FormField control={profileForm.control as any} name='bioHe' render={({ field }) => (
+                    <FormItem><FormLabel>{t('bioHe')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  <FormField control={profileForm.control as any} name='bioEn' render={({ field }) => (
+                    <FormItem><FormLabel>{t('bioEn')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <FormField control={profileForm.control as any} name='profilePhotoUrl' render={({ field }) => (
+                    <FormItem><FormLabel>{t('profilePhotoUrl')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <div className='grid gap-3 md:grid-cols-2'>
+                    <FormField control={profileForm.control as any} name='isPublic' render={({ field }) => (
+                      <FormItem className='flex items-center gap-2 rounded-md border p-3'>
+                        <FormControl><Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} /></FormControl>
+                        <FormLabel>{t('isPublic')}</FormLabel>
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control as any} name='availableForMasterClasses' render={({ field }) => (
+                      <FormItem className='flex items-center gap-2 rounded-md border p-3'>
+                        <FormControl><Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} /></FormControl>
+                        <FormLabel>{t('availableForMasterClasses')}</FormLabel>
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <Button type='submit'>{commonT('save')}</Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value='masterClasses' className='space-y-4'>
+          {canCreateMasterClass && (
             <Card>
-                <CardHeader className="flex flex-row items-start justify-between">
-                    <div>
-                        <CardTitle>{t('directoryTitle')}</CardTitle>
-                        <CardDescription>{t('directorySubtitle')}</CardDescription>
+              <CardHeader>
+                <CardTitle>{t('createMasterClass')}</CardTitle>
+                <CardDescription>{t('createMasterClassDesc')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...masterClassForm}>
+                  <form onSubmit={masterClassForm.handleSubmit(submitMasterClass as any)} className='space-y-4'>
+                    <div className='grid gap-3 md:grid-cols-2'>
+                      <FormField control={masterClassForm.control as any} name='titleHe' render={({ field }) => (
+                        <FormItem><FormLabel>{t('titleHe')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='titleEn' render={({ field }) => (
+                        <FormItem><FormLabel>{t('titleEn')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
                     </div>
-                    {isAdmin && (
-                        <div className="flex gap-2">
-                            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" onClick={handleOpenAddDialog}>
-                                        {t('addAlumnus')}
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[500px]">
-                                    <DialogHeader>
-                                        <DialogTitle>{t('addAlumnus')}</DialogTitle>
-                                        <DialogDescription>
-                                            Add a new distinguished graduate to the directory.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <AlumnusForm
-                                        onSubmit={handleSaveAlumnus}
-                                        onCancel={() => setIsAddDialogOpen(false)}
-                                        isSubmitting={isSubmitting}
-                                    />
-                                </DialogContent>
-                            </Dialog>
+                    <FormField control={masterClassForm.control as any} name='descriptionHe' render={({ field }) => (
+                      <FormItem><FormLabel>{t('descriptionHe')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={masterClassForm.control as any} name='descriptionEn' render={({ field }) => (
+                      <FormItem><FormLabel>{t('descriptionEn')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <div className='grid gap-3 md:grid-cols-3'>
+                      <FormField control={masterClassForm.control as any} name='instrument' render={({ field }) => (
+                        <FormItem><FormLabel>{t('instrument')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='date' render={({ field }) => (
+                        <FormItem><FormLabel>{t('date')}</FormLabel><FormControl><Input type='date' {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='startTime' render={({ field }) => (
+                        <FormItem><FormLabel>{t('startTime')}</FormLabel><FormControl><Input type='time' {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                    </div>
+                    <div className='grid gap-3 md:grid-cols-3'>
+                      <FormField control={masterClassForm.control as any} name='durationMinutes' render={({ field }) => (
+                        <FormItem><FormLabel>{t('duration')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='maxParticipants' render={({ field }) => (
+                        <FormItem><FormLabel>{t('maxParticipants')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='location' render={({ field }) => (
+                        <FormItem><FormLabel>{t('location')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                    </div>
+                    <div className='grid gap-3 md:grid-cols-2'>
+                      <FormField control={masterClassForm.control as any} name='includedInPackage' render={({ field }) => (
+                        <FormItem className='flex items-center gap-2 rounded-md border p-3'>
+                          <FormControl><Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} /></FormControl>
+                          <FormLabel>{t('includedInPackage')}</FormLabel>
+                        </FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='priceILS' render={({ field }) => (
+                        <FormItem><FormLabel>{t('priceILS')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                    </div>
+                    <Button type='submit'>{t('submitMasterClass')}</Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          )}
 
-                            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                                <DialogContent className="sm:max-w-[500px]">
-                                    <DialogHeader>
-                                        <DialogTitle>{t('editAlumnus')}</DialogTitle>
-                                        <DialogDescription>
-                                            Update the details for this graduate.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    {selectedAlumnus && (
-                                        <AlumnusForm
-                                            initialData={selectedAlumnus}
-                                            onSubmit={handleSaveAlumnus}
-                                            onCancel={() => setIsEditDialogOpen(false)}
-                                            isSubmitting={isSubmitting}
-                                        />
-                                    )}
-                                </DialogContent>
-                            </Dialog>
-                        </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('publishedMasterClasses')}</CardTitle>
+              {role === 'student' && allowance && (
+                <CardDescription>{t('allowanceRemaining', { remaining: allowance.remaining })}</CardDescription>
+              )}
+            </CardHeader>
+            <CardContent className='space-y-3'>
+              {publishedMasterClasses.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublishedMasterClasses')}</p>}
+              {publishedMasterClasses.map((item) => (
+                <div key={item.id} className='rounded-md border p-3'>
+                  <div className='flex flex-col gap-2 md:flex-row md:items-center md:justify-between'>
+                    <div className='space-y-1'>
+                      <p className='font-medium'>{item.title.en}</p>
+                      <p className='text-sm text-muted-foreground'>
+                        <span>{item.instructor.displayName}</span>
+                        <span aria-hidden='true' className='mx-1'>?</span>
+                        <span dir='ltr'>{item.date} {item.startTime}</span>
+                      </p>
+                    </div>
+                    {role === 'student' && user && (
+                      <Button
+                        type='button'
+                        onClick={() => {
+                          const result = registerToMasterClass(item.id, user.id);
+                          if (!result.success) {
+                            toast({ variant: 'destructive', title: t('registrationFailed') });
+                            return;
+                          }
+
+                          if ((result.chargedILS || 0) > 0) {
+                            toast({ title: t('chargedTitle'), description: t('chargedDesc', { amount: result.chargedILS || 0 }) });
+                          } else {
+                            toast({ title: t('registeredTitle'), description: t('remainingDesc', { remaining: result.remaining ?? 0 }) });
+                          }
+                        }}
+                      >
+                        {t('registerButton')}
+                      </Button>
                     )}
-                </CardHeader>
-                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {alumni.map(alumnus => (
-                        <Card key={alumnus.id} className="text-center relative">
-                            {isAdmin && (
-                                <div className="absolute top-2 right-2">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                <MoreVertical className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => handleOpenEditDialog(alumnus)}>
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                <span>{commonT('edit')}</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDeleteAlumnus(alumnus.id)} className="text-destructive">
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                <span>{commonT('delete')}</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            )}
-                            <CardContent className="pt-6 flex flex-col items-center">
-                                <Avatar className="w-24 h-24 mb-4">
-                                    <AvatarImage src={alumnus.avatarUrl} />
-                                    <AvatarFallback>{alumnus.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <h3 className="font-semibold text-lg">{alumnus.name}</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    {t('graduated', { year: alumnus.graduationYear, instrument: alumnus.instrument })}
-                                </p>
-                                <Badge variant="secondary" className="mt-2">{alumnus.currentRole}</Badge>
-                                {alumnus.achievements && (
-                                    <p className="mt-4 text-xs italic text-muted-foreground border-t pt-2">
-                                        {alumnus.achievements}
-                                    </p>
-                                )}
-                            </CardContent>
-                        </Card>
-                    ))}
-                </CardContent>
-            </Card>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
+        <TabsContent value='review' className='space-y-4'>
+          {isAdmin && (
             <Card>
-                <CardHeader>
-                    <CardTitle>{t('masterclassesTitle')}</CardTitle>
-                    <CardDescription>{t('masterclassesSubtitle')}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {mockMasterclasses.map(mc => (
-                        <div key={mc.id} className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                            <div>
-                                <h3 className="font-semibold">{mc.title}</h3>
-                                <p className="text-sm text-muted-foreground">{t('instructor', { name: mc.instructor })}</p>
-                                <p className="text-sm text-muted-foreground">{t('date', { date: new Date(mc.date) })}</p>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <span className="font-bold text-lg">₪{mc.price}</span>
-                                <Button>{t('registerButton')}</Button>
-                            </div>
-                        </div>
+              <CardHeader>
+                <CardTitle>{t('graduateTitle')}</CardTitle>
+                <CardDescription>{t('graduateDesc')}</CardDescription>
+              </CardHeader>
+              <CardContent className='grid gap-3 md:grid-cols-[1fr_180px_auto]'>
+                <Select value={graduateStudentId} onValueChange={setGraduateStudentId}>
+                  <SelectTrigger><SelectValue placeholder={t('selectStudent')} /></SelectTrigger>
+                  <SelectContent>
+                    {gradCandidates.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                     ))}
-                </CardContent>
+                  </SelectContent>
+                </Select>
+                <div className='space-y-1'>
+                  <Label htmlFor='grad-year'>{t('graduationYear')}</Label>
+                  <Input id='grad-year' type='number' value={graduateYear} onChange={(e) => setGraduateYear(e.target.value)} />
+                </div>
+                <div className='flex items-end'>
+                  <Button type='button' onClick={onGraduate}>{t('markGraduated')}</Button>
+                </div>
+              </CardContent>
             </Card>
-        </div>
-    );
-}
+          )}
 
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('reviewQueueTitle')}</CardTitle>
+              <CardDescription>{t('reviewQueueDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-3'>
+              {reviewQueue.length === 0 && <p className='text-sm text-muted-foreground'>{t('noReviewItems')}</p>}
+              {reviewQueue.map((item) => (
+                <div key={item.id} className='flex flex-col gap-2 rounded-md border p-3 md:flex-row md:items-center md:justify-between'>
+                  <div>
+                    <p className='font-medium'>{item.title.en}</p>
+                    <p className='text-sm text-muted-foreground'>
+                    <span>{item.instructor.displayName}</span>
+                    <span aria-hidden='true' className='mx-1'>?</span>
+                    <span dir='ltr'>{item.instrument}</span>
+                  </p>
+                  </div>
+                  {isAdmin && (
+                    <Button type='button' onClick={() => publishMasterClass(item.id)}>{t('publishButton')}</Button>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

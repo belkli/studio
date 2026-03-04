@@ -178,7 +178,12 @@
     "email": "Email",
     "emailPlaceholder": "For receipt delivery",
     "anonymous": "I prefer to remain anonymous (no receipt)",
-    "submitButton": "Donate ₪{amount}"
+    "submitButton": "Donate ₪{amount}",
+    "chooseCause": "Choose where your donation goes",
+    "chooseCauseHint": "Select a specific cause or donate to the general fund.",
+    "generalFund": "General Contribution",
+    "generalFundDesc": "Supports flexible and fair distribution across conservatories based on real student needs.",
+    "raisedProgress": "Raised: {percent}% of target"
   },
   "PublicEventPage": {
     "orderComplete": "Order Complete!",
@@ -193,7 +198,9 @@
     "buyTickets": "Buy Tickets",
     "totalPayment": "Total Payment",
     "freeEntrance": "Free Entrance",
-    "bookTicketsBtn": "Book Tickets"
+    "bookTicketsBtn": "Book Tickets",
+    "openInMaps": "Open in Google Maps",
+    "soldOut": "Sold Out"
   },
   "PublicProfiles": {
     "aiTranslated": "AI Translated",
@@ -228,6 +235,87 @@
     "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
     "errorMessage": "I'm sorry, an error occurred. Please try again later.",
     "openAssistant": "Open AI Assistant",
-    "goToHelpCenter": "Go to full help center"
+    "goToHelpCenter": "Go to full help center",
+    "quickQuestions": {
+      "default": {
+        "cancelLesson": "How do I cancel a lesson?",
+        "makeupBalance": "Where can I see my makeup lesson balance?",
+        "recitalForm": "How do I submit a recital form?",
+        "updateAvailability": "How do I update my availability? (teachers)"
+      },
+      "schedule": {
+        "bookMakeup": "How do I book a makeup lesson?",
+        "cancelNextWeek": "Can I cancel next week's lesson?",
+        "cancellationPolicy": "What is the conservatory cancellation policy?",
+        "syncCalendar": "How can I sync my calendar?"
+      },
+      "billing": {
+        "invoices": "Where can I find my invoices?",
+        "updateCard": "How do I update my payment card?",
+        "nextCharge": "When is my next charge due?",
+        "siblingDiscount": "How does sibling discount work?"
+      },
+      "forms": {
+        "approveRecital": "How long does recital form approval take?",
+        "rejectedForm": "My form was rejected, what should I do?",
+        "downloadPdf": "How do I download approved form PDF?",
+        "whoApproves": "Who needs to approve my form?"
+      },
+      "admin": {
+        "approveEnrollment": "How do I approve a new student enrollment?",
+        "packagePricing": "Where do I configure package pricing?",
+        "sendAnnouncement": "How do I send an announcement to all parents?",
+        "financialReports": "Where can I view financial reports?"
+      }
+    }
+  },
+  "Landing": {
+    "heroTitle": "Music is not just skill, it is life",
+    "heroSubtitle": "Professional music education for every age and every stage.",
+    "registerCta": "Register Now",
+    "findConservatory": "Find Conservatory",
+    "statConservatories": "Conservatories",
+    "statLessons": "Lessons per year",
+    "statSatisfaction": "Parent satisfaction",
+    "statStudents": "Active students",
+    "findTitle": "Find your conservatory",
+    "findSubtitle": "Search by city, instrument or conservatory name.",
+    "searchPlaceholder": "Search by city or name...",
+    "cityPlaceholder": "City",
+    "instrumentPlaceholder": "Instrument",
+    "search": "Search",
+    "conservatoryFallback": "Professional conservatory in the Harmonia network.",
+    "viewAll": "View all {count} conservatories",
+    "howItWorksTitle": "How it works",
+    "step1Title": "Find conservatory",
+    "step1Desc": "Search by city, instrument or teacher.",
+    "step2Title": "Register quickly",
+    "step2Desc": "Complete registration with a simple flow.",
+    "step3Title": "Start learning",
+    "step3Desc": "Personalized lessons with experienced teachers.",
+    "featuredTeachersTitle": "Featured teachers",
+    "teacherFallback": "Experienced teacher in the Harmonia network.",
+    "upcomingEventsTitle": "Upcoming events",
+    "openDaysTitle": "Upcoming open days",
+    "openDaysFallback": "Open day schedule will be published soon.",
+    "openDaysCta": "View Open Days",
+    "testimonialsTitle": "What families say",
+    "testimonial1": "Our daughter gained confidence and joy through music.",
+    "testimonial2": "The registration process was clear and fast.",
+    "testimonial3": "Excellent teachers and warm support.",
+    "donateTitle": "Give every child the gift of music",
+    "donateSubtitle": "Support scholarships and equal access to music education.",
+    "donateCta": "Donate now"
+  },
+  "About": {
+    "allInstruments": "All instruments",
+    "teachersTitle": "Meet our teachers",
+    "teachersSubtitle": "Professional teachers from conservatories across the platform.",
+    "viewBio": "View full profile",
+    "instrumentUnknown": "Instrument not specified",
+    "loadMoreTeachers": "Show {count} more teachers",
+    "bookWithTeacher": "Register with this teacher",
+    "education": "Education",
+    "bioUnavailable": "Biography will be added soon."
   }
 }

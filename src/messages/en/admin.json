@@ -27,7 +27,23 @@
       "weeklySchedule": "Weekly Schedule",
       "bookNewLesson": "Book new lesson",
       "noLessonsTitle": "No scheduled lessons",
-      "noLessonsDesc": "Your schedule for the upcoming week is empty. You can book a new lesson."
+      "noLessonsDesc": "Your schedule for the upcoming week is empty. You can book a new lesson.",
+      "viewWeek": "Week",
+      "viewByTeacher": "By teacher",
+      "viewByInstrument": "By instrument",
+      "viewByRoom": "By room",
+      "weekLabel": "Week",
+      "filterTeacher": "Teacher",
+      "allTeachers": "All teachers",
+      "filterInstrument": "Instrument",
+      "allInstruments": "All instruments",
+      "filterRoom": "Room",
+      "allRooms": "All rooms",
+      "export": "Export CSV",
+      "time": "Time",
+      "teacherHeading": "Teacher: {teacher}",
+      "unknown": "Unknown",
+      "notAssigned": "Not assigned"
     },
     "branches": {
       "subtitle": "View, add, and edit conservatorium branches.",
@@ -175,9 +191,36 @@
     "statuses": {
       "SCHEDULED": "Scheduled",
       "ATTENDED": "Attended",
-      "NO_SHOW": "No-Show"
+      "NO_SHOW": "No-Show",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "attended": "Attended",
+      "no_show": "No-show"
     },
-    "childAge": "Child age"
+    "childAge": "Child age",
+    "noActiveEvent": "No active open day event found for your conservatorium.",
+    "sessions": "Sessions",
+    "registrations": "Registrations",
+    "sessionTime": "Session time",
+    "sessionInstrument": "Instrument",
+    "sessionTeacher": "Teacher",
+    "sessionCapacity": "Max attendees",
+    "addSession": "Add session",
+    "noSessions": "No sessions yet.",
+    "teacherLabel": "Teacher",
+    "unknownTeacher": "Unknown teacher",
+    "instrument": "Instrument",
+    "assignedSession": "Assigned session",
+    "notes": "Notes",
+    "selectSession": "Select session",
+    "unassigned": "Unassigned",
+    "notesPlaceholder": "Add notes",
+    "errors": {
+      "missingSessionFields": "Fill time, instrument, and teacher to add a session."
+    },
+    "toasts": {
+      "sessionAdded": "Session added successfully."
+    }
   },
   "AdminScholarships": {
     "title": "Scholarship Management",
@@ -222,7 +265,30 @@
       "WAITLISTED": "Waitlisted",
       "REJECTED": "Rejected",
       "EXPIRED": "Expired"
-    }
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "markPaid": "Mark as paid",
+    "approvedSuccess": "Scholarship approved successfully.",
+    "rejectedSuccess": "Scholarship rejected successfully.",
+    "paidSuccess": "Scholarship marked as paid.",
+    "actionError": "An error occurred. Please try again.",
+    "paidBadge": "Paid",
+    "causeSettingsTitle": "Donation Causes Settings",
+    "causeSettingsDesc": "Add custom donation causes for the public donation page.",
+    "causeNameHe": "Cause name (Hebrew)",
+    "causeNameEn": "Cause name (English)",
+    "causeDescHe": "Description (Hebrew)",
+    "causeDescEn": "Description (English)",
+    "causeCategory": "Category",
+    "causeTargetAmount": "Target amount (ILS)",
+    "addCause": "Add cause",
+    "causeAddedSuccess": "Donation cause added successfully.",
+    "categoryFinancialAid": "Financial Aid",
+    "categoryExcellence": "Excellence",
+    "categoryEquipment": "Equipment",
+    "categoryEvents": "Events",
+    "categoryGeneral": "General"
   },
   "AiAgents": {
     "title": "AI Agents",
@@ -540,6 +606,13 @@
       "rejected": "Rejected",
       "revisionRequired": "Revision Required",
       "finalApproved": "Final Approved"
+    },
+    "whatsNewFeed": {
+      "title": "What's New",
+      "description": "Recent updates relevant to your account.",
+      "empty": "No new updates right now.",
+      "new": "New",
+      "openItem": "Open"
     }
   },
   "UserManagement": {

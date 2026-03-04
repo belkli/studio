@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Copy, PlusCircle, Save } from "lucide-react";
+import { Calendar, Save } from "lucide-react";
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import type { LessonSlot, WeeklyAvailabilityBlock, DayOfWeek } from "@/lib/types";
@@ -96,15 +96,9 @@ export function AvailabilityGrid() {
     return (
         <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle>{t('title')}</CardTitle>
-                        <CardDescription>{t('description')}</CardDescription>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button variant="outline" disabled><Copy className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} /> {t('copyLastWeek')}</Button>
-                        <Button disabled><PlusCircle className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} /> {t('addException')}</Button>
-                    </div>
+                <div>
+                    <CardTitle>{t('title')}</CardTitle>
+                    <CardDescription>{t('description')}</CardDescription>
                 </div>
             </CardHeader>
             <CardContent>

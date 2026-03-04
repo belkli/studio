@@ -1,39 +1,34 @@
+﻿
 'use client';
 
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { User, Composition, FormSubmission } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
-import { SuggestionButton } from './suggestion-button';
 import { schools, genres } from '@/lib/data';
-
-
-import { useTranslations } from 'next-intl';
-
+import { useLocale, useTranslations } from 'next-intl';
 
 const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
+    composerId: z.string().optional(),
     composer: z.string().min(1, t('validation.requiredComposer')),
     title: z.string().min(1, t('validation.requiredTitle')),
     duration: z.string().regex(/^\d{2}:\d{2}$/, t('validation.invalidDuration')),
     genre: z.string().min(1, t('validation.requiredGenre')),
     approved: z.boolean().optional(),
 });
-
 
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
@@ -42,10 +37,7 @@ const getRecitalFormSchema = (t: any) => z.object({
     studentId: z.string(),
     studentName: z.string(),
     academicYear: z.string().min(1, t('validation.requiredAcademicYear')),
-    grade: z.enum(['י', 'יא', 'יב'], {
-        message: t('validation.requiredGrade')
-    }),
-
+    grade: z.string().min(1, t('validation.requiredGrade')),
     applicantDetails: z.object({
         city: z.string().optional(),
         phone: z.string().optional(),
@@ -54,16 +46,30 @@ const getRecitalFormSchema = (t: any) => z.object({
     }),
     schoolDetails: z.object({
         schoolName: z.string().optional(),
+        schoolSymbol: z.string().optional(),
         hasMusicMajor: z.boolean().default(false),
         isMajorParticipant: z.boolean().default(false),
+        plansTheoryExam: z.boolean().default(false),
+        schoolEmail: z.string().optional(),
     }),
     instrumentDetails: z.object({
         instrument: z.string().min(1, t('validation.requiredInstrument')),
         yearsOfStudy: z.coerce.number().optional(),
+        recitalField: z.string().optional(),
+        previousOrOtherInstrument: z.string().optional(),
     }),
     teacherDetails: z.object({
+        name: z.string().optional(),
+        idNumber: z.string().optional(),
+        email: z.string().optional(),
         yearsWithTeacher: z.coerce.number().optional(),
     }),
+    additionalMusicDetails: z.object({
+        ensembleParticipation: z.string().optional(),
+        theoryStudyYears: z.coerce.number().optional(),
+        orchestraParticipation: z.string().optional(),
+    }),
+    managerNotes: z.string().optional(),
     repertoire: z.array(getCompositionSchema(t)).min(MIN_REPERTOIRE_ITEMS, t('validation.minRepertoire')).max(MAX_REPERTOIRE_ITEMS, t('validation.maxRepertoire', { max: MAX_REPERTOIRE_ITEMS })),
 });
 
@@ -78,7 +84,18 @@ interface RecitalFormProps {
     onCancel?: () => void;
 }
 
-const getSchoolOptions = (t: any) => schools.map(s => ({ value: s.name, label: `${s.name} (${t('schoolSymbol')}: ${s.symbol})` }));
+const getSchoolOptions = () => schools.map((s) => ({ value: s.name, label: s.name, symbol: s.symbol }));
+
+type ComposerOption = {
+    id: string;
+    name: string;
+    names: {
+        he: string;
+        en: string;
+        ru?: string;
+        ar?: string;
+    };
+};
 
 const getHebrewAcademicYear = () => {
     const date = new Date();
@@ -87,56 +104,56 @@ const getHebrewAcademicYear = () => {
     if (month < 8) {
         gregorianYear--;
     }
+
     const hebrewYearShort = (gregorianYear + 1) % 100;
-    const hebrewYear = 5700 + hebrewYearShort + (gregorianYear - 2000) + 40; // Approximate
+    const hebrewYear = 5700 + hebrewYearShort + (gregorianYear - 2000) + 40;
     const hebrewYearInChars = String.fromCharCode(1488 + ((hebrewYear % 100) - 1));
     return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
-}
-
+};
 
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('RecitalForm');
     const { control, setValue, watch, getValues } = useFormContext();
-    const [composerOptions, setComposerOptions] = useState<string[]>([]);
+    const [composerOptions, setComposerOptions] = useState<ComposerOption[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
     const [isLoadingCompositions, setIsLoadingCompositions] = useState(false);
 
     const currentRepertoireItem = watch(`repertoire.${index}`);
+    const locale = useLocale() as 'he' | 'en' | 'ar' | 'ru';
+    const selectedComposerId = currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(currentRepertoireItem?.composer))?.id || '';
     const selectedComposer = currentRepertoireItem?.composer;
+    const selectedInstrument = watch('instrumentDetails.instrument');
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
-        const results = await searchComposers(query);
+        const results = await searchComposers({ query, instrument: selectedInstrument });
         setComposerOptions(results);
         setIsLoadingComposers(false);
-    }, 300), []);
+    }, 300), [selectedInstrument]);
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
         const instrument = getValues('instrumentDetails.instrument');
-        const results = await searchCompositions({ query, composer: selectedComposer, instrument });
+        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
         setCompositionOptions(results);
         setIsLoadingCompositions(false);
-    }, 300), [selectedComposer, getValues]);
+    }, 300), [selectedComposer, selectedComposerId, getValues, locale]);
 
     useEffect(() => {
-        if (selectedComposer) {
-            debouncedCompositionSearch('');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComposer]);
+        debouncedCompositionSearch('');
+    }, [selectedComposer, selectedComposerId, selectedInstrument, debouncedCompositionSearch]);
 
     useEffect(() => {
         debouncedComposerSearch('');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [debouncedComposerSearch]);
 
     const handleSelectComposition = (id: string) => {
         const composition = compositionOptions.find(c => c.id === id);
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
             setValue(`repertoire.${index}.title`, composition.title);
+            setValue(`repertoire.${index}.composerId`, composition.composerId || '');
             setValue(`repertoire.${index}.composer`, composition.composer);
             setValue(`repertoire.${index}.duration`, composition.duration);
             setValue(`repertoire.${index}.genre`, composition.genre);
@@ -144,20 +161,19 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
         } else {
             setValue(`repertoire.${index}.title`, id);
         }
-    }
-
+    };
 
     return (
-        <div className="border rounded-lg relative">
-            <div className="p-4 flex justify-between items-center lg:hidden border-b">
+        <div className="relative rounded-lg border">
+            <div className="flex items-center justify-between border-b p-4 lg:hidden">
                 <span className="font-medium text-muted-foreground">{t('compositionItem', { index: index + 1 })}</span>
                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                     <span className="sr-only">{t('deleteItem')}</span>
                 </Button>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto] items-start gap-x-4 gap-y-2 p-4">
-                <div className="hidden lg:flex items-center justify-center h-10 font-medium text-muted-foreground">{index + 1}.</div>
+            <div className="grid grid-cols-1 items-start gap-x-4 gap-y-2 p-4 lg:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,2.5fr)_minmax(0,1fr)_110px_auto]">
+                <div className="hidden h-10 items-center justify-center font-medium text-muted-foreground lg:flex">{index + 1}.</div>
 
                 <FormField
                     control={control}
@@ -167,10 +183,12 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                             <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={composerOptions.map(c => ({ value: c, label: c }))}
-                                    selectedValue={composerField.value}
+                                    options={composerOptions.map(c => ({ value: c.id, label: c.names[locale] || c.names.en || c.name }))}
+                                    selectedValue={currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(composerField.value))?.id || ''}
                                     onSelectedValueChange={(value) => {
-                                        composerField.onChange(value);
+                                        const selectedOption = composerOptions.find((option) => option.id === value);
+                                        setValue(`repertoire.${index}.composerId`, value);
+                                        composerField.onChange(selectedOption?.names[locale] || selectedOption?.names.en || selectedOption?.name || '');
                                         setValue(`repertoire.${index}.title`, '');
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
@@ -194,8 +212,8 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                             <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={compositionOptions.map(c => ({ value: c.id || '', label: c.title }))}
-                                    selectedValue={currentRepertoireItem.id || titleField.value}
+                                    options={compositionOptions.map(c => ({ value: c.id || c.title, label: c.title }))}
+                                    selectedValue={currentRepertoireItem?.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
                                     placeholder={t('selectComposition')}
                                     onInputChange={debouncedCompositionSearch}
@@ -208,13 +226,44 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                     )}
                 />
 
-                <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
-                    <FormItem> <FormLabel>{t('genre')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
-                )} />
+                <FormField
+                    control={control}
+                    name={`repertoire.${index}.genre`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('genre')}</FormLabel>
+                            <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('selectGenre')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {genres.map((g) => (
+                                        <SelectItem key={g} value={g}>{g}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-                <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>{t('duration')}</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField
+                    control={control}
+                    name={`repertoire.${index}.duration`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('duration')}</FormLabel>
+                            <FormControl>
+                                <Input dir="ltr" placeholder="MM:SS" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-                <div className="hidden lg:flex items-center justify-center h-10">
+                <div className="hidden h-10 items-center justify-center lg:flex">
                     <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= MIN_REPERTOIRE_ITEMS}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">{t('deleteItem')}</span>
@@ -222,43 +271,93 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export function RecitalForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: RecitalFormProps) {
+export function RecitalForm({ user: _user, student, onSubmit, isEditing = false, onCancel, initialData }: RecitalFormProps) {
     const t = useTranslations('RecitalForm');
-    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+    const schoolOptions = getSchoolOptions();
+    const initialSchoolSymbol = schoolOptions.find((s) => s.value === student.schoolName)?.symbol || '';
+
+    const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
         resolver: zodResolver(getRecitalFormSchema(t)) as any,
         defaultValues: initialData ? {
-            ...initialData,
-            ...initialData.applicantDetails,
-            ...initialData.schoolDetails,
-            instrument: initialData.instrumentDetails?.instrument,
-            yearsOfStudyInstrument: initialData.instrumentDetails?.yearsOfStudy,
-            yearsWithTeacher: initialData.teacherDetails?.yearsWithTeacher,
-        } as any : {
+            studentId: initialData.studentId,
+            studentName: initialData.studentName,
+            academicYear: initialData.academicYear || getHebrewAcademicYear(),
+            grade: initialData.grade || student.grade || '',
+            applicantDetails: {
+                city: initialData.applicantDetails?.city || '',
+                phone: initialData.applicantDetails?.phone || '',
+                gender: initialData.applicantDetails?.gender || '',
+                birthDate: initialData.applicantDetails?.birthDate || '',
+            },
+            schoolDetails: {
+                schoolName: initialData.schoolDetails?.schoolName || student.schoolName || '',
+                schoolSymbol: initialData.schoolDetails?.schoolSymbol || initialSchoolSymbol,
+                hasMusicMajor: initialData.schoolDetails?.hasMusicMajor || false,
+                isMajorParticipant: initialData.schoolDetails?.isMajorParticipant || false,
+                plansTheoryExam: initialData.schoolDetails?.plansTheoryExam || false,
+                schoolEmail: initialData.schoolDetails?.schoolEmail || '',
+            },
+            instrumentDetails: {
+                instrument: initialData.instrumentDetails?.instrument || student.instruments?.[0]?.instrument || '',
+                yearsOfStudy: initialData.instrumentDetails?.yearsOfStudy,
+                recitalField: initialData.instrumentDetails?.recitalField || '',
+                previousOrOtherInstrument: initialData.instrumentDetails?.previousOrOtherInstrument || '',
+            },
+            teacherDetails: {
+                name: initialData.teacherDetails?.name || student.instruments?.[0]?.teacherName || '',
+                idNumber: initialData.teacherDetails?.idNumber || '',
+                email: initialData.teacherDetails?.email || '',
+                yearsWithTeacher: initialData.teacherDetails?.yearsWithTeacher,
+            },
+            additionalMusicDetails: {
+                ensembleParticipation: initialData.additionalMusicDetails?.ensembleParticipation || '',
+                theoryStudyYears: initialData.additionalMusicDetails?.theoryStudyYears,
+                orchestraParticipation: initialData.additionalMusicDetails?.orchestraParticipation || '',
+            },
+            managerNotes: initialData.managerNotes || '',
+            repertoire: initialData.repertoire?.length ? initialData.repertoire : Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
+        } : {
             studentId: student.id,
             studentName: student.name,
             academicYear: getHebrewAcademicYear(),
-            grade: student.grade,
+            grade: student.grade || '',
             applicantDetails: {
-                city: student.city,
-                phone: student.phone,
-                gender: student.gender,
-                birthDate: student.birthDate,
+                city: student.city || '',
+                phone: student.phone || '',
+                gender: student.gender || '',
+                birthDate: student.birthDate || '',
             },
             schoolDetails: {
-                schoolName: student.schoolName,
+                schoolName: student.schoolName || '',
+                schoolSymbol: initialSchoolSymbol,
+                hasMusicMajor: false,
+                isMajorParticipant: false,
+                plansTheoryExam: false,
+                schoolEmail: '',
             },
             instrumentDetails: {
-                instrument: student.instruments?.[0]?.instrument,
+                instrument: student.instruments?.[0]?.instrument || '',
                 yearsOfStudy: student.instruments?.[0]?.yearsOfStudy,
+                recitalField: '',
+                previousOrOtherInstrument: '',
             },
             teacherDetails: {
+                name: student.instruments?.[0]?.teacherName || '',
+                idNumber: '',
+                email: '',
                 yearsWithTeacher: student.instruments?.[0]?.yearsOfStudy,
             },
+            additionalMusicDetails: {
+                ensembleParticipation: '',
+                theoryStudyYears: undefined,
+                orchestraParticipation: '',
+            },
+            managerNotes: '',
             repertoire: Array.from({ length: MIN_REPERTOIRE_ITEMS }, () => ({ ...emptyComposition })),
         },
     });
@@ -274,19 +373,77 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="space-y-8 mt-8">
+            <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="mt-8 space-y-8">
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('studentDetails')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField name="studentName" render={({ field }) => (<FormItem> <FormLabel>{t('studentName')}</FormLabel><FormControl><Input {...field} disabled /></FormControl><FormMessage /></FormItem>)} />
-                        <FormItem> <FormLabel>{t('idNumber')}</FormLabel><Input value={student.idNumber} disabled /></FormItem>
-                        <FormField control={form.control} name="grade" render={({ field }) => (<FormItem> <FormLabel>{t('grade')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                        <FormField control={form.control} name="studentName" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('studentName')}</FormLabel>
+                                <FormControl><Input {...field} disabled /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormItem>
+                            <FormLabel>{t('idNumber')}</FormLabel>
+                            <Input value={student.idNumber} disabled />
+                        </FormItem>
+                        <FormField control={form.control} name="academicYear" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('academicYear')}</FormLabel>
+                                <FormControl><Input {...field} disabled={isEditing} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="grade" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('grade')}</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t('selectGrade')} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="י">י</SelectItem>
+                                        <SelectItem value={'י"א'}>י"א</SelectItem>
+                                        <SelectItem value={'י"ב'}>י"ב</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
-                        <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (<FormItem> <FormLabel>{t('city')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('phone')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (<FormItem> <FormLabel>{t('gender')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                        <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('city')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('phone')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('gender')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="applicantDetails.birthDate" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('birthDate')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </CardContent>
                 </Card>
 
@@ -294,10 +451,74 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                     <CardHeader>
                         <CardTitle>{t('schoolDetails')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField control={form.control as any} name="schoolDetails.schoolName" render={({ field }) => (<FormItem> <FormLabel>{t('schoolName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="schoolDetails.hasMusicMajor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('hasMusicMajor')}</FormLabel></div> </FormItem>)} />
-                        <FormField control={form.control as any} name="schoolDetails.isMajorParticipant" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"> <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl> <div className="space-y-1 leading-none"><FormLabel>{t('isMajorParticipant')}</FormLabel></div> </FormItem>)} />
+                    <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                        <FormField control={form.control} name="schoolDetails.schoolName" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('schoolName')}</FormLabel>
+                                <Select
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                        const selectedSchool = schoolOptions.find((s) => s.value === value);
+                                        form.setValue('schoolDetails.schoolSymbol', selectedSchool?.symbol || '');
+                                    }}
+                                    value={field.value || ''}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t('selectSchool')} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {schoolOptions.map((school) => (
+                                            <SelectItem key={school.value} value={school.value}>{school.label}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="schoolDetails.schoolSymbol" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('schoolSymbol')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="schoolDetails.schoolEmail" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('schoolEmail')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+
+                        <FormField control={form.control} name="schoolDetails.hasMusicMajor" render={({ field }) => (
+                            <FormItem className="rounded-md border p-4">
+                                <div className="flex items-center gap-2.5">
+                                    <FormControl><Checkbox id="schoolDetails.hasMusicMajor" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                    <FormLabel htmlFor="schoolDetails.hasMusicMajor" className="cursor-pointer leading-none">{t('hasMusicMajor')}</FormLabel>
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="schoolDetails.isMajorParticipant" render={({ field }) => (
+                            <FormItem className="rounded-md border p-4">
+                                <div className="flex items-center gap-2.5">
+                                    <FormControl><Checkbox id="schoolDetails.isMajorParticipant" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                    <FormLabel htmlFor="schoolDetails.isMajorParticipant" className="cursor-pointer leading-none">{t('isMajorParticipant')}</FormLabel>
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="schoolDetails.plansTheoryExam" render={({ field }) => (
+                            <FormItem className="rounded-md border p-4">
+                                <div className="flex items-center gap-2.5">
+                                    <FormControl><Checkbox id="schoolDetails.plansTheoryExam" checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                    <FormLabel htmlFor="schoolDetails.plansTheoryExam" className="cursor-pointer leading-none">{t('plansTheoryExam')}</FormLabel>
+                                </div>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </CardContent>
                 </Card>
 
@@ -305,11 +526,100 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                     <CardHeader>
                         <CardTitle>{t('instrumentDetails')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <FormField control={form.control as any} name="instrumentDetails.instrument" render={({ field }) => (<FormItem> <FormLabel>{t('instrument')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="instrumentDetails.yearsOfStudy" render={({ field }) => (<FormItem> <FormLabel>{t('yearsOfStudy')}</FormLabel> <FormControl><Input type="number" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormField control={form.control as any} name="teacherDetails.yearsWithTeacher" render={({ field }) => (<FormItem> <FormLabel>{t('yearsWithTeacher')}</FormLabel> <FormControl><Input type="number" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                        <FormItem> <FormLabel>{t('teacherName')}</FormLabel><Input value={student.instruments?.[0]?.teacherName} disabled /></FormItem>
+                    <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                        <FormField control={form.control} name="instrumentDetails.instrument" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('instrument')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="instrumentDetails.yearsOfStudy" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('yearsOfStudy')}</FormLabel>
+                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="instrumentDetails.recitalField" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('recitalField')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="instrumentDetails.previousOrOtherInstrument" render={({ field }) => (
+                            <FormItem className="sm:col-span-2 md:col-span-3">
+                                <FormLabel>{t('previousOrOtherInstrument')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('teacherDetails')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+                        <FormField control={form.control} name="teacherDetails.name" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('teacherName')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="teacherDetails.idNumber" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('teacherIdNumber')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="teacherDetails.email" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('teacherEmail')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="teacherDetails.yearsWithTeacher" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('yearsWithTeacher')}</FormLabel>
+                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('additionalMusicDetails')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                        <FormField control={form.control} name="additionalMusicDetails.ensembleParticipation" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('ensembleParticipation')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="additionalMusicDetails.theoryStudyYears" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('theoryStudyYears')}</FormLabel>
+                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="additionalMusicDetails.orchestraParticipation" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('orchestraParticipation')}</FormLabel>
+                                <FormControl><Input {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </CardContent>
                 </Card>
 
@@ -320,20 +630,31 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
                     <CardContent>
                         <div className="space-y-4">
                             {fields.map((item, index) => (
-                                <RepertoireItem
-                                    key={item.id}
-                                    index={index}
-                                    remove={remove}
-                                    fields={fields}
-                                />
+                                <RepertoireItem key={item.id} index={index} remove={remove} fields={fields} />
                             ))}
                         </div>
-                        <div className="flex items-center gap-4 mt-4">
-                            <Button type="button" variant="outline" onClick={() => append({ ...emptyComposition })} disabled={fields.length >= MAX_REPERTOIRE_ITEMS} >
+                        <div className="mt-4 flex items-center gap-4">
+                            <Button type="button" variant="outline" onClick={() => append({ ...emptyComposition })} disabled={fields.length >= MAX_REPERTOIRE_ITEMS}>
                                 <PlusCircle className="me-2 h-4 w-4" />
                                 {t('addComposition')}
                             </Button>
                         </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('managerNotes')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <FormField control={form.control} name="managerNotes" render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <Textarea rows={4} placeholder={t('managerNotesPlaceholder')} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </CardContent>
                 </Card>
 
@@ -352,3 +673,4 @@ export function RecitalForm({ user, student, onSubmit, isEditing = false, onCanc
         </FormProvider>
     );
 }
+

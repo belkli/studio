@@ -22,7 +22,7 @@ import { examLevels, examTypes, genres } from '@/lib/data';
 import { Checkbox } from '../ui/checkbox';
 
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 
 const getCompositionSchema = (t: any) => z.object({
@@ -53,6 +53,12 @@ const getFormSchema = (t: any) => z.object({
 
 type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
+type ComposerOption = {
+    id: string;
+    name: string;
+    names: { he: string; en: string; ru?: string; ar?: string };
+};
+
 interface ExamRegistrationFormProps {
     user: User;
     student: User;
@@ -65,40 +71,42 @@ interface ExamRegistrationFormProps {
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('ExamRegistrationForm');
     const { control, setValue, watch, getValues } = useFormContext();
-    const [composerOptions, setComposerOptions] = useState<string[]>([]);
+    const [composerOptions, setComposerOptions] = useState<ComposerOption[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
     const [isLoadingCompositions, setIsLoadingCompositions] = useState(false);
 
     const currentRepertoireItem = watch(`repertoire.${index}`);
+    const locale = useLocale() as "he" | "en" | "ar" | "ru";
+    const selectedComposerId = currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(currentRepertoireItem?.composer))?.id || '';
     const selectedComposer = currentRepertoireItem?.composer;
+    const selectedInstrument = watch('instrument');
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
-        const results = await searchComposers(query);
+        const results = await searchComposers({ query, instrument: selectedInstrument });
         setComposerOptions(results);
         setIsLoadingComposers(false);
-    }, 300), []);
+    }, 300), [selectedInstrument]);
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
         const instrument = getValues('instrument');
-        const results = await searchCompositions({ query, composer: selectedComposer, instrument });
+        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
         setCompositionOptions(results);
         setIsLoadingCompositions(false);
-    }, 300), [selectedComposer, getValues]);
+    }, 300), [selectedComposer, selectedComposerId, getValues, locale]);
 
     useEffect(() => {
-        if (selectedComposer) {
-            debouncedCompositionSearch('');
-        }
-    }, [selectedComposer, debouncedCompositionSearch]);
+        debouncedCompositionSearch('');
+    }, [selectedComposerId, selectedComposer, selectedInstrument, debouncedCompositionSearch]);
 
     const handleSelectComposition = (id: string) => {
         const composition = compositionOptions.find(c => c.id === id);
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
             setValue(`repertoire.${index}.title`, composition.title);
+            setValue(`repertoire.${index}.composerId`, composition.composerId || "");
             setValue(`repertoire.${index}.composer`, composition.composer);
             setValue(`repertoire.${index}.duration`, composition.duration);
             setValue(`repertoire.${index}.genre`, composition.genre);
@@ -129,10 +137,12 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                             <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={composerOptions.map(c => ({ value: c, label: c }))}
-                                    selectedValue={composerField.value}
+                                    options={composerOptions.map(c => ({ value: c.id, label: c.names[locale] || c.names.en || c.name }))}
+                                    selectedValue={currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(composerField.value))?.id || ""}
                                     onSelectedValueChange={(value) => {
-                                        composerField.onChange(value);
+                                        const selectedOption = composerOptions.find(option => option.id === value);
+                                        setValue(`repertoire.${index}.composerId`, value);
+                                        composerField.onChange(selectedOption?.names[locale] || selectedOption?.names.en || selectedOption?.name || "");
                                         setValue(`repertoire.${index}.title`, '');
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
@@ -203,7 +213,7 @@ const getHebrewAcademicYear = () => {
 export function ExamRegistrationForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: ExamRegistrationFormProps) {
     const t = useTranslations('ExamRegistrationForm');
     const nt = useTranslations('NewForm');
-    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+    const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
         resolver: zodResolver(getFormSchema(t)),
@@ -339,7 +349,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                             control={form.control}
                             name="teacherDeclaration"
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-start space-x-3 space-x-reverse space-y-0 rounded-md border p-4">
+                                <FormItem className="flex items-start gap-3 rounded-md border p-4">
                                     <FormControl>
                                         <Checkbox
                                             checked={field.value}
@@ -373,3 +383,4 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
         </FormProvider>
     );
 }
+

@@ -21,14 +21,14 @@ export function FormsList({
     let forms = user ? mockFormSubmissions : [];
 
     if (user) {
-        if (user.role === 'student') {
-            forms = forms.filter(f => f.studentId === user.id);
-        } else if (user.role === 'parent') {
-            forms = forms.filter(f => user.childIds?.includes(f.studentId));
+        if (user.role === 'conservatorium_admin' || user.role === 'delegated_admin') {
+            forms = forms.filter((f) => f.conservatoriumId === user.conservatoriumId);
         } else if (user.role === 'teacher') {
-            forms = forms.filter(f => user.students?.includes(f.studentId));
-        } else if (user.role === 'conservatorium_admin') {
-            forms = forms.filter(f => f.conservatoriumId === user.conservatoriumId);
+            forms = forms.filter((f) => f.teacherId === user.id || (f.formData as any)?.assignedToTeacherId === user.id);
+        } else if (user.role === 'student') {
+            forms = forms.filter((f) => f.submittedBy === user.id || f.studentId === user.id);
+        } else if (user.role === 'parent') {
+            forms = forms.filter((f) => f.submittedBy === user.id || !!user.childIds?.includes(f.studentId));
         }
     }
 
@@ -56,7 +56,7 @@ export function FormsList({
                     <TableHead>{tc('formType')}</TableHead>
                     <TableHead>{tc('status')}</TableHead>
                     <TableHead>{tc('submissionDate')}</TableHead>
-                    <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
+                    <TableHead className="text-start"><span className="sr-only">{tc('actions')}</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,7 +68,7 @@ export function FormsList({
                             <StatusBadge status={form.status} />
                         </TableCell>
                         <TableCell>{form.submissionDate}</TableCell>
-                        <TableCell className="text-left">
+                        <TableCell className="text-start">
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                             </Button>

@@ -51,7 +51,7 @@
     "weeklyGoalProgress": "{current} / {goal} دقيقة",
     "welcomeStudent": "مرحباً، {name}",
     "welcomeTitle": "مرحباً، {studentName}!",
-    "T": "T"
+    "T": "ت"
   },
   "StudentBilling": {
     "active": "نشط",
@@ -120,7 +120,7 @@
     "videoAttached": "تم إرفاق فيديو",
     "weeklyProgress": "التقدم الأسبوعي",
     "whatDidYouPractice": "ماذا تمرّنت؟",
-    "T": "T"
+    "T": "ت"
   },
   "PracticeLogForm": {
     "dateLabel": "التاريخ",
@@ -146,7 +146,7 @@
     "selectChildPlaceholder": "اختر طفلاً...",
     "successDesc": "أحسنت لتدريبك {duration} دقائق.",
     "successTitle": "تم تسجيل التدريب بنجاح!",
-    "T": "T"
+    "T": "ت"
   },
   "ProgressPage": {
     "achievements": "الإنجازات",
@@ -176,7 +176,7 @@
     "totalPractice": "إجمالي التدريب",
     "weeklyGoal": "الهدف الأسبوعي",
     "weeklyPracticeGoal": "هدف التدريب الأسبوعي",
-    "T": "T"
+    "T": "ت"
   },
   "SheetMusicViewer": {
     "fullscreen": "ملء الشاشة",
@@ -186,7 +186,7 @@
     "myFolderDesc": "القطع والتمارين المخصصة لك.",
     "noPdfAttached": "لا يوجد ملف نوتة موسيقية مرفق بهذه القطعة.",
     "noPieces": "لا توجد قطع مخصصة. يمكن للمعلم تعيين مهام لك من خلال بوابة المعلم.",
-    "pdfSimulator": "(يعرض المحاكي ملف PDF. في الواقع، سيُعرض مكون Viewer مدعوم على الجوال/سطح المكتب)",
+    "pdfSimulator": "(يعرض المحاكي ملف PDF. في الواقع، سيتم عرض مكون العارض الذي يدعمه الهاتف المحمول/سطح المكتب)",
     "piece": "القطعة",
     "pieceDescription": "وصف القطعة: {description}",
     "selectPieceDesc": "جميع النوتات الموسيقية والمصاحبات وملخصات دروس المعلم متاحة هنا.",
@@ -238,7 +238,7 @@
       "level1": {
         "pc1": "قطعة من الحقبة الباروكية (مثل باخ آنا ماغدالينا)",
         "pc2": "الحركة الأولى من سوناتينا",
-        "pc3": "יצירה רומנטית/מודרנית",
+        "pc3": "قطعة رومانسية/حديثة",
         "sc1": "سلمان ماجور وصغير (حتى 2 علامة/بيمول)",
         "sr1": "قراءة سريعة لمستوى مبتدئ"
       },
@@ -246,13 +246,13 @@
         "pc1": "بريلود وفوغ / اختراع ثنائي",
         "pc2": "حركة سوناتا كاملة",
         "pc3": "قطعة رومانسية/حديثة",
-        "pc4": "יצירה מודרנית/עכשווית",
+        "pc4": "قطعة حديثة/معاصرة",
         "sc1": "سلالم ماجور وصغير (حتى 4 علامات/بيمولات)",
         "sr1": "قراءة سريعة متقدمة"
       },
       "other": {
         "pc1": "متطلب شخصي",
-        "sr1": "קריאה מן הדף"
+        "sr1": "القراءة السريعة"
       }
     },
     "result": "النتيجة",
@@ -294,7 +294,7 @@
     "instrumentStatus": "حالة الآلة الموسيقية",
     "lastLessonNotesTitle": "من الدرس الأخير مع {teacherName}:",
     "nextLessonDetails": "{date} - {instrument} مع {teacherName}",
-    "nextLessonTimeFormat": "EEEE, dd/MM 'الساعة' HH:mm",
+    "nextLessonTimeFormat": "EEEE، MM/dd 'at' HH:mm",
     "nextLessonTitle": "الدرس التالي:",
     "noLastLessonNotes": "لا توجد ملاحظات من الدرس الأخير.",
     "noRepertoire": "لم يتم تعيين رديف.",

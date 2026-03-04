@@ -80,7 +80,7 @@
     "sep2026": "سبتمبر 2026",
     "setupAltPayment": "إعداد طريقة دفع بديلة / متكررة",
     "setupRecurring": "إعداد الدفع المتكرر ببطاقة الائتمان",
-    "setupRecurringDesc": "تم إرسال طلب الدفع المتكرر (Tokens) إلى خوادم Cardcom.",
+    "setupRecurringDesc": "تم إرسال طلب الدفع المتكرر (الرموز) إلى خوادم Cardcom.",
     "status": "الحالة",
     "viewInvoices": "عرض الفواتير المفتوحة وسجل المدفوعات.",
     "winterConcert": "يشمل المشاركة في حفل الشتاء (50 شيكل)"
@@ -141,7 +141,19 @@
     "teacherApproveSuccess": "تم اعتماد راتب {name}",
     "teacherPaidSuccess": "تم وضع علامة \"تم الدفع\" على راتب {name}",
     "helvetica": "هيلفيتيكا",
-    "a": "A"
+    "a": "أ-",
+    "period": "الفترة",
+    "generateReport": "إنشاء تقرير",
+    "exportAll": "تصدير الكل",
+    "totalTeachers": "إجمالي المعلمين",
+    "totalLessons": "إجمالي الدروس",
+    "totalHours": "إجمالي الساعات",
+    "teacher": "المعلم",
+    "instrument": "الآلة",
+    "lessonsCount": "دروس",
+    "absences": "الغيابات",
+    "makeups": "حصص تعويضية",
+    "actions": "إجراءات"
   },
   "TeacherPayroll": {
     "amountCol": "المبلغ",
@@ -163,6 +175,21 @@
     "statusPaid": "مدفوع",
     "studentCol": "الطالب",
     "totalHoursLabel": "إجمالي الساعات: {hours}",
-    "helvetica": "هيلفيتيكا"
+    "helvetica": "هيلفيتيكا",
+    "period": "الفترة",
+    "myLessons": "دروسي",
+    "myHours": "ساعاتي",
+    "date": "التاريخ",
+    "student": "الطالب",
+    "instrument": "الآلة",
+    "duration": "المدة",
+    "status": "الحالة",
+    "minutes": "دقائق",
+    "noLessons": "لا توجد دروس في الفترة المحددة.",
+    "downloadMyReport": "تنزيل تقريري"
+  },
+  "TeacherPayrollPage": {
+    "title": "كشوف المرتبات الخاصة بي",
+    "subtitle": "عرض الدروس الشهرية والساعات المبلغ عنها."
   }
 }

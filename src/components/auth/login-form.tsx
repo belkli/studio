@@ -1,5 +1,5 @@
 "use client"
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
@@ -10,22 +10,84 @@ import { useToast } from "@/hooks/use-toast"
 import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
 import { useTranslations, useLocale } from "next-intl"
+import { signInWithGoogle, signInWithMicrosoft, type OAuthProfile } from '@/lib/auth/oauth';
 
 export function LoginForm() {
   const t = useTranslations("Auth")
   const { toast } = useToast()
-  const { login } = useAuth()
+  const { login, users, updateUser } = useAuth()
   const locale = useLocale()
+  const router = useRouter()
   const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleOAuthNotAvailable = () => {
-    toast({
-      title: t('oauthComingSoon') ?? 'Coming Soon',
-      description: t('oauthComingSoonDesc') ?? 'Google/Microsoft login is not yet available.',
-    })
+  const linkOAuthToExistingUser = (oauthProfile: OAuthProfile) => {
+    const existing = users.find((entry) => entry.email.toLowerCase() === oauthProfile.email.toLowerCase());
+    if (!existing) return;
+
+    const now = new Date().toISOString();
+    const nextProvider = {
+      userId: existing.id,
+      provider: oauthProfile.provider,
+      providerUserId: oauthProfile.providerUserId,
+      providerEmail: oauthProfile.email,
+      linkedAt: now,
+      lastUsedAt: now,
+    };
+
+    const providers = existing.oauthProviders || [];
+    const index = providers.findIndex((item) => item.provider === oauthProfile.provider);
+    const mergedProviders = [...providers];
+    if (index >= 0) {
+      mergedProviders[index] = { ...mergedProviders[index], ...nextProvider, linkedAt: mergedProviders[index].linkedAt || now };
+    } else {
+      mergedProviders.push(nextProvider);
+    }
+
+    updateUser({
+      ...existing,
+      avatarUrl: existing.avatarUrl || oauthProfile.avatarUrl,
+      oauthProviders: mergedProviders,
+      registrationSource: existing.registrationSource || 'email',
+    });
+  };
+
+  const handleOAuthSignIn = async (provider: 'google' | 'microsoft') => {
+    setLoading(true);
+    try {
+      const result = provider === 'google'
+        ? await signInWithGoogle({ fallbackEmail: email || undefined })
+        : await signInWithMicrosoft({ fallbackEmail: email || undefined });
+
+      if (result.type === 'conflict') {
+        toast({
+          variant: 'destructive',
+          title: t('accountExistsTitle'),
+          description: t('accountExistsDesc', { methods: result.existingMethods.join(', ') || 'password' }),
+        });
+        return;
+      }
+
+      const existing = users.find((entry) => entry.email.toLowerCase() === result.profile.email.toLowerCase());
+      if (existing) {
+        linkOAuthToExistingUser(result.profile);
+        login(result.profile.email);
+        return;
+      }
+
+      sessionStorage.setItem('oauth_prefill', JSON.stringify(result.profile));
+      router.push('/register?source=oauth');
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: t('oauthErrorTitle'),
+        description: t('oauthErrorDesc'),
+      })
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleForgotPassword = (e: React.MouseEvent) => {
@@ -47,7 +109,6 @@ export function LoginForm() {
       })
       return;
     }
-    // QA-H01: Validate password field before submitting
     if (!password) {
       toast({
         variant: 'destructive',
@@ -58,7 +119,7 @@ export function LoginForm() {
     }
     setLoading(true)
 
-    setTimeout(() => { // Simulate network delay
+    setTimeout(() => {
       const { user, status } = login(email);
 
       if (status === 'approved' && user) {
@@ -73,7 +134,7 @@ export function LoginForm() {
           description: t('toasts.pendingAccountDesc'),
         });
         setLoading(false);
-      } else { // status === 'not_found'
+      } else {
         toast({
           variant: 'destructive',
           title: t('toasts.loginFailed'),
@@ -84,7 +145,6 @@ export function LoginForm() {
     }, 500);
   }
 
-  // QA-H02: Validate email before loading, always reset loading in finally block
   const handleMagicLink = (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) {
@@ -102,7 +162,7 @@ export function LoginForm() {
       } catch {
         toast({ variant: 'destructive', title: 'Error', description: 'Could not send magic link. Try again.' })
       } finally {
-        setLoading(false) // Always reset — user can never get stuck
+        setLoading(false)
       }
     }, 1000)
   }
@@ -168,19 +228,19 @@ export function LoginForm() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading} className="opacity-70">
+          <Button variant="outline" onClick={() => handleOAuthSignIn('google')} disabled={loading}>
             <Icons.google className="me-2 h-4 w-4" />
-            Google (Soon)
+            Google
           </Button>
-          <Button variant="outline" onClick={handleOAuthNotAvailable} disabled={loading} className="opacity-70">
+          <Button variant="outline" onClick={() => handleOAuthSignIn('microsoft')} disabled={loading}>
             <Icons.microsoft className="me-2 h-4 w-4" />
-            Microsoft (Soon)
+            Microsoft
           </Button>
         </div>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">
-          {t('noAccount')}{" "}
+          {t('noAccount')} {" "}
           <Link href="/register" className="underline text-primary">
             {t('registerHere')}
           </Link>

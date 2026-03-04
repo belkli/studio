@@ -64,7 +64,18 @@
       "no": "No",
       "cancel": "Cancel",
       "addNote": "Add a note (optional)...",
-      "reasonPlaceholder": "Detail the reasons here..."
+      "reasonPlaceholder": "Detail the reasons here...",
+      "schoolSymbol": "School symbol",
+      "schoolEmail": "School email",
+      "plansTheoryExam": "Taking theory matriculation",
+      "recitalField": "Recital field",
+      "previousOrOtherInstrument": "Additional/previous instrument",
+      "teacherIdNumber": "Teacher ID number",
+      "teacherEmail": "Teacher email",
+      "ensembleParticipation": "Ensemble participation",
+      "theoryStudyYears": "Theory study years",
+      "orchestraParticipation": "Orchestra participation",
+      "managerNotes": "Additional notes"
     },
     "toasts": {
       "approved": "Form Approved",
@@ -185,7 +196,13 @@
     "formApprovedDesc": "The form for {name} was moved to the next stage.",
     "formRejected": "Form Rejected",
     "formNeedsRevision": "Revision Required",
-    "formRejectedDesc": "The form for {name} was {action}."
+    "formRejectedDesc": "The form for {name} was {action}.",
+    "selectAll": "Select all",
+    "selectRow": "Select row",
+    "requestRevision": "Request Revision",
+    "selectItemsFirst": "Select items first.",
+    "selectedCount": "{count} selected",
+    "bulkActionSuccess": "Bulk action applied to {count} items."
   },
   "FormBuilder": {
     "labelRequired": "Label is required",
@@ -224,7 +241,19 @@
     "stepNameLabel": "Step Name",
     "approverRoleLabel": "Approver Role",
     "addApprovalStepBtn": "Add Approval Step",
-    "saveTemplateBtn": "Save Form Template"
+    "saveTemplateBtn": "Save Form Template",
+    "roleSiteAdmin": "Site admin",
+    "fieldId": "Field ID",
+    "placeholder": "Placeholder",
+    "showIfField": "Show if field",
+    "showIfOperator": "Show if operator",
+    "showIfValue": "Show if value",
+    "optional": "Optional",
+    "previewTitle": "Form Preview",
+    "previewDesc": "Live preview of current field configuration.",
+    "loadRecitalTemplate": "Load recital template",
+    "recitalTemplateTitle": "Recital Form",
+    "recitalTemplateDesc": "Prebuilt recital template with advanced fields."
   },
   "ExamRegistrationForm": {
     "validation": {
@@ -312,7 +341,23 @@
     "addComposition": "Add composition",
     "cancel": "Cancel",
     "resubmit": "Resubmit",
-    "submit": "Submit"
+    "submit": "Submit",
+    "academicYear": "Academic year",
+    "selectGrade": "Select grade",
+    "birthDate": "Birth date",
+    "selectSchool": "Select school",
+    "schoolEmail": "School email",
+    "plansTheoryExam": "Planned to take music theory matriculation exam?",
+    "recitalField": "Recital track/field",
+    "previousOrOtherInstrument": "Additional/previous instrument",
+    "teacherIdNumber": "Teacher ID number",
+    "teacherEmail": "Teacher email",
+    "additionalMusicDetails": "Additional details",
+    "ensembleParticipation": "Participates in conservatory ensembles?",
+    "theoryStudyYears": "Years of music theory studies",
+    "orchestraParticipation": "Orchestra participation",
+    "managerNotes": "Additional notes on applicant",
+    "managerNotesPlaceholder": "Additional details..."
   },
   "KenesForm": {
     "validation": {

@@ -28,7 +28,19 @@
       "title": "New Student Registration (Admin)",
       "subtitle": "Fill in the details to register a new student.",
       "enrollSection": "Enrollment Details",
-      "submit": "Register Student"
+      "submit": "Register Student",
+      "teacherAssignmentTitle": "Teacher Assignment",
+      "manualAssign": "Manual assignment",
+      "selectTeacher": "Select teacher",
+      "aiSuggest": "AI suggestion",
+      "aiSuggestHint": "Pick preferred day/time and get a suggested teacher.",
+      "getSuggestion": "Get suggestion",
+      "useSuggestion": "Use this teacher",
+      "aiScore": "Match score: {score}",
+      "selectInstrumentFirst": "Select conservatorium and instrument first.",
+      "noTeachersForFilters": "No teachers available for selected filters.",
+      "noAiSuggestion": "No suitable teacher suggestion was found.",
+      "aiError": "Could not generate teacher suggestion."
     },
     "details": {
       "parentTitle": "Parent details",
@@ -40,7 +52,8 @@
       "idNumber": "ID number",
       "phone": "Phone",
       "birthDate": "Birth date",
-      "password": "Password"
+      "password": "Password",
+      "oauthEmailReadonly": "Email is provided by your social account and cannot be changed here."
     },
     "musical": {
       "title": "Musical Information",
@@ -153,7 +166,8 @@
       "selectConservatorium": "Please select a conservatory",
       "selectInstrument": "Please select an instrument",
       "selectPackage": "Please select a package",
-      "missingDetails": "Missing details. Cannot complete registration."
+      "missingDetails": "Missing details. Cannot complete registration.",
+      "idRequired": "ID required"
     },
     "steps": {
       "role": "Registration Type",
@@ -536,6 +550,31 @@
       "PENDING": "Pending",
       "SUSPENDED": "Suspended",
       "ENDED": "Ended"
+    },
+    "adminTitle": "Playing School Management",
+    "distribution": {
+      "title": "Distribution & analytics",
+      "subtitle": "Track enrollment funnel performance and share registration links.",
+      "copied": "Link copied",
+      "whatsAppMessage": "Hi! Registration link for {school}: {url}",
+      "funnelTitle": "Enrollment funnel",
+      "funnelSubtitle": "From initial interest to paid enrollment",
+      "funnel": {
+        "leads": "Leads",
+        "tokenScanned": "Token scanned",
+        "startedWizard": "Started registration",
+        "enrolledPaid": "Enrolled & paid"
+      },
+      "conversionRate": "Conversion rate",
+      "tokensTitle": "School tokens",
+      "tokensSubtitle": "Distribute links and monitor progress by school.",
+      "schoolPartnership": "School",
+      "registrationToken": "Registration token",
+      "conversion": "Conversion",
+      "actions": "Actions",
+      "academicYear": "Academic year {year}",
+      "whatsapp": "WhatsApp",
+      "openLink": "Open link"
     }
   },
   "OpenDay": {
@@ -574,7 +613,21 @@
     "selectOpenDay": "Select open day",
     "noEventsForBranch": "No open days found for this branch.",
     "backToList": "Back to list",
-    "registerForEvent": "Register for Open Day: {name}"
+    "registerForEvent": "Register for Open Day: {name}",
+    "filterCity": "City",
+    "allCities": "All cities",
+    "filterDistance": "Distance",
+    "allDistances": "All distances",
+    "distance10": "Up to 10 km",
+    "distance25": "Up to 25 km",
+    "distance50": "Up to 50 km",
+    "filterInstrument": "Instrument",
+    "allInstruments": "All instruments",
+    "dateFrom": "Date from",
+    "dateTo": "Date to",
+    "locating": "Locating...",
+    "useMyLocation": "Use my location",
+    "noEventsForFilters": "No open days match the selected filters."
   },
   "AvailableNow": {
     "title": "Available Lessons for Today and Tomorrow",
@@ -588,7 +641,13 @@
     "duration60": "60 minutes",
     "noSlotsFound": "No available lessons right now",
     "noSlotsDesc": "Try changing the filter options or check back later.",
-    "loadingSlots": "Looking for last-minute opportunities..."
+    "loadingSlots": "Looking for last-minute opportunities...",
+    "city": "City",
+    "allCities": "All cities",
+    "distance": "Distance",
+    "allDistances": "All distances",
+    "distance10": "Up to 10 km",
+    "distance25": "Up to 25 km"
   },
   "ExcellenceTrack": {
     "successTitle": "Enrollment confirmed",

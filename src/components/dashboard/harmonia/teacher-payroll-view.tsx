@@ -1,174 +1,175 @@
+﻿'use client';
 
-'use client';
-import { useMemo } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import type { PayrollSummary, PayrollStatus } from '@/lib/types';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import { Download } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { useTranslations, useLocale } from 'next-intl';
-import { useDateLocale } from '@/hooks/use-date-locale';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+type TeacherLessonRow = {
+  id: string;
+  date: string;
+  studentName: string;
+  instrument: string;
+  durationMinutes: number;
+  status: string;
+};
+
+const HEBREW_EXPORT_HEADERS = ['שם עובד', 'ת.ז.', 'שעות בפועל', 'שעות נוספות', 'היעדרויות', 'הערות'];
+
+const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
+
+function downloadCsvRow(row: [string, string, string, string, string, string], filename: string) {
+  const bom = '\uFEFF';
+  const csv =
+    bom +
+    [HEBREW_EXPORT_HEADERS, row]
+      .map((line) => line.map((cell) => csvEscape(cell)).join(','))
+      .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+}
+
+function formatMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = String(totalMinutes % 60).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
 
 export function TeacherPayrollView() {
-    const { user, mockPayrolls } = useAuth();
-    const t = useTranslations('TeacherPayroll');
-    const locale = useLocale();
-    const dateLocale = useDateLocale();
-    const isRtl = locale === 'he' || locale === 'ar';
+  const { user, users, mockLessons } = useAuth();
+  const t = useTranslations('TeacherPayroll');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
-    const statusConfig: Record<PayrollStatus, { label: string; className: string }> = {
-        DRAFT: { label: t('statusDraft'), className: 'bg-yellow-100 text-yellow-800' },
-        APPROVED: { label: t('statusApproved'), className: 'bg-blue-100 text-blue-800' },
-        PAID: { label: t('statusPaid'), className: 'bg-green-100 text-green-800' },
+  const [period, setPeriod] = useState<string>('2026-03');
+
+  const report = useMemo(() => {
+    if (!user) {
+      return { lessonsCount: 0, totalMinutes: 0, absentCount: 0, lessons: [] as TeacherLessonRow[] };
+    }
+
+    const monthStart = new Date(`${period}-01T00:00:00`);
+    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const lessons = mockLessons
+      .filter((lesson) => lesson.teacherId === user.id)
+      .filter((lesson) => {
+        const when = new Date(lesson.startTime);
+        return when >= monthStart && when <= monthEnd;
+      })
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+
+    const completed = lessons.filter((lesson) => lesson.status === 'COMPLETED');
+    const totalMinutes = completed.reduce((sum, lesson) => sum + lesson.durationMinutes, 0);
+    const absentCount = lessons.filter((lesson) => lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'NO_SHOW_TEACHER').length;
+
+    const rows: TeacherLessonRow[] = lessons.map((lesson) => ({
+      id: lesson.id,
+      date: format(new Date(lesson.startTime), 'dd/MM/yyyy'),
+      studentName: users.find((entry) => entry.id === lesson.studentId)?.name || '-',
+      instrument: lesson.instrument,
+      durationMinutes: lesson.durationMinutes,
+      status: lesson.status,
+    }));
+
+    return {
+      lessonsCount: completed.length,
+      totalMinutes,
+      absentCount,
+      lessons: rows,
     };
+  }, [mockLessons, period, user, users]);
 
-    const teacherPayrolls = useMemo(() => {
-        if (!user) return [];
-        return mockPayrolls
-            .filter(p => p.teacherId === user.id)
-            .sort((a, b) => new Date(b.periodStart).getTime() - new Date(a.periodStart).getTime());
-    }, [mockPayrolls, user]);
+  const exportMyPayroll = () => {
+    if (!user) return;
+    const row: [string, string, string, string, string, string] = [
+      user.name,
+      user.idNumber || '',
+      (report.totalMinutes / 60).toFixed(2),
+      '0.00',
+      String(report.absentCount),
+      period,
+    ];
+    downloadCsvRow(row, `payroll-${user.id}-${period}.csv`);
+  };
 
-    const handleExport = (payroll: PayrollSummary) => {
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.width;
+  return (
+    <div className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="space-y-1">
+        <label className="text-sm text-muted-foreground">{t('period')}</label>
+        <input
+          type="month"
+          value={period}
+          onChange={(event) => setPeriod(event.target.value)}
+          className="h-9 rounded-md border bg-background px-3"
+        />
+      </div>
 
-        const rtl = (text: string | number) => {
-            if (typeof text !== 'string') return String(text);
-            return isRtl ? text.split('').reverse().join('') : text;
-        };
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-start">{t('myLessons')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-start">{report.lessonsCount}</CardContent>
+        </Card>
 
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(20);
-        doc.text(rtl(t('payrollReportTitle', { teacherName: payroll.teacherName })), pageWidth / 2, 20, { align: 'center' });
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-start">{t('myHours')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-start">{formatMinutes(report.totalMinutes)}</CardContent>
+        </Card>
+      </div>
 
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
+      <Card>
+        <CardContent className="pt-6">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-start">{t('date')}</TableHead>
+                <TableHead className="text-start">{t('student')}</TableHead>
+                <TableHead className="text-start">{t('instrument')}</TableHead>
+                <TableHead className="text-start">{t('duration')}</TableHead>
+                <TableHead className="text-start">{t('status')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {report.lessons.map((lesson) => (
+                <TableRow key={lesson.id}>
+                  <TableCell className="text-start">{lesson.date}</TableCell>
+                  <TableCell className="text-start">{lesson.studentName}</TableCell>
+                  <TableCell className="text-start">{lesson.instrument}</TableCell>
+                  <TableCell className="text-start">{lesson.durationMinutes} {t('minutes')}</TableCell>
+                  <TableCell className="text-start">{lesson.status}</TableCell>
+                </TableRow>
+              ))}
+              {report.lessons.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-start text-muted-foreground">{t('noLessons')}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-        const periodStr = t('periodLabel', {
-            start: format(new Date(payroll.periodStart), 'dd/MM/yyyy'),
-            end: format(new Date(payroll.periodEnd), 'dd/MM/yyyy')
-        });
-        const statusStr = t('statusLabel', { status: statusConfig[payroll.status].label });
-
-        doc.text(rtl(periodStr), isRtl ? pageWidth - 15 : 15, 35, { align: isRtl ? 'right' : 'left' });
-        doc.text(rtl(statusStr), isRtl ? pageWidth - 15 : 15, 42, { align: isRtl ? 'right' : 'left' });
-
-        const head = isRtl
-            ? [[rtl(t('amountCol')), rtl(t('rateCol')), rtl(t('durationCol')), rtl(t('studentCol')), rtl(t('dateCol'))]]
-            : [[t('dateCol'), t('studentCol'), t('durationCol'), t('rateCol'), t('amountCol')]];
-
-        const body = payroll.completedLessons.map(lesson => {
-            const row = [
-                format(new Date(lesson.completedAt), 'dd/MM/yyyy'),
-                lesson.studentName,
-                lesson.durationMinutes,
-                `${t('currencySymbol')}${lesson.rate}`,
-                `${t('currencySymbol')}${lesson.subtotal.toFixed(2)}`
-            ];
-            if (isRtl) {
-                return [rtl(row[4]), rtl(row[3]), rtl(row[2]), rtl(row[1]), rtl(row[0])];
-            }
-            return row;
-        });
-
-        (doc as any).autoTable({
-            startY: 55,
-            head: head,
-            body: body,
-            styles: {
-                halign: isRtl ? 'right' : 'left',
-                font: 'helvetica',
-            },
-            headStyles: {
-                fillColor: [41, 128, 185],
-                textColor: 255,
-                fontStyle: 'bold',
-            },
-        });
-
-        const finalY = (doc as any).lastAutoTable.finalY;
-
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-
-        const totalHoursStr = t('totalHoursLabel', { hours: payroll.totalHours.toFixed(2) });
-        const grossPayStr = t('grossPayLabel', { amount: payroll.grossPay.toLocaleString() });
-
-        doc.text(rtl(totalHoursStr), isRtl ? pageWidth - 15 : 15, finalY + 15, { align: isRtl ? 'right' : 'left' });
-        doc.text(rtl(grossPayStr), isRtl ? pageWidth - 15 : 15, finalY + 25, { align: isRtl ? 'right' : 'left' });
-
-        doc.save(`payroll_${payroll.teacherId}_${payroll.periodStart.slice(0, 7)}.pdf`);
-    }
-
-    if (teacherPayrolls.length === 0) {
-        return (
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('noPayrollDataTitle')}</CardTitle>
-                    <CardDescription>{t('noPayrollDataDesc')}</CardDescription>
-                </CardHeader>
-            </Card>
-        );
-    }
-
-    return (
-        <Accordion type="single" collapsible className="w-full" defaultValue={teacherPayrolls[0]?.id}>
-            {teacherPayrolls.map((payroll) => (
-                <AccordionItem value={payroll.id} key={payroll.id}>
-                    <AccordionTrigger className="hover:bg-muted/50 px-4 rounded-md text-lg">
-                        <div className={isRtl ? "flex items-center gap-4 flex-1 text-right" : "flex items-center gap-4 flex-1 text-left"}>
-                            <div className={isRtl ? "text-right" : "text-left"}>
-                                <p className="font-semibold">
-                                    {t('payslipForMonth', { month: format(new Date(payroll.periodStart), 'MMMM yyyy', { locale: dateLocale }) })}
-                                </p>
-                                <Badge variant="outline" className={statusConfig[payroll.status].className}>
-                                    {statusConfig[payroll.status].label}
-                                </Badge>
-                            </div>
-                        </div>
-                        <div className={`text-xl font-bold text-green-600 ${isRtl ? 'me-4' : 'ms-4'}`}>
-                            {t('currencySymbol')}{payroll.grossPay.toLocaleString()}
-                        </div>
-                        <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleExport(payroll); }} className={isRtl ? 'me-4' : 'ms-4'}>
-                            <Download className={`${isRtl ? 'ms-2' : 'me-2'} h-4 w-4`} /> {t('exportPdfBtn')}
-                        </Button>
-                    </AccordionTrigger>
-                    <AccordionContent className="bg-muted/20">
-                        <div className="p-4">
-                            <h4 className="font-semibold mb-2">{t('lessonDetailsTitle', { count: payroll.completedLessons.length })}</h4>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('dateCol')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('studentCol')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('durationCol')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('rateCol')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-left' : 'text-right'}>{t('amountCol')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {payroll.completedLessons.map(lesson => (
-                                        <TableRow key={lesson.slotId}>
-                                            <TableCell className={isRtl ? 'text-right' : 'text-left'}>{format(new Date(lesson.completedAt), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className={isRtl ? 'text-right' : 'text-left'}>{lesson.studentName}</TableCell>
-                                            <TableCell className={isRtl ? 'text-right' : 'text-left'}>{lesson.durationMinutes}</TableCell>
-                                            <TableCell className={isRtl ? 'text-right' : 'text-left'}>{t('currencySymbol')}{lesson.rate}</TableCell>
-                                            <TableCell className={`${isRtl ? 'text-left' : 'text-right'} font-medium`}>{t('currencySymbol')}{lesson.subtotal.toFixed(2)}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            ))}
-        </Accordion>
-    );
+      <Button variant="outline" onClick={exportMyPayroll}>
+        <Download className="h-4 w-4 me-2" />
+        {t('downloadMyReport')}
+      </Button>
+    </div>
+  );
 }

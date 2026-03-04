@@ -1,5 +1,5 @@
 
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental } from './types';
 import constAdminData from '../../docs/constadmin.json';
 import rawCompositions from '../../docs/data.json';
 import rawConservatoriums from '../../docs/Conservatoriums/conservatoriums.json';
@@ -156,17 +156,89 @@ export const schools = [
 export const examLevels = ['בגרות (יחידה 1)', 'בגרות (5 יחידות)', 'אקדמאי', 'אחר'];
 export const examTypes = ['ביצוע (רסיטל)', 'תאוריה', 'משולב'];
 
+const CANONICAL_COMPOSERS: Record<string, { he: string; en: string; ru?: string; ar?: string; aliases: string[] }> = {
+    beethoven: { he: '??????', en: 'Beethoven', ru: '????????', ar: '???????', aliases: ['beethoven', '??????'] },
+    mozart: { he: '?????', en: 'Mozart', ru: '??????', ar: '??????', aliases: ['mozart', '?????'] },
+    bach: { he: '???', en: 'Bach', ru: '???', ar: '???', aliases: ['bach', '???'] },
+    chopin: { he: '????', en: 'Chopin', ru: '?????', ar: '?????', aliases: ['chopin', '????'] },
+    brahms: { he: '?????', en: 'Brahms', ru: '?????', ar: '?????', aliases: ['brahms', '?????'] },
+    handel: { he: '????', en: 'Handel', ru: '???????', ar: '?????', aliases: ['handel', 'haendel', '????'] },
+    schumann: { he: '????', en: 'Schumann', ru: '?????', ar: '?????', aliases: ['schumann', '????'] },
+};
 
-export const compositions: Composition[] = (rawCompositions as any[]).map((item: any, index: number) => ({
-    id: `comp-db-${index}`,
-    composer: item['מלחין'] || 'לא ידוע',
-    title: item['יצירה'] || 'ללא כותרת',
-    duration: '05:00', // Placeholder duration, as it's not in the JSON
-    genre: item['תקופה'] || 'לא ידוע',
-    instrument: item['כלי'] || undefined,
-    approved: item['מאושר כיצירה מרכזית'] === 'כן',
-    source: 'seed' as const,
-})).filter(c => c.composer && c.title);
+const normalizeText = (value: string) =>
+    value
+        .normalize('NFKD')
+        .replace(/[֑-ׇ]/g, '')
+        .toLowerCase()
+        .trim();
+
+const slugifyComposer = (value: string) => {
+    const normalized = normalizeText(value)
+        .replace(/[^a-z0-9֐-׿s-]/g, '')
+        .replace(/s+/g, '-');
+
+    return normalized || 'unknown-composer';
+};
+
+const hasHebrewChars = (value: string) => /[\u0590-\u05ff]/.test(value);
+
+const localizeSeedTitle = (titleRaw: string) => ({
+    he: titleRaw,
+    en: hasHebrewChars(titleRaw) ? `${titleRaw} (EN)` : titleRaw,
+    ru: hasHebrewChars(titleRaw) ? `${titleRaw} (RU)` : titleRaw,
+    ar: hasHebrewChars(titleRaw) ? `${titleRaw} (AR)` : titleRaw,
+});
+
+const resolveComposerData = (composerRaw: string) => {
+    const normalized = normalizeText(composerRaw);
+    const canonical = Object.entries(CANONICAL_COMPOSERS).find(([, value]) =>
+        value.aliases.some((alias) => normalized.includes(normalizeText(alias)))
+    );
+
+    if (canonical) {
+        return {
+            id: canonical[0],
+            names: {
+                he: canonical[1].he,
+                en: canonical[1].en,
+                ru: canonical[1].ru,
+                ar: canonical[1].ar,
+            },
+        };
+    }
+
+    return {
+        id: slugifyComposer(composerRaw),
+        names: {
+            he: composerRaw,
+            en: composerRaw,
+            ru: composerRaw,
+            ar: composerRaw,
+        },
+    };
+};
+
+
+export const compositions: Composition[] = (rawCompositions as any[]).map((item: any, index: number) => {
+    const composerRaw = item['\u05de\u05dc\u05d7\u05d9\u05df'] || 'Unknown Composer';
+    const titleRaw = item['\u05d9\u05e6\u05d9\u05e8\u05d4'] || 'Untitled';
+    const composerData = resolveComposerData(composerRaw);
+
+    return {
+        id: `comp-db-${index}`,
+        composerId: composerData.id,
+        composer: composerData.names.he || composerRaw,
+        composerNames: composerData.names,
+        title: titleRaw,
+        titles: localizeSeedTitle(titleRaw),
+        duration: '05:00', // Placeholder duration, as it's not in the JSON
+        genre: item['\u05ea\u05e7\u05d5\u05e4\u05d4'] || 'Unknown',
+        instrument: item['\u05db\u05dc\u05d9'] || undefined,
+        approved: item['\u05de\u05d0\u05d5\u05e9\u05e8 \u05db\u05d9\u05e6\u05d9\u05e8\u05d4 \u05de\u05e8\u05db\u05d6\u05d9\u05ea'] === '\u05db\u05df',
+        source: 'seed' as const,
+    };
+}).filter(c => c.composer && c.title);
 
 export const mockBranches: Branch[] = [
     {
@@ -190,13 +262,100 @@ export const mockBranches: Branch[] = [
 ];
 
 export const mockRooms: Room[] = [
-    { id: 'room-1', name: 'סטודיו פסנתר 1', branchId: 'branch-1', capacity: 2, equipment: ['פסנתר כנף Yamaha', 'סטנד תווים'], description: 'חדר מרווח המתאים לשיעורי פסנתר ו-2 תלמידים.', photoUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2070&auto=format&fit=crop' },
-    { id: 'room-2', name: 'חדר כינורות', branchId: 'branch-1', capacity: 2, equipment: ['סטנד תווים', 'מראה'], description: 'מיועד לשיעורים פרטניים.' },
-    { id: 'room-3', name: 'אולם קונצרטים קטן', branchId: 'branch-1', capacity: 50, equipment: ['פסנתר כנף Steinway', 'מערכת הגברה'], description: 'אולם מיני קונצרטים לתלמידים.' },
-    { id: 'room-4', name: 'חדר תיאוריה', branchId: 'branch-2', capacity: 15, equipment: ['לוח מחיק', 'פסנתר חשמלי', 'מקרן'], description: 'כיתה לימודית לשיעורי תיאוריה והרכבים קטנים.' },
-    { id: 'room-5', name: 'סטודיו גיטרה', branchId: 'branch-2', capacity: 3, equipment: ['מגברי גיטרה', 'כסאות נגנים'], description: 'חדר לשיעורי גיטרה קלאסית וחשמלית.' },
-    { id: 'room-6', name: 'חדר כלי נשיפה', branchId: 'branch-3', capacity: 5, equipment: ['סטנדים לתווים', 'חומרי בידוד אקוסטי'], description: 'חדר ייעודי לכלי נשיפה מתכתיים ומעץ.' },
-    { id: 'room-7', name: 'חדר צ\'לו', branchId: 'branch-3', capacity: 2, equipment: ['כסא צ\'לן מותאם', 'סטנד תווים כפול'], description: 'חדר אימון וקבלת תלמידים.' },
+    {
+        id: 'room-1',
+        conservatoriumId: 'cons-15',
+        branchId: 'branch-1',
+        name: 'Piano Studio 1',
+        capacity: 2,
+        instrumentEquipment: [
+            { instrumentId: 'piano', quantity: 1, notes: 'Yamaha grand' }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Dedicated room for piano lessons.',
+        photoUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+        id: 'room-2',
+        conservatoriumId: 'cons-15',
+        branchId: 'branch-1',
+        name: 'Strings Room',
+        capacity: 2,
+        instrumentEquipment: [
+            { instrumentId: 'violin', quantity: 2 }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Best fit for violin and chamber lessons.'
+    },
+    {
+        id: 'room-3',
+        conservatoriumId: 'cons-15',
+        branchId: 'branch-1',
+        name: 'Drums Room',
+        capacity: 3,
+        instrumentEquipment: [
+            { instrumentId: 'drums', quantity: 1 },
+            { instrumentId: 'piano', quantity: 1, notes: 'upright' }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Isolated room for percussion and loud instruments.'
+    },
+    {
+        id: 'room-4',
+        conservatoriumId: 'cons-15',
+        branchId: 'branch-2',
+        name: 'Theory Classroom',
+        capacity: 15,
+        instrumentEquipment: [
+            { instrumentId: 'piano', quantity: 1 }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Classroom for theory and small ensembles.'
+    },
+    {
+        id: 'room-5',
+        conservatoriumId: 'cons-15',
+        branchId: 'branch-2',
+        name: 'Guitar Studio',
+        capacity: 3,
+        instrumentEquipment: [
+            { instrumentId: 'guitar', quantity: 3 }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Room for guitar lessons and coaching.'
+    },
+    {
+        id: 'room-6',
+        conservatoriumId: 'cons-12',
+        branchId: 'branch-3',
+        name: 'Winds Room',
+        capacity: 5,
+        instrumentEquipment: [
+            { instrumentId: 'flute', quantity: 2 },
+            { instrumentId: 'clarinet', quantity: 2 }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Room for woodwind instruction.'
+    },
+    {
+        id: 'room-7',
+        conservatoriumId: 'cons-12',
+        branchId: 'branch-3',
+        name: 'Cello Room',
+        capacity: 2,
+        instrumentEquipment: [
+            { instrumentId: 'cello', quantity: 2 }
+        ],
+        blocks: [],
+        isActive: true,
+        description: 'Quiet practice room for cello students.'
+    },
 ];
 
 const studentNotifications: Notification[] = [];
@@ -363,6 +522,50 @@ export const mockFormSubmissions: FormSubmission[] = [
     { id: 'form-104', formType: 'רסיטל בגרות', academicYear: 'תשפ"ג', grade: 'יא', studentId: 'user-7', studentName: 'רבקה גולן', status: 'REJECTED', teacherComment: 'נא לבחור יצירה נוספת מהתקופה הרומנטית.', submissionDate: '2024-05-15', totalDuration: '09:00', repertoire: [{ id: 'comp-haydn', composer: 'היידן', title: 'סונטה ברה מז\'ור', duration: '09:00', genre: 'קלאסי' },], conservatoriumName: 'מרכז למוסיקה ובימת אמנויות רעננה', },
     { id: 'form-105', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יא', studentId: studentUser2.id, studentName: studentUser2.name, status: 'REVISION_REQUIRED', ministryComment: 'הרפרטואר אינו מאוזן דיו. יש להחליף את אחת היצירות הקלאסיות ביצירה מהמאה ה-20.', submissionDate: '2024-05-23', totalDuration: '21:00', repertoire: [{ id: 'bach-wtc1-prelude-c', composer: 'יוהאן סבסטיאן באך', title: 'פרלוד ופוגה בדו מז\'ור, רי"ב 846 (מתוך הפסנתר המושווה, ספר א\')', duration: '04:00', genre: 'בארוק' }, { id: 'mozart-eine-kleine', composer: 'וולפגנג אמדאוס מוצרט', title: 'מוזיקת לילה זעירה (Eine kleine Nachtmusik), סרנדה מס\' 13', duration: '05:45', genre: 'קלאסי' }, { id: 'chopin-nocturne-op9-no2', composer: 'פרדריק שופן', title: 'נוקטורן במי במול מז\'ור, אופ. 9 מס\' 2', duration: '04:30', genre: 'רומנטי' }, { id: 'beethoven-moonlight-sonata', composer: 'לודוויג ואן בטהובן', title: 'סונאטה לפסנתר מס\' 14 בדו דיאז מינור, אופ. 27 מס\' 2 "אור ירח"', duration: '15:00', genre: 'קלאסי' }], conservatoriumName: studentUser2.conservatoriumName, applicantDetails: { birthDate: studentUser2.birthDate, city: studentUser2.city, gender: studentUser2.gender, phone: studentUser2.phone }, schoolDetails: { schoolName: studentUser2.schoolName, hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: true }, teacherDetails: { name: teacherUser.name, }, instrumentDetails: { instrument: studentUser2.instruments?.[0].instrument, yearsOfStudy: studentUser2.instruments?.[0].yearsOfStudy } },
 ];
+export const mockConservatoriumInstruments: ConservatoriumInstrument[] = [
+  { id: 'piano', conservatoriumId: 'cons-15', names: { he: '?????', en: 'Piano', ru: '??????????', ar: '?????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  { id: 'violin', conservatoriumId: 'cons-15', names: { he: '?????', en: 'Violin', ru: '???????', ar: '????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  { id: 'flute', conservatoriumId: 'cons-15', names: { he: '????', en: 'Flute', ru: '??????', ar: '????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  { id: 'guitar', conservatoriumId: 'cons-15', names: { he: '?????', en: 'Guitar', ru: '??????', ar: '?????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  { id: 'cello', conservatoriumId: 'cons-15', names: { he: "?'??", en: 'Cello', ru: '??????????', ar: '?????' }, isActive: true, teacherCount: 0, availableForRegistration: true, availableForRental: true },
+  { id: 'drums', conservatoriumId: 'cons-15', names: { he: '?????', en: 'Drums', ru: '???????', ar: '????' }, isActive: true, teacherCount: 0, availableForRegistration: true, availableForRental: true },
+  { id: 'saxophone', conservatoriumId: 'cons-15', names: { he: '???????', en: 'Saxophone', ru: '????????', ar: '???????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  { id: 'clarinet', conservatoriumId: 'cons-15', names: { he: '??????', en: 'Clarinet', ru: '???????', ar: '????????' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+];
+
+export const mockLessonPackages: LessonPackage[] = [
+  {
+    id: 'pkg-monthly-45',
+    conservatoriumId: 'cons-15',
+    names: { he: '???? ?????', en: 'Monthly Plan', ru: '??????????? ????', ar: '??? ?????' },
+    type: 'monthly',
+    lessonCount: 4,
+    durationMinutes: 45,
+    priceILS: 500,
+    isActive: true,
+  },
+  {
+    id: 'pkg-semester-45',
+    conservatoriumId: 'cons-15',
+    names: { he: '????? ?????', en: 'Semester Pack', ru: '??????????? ?????', ar: '???? ?????' },
+    type: 'semester',
+    lessonCount: 16,
+    durationMinutes: 45,
+    priceILS: 1800,
+    isActive: true,
+  },
+  {
+    id: 'pkg-single-45',
+    conservatoriumId: 'cons-15',
+    names: { he: '????? ????', en: 'Single Lesson', ru: '??????? ????', ar: '??? ????' },
+    type: 'single',
+    lessonCount: 1,
+    durationMinutes: 45,
+    priceILS: 150,
+    isActive: true,
+  },
+];
+
 export const mockPackages: Package[] = [];
 export const mockLessons: LessonSlot[] = [
     { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2024-03-04T16:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false },
@@ -394,9 +597,118 @@ export const mockEvents: EventProduction[] = [
         ]
     }
 ];
-export const mockInstrumentInventory: InstrumentInventory[] = [];
+export const mockInstrumentInventory: InstrumentInventory[] = [
+    {
+        id: 'inst-1',
+        conservatoriumId: 'cons-15',
+        name: 'Yamaha YEV104',
+        type: 'Violin',
+        category: 'STRINGS',
+        brand: 'Yamaha',
+        serialNumber: 'YEV104-2024-001',
+        condition: 'GOOD',
+        status: 'AVAILABLE',
+        rentalRatePerMonth: 180,
+        rentalModelsOffered: ['deposit', 'monthly', 'rent_to_own'],
+        depositAmountILS: 1200,
+        monthlyFeeILS: 180,
+        purchasePriceILS: 4800,
+        monthsUntilPurchaseEligible: 12,
+    },
+    {
+        id: 'inst-2',
+        conservatoriumId: 'cons-15',
+        name: 'Buffet Crampon E11',
+        type: 'Clarinet',
+        category: 'WOODWIND',
+        brand: 'Buffet Crampon',
+        serialNumber: 'E11-2023-017',
+        condition: 'EXCELLENT',
+        status: 'AVAILABLE',
+        rentalRatePerMonth: 220,
+        rentalModelsOffered: ['deposit', 'monthly'],
+        depositAmountILS: 1500,
+        monthlyFeeILS: 220,
+    }
+];
 export const mockPerformanceBookings: PerformanceBooking[] = [];
-export const mockScholarshipApplications: any[] = [];
+export const mockScholarshipApplications: ScholarshipApplication[] = [
+    {
+        id: 'schol-app-1',
+        studentId: 'student-user-1',
+        studentName: 'Ariel Levi',
+        instrument: 'Piano',
+        conservatoriumId: 'cons-15',
+        academicYear: '2025-2026',
+        status: 'SUBMITTED',
+        submittedAt: new Date().toISOString(),
+        priorityScore: 88,
+        paymentStatus: 'UNPAID',
+    },
+    {
+        id: 'schol-app-2',
+        studentId: 'student-user-2',
+        studentName: 'Tamar Israeli',
+        instrument: 'Violin',
+        conservatoriumId: 'cons-15',
+        academicYear: '2025-2026',
+        status: 'APPROVED',
+        submittedAt: new Date().toISOString(),
+        approvedAt: new Date().toISOString(),
+        priorityScore: 81,
+        paymentStatus: 'UNPAID',
+    }
+];
+
+export const mockDonationCauses: DonationCause[] = [
+    {
+        id: 'cause-financial-aid',
+        conservatoriumId: 'cons-15',
+        category: 'financial_aid',
+        priority: 1,
+        names: { he: '???? ????? ???????', en: 'Financial Aid for Disadvantaged Families' },
+        descriptions: { he: '????? ??????? ??????? ??? ???, ??? ???? ?????? ??????.', en: 'Equal music education for every child regardless of financial background.' },
+        isActive: true,
+        targetAmountILS: 250000,
+        raisedAmountILS: 125000,
+    },
+    {
+        id: 'cause-excellence',
+        conservatoriumId: 'cons-15',
+        category: 'excellence',
+        priority: 2,
+        names: { he: '????? ???????', en: 'Excellence Scholarships' },
+        descriptions: { he: '????? ???????? ???????? ?????? ??????? ????.', en: 'Support gifted students in developing their talent.' },
+        isActive: true,
+        targetAmountILS: 120000,
+        raisedAmountILS: 56000,
+    },
+    {
+        id: 'cause-equipment',
+        conservatoriumId: 'cons-15',
+        category: 'equipment',
+        priority: 3,
+        names: { he: '???? ??????? ????????', en: 'Musical Equipment for Students' },
+        descriptions: { he: '????? ??? ????? ?????? ????????.', en: 'Purchase instruments for student loans.' },
+        isActive: true,
+        targetAmountILS: 90000,
+        raisedAmountILS: 22500,
+    },
+    {
+        id: 'cause-events',
+        conservatoriumId: 'cons-15',
+        category: 'events',
+        priority: 4,
+        names: { he: '??????? ?????????', en: 'Competitions & Festivals' },
+        descriptions: { he: '????? ??????? ??????? ???????? ????????? ???? ??????.', en: 'Fund student participation in national and international competitions.' },
+        isActive: true,
+        targetAmountILS: 110000,
+        raisedAmountILS: 47000,
+    },
+];
+
+export const mockDonations: DonationRecord[] = [];
+export const mockInstrumentRentals: InstrumentRental[] = [];
 export const mockOpenDayEvents: OpenDayEvent[] = [
     {
         id: 'open-day-1',
@@ -432,50 +744,110 @@ export const mockMakeupCredits: any[] = [];
 export const mockRepertoire: Composition[] = compositions;
 
 export const mockAlumni: Alumnus[] = [
-    {
-        id: 'alumni-1',
-        name: 'דניאל כהן',
-        avatarUrl: 'https://i.pravatar.cc/150?u=alumni1',
-        graduationYear: 2018,
-        instrument: 'פסנתר',
-        currentRole: 'פסנתרן קונצרטים',
-        achievements: 'זוכה תחרות פנינה זלצמן 2021'
+  {
+    id: 'alumni-1',
+    userId: 'student-user-1',
+    conservatoriumId: 'cons-15',
+    displayName: 'Daniel Cohen',
+    graduationYear: 2018,
+    primaryInstrument: 'Piano',
+    currentOccupation: 'Concert pianist',
+    bio: {
+      he: '???? ?????? ?????? ?????? ??????? ???????.',
+      en: 'Classical track graduate performing across Israel and Europe.',
     },
-    {
-        id: 'alumni-2',
-        name: 'מאיה לוי',
-        avatarUrl: 'https://i.pravatar.cc/150?u=alumni2',
-        graduationYear: 2020,
-        instrument: 'כינור',
-        currentRole: 'נגנית בתזמורת הפילהרמונית הישראלית',
-        achievements: 'בוגרת תואר שני בג\'וליארד'
+    profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni1',
+    isPublic: true,
+    achievements: ['Pinchas Zukerman Competition Winner 2021'],
+    socialLinks: {
+      website: 'https://example.com/daniel',
     },
-    {
-        id: 'alumni-3',
-        name: 'יונתן אגמון',
-        avatarUrl: 'https://i.pravatar.cc/150?u=alumni3',
-        graduationYear: 2019,
-        instrument: 'שירה קלאסית',
-        currentRole: 'סולן באופרה הישראלית',
-        achievements: 'השתתף בכיתת אמן עם פלסידו דומינגו'
-    }
+    availableForMasterClasses: true,
+  },
+  {
+    id: 'alumni-2',
+    userId: 'alumni-user-2',
+    conservatoriumId: 'cons-15',
+    displayName: 'Maya Levi',
+    graduationYear: 2020,
+    primaryInstrument: 'Violin',
+    currentOccupation: 'Orchestra violinist',
+    bio: {
+      he: '????? ??????? ????? ?????? ???.',
+      en: 'Orchestra violinist and guest master class instructor.',
+    },
+    profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni2',
+    isPublic: true,
+    achievements: ['Juilliard MA graduate'],
+    availableForMasterClasses: true,
+  },
+  {
+    id: 'alumni-3',
+    userId: 'alumni-user-3',
+    conservatoriumId: 'cons-15',
+    displayName: 'Yonatan Agmon',
+    graduationYear: 2019,
+    primaryInstrument: 'Voice',
+    currentOccupation: 'Opera soloist',
+    bio: {
+      he: '??? ????? ???? ?????? ??????.',
+      en: 'Active opera soloist in Israel and abroad.',
+    },
+    profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni3',
+    isPublic: false,
+    achievements: ['Master class with Placido Domingo'],
+    availableForMasterClasses: false,
+  },
 ];
 
 export const mockMasterclasses: Masterclass[] = [
-    {
-        id: 'mc-1',
-        title: 'טכניקות מתקדמות לפסנתר',
-        instructor: 'דניאל כהן',
-        date: '2024-08-15',
-        price: 250,
+  {
+    id: 'mc-1',
+    conservatoriumId: 'cons-15',
+    title: { he: '??????? ??????? ??????', en: 'Advanced Piano Techniques' },
+    description: { he: '???? ??? ????????? ???????', en: 'Master class for advanced pianists' },
+    instructor: {
+      userId: 'teacher-user-1',
+      displayName: 'Miriam Cohen',
+      instrument: 'Piano',
     },
-    {
-        id: 'mc-2',
-        title: 'הכנה לאודישנים לתזמורת',
-        instructor: 'מאיה לוי',
-        date: '2024-09-05',
-        price: 300,
-    }
+    instrument: 'Piano',
+    maxParticipants: 12,
+    targetAudience: 'advanced',
+    date: '2026-04-15',
+    startTime: '17:00',
+    durationMinutes: 90,
+    location: 'Main Hall',
+    isOnline: false,
+    includedInPackage: true,
+    packageMasterClassCount: 1,
+    status: 'published',
+    registrations: [],
+  },
+  {
+    id: 'mc-2',
+    conservatoriumId: 'cons-15',
+    title: { he: '???? ????????? ???????', en: 'Orchestra Audition Prep' },
+    description: { he: '???? ??????? ?????????', en: 'Practical tools for audition success' },
+    instructor: {
+      userId: 'alumni-user-2',
+      displayName: 'Maya Levi',
+      instrument: 'Violin',
+    },
+    instrument: 'Violin',
+    maxParticipants: 15,
+    targetAudience: 'intermediate',
+    date: '2026-05-05',
+    startTime: '18:30',
+    durationMinutes: 120,
+    location: 'Room B',
+    isOnline: true,
+    streamUrl: 'https://example.com/masterclass/violin',
+    includedInPackage: false,
+    priceILS: 180,
+    status: 'draft',
+    registrations: [],
+  },
 ];
 
 export const initialMockData = {
@@ -496,6 +868,8 @@ export const initialMockData = {
     mockInstrumentInventory,
     mockPerformanceBookings,
     mockScholarshipApplications,
+    mockDonationCauses,
+    mockDonations,
     mockOpenDayEvents,
     mockOpenDayAppointments,
     mockBranches,

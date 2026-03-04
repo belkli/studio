@@ -45,22 +45,71 @@ export type Notification = {
   read: boolean;
 };
 
-export type Alumnus = {
+export type AlumniProfile = {
   id: string;
-  name: string;
-  avatarUrl?: string;
+  userId: string;
+  conservatoriumId: string;
+  displayName: string;
   graduationYear: number;
-  instrument: string;
-  currentRole: string;
-  achievements?: string;
+  primaryInstrument: string;
+  currentOccupation?: string;
+  bio: { he?: string; en?: string; ru?: string; ar?: string };
+  profilePhotoUrl?: string;
+  isPublic: boolean;
+  achievements?: string[];
+  socialLinks?: {
+    website?: string;
+    youtube?: string;
+    spotify?: string;
+    instagram?: string;
+  };
+  availableForMasterClasses: boolean;
+};
+
+export type Alumnus = AlumniProfile;
+
+export type MasterClassRegistration = {
+  studentId: string;
+  registeredAt: string;
+  attendanceStatus: 'registered' | 'attended' | 'no_show';
+  isPartOfPackage: boolean;
 };
 
 export type Masterclass = {
   id: string;
-  title: string;
-  instructor: string;
+  conservatoriumId: string;
+  title: { he: string; en: string; ru?: string; ar?: string };
+  description: { he: string; en: string; ru?: string; ar?: string };
+  instructor: {
+    userId: string;
+    displayName: string;
+    instrument: string;
+    bio?: string;
+    photoUrl?: string;
+  };
+  instrument: string;
+  maxParticipants: number;
+  targetAudience: 'beginners' | 'intermediate' | 'advanced' | 'all';
   date: string;
-  price: number;
+  startTime: string;
+  durationMinutes: number;
+  location: string;
+  isOnline: boolean;
+  streamUrl?: string;
+  includedInPackage: boolean;
+  priceILS?: number;
+  packageMasterClassCount?: number;
+  status: 'draft' | 'published' | 'completed' | 'cancelled';
+  registrations: MasterClassRegistration[];
+};
+
+export type StudentMasterClassAllowance = {
+  studentId: string;
+  conservatoriumId: string;
+  academicYear: string;
+  totalAllowed: number;
+  used: number;
+  remaining: number;
 };
 
 // From SDD-07
@@ -281,8 +330,19 @@ export type ConservatoriumLocation = {
   city: string;
   cityEn?: string;
   address?: string;
+  postalCode?: string;
+  googlePlaceId?: string;
   coordinates?: { lat: number; lng: number };
+  googleMapsUrl?: string;
   branches?: string[]; // Location-level branch descriptions
+};
+
+export type OpeningHours = {
+  [day: string]: {
+    isOpen: boolean;
+    openTime: string;
+    closeTime: string;
+  };
 };
 
 export type ConservatoriumBranchInfo = {
@@ -365,6 +425,15 @@ export type UserTranslations = {
   ru?: UserProfileTranslation;
 };
 
+export type UserOAuthProvider = {
+  userId: string;
+  provider: 'google' | 'microsoft';
+  providerUserId: string;
+  providerEmail: string;
+  linkedAt: string;
+  lastUsedAt: string;
+};
+
 export type User = {
   createdAt: string | number | Date;
   id: string;
@@ -396,6 +465,17 @@ export type User = {
   grade?: string;
   // Teacher-specific fields from SDD-03 & SDD-13
   bio?: string;
+  videoUrl?: string;
+  education?: string[];
+  performanceCredits?: string[];
+  teachingPhilosophy?: {
+    he?: string;
+    en?: string;
+    ru?: string;
+    ar?: string;
+  };
+  availableForNewStudents?: boolean;
+  lessonDurationsOffered?: (30 | 45 | 60)[];
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
   availability?: WeeklyAvailabilityBlock[];
@@ -427,6 +507,10 @@ export type User = {
   delegatedAdminPermissions?: AdminSection[];
   teacherAssignments?: TeacherAssignment[];
   isPrimaryConservatoriumAdmin?: boolean;
+  oauthProviders?: UserOAuthProvider[];
+  registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
+  status?: 'active' | 'graduated' | 'inactive';
+  graduationYear?: number;
 };
 
 export type Conservatorium = {
@@ -446,6 +530,7 @@ export type Conservatorium = {
   tel?: string;
   officialSite?: string;
   openingHours?: string;
+  openingHoursByDay?: OpeningHours;
   foundedYear?: number;
   location?: ConservatoriumLocation;
   manager?: ConservatoriumStaffMember;
@@ -469,7 +554,20 @@ export type FormStatus = 'DRAFT' | 'PENDING_TEACHER' | 'PENDING_ADMIN' | 'APPROV
 export type Composition = {
   id?: string;
   composer: string;
+  composerId?: string;
+  composerNames?: {
+    he: string;
+    en: string;
+    ru?: string;
+    ar?: string;
+  };
   title: string;
+  titles?: {
+    he: string;
+    en: string;
+    ru?: string;
+    ar?: string;
+  };
   duration: string; // MM:SS, for the entire piece
   genre: string;
   instrument?: string;
@@ -588,15 +686,63 @@ export type FormSubmission = {
 };
 
 // From SDD-08: Dynamic Form Builder
-export type FormFieldType = 'text' | 'textarea' | 'number' | 'date' | 'dropdown' | 'checkbox';
+export type FormFieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'date'
+  | 'select'
+  | 'multiselect'
+  | 'checkbox'
+  | 'checkbox_group'
+  | 'radio'
+  | 'file_upload'
+  | 'signature'
+  | 'composer_select'
+  | 'teacher_select'
+  | 'instrument_select'
+  | 'separator'
+  | 'heading'
+  | 'info_text'
+  | 'conditional_group'
+  | 'dropdown';
+
+export type LocalizedLabel = {
+  he: string;
+  en: string;
+  ru?: string;
+  ar?: string;
+};
+
+export type FormFieldOption = {
+  value: string;
+  label: LocalizedLabel | string;
+};
+
+export type FormFieldCondition = {
+  fieldId: string;
+  operator: 'equals' | 'not_equals' | 'contains' | 'not_empty';
+  value?: string | boolean;
+};
+
+export type FormFieldValidation = {
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  min?: number;
+  max?: number;
+};
 
 export type FormFieldDefinition = {
   id: string;
-  label: string;
+  label: LocalizedLabel | string;
   type: FormFieldType;
   required: boolean;
+  order?: number;
   placeholder?: string;
-  options?: string; // Comma-separated values for dropdown
+  options?: FormFieldOption[] | string;
+  showIf?: FormFieldCondition;
+  validation?: FormFieldValidation;
 };
 
 export type WorkflowStepDefinition = {
@@ -814,14 +960,32 @@ export type Announcement = {
   sentAt: string; // ISO Timestamp
 };
 
+export type RoomInstrumentEquipment = {
+  instrumentId: string;
+  quantity: number;
+  notes?: string;
+};
+
+export type RoomBlock = {
+  id: string;
+  startDateTime: string;
+  endDateTime: string;
+  reason: string;
+  blockedByUserId: string;
+};
+
 export type Room = {
   id: string;
+  conservatoriumId: string;
+  branchId: string;
   name: string;
-  branchId?: string;
-  capacity?: number;
-  equipment?: string[];
+  capacity: number;
+  instrumentEquipment: RoomInstrumentEquipment[];
+  blocks: RoomBlock[];
+  isActive: boolean;
   description?: string;
   photoUrl?: string;
+  equipment?: string[];
 };
 
 export type PayrollStatus = 'DRAFT' | 'APPROVED' | 'PAID';
@@ -877,6 +1041,46 @@ export type AuditLogEntry = {
 };
 
 export type EventProductionStatus = 'PLANNING' | 'OPEN_REGISTRATION' | 'CLOSED' | 'COMPLETED';
+export type EventVisibilityStatus = 'draft' | 'published' | 'cancelled' | 'completed';
+
+export type EventTranslation = {
+  he: string;
+  en: string;
+  ru?: string;
+  ar?: string;
+};
+
+export type EventVenue = {
+  name: { he: string; en: string };
+  address: string;
+  googleMapsUrl?: string;
+  capacity: number;
+  isOnline: boolean;
+  streamUrl?: string;
+};
+
+export type TicketTier = {
+  id: string;
+  name: { he: string; en: string };
+  priceILS: number;
+  availableCount: number;
+  description?: string;
+};
+
+export type BookedSeat = {
+  userId: string;
+  tierId: string;
+  seatNumber?: string;
+  bookingRef: string;
+  paidAt?: string;
+};
+
+export type EventPerformer = {
+  userId?: string;
+  displayName: string;
+  instrument: string;
+  role: 'soloist' | 'ensemble' | 'accompanist' | 'conductor';
+};
 
 export type PerformanceSlot = {
   id: string;
@@ -891,14 +1095,27 @@ export type EventProduction = {
   id: string;
   conservatoriumId: string;
   name: string;
+  title?: EventTranslation;
+  description?: EventTranslation;
   type: 'RECITAL' | 'CONCERT' | 'EXAM_PERFORMANCE' | 'OPEN_DAY';
   venue: string;
+  venueDetails?: EventVenue;
   eventDate: string; // ISO Date string
   startTime: string; // "HH:mm"
   status: EventProductionStatus;
+  visibilityStatus?: EventVisibilityStatus;
   program: PerformanceSlot[];
+  performers?: EventPerformer[];
   isPublic?: boolean;
+  isFree?: boolean;
+  ticketPrices?: TicketTier[];
   ticketPrice?: number;
+  totalSeats?: number;
+  seatMapUrl?: string;
+  bookedSeats?: BookedSeat[];
+  tags?: string[];
+  posterUrl?: string;
+  publishedAt?: string;
   dressRehearsalDate?: string;
   soundCheckSchedule?: {
     performanceId: string;
@@ -909,6 +1126,9 @@ export type EventProduction = {
 
 export type InstrumentCondition = 'EXCELLENT' | 'GOOD' | 'FAIR' | 'NEEDS_REPAIR' | 'RETIRED';
 export type InstrumentCategory = 'PIANO' | 'BRASS' | 'WOODWIND' | 'STRINGS' | 'PERCUSSION' | 'OTHER';
+export type RentalModel = 'deposit' | 'monthly' | 'rent_to_own';
+export type RentalStatus = 'pending_signature' | 'active' | 'returned' | 'overdue' | 'purchased';
+export type RentalCondition = 'excellent' | 'good' | 'fair' | 'damaged';
 
 export type InstrumentInventory = {
   id: string;
@@ -925,6 +1145,11 @@ export type InstrumentInventory = {
   locationRoomId?: string;       // where it normally lives
   status: 'AVAILABLE' | 'CHECKED_OUT' | 'IN_REPAIR' | 'RETIRED';
   rentalRatePerMonth: number;
+  rentalModelsOffered?: RentalModel[];
+  depositAmountILS?: number;
+  monthlyFeeILS?: number;
+  purchasePriceILS?: number;
+  monthsUntilPurchaseEligible?: number;
   currentRenterId?: string;
   rentalStartDate?: string;
   currentCheckout?: {
@@ -944,6 +1169,35 @@ export type InstrumentInventory = {
 };
 
 export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
+
+export type InstrumentRental = {
+  id: string;
+  conservatoriumId: string;
+  instrumentId: string;
+  studentId: string;
+  parentId: string;
+
+  rentalModel: RentalModel;
+  depositAmountILS?: number;
+  monthlyFeeILS?: number;
+  purchasePriceILS?: number;
+  monthsUntilPurchaseEligible?: number;
+
+  startDate: string;
+  expectedReturnDate?: string;
+  actualReturnDate?: string;
+
+  status: RentalStatus;
+
+  signingToken: string;
+  parentSignedAt?: string;
+  parentSignatureUrl?: string;
+
+  condition: RentalCondition;
+  notes?: string;
+  refundAmountILS?: number;
+  purchaseEligibleNotifiedAt?: string;
+};
 
 export type PerformanceBooking = {
   id: string;
@@ -976,6 +1230,8 @@ export type ApplicationStatus =
   | 'REJECTED'
   | 'EXPIRED';
 
+export type ScholarshipPaymentStatus = 'UNPAID' | 'PAID';
+
 export type ScholarshipApplication = {
   id: string;
   studentId: string;
@@ -986,6 +1242,38 @@ export type ScholarshipApplication = {
   status: ApplicationStatus;
   submittedAt: string; // ISO Timestamp
   priorityScore: number;
+  approvedAt?: string;
+  rejectedAt?: string;
+  paymentStatus?: ScholarshipPaymentStatus;
+  paidAt?: string;
+};
+
+export type DonationCauseCategory = 'financial_aid' | 'excellence' | 'equipment' | 'events' | 'general';
+
+export type DonationCause = {
+  id: string;
+  conservatoriumId: string;
+  names: { he: string; en: string; ru?: string; ar?: string };
+  descriptions: { he: string; en: string };
+  category: DonationCauseCategory;
+  priority: number;
+  isActive: boolean;
+  targetAmountILS?: number;
+  raisedAmountILS: number;
+  imageUrl?: string;
+};
+
+export type DonationRecord = {
+  id: string;
+  conservatoriumId: string;
+  causeId: string;
+  amountILS: number;
+  frequency: 'once' | 'monthly' | 'yearly';
+  donorName?: string;
+  donorEmail?: string;
+  donorId?: string;
+  status: 'INITIATED' | 'PAID' | 'FAILED';
+  createdAt: string;
 };
 
 export type OpenDayEvent = {
@@ -1627,3 +1915,34 @@ export type PlayingSchoolInterestLead = {
   createdAt: string;
 };
 
+
+
+export type ConservatoriumInstrument = {
+  id: string;
+  conservatoriumId: string;
+  names: {
+    he: string;
+    en: string;
+    ru?: string;
+    ar?: string;
+  };
+  isActive: boolean;
+  teacherCount: number;
+  availableForRegistration: boolean;
+  availableForRental: boolean;
+};
+
+export type LessonPackageType = 'monthly' | 'semester' | 'annual' | 'single';
+
+export type LessonPackage = {
+  id: string;
+  conservatoriumId: string;
+  names: { he: string; en: string; ru?: string; ar?: string };
+  type: LessonPackageType;
+  lessonCount: number | null;
+  durationMinutes: 30 | 45 | 60;
+  priceILS: number;
+  isActive: boolean;
+  instruments?: string[];
+  notes?: string;
+};

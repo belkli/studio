@@ -33,8 +33,8 @@
     "subtitle": "Сеть консерваторий Harmonia — профессиональное музыкальное образование для всех возрастов по всей стране.",
     "teachers": "Преподаватели ({count})",
     "title": "Найдите свою консерваторию",
-    "unitKm": "{count}km",
-    "unitMeters": "{count}m",
+    "unitKm": "{count}км",
+    "unitMeters": "{count}м",
     "leadingTeam": "Ведущий Команда",
     "noDepartments": "Нет Департменц"
   },
@@ -178,7 +178,12 @@
     "story3Instrument": "Флейта",
     "story3Name": "Лиан",
     "story3Text": "Лиан живет на периферии, и доступ к качественным урокам ограничен. Ваше пожертвование позволит ей продолжать посещать уроки в консерватории и осуществить свою мечту.",
-    "submitButton": "Пожертвовать ₪{amount}"
+    "submitButton": "Пожертвовать ₪{amount}",
+    "chooseCause": "Выберите, куда пойдет ваше пожертвование",
+    "chooseCauseHint": "Выберите конкретную причину или сделайте пожертвование в общий фонд.",
+    "generalFund": "????? ?????",
+    "generalFundDesc": "???????????? ?????? ? ???????????? ????????????? ????? ??????????????? ?? ???????? ???????????? ????????.",
+    "raisedProgress": "Поднято: {percent}% от целевого значения"
   },
   "PublicEventPage": {
     "bookTicketsBtn": "Забронировать билеты",
@@ -193,7 +198,9 @@
     "programDesc": "Репертуар в исполнении наших юных артистов.",
     "programTBA": "Полная программа будет объявлена позже.",
     "recitalDesc": "Присоединяйтесь к нам на специальный концерт наших талантливых учеников.",
-    "totalPayment": "Итого к оплате"
+    "totalPayment": "Итого к оплате",
+    "openInMaps": "Открыть в Google Картах",
+    "soldOut": "Распроданный"
   },
   "PublicProfiles": {
     "aiTranslated": "Переведено ИИ",
@@ -228,6 +235,87 @@
     "placeholder": "Спросите меня что-нибудь...",
     "suggestionsTitle": "Предложения:",
     "title": "AI-ассистент Harmonia",
-    "welcomeMessage": "Здравствуйте! Я Гармония, ваш AI-ассистент. Чем я могу вам помочь сегодня?"
+    "welcomeMessage": "Здравствуйте! Я Гармония, ваш AI-ассистент. Чем я могу вам помочь сегодня?",
+    "quickQuestions": {
+      "default": {
+        "cancelLesson": "How do I cancel a lesson?",
+        "makeupBalance": "Where can I see my makeup lesson balance?",
+        "recitalForm": "How do I submit a recital form?",
+        "updateAvailability": "How do I update my availability? (teachers)"
+      },
+      "schedule": {
+        "bookMakeup": "How do I book a makeup lesson?",
+        "cancelNextWeek": "Can I cancel next week's lesson?",
+        "cancellationPolicy": "What is the conservatory cancellation policy?",
+        "syncCalendar": "How can I sync my calendar?"
+      },
+      "billing": {
+        "invoices": "Where can I find my invoices?",
+        "updateCard": "How do I update my payment card?",
+        "nextCharge": "When is my next charge due?",
+        "siblingDiscount": "How does sibling discount work?"
+      },
+      "forms": {
+        "approveRecital": "How long does recital form approval take?",
+        "rejectedForm": "My form was rejected, what should I do?",
+        "downloadPdf": "How do I download approved form PDF?",
+        "whoApproves": "Who needs to approve my form?"
+      },
+      "admin": {
+        "approveEnrollment": "How do I approve a new student enrollment?",
+        "packagePricing": "Where do I configure package pricing?",
+        "sendAnnouncement": "How do I send an announcement to all parents?",
+        "financialReports": "Where can I view financial reports?"
+      }
+    }
+  },
+  "Landing": {
+    "heroTitle": "Музыка – это не просто мастерство, это жизнь",
+    "heroSubtitle": "Профессиональное музыкальное образование для любого возраста и любого этапа.",
+    "registerCta": "Зарегистрироваться",
+    "findConservatory": "Найти консерваторию",
+    "statConservatories": "Консерватории",
+    "statLessons": "Уроков в год",
+    "statSatisfaction": "Удовлетворенность родителей",
+    "statStudents": "Активные ученики",
+    "findTitle": "Найдите свою консерваторию",
+    "findSubtitle": "Поиск по городу, инструменту или названию консерватории.",
+    "searchPlaceholder": "Поиск по городу или имени...",
+    "cityPlaceholder": "Город",
+    "instrumentPlaceholder": "Инструмент",
+    "search": "Поиск",
+    "conservatoryFallback": "Профессиональная консерватория в сети «Гармония».",
+    "viewAll": "Просмотреть все {count} зимние сады",
+    "howItWorksTitle": "Как это работает",
+    "step1Title": "Найти зимний сад",
+    "step1Desc": "Поиск по городу, инструменту или учителю.",
+    "step2Title": "Зарегистрируйтесь быстро",
+    "step2Desc": "Завершите регистрацию с помощью простой процедуры.",
+    "step3Title": "Начать обучение",
+    "step3Desc": "Индивидуальные занятия с опытными преподавателями.",
+    "featuredTeachersTitle": "Рекомендуемые преподаватели",
+    "teacherFallback": "Опытный преподаватель в сети Гармония.",
+    "upcomingEventsTitle": "Предстоящие события",
+    "openDaysTitle": "Ближайшие дни открытых дверей",
+    "openDaysFallback": "Расписание Дня открытых дверей будет опубликовано в ближайшее время.",
+    "openDaysCta": "Посмотреть дни открытых дверей",
+    "testimonialsTitle": "Что говорят семьи",
+    "testimonial1": "Наша дочь обрела уверенность и радость благодаря музыке.",
+    "testimonial2": "Процесс регистрации был четким и быстрым.",
+    "testimonial3": "Отличные преподаватели и теплая поддержка.",
+    "donateTitle": "Подарите каждому ребенку музыку",
+    "donateSubtitle": "Поддержите стипендии и равный доступ к музыкальному образованию.",
+    "donateCta": "Пожертвовать сейчас"
+  },
+  "About": {
+    "allInstruments": "Все инструменты",
+    "teachersTitle": "Познакомьтесь с нашими учителями",
+    "teachersSubtitle": "Профессиональные преподаватели консерваторий по всей платформе.",
+    "viewBio": "Посмотреть полный профиль",
+    "instrumentUnknown": "Инструмент не указан",
+    "loadMoreTeachers": "Показать еще {count} учителей",
+    "bookWithTeacher": "Зарегистрируйтесь у этого преподавателя",
+    "education": "Образование",
+    "bioUnavailable": "Биография будет добавлена ​​в ближайшее время."
   }
 }

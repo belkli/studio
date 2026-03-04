@@ -18,9 +18,12 @@
     "db:start": "docker compose up -d",
     "db:stop": "docker compose down",
     "db:migrate": "node scripts/db/run-sql-file.mjs scripts/db/schema.sql",
-    "db:seed": "node scripts/db/run-sql-file.mjs scripts/db/seed.sql",
+    "db:seed": "node scripts/db/seed-repertoire.mjs && node scripts/db/run-sql-file.mjs scripts/db/seed.sql && node scripts/db/run-sql-file.mjs scripts/db/repertoire.seed.sql",
     "db:reset": "node scripts/db/reset.mjs",
-    "db:studio": "npx drizzle-kit studio"
+    "db:studio": "npx drizzle-kit studio",
+    "i18n:normalize": "node scripts/i18n/normalize-locales.mjs",
+    "i18n:sync": "node scripts/i18n/sync-from-en.mjs",
+    "db:seed:repertoire": "node scripts/db/seed-repertoire.mjs && node scripts/db/run-sql-file.mjs scripts/db/repertoire.seed.sql"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.29.0",
@@ -93,6 +96,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "xlsx": "^0.18.5"
   }
 }

@@ -1,4 +1,4 @@
-﻿import { spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import type {
   Conservatorium,
   EventProduction,
@@ -22,7 +22,10 @@ type RawConservatorium = {
   phone: string | null;
   email: string | null;
   website_url: string | null;
+  logo_url: string | null;
+  opening_hours: unknown;
   established_year: number | null;
+  description: unknown;
 };
 
 type RawUser = {
@@ -39,6 +42,13 @@ type RawUser = {
   gender: string | null;
   is_active: boolean;
   created_at: string;
+  avatar_url: string | null;
+  bio_json: unknown;
+  education: unknown;
+  video_url: string | null;
+  available_for_new_students: boolean | null;
+  lesson_durations: unknown;
+  instrument_ids: unknown;
 };
 
 type RawLesson = {
@@ -126,13 +136,126 @@ function runPsqlJson<T>(connectionString: string, sql: string): T[] {
   return JSON.parse(output) as T[];
 }
 
+function parseJsonObject(value: unknown): Record<string, unknown> {
+  if (!value) return {};
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  if (typeof value !== 'string') return {};
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>;
+    }
+  } catch {
+    return {};
+  }
+  return {};
+}
+
+function parseStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'string') as string[];
+  }
+  if (typeof value !== 'string') return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item) => typeof item === 'string');
+    }
+  } catch {
+    return [];
+  }
+  return [];
+}
+
+function parseNumberArray(value: unknown): number[] {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'number') as number[];
+  }
+  if (typeof value !== 'string') return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item) => typeof item === 'number');
+    }
+  } catch {
+    return [];
+  }
+  return [];
+}
+
+function pickLocalizedText(
+  value: unknown,
+  preferredLocale: 'he' | 'en' | 'ar' | 'ru' = 'he'
+): string | undefined {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+
+  const record = value as Record<string, unknown>;
+  const lookupOrder: Array<'he' | 'en' | 'ar' | 'ru'> = [
+    preferredLocale,
+    'he',
+    'en',
+    'ar',
+    'ru',
+  ];
+
+  for (const locale of lookupOrder) {
+    const candidate = record[locale];
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+
+  return undefined;
+}
+
+function pickLocalizedStringArray(
+  value: unknown,
+  preferredLocale: 'he' | 'en' | 'ar' | 'ru' = 'he'
+): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'string') as string[];
+  }
+
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return [];
+  }
+
+  const record = value as Record<string, unknown>;
+  const lookupOrder: Array<'he' | 'en' | 'ar' | 'ru'> = [
+    preferredLocale,
+    'he',
+    'en',
+    'ar',
+    'ru',
+  ];
+
+  for (const locale of lookupOrder) {
+    const candidate = record[locale];
+    if (Array.isArray(candidate)) {
+      return candidate.filter((item) => typeof item === 'string') as string[];
+    }
+  }
+
+  return [];
+}
+
 function mapRole(role: string): UserRole {
   switch (role) {
     case 'SITE_ADMIN':
       return 'site_admin';
     case 'CONSERVATORIUM_ADMIN':
-    case 'DELEGATED_ADMIN':
       return 'conservatorium_admin';
+    case 'DELEGATED_ADMIN':
+      return 'delegated_admin';
     case 'TEACHER':
       return 'teacher';
     case 'PARENT':
@@ -190,57 +313,232 @@ function toDuration(value: number): 30 | 45 | 60 {
   return 45;
 }
 
-function mapConservatoriums(rows: RawConservatorium[]): Conservatorium[] {
-  return rows.map((row, index) => ({
-    id: row.id,
-    name: row.name,
-    nameEn: row.name_en ?? undefined,
-    tier: TIER_CYCLE[index % TIER_CYCLE.length],
-    foundedYear: row.established_year ?? undefined,
-    email: row.email ?? undefined,
-    tel: row.phone ?? undefined,
-    officialSite: row.website_url ?? undefined,
-    location: {
-      city: row.city ?? '',
-      address: row.address ?? undefined,
-    },
-  }));
+function mapConservatoriums(rows: RawConservatorium[]): {
+  conservatoriums: Conservatorium[];
+  idMap: Map<string, string>;
+  nameMap: Map<string, string>;
+} {
+  const idMap = new Map<string, string>();
+  const nameMap = new Map<string, string>();
+
+  const conservatoriums = rows.map((row, index) => {
+    const description = parseJsonObject(row.description);
+    const sourceIdValue = description.sourceId;
+    const sourceId =
+      typeof sourceIdValue === 'number'
+        ? sourceIdValue
+        : typeof sourceIdValue === 'string' && /^\d+$/.test(sourceIdValue)
+          ? Number(sourceIdValue)
+          : null;
+
+    const appId = Number.isFinite(sourceId) ? 'cons-' + sourceId : row.id;
+    idMap.set(row.id, appId);
+
+    const about =
+      pickLocalizedText(description.about, 'he') ??
+      pickLocalizedText(description.aboutText, 'he');
+
+    const openingHoursText =
+      pickLocalizedText(description.openingHours, 'he') ??
+      (typeof row.opening_hours === 'string' ? row.opening_hours : undefined);
+
+    const managerRecord =
+      description.manager && typeof description.manager === 'object'
+        ? (description.manager as Record<string, unknown>)
+        : undefined;
+
+    const locationRecord =
+      description.location && typeof description.location === 'object'
+        ? (description.location as Record<string, unknown>)
+        : undefined;
+
+    const translated = parseJsonObject(description.translations);
+    const translations = (() => {
+      const out: Conservatorium['translations'] = {};
+      (['en', 'ar', 'ru'] as const).forEach((locale) => {
+        const raw = translated[locale];
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return;
+        out[locale] = raw as NonNullable<Conservatorium['translations']>[typeof locale];
+      });
+      return Object.keys(out).length ? out : undefined;
+    })();
+
+    const photoUrls = Array.isArray(description.photoUrls)
+      ? (description.photoUrls.filter((item) => typeof item === 'string') as string[])
+      : row.logo_url
+        ? [row.logo_url]
+        : [];
+
+    const mapped: Conservatorium = {
+      id: appId,
+      name: row.name,
+      nameEn: row.name_en ?? undefined,
+      tier: TIER_CYCLE[index % TIER_CYCLE.length],
+      foundedYear: row.established_year ?? undefined,
+      about: about || undefined,
+      email: row.email ?? undefined,
+      tel: row.phone ?? undefined,
+      officialSite: row.website_url ?? undefined,
+      openingHours: openingHoursText,
+      location: {
+        city: pickLocalizedText(locationRecord?.city, 'he') || row.city || '',
+        cityEn:
+          pickLocalizedText(locationRecord?.city, 'en') ||
+          pickLocalizedText(description.cityEn, 'en') ||
+          undefined,
+        address: pickLocalizedText(locationRecord?.address, 'he') || row.address || undefined,
+        coordinates:
+          locationRecord?.coordinates && typeof locationRecord.coordinates === 'object'
+            ? (locationRecord.coordinates as { lat: number; lng: number })
+            : undefined,
+        googleMapsUrl: pickLocalizedText(locationRecord?.googleMapsUrl, 'en'),
+      },
+      manager: managerRecord
+        ? {
+            name: pickLocalizedText(managerRecord.name, 'he') || '',
+            role: pickLocalizedText(managerRecord.role, 'he'),
+            bio: pickLocalizedText(managerRecord.bio, 'he'),
+            photoUrl:
+              pickLocalizedText(managerRecord.photoUrl, 'en') ||
+              pickLocalizedText(managerRecord.photo_url, 'en'),
+          }
+        : undefined,
+      leadingTeam: Array.isArray(description.leadingTeam)
+        ? (description.leadingTeam as Array<Record<string, unknown>>)
+            .map((member) => ({
+              name: pickLocalizedText(member.name, 'he') || '',
+              role: pickLocalizedText(member.role, 'he'),
+              bio: pickLocalizedText(member.bio, 'he'),
+              photoUrl:
+                pickLocalizedText(member.photoUrl, 'en') ||
+                pickLocalizedText(member.photo_url, 'en'),
+            }))
+            .filter((member) => member.name)
+        : undefined,
+      departments: Array.isArray(description.departments)
+        ? (description.departments as Array<Record<string, unknown>>)
+            .map((department) => ({
+              name: pickLocalizedText(department.name, 'he') || '',
+              nameEn: pickLocalizedText(department.name, 'en'),
+              headTeacher:
+                pickLocalizedText(department.headTeacher, 'he') ||
+                pickLocalizedText(department.head_teacher, 'he'),
+              photoUrl:
+                pickLocalizedText(department.photoUrl, 'en') ||
+                pickLocalizedText(department.photo_url, 'en'),
+            }))
+            .filter((department) => department.name)
+        : undefined,
+      branchesInfo: Array.isArray(description.branchesInfo)
+        ? (description.branchesInfo as Array<Record<string, unknown>>)
+            .map((branch) => ({
+              name: pickLocalizedText(branch.name, 'he') || '',
+              address: pickLocalizedText(branch.address, 'he'),
+              tel: pickLocalizedText(branch.tel, 'en'),
+              email: pickLocalizedText(branch.email, 'en'),
+              manager: pickLocalizedText(branch.manager, 'he'),
+            }))
+            .filter((branch) => branch.name)
+        : undefined,
+      teachers: Array.isArray(description.teachers)
+        ? (description.teachers as Array<Record<string, unknown>>)
+            .map((teacher, teacherIndex) => ({
+              id: pickLocalizedText(teacher.id, 'en') || appId + '-teacher-' + (teacherIndex + 1),
+              name: pickLocalizedText(teacher.name, 'he') || '',
+              role: pickLocalizedText(teacher.role, 'he'),
+              bio: pickLocalizedText(teacher.bio, 'he'),
+              photoUrl:
+                pickLocalizedText(teacher.photoUrl, 'en') ||
+                pickLocalizedText(teacher.photo_url, 'en'),
+              instruments: parseStringArray(teacher.instruments),
+            }))
+            .filter((teacher) => teacher.name)
+        : undefined,
+      programs: pickLocalizedStringArray(description.programs, 'he') || undefined,
+      socialMedia:
+        description.socialMedia && typeof description.socialMedia === 'object'
+          ? {
+              facebook: (description.socialMedia as Record<string, unknown>).facebook as string,
+              instagram: (description.socialMedia as Record<string, unknown>).instagram as string,
+              youtube: (description.socialMedia as Record<string, unknown>).youtube as string,
+              tiktok: (description.socialMedia as Record<string, unknown>).tiktok as string,
+              whatsapp: (description.socialMedia as Record<string, unknown>).whatsapp as string,
+            }
+          : undefined,
+      photoUrls: photoUrls.length ? photoUrls : undefined,
+      translations,
+    };
+
+    nameMap.set(mapped.id, mapped.name);
+    return mapped;
+  });
+
+  return {
+    conservatoriums,
+    idMap,
+    nameMap,
+  };
 }
 
-function mapUsers(rows: RawUser[]): User[] {
+function mapUsers(rows: RawUser[], idMap: Map<string, string>, nameMap: Map<string, string>): User[] {
   return rows.map((row) => {
     const mappedRole = mapRole(row.role);
-    const isDelegated = row.role === 'DELEGATED_ADMIN';
-    const isConservatoriumAdmin = row.role === 'CONSERVATORIUM_ADMIN';
+    const bio = parseJsonObject(row.bio_json);
+    const lessonDurations = parseNumberArray(row.lesson_durations)
+      .filter((value) => value === 30 || value === 45 || value === 60) as Array<30 | 45 | 60>;
+    const instrumentIds = parseStringArray(row.instrument_ids);
+    const displayName = row.first_name + ' ' + row.last_name;
+    const conservatoriumId = row.conservatorium_id
+      ? idMap.get(row.conservatorium_id) || row.conservatorium_id
+      : 'global';
 
     return {
       id: row.id,
-      name: `${row.first_name} ${row.last_name}`.trim(),
+      name: displayName.trim(),
       email: row.email,
       role: mappedRole,
-      conservatoriumId: row.conservatorium_id ?? 'global',
-      conservatoriumName: row.conservatorium_name ?? 'Harmonia',
+      conservatoriumId,
+      conservatoriumName:
+        conservatoriumId === 'global'
+          ? 'Harmonia'
+          : nameMap.get(conservatoriumId) || row.conservatorium_name || 'Harmonia',
       idNumber: row.national_id ?? undefined,
       phone: row.phone ?? undefined,
       city: row.city ?? undefined,
-      gender: row.gender === 'female' ? 'נקבה' : row.gender === 'male' ? 'זכר' : undefined,
+      gender: row.gender === 'female' ? 'female' : row.gender === 'male' ? 'male' : undefined,
       approved: row.is_active,
       createdAt: row.created_at,
       achievements: [],
       notifications: [],
-      isDelegatedAdmin: isDelegated,
-      isPrimaryConservatoriumAdmin: isConservatoriumAdmin,
+      avatarUrl: row.avatar_url ?? undefined,
+      bio: (bio.he as string) || (bio.en as string) || undefined,
+      education: parseStringArray(row.education),
+      videoUrl: row.video_url ?? undefined,
+      availableForNewStudents: row.available_for_new_students ?? undefined,
+      lessonDurationsOffered: lessonDurations.length ? lessonDurations : undefined,
+      instruments: instrumentIds.map((instrumentId) => ({
+        instrument: instrumentId,
+        teacherName: displayName.trim(),
+        yearsOfStudy: 0,
+      })),
+      translations: {
+        en: bio.en ? { bio: String(bio.en) } : undefined,
+        ru: bio.ru ? { bio: String(bio.ru) } : undefined,
+        ar: bio.ar ? { bio: String(bio.ar) } : undefined,
+      },
+      isDelegatedAdmin: row.role === 'DELEGATED_ADMIN',
+      isPrimaryConservatoriumAdmin: row.role === 'CONSERVATORIUM_ADMIN',
     };
   });
 }
 
-function mapLessons(rows: RawLesson[]): LessonSlot[] {
+function mapLessons(rows: RawLesson[], idMap: Map<string, string>): LessonSlot[] {
   return rows.map((row) => ({
     id: row.id,
-    conservatoriumId: row.conservatorium_id,
+    conservatoriumId: idMap.get(row.conservatorium_id) || row.conservatorium_id,
     teacherId: row.teacher_id,
     studentId: row.student_id,
-    instrument: row.instrument || 'כלי נגינה',
+    instrument: row.instrument || 'Instrument',
     startTime: new Date(row.scheduled_at).toISOString(),
     durationMinutes: toDuration(row.duration_minutes),
     type: row.status === 'makeup' ? 'MAKEUP' : 'RECURRING',
@@ -254,20 +552,22 @@ function mapLessons(rows: RawLesson[]): LessonSlot[] {
   }));
 }
 
-function mapForms(rows: RawForm[]): FormSubmission[] {
+function mapForms(rows: RawForm[], idMap: Map<string, string>, nameMap: Map<string, string>): FormSubmission[] {
   return rows.map((row) => {
     let parsedData: Record<string, unknown> = {};
     try {
       parsedData = JSON.parse(row.form_data || '{}') as Record<string, unknown>;
-    } catch (error) {
+    } catch {
       parsedData = {};
     }
+
+    const conservatoriumId = idMap.get(row.conservatorium_id) || row.conservatorium_id;
 
     return {
       id: row.id,
       formType: row.type,
-      conservatoriumId: row.conservatorium_id,
-      conservatoriumName: row.conservatorium_name,
+      conservatoriumId,
+      conservatoriumName: nameMap.get(conservatoriumId) || row.conservatorium_name,
       studentId: row.student_id ?? 'unknown-student',
       studentName: row.student_name || 'Student',
       status: mapFormStatus(row.status),
@@ -279,31 +579,40 @@ function mapForms(rows: RawForm[]): FormSubmission[] {
   });
 }
 
-function mapRooms(rows: RawRoom[]): Room[] {
+function mapRooms(rows: RawRoom[], idMap: Map<string, string>): Room[] {
   return rows.map((row) => {
-    let equipment: string[] = [];
+    let instrumentEquipment: Room['instrumentEquipment'] = [];
     try {
-      const parsed = JSON.parse(row.instrument_equipment || '[]') as Array<{ instrumentId?: string; notes?: string }>;
-      equipment = parsed.map((item) => [item.instrumentId, item.notes].filter(Boolean).join(' - ')).filter(Boolean);
-    } catch (error) {
-      equipment = [];
+      const parsed = JSON.parse(row.instrument_equipment || '[]') as Array<{ instrumentId?: string; quantity?: number; notes?: string }>;
+      instrumentEquipment = parsed
+        .filter((item) => Boolean(item.instrumentId))
+        .map((item) => ({
+          instrumentId: item.instrumentId as string,
+          quantity: item.quantity && item.quantity > 0 ? item.quantity : 1,
+          notes: item.notes || undefined,
+        }));
+    } catch {
+      instrumentEquipment = [];
     }
 
     return {
       id: row.id,
-      conservatoriumId: row.conservatorium_id,
-      branchId: row.branch_id ?? undefined,
+      conservatoriumId: idMap.get(row.conservatorium_id) || row.conservatorium_id,
+      branchId: row.branch_id ?? 'branch-1',
       name: row.name,
-      capacity: row.capacity ?? undefined,
-      equipment,
+      capacity: row.capacity ?? 1,
+      instrumentEquipment,
+      blocks: [],
+      isActive: true,
+      equipment: instrumentEquipment.map((item) => [item.instrumentId, item.notes].filter(Boolean).join(' - ')),
     };
   });
 }
 
-function mapEvents(rows: RawEvent[]): EventProduction[] {
+function mapEvents(rows: RawEvent[], idMap: Map<string, string>): EventProduction[] {
   return rows.map((row) => ({
     id: row.id,
-    conservatoriumId: row.conservatorium_id,
+    conservatoriumId: idMap.get(row.conservatorium_id) || row.conservatorium_id,
     name: row.name,
     type: 'CONCERT',
     venue: row.venue ?? '',
@@ -314,7 +623,7 @@ function mapEvents(rows: RawEvent[]): EventProduction[] {
   }));
 }
 
-function mapPayroll(rows: RawPayroll[]): PayrollSummary[] {
+function mapPayroll(rows: RawPayroll[], idMap: Map<string, string>): PayrollSummary[] {
   return rows.map((row) => {
     const month = String(row.period_month).padStart(2, '0');
     const periodStart = `${row.period_year}-${month}-01`;
@@ -323,7 +632,7 @@ function mapPayroll(rows: RawPayroll[]): PayrollSummary[] {
 
     return {
       id: row.id,
-      conservatoriumId: row.conservatorium_id,
+      conservatoriumId: idMap.get(row.conservatorium_id) || row.conservatorium_id,
       teacherId: row.teacher_id,
       teacherName: row.teacher_name,
       periodStart,
@@ -344,14 +653,17 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
     `
       SELECT
         c.id::text,
-        COALESCE(c.name->>'he', c.name->>'en', 'Conservatorium') AS name,
-        COALESCE(c.name->>'en', c.name->>'he', 'Conservatorium') AS name_en,
+        COALESCE(c.name->>'he', c.name->>'en', 'Conservatory') AS name,
+        COALESCE(c.name->>'en', c.name->>'he', 'Conservatory') AS name_en,
         c.city,
         c.address,
         c.phone,
         c.email,
         c.website_url,
-        c.established_year
+        c.logo_url,
+        c.opening_hours,
+        c.established_year,
+        c.description
       FROM conservatoriums c
       ORDER BY c.created_at ASC
     `
@@ -373,9 +685,17 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
         u.city,
         u.gender,
         u.is_active,
-        u.created_at::text
+        u.created_at::text,
+        u.avatar_url,
+        tp.bio AS bio_json,
+        tp.education,
+        tp.video_url,
+        tp.available_for_new_students,
+        tp.lesson_durations,
+        tp.instruments AS instrument_ids
       FROM users u
       LEFT JOIN conservatoriums c ON c.id = u.conservatorium_id
+      LEFT JOIN teacher_profiles tp ON tp.user_id = u.id
       ORDER BY u.created_at ASC
     `
   );
@@ -405,7 +725,7 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
       SELECT
         f.id::text,
         f.conservatorium_id::text,
-        COALESCE(c.name->>'he', c.name->>'en', 'Conservatorium') AS conservatorium_name,
+        COALESCE(c.name->>'he', c.name->>'en', 'Conservatory') AS conservatorium_name,
         f.type,
         f.student_id::text,
         COALESCE(u.first_name || ' ' || u.last_name, 'Student') AS student_name,
@@ -468,17 +788,20 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
     `
   );
 
+  const mappedConservatoriums = mapConservatoriums(conservatoriumRows);
+  const { conservatoriums: conservatoriumSeed, idMap, nameMap } = mappedConservatoriums;
+
   return {
-    users: mapUsers(userRows),
-    conservatoriums: mapConservatoriums(conservatoriumRows),
-    lessons: mapLessons(lessonRows),
-    rooms: mapRooms(roomRows),
-    events: mapEvents(eventRows),
-    forms: mapForms(formRows),
+    users: mapUsers(userRows, idMap, nameMap),
+    conservatoriums: conservatoriumSeed,
+    lessons: mapLessons(lessonRows, idMap),
+    rooms: mapRooms(roomRows, idMap),
+    events: mapEvents(eventRows, idMap),
+    forms: mapForms(formRows, idMap, nameMap),
     scholarships: [],
     rentals: [],
     payments: [],
-    payrolls: mapPayroll(payrollRows),
+    payrolls: mapPayroll(payrollRows, idMap),
     announcements: [],
     alumni: [],
     masterClasses: [],

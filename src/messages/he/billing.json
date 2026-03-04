@@ -80,7 +80,7 @@
     "sep2026": "ספטמבר 2026",
     "setupAltPayment": "הגדרת אמצעי תשלום חלופי / חוזר",
     "setupRecurring": "הגדרת תשלום חוזר בכרטיס אשראי",
-    "setupRecurringDesc": "בקשת התשלום החוזר (Tokens) נשלחה לשרתי Cardcom.",
+    "setupRecurringDesc": "בקשת התשלום החוזרת (אסימונים) נשלחה לשרתי Cardcom.",
     "status": "סטטוס",
     "viewInvoices": "צפה בחשבוניות פתוחות והיסטוריית תשלומים.",
     "winterConcert": "כולל השתתפות בקונצרט חורף (50 ₪)"
@@ -141,7 +141,19 @@
     "teacherApproveSuccess": "השכר של {name} אושר",
     "teacherPaidSuccess": "השכר של {name} סומן כ\"שולם\"",
     "helvetica": "הלבטיקה",
-    "a": "A"
+    "a": "א-",
+    "period": "תקופה",
+    "generateReport": "הפק דוח",
+    "exportAll": "ייצא הכל",
+    "totalTeachers": "סך הכל מורים",
+    "totalLessons": "סך שיעורים",
+    "totalHours": "שעות סה\"כ",
+    "teacher": "מורה",
+    "instrument": "כלי נגינה",
+    "lessonsCount": "שיעורים",
+    "absences": "היעדרויות",
+    "makeups": "השלמות",
+    "actions": "פעולות"
   },
   "TeacherPayroll": {
     "amountCol": "סכום",
@@ -163,6 +175,21 @@
     "statusPaid": "שולם",
     "studentCol": "תלמיד/ה",
     "totalHoursLabel": "סך שעות: {hours}",
-    "helvetica": "הלבטיקה"
+    "helvetica": "הלבטיקה",
+    "period": "תקופה",
+    "myLessons": "השיעורים שלי",
+    "myHours": "השעות שלי",
+    "date": "תאריך",
+    "student": "תלמיד/ה",
+    "instrument": "כלי נגינה",
+    "duration": "משך",
+    "status": "סטטוס",
+    "minutes": "דקות",
+    "noLessons": "אין שיעורים בתקופה שנבחרה.",
+    "downloadMyReport": "הורד את הדוח שלי"
+  },
+  "TeacherPayrollPage": {
+    "title": "השכר שלי",
+    "subtitle": "הצג את השיעורים החודשיים והשעות המדווחות שלך."
   }
 }

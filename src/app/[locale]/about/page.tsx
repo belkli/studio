@@ -1,462 +1,751 @@
-'use client';
+﻿'use client';
+
 import { useTranslations, useLocale } from 'next-intl';
-import { PublicNavbar } from "@/components/layout/public-navbar";
-import { PublicFooter } from "@/components/layout/public-footer";
-import { Icons } from "@/components/icons";
-import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/hooks/use-auth";
-import type { Conservatorium } from "@/lib/types";
+import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { PublicNavbar } from '@/components/layout/public-navbar';
+import { PublicFooter } from '@/components/layout/public-footer';
+import { Link } from '@/i18n/routing';
+import { useAuth } from '@/hooks/use-auth';
+import type { Conservatorium, ConservatoriumInstrument, User } from '@/lib/types';
+import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
+import { buildConservatoriumSlug } from '@/lib/utils/conservatorium-slug';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import {
-    MapPin, Phone, Mail, Globe, Search, LocateFixed, Music2,
-    Clock, ChevronRight, Facebook, Instagram, Youtube, ExternalLink,
-    Building2, Star, Users, BookOpen, X, Navigation2, MessageCircle
-} from "lucide-react";
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { getLocalizedConservatorium } from "@/lib/utils/localized-content";
+  Search,
+  MapPin,
+  Users,
+  Music2,
+  Phone,
+  Mail,
+  Globe,
+  Facebook,
+  Instagram,
+  Youtube,
+  ArrowLeft,
+  ChevronRight,
+  UserRound,
+} from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-// Haversine distance in km
-function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-// City coordinates for Israel cities (for text-based city search fallback)
-const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
-    'תל אביב': { lat: 32.0853, lng: 34.7818 }, 'tel aviv': { lat: 32.0853, lng: 34.7818 },
-    'ירושלים': { lat: 31.7683, lng: 35.2137 }, 'jerusalem': { lat: 31.7683, lng: 35.2137 },
-    'חיפה': { lat: 32.7940, lng: 34.9896 }, 'haifa': { lat: 32.7940, lng: 34.9896 },
-    'באר שבע': { lat: 31.2520, lng: 34.7915 }, 'beer sheva': { lat: 31.2520, lng: 34.7915 },
-    'הרצליה': { lat: 32.1663, lng: 34.8435 }, 'herzliya': { lat: 32.1663, lng: 34.8435 },
-    'נתניה': { lat: 32.3226, lng: 34.8530 }, 'netanya': { lat: 32.3226, lng: 34.8530 },
-    'פתח תקווה': { lat: 32.0840, lng: 34.8879 }, 'petah tikva': { lat: 32.0840, lng: 34.8879 },
-    'רמת גן': { lat: 32.0691, lng: 34.8238 }, 'ramat gan': { lat: 32.0691, lng: 34.8238 },
-    'ראשון לציון': { lat: 31.9730, lng: 34.7895 }, 'rishon lezion': { lat: 31.9730, lng: 34.7895 },
-    'אשדוד': { lat: 31.8014, lng: 34.6461 }, 'ashdod': { lat: 31.8014, lng: 34.6461 },
-    'הוד השרון': { lat: 32.1528, lng: 34.8927 }, 'hod hasharon': { lat: 32.1528, lng: 34.8927 },
-    'כפר סבא': { lat: 32.1759, lng: 34.9088 }, 'kfar saba': { lat: 32.1759, lng: 34.9088 },
-    'רעננה': { lat: 32.1851, lng: 34.8702 }, 'raanana': { lat: 32.1851, lng: 34.8702 },
-    'מודיעין': { lat: 31.8939, lng: 35.0102 }, "modi'in": { lat: 31.8939, lng: 35.0102 },
-    'אשקלון': { lat: 31.6688, lng: 34.5742 }, 'ashkelon': { lat: 31.6688, lng: 34.5742 },
-    'גבעתיים': { lat: 32.0714, lng: 34.8124 }, 'givatayim': { lat: 32.0714, lng: 34.8124 },
-    'בת ים': { lat: 32.0239, lng: 34.7497 }, 'bat yam': { lat: 32.0239, lng: 34.7497 },
-    'חולון': { lat: 32.0107, lng: 34.7782 }, 'holon': { lat: 32.0107, lng: 34.7782 },
+type PublicProfile = {
+  id: string;
+  name: string;
+  role?: string;
+  bio?: string;
+  photoUrl?: string;
+  instruments: string[];
+  education?: string[];
+  email?: string;
+  phone?: string;
+  teacherUserId?: string;
+  availableForNewStudents?: boolean;
+  source: 'teacher' | 'manager' | 'staff';
 };
 
-function getCardGradient(id: string): string {
-    const gradients = [
-        'from-violet-600/20 via-purple-500/10 to-indigo-600/20',
-        'from-emerald-600/20 via-teal-500/10 to-cyan-600/20',
-        'from-rose-600/20 via-pink-500/10 to-orange-500/20',
-        'from-amber-600/20 via-yellow-500/10 to-orange-600/20',
-        'from-blue-600/20 via-indigo-500/10 to-violet-600/20',
-        'from-teal-600/20 via-emerald-500/10 to-green-600/20',
-    ];
-    const idx = parseInt(id.replace('cons-', '')) % gradients.length;
-    return gradients[idx];
+function getInstrumentName(inst: ConservatoriumInstrument, locale: string) {
+  if (locale === 'he') return inst.names.he;
+  if (locale === 'ar') return inst.names.ar || inst.names.en;
+  if (locale === 'ru') return inst.names.ru || inst.names.en;
+  return inst.names.en;
 }
 
-function getAccentColor(id: string): string {
-    const colors = ['text-violet-500', 'text-emerald-500', 'text-rose-500', 'text-amber-500', 'text-blue-500', 'text-teal-500'];
-    const idx = parseInt(id.replace('cons-', '')) % colors.length;
-    return colors[idx];
+function normalizeName(value: string) {
+  return value.toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
-function ConservatoriumCard({ cons, distance, onClick }: { cons: Conservatorium; distance?: number; onClick: () => void }) {
-    const t = useTranslations('AboutPage');
-    const locale = useLocale();
-    const isRtl = locale === 'he' || locale === 'ar';
-    const localizedCons = getLocalizedConservatorium(cons, locale);
-    const gradient = getCardGradient(localizedCons.id);
-    const accent = getAccentColor(localizedCons.id);
-    const heroPhoto = localizedCons.photoUrls?.[0];
-    const [imageError, setImageError] = useState(false);
+function getLocalizedUserBio(user: User, locale: string) {
+  if (locale === 'en') return user.translations?.en?.bio || user.bio;
+  if (locale === 'ar') return user.translations?.ar?.bio || user.translations?.en?.bio || user.bio;
+  if (locale === 'ru') return user.translations?.ru?.bio || user.translations?.en?.bio || user.bio;
+  return user.bio;
+}
 
-    const name = localizedCons.name;
-    const city = localizedCons.location?.city;
-    const about = localizedCons.about;
+function buildTeacherInstruments(teacher: User, allInstruments: ConservatoriumInstrument[], locale: string) {
+  const names = (teacher.instruments || []).map((item) => {
+    const match = allInstruments.find((inst) => inst.names.he === item.instrument || inst.id === item.instrument);
+    if (match) return getInstrumentName(match, locale);
+    return item.instrument;
+  });
+  return Array.from(new Set(names.filter(Boolean)));
+}
 
-    return (
-        <button
-            onClick={onClick}
-            className="group relative bg-card border border-border rounded-2xl overflow-hidden text-start transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 hover:border-primary/30 w-full"
-        >
-            {/* Hero strip */}
-            <div className={`relative h-32 bg-gradient-to-br ${gradient} overflow-hidden`}>
-                {heroPhoto && !imageError ? (
-                    <img
-                        src={heroPhoto}
-                        alt={name}
-                        className="absolute inset-0 h-full w-full object-cover opacity-60 transition-opacity duration-500 group-hover:scale-105 group-hover:opacity-80"
-                        onError={() => setImageError(true)}
-                    />
-                ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Music2 className={`h-16 w-16 ${accent} opacity-20 group-hover:opacity-30 transition-opacity`} />
-                    </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
-                {distance !== undefined && (
-                    <div className="absolute top-3 start-3 bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1 flex items-center gap-1.5 text-xs font-semibold">
-                        <Navigation2 className="h-3 w-3 text-primary" />
-                        <span>{distance < 1 ? t('unitMeters', { count: Math.round(distance * 1000) }) : t('unitKm', { count: distance.toFixed(1) })}</span>
-                    </div>
-                )}
+function getProgramLabel(program: unknown, locale: string): string {
+  if (typeof program === 'string') return program;
+  if (!program || typeof program !== 'object' || Array.isArray(program)) return '';
+
+  const record = program as Record<string, unknown>;
+  const nameField = record.name;
+
+  if (typeof nameField === 'string') return nameField;
+  if (nameField && typeof nameField === 'object' && !Array.isArray(nameField)) {
+    const nameByLocale = nameField as Record<string, unknown>;
+    const localized =
+      (typeof nameByLocale[locale] === 'string' && String(nameByLocale[locale])) ||
+      (typeof nameByLocale.he === 'string' && String(nameByLocale.he)) ||
+      (typeof nameByLocale.en === 'string' && String(nameByLocale.en));
+    if (localized) return localized;
+  }
+
+  if (typeof record.note === 'string' && record.note) return record.note;
+  return '';
+}
+
+function getProgramKey(consId: string, program: unknown, index: number, locale: string): string {
+  const label = getProgramLabel(program, locale);
+  if (label) return `${consId}-${label}-${index}`;
+  return `${consId}-program-${index}`;
+}
+
+function ConservatoriumCard({
+  cons,
+  teacherCount,
+  onOpen,
+  viewLabel,
+}: {
+  cons: Conservatorium;
+  teacherCount: number;
+  onOpen: () => void;
+  viewLabel: string;
+}) {
+  const heroPhoto = cons.photoUrls?.[0];
+
+  return (
+    <Card className="group overflow-hidden border-border/70 transition hover:border-primary/40 hover:shadow-lg">
+      <button type="button" onClick={onOpen} className="w-full text-start">
+        <div className="relative h-36 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
+          {heroPhoto ? (
+            <img src={heroPhoto} alt={cons.name} className="h-full w-full object-cover opacity-80 transition duration-300 group-hover:scale-105" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <Music2 className="h-12 w-12 text-primary/35" />
             </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent" />
+        </div>
 
-            {/* Content */}
-            <div className="p-5 space-y-3">
-                <div>
-                    <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">{name}</h3>
-                </div>
+        <CardHeader className="space-y-2 pb-2">
+          <CardTitle className="line-clamp-2 text-base leading-snug">{cons.name}</CardTitle>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" />
+              {cons.location?.city || '-'}
+            </span>
+            <span className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5" />
+              {teacherCount}
+            </span>
+          </div>
+        </CardHeader>
 
-                {city && (
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span>{city}</span>
-                    </div>
-                )}
+        <CardContent className="space-y-3 pt-0">
+          <p className="line-clamp-3 text-sm text-muted-foreground">{cons.about || ''}</p>
 
-                {about && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{about}</p>
-                )}
+          <div className="flex flex-wrap gap-1.5">
+            {(cons.departments || []).slice(0, 3).map((department) => (
+              <Badge key={`${cons.id}-${department.name}`} variant="secondary" className="max-w-full truncate text-[11px]">
+                {department.name}
+              </Badge>
+            ))}
+            {(cons.departments?.length || 0) > 3 && (
+              <Badge variant="outline" className="text-[11px]">+{(cons.departments?.length || 0) - 3}</Badge>
+            )}
+          </div>
 
-                {/* Departments */}
-                {cons.departments && cons.departments.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                        {cons.departments.slice(0, 3).map((d, i) => (
-                            <Badge key={i} variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
-                                {d.name}
-                            </Badge>
-                        ))}
-                        {cons.departments.length > 3 && (
-                            <Badge variant="outline" className="text-xs px-2 py-0.5 rounded-full">
-                                +{cons.departments.length - 3}
-                            </Badge>
-                        )}
-                    </div>
-                )}
-
-                {/* Footer row */}
-                <div className="flex items-center justify-between pt-1 border-t border-border/50">
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                        {cons.tel && <span className="flex items-center gap-1 text-xs"><Phone className="h-3 w-3" />{cons.tel}</span>}
-                        {cons.teachers && cons.teachers.length > 0 && (
-                            <span className="flex items-center gap-1 text-xs"><Users className="h-3 w-3" />{cons.teachers.length}</span>
-                        )}
-                    </div>
-                    <ChevronRight className={`h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors ${isRtl ? 'rotate-180' : ''}`} />
-                </div>
-            </div>
-        </button>
-    );
-}
-
-function ConservatoriumDialog({ cons, open, onClose }: { cons: Conservatorium | null; open: boolean; onClose: () => void }) {
-    const t = useTranslations('AboutPage');
-    const locale = useLocale();
-
-    if (!cons) return null;
-
-    const localizedCons = getLocalizedConservatorium(cons, locale);
-    const translation = localizedCons.translations?.[locale as keyof typeof localizedCons.translations];
-    const name = localizedCons.name;
-    const about = localizedCons.about;
-    const openingHours = localizedCons.openingHours;
-
-    return (
-        <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
-                <DialogHeader className="text-start">
-                    <DialogTitle className="text-2xl font-bold">{name}</DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-4">
-                    {about && <p className="text-sm text-muted-foreground leading-relaxed">{about}</p>}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div className="space-y-2">
-                            <h4 className="font-semibold">{t('contactDetails')}</h4>
-                            {localizedCons.location?.city && <p>{localizedCons.location?.address || localizedCons.location?.city}</p>}
-                            {cons.tel && <a href={'tel:' + cons.tel} className="hover:underline" dir="ltr">{cons.tel}</a>}
-                            {cons.email && <a href={'mailto:' + cons.email} className="hover:underline break-all" dir="ltr">{cons.email}</a>}
-                            {cons.secondaryEmail && <a href={'mailto:' + cons.secondaryEmail} className="hover:underline break-all" dir="ltr">{cons.secondaryEmail}</a>}
-                            {openingHours && <p>{openingHours}</p>}
-                        </div>
-
-                        <div className="space-y-2">
-                            <h4 className="font-semibold">{t('departments')}</h4>
-                            {cons.departments && cons.departments.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {cons.departments.map((d, i) => (
-                                        <Badge key={i} variant="secondary">{d.name}</Badge>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-muted-foreground">{t('noDepartments')}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    {cons.teachers && cons.teachers.length > 0 && (
-                        <div className="space-y-2">
-                            <h4 className="font-semibold">{t('teachers', { count: cons.teachers.length })}</h4>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                {cons.teachers.slice(0, 8).map((teacher, i) => (
-                                    <div key={i} className="text-center text-xs">
-                                        <Avatar className="h-12 w-12 mx-auto mb-1">
-                                            <AvatarImage src={teacher.photoUrl} alt={teacher.name} />
-                                            <AvatarFallback>{teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</AvatarFallback>
-                                        </Avatar>
-                                        <p className="font-medium">{teacher.name}</p>
-                                        {teacher.role && <p className="text-muted-foreground">{teacher.role}</p>}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="pt-2 flex gap-3">
-                        <Button asChild className="flex-1">
-                            <Link href="/contact">{t('contactThisCons')}</Link>
-                        </Button>
-                        {cons.officialSite && (
-                            <Button asChild variant="outline" className="flex-1">
-                                <a href={cons.officialSite} target="_blank" rel="noopener noreferrer">
-                                    {t('officialSite')}
-                                </a>
-                            </Button>
-                        )}
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
+          <div className="flex items-center justify-end border-t pt-2 text-xs text-primary">
+            <span className="flex items-center gap-1">
+              <ChevronRight className="h-3.5 w-3.5" />
+              <span>{viewLabel}</span>
+            </span>
+          </div>
+        </CardContent>
+      </button>
+    </Card>
+  );
 }
 
 export default function AboutPage() {
-    const t = useTranslations('AboutPage');
-    const tNav = useTranslations('Navigation');
-    const tHome = useTranslations('HomePage');
-    const locale = useLocale();
-    const { conservatoriums } = useAuth();
+  const t = useTranslations('AboutPage');
+  const tAbout = useTranslations('About');
+  const tCommon = useTranslations('Common.shared');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const searchParams = useSearchParams();
+  const { conservatoriums, conservatoriumInstruments, users } = useAuth();
 
-    const localizedConservatoriums = useMemo(() => {
-        return conservatoriums.map(c => getLocalizedConservatorium(c, locale));
-    }, [locale]);
+  const [search, setSearch] = useState('');
+  const [city, setCity] = useState('');
+  const [instrumentId, setInstrumentId] = useState('');
+  const [selectedCons, setSelectedCons] = useState<Conservatorium | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<PublicProfile | null>(null);
 
-    const allDepartments = useMemo(() => {
-        const uniqueNames = Array.from(
-            new Set(localizedConservatoriums.flatMap(c => c.departments?.map(d => d.name) || []))
-        ).sort();
-        return uniqueNames;
-    }, [localizedConservatoriums]);
-
-    const [search, setSearch] = useState('');
-    const [citySearch, setCitySearch] = useState('');
-    const [deptFilter, setDeptFilter] = useState('');
-    const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'found' | 'error'>('idle');
-    const [selectedCons, setSelectedCons] = useState<Conservatorium | null>(null);
-    const [dialogOpen, setDialogOpen] = useState(false);
-
-    const handleLocate = useCallback(() => {
-        if (!navigator.geolocation) { setLocationStatus('error'); return; }
-        setLocationStatus('loading');
-        navigator.geolocation.getCurrentPosition(
-            pos => { setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setLocationStatus('found'); setCitySearch(''); },
-            () => setLocationStatus('error')
-        );
-    }, []);
-
-    const referencePoint = useMemo(() => {
-        if (userLocation) return userLocation;
-        const cityKey = citySearch.trim().toLowerCase();
-        if (cityKey) {
-            for (const [key, coords] of Object.entries(CITY_COORDS)) {
-                if (key.toLowerCase().includes(cityKey) || cityKey.includes(key.toLowerCase())) return coords;
-            }
-        }
-        return null;
-    }, [userLocation, citySearch]);
-
-    const filteredAndSorted = useMemo(() => {
-        let list = localizedConservatoriums.filter(c => {
-            const q = search.toLowerCase();
-            const name = c.name || '';
-            const city = c.location?.city || '';
-
-            const nameMatch = name.toLowerCase().includes(q) || (city.toLowerCase().includes(q));
-            const deptMatch = !deptFilter || c.departments?.some(d => d.name === deptFilter);
-            return nameMatch && deptMatch;
-        });
-
-        if (referencePoint) {
-            return list.sort((a, b) => {
-                const coordsA = a.location?.coordinates;
-                const coordsB = b.location?.coordinates;
-                if (!coordsA && !coordsB) return 0;
-                if (!coordsA) return 1;
-                if (!coordsB) return -1;
-                const distA = haversineDistance(referencePoint.lat, referencePoint.lng, coordsA.lat, coordsA.lng);
-                const distB = haversineDistance(referencePoint.lat, referencePoint.lng, coordsB.lat, coordsB.lng);
-                return distA - distB;
-            });
-        }
-        return list.sort((a, b) => a.name.localeCompare(b.name, locale === 'he' ? 'he' : 'en'));
-    }, [search, deptFilter, referencePoint, locale]);
-
-    function getDistance(cons: Conservatorium): number | undefined {
-        if (!referencePoint || !cons.location?.coordinates) return undefined;
-        return haversineDistance(referencePoint.lat, referencePoint.lng, cons.location.coordinates.lat, cons.location.coordinates.lng);
+  const localizedConservatoriums = useMemo(() => {
+    const uniqueById = new Map<string, Conservatorium>();
+    for (const item of conservatoriums) {
+      if (!uniqueById.has(item.id)) uniqueById.set(item.id, item);
     }
+    return Array.from(uniqueById.values()).map((item) => getLocalizedConservatorium(item, locale));
+  }, [conservatoriums, locale]);
 
-    function openCons(cons: Conservatorium) {
-        setSelectedCons(cons);
-        setDialogOpen(true);
+  const localizedTeachers = useMemo(() => {
+    const unique = new Map<string, User>();
+    for (const user of users) {
+      if (user.role !== 'teacher' || !user.approved) continue;
+      if (!unique.has(user.id)) unique.set(user.id, getLocalizedUserProfile(user, locale));
     }
+    return Array.from(unique.values());
+  }, [users, locale]);
 
-    const hasFilters = !!search || !!deptFilter || !!citySearch || locationStatus === 'found';
+  const platformInstruments = useMemo(() => {
+    const unique = new Map<string, ConservatoriumInstrument>();
+    conservatoriumInstruments
+      .filter((inst) => inst.isActive && inst.availableForRegistration)
+      .forEach((inst) => {
+        if (!unique.has(inst.id)) unique.set(inst.id, inst);
+      });
 
-    return (
-        <div className="flex flex-col min-h-dvh bg-background" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
-            {/* Header */}
-            <PublicNavbar />
-
-            <main className="flex-1 pt-14 text-start">
-                {/* Hero */}
-                <section className="relative py-20 px-4 text-center overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
-                    <div className="relative max-w-3xl mx-auto space-y-4">
-                        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 text-sm font-semibold text-primary mb-2">
-                            <Music2 className="h-4 w-4" />
-                            <span>{t('showingCount', { count: conservatoriums.length })}</span>
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-                            {t('title')}
-                        </h1>
-                        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                            {t('subtitle')}
-                        </p>
-                    </div>
-                </section>
-
-                {/* Search & Filters */}
-                <section className="sticky top-14 z-30 bg-background/90 backdrop-blur-md border-b border-border py-3 px-4">
-                    <div className="max-w-7xl mx-auto space-y-2.5">
-                        {/* Main search row */}
-                        <div className="flex flex-col sm:flex-row gap-2">
-                            <div className="relative flex-1">
-                                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <input
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    placeholder={t('searchPlaceholder')}
-                                    className="w-full h-10 bg-muted/50 border border-border rounded-xl ps-9 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-muted-foreground"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                {/* City for distance sort */}
-                                <div className="relative flex-1 sm:w-40">
-                                    <Navigation2 className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <input
-                                        value={citySearch}
-                                        onChange={e => { setCitySearch(e.target.value); setUserLocation(null); setLocationStatus('idle'); }}
-                                        placeholder={t('citySortPlaceholder')}
-                                        className="w-full h-10 bg-muted/50 border border-border rounded-xl ps-9 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder:text-muted-foreground"
-                                    />
-                                </div>
-                                <Button
-                                    variant={locationStatus === 'found' ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={handleLocate}
-                                    disabled={locationStatus === 'loading'}
-                                    className="h-10 gap-2 whitespace-nowrap rounded-xl"
-                                >
-                                    <LocateFixed className="h-4 w-4" />
-                                    {locationStatus === 'loading' ? t('locating') : locationStatus === 'found' ? t('sortedByLocation') : t('locateMe')}
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Department filter chips */}
-                        <div className="flex gap-2 overflow-x-auto pb-0.5 no-scrollbar">
-                            <button
-                                onClick={() => setDeptFilter('')}
-                                className={`flex-shrink-0 h-7 px-3 rounded-full text-xs font-medium border transition-all ${!deptFilter ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/50 border-border hover:border-primary hover:text-primary'}`}
-                            >
-                                {t('allDepartments')}
-                            </button>
-                            {allDepartments.slice(0, 15).map(dept => (
-                                <button
-                                    key={dept}
-                                    onClick={() => setDeptFilter(deptFilter === dept ? '' : dept)}
-                                    className={`flex-shrink-0 h-7 px-3 rounded-full text-xs font-medium border transition-all ${deptFilter === dept ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted/50 border-border hover:border-primary hover:text-primary'}`}
-                                >
-                                    {dept}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Results */}
-                <section className="py-8 px-4">
-                    <div className="max-w-7xl mx-auto">
-                        {/* Stats row */}
-                        <div className="flex items-center justify-between mb-6 text-sm text-muted-foreground">
-                            <span>
-                                {filteredAndSorted.length === conservatoriums.length
-                                    ? t('showingCount', { count: conservatoriums.length })
-                                    : t('foundCount', { found: filteredAndSorted.length, total: conservatoriums.length })}
-                                {referencePoint && ` · ${t('sortedByDistance')}`}
-                            </span>
-                            {hasFilters && (
-                                <button
-                                    onClick={() => { setSearch(''); setDeptFilter(''); setCitySearch(''); setUserLocation(null); setLocationStatus('idle'); }}
-                                    className="flex items-center gap-1.5 text-primary hover:underline"
-                                >
-                                    <X className="h-3.5 w-3.5" /> {t('clearFilters')}
-                                </button>
-                            )}
-                        </div>
-
-                        {filteredAndSorted.length === 0 ? (
-                            <div className="text-center py-24 space-y-3">
-                                <Search className="h-12 w-12 text-muted-foreground/30 mx-auto" />
-                                <p className="text-lg font-medium text-muted-foreground">{t('noResults')}</p>
-                                <p className="text-sm text-muted-foreground">{t('noResultsSub')}</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                                {filteredAndSorted.map(cons => (
-                                    <ConservatoriumCard
-                                        key={cons.id}
-                                        cons={cons}
-                                        distance={getDistance(cons)}
-                                        onClick={() => openCons(cons)}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </section>
-            </main>
-
-            <PublicFooter />
-
-            <ConservatoriumDialog
-                cons={selectedCons}
-                open={dialogOpen}
-                onClose={() => setDialogOpen(false)}
-            />
-        </div>
+    return Array.from(unique.values()).sort((a, b) =>
+      getInstrumentName(a, 'he').localeCompare(getInstrumentName(b, 'he'), 'he')
     );
-}
+  }, [conservatoriumInstruments]);
 
+  const placeholderImageMap = useMemo(
+    () => new Map(PlaceHolderImages.map((image) => [image.id, image.imageUrl])),
+    []
+  );
+
+  const resolveAvatarUrl = (value?: string) => {
+    if (!value) return undefined;
+    return placeholderImageMap.get(value) || value;
+  };
+
+  useEffect(() => {
+    setSearch(searchParams.get('search') || '');
+    setCity(searchParams.get('city') || '');
+    setInstrumentId(searchParams.get('instrument') || '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    const selectedConsId = searchParams.get('cons');
+    if (!selectedConsId) return;
+    const found = localizedConservatoriums.find((item) => item.id === selectedConsId);
+    if (found) setSelectedCons(found);
+  }, [searchParams, localizedConservatoriums]);
+
+  const filteredConservatoriums = useMemo(() => {
+    const searchLower = search.trim().toLowerCase();
+    const cityLower = city.trim().toLowerCase();
+
+    return localizedConservatoriums.filter((cons) => {
+      const name = (cons.name || '').toLowerCase();
+      const cityName = (cons.location?.city || '').toLowerCase();
+
+      const bySearch = !searchLower || name.includes(searchLower) || cityName.includes(searchLower);
+      const byCity = !cityLower || cityName.includes(cityLower);
+
+      const byInstrument =
+        !instrumentId ||
+        conservatoriumInstruments.some(
+          (inst) =>
+            inst.conservatoriumId === cons.id &&
+            inst.id === instrumentId &&
+            inst.isActive &&
+            inst.availableForRegistration
+        );
+
+      return bySearch && byCity && byInstrument;
+    });
+  }, [localizedConservatoriums, conservatoriumInstruments, search, city, instrumentId]);
+
+  const teacherCountByConservatorium = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    for (const cons of localizedConservatoriums) {
+      const listCount = cons.teachers?.length || 0;
+      const usersCount = localizedTeachers.filter((teacher) => teacher.conservatoriumId === cons.id).length;
+      counts.set(cons.id, Math.max(listCount, usersCount));
+    }
+
+    return counts;
+  }, [localizedConservatoriums, localizedTeachers]);
+
+  const selectedConsProfiles = useMemo(() => {
+    if (!selectedCons) return [] as PublicProfile[];
+
+    const profiles: PublicProfile[] = [];
+    const matchedTeacherIds = new Set<string>();
+
+    const teachersInCons = localizedTeachers.filter((teacher) => teacher.conservatoriumId === selectedCons.id);
+    const teacherByName = new Map<string, User>();
+    for (const teacher of teachersInCons) {
+      teacherByName.set(normalizeName(teacher.name), teacher);
+    }
+
+    for (const dirTeacher of selectedCons.teachers || []) {
+      const matched = teacherByName.get(normalizeName(dirTeacher.name));
+      if (matched) matchedTeacherIds.add(matched.id);
+
+      const instruments = matched ? buildTeacherInstruments(matched, platformInstruments, locale) : [];
+      const bio = dirTeacher.bio || (matched ? getLocalizedUserBio(matched, locale) : undefined);
+
+      profiles.push({
+        id: matched?.id || `dir-${selectedCons.id}-${dirTeacher.name}`,
+        name: dirTeacher.name,
+        role: dirTeacher.role || matched?.role,
+        bio: bio || undefined,
+        photoUrl: resolveAvatarUrl(dirTeacher.photoUrl || matched?.avatarUrl),
+        instruments,
+        education: matched?.education,
+        email: matched?.email,
+        phone: matched?.phone,
+        teacherUserId: matched?.id,
+        availableForNewStudents: matched?.availableForNewStudents,
+        source: 'teacher',
+      });
+    }
+
+    for (const teacher of teachersInCons) {
+      if (matchedTeacherIds.has(teacher.id)) continue;
+      profiles.push({
+        id: teacher.id,
+        name: teacher.name,
+        role: teacher.role,
+        bio: getLocalizedUserBio(teacher, locale),
+        photoUrl: resolveAvatarUrl(teacher.avatarUrl),
+        instruments: buildTeacherInstruments(teacher, platformInstruments, locale),
+        education: teacher.education,
+        email: teacher.email,
+        phone: teacher.phone,
+        teacherUserId: teacher.id,
+        availableForNewStudents: teacher.availableForNewStudents,
+        source: 'teacher',
+      });
+    }
+
+    if (selectedCons.manager?.name) {
+      profiles.push({
+        id: `manager-${selectedCons.id}`,
+        name: selectedCons.manager.name,
+        role: selectedCons.manager.role,
+        bio: selectedCons.manager.bio,
+        photoUrl: resolveAvatarUrl(selectedCons.manager.photoUrl),
+        instruments: [],
+        source: 'manager',
+      });
+    }
+
+    for (const member of selectedCons.leadingTeam || []) {
+      profiles.push({
+        id: `team-${selectedCons.id}-${member.name}`,
+        name: member.name,
+        role: member.role,
+        bio: member.bio,
+        photoUrl: resolveAvatarUrl(member.photoUrl),
+        instruments: [],
+        source: 'staff',
+      });
+    }
+
+    const unique = new Map<string, PublicProfile>();
+    for (const profile of profiles) {
+      const key = `${profile.source}-${normalizeName(profile.name)}`;
+      if (!unique.has(key)) unique.set(key, profile);
+    }
+
+    return Array.from(unique.values());
+  }, [selectedCons, localizedTeachers, platformInstruments, locale]);
+
+  const selectedTeacherGroups = useMemo(() => {
+    const groups = new Map<string, PublicProfile[]>();
+
+    for (const profile of selectedConsProfiles.filter((item) => item.source === 'teacher')) {
+      const key = profile.instruments[0] || tAbout('instrumentUnknown');
+      const list = groups.get(key) || [];
+      list.push(profile);
+      groups.set(key, list);
+    }
+
+    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b, locale));
+  }, [selectedConsProfiles, tAbout, locale]);
+
+  return (
+    <div className="flex min-h-dvh flex-col bg-background" dir={isRtl ? 'rtl' : 'ltr'}>
+      <PublicNavbar />
+
+      <main className="flex-1 pt-14 text-start">
+        <section className="border-b bg-gradient-to-b from-primary/10 via-background to-background px-4 py-16">
+          <div className="mx-auto max-w-6xl space-y-4 text-center">
+            <Badge variant="secondary" className="mx-auto">
+              {t('showingCount', { count: localizedConservatoriums.length })}
+            </Badge>
+            <h1 className="text-4xl font-bold md:text-5xl">{t('title')}</h1>
+            <p className="mx-auto max-w-2xl text-muted-foreground">{t('subtitle')}</p>
+          </div>
+        </section>
+
+        <section className="sticky top-14 z-30 border-b bg-background/95 px-4 py-4 backdrop-blur">
+          <div className="mx-auto grid max-w-6xl gap-3 md:grid-cols-[1fr_220px_220px]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder={t('searchPlaceholder')}
+                className="ps-9"
+              />
+            </div>
+            <Input value={city} onChange={(event) => setCity(event.target.value)} placeholder={t('citySortPlaceholder')} />
+            <select
+              value={instrumentId}
+              onChange={(event) => setInstrumentId(event.target.value)}
+              className="h-10 rounded-md border bg-background px-3 text-sm"
+            >
+              <option value="">{tAbout('allInstruments')}</option>
+              {platformInstruments.map((inst) => (
+                <option key={inst.id} value={inst.id}>
+                  {getInstrumentName(inst, locale)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </section>
+
+        <section className="px-4 py-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-6 flex items-center justify-between text-sm text-muted-foreground">
+              <span>
+                {t('foundCount', {
+                  found: filteredConservatoriums.length,
+                  total: localizedConservatoriums.length,
+                })}
+              </span>
+              <button
+                type="button"
+                className="text-primary hover:underline"
+                onClick={() => {
+                  setSearch('');
+                  setCity('');
+                  setInstrumentId('');
+                }}
+              >
+                {t('clearFilters')}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredConservatoriums.map((cons) => (
+                <ConservatoriumCard
+                  key={cons.id}
+                  cons={cons}
+                  teacherCount={teacherCountByConservatorium.get(cons.id) || 0}
+                  onOpen={() => {
+                    setSelectedProfile(null);
+                    setSelectedCons(cons);
+                  }}
+                  viewLabel={tCommon('view')}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <PublicFooter />
+
+      <Dialog
+        open={Boolean(selectedCons)}
+        onOpenChange={(open) => {
+          if (!open && selectedProfile) {
+            setSelectedProfile(null);
+            return;
+          }
+          if (!open) {
+            setSelectedProfile(null);
+            setSelectedCons(null);
+          }
+        }}
+      >
+        <DialogContent className="max-h-[92vh] w-[95vw] max-w-6xl overflow-y-auto" dir={isRtl ? 'rtl' : 'ltr'}>
+          <DialogHeader>
+            <DialogTitle>{selectedCons?.name}</DialogTitle>
+          </DialogHeader>
+
+          {selectedCons && !selectedProfile && (
+            <div className="space-y-5 text-sm">
+              {selectedCons.about && <p className="text-muted-foreground">{selectedCons.about}</p>}
+
+              <div className="flex flex-wrap gap-2">
+                <Button asChild>
+                  <Link href="/contact">{t('contactThisCons')}</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href={`/about/${buildConservatoriumSlug({ id: selectedCons.id, name: selectedCons.name, nameEn: selectedCons.nameEn })}`}>
+                    {tCommon('view')}
+                  </Link>
+                </Button>
+                {selectedCons.officialSite && (
+                  <Button variant="outline" asChild>
+                    <a href={selectedCons.officialSite} target="_blank" rel="noopener noreferrer">
+                      {t('officialSite')}
+                    </a>
+                  </Button>
+                )}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">{t('contactDetails')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-muted-foreground">
+                    {selectedCons.location?.city && (
+                      <p className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {selectedCons.location.address || selectedCons.location.city}
+                      </p>
+                    )}
+                    {selectedCons.tel && (
+                      <a href={`tel:${selectedCons.tel}`} className="flex items-center gap-2 hover:underline" dir="ltr">
+                        <Phone className="h-4 w-4" />
+                        {selectedCons.tel}
+                      </a>
+                    )}
+                    {selectedCons.email && (
+                      <a href={`mailto:${selectedCons.email}`} className="flex items-center gap-2 break-all hover:underline" dir="ltr">
+                        <Mail className="h-4 w-4" />
+                        {selectedCons.email}
+                      </a>
+                    )}
+                    {selectedCons.officialSite && (
+                      <a
+                        href={selectedCons.officialSite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 break-all hover:underline"
+                        dir="ltr"
+                      >
+                        <Globe className="h-4 w-4" />
+                        {selectedCons.officialSite}
+                      </a>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">{t('management')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {selectedConsProfiles
+                      .filter((profile) => profile.source !== 'teacher')
+                      .map((profile) => (
+                        <button
+                          type="button"
+                          key={profile.id}
+                          onClick={() => setSelectedProfile(profile)}
+                          className="flex w-full items-center gap-3 rounded-md border p-2 text-start transition hover:border-primary/40"
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={profile.photoUrl} alt={profile.name} />
+                            <AvatarFallback>
+                              {profile.name
+                                .split(' ')
+                                .map((part) => part[0])
+                                .join('')
+                                .slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{profile.name}</p>
+                            {profile.role && <p className="text-xs text-muted-foreground">{profile.role}</p>}
+                          </div>
+                        </button>
+                      ))}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {selectedCons.departments && selectedCons.departments.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">{t('departments')}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCons.departments.map((department) => (
+                      <Badge key={`${selectedCons.id}-${department.name}`} variant="secondary">
+                        {department.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedCons.programs && selectedCons.programs.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">{t('programs')}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCons.programs.map((program, index) => {
+                      const label = getProgramLabel(program, locale);
+                      if (!label) return null;
+                      return (
+                        <Badge key={getProgramKey(selectedCons.id, program, index, locale)} variant="outline">
+                          {label}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {selectedCons.branchesInfo && selectedCons.branchesInfo.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold">{t('branches')}</h3>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {selectedCons.branchesInfo.map((branch) => (
+                      <Card key={`${selectedCons.id}-${branch.name}-${branch.address || ''}`}>
+                        <CardContent className="space-y-1 p-3 text-muted-foreground">
+                          <p className="font-medium text-foreground">{branch.name}</p>
+                          {branch.address && <p>{branch.address}</p>}
+                          {branch.tel && <p dir="ltr">{branch.tel}</p>}
+                          {branch.email && <p dir="ltr">{branch.email}</p>}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedCons.socialMedia && (
+                <div className="flex items-center gap-3">
+                  {selectedCons.socialMedia.facebook && (
+                    <a href={selectedCons.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                      <Facebook className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selectedCons.socialMedia.instagram && (
+                    <a href={selectedCons.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                      <Instagram className="h-4 w-4" />
+                    </a>
+                  )}
+                  {selectedCons.socialMedia.youtube && (
+                    <a href={selectedCons.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                      <Youtube className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <h3 className="font-semibold">{t('teachers', { count: selectedConsProfiles.filter((item) => item.source === 'teacher').length })}</h3>
+                {selectedTeacherGroups.map(([instrumentName, profiles]) => (
+                  <div key={instrumentName} className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{instrumentName}</p>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                      {profiles.map((profile) => (
+                        <button
+                          type="button"
+                          key={profile.id}
+                          onClick={() => setSelectedProfile(profile)}
+                          className="rounded-md border p-2 text-start transition hover:border-primary/50 hover:shadow-sm"
+                        >
+                          <div className="mb-2 flex items-center gap-2">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={profile.photoUrl} alt={profile.name} />
+                              <AvatarFallback>
+                                {profile.name
+                                  .split(' ')
+                                  .map((part) => part[0])
+                                  .join('')
+                                  .slice(0, 2)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="line-clamp-2 text-xs font-medium">{profile.name}</p>
+                              {profile.role && <p className="line-clamp-1 text-[11px] text-muted-foreground">{profile.role}</p>}
+                            </div>
+                          </div>
+                          {profile.instruments.length > 0 && (
+                            <p className="line-clamp-1 text-[11px] text-muted-foreground">{profile.instruments.join(', ')}</p>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {selectedCons && selectedProfile && (
+            <div className="space-y-5">
+              <Button variant="ghost" className="ps-2 pe-2" onClick={() => setSelectedProfile(null)}>
+                <ArrowLeft className="me-2 h-4 w-4" />
+                {tCommon('back')}
+              </Button>
+
+              <div className="flex items-start gap-3">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={selectedProfile.photoUrl} alt={selectedProfile.name} />
+                  <AvatarFallback>
+                    <UserRound className="h-6 w-6" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <p className="text-lg font-semibold">{selectedProfile.name}</p>
+                  {selectedProfile.role && <p className="text-sm text-muted-foreground">{selectedProfile.role}</p>}
+                  {selectedProfile.instruments.length > 0 && (
+                    <p className="text-sm text-muted-foreground">{selectedProfile.instruments.join(', ')}</p>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {selectedProfile.bio || tAbout('bioUnavailable')}
+              </p>
+
+              {selectedProfile.education && selectedProfile.education.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">{tAbout('education')}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-1 text-sm text-muted-foreground">
+                    {selectedProfile.education.map((item) => (
+                      <p key={`${selectedProfile.id}-${item}`}>{item}</p>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                {selectedProfile.phone && (
+                  <Button variant="outline" asChild>
+                    <a href={`tel:${selectedProfile.phone}`} dir="ltr">
+                      <Phone className="me-2 h-4 w-4" />
+                      {selectedProfile.phone}
+                    </a>
+                  </Button>
+                )}
+                {selectedProfile.email && (
+                  <Button variant="outline" asChild>
+                    <a href={`mailto:${selectedProfile.email}`} dir="ltr">
+                      <Mail className="me-2 h-4 w-4" />
+                      {selectedProfile.email}
+                    </a>
+                  </Button>
+                )}
+                {selectedProfile.source === 'teacher' && selectedProfile.teacherUserId && selectedProfile.availableForNewStudents && (
+                  <Button asChild>
+                    <Link href={`/register?teacher=${selectedProfile.teacherUserId}`}>{tAbout('bookWithTeacher')}</Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

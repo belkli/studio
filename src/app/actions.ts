@@ -12,6 +12,18 @@ import { compositions as allCompositions } from '@/lib/data';
 import { withAuth } from '@/lib/auth-utils';
 import { z } from 'zod';
 
+type ComposerSearchResult = {
+  id: string;
+  name: string;
+  names: {
+    he: string;
+    en: string;
+    ru?: string;
+    ar?: string;
+  };
+};
+
+
 import {
   suggestCompositions,
   type SuggestCompositionsInput,
@@ -61,23 +73,43 @@ import {
 } from '@/ai/flows/nurture-lead-flow';
 import { NurtureLeadInputSchema } from '@/ai/flows/nurture-lead-flow';
 
+import {
+  generateEventPoster,
+  type GenerateEventPosterInput,
+  type GenerateEventPosterOutput,
+} from '@/ai/flows/generate-event-poster';
+
 
 // Schemas for non-Genkit actions
-const SearchComposersSchema = z.string();
+const SearchComposersSchema = z.union([
+  z.string(),
+  z.object({
+    query: z.string(),
+    instrument: z.string().optional(),
+  }),
+]);
 const SearchCompositionsSchema = z.object({
   query: z.string(),
   composer: z.string().optional(),
+  composerId: z.string().optional(),
   instrument: z.string().optional(),
+  locale: z.enum(['he', 'en', 'ar', 'ru']).optional(),
 });
 
 const AlumnusSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(2),
-  avatarUrl: z.string().optional(),
+  userId: z.string(),
+  conservatoriumId: z.string(),
+  displayName: z.string().min(2),
   graduationYear: z.number().int().min(1900).max(new Date().getFullYear()),
-  instrument: z.string().min(2),
-  currentRole: z.string().min(2),
-  achievements: z.string().optional(),
+  primaryInstrument: z.string().min(2),
+  currentOccupation: z.string().optional(),
+  bio: z.object({ he: z.string().optional(), en: z.string().optional(), ru: z.string().optional(), ar: z.string().optional() }).default({}),
+  profilePhotoUrl: z.string().optional(),
+  isPublic: z.boolean().default(false),
+  achievements: z.array(z.string()).optional(),
+  socialLinks: z.object({ website: z.string().optional(), youtube: z.string().optional(), spotify: z.string().optional(), instagram: z.string().optional() }).optional(),
+  availableForMasterClasses: z.boolean().default(false),
 });
 
 const DeleteAlumnusSchema = z.string();
@@ -186,6 +218,20 @@ const CreateDonationCheckoutSchema = z.object({
   donorName: z.string().optional(),
   donorEmail: z.string().email().optional(),
   donorId: z.string().optional(),
+  causeId: z.string().optional(),
+});
+
+const GenerateEventPosterSchema = z.object({
+  id: z.string(),
+  title: z.object({
+    he: z.string(),
+    en: z.string(),
+    ru: z.string().optional(),
+    ar: z.string().optional(),
+  }),
+  eventDate: z.string(),
+  startTime: z.string(),
+  venueName: z.string(),
 });
 
 type AppLocale = z.infer<typeof AppLocaleSchema>;
@@ -338,16 +384,65 @@ export const getCompositionSuggestions = withAuth(
  * @param query - The search query for the composer's name.
  * @returns A promise that resolves to an array of matching composer names.
  */
+const normalizeSearchValue = (value: string) =>
+  value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+
+const tokenizeInstrument = (value?: string) => {
+  if (!value) return [] as string[];
+  return value
+    .split(/[\/,;|]+/)
+    .map((token) => normalizeSearchValue(token))
+    .filter(Boolean);
+};
+
+const matchesInstrument = (compositionInstrument: string | undefined, requestedInstrument: string | undefined) => {
+  if (!requestedInstrument) return true;
+  if (!compositionInstrument) return false;
+
+  const requested = normalizeSearchValue(requestedInstrument);
+  const tokens = tokenizeInstrument(compositionInstrument);
+  if (tokens.length === 0) return false;
+
+  return tokens.some((token) => token.includes(requested) || requested.includes(token));
+};
+
+/**
+ * Searches the mock database for composers matching a query string.
+ * @param query - The search query for the composer's name.
+ * @returns A promise that resolves to an array of matching composer names.
+ */
 export const searchComposers = withAuth(
   SearchComposersSchema,
-  async (query: string): Promise<string[]> => {
+  async (input: z.infer<typeof SearchComposersSchema>): Promise<ComposerSearchResult[]> => {
+    const query = typeof input === 'string' ? input : input.query;
+    const instrument = typeof input === 'string' ? undefined : input.instrument;
     const lowerCaseQuery = query.toLowerCase();
-    const allUniqueComposers = Array.from(new Set(allCompositions.map(c => c.composer)));
 
-    if (!query) return allUniqueComposers.sort().slice(0, 50);
+    const source = instrument
+      ? allCompositions.filter((composition) => matchesInstrument(composition.instrument, instrument))
+      : allCompositions;
 
-    const filteredComposers = allUniqueComposers.filter(c => c.toLowerCase().includes(lowerCaseQuery));
-    return filteredComposers.sort().slice(0, 20);
+    const allUniqueComposers = Array.from(
+      new Map(
+        source.map((composition) => {
+          const id = composition.composerId || composition.composer;
+          const names = composition.composerNames || { he: composition.composer, en: composition.composer };
+          return [id, { id, name: names.he || composition.composer, names }];
+        })
+      ).values()
+    );
+
+    if (!query) return allUniqueComposers.sort((a, b) => a.name.localeCompare(b.name)).slice(0, 100);
+
+    const filteredComposers = allUniqueComposers.filter((composer) =>
+      Object.values(composer.names).some((value) => value?.toLowerCase().includes(lowerCaseQuery))
+    );
+
+    return filteredComposers.sort((a, b) => a.name.localeCompare(b.name)).slice(0, 50);
   }
 );
 
@@ -361,20 +456,32 @@ export const searchComposers = withAuth(
  */
 export const searchCompositions = withAuth(
   SearchCompositionsSchema,
-  async ({ query, composer, instrument }: z.infer<typeof SearchCompositionsSchema>): Promise<Composition[]> => {
+  async ({ query, composer, composerId, instrument, locale = 'he' }: z.infer<typeof SearchCompositionsSchema>): Promise<Composition[]> => {
     let source = allCompositions;
 
+    if (composerId) source = source.filter(c => c.composerId === composerId);
     if (composer) source = source.filter(c => c.composer === composer);
-    if (instrument) source = source.filter(c => c.instrument === instrument);
-    if (!query && !composer && !instrument) return source.slice(0, 20);
-    if (!query) return source.slice(0, 20);
+    if (instrument) source = source.filter(c => matchesInstrument(c.instrument, instrument));
+
+    const localized = (composition: Composition): Composition => ({
+      ...composition,
+      composer: composition.composerNames?.[locale] || composition.composerNames?.en || composition.composer,
+      title: composition.titles?.[locale] || composition.titles?.en || composition.title,
+    });
+
+    if (!query && !composer && !composerId && !instrument) return source.slice(0, 20).map(localized);
+    if (!query) return source.slice(0, 20).map(localized);
 
     const lowerCaseQuery = query.toLowerCase();
     const results = source.filter(c =>
       c.title.toLowerCase().includes(lowerCaseQuery) ||
-      c.composer.toLowerCase().includes(lowerCaseQuery)
+      c.composer.toLowerCase().includes(lowerCaseQuery) ||
+      Object.values(c.titles || {}).some(value => value?.toLowerCase().includes(lowerCaseQuery)) ||
+      Object.values(c.composerNames || {}).some(value => value?.toLowerCase().includes(lowerCaseQuery)) ||
+      (c.instrument || '').toLowerCase().includes(lowerCaseQuery)
     );
-    return results.slice(0, 20);
+
+    return results.slice(0, 20).map(localized);
   }
 );
 
@@ -656,8 +763,20 @@ export const createDonationCheckout = withAuth(
       frequency: data.frequency,
       donorName: data.donorName,
       donorEmail: data.donorEmail,
+      causeId: data.causeId || 'general',
     });
 
     return { url, provider };
+  }
+);
+
+
+/**
+ * Generates an event poster background image using the AI poster flow.
+ */
+export const generateAiEventPoster = withAuth(
+  GenerateEventPosterSchema,
+  async (input: z.infer<typeof GenerateEventPosterSchema>): Promise<GenerateEventPosterOutput> => {
+    return await generateEventPoster(input as GenerateEventPosterInput);
   }
 );

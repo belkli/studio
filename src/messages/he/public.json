@@ -178,7 +178,12 @@
     "story3Instrument": "חליל צד",
     "story3Name": "ליאן",
     "story3Text": "ליאן מתגוררת בפריפריה והנגישות לשיעורים איכותיים מוגבלת. התרומה שלך תאפשר לה להמשיך להגיע לשיעורים בקונסרבטוריון ולהגשים חלום.",
-    "submitButton": "תרומה של {amount}₪"
+    "submitButton": "תרומה של {amount}₪",
+    "chooseCause": "בחר לאן תגיע התרומה שלך",
+    "chooseCauseHint": "בחר מטרה ספציפית או תרום לקרן הכללית.",
+    "generalFund": "????? ?????",
+    "generalFundDesc": "?????? ????? ????? ?????? ??? ??????????????? ??? ????? ??????? ?????.",
+    "raisedProgress": "הועלה: {percent}% מהיעד"
   },
   "PublicEventPage": {
     "bookTicketsBtn": "הזמן כרטיסים",
@@ -193,7 +198,9 @@
     "programDesc": "הרפרטואר שיבוצע על ידי אמנינו הצעירים.",
     "programTBA": "התוכניה המלאה תפורסם בקרוב.",
     "recitalDesc": "הצטרפו אלינו לקונצרט מיוחד המציג את תלמידינו המוכשרים.",
-    "totalPayment": "סה\"כ לתשלום"
+    "totalPayment": "סה\"כ לתשלום",
+    "openInMaps": "פתח בגוגל מפות",
+    "soldOut": "הַכַּרטִיסִים אָזלוּ"
   },
   "PublicProfiles": {
     "aiTranslated": "תורגם באמצעות AI",
@@ -228,6 +235,87 @@
     "placeholder": "שאל אותי משהו...",
     "suggestionsTitle": "הצעות:",
     "title": "עוזר AI של הרמוניה",
-    "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?"
+    "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?",
+    "quickQuestions": {
+      "default": {
+        "cancelLesson": "איך מבטלים שיעור?",
+        "makeupBalance": "איפה אני רואה את יתרת שיעורי ההשלמה שלי?",
+        "recitalForm": "איך מגישים טופס רסיטל?",
+        "updateAvailability": "כיצד אני מעדכן את הזמינות שלי? (למורים)"
+      },
+      "schedule": {
+        "bookMakeup": "איך אני מזמין שיעור השלמה?",
+        "cancelNextWeek": "האם אפשר לבטל שיעור מהשבוע הבא?",
+        "cancellationPolicy": "מהי מדיניות הביטולים של הקונסרבטוריון?",
+        "syncCalendar": "כיצד אוכל לסנכרן את היומן שלי?"
+      },
+      "billing": {
+        "invoices": "איפה אני מוצא את החשבוניות שלי?",
+        "updateCard": "איך מעדכנים פרטי אשראי?",
+        "nextCharge": "מתי החיוב הבא שלי צפוי?",
+        "siblingDiscount": "איך עובדת הנחת אחים?"
+      },
+      "forms": {
+        "approveRecital": "כמה זמן לוקח לאשר טופס רסיטל?",
+        "rejectedForm": "הטופס שלי נדחה, מה עושים?",
+        "downloadPdf": "איך אני מוריד עותק PDF של טופס מאושר?",
+        "whoApproves": "מי צריך לאשר את הטופס שלי?"
+      },
+      "admin": {
+        "approveEnrollment": "איך אני מאשר הרשמה של תלמיד חדש?",
+        "packagePricing": "איפה אני מגדיר את מחירי החבילות?",
+        "sendAnnouncement": "איך אני שולח הכרזה לכל ההורים?",
+        "financialReports": "איפה אני רואה דוחות כספיים?"
+      }
+    }
+  },
+  "Landing": {
+    "heroTitle": "מוזיקה היא לא רק מיומנות, זה החיים",
+    "heroSubtitle": "חינוך מוזיקלי מקצועי לכל גיל ולכל שלב.",
+    "registerCta": "להרשמה עכשיו",
+    "findConservatory": "מצא קונסרבטוריון",
+    "statConservatories": "קונסרבטוריונים",
+    "statLessons": "שיעורים בשנה",
+    "statSatisfaction": "שביעות רצון ההורים",
+    "statStudents": "תלמידים פעילים",
+    "findTitle": "מוצאים את הקונסרבטוריון שלכם",
+    "findSubtitle": "חפש לפי שם, עיר, כלי נגינה או קונסרבטוריון.",
+    "searchPlaceholder": "חפש לפי עיר או שם...",
+    "cityPlaceholder": "עיר",
+    "instrumentPlaceholder": "כלי נגינה",
+    "search": "חיפוש",
+    "conservatoryFallback": "קונסרבטוריון מקצועי ברשת הרמוניה.",
+    "viewAll": "הצג את כל {count} החממות",
+    "howItWorksTitle": "איך זה עובד",
+    "step1Title": "מצא חממה",
+    "step1Desc": "חפש לפי עיר, כלי נגינה או מורה.",
+    "step2Title": "הירשם מהר",
+    "step2Desc": "השלם רישום עם זרימה פשוטה.",
+    "step3Title": "תתחיל ללמוד",
+    "step3Desc": "שיעורים מותאמים אישית עם מורים מנוסים.",
+    "featuredTeachersTitle": "מורים מומלצים",
+    "teacherFallback": "מורה מנוסה ברשת הרמוניה.",
+    "upcomingEventsTitle": "אירועים קרובים",
+    "openDaysTitle": "ימים פתוחים קרובים",
+    "openDaysFallback": "לוח ימים פתוחים יפורסם בקרוב.",
+    "openDaysCta": "צפו בימים פתוחים",
+    "testimonialsTitle": "מה שמשפחות אומרות",
+    "testimonial1": "הבת שלנו צברה ביטחון ושמחה באמצעות מוזיקה.",
+    "testimonial2": "תהליך הרישום היה ברור ומהיר.",
+    "testimonial3": "מורים מצוינים ותמיכה חמה.",
+    "donateTitle": "תן לכל ילד את מתנת המוזיקה",
+    "donateSubtitle": "תמכו במלגות ובגישה שווה לחינוך מוזיקלי.",
+    "donateCta": "תרומה עכשיו"
+  },
+  "About": {
+    "allInstruments": "כל הכלים",
+    "teachersTitle": "הכירו את המורים שלנו",
+    "teachersSubtitle": "מורים מקצועיים מקונסרבטוריונים ברחבי הפלטפורמה.",
+    "viewBio": "צפה בפרופיל המלא",
+    "instrumentUnknown": "מכשיר לא צוין",
+    "loadMoreTeachers": "הצג {count} מורים נוספים",
+    "bookWithTeacher": "הירשם אצל מורה זה",
+    "education": "הַשׂכָּלָה",
+    "bioUnavailable": "ביוגרפיה תתווסף בקרוב."
   }
 }

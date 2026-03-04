@@ -9,11 +9,11 @@
       "hasTokenQuestion": "Уже есть ссылка регистрации (токен)?",
       "tokenPlaceholder": "Введите токен...",
       "go": "Перейти",
-      "title": "Who является регистрация?",
+      "title": "Кто регистрируется?",
       "subtitle": "Заполните в детали для присоединиться Хармониа.",
       "parent": "Я ам регистрация мой ребенок",
       "self": "Я ам регистрация мйселф (возраст 13+)",
-      "playingSchool": "I'm регистрация для the Игра School program",
+      "playingSchool": "Я регистрируюсь на программу «Игровая школа»",
       "conservatorium": "Консерватория",
       "conservatoriumPlaceholder": "Поиск консерватории..."
     },
@@ -28,7 +28,19 @@
       "title": "Регистрация нового ученика (админ)",
       "subtitle": "Заполните данные, чтобы зарегистрировать нового ученика.",
       "enrollSection": "Данные регистрации",
-      "submit": "Зарегистрировать ученика"
+      "submit": "Зарегистрировать ученика",
+      "teacherAssignmentTitle": "Задание учителя",
+      "manualAssign": "Назначение вручную",
+      "selectTeacher": "Выберите преподавателя",
+      "aiSuggest": "предложение ИИ",
+      "aiSuggestHint": "Выберите предпочтительный день/время и получите рекомендованного учителя.",
+      "getSuggestion": "Получить предложение",
+      "useSuggestion": "Используйте этого учителя",
+      "aiScore": "Счет матча: {score}",
+      "selectInstrumentFirst": "Сначала выберите консерваторию и инструмент.",
+      "noTeachersForFilters": "Для выбранных фильтров нет доступных учителей.",
+      "noAiSuggestion": "Подходящего предложения учителя не найдено.",
+      "aiError": "Не удалось создать предложение учителя."
     },
     "details": {
       "parentTitle": "Данные родителя",
@@ -37,10 +49,11 @@
       "firstName": "Имя",
       "lastName": "Фамилия",
       "email": "Электронная почта",
-      "idNumber": "ID номер",
+      "idNumber": "Номер удостоверения личности (ТЗ)",
       "phone": "Телефон",
       "birthDate": "Дата рождения",
-      "password": "Пароль"
+      "password": "Пароль",
+      "oauthEmailReadonly": "Адрес электронной почты предоставляется вашей учетной записью в социальной сети и не может быть изменен здесь."
     },
     "musical": {
       "title": "Музыкальная информация",
@@ -100,7 +113,7 @@
       "goBack": "Вы можете вернуться и изменить предпочтения.",
       "joinWaitlist": "Встать в лист ожидания",
       "matchPercentage": "Матч Перкентаге",
-      "whyLearnWith": "Why Учиться С"
+      "whyLearnWith": "Зачем учиться с"
     },
     "package": {
       "title": "Выберите учебный пакет",
@@ -135,32 +148,33 @@
     "toasts": {
       "errorTitle": "Ошибка",
       "successTitle": "Регистрация успешно отправлена",
-      "successAdminDesc": "{name} was добавлен to the система.",
+      "successAdminDesc": "{name} был добавлен в систему.",
       "successUserDesc": "Ваш запрос отправлен на утверждение.",
-      "waitlistTitle": "Joined лист ожидания",
-      "waitlistAdminDesc": "{name} was добавлен to лист ожидания.",
+      "waitlistTitle": "В списке ожидания",
+      "waitlistAdminDesc": "{name} добавлен в список ожидания.",
       "waitlistUserDesc": "Мы будет нотифй вы вхен один слот опенс."
     },
     "validation": {
       "required": "Обязательное поле",
       "tooShort": "Должен содержать в минимум {min} символы",
       "date": "Введите корректную дату",
-      "invalidEmail": "Некорректный email",
-      "invalidID": "Некорректный ID",
+      "invalidEmail": "Неверный адрес электронной почты",
+      "invalidID": "Неверный идентификационный номер",
       "invalidPhone": "Некорректный номер телефона",
-      "passwordLength": "Password должен содержать в минимум {min} символы",
+      "passwordLength": "Пароль должен содержать не менее {min} символов.",
       "selectType": "Выберите тип регистрации",
       "selectConservatorium": "Выберите консерваторию",
       "selectInstrument": "Выберите инструмент",
       "selectPackage": "Выберите пакет",
-      "missingDetails": "Недостаточно данных. Невозможно завершить регистрацию."
+      "missingDetails": "Недостаточно данных. Невозможно завершить регистрацию.",
+      "idRequired": "Требуется идентификатор"
     },
     "steps": {
       "role": "Регистратион Тип",
-      "details": "Личный Details",
-      "musical": "Музыкальный Info",
+      "details": "Личные данные",
+      "musical": "Музыкальная информация",
       "schedule": "Доступность",
-      "matching": "Преподаватель Match",
+      "matching": "Учитель Матч",
       "package": "Пакет",
       "booking": "Урок Бронирование",
       "summary": "Сводка & Подтверждение"
@@ -309,7 +323,7 @@
       "termsVersion": "Версия условий: {version}",
       "termsUpdatedAt": "Последнее обновление: {date}",
       "success": "Регистрация завершена",
-      "enrollmentId": "ID регистрации",
+      "enrollmentId": "Регистрационный идентификатор",
       "pickupNote": "Передача и сопровождение",
       "pickupNoteFull": "Ответственность за передачу и сопровождение ученика несут родители/школа по местным правилам.",
       "grade": "Класс",
@@ -320,7 +334,7 @@
       "step5": "Оплата",
       "successDesc": "Заявка успешно отправлена. Мы свяжемся с вами по {email} или {phone}.",
       "backToFinder": "Назад к поиску школ",
-      "title": "Регистрация в программе Playing School",
+      "title": "Регистрация в игровой школе",
       "programInfo": "Детали программы",
       "programInfoDesc": "Проверьте детали выбранной школьной программы перед продолжением.",
       "school": "Школа",
@@ -343,8 +357,8 @@
       "next": "Далее",
       "parentName": "Полное имя родителя",
       "parentPhone": "Телефон родителя",
-      "parentEmail": "Email родителя",
-      "parentId": "ID родителя",
+      "parentEmail": "Родительский адрес электронной почты",
+      "parentId": "Идентификатор родителя",
       "termsTitle": "Условия регистрации",
       "termsNote1": "Продолжая, вы подтверждаете, что введенные данные актуальны и верны.",
       "termsNote2": "Координатор программы может связаться с вами для проверки перед финальным подтверждением.",
@@ -358,13 +372,13 @@
       "complete": "Завершить регистрацию",
       "payViaCardcom": "Онлайн-оплата через Cardcom",
       "payViaCardcomDesc": "Безопасная оплата через Cardcom.",
-      "payViaTranzila": "Онлайн-оплата через Tranzila",
+      "payViaTranzila": "Оплата онлайн через Транзила",
       "payViaTranzilaDesc": "Безопасная оплата через Tranzila.",
-      "payViaStripe": "Онлайн-оплата через Stripe",
+      "payViaStripe": "Оплата онлайн через Stripe",
       "payViaStripeDesc": "Безопасная оплата через Stripe.",
       "validation": {
         "invalidPhone": "Введите корректный номер телефона.",
-        "invalidEmail": "Введите корректный email."
+        "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты."
       }
     },
     "attendance": {
@@ -383,7 +397,7 @@
       "status": "Статус"
     },
     "finder": {
-      "title": "Найдите программу Playing School",
+      "title": "Найдите программу игровой школы",
       "subtitle": "Школьные музыкальные программы в партнерстве с консерваториями Harmonia.",
       "enquirySuccessTitle": "Запрос отправлен",
       "enquirySuccessDesc": "Мы получили ваши данные и скоро свяжемся с вами.",
@@ -401,7 +415,7 @@
       "interestedDesc": "Оставьте данные, и мы поможем выбрать подходящую программу.",
       "sendAnotherMessage": "Отправить еще один запрос",
       "parentName": "Полное имя родителя",
-      "parentEmail": "Email родителя",
+      "parentEmail": "Родительский адрес электронной почты",
       "parentPhone": "Телефон родителя",
       "childSchoolSymbol": "Символ школы ребенка",
       "sending": "Отправка...",
@@ -415,7 +429,7 @@
         "cello": "Виолончель",
         "voice": "Вокал"
       },
-      "heroBadge": "Harmonia Playing School"
+      "heroBadge": "Школа игры «Гармония»"
     },
     "familyHub": {
       "title": "Заголовок",
@@ -448,19 +462,19 @@
     },
     "coordinatorSubtitle": "Координатор Подзаголовок",
     "coordinator": {
-      "enrolledTitle": "Enrolled Заголовок",
+      "enrolledTitle": "Зарегистрированное название",
       "enrolledSub": "Енроллед Суб",
       "teacherTitle": "Преподаватель Заголовок",
       "nextLesson": "Следующий урок:",
       "alerts": "Алерц",
-      "alertInstrument": "Alert Инструмент",
-      "alertPayment": "Alert Оплата",
-      "alertPositive": "Alert Положительный",
+      "alertInstrument": "Оповещение Инструмент",
+      "alertPayment": "Оповещение об оплате",
+      "alertPositive": "Оповещение положительное",
       "studentsDesc": "Ученики Описание",
       "calendarTitle": "Календарь Заголовок",
       "planned": "Запланировано",
       "reportUnavailability": "Отчет Унаваилабилитй",
-      "messagesWip": "Messages В разработке"
+      "messagesWip": "Сообщения стереть"
     },
     "tabs": {
       "overview": "Обзор",
@@ -472,7 +486,7 @@
     },
     "table": {
       "school": "Школа",
-      "pickupStatus": "Pickup Статус",
+      "pickupStatus": "Статус получения",
       "paid": "Оплачено",
       "pending": "В ожидании",
       "symbol": "Символ",
@@ -491,57 +505,82 @@
     "schoolName": "Название школы",
     "schoolSymbol": "Код школы",
     "contactEmail": "Контакт Почта",
-    "contactPhone": "Contact Телефон",
+    "contactPhone": "Контактный телефон",
     "address": "Адрес",
     "subsidyModelLvl": "Субсидия Модель Ур",
     "subsidyModel": {
       "FULL_MUNICIPAL": "Полный_Муниципальный",
       "SPLIT": "Разделение",
-      "PARENT_ONLY": "PARENT_Только"
+      "PARENT_ONLY": "Только родитель"
     },
-    "municipalSubsidyPercent": "Муниципальный Субсидия Percent",
-    "ministrySubsidyPercent": "Министерство Subsidy Percent",
+    "municipalSubsidyPercent": "Процент муниципальных субсидий",
+    "ministrySubsidyPercent": "Процент субсидии министерства",
     "parentYearlyContribution": "Родитель Годовой Контрибутион",
     "cancel": "Отмена",
     "create": "Создать",
     "inviteBtn": "Пригласить Кнопка",
-    "inviteCoordinatorTitle": "Пригласить Coordinator Заголовок",
-    "inviteCoordinatorDesc": "Пригласить Coordinator Описание",
+    "inviteCoordinatorTitle": "Должность координатора приглашений",
+    "inviteCoordinatorDesc": "Пригласить координатора Описание",
     "coordinatorEmail": "Координатор Почта",
     "sendInvite": "Отправить Пригласить",
     "pageTitle": "Заявка на финансовую помощь / стипендию",
     "adminSubtitle": "Админ Подзаголовок",
     "activePartnerships": "Активный Партнершипс",
     "pendingPartnerships": "В ожидании Партнершипс",
-    "enrolledStudents": "Enrolled Ученики",
+    "enrolledStudents": "Зачисленные студенты",
     "allSchools": "Все Щоолс",
     "academicYearLvl": "Академик Год Лвл",
     "activeYear": "Активный Год",
     "partnershipList": "Партнерство Список",
-    "partnershipListDesc": "Partnership Список Описание",
+    "partnershipListDesc": "Список партнерства Описание",
     "distributeBtn": "Распределить Кнопка",
     "billing": {
       "title": "Заголовок",
       "desc": "Описание",
       "wip": "В разработке",
-      "wipNote": "Wip Заметка"
+      "wipNote": "Удалить заметку"
     },
     "programBilling": {
       "title": "Заголовок",
       "subtitle": "Подзаголовок",
-      "subsidyNotice": "Субсидия Notice"
+      "subsidyNotice": "Уведомление о субсидии"
     },
     "status": {
       "ACTIVE": "Активен",
       "PENDING": "В ожидании",
       "SUSPENDED": "Приостановлен",
       "ENDED": "Завершен"
+    },
+    "adminTitle": "Игра в управление школой",
+    "distribution": {
+      "title": "Дистрибуция и аналитика",
+      "subtitle": "Отслеживайте эффективность воронки регистрации и делитесь ссылками на регистрацию.",
+      "copied": "Ссылка скопирована",
+      "whatsAppMessage": "Привет! Ссылка на регистрацию для {school}: {url}",
+      "funnelTitle": "Воронка регистрации",
+      "funnelSubtitle": "От первоначального интереса до платной регистрации",
+      "funnel": {
+        "leads": "лиды",
+        "tokenScanned": "Токен отсканирован",
+        "startedWizard": "Началась регистрация",
+        "enrolledPaid": "Зарегистрировано и оплачено"
+      },
+      "conversionRate": "Коэффициент конверсии",
+      "tokensTitle": "Школьные жетоны",
+      "tokensSubtitle": "Распространяйте ссылки и отслеживайте прогресс по школам.",
+      "schoolPartnership": "Школа",
+      "registrationToken": "Регистрационный токен",
+      "conversion": "Конверсия",
+      "actions": "Действия",
+      "academicYear": "Учебный год {year}",
+      "whatsapp": "Ватсап",
+      "openLink": "Открыть ссылку"
     }
   },
   "OpenDay": {
     "allBranches": "Все филиалы и консерваториес",
     "backToHome": "Вернуться на главную страницу",
-    "backToList": "Back to список",
+    "backToList": "Вернуться к списку",
     "childAge": "Возраст ребенка",
     "childName": "Имя ребенка",
     "familyName": "Фамилия",
@@ -558,9 +597,9 @@
     "heroSubtitle": "Приходите познакомиться с преподавателями, попробовать новые инструменты и послушать выступления наших студентов. Музыкальный опыт для всей семьи!",
     "heroTitle": "День открытых дверей в консерватории",
     "instrumentInterest": "Интересующий инструмент",
-    "missingDetails": "Отсутствует Details",
+    "missingDetails": "Недостающие детали",
     "missingDetailsDesc": "Пожалуйста выберите ан аппоинтмент время.",
-    "noEventsForBranch": "Нет открытый дни найдено for этот branch.",
+    "noEventsForBranch": "Для этого филиала не найдено дней открытых дверей.",
     "noOpenDays": "Там аре куррентлй нет открытый дни запланировано. Пожалуйста чекк агаин скоро!",
     "noSlots": "Все места заняты. Попробуйте другую дату.",
     "parentEmail": "Электронная почта родителя",
@@ -569,12 +608,26 @@
     "registerNow": "Записаться на встречу",
     "registrationDetails": "Детали регистрации",
     "selectInstrument": "Выберите инструмент...",
-    "selectOpenDay": "Выберите открытый day",
+    "selectOpenDay": "Выберите день открытых дверей",
     "selectTime": "Выберите время прибытия",
     "startingFrom": "Стартинг из __Пх_0__",
     "submit": "Подтвердить регистрацию",
     "successDesc": "Спасибо за регистрацию на День открытых дверей. Подтверждение и дополнительная информация отправлены на вашу электронную почту. С нетерпением ждем встречи!",
-    "successTitle": "Регистрация получена!"
+    "successTitle": "Регистрация получена!",
+    "filterCity": "Город",
+    "allCities": "Все города",
+    "filterDistance": "Расстояние",
+    "allDistances": "Все расстояния",
+    "distance10": "До 10 км",
+    "distance25": "До 25 км",
+    "distance50": "До 50 км",
+    "filterInstrument": "Инструмент",
+    "allInstruments": "Все инструменты",
+    "dateFrom": "Дата с",
+    "dateTo": "Дата",
+    "locating": "Определение местоположения...",
+    "useMyLocation": "Использовать мое местоположение",
+    "noEventsForFilters": "Ни один день открытых дверей не соответствует выбранным фильтрам."
   },
   "AvailableNow": {
     "allConservatoriums": "Все консерватории",
@@ -588,7 +641,13 @@
     "noSlotsDesc": "Попробуйте изменить параметры фильтрации или зайдите позже.",
     "noSlotsFound": "В данный момент нет свободных уроков",
     "subtitle": "Найдите музыкальный урок по специальной цене! Уникальная возможность учиться у лучших преподавателей со скидкой.",
-    "title": "Доступные уроки на сегодня и завтра"
+    "title": "Доступные уроки на сегодня и завтра",
+    "city": "Город",
+    "allCities": "Все города",
+    "distance": "Расстояние",
+    "allDistances": "Все расстояния",
+    "distance10": "До 10 км",
+    "distance25": "До 25 км"
   },
   "ExcellenceTrack": {
     "acceptBtn": "Принять приглашение",
@@ -599,7 +658,7 @@
     "notInterestedReason": "Сейчас неинтересно",
     "offerDescription": "Программа включает углубленное обучение, сценические возможности и персональное наставничество.",
     "offerSubtitle": "Вы номинированы на продвинутую программу.",
-    "offerTitle": "Приглашение в программу excellence",
+    "offerTitle": "Приглашение на трек совершенства",
     "successTitle": "Зачисление подтверждено",
     "tuitionDescription": "Ежемесячная стоимость участия.",
     "tuitionTitle": "Стоимость обучения"

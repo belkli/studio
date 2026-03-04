@@ -141,7 +141,19 @@
       "hilanCode": "Code"
     },
     "helvetica": "Helvetica",
-    "a": "A"
+    "a": "A",
+    "period": "Period",
+    "generateReport": "Generate report",
+    "exportAll": "Export all",
+    "totalTeachers": "Total teachers",
+    "totalLessons": "Total lessons",
+    "totalHours": "Total hours",
+    "teacher": "Teacher",
+    "instrument": "Instrument",
+    "lessonsCount": "Lessons",
+    "absences": "Absences",
+    "makeups": "Makeups",
+    "actions": "Actions"
   },
   "TeacherPayroll": {
     "statusDraft": "Under Review",
@@ -163,6 +175,21 @@
     "exportPdfBtn": "Export PDF",
     "lessonDetailsTitle": "Lesson Details ({count})",
     "currencySymbol": "₪",
-    "helvetica": "Helvetica"
+    "helvetica": "Helvetica",
+    "period": "Period",
+    "myLessons": "My lessons",
+    "myHours": "My hours",
+    "date": "Date",
+    "student": "Student",
+    "instrument": "Instrument",
+    "duration": "Duration",
+    "status": "Status",
+    "minutes": "minutes",
+    "noLessons": "No lessons in the selected period.",
+    "downloadMyReport": "Download my report"
+  },
+  "TeacherPayrollPage": {
+    "title": "My payroll",
+    "subtitle": "View your monthly lessons and reported hours."
   }
 }

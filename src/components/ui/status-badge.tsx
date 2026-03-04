@@ -19,7 +19,7 @@ interface StatusBadgeProps extends Omit<BadgeProps, 'variant' | 'children'> {
 }
 
 export function StatusBadge({ status, label, className, ...props }: StatusBadgeProps) {
-    const t = useTranslations('Dashboard.status');
+    const t = useTranslations('Status');
     const config = getStatusConfig(t)[status];
 
     if (!config) {

@@ -287,7 +287,7 @@ export function SchoolPartnershipDashboard() {
                 <div>
                     <h1 className="text-2xl font-bold flex items-center gap-2">
                         <School className="h-6 w-6 text-primary" />
-                        {t('pageTitle')}
+                        {t('adminTitle')}
                     </h1>
                     <p className="text-muted-foreground mt-1">{t('adminSubtitle')}</p>
                 </div>

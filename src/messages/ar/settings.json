@@ -15,22 +15,38 @@
           "title": "تفاصيل التواصل",
           "website": "الموقع الرسمي",
           "whatsapp": "رقم واتساب",
-          "privacyContactTitle": "Privacy Statement Contact",
-          "accessibilityContactTitle": "Accessibility Statement Contact",
-          "contactName": "Contact Name",
-          "contactEmail": "Contact Email",
-          "contactPhone": "Contact Phone",
-          "contactNamePlaceholder": "e.g. Dana Cohen",
-          "contactEmailPlaceholder": "e.g. privacy@conservatory.org.il",
-          "contactPhonePlaceholder": "e.g. 03-1234567",
-          "fallbackHint": "If these fields are empty, the legal statements automatically display the primary conservatorium admin contact."
+          "privacyContactTitle": "جهة الاتصال الخاصة ببيان الخصوصية",
+          "accessibilityContactTitle": "بيان إمكانية الوصول جهة الاتصال",
+          "contactName": "اسم جهة الاتصال",
+          "contactEmail": "بريد التواصل",
+          "contactPhone": "هاتف التواصل",
+          "contactNamePlaceholder": "على سبيل المثال دانا كوهين",
+          "contactEmailPlaceholder": "على سبيل المثال Privacy@conservatory.org.il",
+          "contactPhonePlaceholder": "على سبيل المثال 03-1234567",
+          "fallbackHint": "إذا كانت هذه الحقول فارغة، فسوف تظهر البيانات القانونية جهة الاتصال الرئيسية لمشرف المعهد.",
+          "openingHours": "ساعات العمل",
+          "days": {
+            "sunday": "الأحد",
+            "monday": "الاثنين",
+            "tuesday": "الثلاثاء",
+            "wednesday": "الأربعاء",
+            "thursday": "الخميس",
+            "friday": "الجمعة",
+            "saturday": "السبت"
+          }
         },
         "location": {
           "cityEnglish": "المدينة (بالإنجليزية)",
           "cityHebrew": "المدينة (بالعبرية)",
           "description": "أين يقع المعهد؟",
           "fullAddress": "العنوان الكامل",
-          "title": "الموقع"
+          "title": "الموقع",
+          "postalCode": "رمز بريدي",
+          "mapsLink": "عنوان URL لخرائط Google",
+          "openInMaps": "افتح في خرائط جوجل",
+          "instrumentsTitle": "الأدوات المتاحة",
+          "instrumentsAutoHint": "يتم ملؤها تلقائيًا من المعلمين النشطين في هذا المعهد الموسيقي.",
+          "instrumentsEmpty": "لم يتم الكشف عن أي أدوات من الملفات الشخصية للمعلم."
         },
         "media": {
           "description": "الصور المعروضة في ملفكم العام.",
@@ -61,11 +77,50 @@
           "titleRole": "المنصب / الدور",
           "additionalMember": "عضو إضافي",
           "addMember": "إضافة عضو",
-          "note": "ملاحظة"
+          "note": "ملاحظة",
+          "memberNamePlaceholder": "على سبيل المثال يوسي كوهين"
+        },
+        "ui": {
+          "pageTitle": "الملف العام (من نحن)",
+          "pageDesc": "إدارة ملف التعريف متعدد اللغات الموضح في الدليل العام.",
+          "forceRetranslate": "فرض إعادة الترجمة",
+          "tabs": {
+            "basic": "معلومات أساسية",
+            "contact": "إذا لزم الأمر، سوف نتصل بك للحصول على معلومات إضافية.",
+            "location": "الموقع",
+            "team": "فريق",
+            "social": "اجتماعي",
+            "media": "وسائط"
+          },
+          "basic": {
+            "title": "المعلومات الأساسية",
+            "desc": "التفاصيل الأولية حول المعهد الموسيقي.",
+            "pendingSync": "في انتظار المزامنة",
+            "name": "اسم الكونسرفاتوار",
+            "about": "معلومات عنا (الوصف)",
+            "foundedYear": "سنة التأسيس",
+            "foundedYearPlaceholder": "على سبيل المثال 1995"
+          },
+          "toasts": {
+            "contentChangedTitle": "تم تغيير المحتوى",
+            "contentChangedDesc": "تحديث ترجمات الذكاء الاصطناعي لتتناسب مع المحتوى الجديد الخاص بك...",
+            "profileSavedTitle": "تم حفظ الملف الشخصي",
+            "profileSavedDesc": "تم تحديث الملف الشخصي العام للمعهد.",
+            "errorSavingTitle": "خطأ في الحفظ",
+            "errorSavingDesc": "فشل في تحديث الملف الشخصي.",
+            "translationsUpdatedTitle": "تم تحديث الترجمات"
+          },
+          "footer": {
+            "resetChanges": "إعادة ضبط التغييرات",
+            "saving": "جارٍ الحفظ...",
+            "saveProfile": "حفظ الملف الشخصي"
+          }
         }
       },
       "publicProfile": "الملف الشخصي العام",
-      "title": "إعدادات المعهد"
+      "title": "إعدادات المعهد",
+      "instruments": "إعدادات الأداة",
+      "packages": "إعدادات الحزمة"
     },
     "notifications": {
       "description": "اختر ما تريد تلقي إشعارات بشأنه.",
@@ -92,7 +147,63 @@
       "title": "معلومات الملف الشخصي"
     },
     "subtitle": "إدارة إعدادات النظام وتفضيلات الحساب.",
-    "title": "الإعدادات"
+    "title": "الإعدادات",
+    "instruments": {
+      "title": "الآلات",
+      "add": "إضافة أداة",
+      "listTitle": "أدوات الكونسرفاتوار",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "yes": "نعم",
+      "no": "لا",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "nameHe": "الاسم (بالعبرية)",
+      "nameEn": "الاسم (الإنجليزية)",
+      "nameRu": "الاسم (الروسية)",
+      "nameAr": "الاسم (عربي)",
+      "availableForRegistration": "متاح للتسجيل",
+      "availableForRental": "متاحة للتأجير",
+      "isActive": "نشط",
+      "save": "حفظ"
+    },
+    "packages": {
+      "title": "باقات",
+      "add": "إنشاء الحزمة",
+      "listTitle": "حزم الدروس",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "nameHe": "الاسم (بالعبرية)",
+      "nameEn": "الاسم (الإنجليزية)",
+      "type": "النوع",
+      "monthly": "شهريا",
+      "semester": "الفصل الدراسي",
+      "annual": "سنوي",
+      "single": "أعزب",
+      "lessonCount": "دروس",
+      "durationMinutes": "المدة (بالدقائق)",
+      "price": "السعر (شيكل)",
+      "isActive": "نشط",
+      "save": "حفظ"
+    },
+    "linkedAccounts": {
+      "title": "حسابات متصلة",
+      "description": "قم بتوصيل Google أو Microsoft لتسجيل الدخول بشكل أسرع.",
+      "link": "وصلة",
+      "unlink": "إلغاء الارتباط",
+      "linkedTitle": "تم ربط الحساب",
+      "linkedDesc": "تم ربط {provider} بنجاح.",
+      "unlinkedTitle": "تم إلغاء ربط الحساب",
+      "unlinkedDesc": "تم إلغاء ربط {provider} بنجاح.",
+      "errorTitle": "فشل الربط",
+      "errorDesc": "لا يمكن ربط الموفر. يرجى المحاولة مرة أخرى.",
+      "conflictTitle": "الحساب موجود بالفعل",
+      "conflictDesc": "هذا البريد الإلكتروني مسجل بالفعل في: {methods}.",
+      "emailMismatchTitle": "عدم تطابق البريد الإلكتروني",
+      "emailMismatchDesc": "يجب أن يتطابق البريد الإلكتروني للموفر مع البريد الإلكتروني لحسابك الحالي."
+    }
   },
   "CancellationPolicy": {
     "lateCancelCredit": "رصيد للإلغاء المتأخر",

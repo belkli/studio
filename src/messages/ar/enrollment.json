@@ -6,7 +6,7 @@
       "findSchoolPlaceholder": "ابحثوا باسم المدرسة...",
       "schoolSymbol": "رمز: {symbol}",
       "or": "أو",
-      "hasTokenQuestion": "هل لديكم رابط تسجيل (Token)؟",
+      "hasTokenQuestion": "هل لديك بالفعل رابط التسجيل (الرمز المميز)؟",
       "tokenPlaceholder": "أدخلوا الرمز...",
       "go": "انتقال",
       "title": "من يقوم بالتسجيل؟",
@@ -28,7 +28,19 @@
       "title": "تسجيل طالب جديد (مسؤول)",
       "subtitle": "املأ التفاصيل لتسجيل طالب جديد.",
       "enrollSection": "تفاصيل التسجيل",
-      "submit": "تسجيل الطالب"
+      "submit": "تسجيل الطالب",
+      "teacherAssignmentTitle": "مهمة المعلم",
+      "manualAssign": "التعيين اليدوي",
+      "selectTeacher": "اختر المدرس",
+      "aiSuggest": "اقتراح الذكاء الاصطناعي",
+      "aiSuggestHint": "اختر اليوم/الوقت المفضل واحصل على مدرس مقترح.",
+      "getSuggestion": "احصل على اقتراح",
+      "useSuggestion": "استخدم هذا المعلم",
+      "aiScore": "نتيجة المباراة: {score}",
+      "selectInstrumentFirst": "حدد المعهد الموسيقي والأداة أولاً.",
+      "noTeachersForFilters": "لا يوجد معلمون متاحون للمرشحات المحددة.",
+      "noAiSuggestion": "لم يتم العثور على اقتراح المعلم المناسب.",
+      "aiError": "لا يمكن إنشاء اقتراح المعلم."
     },
     "details": {
       "parentTitle": "تفاصيل ولي الأمر",
@@ -40,7 +52,8 @@
       "idNumber": "رقم الهوية",
       "phone": "الهاتف",
       "birthDate": "تاريخ الميلاد",
-      "password": "كلمة المرور"
+      "password": "كلمة المرور",
+      "oauthEmailReadonly": "يتم توفير البريد الإلكتروني من خلال حسابك الاجتماعي ولا يمكن تغييره هنا."
     },
     "musical": {
       "title": "المعلومات الموسيقية",
@@ -153,7 +166,8 @@
       "selectConservatorium": "يرجى اختيار المعهد",
       "selectInstrument": "يرجى اختيار آلة",
       "selectPackage": "يرجى اختيار باقة",
-      "missingDetails": "تفاصيل ناقصة. لا يمكن إكمال التسجيل."
+      "missingDetails": "تفاصيل ناقصة. لا يمكن إكمال التسجيل.",
+      "idRequired": "مطلوب معرف"
     },
     "steps": {
       "role": "نوع التسجيل",
@@ -536,6 +550,31 @@
       "PENDING": "قيد الانتظار",
       "SUSPENDED": "معلّق",
       "ENDED": "منتهٍ"
+    },
+    "adminTitle": "لعب إدارة المدرسة",
+    "distribution": {
+      "title": "التوزيع والتحليلات",
+      "subtitle": "تتبع أداء مسار التسجيل وشارك روابط التسجيل.",
+      "copied": "تم نسخ الرابط!",
+      "whatsAppMessage": "أهلاً! رابط التسجيل في {school}: {url}",
+      "funnelTitle": "قمع التسجيل",
+      "funnelSubtitle": "من الفائدة الأولية إلى التسجيل المدفوع",
+      "funnel": {
+        "leads": "يؤدي",
+        "tokenScanned": "تم فحص الرمز المميز",
+        "startedWizard": "بدأ التسجيل",
+        "enrolledPaid": "تم التسجيل والدفع"
+      },
+      "conversionRate": "معدل التحويل",
+      "tokensTitle": "الرموز المدرسية",
+      "tokensSubtitle": "توزيع الروابط ومراقبة التقدم حسب المدرسة.",
+      "schoolPartnership": "المدرسة",
+      "registrationToken": "رمز التسجيل",
+      "conversion": "تحويل",
+      "actions": "إجراءات",
+      "academicYear": "العام الدراسي {year}",
+      "whatsapp": "واتساب",
+      "openLink": "فتح الرابط"
     }
   },
   "OpenDay": {
@@ -574,7 +613,21 @@
     "startingFrom": "ابتداءً من {date}",
     "submit": "تأكيد التسجيل",
     "successDesc": "شكرًا لتسجيلكم في اليوم المفتوح. تم إرسال تأكيد وتفاصيل إضافية إلى بريدكم الإلكتروني. نتطلع لرؤيتكم!",
-    "successTitle": "تم استلام تسجيلكم!"
+    "successTitle": "تم استلام تسجيلكم!",
+    "filterCity": "مدينة الإقامة",
+    "allCities": "جميع المدن",
+    "filterDistance": "مسافة",
+    "allDistances": "كل المسافات",
+    "distance10": "ما يصل إلى 10 كم",
+    "distance25": "يصل إلى 25 كم",
+    "distance50": "تصل إلى 50 كم",
+    "filterInstrument": "الآلة",
+    "allInstruments": "كل الآلات",
+    "dateFrom": "التاريخ من",
+    "dateTo": "تاريخ ل",
+    "locating": "جاري تحديد الموقع...",
+    "useMyLocation": "استخدم موقعي",
+    "noEventsForFilters": "لا توجد أيام مفتوحة تتطابق مع عوامل التصفية المحددة."
   },
   "AvailableNow": {
     "allConservatoriums": "جميع المعاهد",
@@ -588,7 +641,13 @@
     "noSlotsDesc": "حاول تغيير خيارات التصفية أو العودة لاحقًا.",
     "noSlotsFound": "لا توجد دروس متاحة حاليًا",
     "subtitle": "اعثر على درس موسيقى بسعر خاص! فرصة فريدة للتعلم من أفضل المعلمين بخصم.",
-    "title": "الدروس المتاحة لليوم وغداً"
+    "title": "الدروس المتاحة لليوم وغداً",
+    "city": "مدينة الإقامة",
+    "allCities": "جميع المدن",
+    "distance": "مسافة",
+    "allDistances": "كل المسافات",
+    "distance10": "ما يصل إلى 10 كم",
+    "distance25": "يصل إلى 25 كم"
   },
   "ExcellenceTrack": {
     "acceptBtn": "قبول الدعوة",

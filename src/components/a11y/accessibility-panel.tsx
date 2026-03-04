@@ -1,9 +1,9 @@
 ﻿'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import type { PointerEvent as ReactPointerEvent, CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
-import { Accessibility } from 'lucide-react';
+import { Accessibility, Maximize2, Minimize2 } from 'lucide-react';
 
 type A11yPrefs = {
   fontScale: number;
@@ -17,6 +17,7 @@ type A11yPrefs = {
 
 const STORAGE_KEY = 'harmonia.a11y.prefs.v1';
 const POSITION_KEY = 'harmonia.a11y.position.v1';
+const MINIMIZED_KEY = 'harmonia.a11y.minimized.v1';
 const DEFAULT_PREFS: A11yPrefs = {
   fontScale: 100,
   highContrast: false,
@@ -47,9 +48,11 @@ export function AccessibilityPanel() {
   const [open, setOpen] = useState(false);
   const [prefs, setPrefs] = useState<A11yPrefs>(DEFAULT_PREFS);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [panelPosition, setPanelPosition] = useState<{ left: number; top: number } | null>(null);
+  const [minimized, setMinimized] = useState(false);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
-  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean } | null>(null);
+  const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number } | null>(null);
   const suppressClickRef = useRef(false);
 
   useEffect(() => {
@@ -66,21 +69,50 @@ export function AccessibilityPanel() {
   }, []);
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(MINIMIZED_KEY);
+      setMinimized(raw === '1');
+    } catch {
+      setMinimized(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MINIMIZED_KEY, minimized ? '1' : '0');
+    } catch {
+      // Ignore storage failures.
+    }
+  }, [minimized]);
+
+  const clampPosition = (x: number, y: number) => {
+    const toggleRect = toggleRef.current?.getBoundingClientRect();
+    const width = Math.max(48, Math.ceil(toggleRect?.width || (minimized ? 48 : 124)));
+    const height = Math.max(48, Math.ceil(toggleRect?.height || 48));
+    const maxX = Math.max(8, window.innerWidth - width - 8);
+    const maxY = Math.max(8, window.innerHeight - height - 8);
+    return {
+      x: Math.max(8, Math.min(x, maxX)),
+      y: Math.max(8, Math.min(y, maxY)),
+    };
+  };
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const raw = localStorage.getItem(POSITION_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as { x?: number; y?: number };
         if (typeof parsed.x === 'number' && typeof parsed.y === 'number') {
-          setPosition({ x: parsed.x, y: parsed.y });
+          setPosition(clampPosition(parsed.x, parsed.y));
           return;
         }
       }
     } catch {
       // Ignore invalid saved position.
     }
-    setPosition({ x: 16, y: Math.max(16, window.innerHeight - 80) });
-  }, []);
+    setPosition({ x: 16, y: Math.max(16, window.innerHeight - 84) });
+  }, [minimized]);
 
   useEffect(() => {
     if (!position) return;
@@ -96,17 +128,12 @@ export function AccessibilityPanel() {
     const onResize = () => {
       setPosition((prev) => {
         if (!prev) return prev;
-        const maxX = Math.max(8, window.innerWidth - 72);
-        const maxY = Math.max(8, window.innerHeight - 72);
-        return {
-          x: Math.max(8, Math.min(prev.x, maxX)),
-          y: Math.max(8, Math.min(prev.y, maxY)),
-        };
+        return clampPosition(prev.x, prev.y);
       });
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, []);
+  }, [minimized]);
 
   useEffect(() => {
     applyPrefs(prefs);
@@ -131,6 +158,36 @@ export function AccessibilityPanel() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !position) return;
+
+    const updatePanelPosition = () => {
+      const toggleRect = toggleRef.current?.getBoundingClientRect();
+      if (!toggleRect) return;
+
+      const panelRect = panelRef.current?.getBoundingClientRect();
+      const panelWidth = Math.min(window.innerWidth * 0.92, panelRect?.width || 360);
+      const panelHeight = Math.min(window.innerHeight * 0.75, panelRect?.height || 620);
+
+      const left = Math.max(8, Math.min(toggleRect.left, window.innerWidth - panelWidth - 8));
+      const spaceAbove = toggleRect.top - 8;
+      const spaceBelow = window.innerHeight - toggleRect.bottom - 8;
+      const top =
+        spaceAbove >= panelHeight || spaceAbove >= spaceBelow
+          ? Math.max(8, toggleRect.top - panelHeight - 8)
+          : Math.min(window.innerHeight - panelHeight - 8, toggleRect.bottom + 8);
+
+      setPanelPosition({ left, top });
+    };
+
+    const raf = requestAnimationFrame(updatePanelPosition);
+    window.addEventListener('resize', updatePanelPosition);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', updatePanelPosition);
+    };
+  }, [open, position, minimized]);
+
   const percent = useMemo(() => `${prefs.fontScale}%`, [prefs.fontScale]);
 
   function toggle(key: keyof Omit<A11yPrefs, 'fontScale'>) {
@@ -143,7 +200,6 @@ export function AccessibilityPanel() {
       pointerId: event.pointerId,
       startX: event.clientX - position.x,
       startY: event.clientY - position.y,
-      moved: false,
     };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -152,18 +208,11 @@ export function AccessibilityPanel() {
     const drag = dragStateRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
 
-    const nextX = event.clientX - drag.startX;
-    const nextY = event.clientY - drag.startY;
-    const maxX = Math.max(8, window.innerWidth - 72);
-    const maxY = Math.max(8, window.innerHeight - 72);
-    const x = Math.max(8, Math.min(nextX, maxX));
-    const y = Math.max(8, Math.min(nextY, maxY));
-
+    const next = clampPosition(event.clientX - drag.startX, event.clientY - drag.startY);
     if (Math.abs(event.movementX) > 1 || Math.abs(event.movementY) > 1) {
-      drag.moved = true;
       suppressClickRef.current = true;
     }
-    setPosition({ x, y });
+    setPosition(next);
   };
 
   const onTogglePointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -179,12 +228,23 @@ export function AccessibilityPanel() {
   return (
     <div
       className="a11y-widget-root"
-      style={position ? { left: `${position.x}px`, top: `${position.y}px` } : undefined}
+      style={position ? ({ left: `${position.x}px`, top: `${position.y}px` } as CSSProperties) : undefined}
     >
+      <div className="a11y-widget-actions">
+        <button
+          type="button"
+          className="a11y-mini-toggle"
+          onClick={() => setMinimized((v) => !v)}
+          aria-label={t('openButton')}
+        >
+          {minimized ? <Maximize2 className="h-3.5 w-3.5" aria-hidden /> : <Minimize2 className="h-3.5 w-3.5" aria-hidden />}
+        </button>
+      </div>
+
       <button
         ref={toggleRef}
         type="button"
-        className="a11y-toggle"
+        className={minimized ? 'a11y-toggle a11y-toggle--mini' : 'a11y-toggle'}
         aria-expanded={open}
         aria-controls="a11y-widget-panel"
         aria-label={t('openButton')}
@@ -197,7 +257,7 @@ export function AccessibilityPanel() {
         onPointerUp={onTogglePointerUp}
       >
         <Accessibility className="a11y-toggle-icon" aria-hidden />
-        <span>{t('openShort')}</span>
+        {!minimized && <span>{t('openShort')}</span>}
       </button>
 
       {open && (
@@ -205,6 +265,7 @@ export function AccessibilityPanel() {
           ref={panelRef}
           id="a11y-widget-panel"
           className="a11y-panel"
+          style={panelPosition ? ({ left: `${panelPosition.left}px`, top: `${panelPosition.top}px` } as CSSProperties) : undefined}
           aria-label={t('panelTitle')}
           role="dialog"
           aria-modal="false"

@@ -28,7 +28,19 @@
       "title": "רישום תלמיד חדש (מנהל מערכת)",
       "subtitle": "מלא/י את הפרטים כדי לרשום תלמיד חדש.",
       "enrollSection": "פרטי הרשמה",
-      "submit": "רישום תלמיד"
+      "submit": "רישום תלמיד",
+      "teacherAssignmentTitle": "מטלת מורה",
+      "manualAssign": "הקצאה ידנית",
+      "selectTeacher": "בחירת מורה",
+      "aiSuggest": "הצעת AI",
+      "aiSuggestHint": "בחר יום/שעה מועדפים וקבל הצעה למורה.",
+      "getSuggestion": "קבל הצעה",
+      "useSuggestion": "השתמש במורה הזה",
+      "aiScore": "ציון המשחק: {score}",
+      "selectInstrumentFirst": "תחילה בחר קונסרבטוריום וכלי נגינה.",
+      "noTeachersForFilters": "אין מורים זמינים עבור המסננים שנבחרו.",
+      "noAiSuggestion": "לא נמצאה הצעת מורה מתאימה.",
+      "aiError": "לא ניתן היה ליצור הצעת מורה."
     },
     "details": {
       "parentTitle": "פרטי הורה",
@@ -40,7 +52,8 @@
       "idNumber": "תעודת זהות",
       "phone": "טלפון",
       "birthDate": "תאריך לידה",
-      "password": "סיסמה"
+      "password": "סיסמה",
+      "oauthEmailReadonly": "האימייל מסופק על ידי החשבון החברתי שלך ולא ניתן לשנותו כאן."
     },
     "musical": {
       "title": "מידע מוזיקלי",
@@ -153,7 +166,8 @@
       "selectConservatorium": "יש לבחור קונסרבטוריון",
       "selectInstrument": "יש לבחור כלי נגינה",
       "selectPackage": "יש לבחור חבילה",
-      "missingDetails": "פרטים חסרים. לא ניתן להשלים הרשמה."
+      "missingDetails": "פרטים חסרים. לא ניתן להשלים הרשמה.",
+      "idRequired": "נדרש תעודה מזהה"
     },
     "steps": {
       "role": "סוג רישום",
@@ -536,6 +550,31 @@
       "PENDING": "ממתין",
       "SUSPENDED": "מושהה",
       "ENDED": "הסתיים"
+    },
+    "adminTitle": "ניהול בית ספר משחק",
+    "distribution": {
+      "title": "הפצה וניתוח",
+      "subtitle": "עקוב אחר ביצועי משפך ההרשמה ושתף קישורי רישום.",
+      "copied": "הקישור הועתק!",
+      "whatsAppMessage": "היי! קישור לרישום עבור {school}: {url}",
+      "funnelTitle": "משפך ההרשמה",
+      "funnelSubtitle": "מריבית ראשונית ועד לרישום בתשלום",
+      "funnel": {
+        "leads": "לידים",
+        "tokenScanned": "אסימון נסרק",
+        "startedWizard": "החל ההרשמה",
+        "enrolledPaid": "נרשם ושולם"
+      },
+      "conversionRate": "שיעור המרה",
+      "tokensTitle": "אסימוני בית ספר",
+      "tokensSubtitle": "הפצת קישורים ועקוב אחר ההתקדמות לפי בית ספר.",
+      "schoolPartnership": "בית ספר",
+      "registrationToken": "אסימון רישום",
+      "conversion": "הֲמָרָה",
+      "actions": "פעולות",
+      "academicYear": "שנת לימודים {year}",
+      "whatsapp": "ווטסאפ",
+      "openLink": "פתח קישור"
     }
   },
   "OpenDay": {
@@ -574,7 +613,21 @@
     "startingFrom": "החל מ-{date}",
     "submit": "אשרו הרשמה",
     "successDesc": "תודה על הרשמתכם ליום הפתוח. אישור ופרטים נוספים נשלחו למייל שהזנתם. נשמח לראות אתכם!",
-    "successTitle": "הרשמתכם התקבלה!"
+    "successTitle": "הרשמתכם התקבלה!",
+    "filterCity": "עיר",
+    "allCities": "כל הערים",
+    "filterDistance": "מֶרְחָק",
+    "allDistances": "כל המרחקים",
+    "distance10": "עד 10 ק\"מ",
+    "distance25": "עד 25 ק\"מ",
+    "distance50": "עד 50 ק\"מ",
+    "filterInstrument": "כלי נגינה",
+    "allInstruments": "כל הכלים",
+    "dateFrom": "תאריך מ",
+    "dateTo": "תאריך ל",
+    "locating": "מאתר...",
+    "useMyLocation": "השתמש במיקום שלי",
+    "noEventsForFilters": "אין ימים פתוחים שתואמים למסננים שנבחרו."
   },
   "AvailableNow": {
     "allConservatoriums": "כל הקונסרבטוריונים",
@@ -588,7 +641,13 @@
     "noSlotsDesc": "נסו לשנות את אפשרויות הסינון או בדקו שוב מאוחר יותר.",
     "noSlotsFound": "אין שיעורים פנויים כרגע",
     "subtitle": "מצאו שיעור מוזיקה במחיר מיוחד! הזדמנות חד-פעמית ללמוד מהמורים הטובים ביותר בהנחות של עד 40%.",
-    "title": "שיעורים פנויים להיום ומחר"
+    "title": "שיעורים פנויים להיום ומחר",
+    "city": "עיר",
+    "allCities": "כל הערים",
+    "distance": "מֶרְחָק",
+    "allDistances": "כל המרחקים",
+    "distance10": "עד 10 ק\"מ",
+    "distance25": "עד 25 ק\"מ"
   },
   "ExcellenceTrack": {
     "acceptBtn": "אישור ההזמנה",

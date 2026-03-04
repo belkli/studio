@@ -1,28 +1,35 @@
-'use client';
+﻿'use client';
 
-import { useAuth } from '@/hooks/use-auth';
+import { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
+import { languages, teacherSpecialties } from '@/lib/data';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { languages, teacherSpecialties } from '@/lib/data';
+import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { TranslatedFieldInput } from './translated-field-input';
-import { translateUserBio } from '@/app/actions/translate';
-import { computeUserSourceHash } from '@/lib/utils/translation-hash';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { Switch } from '@/components/ui/switch';
 
 const getProfileSchema = (t: ReturnType<typeof useTranslations>) =>
   z.object({
     name: z.string().min(2, t('validation.nameMin')),
     email: z.string().email(t('validation.emailInvalid')),
-    bio: z.string().max(500, t('validation.bioMax')).optional(),
+    bioHe: z.string().max(2000, t('validation.bioMax')).optional(),
+    bioEn: z.string().max(2000, t('validation.bioMax')).optional(),
+    videoUrl: z.string().optional(),
+    availableForNewStudents: z.boolean().optional(),
+    educationText: z.string().optional(),
+    performanceCreditsText: z.string().optional(),
     specialties: z.array(z.string()).optional(),
     teachingLanguages: z.array(z.string()).optional(),
   });
@@ -31,16 +38,23 @@ type ProfileFormData = z.infer<ReturnType<typeof getProfileSchema>>;
 
 export function TeacherProfileEditor() {
   const { user, updateUser } = useAuth();
-  const t = useTranslations('TeacherProfileEditor');
   const { toast } = useToast();
-  const [isTranslating, setIsTranslating] = useState(false);
+  const t = useTranslations('TeacherProfile');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(getProfileSchema(t)),
     defaultValues: {
       name: user?.name || '',
       email: user?.email || '',
-      bio: user?.bio || '',
+      bioHe: user?.bio || '',
+      bioEn: user?.translations?.en?.bio || '',
+      videoUrl: user?.videoUrl || '',
+      availableForNewStudents: user?.availableForNewStudents ?? true,
+      educationText: (user?.education || []).join('\n'),
+      performanceCreditsText: (user?.performanceCredits || []).join('\n'),
       specialties: user?.specialties || [],
       teachingLanguages: user?.teachingLanguages || [],
     },
@@ -48,72 +62,49 @@ export function TeacherProfileEditor() {
 
   if (!user) return null;
 
-  const onSubmit = async (data: ProfileFormData) => {
-    let updatedUser = { ...user, ...data };
+  const onSubmit = (data: ProfileFormData) => {
+    setIsSaving(true);
 
-    const currentHash = computeUserSourceHash(updatedUser as any);
-    const isStale = currentHash !== user.translationMeta?.sourceHash;
+    const education = (data.educationText || '')
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
 
-    if (isStale && data.bio) {
-      setIsTranslating(true);
-      toast({
-        title: t('toasts.translatingTitle'),
-        description: t('toasts.translatingDesc'),
-      });
-
-      const result = await translateUserBio(updatedUser as any, ['en', 'ar', 'ru'], user.translations, user.translationMeta?.overrides);
-
-      if (result.success && result.translations && result.meta) {
-        updatedUser = {
-          ...updatedUser,
-          translations: result.translations,
-          translationMeta: {
-            ...result.meta,
-            overrides: user.translationMeta?.overrides,
-          },
-        } as any;
-      }
-      setIsTranslating(false);
-    }
-
-    updateUser(updatedUser as any);
-    toast({ title: t('toasts.saved') });
-  };
-
-  const handleTranslationChange = (field: string, locale: string, value: string) => {
-    const currentTranslations = user.translations || {};
-    const localeData = (currentTranslations as any)[locale] || {};
-    const updatedTranslations = {
-      ...currentTranslations,
-      [locale]: { ...localeData, [field]: value },
-    };
-
-    const currentOverrides = user.translationMeta?.overrides || {};
-    const localeOverrides = [...(currentOverrides[locale] || [])];
-    if (!localeOverrides.includes(field)) {
-      localeOverrides.push(field);
-    }
+    const performanceCredits = (data.performanceCreditsText || '')
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
 
     updateUser({
       ...user,
-      translations: updatedTranslations,
-      translationMeta: {
-        ...user.translationMeta,
-        overrides: {
-          ...currentOverrides,
-          [locale]: localeOverrides,
+      name: data.name,
+      email: data.email,
+      bio: data.bioHe || '',
+      videoUrl: data.videoUrl || undefined,
+      availableForNewStudents: data.availableForNewStudents ?? true,
+      education,
+      performanceCredits,
+      specialties: (data.specialties || []) as any,
+      teachingLanguages: (data.teachingLanguages || []) as any,
+      translations: {
+        ...(user.translations || {}),
+        en: {
+          ...(user.translations?.en || {}),
+          bio: data.bioEn || '',
         },
-        translatedBy: 'HUMAN',
       },
     });
+
+    toast({ title: t('saved') });
+    setIsSaving(false);
   };
 
   return (
-    <Card className='w-full max-w-2xl'>
+    <Card className="w-full max-w-3xl" dir={isRtl ? 'rtl' : 'ltr'}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader className='flex flex-col items-center text-center'>
-            <Avatar className='h-24 w-24 mb-4'>
+          <CardHeader className="items-center text-center">
+            <Avatar className="mb-4 h-24 w-24">
               <AvatarImage src={user.avatarUrl} alt={user.name} />
               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
@@ -121,138 +112,203 @@ export function TeacherProfileEditor() {
             <CardDescription>{t('description')}</CardDescription>
           </CardHeader>
 
-          <CardContent className='space-y-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('fullName')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('email')}</FormLabel>
-                    <FormControl>
-                      <Input type='email' dir='ltr' className='text-left' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+          <CardContent>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="basic">{t('basicInfo')}</TabsTrigger>
+                <TabsTrigger value="bio">{t('bio')}</TabsTrigger>
+                <TabsTrigger value="education">{t('education')}</TabsTrigger>
+              </TabsList>
 
-            <FormField
-              control={form.control}
-              name='bio'
-              render={({ field }) => (
-                <FormItem>
-                  <TranslatedFieldInput
-                    label={t('shortBio')}
-                    value={field.value || ''}
-                    translations={{
-                      en: user.translations?.en?.bio,
-                      ar: user.translations?.ar?.bio,
-                      ru: user.translations?.ru?.bio,
-                    }}
-                    fieldKey='bio'
-                    isTextArea
-                    onSourceChange={field.onChange}
-                    onTranslationChange={(loc, val) => handleTranslationChange('bio', loc, val)}
-                    isStale={computeUserSourceHash({ ...user, bio: field.value } as any) !== user.translationMeta?.sourceHash}
-                    isTranslating={isTranslating}
-                    overriddenLocales={Object.entries(user.translationMeta?.overrides || {})
-                      .filter(([_, fields]) => fields.includes('bio'))
-                      .map(([loc]) => loc)}
+              <TabsContent value="basic" className="mt-6 space-y-5">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('fullName')}</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('email')}</FormLabel>
+                        <FormControl>
+                          <Input type="email" dir="ltr" className="text-start" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <FormField
-              name='specialties'
-              render={() => (
-                <FormItem>
-                  <div className='mb-4'>
-                    <FormLabel>{t('specialties')}</FormLabel>
-                  </div>
-                  <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
-                    {teacherSpecialties.map((item) => (
-                      <FormField
-                        key={item.id}
-                        name='specialties'
-                        render={({ field }) => (
-                          <FormItem className='flex flex-row items-center space-x-3 space-x-reverse space-y-0'>
-                            <FormControl>
-                              <Checkbox
-                                checked={(field.value || []).includes(item.id)}
-                                onCheckedChange={(checked) =>
-                                  checked
-                                    ? field.onChange([...(field.value || []), item.id])
-                                    : field.onChange((field.value || []).filter((value: string) => value !== item.id))
-                                }
-                              />
-                            </FormControl>
-                            <FormLabel className='font-normal'>{item.label}</FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="specialties"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>{t('specialties')}</FormLabel>
+                      <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                        {teacherSpecialties.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="specialties"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center gap-2 rounded-md border p-2">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={(field.value || []).includes(item.id)}
+                                    onCheckedChange={(checked) =>
+                                      checked
+                                        ? field.onChange([...(field.value || []), item.id])
+                                        : field.onChange((field.value || []).filter((value: string) => value !== item.id))
+                                    }
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name='teachingLanguages'
-              render={() => (
-                <FormItem>
-                  <div className='mb-4'>
-                    <FormLabel>{t('teachingLanguages')}</FormLabel>
-                  </div>
-                  <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-                    {languages.map((item) => (
-                      <FormField
-                        key={item.id}
-                        name='teachingLanguages'
-                        render={({ field }) => (
-                          <FormItem className='flex flex-row items-center space-x-3 space-x-reverse space-y-0'>
-                            <FormControl>
-                              <Checkbox
-                                checked={(field.value || []).includes(item.id)}
-                                onCheckedChange={(checked) =>
-                                  checked
-                                    ? field.onChange([...(field.value || []), item.id])
-                                    : field.onChange((field.value || []).filter((value: string) => value !== item.id))
-                                }
-                              />
-                            </FormControl>
-                            <FormLabel className='font-normal'>{item.label}</FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="teachingLanguages"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>{t('teachingLanguages')}</FormLabel>
+                      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                        {languages.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="teachingLanguages"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center gap-2 rounded-md border p-2">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={(field.value || []).includes(item.id)}
+                                    onCheckedChange={(checked) =>
+                                      checked
+                                        ? field.onChange([...(field.value || []), item.id])
+                                        : field.onChange((field.value || []).filter((value: string) => value !== item.id))
+                                    }
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
+              <TabsContent value="bio" className="mt-6 space-y-5">
+                <FormField
+                  control={form.control}
+                  name="bioHe"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('bioHe')}</FormLabel>
+                      <FormControl>
+                        <Textarea rows={6} dir="rtl" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bioEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('bioEn')}</FormLabel>
+                      <FormControl>
+                        <Textarea rows={6} dir="ltr" className="text-start" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="videoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('videoUrl')}</FormLabel>
+                      <FormControl>
+                        <Input dir="ltr" className="text-start" placeholder="https://youtube.com/..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="availableForNewStudents"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between rounded-md border p-3">
+                      <FormLabel>{t('availableForNewStudents')}</FormLabel>
+                      <FormControl>
+                        <Switch checked={Boolean(field.value)} onCheckedChange={field.onChange} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
+              <TabsContent value="education" className="mt-6 space-y-5">
+                <FormField
+                  control={form.control}
+                  name="educationText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('education')}</FormLabel>
+                      <FormControl>
+                        <Textarea rows={5} placeholder={t('educationPlaceholder')} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="performanceCreditsText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('performanceCredits')}</FormLabel>
+                      <FormControl>
+                        <Textarea rows={5} placeholder={t('performanceCreditsPlaceholder')} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+            </Tabs>
           </CardContent>
 
           <CardFooter>
-            <Button type='submit' className='w-full' disabled={isTranslating}>
-              {isTranslating ? t('savingTranslations') : t('saveChanges')}
+            <Button type="submit" className="w-full" disabled={isSaving}>
+              {isSaving ? t('saving') : t('saveChanges')}
             </Button>
           </CardFooter>
         </form>
@@ -260,3 +316,4 @@ export function TeacherProfileEditor() {
     </Card>
   );
 }
+

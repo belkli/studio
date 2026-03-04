@@ -1,4 +1,4 @@
-﻿
+
 /**
  * @fileoverview This is the central authentication and state management provider for the Harmonia application.
  * It uses React Context to provide user authentication status, user data, and all mock data
@@ -8,11 +8,13 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { add, differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
+import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 /**
  * Defines the shape of the authentication context, including all state and action dispatchers.
@@ -36,16 +38,22 @@ interface AuthContextType {
   mockPlayingSchoolInvoices: PlayingSchoolInvoice[];
   mockEvents: EventProduction[];
   mockInstrumentInventory: InstrumentInventory[];
+  mockInstrumentRentals: InstrumentRental[];
   mockPerformanceBookings: PerformanceBooking[];
   mockScholarshipApplications: ScholarshipApplication[];
+  mockDonationCauses: DonationCause[];
+  mockDonations: DonationRecord[];
   mockOpenDayEvents: OpenDayEvent[];
   mockOpenDayAppointments: OpenDayAppointment[];
   mockPracticeVideos: PracticeVideo[];
   mockAlumni: Alumnus[];
   mockMasterclasses: Masterclass[];
+  mockMasterClassAllowances: StudentMasterClassAllowance[];
   mockMakeupCredits: MakeupCredit[];
   mockRepertoire: Composition[];
   conservatoriums: Conservatorium[];
+  conservatoriumInstruments: ConservatoriumInstrument[];
+  lessonPackages: LessonPackage[];
   mockBranches: Branch[];
   login: (email: string) => { user: User | null; status: 'approved' | 'pending' | 'not_found' };
   logout: () => void;
@@ -64,6 +72,7 @@ interface AuthContextType {
   updateUserPracticeGoal: (studentId: string, goal: number) => void;
   addProgressReport: (reportData: Partial<ProgressReport>) => void;
   addMessage: (threadId: string, senderId: string, body: string) => void;
+  createMessageThread: (participants: string[], initialMessage?: { senderId: string; body: string }) => string;
   addAnnouncement: (announcementData: Partial<Announcement>) => void;
   assignSubstitute: (lessonId: string, newTeacherId: string) => void;
   reportSickLeave: (teacherId: string, from: Date, to: Date) => LessonSlot[];
@@ -76,7 +85,11 @@ interface AuthContextType {
   addPerformanceToEvent: (eventId: string, studentId: string, repertoireId: string) => void;
   removePerformanceFromEvent: (eventId: string, performanceId: string) => void;
   assignInstrumentToStudent: (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => void;
+  initiateInstrumentRental: (payload: { instrumentId: string; studentId: string; parentId: string; rentalModel: RentalModel; startDate: string; expectedReturnDate?: string; depositAmountILS?: number; monthlyFeeILS?: number; purchasePriceILS?: number; monthsUntilPurchaseEligible?: number; }) => { rentalId: string; signingToken: string; signingLink: string };
+  getRentalByToken: (token: string) => InstrumentRental | undefined;
+  confirmRentalSignature: (token: string, signatureUrl: string) => { success: boolean; rentalId?: string };
   returnInstrument: (instrumentId: string) => void;
+  markInstrumentRentalReturned: (rentalId: string, condition: RentalCondition, customRefundAmountILS?: number) => { success: boolean; refundAmountILS: number };
   addInstrument: (instrumentData: Partial<InstrumentInventory>) => void;
   updateInstrument: (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => void;
   deleteInstrument: (instrumentId: string) => void;
@@ -86,11 +99,26 @@ interface AuthContextType {
   updatePerformanceBookingStatus: (bookingId: string, status: PerformanceBookingStatus) => void;
   addPerformanceBooking: (bookingData: Partial<PerformanceBooking>) => void;
   addScholarshipApplication: (applicationData: Partial<ScholarshipApplication>) => void;
+  updateScholarshipStatus: (applicationId: string, status: 'APPROVED' | 'REJECTED') => void;
+  markScholarshipAsPaid: (applicationId: string) => void;
+  addDonationCause: (cause: { names: { he: string; en: string }; descriptions: { he: string; en: string }; category: DonationCauseCategory; targetAmountILS?: number; }) => DonationCause;
+  recordDonation: (donation: { causeId: string; amountILS: number; frequency: 'once' | 'monthly' | 'yearly'; donorName?: string; donorEmail?: string; donorId?: string; status?: DonationRecord['status']; }) => DonationRecord;
   addOpenDayAppointment: (appointmentData: Partial<OpenDayAppointment>) => void;
+  graduateStudent: (studentId: string, graduationYear: number) => void;
+  upsertAlumniProfile: (payload: Partial<Alumnus> & { userId: string }) => Alumnus;
+  createMasterClass: (payload: Partial<Masterclass>) => Masterclass;
+  publishMasterClass: (masterClassId: string) => void;
+  registerToMasterClass: (masterClassId: string, studentId: string) => { success: boolean; chargedILS?: number; remaining?: number; reason?: string };
   markWalkthroughAsSeen: (userId: string) => void;
   addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
   addBranch: (branchData: Partial<Branch>) => void;
   updateBranch: (branchData: Branch) => void;
+  addConservatoriumInstrument: (instrumentData: Partial<ConservatoriumInstrument>) => void;
+  updateConservatoriumInstrument: (instrumentId: string, instrumentData: Partial<ConservatoriumInstrument>) => void;
+  deleteConservatoriumInstrument: (instrumentId: string) => void;
+  addLessonPackage: (packageData: Partial<LessonPackage>) => void;
+  updateLessonPackage: (packageId: string, packageData: Partial<LessonPackage>) => void;
+  deleteLessonPackage: (packageId: string) => void;
   mockRooms: Room[];
   addRoom: (roomData: Partial<Room>) => void;
   updateRoom: (roomId: string, roomData: Partial<Room>) => void;
@@ -99,13 +127,14 @@ interface AuthContextType {
   updateUserPaymentMethod: (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => void;
   newFeaturesEnabled: boolean;
   isLoading: boolean;
-  assignRepertoire: (studentId: string, compositionId: string) => void;
+  assignRepertoire: (studentIds: string | string[], compositionId: string) => void;
   awardAchievement: (studentId: string, type: AchievementType) => void;
   mockWaitlist: WaitlistEntry[];
   mockPayrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
   updateEvent: (event: EventProduction) => void;
   updateEventStatus: (eventId: string, status: EventProductionStatus) => void;
+  bookEventTickets: (eventId: string, selections: Record<string, number>, attendee: { name: string; email: string; phone: string }, userId?: string) => { success: boolean; soldOut?: boolean; bookingRef?: string; totalAmount: number };
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -160,20 +189,77 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, users]);
   const [mockEvents, setMockEvents] = useState<EventProduction[]>(initialMockData.mockEvents);
   const [mockInstrumentInventory, setMockInstrumentInventory] = useState<InstrumentInventory[]>(initialMockData.mockInstrumentInventory);
+  const [mockInstrumentRentals, setMockInstrumentRentals] = useState<InstrumentRental[]>(initialMockData.mockInstrumentRentals || []);
+
+  useEffect(() => {
+    const now = new Date();
+    const dueRentals = mockInstrumentRentals.filter((rental) => {
+      if (rental.rentalModel !== 'rent_to_own') return false;
+      if (rental.status !== 'active') return false;
+      if (!rental.monthsUntilPurchaseEligible) return false;
+      if (rental.purchaseEligibleNotifiedAt) return false;
+
+      const start = startOfDay(new Date(rental.startDate));
+      const elapsedDays = differenceInCalendarDays(now, start);
+      const minimumDays = rental.monthsUntilPurchaseEligible * 30;
+      return elapsedDays >= minimumDays;
+    });
+
+    if (dueRentals.length === 0) return;
+
+    const nowIso = now.toISOString();
+    const dueIds = new Set(dueRentals.map((item) => item.id));
+    const notificationsByParent = new Map<string, Notification[]>();
+
+    for (const rental of dueRentals) {
+      const instrument = mockInstrumentInventory.find((inst) => inst.id === rental.instrumentId);
+      const notification: Notification = {
+        id: 'notif-rent-to-own-' + rental.id + '-' + Date.now(),
+        title: 'Purchase option is now available',
+        message: 'You can now purchase ' + (instrument?.name || instrument?.type || 'your rented instrument') + '.',
+        timestamp: nowIso,
+        link: '/dashboard/admin/rentals',
+        read: false,
+      };
+
+      const existing = notificationsByParent.get(rental.parentId) || [];
+      notificationsByParent.set(rental.parentId, [notification, ...existing]);
+    }
+
+    setMockInstrumentRentals((prev) =>
+      prev.map((rental) => (dueIds.has(rental.id) ? { ...rental, purchaseEligibleNotifiedAt: nowIso } : rental))
+    );
+
+    setUsers((prevUsers) =>
+      prevUsers.map((entry) => {
+        const parentNotifications = notificationsByParent.get(entry.id);
+        if (!parentNotifications || parentNotifications.length === 0) return entry;
+        return { ...entry, notifications: [...parentNotifications, ...(entry.notifications || [])] };
+      })
+    );
+  }, [mockInstrumentInventory, mockInstrumentRentals]);
   const [mockPerformanceBookings, setMockPerformanceBookings] = useState<PerformanceBooking[]>(initialMockData.mockPerformanceBookings);
   const [mockScholarshipApplications, setMockScholarshipApplications] = useState<ScholarshipApplication[]>(initialMockData.mockScholarshipApplications);
+  const [mockDonationCauses, setMockDonationCauses] = useState<DonationCause[]>(initialMockData.mockDonationCauses || []);
+  const [mockDonations, setMockDonations] = useState<DonationRecord[]>(initialMockData.mockDonations || []);
   const [mockOpenDayEvents, setMockOpenDayEvents] = useState<OpenDayEvent[]>(initialMockData.mockOpenDayEvents);
   const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>(initialMockData.mockOpenDayAppointments);
   const [mockBranches, setMockBranches] = useState<Branch[]>(initialMockData.mockBranches);
   const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>(initialMockData.mockPracticeVideos);
   const [mockAlumni, setMockAlumni] = useState<Alumnus[]>(initialMockData.mockAlumni);
   const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>(initialMockData.mockMasterclasses);
+  const [mockMasterClassAllowances, setMockMasterClassAllowances] = useState<StudentMasterClassAllowance[]>([
+    { studentId: 'student-user-1', conservatoriumId: 'cons-15', academicYear: '2025-2026', totalAllowed: 2, used: 0, remaining: 2 },
+    { studentId: 'student-user-2', conservatoriumId: 'cons-15', academicYear: '2025-2026', totalAllowed: 0, used: 0, remaining: 0 },
+  ]);
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>(initialMockData.mockWaitlist);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
   const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>(initialMockData.mockMakeupCredits || []);
   const [mockRepertoire, setMockRepertoire] = useState<Composition[]>(initialMockData.mockRepertoire || initialMockData.compositions);
   const [mockRooms, setMockRooms] = useState<Room[]>(initialMockData.mockRooms);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
+  const [conservatoriumInstruments, setConservatoriumInstruments] = useState<ConservatoriumInstrument[]>(initialMockData.mockConservatoriumInstruments || []);
+  const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>(initialMockData.mockLessonPackages || []);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -187,18 +273,110 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const payload = await response.json();
         if (!active) return;
 
-        if (Array.isArray(payload.users)) setUsers(payload.users);
-        if (Array.isArray(payload.conservatoriums)) setConservatoriums(payload.conservatoriums);
+        const normalizeText = (value: string) => value.trim().toLowerCase();
+        const placeholderImageMap = new Map(PlaceHolderImages.map((image) => [image.id, image.imageUrl]));
+        const normalizeAvatarUrl = (value?: string) => {
+          if (!value) return value;
+          return placeholderImageMap.get(value) || value;
+        };
+
+        const mergedUsers = Array.isArray(payload.users)
+          ? (() => {
+              const localUsers = initialMockData.mockUsers;
+              const matchedIndexes = new Set<number>();
+
+              const merged = localUsers.map((localUser) => {
+                const foundIndex = payload.users.findIndex((remoteUser: User) => {
+                  if (remoteUser.id === localUser.id) return true;
+                  return normalizeText(remoteUser.email) === normalizeText(localUser.email);
+                });
+
+                if (foundIndex < 0) return localUser;
+                matchedIndexes.add(foundIndex);
+                const remoteUser = payload.users[foundIndex];
+
+                return {
+                  ...localUser,
+                  ...remoteUser,
+                  avatarUrl: remoteUser.avatarUrl || localUser.avatarUrl,
+                  bio: remoteUser.bio || localUser.bio,
+                  education: (remoteUser.education && remoteUser.education.length > 0) ? remoteUser.education : localUser.education,
+                  instruments: (remoteUser.instruments && remoteUser.instruments.length > 0) ? remoteUser.instruments : localUser.instruments,
+                } as User;
+              });
+
+              payload.users.forEach((remoteUser: User, index: number) => {
+                if (!matchedIndexes.has(index)) {
+                  merged.push(remoteUser);
+                }
+              });
+
+              return merged;
+            })()
+          : null;
+
+        const mergedConservatoriums = Array.isArray(payload.conservatoriums)
+          ? (() => {
+              const localConservatoriums = initialMockData.conservatoriums;
+              const matchedIndexes = new Set<number>();
+
+              const merged = localConservatoriums.map((localCons) => {
+                const foundIndex = payload.conservatoriums.findIndex((remoteCons: Conservatorium) => {
+                  if (remoteCons.id === localCons.id) return true;
+                  return normalizeText(remoteCons.name) === normalizeText(localCons.name);
+                });
+
+                if (foundIndex < 0) return localCons;
+                matchedIndexes.add(foundIndex);
+                const remoteCons = payload.conservatoriums[foundIndex];
+
+                return {
+                  ...localCons,
+                  ...remoteCons,
+                  about: remoteCons.about || localCons.about,
+                  departments: (remoteCons.departments && remoteCons.departments.length > 0) ? remoteCons.departments : localCons.departments,
+                  teachers: (remoteCons.teachers && remoteCons.teachers.length > 0) ? remoteCons.teachers : localCons.teachers,
+                  branchesInfo: (remoteCons.branchesInfo && remoteCons.branchesInfo.length > 0) ? remoteCons.branchesInfo : localCons.branchesInfo,
+                  programs: (remoteCons.programs && remoteCons.programs.length > 0) ? remoteCons.programs : localCons.programs,
+                  socialMedia: remoteCons.socialMedia || localCons.socialMedia,
+                  photoUrls: (remoteCons.photoUrls && remoteCons.photoUrls.length > 0) ? remoteCons.photoUrls : localCons.photoUrls,
+                } as Conservatorium;
+              });
+
+              payload.conservatoriums.forEach((remoteCons: Conservatorium, index: number) => {
+                if (!matchedIndexes.has(index)) {
+                  merged.push(remoteCons);
+                }
+              });
+
+              return merged;
+            })()
+          : null;
+
+        const finalUsers = mergedUsers
+          ? Array.from(
+              new Map(
+                mergedUsers.map((entry) => [entry.id, { ...entry, avatarUrl: normalizeAvatarUrl(entry.avatarUrl) }])
+              ).values()
+            )
+          : null;
+
+        const finalConservatoriums = mergedConservatoriums
+          ? Array.from(new Map(mergedConservatoriums.map((entry) => [entry.id, entry])).values())
+          : null;
+
+        if (finalUsers) setUsers(finalUsers);
+        if (finalConservatoriums) setConservatoriums(finalConservatoriums);
         if (Array.isArray(payload.lessons)) setMockLessons(payload.lessons);
         if (Array.isArray(payload.forms)) setMockFormSubmissions(payload.forms);
         if (Array.isArray(payload.events)) setMockEvents(payload.events);
         if (Array.isArray(payload.rooms)) setMockRooms(payload.rooms);
         if (Array.isArray(payload.payrolls)) setMockPayrolls(payload.payrolls);
 
-        if (Array.isArray(payload.users)) {
+        if (finalUsers) {
           setUser((currentUser) => {
             if (!currentUser) return currentUser;
-            const matched = payload.users.find((candidate: User) => candidate.email.toLowerCase() === currentUser.email.toLowerCase());
+            const matched = finalUsers.find((candidate: User) => candidate.email.toLowerCase() === currentUser.email.toLowerCase());
             if (!matched) return currentUser;
             localStorage.setItem('harmonia-user', JSON.stringify(matched));
             setAuthCookie();
@@ -348,6 +526,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatedAt: new Date().toISOString(),
       ...lessonData
     } as LessonSlot;
+
+    const conservatoriumRoomPool = mockRooms.filter((room) => room.conservatoriumId === newLesson.conservatoriumId);
+
+    if (!newLesson.isVirtual && !newLesson.roomId && conservatoriumRoomPool.length > 0) {
+      const allocation = allocateRoomWithConflictResolution({
+        lesson: {
+          instrument: newLesson.instrument,
+          startTime: newLesson.startTime,
+          durationMinutes: newLesson.durationMinutes,
+          conservatoriumId: newLesson.conservatoriumId,
+        },
+        rooms: conservatoriumRoomPool,
+        existingLessons: mockLessons.filter((lesson) => lesson.conservatoriumId === newLesson.conservatoriumId),
+        conservatoriumInstruments: conservatoriumInstruments.filter((item) => item.conservatoriumId === newLesson.conservatoriumId),
+      });
+
+      if (allocation.action === 'no_room_available') {
+        toast({
+          title: 'No available room',
+          description: 'No available room for ' + newLesson.instrument + ' at ' + new Date(newLesson.startTime).toLocaleString(),
+        });
+        return;
+      }
+
+      newLesson.roomId = allocation.roomId;
+
+      if (allocation.action === 'reallocate_existing') {
+        setMockLessons((prev) => {
+          const shifted = prev.map((lesson) => lesson.id === allocation.reallocatedLessonId
+            ? { ...lesson, roomId: allocation.reallocatedRoomId, updatedAt: new Date().toISOString() }
+            : lesson);
+          return [...shifted, newLesson];
+        });
+
+        toast({ title: 'Room reallocated automatically for better fit' });
+        return;
+      }
+    }
+
     setMockLessons(prev => [...prev, newLesson]);
   };
 
@@ -510,7 +727,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { ...thread, messages: [...thread.messages, newMessage] };
       }
       return thread;
-    }))
+    }));
+  };
+
+  const createMessageThread = (participants: string[], initialMessage?: { senderId: string; body: string }) => {
+    const normalizedParticipants = Array.from(new Set(participants));
+    const existing = mockMessageThreads.find((thread) =>
+      thread.participants.length === normalizedParticipants.length &&
+      normalizedParticipants.every((participantId) => thread.participants.includes(participantId))
+    );
+
+    if (existing) {
+      if (initialMessage?.body?.trim()) {
+        addMessage(existing.id, initialMessage.senderId, initialMessage.body);
+      }
+      return existing.id;
+    }
+
+    const newThreadId = 'thread-' + Date.now();
+    const now = new Date().toISOString();
+    const messages = initialMessage?.body?.trim()
+      ? [{ senderId: initialMessage.senderId, body: initialMessage.body, sentAt: now }]
+      : [];
+
+    setMockMessageThreads((prev) => [
+      ...prev,
+      {
+        id: newThreadId,
+        participants: normalizedParticipants,
+        messages,
+      },
+    ]);
+
+    return newThreadId;
   };
   const addAnnouncement = (announcementData: Partial<Announcement>) => {
     const newAnnouncement: Announcement = {
@@ -592,6 +841,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: `event-${Date.now()}`,
       conservatoriumId: user?.conservatoriumId || 'cons-15',
       program: [],
+      title: eventData.title || { he: eventData.name || "", en: eventData.name || "" },
+      description: eventData.description || { he: "", en: "" },
+      venueDetails: eventData.venueDetails || {
+        name: { he: eventData.venue || "", en: eventData.venue || "" },
+        address: "",
+        capacity: eventData.totalSeats || 0,
+        isOnline: false,
+      },
+      isFree: eventData.isFree ?? true,
+      ticketPrices: eventData.ticketPrices || [],
+      bookedSeats: eventData.bookedSeats || [],
+      tags: eventData.tags || [],
       ...eventData,
     } as EventProduction;
     setMockEvents(prev => [newEvent, ...prev]);
@@ -603,6 +864,73 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateEventStatus = (eventId: string, status: EventProductionStatus) => {
     setMockEvents(prev => prev.map(e => e.id === eventId ? { ...e, status } : e));
+  };
+
+
+  const bookEventTickets = (
+    eventId: string,
+    selections: Record<string, number>,
+    attendee: { name: string; email: string; phone: string },
+    userId = 'guest'
+  ): { success: boolean; soldOut?: boolean; bookingRef?: string; totalAmount: number } => {
+    const bookingRef = `BK-${Date.now()}`;
+    let totalAmount = 0;
+    let soldOut = false;
+
+    setMockEvents(prev => prev.map(event => {
+      if (event.id !== eventId) return event;
+
+      const currentBookedSeats = [...(event.bookedSeats || [])];
+      const fallbackFreeTier = {
+        id: 'tier-free',
+        name: { he: '????? ????', en: 'Free Entry', ru: '?????????? ????', ar: '???? ?????' },
+        priceILS: 0,
+        availableCount: Math.max(0, (event.totalSeats || 0) - currentBookedSeats.length),
+      };
+
+      const tiersInput = (event.ticketPrices && event.ticketPrices.length > 0)
+        ? event.ticketPrices
+        : [fallbackFreeTier];
+
+      const tiers = tiersInput.map((tier: TicketTier) => {
+        const requested = Math.max(0, selections[tier.id] || 0);
+        if (requested === 0) return tier;
+
+        if (tier.availableCount < requested) {
+          soldOut = true;
+          return tier;
+        }
+
+        totalAmount += requested * tier.priceILS;
+        for (let i = 0; i < requested; i += 1) {
+          currentBookedSeats.push({
+            userId,
+            tierId: tier.id,
+            bookingRef,
+            paidAt: tier.priceILS > 0 ? new Date().toISOString() : undefined,
+          });
+        }
+
+        return { ...tier, availableCount: tier.availableCount - requested };
+      });
+
+      if (soldOut) return event;
+
+      const remainingTotal = tiers.reduce((acc: number, tier: TicketTier) => acc + tier.availableCount, 0);
+      return {
+        ...event,
+        ticketPrices: event.ticketPrices && event.ticketPrices.length > 0 ? tiers : event.ticketPrices,
+        bookedSeats: currentBookedSeats,
+        totalSeats: event.totalSeats ?? remainingTotal + currentBookedSeats.length,
+        status: remainingTotal <= 0 ? 'CLOSED' : event.status,
+      };
+    }));
+
+    if (soldOut) {
+      return { success: false, soldOut: true, totalAmount: 0 };
+    }
+
+    return { success: true, bookingRef, totalAmount };
   };
 
   const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
@@ -657,15 +985,137 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         : inst
     ));
-    toast({ title: '×”×›×œ×™ ×”×•×©××œ ×‘×”×¦×œ×—×”' });
+    toast({ title: 'Instrument assigned successfully' });
   };
+
+  const initiateInstrumentRental = (payload: { instrumentId: string; studentId: string; parentId: string; rentalModel: RentalModel; startDate: string; expectedReturnDate?: string; depositAmountILS?: number; monthlyFeeILS?: number; purchasePriceILS?: number; monthsUntilPurchaseEligible?: number; }) => {
+    const token = 'rent-sign-' + Date.now();
+    const rentalId = 'rental-' + Date.now();
+    const now = new Date().toISOString();
+
+    const newRental: InstrumentRental = {
+      id: rentalId,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
+      instrumentId: payload.instrumentId,
+      studentId: payload.studentId,
+      parentId: payload.parentId,
+      rentalModel: payload.rentalModel,
+      depositAmountILS: payload.depositAmountILS,
+      monthlyFeeILS: payload.monthlyFeeILS,
+      purchasePriceILS: payload.purchasePriceILS,
+      monthsUntilPurchaseEligible: payload.monthsUntilPurchaseEligible,
+      startDate: payload.startDate,
+      expectedReturnDate: payload.expectedReturnDate,
+      status: 'pending_signature',
+      signingToken: token,
+      condition: 'good',
+      notes: 'Awaiting parent signature',
+    };
+
+    setMockInstrumentRentals(prev => [newRental, ...prev]);
+
+    const parent = users.find(u => u.id === payload.parentId);
+    if (parent) {
+      const parentNotification: Notification = {
+        id: 'notif-rental-' + Date.now(),
+        title: 'Instrument rental request awaiting your signature',
+        message: 'Please sign the rental agreement: /rental-sign/' + token,
+        timestamp: now,
+        link: '/rental-sign/' + token,
+        read: false,
+      };
+      setUsers(prevUsers => prevUsers.map(u => u.id === parent.id
+        ? { ...u, notifications: [parentNotification, ...(u.notifications || [])] }
+        : u));
+    }
+
+    toast({ title: 'Signature request sent to parent (app + SMS/WhatsApp link)' });
+    return { rentalId, signingToken: token, signingLink: '/rental-sign/' + token };
+  };
+
+  const getRentalByToken = (token: string) => {
+    return mockInstrumentRentals.find(r => r.signingToken === token);
+  };
+
+  const confirmRentalSignature = (token: string, signatureUrl: string) => {
+    const rental = mockInstrumentRentals.find(r => r.signingToken === token);
+    if (!rental || rental.status !== 'pending_signature') {
+      return { success: false };
+    }
+
+    const signedAt = new Date().toISOString();
+    setMockInstrumentRentals(prev => prev.map(item => item.signingToken === token
+      ? { ...item, parentSignedAt: signedAt, parentSignatureUrl: signatureUrl, status: 'active' }
+      : item));
+
+    setMockInstrumentInventory(prev => prev.map(inst => {
+      if (inst.id !== rental.instrumentId) return inst;
+      return {
+        ...inst,
+        currentRenterId: rental.studentId,
+        rentalStartDate: rental.startDate,
+        currentCheckout: {
+          studentId: rental.studentId,
+          checkedOutAt: signedAt,
+          expectedReturnDate: rental.expectedReturnDate || rental.startDate,
+          parentSignatureUrl: signatureUrl,
+          depositAmount: rental.depositAmountILS,
+        }
+      };
+    }));
+
+    const student = users.find(u => u.id === rental.studentId);
+    const parent = users.find(u => u.id === rental.parentId);
+    const instrument = mockInstrumentInventory.find(inst => inst.id === rental.instrumentId);
+    const adminNotification: Notification = {
+      id: 'notif-admin-rental-' + Date.now(),
+      title: 'Rental agreement signed',
+      message: (parent?.name || 'Parent') + ' has signed rental for ' + (instrument?.name || instrument?.type || student?.name || rental.studentId),
+      timestamp: signedAt,
+      link: '/dashboard/admin/rentals',
+      read: false,
+    };
+    setUsers(prevUsers => prevUsers.map(u => (u.role === 'conservatorium_admin' || u.role === 'site_admin') && u.conservatoriumId === rental.conservatoriumId
+      ? { ...u, notifications: [adminNotification, ...(u.notifications || [])] }
+      : u));
+
+    return { success: true, rentalId: rental.id };
+  };
+
   const returnInstrument = (instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
       inst.id === instrumentId
         ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
         : inst
     ));
-    toast({ title: '×”×›×œ×™ ×”×•×—×–×¨ ×œ×ž×œ××™' });
+    toast({ title: 'Instrument returned to inventory' });
+  };
+
+  const markInstrumentRentalReturned = (rentalId: string, condition: RentalCondition, customRefundAmountILS?: number) => {
+    const rental = mockInstrumentRentals.find(item => item.id === rentalId);
+    if (!rental) return { success: false, refundAmountILS: 0 };
+
+    const deposit = rental.depositAmountILS || 0;
+    const refundMap: Record<RentalCondition, number> = {
+      excellent: deposit,
+      good: deposit,
+      fair: Math.round(deposit * 0.7),
+      damaged: 0,
+    };
+
+    const refundAmountILS = customRefundAmountILS ?? refundMap[condition];
+    const now = new Date().toISOString();
+
+    setMockInstrumentRentals(prev => prev.map(item => item.id === rentalId
+      ? { ...item, status: 'returned', condition, actualReturnDate: now, refundAmountILS }
+      : item));
+
+    setMockInstrumentInventory(prev => prev.map(inst => inst.id === rental.instrumentId
+      ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
+      : inst));
+
+    toast({ title: 'Refund calculated: ILS ' + refundAmountILS });
+    return { success: true, refundAmountILS };
   };
 
   const addInstrument = (instrumentData: Partial<InstrumentInventory>) => {
@@ -763,15 +1213,74 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: `schol-app-${Date.now()}`,
       studentId: student.id,
       studentName: student.name,
-      instrument: student.instruments?.[0]?.instrument || '×œ× ×¦×•×™×Ÿ',
+      instrument: student.instruments?.[0]?.instrument || 'Unknown',
       conservatoriumId: student.conservatoriumId || 'cons-1',
-      academicYear: '×ª×©×¤"×”',
+      academicYear: '2025-2026',
       status: 'SUBMITTED',
       submittedAt: new Date().toISOString(),
       priorityScore: Math.floor(Math.random() * 50) + 40,
+      paymentStatus: 'UNPAID',
       ...applicationData
     } as ScholarshipApplication;
     setMockScholarshipApplications(prev => [...prev, newApplication]);
+  };
+
+  const updateScholarshipStatus = (applicationId: string, status: 'APPROVED' | 'REJECTED') => {
+    const now = new Date().toISOString();
+    setMockScholarshipApplications(prev => prev.map(app => {
+      if (app.id !== applicationId) return app;
+      return {
+        ...app,
+        status,
+        approvedAt: status === 'APPROVED' ? now : app.approvedAt,
+        rejectedAt: status === 'REJECTED' ? now : app.rejectedAt,
+      };
+    }));
+  };
+
+  const markScholarshipAsPaid = (applicationId: string) => {
+    const now = new Date().toISOString();
+    setMockScholarshipApplications(prev => prev.map(app => app.id === applicationId
+      ? { ...app, paymentStatus: 'PAID', paidAt: now }
+      : app));
+  };
+
+  const addDonationCause = (cause: { names: { he: string; en: string }; descriptions: { he: string; en: string }; category: DonationCauseCategory; targetAmountILS?: number; }): DonationCause => {
+    const newCause: DonationCause = {
+      id: `cause-${Date.now()}`,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
+      names: cause.names,
+      descriptions: cause.descriptions,
+      category: cause.category,
+      priority: (mockDonationCauses.reduce((max, item) => Math.max(max, item.priority), 0) || 0) + 1,
+      isActive: true,
+      targetAmountILS: cause.targetAmountILS,
+      raisedAmountILS: 0,
+    };
+    setMockDonationCauses(prev => [...prev, newCause]);
+    return newCause;
+  };
+
+  const recordDonation = (donation: { causeId: string; amountILS: number; frequency: 'once' | 'monthly' | 'yearly'; donorName?: string; donorEmail?: string; donorId?: string; status?: DonationRecord['status']; }): DonationRecord => {
+    const newDonation: DonationRecord = {
+      id: `donation-${Date.now()}`,
+      conservatoriumId: user?.conservatoriumId || 'cons-15',
+      causeId: donation.causeId,
+      amountILS: donation.amountILS,
+      frequency: donation.frequency,
+      donorName: donation.donorName,
+      donorEmail: donation.donorEmail,
+      donorId: donation.donorId,
+      status: donation.status || 'INITIATED',
+      createdAt: new Date().toISOString(),
+    };
+
+    setMockDonations(prev => [...prev, newDonation]);
+    setMockDonationCauses(prev => prev.map(cause => cause.id === donation.causeId
+      ? { ...cause, raisedAmountILS: cause.raisedAmountILS + donation.amountILS }
+      : cause));
+
+    return newDonation;
   };
 
   const addOpenDayAppointment = (appointmentData: Partial<OpenDayAppointment>) => {
@@ -784,6 +1293,146 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockOpenDayAppointments(prev => [...prev, newAppointment]);
   };
 
+  const graduateStudent = (studentId: string, graduationYear: number) => {
+    const student = users.find((item) => item.id === studentId);
+    if (!student) return;
+
+    setUsers((prev) => prev.map((item) =>
+      item.id === studentId
+        ? { ...item, status: 'graduated', graduationYear }
+        : item
+    ));
+
+    setMockAlumni((prev) => {
+      const exists = prev.find((item) => item.userId === studentId);
+      if (exists) return prev;
+      const profile: Alumnus = {
+        id: 'alumni-' + studentId,
+        userId: studentId,
+        conservatoriumId: student.conservatoriumId,
+        displayName: student.name,
+        graduationYear,
+        primaryInstrument: student.instruments?.[0]?.instrument || 'General',
+        bio: {},
+        profilePhotoUrl: student.avatarUrl,
+        isPublic: false,
+        availableForMasterClasses: false,
+      };
+      return [profile, ...prev];
+    });
+  };
+
+  const upsertAlumniProfile = (payload: Partial<Alumnus> & { userId: string }): Alumnus => {
+    const existing = mockAlumni.find((item) => item.userId === payload.userId);
+    if (existing) {
+      const merged = { ...existing, ...payload } as Alumnus;
+      setMockAlumni((prev) => prev.map((item) => (item.userId === payload.userId ? merged : item)));
+      return merged;
+    }
+
+    const student = users.find((item) => item.id === payload.userId);
+    const created: Alumnus = {
+      id: payload.id || ('alumni-' + payload.userId),
+      userId: payload.userId,
+      conservatoriumId: payload.conservatoriumId || student?.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      displayName: payload.displayName || student?.name || 'Alumnus',
+      graduationYear: payload.graduationYear || new Date().getFullYear(),
+      primaryInstrument: payload.primaryInstrument || student?.instruments?.[0]?.instrument || 'General',
+      currentOccupation: payload.currentOccupation,
+      bio: payload.bio || {},
+      profilePhotoUrl: payload.profilePhotoUrl || student?.avatarUrl,
+      isPublic: payload.isPublic ?? false,
+      achievements: payload.achievements || [],
+      socialLinks: payload.socialLinks,
+      availableForMasterClasses: payload.availableForMasterClasses ?? false,
+    };
+
+    setMockAlumni((prev) => [created, ...prev]);
+    return created;
+  };
+
+  const createMasterClass = (payload: Partial<Masterclass>): Masterclass => {
+    const instructorInstrument = user?.instruments?.[0]?.instrument || payload.instrument || 'General';
+    const created: Masterclass = {
+      id: payload.id || ('mc-' + Date.now()),
+      conservatoriumId: payload.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      title: payload.title || { he: payload.instrument || '???? ???', en: payload.instrument || 'Master Class' },
+      description: payload.description || { he: '????? ?????? ?????', en: 'Description will be added soon' },
+      instructor: payload.instructor || {
+        userId: user?.id || 'unknown',
+        displayName: user?.name || 'Instructor',
+        instrument: instructorInstrument,
+        bio: user?.bio,
+        photoUrl: user?.avatarUrl,
+      },
+      instrument: payload.instrument || instructorInstrument,
+      maxParticipants: payload.maxParticipants || 12,
+      targetAudience: payload.targetAudience || 'all',
+      date: payload.date || new Date().toISOString().split('T')[0],
+      startTime: payload.startTime || '18:00',
+      durationMinutes: payload.durationMinutes || 90,
+      location: payload.location || 'Main Hall',
+      isOnline: payload.isOnline ?? false,
+      streamUrl: payload.streamUrl,
+      includedInPackage: payload.includedInPackage ?? false,
+      priceILS: payload.priceILS,
+      packageMasterClassCount: payload.packageMasterClassCount,
+      status: user?.role === 'conservatorium_admin' || user?.role === 'site_admin' ? 'published' : 'draft',
+      registrations: payload.registrations || [],
+    };
+
+    setMockMasterclasses((prev) => [created, ...prev]);
+    return created;
+  };
+
+  const publishMasterClass = (masterClassId: string) => {
+    setMockMasterclasses((prev) => prev.map((item) =>
+      item.id === masterClassId ? { ...item, status: 'published' } : item
+    ));
+  };
+
+  const registerToMasterClass = (masterClassId: string, studentId: string) => {
+    const target = mockMasterclasses.find((item) => item.id === masterClassId);
+    const student = users.find((item) => item.id === studentId);
+    if (!target || !student) return { success: false, reason: 'not_found' };
+    if (target.status !== 'published') return { success: false, reason: 'not_published' };
+    if (target.registrations.some((r) => r.studentId === studentId)) return { success: false, reason: 'already_registered' };
+    if (target.registrations.length >= target.maxParticipants) return { success: false, reason: 'full' };
+
+    const allowance = mockMasterClassAllowances.find((item) =>
+      item.studentId === studentId && item.conservatoriumId === target.conservatoriumId
+    );
+
+    const isPartOfPackage = Boolean(target.includedInPackage && allowance && allowance.remaining > 0);
+
+    if (isPartOfPackage && allowance) {
+      setMockMasterClassAllowances((prev) => prev.map((item) =>
+        item.studentId === allowance.studentId && item.conservatoriumId === allowance.conservatoriumId
+          ? { ...item, used: item.used + 1, remaining: Math.max(0, item.remaining - 1) }
+          : item
+      ));
+    }
+
+    const registration = {
+      studentId,
+      registeredAt: new Date().toISOString(),
+      attendanceStatus: 'registered' as const,
+      isPartOfPackage,
+    };
+
+    setMockMasterclasses((prev) => prev.map((item) =>
+      item.id === masterClassId
+        ? { ...item, registrations: [...item.registrations, registration] }
+        : item
+    ));
+
+    if (!isPartOfPackage && (target.priceILS || 0) > 0) {
+      return { success: true, chargedILS: target.priceILS || 0, remaining: allowance?.remaining };
+    }
+
+    const nextAllowance = isPartOfPackage && allowance ? Math.max(0, allowance.remaining - 1) : allowance?.remaining;
+    return { success: true, chargedILS: 0, remaining: nextAllowance };
+  };
   const markWalkthroughAsSeen = (userId: string) => {
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, hasSeenWalkthrough: true } : u));
     if (user?.id === userId) {
@@ -799,8 +1448,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const newUser: User = {
       id: `user-${Date.now()}`,
       approved: isAdminFlow, // Admins auto-approve
-      avatarUrl: 'https://i.pravatar.cc/150?u=' + Date.now(),
+      avatarUrl: userData.avatarUrl || ('https://i.pravatar.cc/150?u=' + Date.now()),
       achievements: [],
+      registrationSource: userData.registrationSource || (isAdminFlow ? 'admin_created' : 'email'),
       ...(isConservatoriumAdmin ? {
         isDelegatedAdmin: userData.isDelegatedAdmin ?? true,
         isPrimaryConservatoriumAdmin: userData.isPrimaryConservatoriumAdmin ?? false,
@@ -823,13 +1473,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockBranches(prev => prev.map(b => b.id === updatedBranch.id ? updatedBranch : b));
   };
 
+  const addConservatoriumInstrument = (instrumentData: Partial<ConservatoriumInstrument>) => {
+    const newInstrument: ConservatoriumInstrument = {
+      id: instrumentData.id || `cons-inst-${Date.now()}`,
+      conservatoriumId: instrumentData.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      names: instrumentData.names || { he: '', en: '' },
+      isActive: instrumentData.isActive ?? true,
+      teacherCount: instrumentData.teacherCount ?? 0,
+      availableForRegistration: instrumentData.availableForRegistration ?? true,
+      availableForRental: instrumentData.availableForRental ?? true,
+    };
+    setConservatoriumInstruments(prev => [...prev, newInstrument]);
+  };
+
+  const updateConservatoriumInstrument = (instrumentId: string, instrumentData: Partial<ConservatoriumInstrument>) => {
+    setConservatoriumInstruments(prev => prev.map(item => item.id === instrumentId ? { ...item, ...instrumentData } : item));
+  };
+
+  const deleteConservatoriumInstrument = (instrumentId: string) => {
+    setConservatoriumInstruments(prev => prev.filter(item => item.id !== instrumentId));
+  };
+
+  const addLessonPackage = (packageData: Partial<LessonPackage>) => {
+    const newPackage: LessonPackage = {
+      id: packageData.id || `lesson-pkg-${Date.now()}`,
+      conservatoriumId: packageData.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      names: packageData.names || { he: '', en: '' },
+      type: packageData.type || 'monthly',
+      lessonCount: packageData.lessonCount ?? null,
+      durationMinutes: packageData.durationMinutes || 45,
+      priceILS: packageData.priceILS || 0,
+      isActive: packageData.isActive ?? true,
+      instruments: packageData.instruments || [],
+      notes: packageData.notes,
+    };
+    setLessonPackages(prev => [...prev, newPackage]);
+  };
+
+  const updateLessonPackage = (packageId: string, packageData: Partial<LessonPackage>) => {
+    setLessonPackages(prev => prev.map(item => item.id === packageId ? { ...item, ...packageData } : item));
+  };
+
+  const deleteLessonPackage = (packageId: string) => {
+    setLessonPackages(prev => prev.filter(item => item.id !== packageId));
+  };
+
   const addRoom = (roomData: Partial<Room>) => {
     const newRoom: Room = {
       id: `room-${Date.now()}`,
-      ...roomData
-    } as Room;
+      conservatoriumId: roomData.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      branchId: roomData.branchId || mockBranches[0]?.id || 'branch-1',
+      name: roomData.name || 'Room',
+      capacity: roomData.capacity || 1,
+      instrumentEquipment: roomData.instrumentEquipment || [],
+      blocks: roomData.blocks || [],
+      isActive: roomData.isActive ?? true,
+      description: roomData.description,
+      photoUrl: roomData.photoUrl,
+      equipment: roomData.equipment,
+    };
     setMockRooms(prev => [...prev, newRoom]);
-    toast({ title: '×”×—×“×¨ × ×•×¡×£ ×‘×”×¦×œ×—×”' });
+    toast({ title: 'Room added successfully' });
   };
 
   const updateRoom = (roomId: string, roomData: Partial<Room>) => {
@@ -842,15 +1546,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     toast({ title: '×”×—×“×¨ × ×ž×—×§' });
   };
 
-  const assignRepertoire = (studentId: string, compositionId: string) => {
-    const newRepertoire: AssignedRepertoire = {
-      id: `rep-${Date.now()}`,
-      studentId,
-      compositionId,
-      status: 'LEARNING',
-      assignedAt: new Date().toISOString(),
-    };
-    setMockAssignedRepertoire(prev => [...prev, newRepertoire]);
+  const assignRepertoire = (studentIds: string | string[], compositionId: string) => {
+    const targetIds = Array.isArray(studentIds) ? studentIds : [studentIds];
+
+    setMockAssignedRepertoire(prev => {
+      const existingKeys = new Set(prev.map((item) => `${item.studentId}::${item.compositionId}`));
+      const additions: AssignedRepertoire[] = [];
+
+      targetIds.forEach((studentId, index) => {
+        const key = `${studentId}::${compositionId}`;
+        if (existingKeys.has(key)) return;
+        additions.push({
+          id: `rep-${Date.now()}-${index}`,
+          studentId,
+          compositionId,
+          status: 'LEARNING',
+          assignedAt: new Date().toISOString(),
+        });
+      });
+
+      return additions.length > 0 ? [...prev, ...additions] : prev;
+    });
   };
 
   const updatePayrollStatus = (payrollId: string, status: PayrollStatus) => {
@@ -876,16 +1592,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     mockPlayingSchoolInvoices,
     mockEvents,
     mockInstrumentInventory,
+    mockInstrumentRentals,
     mockPerformanceBookings,
     mockScholarshipApplications,
+    mockDonationCauses,
+    mockDonations,
     mockOpenDayEvents,
     mockOpenDayAppointments,
     mockPracticeVideos,
     mockAlumni,
     mockMasterclasses,
+    mockMasterClassAllowances,
     mockMakeupCredits,
     mockRepertoire,
     conservatoriums,
+    conservatoriumInstruments,
+    lessonPackages,
     mockBranches,
     mockWaitlist,
     mockPayrolls,
@@ -909,6 +1631,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateUserPracticeGoal,
     addProgressReport,
     addMessage,
+    createMessageThread,
     addAnnouncement,
     assignSubstitute,
     reportSickLeave,
@@ -921,7 +1644,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     addPerformanceToEvent,
     removePerformanceFromEvent,
     assignInstrumentToStudent,
+    initiateInstrumentRental,
+    getRentalByToken,
+    confirmRentalSignature,
     returnInstrument,
+    markInstrumentRentalReturned,
     addInstrument,
     updateInstrument,
     deleteInstrument,
@@ -931,11 +1658,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updatePerformanceBookingStatus,
     addPerformanceBooking,
     addScholarshipApplication,
+    updateScholarshipStatus,
+    markScholarshipAsPaid,
+    addDonationCause,
+    recordDonation,
     addOpenDayAppointment,
+    graduateStudent,
+    upsertAlumniProfile,
+    createMasterClass,
+    publishMasterClass,
+    registerToMasterClass,
     markWalkthroughAsSeen,
     addUser,
     addBranch,
     updateBranch,
+    addConservatoriumInstrument,
+    updateConservatoriumInstrument,
+    deleteConservatoriumInstrument,
+    addLessonPackage,
+    updateLessonPackage,
+    deleteLessonPackage,
     mockRooms,
     addRoom,
     updateRoom,
@@ -945,15 +1687,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     assignRepertoire,
     updatePayrollStatus,
     updateEvent,
-    updateEventStatus
+    updateEventStatus,
+    bookEventTickets
   }), [
     user, users, mockFormSubmissions, mockLessons, mockPackages, mockInvoices,
     mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes, mockMessageThreads,
     mockProgressReports, mockAnnouncements, mockFormTemplates, mockAuditLog,
-    mockPlayingSchoolInvoices, mockEvents, mockInstrumentInventory,
-    mockPerformanceBookings, mockScholarshipApplications, mockOpenDayEvents,
-    mockOpenDayAppointments, mockPracticeVideos, mockAlumni, mockMasterclasses,
-    mockMakeupCredits, mockRepertoire, conservatoriums, mockBranches,
+    mockPlayingSchoolInvoices, mockEvents, mockInstrumentInventory, mockInstrumentRentals,
+    mockPerformanceBookings, mockScholarshipApplications, mockDonationCauses, mockDonations, mockOpenDayEvents,
+    mockOpenDayAppointments, mockPracticeVideos, mockAlumni, mockMasterclasses, mockMasterClassAllowances,
+    mockMakeupCredits, mockRepertoire, conservatoriums, conservatoriumInstruments, lessonPackages, mockBranches,
     mockWaitlist, mockPayrolls, newFeaturesEnabled, isLoading, mockRooms
   ]);
 
@@ -975,5 +1718,6 @@ export const useAuth = () => {
   }
   return context;
 };
+
 
 

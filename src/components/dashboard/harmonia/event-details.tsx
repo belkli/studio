@@ -153,7 +153,7 @@ export function EventDetails() {
                             </DropdownMenuContent>
                         )}
                     </DropdownMenu>
-                    <Button variant="outline"><Edit className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />{t('editEvent')}</Button>
+                    <Button variant="outline" asChild><Link href={`/dashboard/events/${event.id}/edit`}><Edit className="me-2 h-4 w-4" />{t('editEvent')}</Link></Button>
                 </div>
             </div>
 
@@ -189,12 +189,12 @@ export function EventDetails() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>#</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colPerformer')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colComposition')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colComposer')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colDuration')}</TableHead>
-                                        <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
+                                        <TableHead className="text-start">#</TableHead>
+                                        <TableHead className="text-start">{t('colPerformer')}</TableHead>
+                                        <TableHead className="text-start">{t('colComposition')}</TableHead>
+                                        <TableHead className="text-start">{t('colComposer')}</TableHead>
+                                        <TableHead className="text-start">{t('colDuration')}</TableHead>
+                                        <TableHead className="text-end">{t('colActions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -205,7 +205,7 @@ export function EventDetails() {
                                             <TableCell>{item.compositionTitle}</TableCell>
                                             <TableCell>{item.composer}</TableCell>
                                             <TableCell className="font-mono">{item.duration}</TableCell>
-                                            <TableCell className={isRtl ? "text-left" : "text-right"}>
+                                            <TableCell className="text-end">
                                                 <Button variant="ghost" size="icon" onClick={() => removePerformanceFromEvent(event.id, item.id)}>
                                                     <Trash2 className="h-4 w-4 text-destructive" />
                                                     <span className="sr-only">{t('actionRemove')}</span>

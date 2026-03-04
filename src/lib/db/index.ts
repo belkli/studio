@@ -22,7 +22,7 @@ export async function getDb(): Promise<DatabaseAdapter> {
     }
     case 'supabase': {
       const { SupabaseAdapter } = await import('./adapters/supabase');
-      dbInstance = new SupabaseAdapter(
+      dbInstance = await SupabaseAdapter.create(
         requireEnv('SUPABASE_URL'),
         requireEnv('SUPABASE_SERVICE_KEY')
       );

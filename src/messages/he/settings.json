@@ -15,22 +15,38 @@
           "title": "פרטי קשר",
           "website": "אתר רשמי",
           "whatsapp": "מספר וואטסאפ",
-          "privacyContactTitle": "Privacy Statement Contact",
-          "accessibilityContactTitle": "Accessibility Statement Contact",
-          "contactName": "Contact Name",
-          "contactEmail": "Contact Email",
-          "contactPhone": "Contact Phone",
-          "contactNamePlaceholder": "e.g. Dana Cohen",
-          "contactEmailPlaceholder": "e.g. privacy@conservatory.org.il",
-          "contactPhonePlaceholder": "e.g. 03-1234567",
-          "fallbackHint": "If these fields are empty, the legal statements automatically display the primary conservatorium admin contact."
+          "privacyContactTitle": "הצהרת פרטיות צור קשר",
+          "accessibilityContactTitle": "הצהרת נגישות ליצירת קשר",
+          "contactName": "שם איש קשר",
+          "contactEmail": "דוא\"ל ליצירת קשר",
+          "contactPhone": "טלפון ליצירת קשר",
+          "contactNamePlaceholder": "לְמָשָׁל דנה כהן",
+          "contactEmailPlaceholder": "לְמָשָׁל privacy@conservatory.org.il",
+          "contactPhonePlaceholder": "לְמָשָׁל 03-1234567",
+          "fallbackHint": "אם שדות אלה ריקים, הצהרות משפטיות יציגו את איש הקשר הראשי של מנהל הקונסרבטוריון.",
+          "openingHours": "שעות פתיחה",
+          "days": {
+            "sunday": "ראשון",
+            "monday": "שני",
+            "tuesday": "שלישי",
+            "wednesday": "רביעי",
+            "thursday": "חמישי",
+            "friday": "שישי",
+            "saturday": "שַׁבָּת"
+          }
         },
         "location": {
           "cityEnglish": "עיר (אנגלית)",
           "cityHebrew": "עיר (עברית)",
           "description": "היכן אתם נמצאים?",
           "fullAddress": "כתובת מלאה",
-          "title": "מיקום"
+          "title": "מיקום",
+          "postalCode": "מיקוד",
+          "mapsLink": "כתובת האתר של מפות גוגל",
+          "openInMaps": "פתח בגוגל מפות",
+          "instrumentsTitle": "מכשירים זמינים",
+          "instrumentsAutoHint": "מאוכלס אוטומטית ממורים פעילים בקונסרבטוריום זה.",
+          "instrumentsEmpty": "לא זוהו מכשירים מפרופילי מורים."
         },
         "media": {
           "description": "תמונות שמוצגות בפרופיל הציבורי.",
@@ -61,11 +77,50 @@
           "titleRole": "תפקיד / תיאור תפקיד",
           "additionalMember": "חבר/ה נוסף/ת",
           "addMember": "הוספת חבר/ה",
-          "note": "הערה"
+          "note": "הערה",
+          "memberNamePlaceholder": "לְמָשָׁל יוסי כהן"
+        },
+        "ui": {
+          "pageTitle": "פרופיל ציבורי (אודותינו)",
+          "pageDesc": "נהל את הפרופיל הרב-לשוני המוצג בספרייה הציבורית.",
+          "forceRetranslate": "כפה תרגום מחדש",
+          "tabs": {
+            "basic": "מידע בסיסי",
+            "contact": "במידת הצורך, ניצור איתך קשר להשלמת פרטים.",
+            "location": "מיקום",
+            "team": "קְבוּצָה",
+            "social": "חֶברָתִי",
+            "media": "כְּלֵי תִקְשׁוֹרֶת"
+          },
+          "basic": {
+            "title": "מידע בסיסי",
+            "desc": "פרטים ראשוניים על הקונסרבטוריום.",
+            "pendingSync": "ממתין לסנכרון",
+            "name": "שם הקונסרבטוריון",
+            "about": "אודותינו (תיאור)",
+            "foundedYear": "שנת ייסוד",
+            "foundedYearPlaceholder": "לְמָשָׁל 1995"
+          },
+          "toasts": {
+            "contentChangedTitle": "התוכן השתנה",
+            "contentChangedDesc": "מעדכן תרגומי AI כך שיתאימו לתוכן החדש שלך...",
+            "profileSavedTitle": "הפרופיל נשמר",
+            "profileSavedDesc": "הפרופיל הציבורי של הקונסרבטוריון עודכן.",
+            "errorSavingTitle": "שגיאה בשמירה",
+            "errorSavingDesc": "עדכון הפרופיל נכשל.",
+            "translationsUpdatedTitle": "התרגומים עודכנו"
+          },
+          "footer": {
+            "resetChanges": "אפס שינויים",
+            "saving": "שומר...",
+            "saveProfile": "שמור פרופיל"
+          }
         }
       },
       "publicProfile": "פרופיל ציבורי",
-      "title": "הגדרות קונסרבטוריון"
+      "title": "הגדרות קונסרבטוריון",
+      "instruments": "הגדרות מכשיר",
+      "packages": "הגדרות חבילה"
     },
     "notifications": {
       "description": "בחר על מה ברצונך לקבל התראה.",
@@ -92,7 +147,63 @@
       "title": "מידע פרופיל"
     },
     "subtitle": "ניהול הגדרות המערכת והעדפות החשבון שלך.",
-    "title": "הגדרות"
+    "title": "הגדרות",
+    "instruments": {
+      "title": "מכשירים",
+      "add": "הוסף כלי",
+      "listTitle": "מכשירי קונסרבטוריום",
+      "active": "פעיל",
+      "inactive": "לֹא פָּעִיל",
+      "yes": "כן",
+      "no": "לא",
+      "edit": "עריכה",
+      "delete": "מחיקה",
+      "nameHe": "שם (עברית)",
+      "nameEn": "שם (אנגלית)",
+      "nameRu": "שם (רוסית)",
+      "nameAr": "שם (ערבית)",
+      "availableForRegistration": "זמין להרשמה",
+      "availableForRental": "זמין להשכרה",
+      "isActive": "פעיל",
+      "save": "שמירה"
+    },
+    "packages": {
+      "title": "חבילות",
+      "add": "צור חבילה",
+      "listTitle": "חבילות שיעור",
+      "active": "פעיל",
+      "inactive": "לֹא פָּעִיל",
+      "edit": "עריכה",
+      "delete": "מחיקה",
+      "nameHe": "שם (עברית)",
+      "nameEn": "שם (אנגלית)",
+      "type": "סוג",
+      "monthly": "יַרחוֹן",
+      "semester": "סֵמֶסטֶר",
+      "annual": "שְׁנָתִי",
+      "single": "אֶחָד",
+      "lessonCount": "שיעורים",
+      "durationMinutes": "משך (בדקות)",
+      "price": "מחיר (ILS)",
+      "isActive": "פעיל",
+      "save": "שמירה"
+    },
+    "linkedAccounts": {
+      "title": "חשבונות מקושרים",
+      "description": "חבר את Google או Microsoft כדי להיכנס מהר יותר.",
+      "link": "לְקַשֵׁר",
+      "unlink": "בטל את הקישור",
+      "linkedTitle": "חשבון מקושר",
+      "linkedDesc": "{provider} קושר בהצלחה.",
+      "unlinkedTitle": "חשבון בוטל",
+      "unlinkedDesc": "{provider} בוטל בהצלחה.",
+      "errorTitle": "הקישור נכשל",
+      "errorDesc": "לא ניתן לקשר את הספק. אנא נסה שוב.",
+      "conflictTitle": "החשבון כבר קיים",
+      "conflictDesc": "דוא\"ל זה כבר רשום עם: {methods}.",
+      "emailMismatchTitle": "אי התאמה באימייל",
+      "emailMismatchDesc": "דוא\"ל הספק חייב להתאים לאימייל החשבון הנוכחי שלך."
+    }
   },
   "CancellationPolicy": {
     "lateCancelCredit": "זיכוי לביטול באיחור",

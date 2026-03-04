@@ -1,14 +1,18 @@
-
+﻿import { useLocale, useTranslations } from 'next-intl';
 import { AnnouncementComposer } from "@/components/dashboard/harmonia/announcement-composer";
 
 export default function AnnouncementsPage() {
-    return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold">שליחת הכרזה חדשה</h1>
-                <p className="text-muted-foreground">שלח הודעה לכלל המשתמשים או לקהל יעד מסוים.</p>
-            </div>
-            <AnnouncementComposer />
-        </div>
-    );
+  const t = useTranslations('AnnouncementComposer');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+
+  return (
+    <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="text-start">
+        <h1 className="text-2xl font-bold text-start">{t('title')}</h1>
+        <p className="text-muted-foreground text-start">{t('description')}</p>
+      </div>
+      <AnnouncementComposer />
+    </div>
+  );
 }

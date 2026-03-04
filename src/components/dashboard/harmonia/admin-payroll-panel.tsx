@@ -1,296 +1,225 @@
-'use client';
-import { useState, useMemo } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import type { PayrollSummary, PayrollStatus } from '@/lib/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+﻿'use client';
+
+import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { useDateLocale } from '@/hooks/use-date-locale';
-import { Check, Send, Download, Banknote, FileSpreadsheet } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { EmptyState } from '@/components/ui/empty-state';
-import { useTranslations, useLocale } from 'next-intl';
+import { Download, Loader2, RefreshCw } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 
-/**
- * Renders a table of payroll summaries within an accordion.
- * Each item can be expanded to show a detailed list of completed lessons.
- * Provides actions (Approve, Mark as Paid, Export) based on the payroll status.
- */
-const PayrollTable = ({ payrolls }: { payrolls: PayrollSummary[] }) => {
-    const t = useTranslations('Payroll');
-    const dateLocale = useDateLocale();
-    const { updatePayrollStatus } = useAuth();
-    const { toast } = useToast();
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-    const handleApprove = (id: string, teacherName: string) => {
-        updatePayrollStatus(id, 'APPROVED');
-        toast({ title: t('teacherApproveSuccess', { name: teacherName }) });
-    }
-    const handleMarkAsPaid = (id: string, teacherName: string) => {
-        updatePayrollStatus(id, 'PAID');
-        toast({ title: t('teacherPaidSuccess', { name: teacherName }) });
-    }
+type TeacherMonthlyRow = {
+  teacherId: string;
+  teacherName: string;
+  nationalId: string;
+  instrument: string;
+  lessonsCount: number;
+  totalMinutes: number;
+  overtimeMinutes: number;
+  absentCount: number;
+  makeupCount: number;
+  notes: string;
+};
 
-    /**
-     * Generates and downloads a PDF summary for a specific payroll period.
-     * @param payroll The payroll summary object.
-     */
-    const handleExport = (payroll: PayrollSummary) => {
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.width;
+type PayrollReport = {
+  teacherCount: number;
+  totalLessons: number;
+  totalHours: number;
+  byTeacher: TeacherMonthlyRow[];
+};
 
-        const rtl = (text: string | number) => typeof text === 'string' ? text.split('').reverse().join('') : String(text);
+const HEBREW_EXPORT_HEADERS = ['שם עובד', 'ת.ז.', 'שעות בפועל', 'שעות נוספות', 'היעדרויות', 'הערות'];
 
-        // PDF Header
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(20);
-        doc.text(rtl(`${t('pdf.title')} - ${payroll.teacherName}`), pageWidth / 2, 20, { align: 'center' });
+const toMonthValue = (date: Date) => format(date, 'yyyy-MM');
 
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text(rtl(`${t('pdf.period')}: ${format(new Date(payroll.periodStart), 'dd/MM/yyyy')} - ${format(new Date(payroll.periodEnd), 'dd/MM/yyyy')}`), pageWidth - 15, 35, { align: 'right' });
-        doc.text(rtl(`${t('pdf.status')}: ${t(payroll.status.toLowerCase() as any)}`), pageWidth - 15, 42, { align: 'right' });
+const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
 
-        // Table of completed lessons
-        const head = [[rtl(t('pdf.amount')), rtl(t('pdf.rate')), rtl(t('pdf.duration')), rtl(t('pdf.student')), rtl(t('pdf.date'))]];
-        const body = payroll.completedLessons.map(lesson => [
-            rtl(`₪${lesson.subtotal.toFixed(2)}`),
-            rtl(`₪${lesson.rate}`),
-            rtl(lesson.durationMinutes),
-            rtl(lesson.studentName),
-            rtl(format(new Date(lesson.completedAt), 'dd/MM/yyyy'))
-        ]);
+function downloadPayrollCsv(rows: TeacherMonthlyRow[], filename: string) {
+  const bom = '\uFEFF';
+  const csvRows = rows.map((row) => [
+    row.teacherName,
+    row.nationalId,
+    (row.totalMinutes / 60).toFixed(2),
+    (row.overtimeMinutes / 60).toFixed(2),
+    String(row.absentCount),
+    row.notes,
+  ]);
 
-        (doc as any).autoTable({
-            startY: 55,
-            head: head,
-            body: body,
-            styles: {
-                halign: 'right',
-                font: 'helvetica', // NOTE: jsPDF default fonts lack Hebrew support. A real app would need to embed a font.
-            },
-            headStyles: {
-                fillColor: [41, 128, 185],
-                textColor: 255,
-                fontStyle: 'bold',
-            },
-        });
+  const csv =
+    bom +
+    [HEBREW_EXPORT_HEADERS, ...csvRows]
+      .map((row) => row.map((cell) => csvEscape(cell)).join(','))
+      .join('\n');
 
-        const finalY = (doc as any).lastAutoTable.finalY;
-
-        // Totals
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text(rtl(`${t('pdf.totalHours')}: ${payroll.totalHours.toFixed(2)}`), pageWidth - 15, finalY + 15, { align: 'right' });
-        doc.text(rtl(`${t('pdf.grossPay')}: ₪${payroll.grossPay.toLocaleString()}`), pageWidth - 15, finalY + 25, { align: 'right' });
-
-        doc.save(`payroll_${payroll.teacherId}_${payroll.periodStart.slice(0, 7)}.pdf`);
-    }
-
-    if (payrolls.length === 0) {
-        return (
-            <EmptyState
-                icon={Banknote}
-                title={t('emptyTitle')}
-                description={t('emptyDesc')}
-                className="py-12"
-            />
-        );
-    }
-
-    return (
-        <Accordion type="single" collapsible className="w-full">
-            {payrolls.map((payroll) => (
-                <AccordionItem value={payroll.id} key={payroll.id}>
-                    <AccordionTrigger className="hover:bg-muted/50 px-4 rounded-md">
-                        <div className="flex items-center gap-4 flex-1">
-                            <Avatar>
-                                <AvatarImage src={payroll.teacherName} />
-                                <AvatarFallback>{payroll.teacherName.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div className="text-right">
-                                <p className="font-semibold">{payroll.teacherName}</p>
-                                <p className="text-sm text-muted-foreground">
-                                    {format(new Date(payroll.periodStart), 'MMMM yyyy', { locale: dateLocale })}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-6 me-4">
-                            <div>
-                                <span className="text-sm text-muted-foreground">{t('hours')}: </span>
-                                <span className="font-bold">{payroll.totalHours.toFixed(2)}</span>
-                            </div>
-                            <div>
-                                <span className="text-sm text-muted-foreground">{t('grossPay')}: </span>
-                                <span className="font-bold text-green-600">₪{payroll.grossPay.toLocaleString()}</span>
-                            </div>
-                            <div className="flex gap-2">
-                                {payroll.status === 'DRAFT' && (
-                                    <Button size="sm" onClick={(e) => { e.stopPropagation(); handleApprove(payroll.id, payroll.teacherName); }}>
-                                        <Check className="ms-2 h-4 w-4" /> {t('approve')}
-                                    </Button>
-                                )}
-                                {payroll.status === 'APPROVED' && (
-                                    <Button size="sm" onClick={(e) => { e.stopPropagation(); handleMarkAsPaid(payroll.id, payroll.teacherName); }}>
-                                        <Send className="ms-2 h-4 w-4" /> {t('markAsPaid')}
-                                    </Button>
-                                )}
-                                {payroll.status === 'PAID' && (
-                                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleExport(payroll); }}>
-                                        <Download className="ms-2 h-4 w-4" /> {t('export')}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="bg-muted/20">
-                        <div className="p-4">
-                            <h4 className="font-semibold mb-2">{t('lessonDetails', { count: payroll.completedLessons.length })}</h4>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>{t('pdf.date')}</TableHead>
-                                        <TableHead>{t('pdf.student')}</TableHead>
-                                        <TableHead>{t('pdf.duration')}</TableHead>
-                                        <TableHead>{t('pdf.rate')}</TableHead>
-                                        <TableHead className="text-left">{t('pdf.amount')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {payroll.completedLessons.map(lesson => (
-                                        <TableRow key={lesson.slotId}>
-                                            <TableCell>{format(new Date(lesson.completedAt), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell>{lesson.studentName}</TableCell>
-                                            <TableCell>{lesson.durationMinutes}</TableCell>
-                                            <TableCell>₪{lesson.rate}</TableCell>
-                                            <TableCell className="text-left font-medium">₪{lesson.subtotal.toFixed(2)}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            ))}
-        </Accordion>
-    );
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
 }
 
-/**
- * Main component for the admin payroll panel. It organizes payrolls into a tabbed interface
- * based on their status, allowing for a clear and manageable workflow.
- */
+function formatMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = String(totalMinutes % 60).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
 export function AdminPayrollPanel() {
-    const t = useTranslations('Payroll');
-    const { mockPayrolls } = useAuth();
+  const { users, mockLessons } = useAuth();
+  const t = useTranslations('Payroll');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
-    const draftPayrolls = useMemo(() => mockPayrolls.filter(p => p.status === 'DRAFT'), [mockPayrolls]);
-    const approvedPayrolls = useMemo(() => mockPayrolls.filter(p => p.status === 'APPROVED'), [mockPayrolls]);
-    const paidPayrolls = useMemo(() => mockPayrolls.filter(p => p.status === 'PAID'), [mockPayrolls]);
+  const [period, setPeriod] = useState<string>('2026-03');
+  const [isLoading, setIsLoading] = useState(false);
 
-    const { toast } = useToast();
+  const report = useMemo<PayrollReport>(() => {
+    const monthStart = new Date(`${period}-01T00:00:00`);
+    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const handleHilanExport = (payrollsToExport: PayrollSummary[]) => {
-        if (payrollsToExport.length === 0) {
-            toast({ title: t('noDataExport'), variant: 'destructive' });
-            return;
-        }
+    const teachers = users.filter((user) => user.role === 'teacher');
 
-        const headers = [
-            t('csv.employeeId'),
-            t('csv.employeeName'),
-            t('csv.workHours'),
-            t('csv.grossPay'),
-            t('csv.periodStart'),
-            t('csv.periodEnd'),
-            t('csv.hilanCode')
-        ];
-        const rows = payrollsToExport.map(p => [
-            p.teacherId, // In reality, this would be the ID number (Tz)
-            p.teacherName,
-            p.totalHours.toFixed(2),
-            p.grossPay.toString(),
-            format(new Date(p.periodStart), 'dd/MM/yyyy'),
-            format(new Date(p.periodEnd), 'dd/MM/yyyy'),
-            '101' // Standard Hilan code for hourly teaching
-        ]);
+    const byTeacher = teachers.map((teacher) => {
+      const teacherLessons = mockLessons.filter((lesson) => {
+        const when = new Date(lesson.startTime);
+        return lesson.teacherId === teacher.id && when >= monthStart && when <= monthEnd;
+      });
 
-        const csvContent = "data:text/csv;charset=utf-8,\uFEFF"
-            + headers.join(',') + '\n'
-            + rows.map(e => e.join(',')).join('\n');
+      const completed = teacherLessons.filter((lesson) => lesson.status === 'COMPLETED');
+      const totalMinutes = completed.reduce((sum, lesson) => sum + lesson.durationMinutes, 0);
+      const overtimeMinutes = Math.max(0, totalMinutes - 2400);
+      const absentCount = teacherLessons.filter((lesson) => lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'NO_SHOW_TEACHER').length;
+      const makeupCount = completed.filter((lesson) => lesson.type === 'MAKEUP').length;
+      const instrument = Array.from(new Set(teacherLessons.map((lesson) => lesson.instrument))).join(', ');
 
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `hilan_export_${format(new Date(), 'yyyy_MM')}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast({ title: t('hilanSuccess') });
+      return {
+        teacherId: teacher.id,
+        teacherName: teacher.name,
+        nationalId: teacher.idNumber || '',
+        instrument,
+        lessonsCount: completed.length,
+        totalMinutes,
+        overtimeMinutes,
+        absentCount,
+        makeupCount,
+        notes: instrument,
+      } satisfies TeacherMonthlyRow;
+    });
+
+    const totalLessons = byTeacher.reduce((sum, row) => sum + row.lessonsCount, 0);
+    const totalMinutes = byTeacher.reduce((sum, row) => sum + row.totalMinutes, 0);
+
+    return {
+      teacherCount: byTeacher.length,
+      totalLessons,
+      totalHours: Number((totalMinutes / 60).toFixed(2)),
+      byTeacher,
     };
+  }, [mockLessons, period, users]);
 
-    return (
-        <Tabs defaultValue="drafts" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="drafts">
-                    {t('drafts')}
-                    {draftPayrolls.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">{draftPayrolls.length}</span>}
-                </TabsTrigger>
-                <TabsTrigger value="approved">
-                    {t('pendingPayment')}
-                    {approvedPayrolls.length > 0 && <span className="ms-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-yellow-500 rounded-full">{approvedPayrolls.length}</span>}
-                </TabsTrigger>
-                <TabsTrigger value="paid">{t('paid')}</TabsTrigger>
-            </TabsList>
-            <Card className="mt-4">
-                <TabsContent value="drafts" className="m-0">
-                    <CardHeader>
-                        <CardTitle>{t('draftTitle')}</CardTitle>
-                        <CardDescription>{t('draftDesc')}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <PayrollTable payrolls={draftPayrolls} />
-                    </CardContent>
-                </TabsContent>
-                <TabsContent value="approved" className="m-0">
-                    <CardHeader className="flex flex-row items-start justify-between">
-                        <div>
-                            <CardTitle>{t('approvedTitle')}</CardTitle>
-                            <CardDescription>{t('approvedDesc')}</CardDescription>
-                        </div>
-                        {approvedPayrolls.length > 0 && (
-                            <Button variant="outline" onClick={() => handleHilanExport(approvedPayrolls)}>
-                                <FileSpreadsheet className="me-2 h-4 w-4" /> {t('exportHilan')}
-                            </Button>
-                        )}
-                    </CardHeader>
-                    <CardContent>
-                        <PayrollTable payrolls={approvedPayrolls} />
-                    </CardContent>
-                </TabsContent>
-                <TabsContent value="paid" className="m-0">
-                    <CardHeader className="flex flex-row items-start justify-between">
-                        <div>
-                            <CardTitle>{t('paidTitle')}</CardTitle>
-                            <CardDescription>{t('paidDesc')}</CardDescription>
-                        </div>
-                        {paidPayrolls.length > 0 && (
-                            <Button variant="outline" onClick={() => handleHilanExport(paidPayrolls)}>
-                                <FileSpreadsheet className="me-2 h-4 w-4" /> {t('exportPast')}
-                            </Button>
-                        )}
-                    </CardHeader>
-                    <CardContent>
-                        <PayrollTable payrolls={paidPayrolls} />
-                    </CardContent>
-                </TabsContent>
-            </Card>
-        </Tabs>
-    );
+  const generateReport = async () => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    setIsLoading(false);
+  };
+
+  const exportAllToCsv = () => {
+    downloadPayrollCsv(report.byTeacher, `payroll-${period}.csv`);
+  };
+
+  const exportTeacherCsv = (teacherId: string) => {
+    const row = report.byTeacher.find((entry) => entry.teacherId === teacherId);
+    if (!row) return;
+    downloadPayrollCsv([row], `payroll-${teacherId}-${period}.csv`);
+  };
+
+  return (
+    <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="flex flex-wrap items-end gap-4">
+        <div className="space-y-1">
+          <label className="text-sm text-muted-foreground">{t('period')}</label>
+          <input
+            type="month"
+            value={period}
+            onChange={(event) => setPeriod(event.target.value)}
+            className="h-9 rounded-md border bg-background px-3"
+          />
+        </div>
+
+        <Button onClick={generateReport} disabled={isLoading}>
+          {isLoading ? <Loader2 className="h-4 w-4 me-2 animate-spin" /> : <RefreshCw className="h-4 w-4 me-2" />}
+          {t('generateReport')}
+        </Button>
+
+        <Button variant="outline" onClick={exportAllToCsv}>
+          <Download className="h-4 w-4 me-2" />
+          {t('exportAll')}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-start">{t('totalTeachers')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-start">{report.teacherCount}</CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-start">{t('totalLessons')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-start">{report.totalLessons}</CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-start">{t('totalHours')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold text-start">{report.totalHours}h</CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardContent className="pt-6">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-start">{t('teacher')}</TableHead>
+                <TableHead className="text-start">{t('instrument')}</TableHead>
+                <TableHead className="text-start">{t('lessonsCount')}</TableHead>
+                <TableHead className="text-start">{t('hours')}</TableHead>
+                <TableHead className="text-start">{t('absences')}</TableHead>
+                <TableHead className="text-start">{t('makeups')}</TableHead>
+                <TableHead className="text-start">{t('actions')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {report.byTeacher.map((row) => (
+                <TableRow key={row.teacherId}>
+                  <TableCell className="text-start">{row.teacherName}</TableCell>
+                  <TableCell className="text-start">{row.instrument || '-'}</TableCell>
+                  <TableCell className="text-start">{row.lessonsCount}</TableCell>
+                  <TableCell className="text-start">{formatMinutes(row.totalMinutes)}</TableCell>
+                  <TableCell className="text-start">{row.absentCount}</TableCell>
+                  <TableCell className="text-start">{row.makeupCount}</TableCell>
+                  <TableCell className="text-start">
+                    <Button size="sm" variant="ghost" onClick={() => exportTeacherCsv(row.teacherId)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

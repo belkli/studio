@@ -178,7 +178,12 @@
     "story3Instrument": "فلوت",
     "story3Name": "ليان",
     "story3Text": "تعيش ليان في الأطراف، والوصول إلى دروس عالية الجودة محدود. سيمكنها تبرعك من مواصلة حضور الدروس في المعهد وتحقيق حلمها.",
-    "submitButton": "تبرع بـ {amount}₪"
+    "submitButton": "تبرع بـ {amount}₪",
+    "chooseCause": "اختر أين يذهب تبرعك",
+    "chooseCauseHint": "حدد سببًا محددًا أو تبرع للصندوق العام.",
+    "generalFund": "?????? ????",
+    "generalFundDesc": "???? ??????? ????? ??????? ??? ??????? ????????? ??? ???????? ?????? ???????.",
+    "raisedProgress": "أثار: {percent}% من الهدف"
   },
   "PublicEventPage": {
     "bookTicketsBtn": "حجز التذاكر",
@@ -193,7 +198,9 @@
     "programDesc": "المقاطع التي سيؤديها فنانونا الشباب.",
     "programTBA": "سيتم الإعلان عن البرنامج الكامل قريباً.",
     "recitalDesc": "انضم إلينا في حفل خاص يضم طلابنا الموهوبين.",
-    "totalPayment": "إجمالي الدفع"
+    "totalPayment": "إجمالي الدفع",
+    "openInMaps": "افتح في خرائط جوجل",
+    "soldOut": "نفذ"
   },
   "PublicProfiles": {
     "aiTranslated": "مترجم بالذكاء الاصطناعي",
@@ -228,6 +235,87 @@
     "placeholder": "اسألني شيئًا...",
     "suggestionsTitle": "اقتراحات:",
     "title": "مساعد الذكاء الاصطناعي في هارمونيا",
-    "welcomeMessage": "أهلاً! أنا هارموني، مساعد الذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟"
+    "welcomeMessage": "أهلاً! أنا هارموني، مساعد الذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟",
+    "quickQuestions": {
+      "default": {
+        "cancelLesson": "How do I cancel a lesson?",
+        "makeupBalance": "Where can I see my makeup lesson balance?",
+        "recitalForm": "How do I submit a recital form?",
+        "updateAvailability": "How do I update my availability? (teachers)"
+      },
+      "schedule": {
+        "bookMakeup": "How do I book a makeup lesson?",
+        "cancelNextWeek": "Can I cancel next week's lesson?",
+        "cancellationPolicy": "What is the conservatory cancellation policy?",
+        "syncCalendar": "How can I sync my calendar?"
+      },
+      "billing": {
+        "invoices": "Where can I find my invoices?",
+        "updateCard": "How do I update my payment card?",
+        "nextCharge": "When is my next charge due?",
+        "siblingDiscount": "How does sibling discount work?"
+      },
+      "forms": {
+        "approveRecital": "How long does recital form approval take?",
+        "rejectedForm": "My form was rejected, what should I do?",
+        "downloadPdf": "How do I download approved form PDF?",
+        "whoApproves": "Who needs to approve my form?"
+      },
+      "admin": {
+        "approveEnrollment": "How do I approve a new student enrollment?",
+        "packagePricing": "Where do I configure package pricing?",
+        "sendAnnouncement": "How do I send an announcement to all parents?",
+        "financialReports": "Where can I view financial reports?"
+      }
+    }
+  },
+  "Landing": {
+    "heroTitle": "الموسيقى ليست مجرد مهارة، بل هي الحياة",
+    "heroSubtitle": "تعليم الموسيقى الاحترافي لكل الأعمار وكل مرحلة.",
+    "registerCta": "سجّل الآن",
+    "findConservatory": "البحث عن المعهد الموسيقي",
+    "statConservatories": "المعاهد الموسيقية",
+    "statLessons": "الدروس في السنة",
+    "statSatisfaction": "رضا الوالدين",
+    "statStudents": "الطلاب النشطون",
+    "findTitle": "ابحث عن معهدك الموسيقي",
+    "findSubtitle": "البحث حسب المدينة، الصك أو اسم المعهد الموسيقي.",
+    "searchPlaceholder": "البحث حسب المدينة أو الاسم...",
+    "cityPlaceholder": "مدينة الإقامة",
+    "instrumentPlaceholder": "الآلة",
+    "search": "بحث",
+    "conservatoryFallback": "المعهد الموسيقي المحترف في شبكة هارمونيا.",
+    "viewAll": "عرض جميع المعاهد الموسيقية {count}",
+    "howItWorksTitle": "كيف يعمل",
+    "step1Title": "البحث عن المعهد الموسيقي",
+    "step1Desc": "البحث حسب المدينة، الصك أو المعلم.",
+    "step2Title": "سجل بسرعة",
+    "step2Desc": "أكمل التسجيل بتدفق بسيط.",
+    "step3Title": "ابدأ التعلم",
+    "step3Desc": "دروس شخصية مع المعلمين ذوي الخبرة.",
+    "featuredTeachersTitle": "المعلمين المميزين",
+    "teacherFallback": "مدرس ذو خبرة في شبكة هارمونيا.",
+    "upcomingEventsTitle": "الأحداث القادمة",
+    "openDaysTitle": "الأيام المفتوحة القادمة",
+    "openDaysFallback": "سيتم نشر جدول اليوم المفتوح قريبا.",
+    "openDaysCta": "عرض الأيام المفتوحة",
+    "testimonialsTitle": "ماذا تقول العائلات",
+    "testimonial1": "اكتسبت ابنتنا الثقة والفرح من خلال الموسيقى.",
+    "testimonial2": "وكانت عملية التسجيل واضحة وسريعة.",
+    "testimonial3": "مدرسين ممتازين ودعم دافئ.",
+    "donateTitle": "امنح كل طفل هدية الموسيقى",
+    "donateSubtitle": "دعم المنح الدراسية والمساواة في الحصول على تعليم الموسيقى.",
+    "donateCta": "تبرع الآن"
+  },
+  "About": {
+    "allInstruments": "كل الآلات",
+    "teachersTitle": "تعرف على مدرسينا",
+    "teachersSubtitle": "المعلمين المحترفين من المعاهد الموسيقية عبر المنصة.",
+    "viewBio": "عرض الملف الشخصي الكامل",
+    "instrumentUnknown": "الأداة غير محددة",
+    "loadMoreTeachers": "عرض {count} المزيد من المعلمين",
+    "bookWithTeacher": "سجل مع هذا المعلم",
+    "education": "تعليم",
+    "bioUnavailable": "سيتم إضافة السيرة الذاتية قريبا."
   }
 }

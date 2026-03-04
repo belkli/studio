@@ -21,7 +21,7 @@ import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { SuggestionButton } from './suggestion-button';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 
 const getCompositionSchema = (t: any) => z.object({
@@ -62,6 +62,12 @@ type FormData = z.infer<ReturnType<typeof getFormSchema>> & {
     numParticipants: number;
 };
 
+type ComposerOption = {
+    id: string;
+    name: string;
+    names: { he: string; en: string; ru?: string; ar?: string };
+};
+
 interface KenesFormProps {
     user: User;
     onSubmit: (data: Partial<FormSubmission>) => void;
@@ -98,12 +104,14 @@ const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
 const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('KenesForm');
     const { control, setValue, watch, getValues } = useFormContext();
-    const [composerOptions, setComposerOptions] = useState<string[]>([]);
+    const [composerOptions, setComposerOptions] = useState<ComposerOption[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
     const [isLoadingCompositions, setIsLoadingCompositions] = useState(false);
 
     const currentRepertoireItem = watch(`repertoire.${index}`);
+    const locale = useLocale() as "he" | "en" | "ar" | "ru";
+    const selectedComposerId = currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(currentRepertoireItem?.composer))?.id || '';
     const selectedComposer = currentRepertoireItem?.composer;
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
@@ -115,15 +123,15 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
-        const results = await searchCompositions({ query, composer: selectedComposer });
+        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, locale });
         setCompositionOptions(results);
         setIsLoadingCompositions(false);
-    }, 300), [selectedComposer]);
+    }, 300), [selectedComposer, selectedComposerId, locale]);
 
     useEffect(() => {
-        debouncedComposerSearch('');
+        debouncedCompositionSearch('');
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComposer]);
+    }, [selectedComposer, selectedComposerId]);
 
     useEffect(() => {
         debouncedComposerSearch('');
@@ -135,6 +143,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
         if (composition) {
             setValue(`repertoire.${index}.id`, composition.id);
             setValue(`repertoire.${index}.title`, composition.title);
+            setValue(`repertoire.${index}.composerId`, composition.composerId || "");
             setValue(`repertoire.${index}.composer`, composition.composer);
             setValue(`repertoire.${index}.duration`, composition.duration);
             setValue(`repertoire.${index}.genre`, composition.genre);
@@ -165,10 +174,12 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                             <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
                                 <Combobox
-                                    options={composerOptions.map(c => ({ value: c, label: c }))}
-                                    selectedValue={composerField.value}
+                                    options={composerOptions.map(c => ({ value: c.id, label: c.names[locale] || c.names.en || c.name }))}
+                                    selectedValue={currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(composerField.value))?.id || ""}
                                     onSelectedValueChange={(value) => {
-                                        composerField.onChange(value);
+                                        const selectedOption = composerOptions.find(option => option.id === value);
+                                        setValue(`repertoire.${index}.composerId`, value);
+                                        composerField.onChange(selectedOption?.names[locale] || selectedOption?.names.en || selectedOption?.name || "");
                                         setValue(`repertoire.${index}.title`, '');
                                         setValue(`repertoire.${index}.duration`, '00:00');
                                         setValue(`repertoire.${index}.genre`, '');
@@ -250,7 +261,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCancel }: KenesFormProps) {
     const t = useTranslations('KenesForm');
     const tForms = useTranslations('Forms');
-    const emptyComposition = { id: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
+    const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
         resolver: zodResolver(getFormSchema(t)) as any,
@@ -475,3 +486,4 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
         </FormProvider>
     );
 }
+

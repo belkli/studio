@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -11,100 +11,66 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Languages, Plus, Trash2 } from 'lucide-react';
-import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember, ConservatoriumPolicyContact } from '@/lib/types';
+import { Switch } from '@/components/ui/switch';
+import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Plus, Trash2, ExternalLink } from 'lucide-react';
+import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember, ConservatoriumPolicyContact, OpeningHours } from '@/lib/types';
 import { translateConservatoriumProfile } from '@/app/actions/translate';
 import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
 import { computeConservatoriumSourceHash } from '@/lib/utils/translation-hash';
 
-const PROFILE_UI_TEXT = {
-    en: {
-        pageTitle: 'Public Profile (About Us)',
-        pageDesc: 'Manage the multilingual profile shown on the public directory.',
-        forceRetranslate: 'Force Re-translate',
-        contentChanged: 'Content Changed',
-        syncingTranslations: 'Updating AI translations to match your new content...',
-        profileSaved: 'Profile Saved',
-        profileSavedDesc: 'The conservatorium public profile has been updated.',
-        errorSaving: 'Error Saving',
-        errorSavingDesc: 'Failed to update the profile.',
-        translationsUpdated: 'Translations Updated',
-        tabs: { basic: 'Basic Info', contact: 'Contact', location: 'Location', team: 'Team', social: 'Social', media: 'Media' },
-        basic: { title: 'Basic Information', desc: 'Primary details about the conservatorium.', pendingSync: 'Pending Sync', name: 'Conservatorium Name', about: 'About Us (Description)', foundedYear: 'Founded Year', foundedYearPlaceholder: 'e.g 1995' },
-        footer: { cancel: 'Cancel', saving: 'Saving...', saveProfile: 'Save Profile' },
-    },
-    he: {
-        pageTitle: 'פרופיל ציבורי (אודותינו)',
-        pageDesc: 'ניהול הפרופיל הרב-לשוני שמוצג בספרייה הציבורית.',
-        forceRetranslate: 'תרגם מחדש',
-        contentChanged: 'התוכן השתנה',
-        syncingTranslations: 'מעדכן תרגומי AI בהתאם לתוכן החדש...',
-        profileSaved: 'הפרופיל נשמר',
-        profileSavedDesc: 'הפרופיל הציבורי של הקונסרבטוריון עודכן.',
-        errorSaving: 'שגיאה בשמירה',
-        errorSavingDesc: 'שמירת הפרופיל נכשלה.',
-        translationsUpdated: 'התרגומים עודכנו',
-        tabs: { basic: 'מידע בסיסי', contact: 'יצירת קשר', location: 'מיקום', team: 'צוות', social: 'רשתות', media: 'מדיה' },
-        basic: { title: 'מידע בסיסי', desc: 'פרטים ראשיים על הקונסרבטוריון.', pendingSync: 'ממתין לסנכרון', name: 'שם הקונסרבטוריון', about: 'אודות (תיאור)', foundedYear: 'שנת הקמה', foundedYearPlaceholder: 'למשל 1995' },
-        footer: { cancel: 'ביטול', saving: 'שומר...', saveProfile: 'שמור פרופיל' },
-    },
-    ar: {
-        pageTitle: 'الملف العام (من نحن)',
-        pageDesc: 'إدارة الملف متعدد اللغات المعروض في الدليل العام.',
-        forceRetranslate: 'إعادة الترجمة',
-        contentChanged: 'تم تغيير المحتوى',
-        syncingTranslations: 'يتم تحديث ترجمات الذكاء الاصطناعي لتطابق المحتوى الجديد...',
-        profileSaved: 'تم حفظ الملف',
-        profileSavedDesc: 'تم تحديث الملف العام للكونسرفاتوار.',
-        errorSaving: 'خطأ أثناء الحفظ',
-        errorSavingDesc: 'فشل تحديث الملف.',
-        translationsUpdated: 'تم تحديث الترجمات',
-        tabs: { basic: 'معلومات أساسية', contact: 'التواصل', location: 'الموقع', team: 'الفريق', social: 'اجتماعي', media: 'وسائط' },
-        basic: { title: 'معلومات أساسية', desc: 'التفاصيل الأساسية عن الكونسرفاتوار.', pendingSync: 'بانتظار المزامنة', name: 'اسم الكونسرفاتوار', about: 'من نحن (الوصف)', foundedYear: 'سنة التأسيس', foundedYearPlaceholder: 'مثال 1995' },
-        footer: { cancel: 'إلغاء', saving: 'جارٍ الحفظ...', saveProfile: 'حفظ الملف' },
-    },
-    ru: {
-        pageTitle: 'Публичный профиль (О нас)',
-        pageDesc: 'Управляйте многоязычным профилем в публичном каталоге.',
-        forceRetranslate: 'Перевести заново',
-        contentChanged: 'Контент изменен',
-        syncingTranslations: 'Обновляем AI-переводы в соответствии с новым контентом...',
-        profileSaved: 'Профиль сохранен',
-        profileSavedDesc: 'Публичный профиль консерватории обновлен.',
-        errorSaving: 'Ошибка сохранения',
-        errorSavingDesc: 'Не удалось обновить профиль.',
-        translationsUpdated: 'Переводы обновлены',
-        tabs: { basic: 'Основное', contact: 'Контакты', location: 'Локация', team: 'Команда', social: 'Соцсети', media: 'Медиа' },
-        basic: { title: 'Основная информация', desc: 'Основные сведения о консерватории.', pendingSync: 'Ожидает синхронизации', name: 'Название консерватории', about: 'О нас (описание)', foundedYear: 'Год основания', foundedYearPlaceholder: 'например, 1995' },
-        footer: { cancel: 'Отмена', saving: 'Сохранение...', saveProfile: 'Сохранить профиль' },
-    },
-} as const;
+const DAYS_OF_WEEK = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+
+function createDefaultOpeningHours(): OpeningHours {
+    return DAYS_OF_WEEK.reduce((acc, day) => {
+        acc[day] = { isOpen: false, openTime: '08:00', closeTime: '20:00' };
+        return acc;
+    }, {} as OpeningHours);
+}
+
+function formatOpeningHours(hours: OpeningHours, t: (k: string) => string): string {
+    return DAYS_OF_WEEK
+        .filter((day) => hours[day]?.isOpen)
+        .map((day) => t('profileEditor.contact.days.' + day) + ': ' + hours[day].openTime + '-' + hours[day].closeTime)
+        .join(', ');
+}
 
 export default function ConservatoriumProfileEditor() {
     const t = useTranslations('SettingsPage.conservatorium');
-    const locale = useLocale() as keyof typeof PROFILE_UI_TEXT;
+    const tUi = useTranslations('SettingsPage.conservatorium.profileEditor.ui');
+    const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const ui = PROFILE_UI_TEXT[locale] ?? PROFILE_UI_TEXT.en;
-    const resetLabel = locale === 'he'
-        ? 'נקה שינויים'
-        : locale === 'ar'
-            ? 'مسح التغييرات'
-            : locale === 'ru'
-                ? 'Сбросить изменения'
-                : 'Reset changes';
-    const { user, conservatoriums, updateConservatorium } = useAuth();
+    const { user, users, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
     const [formData, setFormData] = useState<Partial<Conservatorium>>({});
+    const [hoursByDay, setHoursByDay] = useState<OpeningHours>(createDefaultOpeningHours());
+    const [addressSuggestions, setAddressSuggestions] = useState<Array<{ description: string; placeId: string }>>([]);
 
     const currentCons = conservatoriums.find(c => c.id === user?.conservatoriumId);
+
+    const derivedInstruments = useMemo(() => {
+        const values = new Set<string>();
+        users
+            .filter((entry) => entry.role === 'teacher' && entry.conservatoriumId === user?.conservatoriumId)
+            .forEach((entry) => entry.instruments?.forEach((item) => values.add(item.instrument)));
+        return Array.from(values).sort((a, b) => a.localeCompare(b));
+    }, [user?.conservatoriumId, users]);
 
     useEffect(() => {
         if (currentCons) {
             setFormData(currentCons);
+            setHoursByDay(currentCons.openingHoursByDay || createDefaultOpeningHours());
         }
     }, [currentCons]);
+
+    useEffect(() => {
+        setFormData((prev) => ({
+            ...prev,
+            openingHoursByDay: hoursByDay,
+            openingHours: formatOpeningHours(hoursByDay, (key) => t(key))
+        }));
+    }, [hoursByDay, t]);
 
     if (!user || !currentCons || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
         return null;
@@ -123,8 +89,8 @@ export default function ConservatoriumProfileEditor() {
         if (isStale) {
             setIsTranslating(true);
             toast({
-                title: ui.contentChanged,
-                description: ui.syncingTranslations,
+                title: tUi('toasts.contentChangedTitle'),
+                description: tUi('toasts.contentChangedDesc'),
             });
 
             const result = await translateConservatoriumProfile(
@@ -150,14 +116,14 @@ export default function ConservatoriumProfileEditor() {
         try {
             await updateConservatorium(finalData);
             toast({
-                title: ui.profileSaved,
-                description: ui.profileSavedDesc,
+                title: tUi('toasts.profileSavedTitle'),
+                description: tUi('toasts.profileSavedDesc'),
             });
         } catch (error) {
             toast({
                 variant: 'destructive',
-                title: ui.errorSaving,
-                description: ui.errorSavingDesc,
+                title: tUi('toasts.errorSavingTitle'),
+                description: tUi('toasts.errorSavingDesc'),
             });
         } finally {
             setIsSaving(false);
@@ -182,7 +148,7 @@ export default function ConservatoriumProfileEditor() {
                     overrides: prev.translationMeta?.overrides
                 }
             }));
-            toast({ title: ui.translationsUpdated });
+            toast({ title: tUi('toasts.translationsUpdatedTitle') });
         }
         setIsTranslating(false);
     };
@@ -315,13 +281,68 @@ export default function ConservatoriumProfileEditor() {
             return { ...prev, leadingTeam: team, translations: updatedTranslations };
         });
     };
+    const setDayOpen = (day: string, isOpen: boolean) => {
+        setHoursByDay((prev) => ({
+            ...prev,
+            [day]: {
+                ...(prev[day] || { openTime: '08:00', closeTime: '20:00' }),
+                isOpen
+            }
+        }));
+    };
+
+    const setDayTime = (day: string, key: 'openTime' | 'closeTime', value: string) => {
+        setHoursByDay((prev) => ({
+            ...prev,
+            [day]: {
+                ...(prev[day] || { isOpen: true, openTime: '08:00', closeTime: '20:00' }),
+                [key]: value
+            }
+        }));
+    };
+
+    const updateLocationField = (key: string, value: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            location: {
+                city: prev.location?.city || '',
+                ...prev.location,
+                [key]: value
+            }
+        }));
+    };
+
+    const handleAddressSuggest = (value: string) => {
+        updateLocationField('address', value);
+        if (value.trim().length < 3) {
+            setAddressSuggestions([]);
+            return;
+        }
+
+        const suggestions = [
+            value,
+            (value + ', ' + (formData.location?.city || '')).trim(),
+            (value + ', ' + (formData.location?.cityEn || '')).trim()
+        ]
+            .filter((entry) => entry.length > 0)
+            .slice(0, 3)
+            .map((entry, index) => ({ description: entry, placeId: 'local-' + index }));
+
+        setAddressSuggestions(suggestions);
+    };
+
+    const selectAddress = (description: string) => {
+        updateLocationField('address', description);
+        updateLocationField('googleMapsUrl', 'https://maps.google.com/?q=' + encodeURIComponent(description));
+        setAddressSuggestions([]);
+    };
 
     return (
         <div className="space-y-6 pb-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold">{ui.pageTitle}</h1>
-                    <p className="text-muted-foreground">{ui.pageDesc}</p>
+                    <h1 className="text-2xl font-bold text-start">{tUi('pageTitle')}</h1>
+                    <p className="text-muted-foreground text-start">{tUi('pageDesc')}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button
@@ -332,39 +353,39 @@ export default function ConservatoriumProfileEditor() {
                         disabled={isTranslating}
                     >
                         {isTranslating ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                        {ui.forceRetranslate}
+                        {tUi('forceRetranslate')}
                     </Button>
                 </div>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-6">
+            <form onSubmit={handleSave} className="space-y-6 [&_label]:text-start">
                 <Tabs defaultValue="basic" className="w-full">
-                    <TabsList className="flex h-auto mb-6 bg-muted/50 p-1 overflow-x-auto">
-                        <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {ui.tabs.basic}</TabsTrigger>
-                        <TabsTrigger value="contact" className="flex items-center gap-2"><Contact className="w-4 h-4" /> {ui.tabs.contact}</TabsTrigger>
-                        <TabsTrigger value="location" className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {ui.tabs.location}</TabsTrigger>
-                        <TabsTrigger value="team" className="flex items-center gap-2"><Users className="w-4 h-4" /> {ui.tabs.team}</TabsTrigger>
-                        <TabsTrigger value="social" className="flex items-center gap-2"><Share2 className="w-4 h-4" /> {ui.tabs.social}</TabsTrigger>
-                        <TabsTrigger value="media" className="flex items-center gap-2"><ImageIcon className="w-4 h-4" /> {ui.tabs.media}</TabsTrigger>
+                    <TabsList dir={isRtl ? "rtl" : "ltr"} className="flex h-auto mb-6 bg-muted/50 p-1 overflow-x-auto">
+                        <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {tUi('tabs.basic')}</TabsTrigger>
+                        <TabsTrigger value="contact" className="flex items-center gap-2"><Contact className="w-4 h-4" /> {tUi('tabs.contact')}</TabsTrigger>
+                        <TabsTrigger value="location" className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {tUi('tabs.location')}</TabsTrigger>
+                        <TabsTrigger value="team" className="flex items-center gap-2"><Users className="w-4 h-4" /> {tUi('tabs.team')}</TabsTrigger>
+                        <TabsTrigger value="social" className="flex items-center gap-2"><Share2 className="w-4 h-4" /> {tUi('tabs.social')}</TabsTrigger>
+                        <TabsTrigger value="media" className="flex items-center gap-2"><ImageIcon className="w-4 h-4" /> {tUi('tabs.media')}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="basic" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0">
                                 <div>
-                                    <CardTitle>{ui.basic.title}</CardTitle>
-                                    <CardDescription>{ui.basic.desc}</CardDescription>
+                                    <CardTitle>{tUi('basic.title')}</CardTitle>
+                                    <CardDescription>{tUi('basic.desc')}</CardDescription>
                                 </div>
                                 {computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash && (
                                     <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 gap-1 h-6">
                                         <Sparkles className="w-3 h-3" />
-                                        {ui.basic.pendingSync}
+                                        {tUi('basic.pendingSync')}
                                     </Badge>
                                 )}
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <TranslatedFieldInput
-                                    label={ui.basic.name}
+                                    label={tUi('basic.name')}
                                     value={formData.name || ''}
                                     translations={{
                                         en: formData.translations?.en?.name || formData.nameEn,
@@ -382,7 +403,7 @@ export default function ConservatoriumProfileEditor() {
                                 />
 
                                 <TranslatedFieldInput
-                                    label={ui.basic.about}
+                                    label={tUi('basic.about')}
                                     value={formData.about || ''}
                                     translations={{
                                         en: formData.translations?.en?.about,
@@ -401,12 +422,12 @@ export default function ConservatoriumProfileEditor() {
                                 />
 
                                 <div className="space-y-2 max-w-sm">
-                                    <Label>{ui.basic.foundedYear}</Label>
+                                    <Label>{tUi('basic.foundedYear')}</Label>
                                     <Input
                                         type="number"
                                         value={formData.foundedYear || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, foundedYear: parseInt(e.target.value) }))}
-                                        placeholder={ui.basic.foundedYearPlaceholder}
+                                        placeholder={tUi('basic.foundedYearPlaceholder')}
                                     />
                                 </div>
                             </CardContent>
@@ -429,7 +450,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => setFormData(prev => ({ ...prev, tel: e.target.value }))}
                                         placeholder="e.g 03-1234567"
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -440,7 +461,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => updateSocial('whatsapp', e.target.value)}
                                         placeholder="e.g 054-1234567"
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -451,7 +472,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                                         placeholder="e.g office@conservatory.co.il"
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -462,7 +483,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => setFormData(prev => ({ ...prev, secondaryEmail: e.target.value }))}
                                         placeholder="Optional"
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 </div>
@@ -474,27 +495,38 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => setFormData(prev => ({ ...prev, officialSite: e.target.value }))}
                                         placeholder="https://www..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
+                                <div className="space-y-3">
+                                    <Label>{t('profileEditor.contact.openingHours')}</Label>
+                                    <div className="space-y-2 rounded-lg border border-border/60 p-4">
+                                        {DAYS_OF_WEEK.map((day) => (
+                                            <div key={day} className="flex flex-wrap items-center gap-3">
+                                                <span className="w-28 text-sm text-start">{t('profileEditor.contact.days.' + day)}</span>
+                                                <Switch checked={hoursByDay[day]?.isOpen ?? false} onCheckedChange={(checked: boolean) => setDayOpen(day, checked)} />
+                                                {hoursByDay[day]?.isOpen ? (
+                                                    <>
+                                                        <Input
+                                                            type="time"
+                                                            value={hoursByDay[day]?.openTime || '08:00'}
+                                                            onChange={(event) => setDayTime(day, 'openTime', event.target.value)}
+                                                            className="w-36"
+                                                        />
+                                                        <span>-</span>
+                                                        <Input
+                                                            type="time"
+                                                            value={hoursByDay[day]?.closeTime || '20:00'}
+                                                            onChange={(event) => setDayTime(day, 'closeTime', event.target.value)}
+                                                            className="w-36"
+                                                        />
+                                                    </>
+                                                ) : null}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
 
-                                <TranslatedFieldInput
-                                    label="Opening Hours"
-                                    value={formData.openingHours || ''}
-                                    translations={{
-                                        en: formData.translations?.en?.openingHours,
-                                        ar: formData.translations?.ar?.openingHours,
-                                        ru: formData.translations?.ru?.openingHours,
-                                    }}
-                                    fieldKey="openingHours"
-                                    onSourceChange={(val) => setFormData(prev => ({ ...prev, openingHours: val }))}
-                                    onTranslationChange={(loc, val) => handleTranslationChange('openingHours', loc, val)}
-                                    isStale={computeConservatoriumSourceHash(formData) !== formData.translationMeta?.sourceHash}
-                                    isTranslating={isTranslating}
-                                    overriddenLocales={Object.entries(formData.translationMeta?.overrides || {})
-                                        .filter(([_, fields]) => fields.includes('openingHours'))
-                                        .map(([loc]) => loc)}
-                                />
 
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
@@ -512,7 +544,7 @@ export default function ConservatoriumProfileEditor() {
                                             <Input
                                                 type="email"
                                                 dir="ltr"
-                                                className="text-left"
+                                                className="text-start"
                                                 value={formData.privacyContact?.email || ''}
                                                 onChange={e => updatePolicyContact('privacyContact', 'email', e.target.value)}
                                                 placeholder={t('profileEditor.contact.contactEmailPlaceholder')}
@@ -523,7 +555,7 @@ export default function ConservatoriumProfileEditor() {
                                             <Input
                                                 type="tel"
                                                 dir="ltr"
-                                                className="text-left"
+                                                className="text-start"
                                                 value={formData.privacyContact?.phone || ''}
                                                 onChange={e => updatePolicyContact('privacyContact', 'phone', e.target.value)}
                                                 placeholder={t('profileEditor.contact.contactPhonePlaceholder')}
@@ -546,7 +578,7 @@ export default function ConservatoriumProfileEditor() {
                                             <Input
                                                 type="email"
                                                 dir="ltr"
-                                                className="text-left"
+                                                className="text-start"
                                                 value={formData.accessibilityContact?.email || ''}
                                                 onChange={e => updatePolicyContact('accessibilityContact', 'email', e.target.value)}
                                                 placeholder={t('profileEditor.contact.contactEmailPlaceholder')}
@@ -557,7 +589,7 @@ export default function ConservatoriumProfileEditor() {
                                             <Input
                                                 type="tel"
                                                 dir="ltr"
-                                                className="text-left"
+                                                className="text-start"
                                                 value={formData.accessibilityContact?.phone || ''}
                                                 onChange={e => updatePolicyContact('accessibilityContact', 'phone', e.target.value)}
                                                 placeholder={t('profileEditor.contact.contactPhonePlaceholder')}
@@ -572,7 +604,6 @@ export default function ConservatoriumProfileEditor() {
                             </CardContent>
                         </Card>
                     </TabsContent>
-
                     <TabsContent value="location" className="space-y-4 outline-none">
                         <Card>
                             <CardHeader>
@@ -585,15 +616,15 @@ export default function ConservatoriumProfileEditor() {
                                         <Label>{t('profileEditor.location.cityHebrew')}</Label>
                                         <Input
                                             value={formData.location?.city || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, city: e.target.value } }))}
-                                            placeholder="e.g פתח תקווה"
+                                            onChange={e => updateLocationField('city', e.target.value)}
+                                            placeholder="e.g Petah Tikva"
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>{t('profileEditor.location.cityEnglish')}</Label>
                                         <Input
                                             value={formData.location?.cityEn || ''}
-                                            onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, cityEn: e.target.value } }))}
+                                            onChange={e => updateLocationField('cityEn', e.target.value)}
                                             placeholder="e.g Petah Tikva"
                                         />
                                     </div>
@@ -602,9 +633,72 @@ export default function ConservatoriumProfileEditor() {
                                     <Label>{t('profileEditor.location.fullAddress')}</Label>
                                     <Input
                                         value={formData.location?.address || ''}
-                                        onChange={e => setFormData(prev => ({ ...prev, location: { ...prev.location!, address: e.target.value } }))}
+                                        onChange={e => handleAddressSuggest(e.target.value)}
                                         placeholder="e.g 15 Maccabi St, Petah Tikva"
                                     />
+                                    {addressSuggestions.length > 0 ? (
+                                        <div className="rounded-md border border-border/60 bg-background">
+                                            {addressSuggestions.map((suggestion) => (
+                                                <button
+                                                    key={suggestion.placeId}
+                                                    type="button"
+                                                    className="block w-full px-3 py-2 text-start text-sm hover:bg-muted"
+                                                    onClick={() => selectAddress(suggestion.description)}
+                                                >
+                                                    {suggestion.description}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : null}
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>{t('profileEditor.location.postalCode')}</Label>
+                                        <Input
+                                            value={formData.location?.postalCode || ''}
+                                            onChange={e => updateLocationField('postalCode', e.target.value)}
+                                            placeholder="e.g 4951123"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>{t('profileEditor.location.mapsLink')}</Label>
+                                        <Input
+                                            value={formData.location?.googleMapsUrl || ''}
+                                            onChange={e => updateLocationField('googleMapsUrl', e.target.value)}
+                                            placeholder="https://maps.google.com/..."
+                                            dir="ltr"
+                                            className="text-start"
+                                        />
+                                    </div>
+                                </div>
+                                {formData.location?.googleMapsUrl ? (
+                                    <a
+                                        href={formData.location.googleMapsUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                        {t('profileEditor.location.openInMaps')}
+                                    </a>
+                                ) : null}
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('profileEditor.location.instrumentsTitle')}</CardTitle>
+                                <CardDescription>{t('profileEditor.location.instrumentsAutoHint')}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-wrap gap-2">
+                                    {derivedInstruments.length > 0 ? (
+                                        derivedInstruments.map((instrument) => (
+                                            <Badge key={instrument} variant="secondary">{instrument}</Badge>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">{t('profileEditor.location.instrumentsEmpty')}</p>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
@@ -724,7 +818,7 @@ export default function ConservatoriumProfileEditor() {
                                     <div key={index} className="space-y-6 border rounded-xl p-6 bg-muted/10 relative">
                                         <div className="flex items-center justify-between">
                                             <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none">
-                                                {t('profileEditor.team.additionalMember') || 'Team Member'} {index + 1}
+                                                {t('profileEditor.team.additionalMember')} {index + 1}
                                             </Badge>
                                             <Button
                                                 type="button"
@@ -750,7 +844,7 @@ export default function ConservatoriumProfileEditor() {
                                                 <Input
                                                     value={member.name || ''}
                                                     onChange={e => updateLeadingTeamMember(index, 'name', e.target.value)}
-                                                    placeholder="e.g. Yossi Cohen"
+                                                    placeholder={t('profileEditor.team.memberNamePlaceholder')}
                                                 />
                                             </div>
                                         </div>
@@ -801,11 +895,11 @@ export default function ConservatoriumProfileEditor() {
                                     onClick={addLeadingTeamMember}
                                 >
                                     <Plus className="w-4 h-4 me-2" />
-                                    {t('profileEditor.team.addMember') || 'Add Team Member'}
+                                    {t('profileEditor.team.addMember')}
                                 </Button>
 
                                 <div className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
-                                    {t('profileEditor.team.note') || 'Note: The legacy Manager and Pedagogical fields above remain indefinitely supported.'}
+                                    {t('profileEditor.team.note')}
                                 </div>
                             </CardContent>
                         </Card>
@@ -826,7 +920,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => updateSocial('facebook', e.target.value)}
                                         placeholder="https://facebook.com/..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -837,7 +931,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => updateSocial('instagram', e.target.value)}
                                         placeholder="https://instagram.com/..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -848,7 +942,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => updateSocial('youtube', e.target.value)}
                                         placeholder="https://youtube.com/..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -859,7 +953,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => updateSocial('tiktok', e.target.value)}
                                         placeholder="https://tiktok.com/@..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                             </CardContent>
@@ -881,7 +975,7 @@ export default function ConservatoriumProfileEditor() {
                                         onChange={e => setFormData(prev => ({ ...prev, photoUrls: [e.target.value, ...(prev.photoUrls?.slice(1) || [])] }))}
                                         placeholder="https://..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -896,7 +990,7 @@ export default function ConservatoriumProfileEditor() {
                                         })}
                                         placeholder="https://..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -911,7 +1005,7 @@ export default function ConservatoriumProfileEditor() {
                                         })}
                                         placeholder="https://..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -926,7 +1020,7 @@ export default function ConservatoriumProfileEditor() {
                                         })}
                                         placeholder="https://..."
                                         dir="ltr"
-                                        className="text-left"
+                                        className="text-start"
                                     />
                                 </div>
                             </CardContent>
@@ -936,14 +1030,15 @@ export default function ConservatoriumProfileEditor() {
 
                 <div className="sticky bottom-0 z-20 border rounded-lg bg-background/95 backdrop-blur-sm p-3 flex items-center justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>
-                        {resetLabel}
+                        {tUi('footer.resetChanges')}
                     </Button>
                     <Button type="submit" disabled={isSaving || isTranslating}>
-                        {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> {ui.footer.saving}</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {ui.footer.saveProfile}</span>}
+                        {isSaving ? <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> {tUi('footer.saving')}</span> : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {tUi('footer.saveProfile')}</span>}
                     </Button>
                 </div>
             </form>
         </div>
     );
 }
+
 

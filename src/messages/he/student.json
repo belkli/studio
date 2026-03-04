@@ -51,7 +51,7 @@
     "weeklyGoalProgress": "{current} / {goal} דקות",
     "welcomeStudent": "ברוך הבא, {name}",
     "welcomeTitle": "ברוך הבא, {studentName}!",
-    "T": "T"
+    "T": "ט"
   },
   "StudentBilling": {
     "active": "פעיל",
@@ -120,7 +120,7 @@
     "videoAttached": "מצורף וידאו",
     "weeklyProgress": "התקדמות שבועית",
     "whatDidYouPractice": "מה תרגלת?",
-    "T": "T"
+    "T": "ט"
   },
   "PracticeLogForm": {
     "dateLabel": "תאריך",
@@ -146,7 +146,7 @@
     "selectChildPlaceholder": "בחר ילד/ה...",
     "successDesc": "כל הכבוד על תרגול של {duration} דקות.",
     "successTitle": "התרגול נרשם בהצלחה!",
-    "T": "T"
+    "T": "ט"
   },
   "ProgressPage": {
     "achievements": "הישגים",
@@ -176,7 +176,7 @@
     "totalPractice": "סך כל האימונים",
     "weeklyGoal": "יעד שבועי",
     "weeklyPracticeGoal": "יעד תרגול שבועי",
-    "T": "T"
+    "T": "ט"
   },
   "SheetMusicViewer": {
     "fullscreen": "מסך מלא",
@@ -186,7 +186,7 @@
     "myFolderDesc": "יצירות ותרגילים שהוקצו לך.",
     "noPdfAttached": "לא צורף קובץ תווים ליצירה זו.",
     "noPieces": "לא הוקצו יצירות. המורה יכול להקצות לך משימות דרך פורטל המורה.",
-    "pdfSimulator": "(הסימולטור מציג PDF. בפועל, יוצג רכיב Viewer הנתמך בנייד/שולחן עבודה)",
+    "pdfSimulator": "(הסימולטור מציג PDF. למעשה, יוצג רכיב Viewer הנתמך על ידי Mobile/Desktop)",
     "piece": "יצירה",
     "pieceDescription": "תיאור יצירה: {description}",
     "selectPieceDesc": "כל התווים, הלוויות ותקצירי שיעורי המורה זמינים כאן.",
@@ -294,7 +294,7 @@
     "instrumentStatus": "סטטוס כלי נגינה",
     "lastLessonNotesTitle": "מהשיעור האחרון עם {teacherName}:",
     "nextLessonDetails": "{date} - {instrument} עם {teacherName}",
-    "nextLessonTimeFormat": "EEEE, dd/MM 'בשעה' HH:mm",
+    "nextLessonTimeFormat": "EEEE, MM/dd 'בשעה' HH:mm",
     "nextLessonTitle": "השיעור הבא:",
     "noLastLessonNotes": "אין הערות מהשיעור האחרון.",
     "noRepertoire": "לא הוקצה רפרטואר.",

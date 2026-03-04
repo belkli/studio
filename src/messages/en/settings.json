@@ -45,14 +45,30 @@
           "contactNamePlaceholder": "e.g. Dana Cohen",
           "contactEmailPlaceholder": "e.g. privacy@conservatory.org.il",
           "contactPhonePlaceholder": "e.g. 03-1234567",
-          "fallbackHint": "If these fields are empty, the legal statements automatically display the primary conservatorium admin contact."
+          "fallbackHint": "If these fields are empty, legal statements will show the primary conservatorium admin contact.",
+          "openingHours": "Opening Hours",
+          "days": {
+            "sunday": "Sunday",
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday"
+          }
         },
         "location": {
           "title": "Location",
           "description": "Where are you located?",
           "cityHebrew": "City (Hebrew)",
           "cityEnglish": "City (English)",
-          "fullAddress": "Full Address"
+          "fullAddress": "Full Address",
+          "postalCode": "Postal Code",
+          "mapsLink": "Google Maps URL",
+          "openInMaps": "Open in Google Maps",
+          "instrumentsTitle": "Available Instruments",
+          "instrumentsAutoHint": "Auto-populated from active teachers in this conservatorium.",
+          "instrumentsEmpty": "No instruments were detected from teacher profiles."
         },
         "team": {
           "title": "Leadership Team",
@@ -67,7 +83,8 @@
           "coordinatorNamePlaceholder": "Coordinator's Name",
           "additionalMember": "Additional Member",
           "addMember": "Add Member",
-          "note": "Note"
+          "note": "Note",
+          "memberNamePlaceholder": "e.g. Yossi Cohen"
         },
         "social": {
           "title": "Social Media Links",
@@ -84,14 +101,108 @@
           "galleryImage1": "Gallery Image 1 URL",
           "galleryImage2": "Gallery Image 2 URL",
           "galleryImage3": "Gallery Image 3 URL"
+        },
+        "ui": {
+          "pageTitle": "Public Profile (About Us)",
+          "pageDesc": "Manage the multilingual profile shown on the public directory.",
+          "forceRetranslate": "Force Re-translate",
+          "tabs": {
+            "basic": "Basic Info",
+            "contact": "Contact",
+            "location": "Location",
+            "team": "Team",
+            "social": "Social",
+            "media": "Media"
+          },
+          "basic": {
+            "title": "Basic Information",
+            "desc": "Primary details about the conservatorium.",
+            "pendingSync": "Pending Sync",
+            "name": "Conservatorium Name",
+            "about": "About Us (Description)",
+            "foundedYear": "Founded Year",
+            "foundedYearPlaceholder": "e.g. 1995"
+          },
+          "toasts": {
+            "contentChangedTitle": "Content Changed",
+            "contentChangedDesc": "Updating AI translations to match your new content...",
+            "profileSavedTitle": "Profile Saved",
+            "profileSavedDesc": "The conservatorium public profile has been updated.",
+            "errorSavingTitle": "Error Saving",
+            "errorSavingDesc": "Failed to update the profile.",
+            "translationsUpdatedTitle": "Translations Updated"
+          },
+          "footer": {
+            "resetChanges": "Reset changes",
+            "saving": "Saving...",
+            "saveProfile": "Save Profile"
+          }
         }
-      }
+      },
+      "instruments": "Instrument Settings",
+      "packages": "Package Settings"
     },
     "notifications": {
       "title": "Notification Preferences",
       "description": "Choose what you want to be notified about.",
       "prompt": "Configure how you receive alerts.",
       "manage": "Manage Notifications"
+    },
+    "instruments": {
+      "title": "Instruments",
+      "add": "Add Instrument",
+      "listTitle": "Conservatorium Instruments",
+      "active": "Active",
+      "inactive": "Inactive",
+      "yes": "Yes",
+      "no": "No",
+      "edit": "Edit",
+      "delete": "Delete",
+      "nameHe": "Name (Hebrew)",
+      "nameEn": "Name (English)",
+      "nameRu": "Name (Russian)",
+      "nameAr": "Name (Arabic)",
+      "availableForRegistration": "Available for registration",
+      "availableForRental": "Available for rental",
+      "isActive": "Active",
+      "save": "Save"
+    },
+    "packages": {
+      "title": "Packages",
+      "add": "Create Package",
+      "listTitle": "Lesson Packages",
+      "active": "Active",
+      "inactive": "Inactive",
+      "edit": "Edit",
+      "delete": "Delete",
+      "nameHe": "Name (Hebrew)",
+      "nameEn": "Name (English)",
+      "type": "Type",
+      "monthly": "Monthly",
+      "semester": "Semester",
+      "annual": "Annual",
+      "single": "Single",
+      "lessonCount": "Lessons",
+      "durationMinutes": "Duration (minutes)",
+      "price": "Price (ILS)",
+      "isActive": "Active",
+      "save": "Save"
+    },
+    "linkedAccounts": {
+      "title": "Linked accounts",
+      "description": "Connect Google or Microsoft to sign in faster.",
+      "link": "Link",
+      "unlink": "Unlink",
+      "linkedTitle": "Account linked",
+      "linkedDesc": "{provider} was linked successfully.",
+      "unlinkedTitle": "Account unlinked",
+      "unlinkedDesc": "{provider} was unlinked successfully.",
+      "errorTitle": "Linking failed",
+      "errorDesc": "Could not link provider. Please try again.",
+      "conflictTitle": "Account already exists",
+      "conflictDesc": "This email is already registered with: {methods}.",
+      "emailMismatchTitle": "Email mismatch",
+      "emailMismatchDesc": "Provider email must match your current account email."
     }
   },
   "CancellationPolicy": {

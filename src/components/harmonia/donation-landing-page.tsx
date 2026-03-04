@@ -2,19 +2,21 @@
 import { useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { HeartHandshake, School, Users, BarChart2, Briefcase, HandCoins } from "lucide-react";
+import { HeartHandshake, School, Users, HandCoins } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { isValidIsraeliID } from "@/lib/utils";
 import { createDonationCheckout } from '@/app/actions';
+import { useAuth } from '@/hooks/use-auth';
+import { cn } from '@/lib/utils';
 
 const StudentStoryCard = ({ imageId, name, age, instrument, story, donateLabel }: { imageId: string, name: string, age: number, instrument: string, story: string, donateLabel: string }) => {
     const image = PlaceHolderImages.find(img => img.id === imageId);
@@ -38,11 +40,13 @@ export function DonationLandingPage() {
     const t = useTranslations('DonatePage');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
+    const { mockDonationCauses, recordDonation, user } = useAuth();
     const heroImage = PlaceHolderImages.find(img => img.id === 'donate-hero');
     const [amountChoice, setAmountChoice] = useState('250');
     const [customAmount, setCustomAmount] = useState('');
     const [frequency, setFrequency] = useState<'once' | 'monthly' | 'yearly'>('once');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedCauseId, setSelectedCauseId] = useState('general');
 
     const configuredMethods = useMemo(() => {
         const fromEnv = (process.env.NEXT_PUBLIC_PAYMENT_METHODS || '')
@@ -56,6 +60,15 @@ export function DonationLandingPage() {
 
     const selectedAmount = amountChoice === 'other' ? Number(customAmount || 0) : Number(amountChoice);
 
+
+    const activeCauses = useMemo(() => {
+        const selectedConservatoriumId = user?.conservatoriumId || 'cons-15';
+        return mockDonationCauses
+            .filter((cause) => cause.isActive && cause.conservatoriumId === selectedConservatoriumId)
+            .sort((a, b) => a.priority - b.priority);
+    }, [mockDonationCauses, user?.conservatoriumId]);
+
+
     const handleDonateSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (selectedAmount <= 0) return;
@@ -68,12 +81,23 @@ export function DonationLandingPage() {
 
         setIsSubmitting(true);
         try {
+            recordDonation({
+                causeId: selectedCauseId,
+                amountILS: selectedAmount,
+                frequency,
+                donorName: donorName || undefined,
+                donorEmail: donorEmail || undefined,
+                donorId: donorId || undefined,
+                status: 'INITIATED',
+            });
+
             const { url } = await createDonationCheckout({
                 amount: selectedAmount,
                 frequency,
                 donorName,
                 donorEmail: donorEmail || undefined,
                 donorId: donorId || undefined,
+                causeId: selectedCauseId,
             });
             window.location.href = url;
         } finally {
@@ -82,7 +106,7 @@ export function DonationLandingPage() {
     };
 
     return (
-        <>
+        <div dir={isRtl ? 'rtl' : 'ltr'}>
             <section className="relative w-full h-[60vh] flex items-center justify-center text-center text-white">
                 {heroImage && (
                     <Image
@@ -166,6 +190,49 @@ export function DonationLandingPage() {
 
                         <Card className="p-6">
                             <form className="space-y-6" onSubmit={handleDonateSubmit}>
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-semibold">{t('chooseCause')}</h3>
+                                    <p className="text-sm text-muted-foreground">{t('chooseCauseHint')}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedCauseId('general')}
+                                            className={cn(
+                                                'rounded-lg border p-3 text-start transition-colors',
+                                                selectedCauseId === 'general' ? 'border-primary bg-primary/5' : 'hover:bg-muted/40'
+                                            )}
+                                        >
+                                            <p className="font-medium">{t('generalFund')}</p>
+                                            <p className="text-sm text-muted-foreground">{t('generalFundDesc')}</p>
+                                        </button>
+                                        {activeCauses.map((cause) => {
+                                            const causeName = cause.names[locale as 'he' | 'en' | 'ru' | 'ar'] || cause.names.he || cause.names.en;
+                                            const causeDescription = locale === 'he' ? cause.descriptions.he : cause.descriptions.en;
+                                            const progress = cause.targetAmountILS
+                                              ? Math.min(100, Math.round((cause.raisedAmountILS / cause.targetAmountILS) * 100))
+                                              : null;
+
+                                            return (
+                                                <button
+                                                    key={cause.id}
+                                                    type="button"
+                                                    onClick={() => setSelectedCauseId(cause.id)}
+                                                    className={cn(
+                                                        'rounded-lg border p-3 text-start transition-colors',
+                                                        selectedCauseId === cause.id ? 'border-primary bg-primary/5' : 'hover:bg-muted/40'
+                                                    )}
+                                                >
+                                                    <p className="font-medium">{causeName}</p>
+                                                    <p className="text-sm text-muted-foreground">{causeDescription}</p>
+                                                    {progress !== null && (
+                                                        <p className="text-xs text-muted-foreground mt-2">{t('raisedProgress', { percent: String(progress) })}</p>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <Label>{t('selectAmount')}</Label>
                                     <RadioGroup value={amountChoice} onValueChange={setAmountChoice} dir={isRtl ? 'rtl' : 'ltr'} className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -188,7 +255,7 @@ export function DonationLandingPage() {
                                             onChange={(e) => setCustomAmount(e.target.value)}
                                             placeholder="100"
                                             dir="ltr"
-                                            className="text-left"
+                                            className="text-start"
                                         />
                                     )}
                                 </div>
@@ -220,7 +287,7 @@ export function DonationLandingPage() {
                                         <div className="space-y-2"><Label htmlFor="donorId">{t('idNumber')}</Label><Input id="donorId" placeholder={t('idNumberPlaceholder')} /></div>
                                     </div>
                                     <div className="space-y-2"><Label htmlFor="donorEmail">{t('email')}</Label><Input id="donorEmail" type="email" placeholder={t('emailPlaceholder')} /></div>
-                                    <div className="flex items-center space-x-2 space-x-reverse"><Checkbox id="anonymous" /><Label htmlFor="anonymous">{t('anonymous')}</Label></div>
+                                    <div className="flex items-center gap-2"><Checkbox id="anonymous" /><Label htmlFor="anonymous">{t('anonymous')}</Label></div>
                                 </div>
 
                                 <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || selectedAmount <= 0}>
@@ -232,6 +299,6 @@ export function DonationLandingPage() {
                     </div>
                 </div>
             </section>
-        </>
+        </div>
     )
 }

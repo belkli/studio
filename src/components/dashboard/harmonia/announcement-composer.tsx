@@ -132,7 +132,7 @@ export function AnnouncementComposer() {
                 render={() => (
                   <FormItem>
                     <FormLabel>{t('formLabels.channels')}</FormLabel>
-                    <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-4' : 'space-x-4'} pt-2`}>
+                    <div className="space-y-3 pt-2">
                       {channelOptions.map((item) => (
                         <FormField
                           key={item.id}
@@ -140,25 +140,19 @@ export function AnnouncementComposer() {
                           name="channels"
                           render={({ field }) => {
                             return (
-                              <FormItem
-                                key={item.id}
-                                className={`flex flex-row items-start ${isRtl ? 'space-x-reverse space-x-3' : 'space-x-3'} space-y-0`}
-                              >
+                              <FormItem key={item.id} className="flex items-center gap-2.5 space-y-0">
                                 <FormControl>
                                   <Checkbox
+                                    id={item.id}
                                     checked={field.value?.includes(item.id)}
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange([...(field.value || []), item.id])
-                                        : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        );
+                                        : field.onChange(field.value?.filter((value) => value !== item.id));
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal">
+                                <FormLabel htmlFor={item.id} className="cursor-pointer leading-none font-normal">
                                   {item.label}
                                 </FormLabel>
                               </FormItem>
@@ -175,7 +169,7 @@ export function AnnouncementComposer() {
           </CardContent>
           <CardFooter className={`${isRtl ? 'justify-end' : 'justify-start'}`}>
             <Button type="submit">
-              <Send className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+              <Send className="me-2 h-4 w-4" />
               {t('submitBtn')}
             </Button>
           </CardFooter>
