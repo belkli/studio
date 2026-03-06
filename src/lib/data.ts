@@ -397,6 +397,8 @@ export const mockTeachers: Partial<User>[] = [
     {
         id: 'teacher-user-1', name: 'מרים כהן', email: 'teacher@example.com', avatarUrl: 'musician-miriam',
         isPremiumTeacher: true,
+        teacherRatingAvg: 4.8,
+        teacherRatingCount: 23,
         bio: 'מורה לפסנתר וכינור עם 15 שנות ניסיון, מתמחה בהכנה לרסיטלים ובחינות בגרות. בוגרת האקדמיה למוסיקה בירושלים. מאמינה בגישה אישית ומעצימה לכל תלמיד.',
         specialties: ['EXAM_PREP', 'PERFORMANCE', 'BEGINNER_ADULTS'],
         teachingLanguages: ['HE', 'EN'],
@@ -417,6 +419,8 @@ export const mockTeachers: Partial<User>[] = [
     {
         id: 'teacher-user-2', name: 'דוד המלך', email: 'teacher2@example.com', avatarUrl: 'musician-david',
         isPremiumTeacher: true,
+        teacherRatingAvg: 4.6,
+        teacherRatingCount: 15,
         bio: 'נשפן וירטואוז, מומחה בחליל צד, סקסופון וקלרינט. מתמחה בג\'אז ואימפרוביזציה, ומעביר סדנאות אמן ברחבי הארץ. מביא אנרגיה ייחודית לשיעורים.',
         specialties: ['JAZZ', 'ENSEMBLE', 'PERFORMANCE'],
         teachingLanguages: ['HE', 'RU'],

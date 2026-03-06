@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { DayOfWeek, EmptySlot } from '@/lib/types';
 import { addDays, format, getDay, isAfter, isSameDay, setHours } from 'date-fns';
 import { SlotPromotionCard } from './slot-promotion-card';
-import { Loader2, X, ChevronsUpDown, Check, SlidersHorizontal, LocateFixed, CalendarDays } from 'lucide-react';
+import { Loader2, X, ChevronsUpDown, Check, SlidersHorizontal, LocateFixed, CalendarDays, Star } from 'lucide-react';
 import { collectInstrumentTokensFromTeacherInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -109,6 +109,7 @@ export function AvailableSlotsMarketplace() {
     maxDistanceKm: 'all', // 'all' | '10' | '25' | '50'
   });
   const [teacherSearch, setTeacherSearch] = useState('');
+  const [premiumOnly, setPremiumOnly] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState(false);
@@ -292,7 +293,9 @@ export function AvailableSlotsMarketplace() {
       const teacherMatch = !teacherSearch.trim() ||
         slot.teacher.name.toLowerCase().includes(teacherSearch.toLowerCase());
 
-      return conservatoriumMatch && instrumentMatch && durationMatch && dateMatch && distanceMatch && teacherMatch;
+      const premiumMatch = !premiumOnly || slot.teacher.isPremiumTeacher === true;
+
+      return conservatoriumMatch && instrumentMatch && durationMatch && dateMatch && distanceMatch && teacherMatch && premiumMatch;
     });
 
     // Sort by distance when GPS is active
@@ -306,27 +309,29 @@ export function AvailableSlotsMarketplace() {
     }
 
     return result;
-  }, [emptySlots, filters, conservatoriumInstruments, teacherSearch, userLocation, consDistanceMap]);
+  }, [emptySlots, filters, conservatoriumInstruments, teacherSearch, premiumOnly, userLocation, consDistanceMap]);
 
   const handleFilterChange = useCallback((filterName: keyof typeof filters, value: string) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   }, []);
 
   const activeFilters = useMemo(() => {
-    const chips: { key: keyof typeof filters | 'teacher' | 'location'; label: string }[] = [];
+    const chips: { key: keyof typeof filters | 'teacher' | 'location' | 'premium'; label: string }[] = [];
     if (filters.conservatoriumId !== 'all') chips.push({ key: 'conservatoriumId', label: conservatoriumOptions.find(o => o.value === filters.conservatoriumId)?.label ?? filters.conservatoriumId });
     if (filters.instrument !== 'all') chips.push({ key: 'instrument', label: filters.instrument });
     if (filters.duration !== 'all') chips.push({ key: 'duration', label: durationOptions.find(o => o.value === filters.duration)?.label ?? filters.duration });
     if (filters.dateStr !== 'all') chips.push({ key: 'dateStr', label: dateOptions.find(o => o.value === filters.dateStr)?.label ?? filters.dateStr });
     if (filters.maxDistanceKm !== 'all') chips.push({ key: 'maxDistanceKm', label: distanceOptions.find(o => o.value === filters.maxDistanceKm)?.label ?? filters.maxDistanceKm });
     if (teacherSearch.trim()) chips.push({ key: 'teacher', label: teacherSearch });
+    if (premiumOnly) chips.push({ key: 'premium', label: t('premiumOnly') });
     if (userLocation) chips.push({ key: 'location', label: t('sortedByDistance') });
     return chips;
-  }, [filters, conservatoriumOptions, durationOptions, dateOptions, distanceOptions, teacherSearch, userLocation, t]);
+  }, [filters, conservatoriumOptions, durationOptions, dateOptions, distanceOptions, teacherSearch, premiumOnly, userLocation, t]);
 
   const clearAll = useCallback(() => {
     setFilters({ conservatoriumId: 'all', instrument: 'all', duration: 'all', dateStr: 'all', maxDistanceKm: 'all' });
     setTeacherSearch('');
+    setPremiumOnly(false);
     setUserLocation(null);
   }, []);
 
@@ -390,7 +395,7 @@ export function AvailableSlotsMarketplace() {
           />
         </div>
 
-        {/* Row 2: teacher search + location distance */}
+        {/* Row 2: teacher search + premium toggle + location distance */}
         <div className="flex flex-wrap gap-3">
           {/* Teacher name search */}
           <div className="relative flex-1 min-w-[200px]">
@@ -410,6 +415,20 @@ export function AvailableSlotsMarketplace() {
               </button>
             )}
           </div>
+
+          {/* Premium only toggle */}
+          <button
+            onClick={() => setPremiumOnly(p => !p)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors h-10",
+              premiumOnly
+                ? "bg-yellow-50 border-yellow-300 text-yellow-700"
+                : "bg-background border-border text-muted-foreground hover:border-yellow-300"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", premiumOnly ? "fill-yellow-500 text-yellow-500" : "")} />
+            {t('premiumOnly')}
+          </button>
 
           {/* GPS locate + distance filter */}
           <div className="flex flex-col gap-1">
@@ -454,6 +473,7 @@ export function AvailableSlotsMarketplace() {
                 className="gap-1 pe-1 cursor-pointer hover:bg-destructive/10 hover:text-destructive transition-colors"
                 onClick={() => {
                   if (key === 'teacher') setTeacherSearch('');
+                  else if (key === 'premium') setPremiumOnly(false);
                   else if (key === 'location') { setUserLocation(null); handleFilterChange('maxDistanceKm', 'all'); }
                   else handleFilterChange(key as keyof typeof filters, 'all');
                 }}

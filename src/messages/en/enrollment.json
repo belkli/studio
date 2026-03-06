@@ -657,7 +657,8 @@
     "sortedByDistance": "Sorted by distance",
     "useMyLocation": "Use my location",
     "locating": "Locating...",
-    "locationError": "Location access denied. Please enable location in your browser."
+    "locationError": "Location access denied. Please enable location in your browser.",
+    "premiumOnly": "Premium teachers only"
   },
   "ExcellenceTrack": {
     "successTitle": "Enrollment confirmed",

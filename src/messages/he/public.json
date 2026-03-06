@@ -294,6 +294,7 @@
     "step3Title": "תתחיל ללמוד",
     "step3Desc": "שיעורים מותאמים אישית עם מורים מנוסים.",
     "featuredTeachersTitle": "מורים מומלצים",
+    "recommendedTeachersTooltip": "מורים אלו נבחרו על פי זמינות, דירוג ופרופיל מלא.",
     "teacherFallback": "מורה מנוסה ברשת הרמוניה.",
     "upcomingEventsTitle": "אירועים קרובים",
     "openDaysTitle": "ימים פתוחים קרובים",
@@ -395,6 +396,7 @@
     "loadMoreTeachers": "הצג {count} מורים נוספים",
     "bookWithTeacher": "הירשם אצל מורה זה",
     "education": "הַשׂכָּלָה",
-    "bioUnavailable": "ביוגרפיה תתווסף בקרוב."
+    "bioUnavailable": "ביוגרפיה תתווסף בקרוב.",
+    "speaks": "שפות דיבור"
   }
 }

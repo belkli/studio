@@ -20,6 +20,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { GraduationCap, Music, MapPin, Users, AlertCircle } from 'lucide-react';
 
 const profileSchema = z.object({
   displayName: z.string().min(2),
@@ -200,8 +202,49 @@ export function AlumniPortal() {
 
   const orderedTabs = isRtl ? [...tabs].reverse() : tabs;
 
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(/\s+/);
+    return parts.length >= 2
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : name.slice(0, 2).toUpperCase();
+  };
+
+  const localizedTitle = (obj: { he: string; en: string; ru?: string; ar?: string }) =>
+    (obj as Record<string, string>)[locale] || obj.en;
+
+  const isRegistered = (mc: Masterclass) =>
+    user ? mc.registrations.some((r) => r.studentId === user.id) : false;
+
   return (
     <div className='space-y-6' dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* Admin: pending approvals surfaced at the top */}
+      {isAdmin && reviewQueue.length > 0 && (
+        <Card className='border-amber-200 bg-amber-50/50'>
+          <CardHeader className='pb-3'>
+            <div className='flex items-center gap-2'>
+              <AlertCircle className='h-5 w-5 text-amber-600' />
+              <CardTitle className='text-base'>{t('reviewQueueTitle')}</CardTitle>
+            </div>
+            <CardDescription>{t('reviewQueueDesc')}</CardDescription>
+          </CardHeader>
+          <CardContent className='space-y-2'>
+            {reviewQueue.map((item) => (
+              <div key={item.id} className='flex flex-col gap-2 rounded-md border border-amber-200 bg-white p-3 md:flex-row md:items-center md:justify-between'>
+                <div className='space-y-1'>
+                  <p className='font-medium text-start'>{localizedTitle(item.title)}</p>
+                  <p className='text-sm text-muted-foreground'>
+                    <span>{item.instructor.displayName}</span>
+                    <span aria-hidden='true' className='mx-1'>&middot;</span>
+                    <span>{item.instrument}</span>
+                  </p>
+                </div>
+                <Button type='button' size='sm' onClick={() => publishMasterClass(item.id)}>{t('publishButton')}</Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue='directory' className='w-full'>
         <TabsList className='grid w-full grid-cols-4'>
           {orderedTabs.map((tab) => (
@@ -212,7 +255,7 @@ export function AlumniPortal() {
         <TabsContent value='directory' className='space-y-4'>
           <Card>
             <CardHeader>
-              <CardTitle>{t('directoryTitle')}</CardTitle>
+              <h2 className='text-lg font-semibold text-start'>{t('directoryTitle')}</h2>
               <CardDescription>{t('directorySubtitle')}</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
@@ -237,22 +280,52 @@ export function AlumniPortal() {
                 </Select>
               </div>
 
-              <div className='grid gap-4 md:grid-cols-2'>
-                {publicAlumni.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublicAlumni')}</p>}
-                {publicAlumni.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent className='space-y-2 p-4'>
-                      <p className='font-semibold'>{item.displayName}</p>
-                      <p className='text-sm text-muted-foreground'>
-                        <span dir='ltr'>{item.graduationYear}</span>
-                        <span aria-hidden='true' className='mx-1'>?</span>
-                        <span dir='ltr'>{item.primaryInstrument}</span>
-                      </p>
-                      {item.currentOccupation && <Badge variant='secondary'>{item.currentOccupation}</Badge>}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              {publicAlumni.length === 0 ? (
+                <div className='flex flex-col items-center justify-center py-12 text-center'>
+                  <GraduationCap className='h-12 w-12 text-muted-foreground/40' />
+                  <p className='mt-3 text-sm font-medium text-muted-foreground'>{t('noPublicAlumni')}</p>
+                  {isAdmin && (
+                    <p className='mt-1 text-xs text-muted-foreground'>{t('graduateDesc')}</p>
+                  )}
+                </div>
+              ) : (
+                <div className='grid gap-4 md:grid-cols-2'>
+                  {publicAlumni.map((item) => {
+                    const bio = (item.bio as Record<string, string | undefined>)[locale] || item.bio.en;
+                    return (
+                      <Card key={item.id} className='overflow-hidden'>
+                        <CardContent className='flex gap-3 p-4'>
+                          <Avatar className='h-12 w-12 shrink-0'>
+                            {item.profilePhotoUrl && <AvatarImage src={item.profilePhotoUrl} alt={item.displayName} />}
+                            <AvatarFallback className='bg-primary/10 text-primary text-sm font-semibold'>
+                              {getInitials(item.displayName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className='min-w-0 flex-1 space-y-1'>
+                            <div className='flex items-start justify-between gap-2'>
+                              <p className='font-semibold text-start leading-tight'>{item.displayName}</p>
+                              <span className='shrink-0 text-xs text-muted-foreground' dir='ltr'>{item.graduationYear}</span>
+                            </div>
+                            <p className='flex items-center gap-1 text-sm text-muted-foreground'>
+                              <Music className='h-3.5 w-3.5 shrink-0' />
+                              <span>{item.primaryInstrument}</span>
+                            </p>
+                            {item.currentOccupation && (
+                              <p className='text-sm text-muted-foreground'>{item.currentOccupation}</p>
+                            )}
+                            {item.availableForMasterClasses && (
+                              <Badge variant='secondary' className='bg-green-100 text-green-800 text-xs'>{t('availableForMasterClasses')}</Badge>
+                            )}
+                            {bio && (
+                              <p className='text-xs text-muted-foreground line-clamp-2'>{bio}</p>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -260,7 +333,7 @@ export function AlumniPortal() {
         <TabsContent value='profile' className='space-y-4'>
           <Card>
             <CardHeader>
-              <CardTitle>{t('profileTitle')}</CardTitle>
+              <h2 className='text-lg font-semibold text-start'>{t('profileTitle')}</h2>
               <CardDescription>{t('profileSubtitle')}</CardDescription>
             </CardHeader>
             <CardContent>
@@ -321,7 +394,7 @@ export function AlumniPortal() {
           {canCreateMasterClass && (
             <Card>
               <CardHeader>
-                <CardTitle>{t('createMasterClass')}</CardTitle>
+                <h2 className='text-lg font-semibold text-start'>{t('createMasterClass')}</h2>
                 <CardDescription>{t('createMasterClassDesc')}</CardDescription>
               </CardHeader>
               <CardContent>
@@ -383,47 +456,60 @@ export function AlumniPortal() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('publishedMasterClasses')}</CardTitle>
+              <h2 className='text-lg font-semibold text-start'>{t('publishedMasterClasses')}</h2>
               {role === 'student' && allowance && (
                 <CardDescription>{t('allowanceRemaining', { remaining: allowance.remaining })}</CardDescription>
               )}
             </CardHeader>
             <CardContent className='space-y-3'>
               {publishedMasterClasses.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublishedMasterClasses')}</p>}
-              {publishedMasterClasses.map((item) => (
-                <div key={item.id} className='rounded-md border p-3'>
-                  <div className='flex flex-col gap-2 md:flex-row md:items-center md:justify-between'>
-                    <div className='space-y-1'>
-                      <p className='font-medium'>{item.title.en}</p>
-                      <p className='text-sm text-muted-foreground'>
-                        <span>{item.instructor.displayName}</span>
-                        <span aria-hidden='true' className='mx-1'>?</span>
-                        <span dir='ltr'>{item.date} {item.startTime}</span>
-                      </p>
-                    </div>
-                    {role === 'student' && user && (
-                      <Button
-                        type='button'
-                        onClick={async () => {
-                          const result = await registerToMasterClass(item.id, user.id);
-                          if (!result.success) {
-                            toast({ variant: 'destructive', title: t('registrationFailed') });
-                            return;
-                          }
+              {publishedMasterClasses.map((item) => {
+                const alreadyRegistered = isRegistered(item);
+                const isFull = item.registrations.length >= item.maxParticipants;
+                return (
+                  <div key={item.id} className='rounded-md border p-4'>
+                    <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
+                      <div className='space-y-1.5'>
+                        <p className='font-medium text-start'>{localizedTitle(item.title)}</p>
+                        <p className='text-sm text-muted-foreground'>
+                          <span>{item.instructor.displayName}</span>
+                        </p>
+                        <div className='flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground'>
+                          <span className='flex items-center gap-1' dir='ltr'>{item.date} {item.startTime}</span>
+                          <span className='flex items-center gap-1'><Music className='h-3.5 w-3.5' />{item.instrument}</span>
+                          <span className='flex items-center gap-1'><MapPin className='h-3.5 w-3.5' />{item.location}</span>
+                          <span className='flex items-center gap-1'><Users className='h-3.5 w-3.5' />{item.registrations.length}/{item.maxParticipants}</span>
+                          {!item.includedInPackage && item.priceILS != null && (
+                            <span dir='ltr'>&#8362;{item.priceILS}</span>
+                          )}
+                        </div>
+                      </div>
+                      {role === 'student' && user && (
+                        <Button
+                          type='button'
+                          size='sm'
+                          disabled={alreadyRegistered || isFull}
+                          onClick={async () => {
+                            const result = await registerToMasterClass(item.id, user.id);
+                            if (!result.success) {
+                              toast({ variant: 'destructive', title: t('registrationFailed') });
+                              return;
+                            }
 
-                          if ((result.chargedILS || 0) > 0) {
-                            toast({ title: t('chargedTitle'), description: t('chargedDesc', { amount: result.chargedILS || 0 }) });
-                          } else {
-                            toast({ title: t('registeredTitle'), description: t('remainingDesc', { remaining: result.remaining ?? 0 }) });
-                          }
-                        }}
-                      >
-                        {t('registerButton')}
-                      </Button>
-                    )}
+                            if ((result.chargedILS || 0) > 0) {
+                              toast({ title: t('chargedTitle'), description: t('chargedDesc', { amount: result.chargedILS || 0 }) });
+                            } else {
+                              toast({ title: t('registeredTitle'), description: t('remainingDesc', { remaining: result.remaining ?? 0 }) });
+                            }
+                          }}
+                        >
+                          {alreadyRegistered ? t('registeredTitle') : t('registerButton')}
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
         </TabsContent>
@@ -432,7 +518,7 @@ export function AlumniPortal() {
           {isAdmin && (
             <Card>
               <CardHeader>
-                <CardTitle>{t('graduateTitle')}</CardTitle>
+                <h2 className='text-lg font-semibold text-start'>{t('graduateTitle')}</h2>
                 <CardDescription>{t('graduateDesc')}</CardDescription>
               </CardHeader>
               <CardContent className='grid gap-3 md:grid-cols-[1fr_180px_auto]'>
@@ -457,7 +543,7 @@ export function AlumniPortal() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('reviewQueueTitle')}</CardTitle>
+              <h2 className='text-lg font-semibold text-start'>{t('reviewQueueTitle')}</h2>
               <CardDescription>{t('reviewQueueDesc')}</CardDescription>
             </CardHeader>
             <CardContent className='space-y-3'>
@@ -465,15 +551,15 @@ export function AlumniPortal() {
               {reviewQueue.map((item) => (
                 <div key={item.id} className='flex flex-col gap-2 rounded-md border p-3 md:flex-row md:items-center md:justify-between'>
                   <div>
-                    <p className='font-medium'>{item.title.en}</p>
+                    <p className='font-medium text-start'>{localizedTitle(item.title)}</p>
                     <p className='text-sm text-muted-foreground'>
                     <span>{item.instructor.displayName}</span>
-                    <span aria-hidden='true' className='mx-1'>?</span>
-                    <span dir='ltr'>{item.instrument}</span>
+                    <span aria-hidden='true' className='mx-1'>&middot;</span>
+                    <span>{item.instrument}</span>
                   </p>
                   </div>
                   {isAdmin && (
-                    <Button type='button' onClick={() => publishMasterClass(item.id)}>{t('publishButton')}</Button>
+                    <Button type='button' size='sm' onClick={() => publishMasterClass(item.id)}>{t('publishButton')}</Button>
                   )}
                 </div>
               ))}

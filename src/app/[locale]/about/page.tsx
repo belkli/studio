@@ -62,6 +62,8 @@ type PublicProfile = {
   availableForNewStudents?: boolean;
   teacherRatingAvg?: number;
   teacherRatingCount?: number;
+  isPremiumTeacher?: boolean;
+  spokenLanguages?: string[];
   source: 'teacher' | 'manager' | 'staff';
 };
 
@@ -74,6 +76,10 @@ function getInstrumentName(inst: ConservatoriumInstrument, locale: string) {
 
 function normalizeName(value: string) {
   return value.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function normalizeForSearch(value: string) {
+  return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function getLocalizedUserBio(user: User, locale: string) {
@@ -365,15 +371,15 @@ export default function AboutPage() {
   };
 
   const filteredConservatoriums = useMemo(() => {
-    const searchLower = search.trim().toLowerCase();
-    const cityLower = city.trim().toLowerCase();
+    const searchNorm = normalizeForSearch(search);
+    const cityNorm = normalizeForSearch(city);
 
     const filtered = localizedConservatoriums.filter((cons) => {
-      const name = (cons.name || '').toLowerCase();
-      const cityName = (cons.location?.city || '').toLowerCase();
+      const name = normalizeForSearch(cons.name || '');
+      const cityName = normalizeForSearch(cons.location?.city || '');
 
-      const bySearch = !searchLower || name.includes(searchLower) || cityName.includes(searchLower);
-      const byCity = !cityLower || cityName.includes(cityLower);
+      const bySearch = !searchNorm || name.includes(searchNorm) || cityName.includes(searchNorm);
+      const byCity = !cityNorm || cityName.includes(cityNorm);
 
       const byInstrument =
         !instrumentId ||
@@ -399,13 +405,13 @@ export default function AboutPage() {
       });
     }
 
-    if (!cityLower) return filtered;
+    if (!cityNorm) return filtered;
 
     // Find coordinates for the searched city from any conservatorium that matches
     let referenceCoords: { lat: number; lng: number } | null = null;
     for (const cons of localizedConservatoriums) {
-      const cityName = (cons.location?.city || '').toLowerCase();
-      if (cityName.includes(cityLower) && cons.location?.coordinates) {
+      const cityName = normalizeForSearch(cons.location?.city || '');
+      if (cityName.includes(cityNorm) && cons.location?.coordinates) {
         referenceCoords = cons.location.coordinates;
         break;
       }
@@ -468,6 +474,8 @@ export default function AboutPage() {
         availableForNewStudents: matched?.availableForNewStudents,
         teacherRatingAvg: matched?.teacherRatingAvg,
         teacherRatingCount: matched?.teacherRatingCount,
+        isPremiumTeacher: matched?.isPremiumTeacher,
+        spokenLanguages: matched?.spokenLanguages,
         source: 'teacher',
       });
     }
@@ -489,6 +497,8 @@ export default function AboutPage() {
         availableForNewStudents: teacher.availableForNewStudents,
         teacherRatingAvg: teacher.teacherRatingAvg,
         teacherRatingCount: teacher.teacherRatingCount,
+        isPremiumTeacher: teacher.isPremiumTeacher,
+        spokenLanguages: teacher.spokenLanguages,
         source: 'teacher',
       });
     }
@@ -860,6 +870,12 @@ export default function AboutPage() {
                             <div>
                               <p className="line-clamp-2 text-xs font-medium">{profile.name}</p>
                               {profile.role && <p className="line-clamp-1 text-[11px] text-muted-foreground">{profile.role}</p>}
+                              {profile.isPremiumTeacher && (
+                                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-full px-1.5 py-0.5 mt-0.5">
+                                  <Star className="h-2.5 w-2.5 fill-yellow-500 text-yellow-500" />
+                                  Premium
+                                </span>
+                              )}
                             </div>
                           </div>
                           {profile.instruments.length > 0 && (
@@ -896,6 +912,12 @@ export default function AboutPage() {
                 </Avatar>
                 <div className="space-y-1">
                   <p className="text-lg font-semibold">{selectedProfile.name}</p>
+                  {selectedProfile.isPremiumTeacher && (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-full px-2 py-0.5">
+                      <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                      Premium
+                    </span>
+                  )}
                   {selectedProfile.role && <p className="text-sm text-muted-foreground">{selectedProfile.role}</p>}
                   {selectedProfile.instruments.length > 0 && (
                     <p className="text-sm text-muted-foreground">{selectedProfile.instruments.join(', ')}</p>
@@ -912,6 +934,16 @@ export default function AboutPage() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {selectedProfile.bio || tAbout('bioUnavailable')}
               </p>
+
+              {selectedProfile.spokenLanguages && selectedProfile.spokenLanguages.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{tAbout('speaks')}:</span>{' '}
+                  {selectedProfile.spokenLanguages.map(lang => {
+                    const labels: Record<string, string> = { HE: 'עברית', EN: 'English', AR: 'العربية', RU: 'Русский' };
+                    return labels[lang] || lang;
+                  }).join(', ')}
+                </p>
+              )}
 
               {selectedProfile.education && selectedProfile.education.length > 0 && (
                 <Card>

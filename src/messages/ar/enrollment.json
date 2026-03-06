@@ -658,7 +658,8 @@
     "sortedByDistance": "مرتب حسب المسافة",
     "useMyLocation": "استخدم موقعي",
     "locating": "جارٍ التحديد...",
-    "locationError": "تم رفض الوصول إلى الموقع. يرجى تفعيل الموقع في المتصفح."
+    "locationError": "تم رفض الوصول إلى الموقع. يرجى تفعيل الموقع في المتصفح.",
+    "premiumOnly": "معلمون مميزون فقط"
   },
   "ExcellenceTrack": {
     "acceptBtn": "قبول الدعوة",

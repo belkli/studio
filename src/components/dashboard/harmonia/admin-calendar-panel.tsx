@@ -120,11 +120,11 @@ export function AdminCalendarPanel() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colDate')}</TableHead>
-                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colName')}</TableHead>
-                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colType')}</TableHead>
-                            <TableHead className={isHe ? "text-right" : "text-left"}>{t('colRelevance')}</TableHead>
-                            <TableHead className={isHe ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
+                            <TableHead className="text-start">{t('colDate')}</TableHead>
+                            <TableHead className="text-start">{t('colName')}</TableHead>
+                            <TableHead className="text-start">{t('colType')}</TableHead>
+                            <TableHead className="text-start">{t('colRelevance')}</TableHead>
+                            <TableHead className="text-end">{t('colActions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -133,17 +133,17 @@ export function AdminCalendarPanel() {
                         ) : (
                             closures.map(c => (
                                 <TableRow key={c.id}>
-                                    <TableCell className={`font-medium ${isHe ? 'text-right' : 'text-left'}`}>
+                                    <TableCell className="font-medium text-start">
                                         {format(new Date(c.date), 'dd/MM/yyyy', { locale: dateLocale })}
                                     </TableCell>
-                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>{isHe ? c.nameHe : c.name}</TableCell>
-                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>
+                                    <TableCell className="text-start">{isHe ? c.nameHe : c.name}</TableCell>
+                                    <TableCell className="text-start">
                                         <Badge variant={c.type === 'NATIONAL_HOLIDAY' ? 'default' : 'secondary'}>
                                             {typeLabels[c.type] || c.type}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className={isHe ? 'text-right' : 'text-left'}>{c.affectsAllTeachers ? t('relevanceAll') : t('relevanceSome')}</TableCell>
-                                    <TableCell className={isHe ? 'text-left' : 'text-right'}>
+                                    <TableCell className="text-start">{c.affectsAllTeachers ? t('relevanceAll') : t('relevanceSome')}</TableCell>
+                                    <TableCell className="text-end">
                                         <Button variant="ghost" size="icon" onClick={() => c.id && handleDelete(c.id)}>
                                             <Trash2 className="h-4 w-4 text-destructive" />
                                         </Button>

@@ -174,6 +174,9 @@ export function ScheduleRedesign() {
           <Button variant="outline" size="icon" onClick={isRtl ? goToPrevWeek : goToNextWeek} aria-label={t('nextWeek')}>
             <ChevronRight className="h-4 w-4" />
           </Button>
+          <Button variant="outline" size="sm" onClick={() => setWeekStartRaw(format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd'))}>
+            {t('today')}
+          </Button>
         </div>
 
         <Select value={teacherFilter} onValueChange={setTeacherFilter}>

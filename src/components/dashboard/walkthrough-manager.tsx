@@ -72,6 +72,12 @@ export function useWalkthrough() {
             return;
         }
 
+        // Also check standalone localStorage key to survive re-login
+        if (typeof window !== 'undefined' && localStorage.getItem(`walkthrough-seen-${user.id}`) === 'true') {
+            markWalkthroughAsSeen(user.id);
+            return;
+        }
+
         const steps = stepsConfig[user.role];
         if (!steps || steps.length === 0) {
             markWalkthroughAsSeen(user.id);
@@ -87,6 +93,7 @@ export function useWalkthrough() {
             doneBtnText: t('done'),
             onDestroyed: () => {
                 markWalkthroughAsSeen(user.id);
+                localStorage.setItem(`walkthrough-seen-${user.id}`, 'true');
                 const tutorialFinished = localStorage.getItem('tutorial-finished');
                 if (!tutorialFinished) {
                     localStorage.setItem('tutorial-finished', 'true');

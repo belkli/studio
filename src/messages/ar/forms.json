@@ -538,6 +538,8 @@
     "bookLesson": "حجز الدرس",
     "cancelLessonAction": "إلغاء الدرس",
     "closeAction": "إغلاق",
+    "rateLesson": "كيف كان الدرس؟",
+    "ratingThanks": "شكراً على ملاحظاتك!",
     "creditBalance": "رصيد الدروس: {remaining} من {total}",
     "dateLabel": "التاريخ",
     "duration": "{min} دقيقة",

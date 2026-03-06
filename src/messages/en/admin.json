@@ -695,6 +695,7 @@
     "delegatedPermissionsHint": "Choose which sections this delegated admin can manage.",
     "signDocumentsExcluded": "Sign documents is not available for delegated admins.",
     "teacherInstruments": "Teacher instruments",
+    "premiumTeacher": "Premium Teacher",
     "linkedStudents": "Linked students",
     "addStudent": "Add student",
     "noLinkedStudents": "No linked students.",

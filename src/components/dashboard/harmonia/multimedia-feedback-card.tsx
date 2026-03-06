@@ -69,7 +69,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                     {video.feedback?.map((fb, index) => (
                       <div key={index} className="text-xs p-2 rounded-md bg-background/50">
                         <p>{fb.comment}</p>
-                        <p className="text-muted-foreground text-right mt-1">
+                        <p className="text-muted-foreground text-end mt-1">
                           <Clock className="h-3 w-3 inline-block ms-1" />
                           {formatDistanceToNow(new Date(fb.createdAt), { addSuffix: true, locale: dateLocale })}
                         </p>

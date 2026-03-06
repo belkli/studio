@@ -294,6 +294,7 @@
     "step3Title": "ابدأ التعلم",
     "step3Desc": "دروس شخصية مع المعلمين ذوي الخبرة.",
     "featuredTeachersTitle": "المعلمين المميزين",
+    "recommendedTeachersTooltip": "تم اختيار هؤلاء المعلمين بناءً على التوفر والتقييم واكتمال الملف الشخصي.",
     "teacherFallback": "مدرس ذو خبرة في شبكة هارمونيا.",
     "upcomingEventsTitle": "الأحداث القادمة",
     "openDaysTitle": "الأيام المفتوحة القادمة",
@@ -395,6 +396,7 @@
     "loadMoreTeachers": "عرض {count} المزيد من المعلمين",
     "bookWithTeacher": "سجل مع هذا المعلم",
     "education": "تعليم",
-    "bioUnavailable": "سيتم إضافة السيرة الذاتية قريبا."
+    "bioUnavailable": "سيتم إضافة السيرة الذاتية قريبا.",
+    "speaks": "يتحدث"
   }
 }

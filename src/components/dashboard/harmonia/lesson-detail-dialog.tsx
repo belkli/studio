@@ -21,13 +21,15 @@ import {
     AlertCircle,
     Info,
     CheckCircle2,
-    XCircle
+    XCircle,
+    Star
 } from "lucide-react";
 import { format } from "date-fns";
 import type { LessonSlot, User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useDateLocale } from "@/hooks/use-date-locale";
+import { useState } from "react";
 
 interface LessonDetailDialogProps {
     lesson: LessonSlot | null;
@@ -50,6 +52,9 @@ export function LessonDetailDialog({
 }: LessonDetailDialogProps) {
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
+    const [ratingValue, setRatingValue] = useState(0);
+    const [ratingHover, setRatingHover] = useState(0);
+    const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
     if (!lesson) return null;
 
@@ -162,6 +167,43 @@ export function LessonDetailDialog({
                         </div>
                     )}
                 </div>
+
+                {/* Rate lesson stub — shown for completed lessons viewed by student */}
+                {lesson.status === 'COMPLETED' && !isTeacher && !lesson.studentRating && (
+                    <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3">
+                        {ratingSubmitted ? (
+                            <p className="text-sm text-amber-700 font-medium text-center">{t('ratingThanks')}</p>
+                        ) : (
+                            <>
+                                <p className="text-sm font-medium text-amber-700 mb-2">{t('rateLesson')}</p>
+                                <div className="flex items-center gap-1">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            className="p-0.5"
+                                            onMouseEnter={() => setRatingHover(star)}
+                                            onMouseLeave={() => setRatingHover(0)}
+                                            onClick={() => {
+                                                setRatingValue(star);
+                                                setRatingSubmitted(true);
+                                            }}
+                                        >
+                                            <Star
+                                                className={cn(
+                                                    "h-6 w-6 transition-colors",
+                                                    (ratingHover || ratingValue) >= star
+                                                        ? "fill-yellow-400 text-yellow-400"
+                                                        : "text-muted-foreground"
+                                                )}
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 <DialogFooter className="flex flex-row-reverse sm:justify-start gap-2 pt-2">
                     {!isPast && !isCancelled && (

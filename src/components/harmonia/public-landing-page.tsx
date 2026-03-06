@@ -14,8 +14,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Conservatorium, ConservatoriumInstrument, EventProduction, User } from '@/lib/types';
-import { Search, ClipboardList, Music, Music2, CalendarDays, CalendarClock, UserRound, Star, Building2, HeartHandshake, GraduationCap, ChevronLeft } from 'lucide-react';
+import { Search, ClipboardList, Music, Music2, CalendarDays, CalendarClock, UserRound, Star, Building2, HeartHandshake, GraduationCap, ChevronLeft, Info } from 'lucide-react';
 import { collectInstrumentTokensFromConservatoriumInstrument, collectInstrumentTokensFromTeacherInstrument, tokenSetsIntersect } from '@/lib/instrument-matching';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const LANDING_HERO_IMAGE =
   'https://images.unsplash.com/photo-1460036521480-ff49c08c2781?q=80&w=2200&auto=format&fit=crop';
@@ -66,6 +67,21 @@ export function PublicLandingPage() {
     return Array.from(unique.values());
   }, [conservatoriumInstruments]);
 
+  /**
+   * Teacher recommendation score:
+   * +80  availableForNewStudents
+   * +20  has availability slots defined
+   * +teacherRatingAvg * 15  (quality signal — populated by admin after reviews)
+   * +min(teacherRatingCount, 20)  (popularity signal)
+   * +10  has bio (profile completeness)
+   * +8   has avatar (profile completeness)
+   * +5   has education entries
+   * +40  instrument match with user's search
+   * +30  city match with user's location
+   *
+   * How ratings are set: conservatorium_admin reviews teacher performance quarterly
+   * and sets teacherRatingAvg in the admin panel. Future: student reviews after lessons.
+   */
   const featuredTeachers = useMemo(() => {
     const seen = new Set<string>();
     const cityQuery = city.trim().toLowerCase();
@@ -348,7 +364,22 @@ export function PublicLandingPage() {
         {/* Featured Teachers Section */}
         <section className="px-4 py-14" aria-labelledby="teachers-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 id="teachers-heading" className="mb-10 text-center text-3xl font-bold">{t('featuredTeachersTitle')}</h2>
+            <div className="mb-10 flex items-center justify-center gap-2">
+              <h2 id="teachers-heading" className="text-center text-3xl font-bold">{t('featuredTeachersTitle')}</h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button type="button" className="text-muted-foreground hover:text-foreground transition-colors">
+                      <Info className="h-4 w-4" />
+                      <span className="sr-only">{t('recommendedTeachersTooltip')}</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-sm">
+                    {t('recommendedTeachersTooltip')}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 section-animate">
               {featuredTeachers.map((teacher) => (
                 <Card key={teacher.id}>

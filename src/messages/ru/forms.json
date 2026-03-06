@@ -538,6 +538,8 @@
     "bookLesson": "Забронировать урок",
     "cancelLessonAction": "Отменить Урок",
     "closeAction": "Закрыть",
+    "rateLesson": "Как прошёл урок?",
+    "ratingThanks": "Спасибо за отзыв!",
     "creditBalance": "Баланс кредитов: {remaining} из {total}",
     "dateLabel": "Дата",
     "duration": "{min} минут",

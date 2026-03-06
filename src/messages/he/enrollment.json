@@ -658,7 +658,8 @@
     "sortedByDistance": "מסודר לפי מרחק",
     "useMyLocation": "השתמש במיקום שלי",
     "locating": "מאתר...",
-    "locationError": "לא ניתן לאתר מיקום. יש לאפשר גישה למיקום בדפדפן."
+    "locationError": "לא ניתן לאתר מיקום. יש לאפשר גישה למיקום בדפדפן.",
+    "premiumOnly": "מורים פרימיום בלבד"
   },
   "ExcellenceTrack": {
     "acceptBtn": "אישור ההזמנה",

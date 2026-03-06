@@ -806,10 +806,10 @@ export function BookLessonWizard() {
                                 </div>{/* end outer grid */}
 
                                 <div className="pt-6">
-                                    <Button type="submit" disabled={!form.formState.isValid || !activePackage}>
+                                    <Button type="submit" disabled={!form.formState.isValid || (user?.role === 'student' || user?.role === 'parent' ? !activePackage : false)}>
                                         {t('bookLesson')}
                                     </Button>
-                                    {!activePackage && (
+                                    {!activePackage && (user?.role === 'student' || user?.role === 'parent') && (
                                         <p className="text-xs text-destructive text-center mt-1">{t('noActivePackage')}</p>
                                     )}
                                 </div>

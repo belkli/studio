@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { AdminSection, TeacherAssignment, UserRole, User } from "@/lib/types";
-import { Check, Edit, Search, X } from "lucide-react";
+import { Check, Edit, Search, Star, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminGuard } from "@/hooks/use-admin-guard";
@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { isValidIsraeliID } from "@/lib/utils";
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -424,6 +425,7 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
     const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
     const [teacherInstrumentSearch, setTeacherInstrumentSearch] = useState('');
     const [showStudentPicker, setShowStudentPicker] = useState(false);
+    const [premiumTeacher, setPremiumTeacher] = useState(user.isPremiumTeacher || false);
     const teacherUsers = useMemo(() => allUsers.filter(u => u.role === 'teacher' && u.conservatoriumId === user.conservatoriumId && u.approved), [allUsers, user.conservatoriumId]);
     const instrumentPool = useMemo(() => {
         const values = new Set<string>();
@@ -463,7 +465,10 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+            <form onSubmit={form.handleSubmit((data) => {
+                // Merge premium toggle (not in zod schema) into submitted data
+                onSubmit({ ...data, isPremiumTeacher: premiumTeacher } as any);
+            })} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">
                     <FormField name="name" render={({ field }) => (<FormItem> <FormLabel>{t('fullNameTitle')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                     <FormField name="email" render={({ field }) => (<FormItem> <FormLabel>{t('email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
@@ -540,6 +545,17 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
                                     </div>
                                 );
                             })}
+                        </div>
+                        <div className="flex items-center gap-3 pt-3 border-t">
+                            <Switch
+                                id="premium-teacher-toggle"
+                                checked={premiumTeacher}
+                                onCheckedChange={setPremiumTeacher}
+                            />
+                            <label htmlFor="premium-teacher-toggle" className="text-sm font-medium flex items-center gap-1.5 cursor-pointer">
+                                <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                                {t('premiumTeacher')}
+                            </label>
                         </div>
                     </div>
                 )}

@@ -540,6 +540,8 @@
     "bookLesson": "הזמן שיעור",
     "cancelLessonAction": "בטל שיעור",
     "closeAction": "סגור",
+    "rateLesson": "איך היה השיעור?",
+    "ratingThanks": "תודה על המשוב!",
     "creditBalance": "יתרת קרדיטים: {remaining} מתוך {total}",
     "dateLabel": "תאריך",
     "duration": "{min} דקות",

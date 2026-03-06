@@ -97,7 +97,7 @@ export function MinistryInboxPanel() {
                     <ScrollArea className="flex-1 px-4 py-2">
                         <TabsContent value="pending" className="mt-0 space-y-2">
                             {pendingForms.map(form => (
-                                <button key={form.id} onClick={() => setSelectedFormId(form.id)} className={`w-full text-right p-3 rounded-lg border text-sm transition-colors ${selectedFormId === form.id ? 'bg-purple-50 border-purple-300 shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}>
+                                <button key={form.id} onClick={() => setSelectedFormId(form.id)} className={`w-full text-start p-3 rounded-lg border text-sm transition-colors ${selectedFormId === form.id ? 'bg-purple-50 border-purple-300 shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}>
                                     <div className="flex justify-between items-start mb-1">
                                         <span className="font-semibold">{form.studentName}</span>
                                         {form.urgency === 'HIGH' && <Badge variant="destructive" className="text-[10px] px-1 h-4">{t('urgent')}</Badge>}
@@ -115,7 +115,7 @@ export function MinistryInboxPanel() {
 
                         <TabsContent value="processed" className="mt-0 space-y-2">
                             {processedForms.map(form => (
-                                <button key={form.id} onClick={() => setSelectedFormId(form.id)} className={`w-full text-right p-3 rounded-lg border text-sm transition-colors ${selectedFormId === form.id ? 'bg-purple-50 border-purple-300' : 'bg-card hover:bg-muted/50'}`}>
+                                <button key={form.id} onClick={() => setSelectedFormId(form.id)} className={`w-full text-start p-3 rounded-lg border text-sm transition-colors ${selectedFormId === form.id ? 'bg-purple-50 border-purple-300' : 'bg-card hover:bg-muted/50'}`}>
                                     <div className="flex justify-between items-start mb-1">
                                         <span className="font-medium">{form.studentName}</span>
                                         <Badge variant={form.status === 'APPROVED' ? 'default' : 'secondary'} className={`text-[10px] px-1 h-4 ${form.status === 'APPROVED' ? 'bg-green-600' : form.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>

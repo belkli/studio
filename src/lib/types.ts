@@ -827,6 +827,7 @@ export type LessonSlot = {
   rescheduledAt?: string;        // ISO Timestamp
   googleCalendarEventId?: string; // for two-way calendar sync
   effectiveRate?: number;         // NIS rate applied at this lesson
+  studentRating?: number;         // 1-5 star rating by student (future: persisted after lesson)
   createdAt: string; // ISO Timestamp
   updatedAt: string; // ISO Timestamp
 };

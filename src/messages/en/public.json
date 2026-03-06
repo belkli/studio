@@ -294,6 +294,7 @@
     "step3Title": "Start learning",
     "step3Desc": "Personalized lessons with experienced teachers.",
     "featuredTeachersTitle": "Featured teachers",
+    "recommendedTeachersTooltip": "These teachers were selected based on availability, rating and profile completeness.",
     "teacherFallback": "Experienced teacher in the Harmonia network.",
     "upcomingEventsTitle": "Upcoming events",
     "openDaysTitle": "Upcoming open days",
@@ -395,6 +396,7 @@
     "loadMoreTeachers": "Show {count} more teachers",
     "bookWithTeacher": "Register with this teacher",
     "education": "Education",
-    "bioUnavailable": "Biography will be added soon."
+    "bioUnavailable": "Biography will be added soon.",
+    "speaks": "Speaks"
   }
 }

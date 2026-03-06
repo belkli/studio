@@ -10,7 +10,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/routing";
 import { Icons } from "@/components/icons";
 import { signInWithGoogle, signInWithMicrosoft } from '@/lib/auth/oauth';
-import type { UserOAuthProvider } from '@/lib/types';
+import type { UserOAuthProvider, Language } from '@/lib/types';
 import { useState, type ReactNode } from 'react';
 import { updatePreferredLanguageAction } from '@/app/actions/user-preferences';
 
@@ -26,6 +26,7 @@ export default function SettingsPage() {
         user?.preferredLanguage ?? (locale as 'he' | 'en' | 'ar' | 'ru') ?? 'he'
     );
     const [isSavingLanguage, setIsSavingLanguage] = useState(false);
+    const [spokenLangs, setSpokenLangs] = useState<Language[]>(user?.spokenLanguages ?? []);
 
     if (!user) {
         return null;
@@ -204,6 +205,39 @@ export default function SettingsPage() {
                     </form>
                 </CardContent>
             </Card>
+
+            {user.role === 'teacher' && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('spokenLanguages.title')}</CardTitle>
+                        <CardDescription>{t('spokenLanguages.description')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-wrap gap-3">
+                            {(['HE', 'EN', 'AR', 'RU'] as const).map(lang => {
+                                const labels: Record<Language, string> = { HE: 'עברית', EN: 'English', AR: 'العربية', RU: 'Русский' };
+                                const checked = spokenLangs.includes(lang);
+                                return (
+                                    <label key={lang} className="flex items-center gap-2 text-sm cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="rounded"
+                                            checked={checked}
+                                            onChange={() => {
+                                                const next = checked ? spokenLangs.filter(l => l !== lang) : [...spokenLangs, lang];
+                                                setSpokenLangs(next);
+                                                updateUser({ ...user, spokenLanguages: next });
+                                                toast({ title: t('spokenLanguages.saved') });
+                                            }}
+                                        />
+                                        {labels[lang]}
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             <Card>
                 <CardHeader>

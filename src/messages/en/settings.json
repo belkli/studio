@@ -11,6 +11,11 @@
       "success": "Profile saved",
       "successDesc": "Your profile has been updated successfully."
     },
+    "spokenLanguages": {
+      "title": "Spoken Languages",
+      "description": "Select the languages you speak. This information is shown on your public profile.",
+      "saved": "Languages updated"
+    },
     "password": {
       "title": "Update Password",
       "description": "Change your password.",
