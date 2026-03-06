@@ -1,4 +1,4 @@
-
+﻿
 /**
  * @fileoverview This is the central authentication and state management provider for the Harmonia application.
  * It uses React Context to provide user authentication status, user data, and all mock data
@@ -515,7 +515,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const newFeaturesEnabled = useMemo(() => {
     if (!user) return false;
     const currentConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
-    return currentConservatorium?.newFeaturesEnabled || false;
+    // DB-backed conservatorium rows currently do not persist this flag.
+    // Treat undefined as enabled so Postgres runtime uses the same modern nav
+    // behavior as mock mode unless explicitly disabled.
+    return currentConservatorium?.newFeaturesEnabled ?? true;
   }, [user, conservatoriums]);
 
   // On initial load, check for a user in localStorage to persist login state with role validation.
@@ -2343,6 +2346,8 @@ export const useAuth = () => {
   }
   return context;
 };
+
+
 
 
 
