@@ -1,8 +1,8 @@
 
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental } from './types';
-import constAdminData from '../../docs/constadmin.json';
-import rawCompositions from '../../docs/data.json';
-import rawConservatoriums from '../../docs/Conservatoriums/conservatoriums.json';
+import constAdminData from '../../docs/data/constadmin.json';
+import rawCompositions from '../../docs/data/data.json';
+import rawConservatoriums from '../../docs/data/conservatoriums.json';
 
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 

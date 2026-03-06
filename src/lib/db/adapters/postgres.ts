@@ -642,6 +642,11 @@ function mapConservatoriums(rows: RawConservatorium[]): {
             }
           : undefined,
       photoUrls: photoUrls.length ? photoUrls : undefined,
+      // Keep modern dashboard nav enabled in DB mode unless explicitly disabled.
+      newFeaturesEnabled:
+        typeof (description as Record<string, unknown>).newFeaturesEnabled === 'boolean'
+          ? ((description as Record<string, unknown>).newFeaturesEnabled as boolean)
+          : true,
       translations,
     };
 
@@ -1721,6 +1726,7 @@ export class PostgresAdapter extends MemoryDatabaseAdapter {
     }
   }
 }
+
 
 
 
