@@ -514,10 +514,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const newFeaturesEnabled = useMemo(() => {
     if (!user) return false;
+
+    // Always use modern nav for admin personas.
+    if (user.role === 'conservatorium_admin' || user.role === 'delegated_admin' || user.role === 'site_admin') {
+      return true;
+    }
+
     const currentConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
-    // DB-backed conservatorium rows currently do not persist this flag.
-    // Treat undefined as enabled so Postgres runtime uses the same modern nav
-    // behavior as mock mode unless explicitly disabled.
     return currentConservatorium?.newFeaturesEnabled ?? true;
   }, [user, conservatoriums]);
 
