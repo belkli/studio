@@ -4,14 +4,10 @@
 
 ### 1.1 Primary: Firebase App Hosting
 
-The Next.js application is deployed to **Firebase App Hosting**, which provides:
-- Native Next.js support (Server Components, Server Actions, API routes)
-- Automatic HTTPS and global CDN
-- Zero-configuration scaling — serverless, scales to zero when idle
-- Direct integration with Firebase Auth, Firestore, and Cloud Functions
+✅ `apphosting.yaml` is present in the repo root. The Next.js application is deployed to **Firebase App Hosting**, which provides native Next.js support (Server Components, Server Actions, API routes), automatic HTTPS, global CDN, and direct integration with Firebase Auth, Firestore, and Cloud Functions.
 
 ```yaml
-# apphosting.yaml
+# apphosting.yaml (present in repo root — review before production deploy)
 runConfig:
   minInstances: 0          # scale-to-zero for cost efficiency
   maxInstances: 10
@@ -19,14 +15,14 @@ runConfig:
   memoryMiB: 512
 env:
   - variable: DB_BACKEND
-    value: firebase
+    value: firebase          # ⚠️ This will use MemoryAdapter until FirebaseAdapter is implemented
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     secret: FIREBASE_PROJECT_ID
 ```
 
 ### 1.2 Alternative: Self-Hosted (Docker)
 
-For conservatoriums using the PostgreSQL or Supabase backend, the app can be self-hosted:
+✅ `docker-compose.yml` is present in the repo root. For Postgres or Supabase backend:
 
 ```yaml
 # docker-compose.yml (present in repo root)
@@ -64,33 +60,68 @@ services:
 
 ### 2.3 Firebase Emulator Suite (Local Development)
 
-All development uses the Firebase Emulator Suite — no developer should have write access to the production Firebase project:
+> ⚠️ Firebase Emulator Suite is **not required** for current development because the app defaults to `mock` or `postgres` backend. It will be required once the `FirebaseAdapter` is properly implemented.
 
 ```bash
-# Start all emulators:
+# When Firebase is connected, start emulators:
 firebase emulators:start --import=./scripts/db/emulator-seed
-
-# Emulators active:
-# Auth      → localhost:9099
-# Firestore → localhost:8080
-# Functions → localhost:5001
-# Storage   → localhost:9199
-# FCM       → localhost:9150
+# Auth → 9099  Firestore → 8080  Functions → 5001  Storage → 9199
 ```
 
 ---
 
 ## 3. Environments
 
-| Environment | Hosting | Firebase Project | Database | Purpose |
-|-------------|---------|-----------------|----------|---------|
-| **Local Dev** | `localhost:3000` | Emulator Suite | Postgres (Docker) or Firestore Emulator | Developer machines |
-| **Staging** | Firebase App Hosting (staging channel) | `harmonia-staging` | Firestore (staging project) | Integration testing, client review |
-| **Production** | Firebase App Hosting | `harmonia-prod` | Firestore (prod project) | Live users |
+| Environment | Hosting | Database | Purpose |
+|-------------|---------|----------|---------|
+| **Local Dev (current)** | `localhost:9002` (port configured in `package.json`) | `mock` (in-memory) or Postgres via `docker compose up` | All development |
+| **Local Dev (target)** | `localhost:9002` | Firebase Emulator Suite | After FirebaseAdapter is implemented |
+| **Staging** | Firebase App Hosting (preview channel) | Firestore (staging project) | Integration testing |
+| **Production** | Firebase App Hosting | Firestore (prod project) | Live users |
 
-### 3.1 Environment Variables
+### 3.1 NPM Scripts (Verified)
 
-All secrets are stored in **Google Secret Manager** and injected at build/runtime. Never committed to source control.
+```json
+"dev":         "next dev --turbopack -p 9002"   // dev server at port 9002
+"build":       "next build"
+"test":        "vitest"
+"typecheck":   "tsc --noEmit"
+"db:start":    "docker compose up -d"
+"db:setup":    "npm run db:migrate && npm run db:seed"
+"db:studio":   "npx drizzle-kit studio"
+"i18n:audit":  "node scripts/i18n/audit.mjs"
+"genkit:dev":  "genkit start -- tsx src/ai/dev.ts"
+```
+
+### 3.2 Environment Variables (Verified from codebase)
+
+All secrets are stored in **Google Secret Manager** in production. Never committed to source control.
+
+| Variable | Required | Description | Status |
+|----------|---------|-------------|--------|
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Client | Firebase client config | ⚠️ Optional — app degrades to mock without it |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Client | Firebase Auth domain | ⚠️ Optional |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Client | Firebase project ID | ⚠️ Optional |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Client | Firebase app ID | ⚠️ Optional |
+| `FIREBASE_SERVICE_ACCOUNT_KEY` | Server | Admin SDK (base64 JSON) | ❌ Not yet used |
+| `DB_BACKEND` | All | `mock` \| `firebase` \| `postgres` \| `supabase` \| `pocketbase` | ✅ |
+| `DATABASE_URL` | Postgres | Auto-selects postgres when set | ✅ |
+| `PAYMENT_GATEWAY_PROVIDER` | Payments | `CARDCOM` (default) \| `PELECARD` \| `HYP` \| `TRANZILA` \| `STRIPE` | ⚠️ Stub |
+| `CARDCOM_TERMINAL_NUMBER` | Production | Live Cardcom terminal | ⚠️ Stub |
+| `CARDCOM_SANDBOX_TERMINAL_NUMBER` | Staging | Separate sandbox terminal | ⚠️ Stub |
+| `CARDCOM_SANDBOX` | Staging | `'true'` to use sandbox API URLs | ⚠️ Stub |
+| `CARDCOM_API_NAME` / `CARDCOM_API_PASSWORD` | Production | Cardcom API credentials | ⚠️ Stub |
+| `CARDCOM_WEBHOOK_SECRET` | Production | HMAC validation | ⚠️ Stub |
+| `PELECARD_TERMINAL_NUMBER` / `HYP_TERMINAL_NUMBER` / `TRANZILA_TERMINAL_NUMBER` | Alt payments | Alternative gateway terminals | ⚠️ Optional |
+| `STRIPE_PUBLISHABLE_KEY` | Alt payments | Stripe public key | ⚠️ Incomplete |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | SMS/WhatsApp | Twilio auth | ⚠️ Stub |
+| `TWILIO_SMS_FROM` | SMS | Sender number e.g. `+972...` | ⚠️ Stub |
+| `TWILIO_WHATSAPP_FROM` | WhatsApp | Sender e.g. `whatsapp:+1...` | ⚠️ Stub |
+| `SENDGRID_API_KEY` / `SENDGRID_FROM_EMAIL` | Email | SendGrid | ⚠️ Stub |
+| `GOOGLE_CALENDAR_CLIENT_ID` / `GOOGLE_CALENDAR_CLIENT_SECRET` | Calendar | Teacher calendar sync | ⚠️ Spec only |
+| `HEBCAL_API_KEY` | Holidays | Israeli holiday feed | ⚠️ Spec only |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | App Check | reCAPTCHA v3 | ❌ Not yet wired |
+| `GOOGLE_API_KEY` / `GENKIT_API_KEY` | AI | Gemini/Genkit key | ✅ Required for AI flows |
 
 | Variable | Required | Description |
 |----------|---------|-------------|
@@ -139,47 +170,40 @@ Push to branch
 
 ---
 
-## 5. External Service Integrations
+## 5. External Service Integrations (Verified Status)
 
-### 5.1 Cardcom (Israeli Payment Gateway)
+### 5.1 Payment Gateways (Multi-Provider)
 
-- **Pattern:** Hosted Payment Page (PCI scope stays with Cardcom; no card data on Harmonia servers)
-- **Recurring billing:** Cardcom tokenised charge via server-to-server API
-- **Installments:** J5 parameter, 1–12 months (Israeli market standard)
-- **Webhook:** Cardcom posts to `/api/cardcom-webhook`; validated with HMAC signature
-- **Section 46 tax receipts:** Donation payments trigger call to Israel Tax Authority API for allocation number
+Five Israeli/international gateways are supported via `PAYMENT_GATEWAY_PROVIDER` env var. All return mock redirect URLs when terminal numbers are absent.
 
-### 5.2 Twilio
+| Gateway | File | Status |
+|---------|------|--------|
+| **Cardcom** (default) | `src/lib/payments/cardcom.ts` | ⚠️ Full API code — inactive (no credentials) |
+| **PeleCard** | `src/app/actions.ts` `buildPaymentRedirectUrl()` | ⚠️ Redirect URL only |
+| **HYP** | `src/app/actions.ts` | ⚠️ Redirect URL only |
+| **Tranzila** | `src/app/actions.ts` | ⚠️ Redirect URL only |
+| **Stripe** | `src/app/actions.ts` | ⚠️ Mock redirect only — incomplete |
 
-- **SMS:** Lesson reminders, urgent cancellations, payment failures
-- **WhatsApp Business API:** Primary channel for Israel market; respects 24h messaging window
-- **Phone OTP:** Firebase Auth phone verification flows through Twilio for custom sender ID
+### 5.2 Twilio (SMS + WhatsApp)
+
+`src/lib/notifications/dispatcher.ts` — real Twilio REST API calls are implemented. When `TWILIO_ACCOUNT_SID` is absent, `sendSMS()` and `sendWhatsApp()` log a warning and return a mock SID. **Production-ready code — inactive due to missing credentials.**
 
 ### 5.3 Google Calendar API
 
-- **Two-way sync** for opted-in teachers
-- `syncTeacherCalendars` Cloud Function runs every 15 minutes
-- Reads teacher's Google Calendar for conflicts → marks in `teacherExceptions` collection
-- Writes new Harmonia lessons to teacher's calendar as events
+`src/lib/cloud-functions/calendar-sync.ts` — typed specification only. OAuth token storage and the actual API calls are specified but not implemented. Teacher calendar connection UI exists but the backend sync function is not deployed.
 
-### 5.4 Hebcal API
+### 5.4 Hebcal API (Israeli Holidays)
 
-- Provides the Israeli national holiday calendar (Rosh Hashana, Yom Kippur, Sukkot, Pesach, etc.)
-- Called once per academic year by `archiveExpiredRecords` / setup function
-- Results stored in `/conservatoriums/{cid}/closureDates/` — used by the booking engine to auto-skip holiday dates when generating recurring lesson series
+`src/lib/cloud-functions/holiday-calendar.ts` — typed specification. Includes the mandatory closure holidays list and `mapHebcalToClosureDate()` function spec. Not yet called.
 
 ### 5.5 Israeli Ministry of Education
 
-- **Form export:** Bulk XML/PDF export compatible with `pop.education.gov.il`
-- **Exam registration:** Structured data export for Ministry exam registration
-- **Integration pattern:** > TODO: Requires manual documentation — Ministry API specifics
+Ministry XML/PDF export is handled via `FormSubmission` data with `ministryExportedAt` and `ministryReferenceNumber` fields. UI pages exist (`/dashboard/ministry-export`). Direct Ministry API integration:
+> TODO: Requires manual documentation — Ministry API specifics and portal submission protocol
 
 ### 5.6 Genkit / Google AI (Gemini)
 
-- Server-side only; no Genkit calls from client components
-- Flows defined in `src/ai/flows/`
-- AI jobs are queued to `/conservatoriums/{cid}/aiJobs/` and processed by a PubSub worker Cloud Function
-- All LLM responses go through human review before any consequential action is taken
+✅ **Active.** 8 Genkit flows in `src/ai/flows/` are called from `src/app/actions.ts`. All run server-side. Requires `GOOGLE_API_KEY` in the environment. Dev server: `npm run genkit:dev`.
 
 ---
 

@@ -4,54 +4,69 @@
 
 Harmonia stores Israeli ID numbers (ת"ז) of minors and parents, video/audio recordings of children, credit card histories, Ministry exam results, and scholarship financial disclosures. This makes a security breach a violation of the **Israeli Protection of Privacy Law (PDPPA / חוק הגנת הפרטיות, 5741-1981)** with civil and regulatory consequences.
 
-> ⚠️ **Current prototype status:** The prototype's authentication is `localStorage.getItem('harmonia-user')` — role escalation is trivially possible from browser DevTools. `verifyAuth()` unconditionally returns `true`. There are no Firestore Security Rules deployed. **These must all be resolved before any real user is onboarded.**
+> ⚠️ **Current prototype security status — verified from code:**
+> - **Authentication:** `login()` in `use-auth.tsx` does a plain email lookup in the mock users array. No password check. No Firebase `signInWithEmailAndPassword` call.
+> - **Session:** A `harmonia-user=1` cookie is set/cleared client-side (`document.cookie`). The cookie value has no cryptographic significance.
+> - **Authorization:** `verifyAuth()` in `src/lib/auth-utils.ts` unconditionally returns `true`. Any unauthenticated caller can invoke any Server Action.
+> - **Route guards:** `useAdminGuard()` is a client-side hook that redirects after mount — it can be bypassed by disabling JavaScript or navigating directly.
+> - **Firestore rules:** `firestore.rules` is a template in the repo but not enforced (no Firestore is connected).
+> - **No `src/middleware.ts` exists.**
+>
+> **None of these must remain in production. All items in §8 Pre-Launch Checklist are blocking.**
 
 ---
 
 ## 2. Authentication
 
-### 2.1 Authentication Methods
+### 2.1 Authentication Methods (Verified Status)
 
-| Method | Used By | Provider |
-|--------|---------|----------|
-| Email + Password | All roles | Firebase Auth |
-| Google OAuth | All roles (optional) | Firebase Auth — GoogleAuthProvider |
-| Microsoft OAuth | All roles (optional) | Firebase Auth — OAuthProvider('microsoft.com') |
-| Magic Link (Email) | Parents (low-tech) | Firebase Auth — sendSignInLinkToEmail |
-| Phone OTP (SMS) | Student 13+, Parent (fallback) | Firebase Auth via Twilio |
+| Method | Used By | Provider | Status |
+|--------|---------|----------|--------|
+| Email + Password | All roles | Mock array lookup — no Firebase Auth call | ⚠️ Mock only |
+| Google OAuth | All roles | Firebase Auth SDK in `src/lib/auth/oauth.ts` — falls back to mock profile when Firebase unconfigured | ⚠️ Partial |
+| Microsoft OAuth | All roles | Firebase Auth SDK — same fallback | ⚠️ Partial |
+| Magic Link (Email) | Parents (low-tech) | `firebase/auth` `sendSignInLinkToEmail` | ❌ Not wired |
+| Phone OTP (SMS) | Student 13+, Parent | Firebase Auth + Twilio | ❌ Not implemented |
 
-### 2.2 OAuth Progressive Registration
+### 2.2 OAuth Progressive Registration (Verified)
 
-OAuth users (Google / Microsoft) do **not** need to pre-register. The flow:
+`src/lib/auth/oauth.ts` uses `GoogleAuthProvider` and `OAuthProvider('microsoft.com')` with `signInWithPopup`. When `getClientAuth()` returns null (Firebase not configured), `createMockProfile()` generates a synthetic profile from the email. The flow:
 
 ```
-OAuth authenticate → check if email exists in Harmonia
-  ├── EXISTS → restore session directly
-  └── NEW    → "Complete Registration" wizard (pre-filled from provider profile)
-                → role assigned during wizard, not by OAuth provider
+signInWithPopup (or mock)
+  ├── Firebase configured → real OAuth credential
+  └── Firebase not configured → mock profile from email/fallbackEmail
+→ caller must check if Harmonia user exists (by email) → redirect to complete-registration if new
 ```
 
-Key rules:
-- Admin accounts cannot be self-created via OAuth — they must be invited by `SITE_ADMIN`
-- Same email = same account (OAuth provider is linked to existing account, not duplicated)
-- `registrationSource` field tracks the origin: `'email' | 'google' | 'microsoft' | 'admin_created'`
+### 2.3 Session Management (Verified — Current Reality)
 
-### 2.3 Session Management
+```typescript
+// src/hooks/use-auth.tsx (actual)
+const setAuthCookie = () => {
+  document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
+  // ⚠️ No JWT, no user ID, no role — just a presence flag
+};
+```
 
-- Firebase ID tokens expire in **1 hour**. Session cookies (`__session`) are issued by the server and last up to 14 days.
-- The Next.js middleware validates the session cookie on every request using Firebase Admin SDK `verifySessionCookie()`.
-- On token refresh, Custom Claims are re-read from Firebase Auth — role changes take effect on next request without forcing logout.
+The `harmonia-user=1` cookie is checked by the dashboard layout to decide whether to render the sidebar. It has no cryptographic content and conveys no identity or role information to the server.
+
+**Target architecture (required before production):**
+- Firebase `signInWithEmailAndPassword` → Firebase ID token
+- Server-side Firebase session cookie via `admin.auth().createSessionCookie()`
+- `src/middleware.ts` validates `__session` cookie via `admin.auth().verifySessionCookie()` on every request
+- Custom Claims `{ role, conservatoriumId, approved }` injected into request headers for Server Components
 
 ---
 
 ## 3. Authorisation — Role-Based Access Control
 
-### 3.1 Custom Claims (Server-Side Role Authority)
+### 3.1 Custom Claims (Planned — Not Yet Implemented)
 
-Roles are stored in **Firebase Custom Claims**, not in `localStorage` or any client-accessible store. Claims are set by the `onUserApproved` Cloud Function whenever `users/{userId}.approved` or `users/{userId}.role` changes.
+The **intended** production design uses Firebase Custom Claims as the server-side role authority. This is **not yet active**. Current role checks use the mock `user.role` value from the in-memory context.
 
 ```typescript
-// Firebase Custom Claims payload:
+// Planned Custom Claims payload (not yet deployed):
 {
   role: UserRole;
   conservatoriumId: string;
@@ -59,38 +74,41 @@ Roles are stored in **Firebase Custom Claims**, not in `localStorage` or any cli
 }
 ```
 
-### 3.2 Middleware Route Protection
+The `onUserApproved` Cloud Function that would set these claims is a spec (`src/lib/cloud-functions/`) and not deployed.
+
+### 3.2 Current Route Protection (Verified — Client-Side Only)
 
 ```typescript
-// src/middleware.ts
-export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('__session')?.value;
-  if (!token) return NextResponse.redirect('/login');
-
-  const decoded = await verifySessionCookie(token);  // throws on invalid
-  if (!decoded.approved) return NextResponse.redirect('/pending-approval');
-
-  // Inject validated claims for Server Components (never trust client headers)
-  const headers = new Headers(request.headers);
-  headers.set('x-user-id', decoded.uid);
-  headers.set('x-user-role', decoded.role);
-  headers.set('x-conservatorium-id', decoded.conservatoriumId);
-
-  return NextResponse.next({ request: { headers } });
+// src/hooks/use-admin-guard.ts (actual — client-side only)
+export function useAdminGuard() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    if (!isLoading && (!user || (
+      user.role !== 'conservatorium_admin' &&
+      user.role !== 'site_admin' &&
+      user.role !== 'delegated_admin'
+    ))) {
+      router.replace('/dashboard');
+    }
+  }, [user, isLoading, router]);
+  return { user, isLoading };
 }
 ```
 
-### 3.3 Server Action Guard Pattern
+> ⚠️ This guard runs after the component mounts on the client. Admin pages render briefly before the redirect fires. JavaScript-disabled users or direct API calls bypass it entirely.
 
-Every Server Action and Callable Function validates claims before any logic:
+### 3.3 Server Action Guard (Target Pattern)
+
+Once `verifyAuth()` is wired to real Firebase Admin SDK:
 
 ```typescript
-// src/lib/auth-utils.ts
+// src/lib/auth-utils.ts (target)
 export async function requireRole(
   allowedRoles: UserRole[],
   conservatoriumIdMustMatch?: string
 ): Promise<DecodedIdToken> {
-  const claims = await getClaimsFromRequestHeaders();
+  const claims = await getClaimsFromRequestHeaders(); // from x-user-role header injected by middleware
   if (!allowedRoles.includes(claims.role)) throw new Error('FORBIDDEN');
   if (conservatoriumIdMustMatch && claims.conservatoriumId !== conservatoriumIdMustMatch) {
     throw new Error('TENANT_MISMATCH');
@@ -152,14 +170,29 @@ service cloud.firestore {
 
 ## 5. STRIDE Threat Model Summary
 
-| Threat | Severity | Attack | Mitigation |
-|--------|----------|--------|------------|
-| **S**poofing — localStorage role manipulation | 🔴 Critical | Edit `harmonia-user` in DevTools → become admin | Firebase Custom Claims in JWT; session cookie validation |
-| **T**ampering — crafted booking with `amount: 0` | 🔴 Critical | Send `bookLessonSlot` with zero price | Zod validation + server-side price lookup; client never sends price |
-| **R**epudiation — no financial audit trail | 🟠 High | Deny authorising a payment | Cardcom webhook HMAC + `/complianceLogs` collection |
-| **I**nformation Disclosure — PII of minors | 🔴 Critical | Unauthenticated Firestore reads | Security Rules + Storage Rules with signed URLs |
-| **D**enial of Service — booking function abuse | 🟡 Medium | Spam `bookLessonSlot` callable | Firebase App Check + rate limiting on callable functions |
-| **E**levation of Privilege — teacher sees admin data | 🔴 Critical | `useAuth()` context exposes all admin data | Role-scoped hooks; Server-side claims validation |
+| Threat | Severity | Attack | Mitigation | Status |
+|--------|----------|--------|------------|--------|
+| **S**poofing — no password check | 🔴 Critical | Any email logs in without password | Replace mock login with `signInWithEmailAndPassword` | ❌ |
+| **T**ampering — `z.any()` on form/user/lesson schemas | 🟠 High | Inject arbitrary data via Server Actions | Replace `z.any()` with real Zod schemas | ❌ |
+| **R**epudiation — no financial audit trail | 🟠 High | Deny authorising a payment | Cardcom webhook HMAC + `/complianceLogs` | ⚠️ Planned |
+| **I**nformation Disclosure — PII of minors | 🔴 Critical | Unauthenticated requests to Server Actions | `verifyAuth()` must validate real claims | ❌ |
+| **D**enial of Service — booking function abuse | 🟡 Medium | Spam callable functions | Firebase App Check + rate limiting | ❌ |
+| **E**levation of Privilege — client-side role check | 🔴 Critical | Access admin pages with student account | Middleware + server-side Claims validation | ❌ |
+
+### Security Headers (✅ Already Configured in `next.config.ts`)
+
+The following HTTP security headers are **already active** in production builds:
+
+```typescript
+// next.config.ts (verified active)
+{ key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },  // Note: SAMEORIGIN not DENY
+{ key: 'X-Content-Type-Options', value: 'nosniff' },
+{ key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+{ key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+{ key: 'Content-Security-Policy', value: ContentSecurityPolicy },
+// CSP includes: Cardcom (secure.cardcom.solutions), Google APIs, Firebase domains
+```
 
 ---
 
@@ -196,16 +229,11 @@ Harmonia stores **sensitive personal data** under PDPPA (חוק הגנת הפר�
 
 ## 7. Firebase App Check
 
-App Check is required on **all callable Cloud Functions** to prevent abuse. It verifies requests originate from the legitimate Harmonia web/mobile app:
+> ⚠️ **Not yet configured.** `src/lib/firebase-client.ts` initialises only `getAuth()` — no `initializeAppCheck()` call. When Cloud Functions are deployed, App Check must be added.
 
+Planned configuration:
 ```typescript
-// functions/src/index.ts
-setGlobalOptions({ enforceAppCheck: true });
-```
-
-Client initialisation:
-```typescript
-// src/lib/firebase-client.ts
+// src/lib/firebase-client.ts (target)
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!),
@@ -215,17 +243,47 @@ initializeAppCheck(app, {
 
 ---
 
-## 8. Performance Targets
+## 8. Pre-Launch Security Checklist
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| LCP | < 2.5s | Measured on 4G mobile, Hebrew locale |
-| INP | < 200ms | All interactive elements |
-| CLS | < 0.1 | No layout shift on RTL font load |
-| Firestore reads per session | ≤ 5 on initial load | Role-scoped, paginated queries |
-| Admin dashboard load | < 2.5s | Reads from `stats/live` document, not collection scans |
-| Booking calendar open | < 800ms | `onSnapshot` with indexed query |
-| Cloud Function cold start | < 500ms | 2nd Gen (Cloud Run min instances = 1 for critical functions) |
-| Monthly auto-charge function | Complete within 10 min | Batch size ≤ 400 Firestore docs; Cardcom rate limit handled |
-| Concurrent lesson bookings | Handles 50 simultaneous | Room lock transaction prevents double-booking |
+### Blocking (must complete before first real user)
+
+- [ ] Replace mock `login()` with real Firebase `signInWithEmailAndPassword`
+- [ ] Implement Firebase session cookies — replace `harmonia-user=1` cookie
+- [ ] Create `src/middleware.ts` with `verifySessionCookie()` on every request
+- [ ] Deploy `onUserApproved` Cloud Function to set Custom Claims
+- [ ] Replace `verifyAuth(): return true` with real claims validation
+- [ ] Replace `FormSubmissionSchema = z.any()`, `UserSchema = z.any()`, `LessonSchema = z.any()`
+- [ ] Deploy complete Firestore Security Rules (tenant isolation)
+- [ ] Deploy Firebase Storage Security Rules (no public URLs for PII)
+- [ ] Enable Firebase App Check on callable functions
+- [ ] Store all secrets in Google Secret Manager
+- [ ] Validate Cardcom HMAC signature on every webhook request
+- [ ] Remove pre-filled mock login (no password prompt in current UI)
+
+### Already Done ✅
+
+- [x] HTTP Security Headers: HSTS, X-Frame-Options (`SAMEORIGIN`), X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP — in `next.config.ts`
+- [x] CSP allowlist includes Cardcom, Firebase, and Google API domains
+- [x] Zod schemas for booking, practice-log, user, announcement, master-class, scholarship, donation, branch, room, lesson-package
+- [x] OAuth `signInWithPopup` implemented with Firebase SDK (pending Firebase project credentials)
+- [x] Israeli phone normalisation (`normalizeIsraeliPhone`) prevents format injection
+- [x] `/accessibility` statutory page present
+- [x] PDPPA types defined: `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog`, `RetentionPolicy`
+
+---
+
+## 9. Performance Targets
+
+> These are aspirational targets. Current performance is constrained by the monolithic `useAuth()` context loading all data for all roles on every page load.
+
+| Metric | Target | Current Reality |
+|--------|--------|----------------|
+| LCP | < 2.5s on 4G mobile | Unmeasured — mock data loads synchronously |
+| INP | < 200ms | At risk — context re-renders on any state change |
+| CLS | < 0.1 | Likely OK |
+| Firestore reads per session | ≤ 5 | N/A — no Firestore reads (all in-memory) |
+| Admin dashboard load | < 2.5s | Context includes all domains' data |
+| Booking calendar | < 800ms | No real-time listeners yet |
+| Cloud Function cold start | < 500ms | No CFs deployed |
+
 

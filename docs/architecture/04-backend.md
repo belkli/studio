@@ -2,249 +2,206 @@
 
 ## 1. Backend Architecture Overview
 
-Harmonia uses a **serverless backend** composed of three layers:
+> **Current reality:** The backend is a **server-action layer over in-memory mock data**. All "Cloud Functions" listed in the SDD documents are typed specification files in `src/lib/cloud-functions/` — they are not deployed Firebase Cloud Functions. Real Firestore, real payment processing, and real notification delivery are all stubbed.
 
-| Layer | Technology | Role |
-|-------|-----------|------|
-| **Server Actions** | Next.js Server Actions | Authenticated data mutations from Client Components; validated server-side |
-| **Callable Cloud Functions** | Firebase Cloud Functions (2nd Gen / Cloud Run) | Transactional operations requiring atomicity, external API calls, or background processing |
-| **Triggered / Scheduled Functions** | Firebase Cloud Functions | Event-driven reactions (new document, payment webhook) and cron jobs |
-
-The client **never writes directly to Firestore**. All mutations go through Server Actions or Callable Functions that validate Firebase Custom Claims before any write.
-
----
-
-## 2. API Design Principles
-
-1. **Claims-first auth** — every callable function reads the caller's role and `conservatoriumId` from `context.auth.token` (Firebase Custom Claims), never from request body.
-2. **Zod validation** — all input is validated with a shared Zod schema before any business logic runs.
-3. **Idempotency** — payment and credit-issuance functions accept an idempotency key (`operationId`) to prevent double-charge on retry.
-4. **Atomic transactions** — room booking, makeup credit redemption, and monthly auto-charge use Firestore transactions or batch writes to guarantee consistency.
-5. **Audit trail** — every consequential write appends to a `/complianceLogs` collection before returning.
-
----
-
-## 3. Callable Cloud Functions
-
-These are invoked by client code via `httpsCallable()`.
-
-### 3.1 Booking Engine
-
-#### `bookLessonSlot`
-```typescript
-Input: {
-  teacherId: string;
-  studentId: string;
-  startTime: Timestamp;
-  durationMinutes: 30 | 45 | 60;
-  packageId?: string;
-  roomId?: string;
-  isVirtual: boolean;
-}
-Steps:
-  1. Validate caller role (PARENT | STUDENT_OVER_13 | ADMIN | TEACHER)
-  2. Validate conservatoriumId from claims === slot's conservatoriumId
-  3. Zod schema validation on input
-  4. Check teacher availability (no overlap with existing slots)
-  5. Acquire roomLock document (Firestore transaction, TTL = lesson duration + 15min)
-  6. Deduct credit from Package (atomic transaction: package.usedCredits++)
-  7. Create LessonSlot document
-  8. Dispatch notifications (student/parent reminder, teacher notification)
-  9. Optionally sync to Google Calendar
-Output: { lessonId: string; success: boolean }
-```
-
-#### `bookMakeupLesson`
-```typescript
-Input: { makeupCreditId: string; startTime: Timestamp; teacherId: string; roomId?: string }
-Steps:
-  1. Validate caller owns the makeupCreditId
-  2. Firestore transaction: MakeupCredit.status AVAILABLE → REDEEMED
-  3. Create LessonSlot with type: 'MAKEUP'
-  4. Dispatch confirmation notification
-```
-
-#### `rescheduleLesson`
-```typescript
-Input: { lessonId: string; newStartTime: Timestamp; newRoomId?: string }
-Steps:
-  1. Load existing LessonSlot, validate caller owns it
-  2. Enforce cancellation policy notice window (e.g., 24h)
-     → If < 24h: treat as late cancel (status: CANCELLED_STUDENT_NO_NOTICE, credit forfeited)
-     → If ≥ 24h: release old slot, create new slot, notify teacher
-```
-
-#### `submitSickLeave`
-```typescript
-Input: { teacherId: string; dates: Date[]; note?: string }
-Role: TEACHER (own sick leave) | ADMIN (on behalf)
-Steps:
-  1. Find all SCHEDULED slots for teacherId on the given dates
-  2. Batch cancel all found slots (status: CANCELLED_TEACHER)
-  3. For each cancelled slot: create MakeupCredit document for affected student
-  4. Notify all affected students/parents via SMS + email
-  5. Admin dashboard AI Alert created
-  6. Optionally suggest substitute teachers (availability check)
-```
-
-### 3.2 Payment Functions
-
-#### `createPaymentPage`
-```typescript
-Input: { invoiceId: string; installments: 1 | 3 | 6 | 10 | 12 }
-Steps:
-  1. Load Invoice, validate payerId === caller.uid
-  2. Call Cardcom Hosted Payment Page API
-     → POST /api/v1/LowProfile/Create with amount, description, installments, returnUrl
-  3. Return { paymentUrl: string } — redirect client to Cardcom hosted page
-  4. DO NOT store card details — Cardcom manages PCI scope
-```
-
-#### `onPaymentWebhook` (triggered, not callable)
-```typescript
-Trigger: POST /api/cardcom-webhook
-Steps:
-  1. Validate Cardcom HMAC signature on request
-  2. Extract invoiceId from ReturnValue field
-  3. Idempotency check: if Invoice.status already PAID, return 200 and stop
-  4. Firestore transaction: Invoice.status → PAID, Invoice.paidAt → now
-  5. Trigger Package activation or credit top-up as appropriate
-  6. Send payment confirmation email (PDF receipt from Storage)
-```
-
-### 3.3 Auth Functions
-
-#### `onUserApproved` (triggered)
-```typescript
-Trigger: Firestore onDocumentUpdated('users/{userId}')
-Condition: approved changed to true OR role changed
-Action: admin.auth().setCustomUserClaims(userId, {
-  role: user.role,
-  conservatoriumId: user.conservatoriumId,
-  approved: user.approved,
-})
-Effect: All subsequent JWT tokens for this user carry the new claims.
-```
-
----
-
-## 4. Scheduled Cloud Functions
-
-| Function | Schedule | Action |
-|----------|----------|--------|
-| `monthlyAutoCharge` | 1st of month, 06:00 | Generate invoices for all active MONTHLY/YEARLY packages; call Cardcom tokenised charge for each |
-| `syncTeacherCalendars` | Every 15 minutes | Fetch Google Calendar / CalDAV for opted-in teachers; mark conflicts in `teacherExceptions` |
-| `dailyAgeGateCheck` | Daily, 02:00 | Find STUDENT_UNDER_13 profiles with `dateOfBirth` that crossed 13th birthday; trigger Age-Upgrade notification to parent |
-| `expireCredits` | Daily, 03:00 | Find MakeupCredit documents past `expiresAt`; set status → EXPIRED; notify student/parent |
-| `sendLessonReminders` | Daily, 08:00 | Send SMS/WhatsApp reminders for lessons scheduled in the next 24h |
-| `archiveExpiredRecords` | September 1 | Move >3-year-old lesson and form records to archive sub-collections (PDPPA retention policy) |
-
----
-
-## 5. Domain Logic — Core Business Rules
-
-### 5.1 Cancellation Policy Engine
-
-Cancellation credit entitlement is determined by the configured policy per conservatorium:
-
-| Condition | Outcome |
-|-----------|---------|
-| Student cancels with ≥ N hours notice (configurable, default 24h) | Makeup credit issued |
-| Student cancels with < N hours notice | Credit forfeited; slot status: `CANCELLED_STUDENT_NO_NOTICE` |
-| Teacher cancels for any reason | Makeup credit always issued to student |
-| Conservatorium cancels (holiday, facility) | Makeup credit always issued |
-| Student no-show | Credit forfeited; slot status: `NO_SHOW_STUDENT` |
-| Teacher no-show | Credit issued; teacher flag raised; admin alerted |
-
-### 5.2 Makeup Credit Lifecycle
-
-```
-MakeupCredit.status:
-  AVAILABLE → (student books makeup lesson) → REDEEMED
-  AVAILABLE → (30 days pass without booking) → EXPIRED (with notification at day 25)
-```
-
-Each credit is an explicit Firestore document in `/conservatoriums/{cid}/makeupCredits/{creditId}`. Credits are **never** implicitly inferred from `Package.usedCredits` — the ledger is explicit and auditable.
-
-### 5.3 Room Booking Lock
-
-To prevent double-booking in a concurrent system:
-
-```typescript
-// roomLocks/{conservatoriumId}_{roomId}_{slotStartMinute}
-{
-  roomId: string;
-  lockedBy: string;       // lessonSlotId
-  expiresAt: Timestamp;   // now + durationMinutes + 15min buffer
-}
-```
-
-`bookLessonSlot` uses a Firestore transaction to atomically:
-1. Check if a `roomLock` document exists and is not expired
-2. If free: create the lock and the `LessonSlot` in the same transaction
-3. If locked: throw `ROOM_UNAVAILABLE` error to the client
-
-### 5.4 Israeli VAT & Invoicing
-
-- VAT rate: 17% (configurable per conservatorium for future rate changes)
-- Invoice numbers: sequential per conservatorium — `CON-2026-00142`
-- Installments: 1–12 months supported via Cardcom's J5 installment parameter
-- Sibling discount: applied automatically at invoice generation when `parent.childIds.length > 1`
-- Prorated billing: `(monthlyRate / lessonsInMonth) × remainingLessons` for mid-month enrolments
-
-### 5.5 Payroll Export
-
-Harmonia is **not** a payroll system. It exports structured data for external Israeli HR systems (Hilan, Merav Digital):
-
-```
-CSV columns: teacherName, nationalId, employmentType, lessonsCount,
-             totalMinutes, actualHours, overtimeHours, sickDays,
-             grossCompensation, period
-```
-
-The file uses `UTF-8 with BOM` to ensure correct Hebrew rendering in Excel and Israeli HR software.
-
----
-
-## 6. AI Agents (Genkit / Gemini)
-
-All AI agents are implemented as **Genkit flows** in `src/ai/flows/`. They run server-side only and are never called directly from client components.
-
-| Agent | Flow File | Trigger | Action |
+| Layer | Technology | File(s) | Status |
 |-------|-----------|---------|--------|
-| Matchmaker | `match-teacher-flow.ts` | End of enrollment wizard Step 5 | Two-pass: hard-filter teachers, then LLM-score top candidates (weight: specialty 40%, schedule 30%, level 20%, age group 10%). Returns top 3 with human-readable match reasons. |
-| Progress Report Drafter | `draft-progress-report-flow.ts` | Teacher clicks "Draft Report" | Reads student's practice logs, lesson notes, and repertoire status; drafts a parent-facing progress narrative in Hebrew. Teacher reviews and edits before sending. |
-| Help Assistant | `help-assistant-flow.ts` | User opens Help chat | RAG over `src/lib/help-articles.ts`; answers questions about the platform in the user's locale. Falls back to "contact support" for unknown queries. |
-| Event Poster Generator | `generate-event-poster.ts` | Admin creates an event | Generates promotional poster text and layout suggestions using event metadata. Returns structured content for admin review. |
-| Scheduling Advisor | > TODO: Requires manual documentation | Async AI job queue | Monitors schedule fill rates; proactively alerts admin when a teacher's slots are < 70% booked. |
-
-All AI agents:
-- Log every invocation to `/conservatoriums/{cid}/aiJobs/{jobId}`
-- Never take irreversible actions without human confirmation
-- Can be enabled/disabled per conservatorium in settings
+| **Server Actions** | Next.js `'use server'` | `src/app/actions.ts` (1283 lines) | ✅ Active — Zod-validated; ⚠️ auth always passes |
+| **Database** | `DatabaseAdapter` | `src/lib/db/` | ✅ Adapter layer real; default = in-memory mock |
+| **Callable Cloud Functions** | Firebase CF specs | `src/lib/cloud-functions/` | ⚠️ Typed pseudocode specs — NOT deployed |
+| **Triggered/Scheduled CFs** | Firebase CF specs | `src/lib/cloud-functions/lesson-triggers.ts` | ⚠️ Spec only |
+| **Notification Dispatcher** | Twilio + SendGrid | `src/lib/notifications/dispatcher.ts` | ⚠️ Real code; falls back to `console.warn` when env vars absent |
+| **Payment Gateway** | Cardcom + 4 others | `src/lib/payments/cardcom.ts` + `actions.ts` | ⚠️ Real API code; returns mock URL when terminal not configured |
 
 ---
 
-## 7. Notification Dispatcher
+## 2. Server Actions (`src/app/actions.ts`)
 
-All outbound notifications are routed through a single `NotificationDispatcher` service that respects user channel preferences and quiet hours.
+### 2.1 Auth Wrapper Pattern
+
+Every action uses `withAuth()` HOC from `src/lib/auth-utils.ts`:
 
 ```typescript
-// src/lib/notifications/dispatcher.ts
-interface NotificationPayload {
-  type: NotificationType;  // e.g. 'LESSON_REMINDER' | 'TEACHER_SICK' | 'PAYMENT_DUE'
-  recipientId: string;
-  data: Record<string, string>;  // template variables
-  urgent?: boolean;              // bypasses quiet hours if true
+// src/lib/auth-utils.ts (actual)
+export async function verifyAuth(): Promise<boolean> {
+    return true;  // ⚠️ ALWAYS TRUE — no real auth check
+}
+
+export function withAuth<Schema, R>(schema: Schema, action: (input) => Promise<R>) {
+    return async (input) => {
+        await verifyAuth();          // ⚠️ no-op
+        const parsed = schema.parse(input);  // ✅ Zod validation runs
+        return action(parsed);
+    };
 }
 ```
 
-| Channel | Provider | Use Case |
-|---------|----------|----------|
-| In-App | Firebase Cloud Messaging (FCM) | All events for active users |
-| Email | SendGrid (via Firebase Extensions) | Invoices, approvals, weekly summaries |
-| SMS | Twilio | Urgent time-sensitive: same-day cancellations, payment failures |
-| WhatsApp | Twilio WhatsApp API | Israeli-preferred channel; replaces SMS for opted-in users |
+> ⚠️ **Critical security gap:** `verifyAuth()` unconditionally returns `true`. Any caller — authenticated or not — can invoke any server action. Role validation must be added here before production.
 
-Quiet hours (configurable per user, default 22:00–08:00) suppress non-urgent SMS/WhatsApp; messages are queued and sent after quiet period. Urgent cancellations always bypass quiet hours.
+### 2.2 Zod Validation Schemas (Verified Implemented)
 
+Dedicated schemas exist in `src/lib/validation/`:
+
+| File | Schemas |
+|------|---------|
+| `booking.ts` | `BookingRequestSchema`, `MakeupBookingRequestSchema`, `RescheduleRequestSchema`, `CancelLessonRequestSchema` |
+| `forms.ts` | Form submission validation |
+| `practice-log.ts` | Practice log submission |
+| `user-schema.ts` | User create/update |
+
+Additionally, `actions.ts` itself contains inline Zod schemas for: `AnnouncementSchema`, `MasterClassSchema`, `ScholarshipApplicationSchema`, `DonationCauseSchema`, `DonationRecordSchema`, `BranchSchema`, `RoomSchema`, `LessonPackageSchema`, `ConservatoriumInstrumentSchema`, and more.
+
+> ⚠️ **Note:** `FormSubmissionSchema = z.any()`, `UserSchema = z.any()`, `LessonSchema = z.any()` — these three high-impact schemas use `z.any()` and provide no input validation.
+
+### 2.3 Payment Gateway — Multi-Provider (Verified)
+
+The architecture is more flexible than originally documented. The active provider is selected via `PAYMENT_GATEWAY_PROVIDER` env var (default: `CARDCOM`):
+
+| Provider | Env Var | Redirect URL |
+|----------|---------|-------------|
+| `CARDCOM` | `CARDCOM_TERMINAL_NUMBER` | `secure.cardcom.solutions/...` |
+| `PELECARD` | `PELECARD_TERMINAL_NUMBER` | `gateway.pelecard.biz/...` |
+| `HYP` | `HYP_TERMINAL_NUMBER` | `pay.hyp.co.il/...` |
+| `TRANZILA` | `TRANZILA_TERMINAL_NUMBER` | `direct.tranzila.com/...` |
+| `STRIPE` | `STRIPE_PUBLISHABLE_KEY` | `/payment/mock` (Stripe flow incomplete) |
+
+If the terminal number is missing, all gateways fall back to `/payment/mock?token=...&gateway=...` with a `console.warn`.
+
+`src/lib/payments/cardcom.ts` has full Cardcom API integration code (hosted payment page, recurring token charge, webhook handler, installment calculator) — but these code paths only execute when `CARDCOM_TERMINAL_NUMBER` is set.
+
+---
+
+## 3. Cloud Function Specifications
+
+All 6 files in `src/lib/cloud-functions/` are **typed pseudocode specifications**, not deployed functions. They document the intended transaction logic using TypeScript interfaces and JSDoc.
+
+| Spec File | Intended Function | Key Logic |
+|-----------|------------------|-----------|
+| `booking.ts` | `bookLessonSlot` (callable) | 8-step Firestore transaction: validate → check availability → acquire room lock → deduct package credit → create slot |
+| `makeup-booking.ts` | `bookMakeupLesson` (callable) | Atomic credit redemption: read credit in transaction → verify AVAILABLE → create slot + mark REDEEMED atomically |
+| `lesson-triggers.ts` | `onLessonCancelled` + `onLessonCompleted` (triggered) | Auto-issue makeup credits, update live stats, dispatch notifications |
+| `calendar-sync.ts` | `syncTeacherCalendars` (scheduled, every 15min) | Two-way Google Calendar sync: outbound new/changed slots, inbound conflict detection |
+| `holiday-calendar.ts` | `getIsraeliHolidaysForYear` (callable) | Hebcal API integration; maps Hebrew calendar holidays to `ClosureDate` documents |
+| `payroll-export.ts` | `generatePayrollExport` (callable) | Aggregates completed lessons by teacher; calculates gross pay using `TeacherCompensation` rates; generates CSV/Excel |
+
+---
+
+## 4. Domain Logic — Core Business Rules
+
+### 4.1 Cancellation Policy Engine
+
+The `CancellationPolicy` type is defined and configured per conservatorium:
+
+```typescript
+type CancellationPolicy = {
+  studentNoticeHoursRequired: number;      // e.g. 24
+  studentCancellationCredit: 'FULL' | 'NONE';
+  studentLateCancelCredit: 'FULL' | 'NONE';
+  noShowCredit: 'NONE';
+  makeupCreditExpiryDays: number;
+  maxMakeupsPerTerm: number;
+};
+```
+
+Current implementation (`use-auth.tsx` `cancelLesson`): cancellation runs in mock context. The Cloud Function spec in `lesson-triggers.ts` documents the production logic with Firestore transactions.
+
+### 4.2 Makeup Credit Lifecycle (Verified Types)
+
+```typescript
+// MakeupCredit type (src/lib/types.ts — verified)
+type MakeupCredit = {
+  id: string;
+  conservatoriumId: string;
+  studentId: string;
+  packageId?: string;
+  issuedBySlotId: string;         // the cancelled lesson
+  issuedReason: 'TEACHER_CANCELLATION' | 'CONSERVATORIUM_CANCELLATION' | 'STUDENT_NOTICED_CANCEL';
+  issuedAt: string;               // ISO Timestamp
+  expiresAt: string;              // issuedAt + policy.makeupCreditExpiryDays
+  status: 'AVAILABLE' | 'REDEEMED' | 'EXPIRED';
+  redeemedBySlotId?: string;
+  redeemedAt?: string;
+  amount: number;
+};
+```
+
+### 4.3 Room Allocation Algorithm (Verified — Active Code)
+
+✅ `src/lib/room-allocation.ts` is a real, active implementation (not a stub). It contains:
+- `resolveInstrumentId()` — normalises raw instrument strings against `ConservatoriumInstrument` catalog using multi-language matching (Hebrew diacritics stripped, aliases resolved)
+- `allocateRoomWithConflictResolution()` — selects the best-fit room based on instrument equipment compatibility, room blocks, and existing lesson conflicts
+- Instrument compatibility matrix (`INSTRUMENT_ROOM_COMPATIBILITY`) — defines preferred/acceptable/incompatible room types per instrument
+- Called from `use-auth.tsx` during lesson booking
+
+### 4.4 Israeli VAT & Invoice Model (Verified Types)
+
+```typescript
+// Invoice type (src/lib/types.ts — verified)
+type Invoice = {
+  id: string;
+  invoiceNumber: string;           // e.g. CON-2026-00142
+  conservatoriumId: string;
+  payerId: string;
+  lineItems: { description: string; total: number }[];
+  total: number;
+  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  dueDate: string;
+  paidAt?: string;
+};
+```
+
+> ⚠️ **Gap vs. plan:** The `Invoice` type does not have explicit `subtotal`, `discounts`, `vatAmount` fields. VAT calculation and sibling discounts are not yet in the type model — they are applied at the payment gateway level only.
+
+### 4.5 Payroll Export
+
+`src/lib/cloud-functions/payroll-export.ts` documents the export format. The `PayrollExportRow` type (in `types.ts`) is comprehensive: lesson details, sick leave days, event hours, gross total. Export is UTF-8 BOM for Hilan/Excel compatibility.
+
+---
+
+## 5. AI Agents (Genkit 1.29 / Gemini)
+
+✅ **All 8 flows are implemented and actively called from `src/app/actions.ts`.**
+
+| Flow | Verified Input → Output |
+|------|------------------------|
+| `match-teacher-flow.ts` | `MatchTeacherInput` (student prefs + available teachers) → top 3 teachers with match reasons |
+| `draft-progress-report-flow.ts` | `DraftProgressReportInput` (practice logs + notes) → Hebrew progress narrative text |
+| `help-assistant-flow.ts` | `HelpAssistantInput` (question + locale) → answer grounded in `help-articles.ts` |
+| `suggest-compositions.ts` | `SuggestCompositionsInput` (instrument + level) → composition suggestions |
+| `reschedule-flow.ts` | `RescheduleRequestInput` (natural language request) → structured reschedule options |
+| `generate-event-poster.ts` | Event metadata → poster content/layout suggestions |
+| `target-empty-slots-flow.ts` | `TargetSlotsInput` (empty slots) → prioritised outreach targets |
+| `nurture-lead-flow.ts` | `NurtureLeadInput` (Playing School lead) → personalised follow-up message |
+
+All flows run **server-side only** (called from `actions.ts` which is `'use server'`).
+
+---
+
+## 6. Notification Dispatcher (Verified — Active Code)
+
+✅ `src/lib/notifications/dispatcher.ts` is a real implementation (245 lines), not a stub.
+
+- `dispatchNotification()` — routes to correct channel based on `NotificationPreferences`
+- `isQuietHours()` — Israel timezone aware (Asia/Jerusalem); handles overnight ranges
+- `normalizeIsraeliPhone()` — converts `050-1234567` → `+972501234567`
+- `sendSMS()` — real Twilio REST API call; falls back to `console.warn` when `TWILIO_ACCOUNT_SID` is not set
+- `sendWhatsApp()` — real Twilio WhatsApp API call; same fallback behaviour
+
+**The dispatcher is production-ready code; it is inactive because Twilio credentials are not configured in the current environment.**
+
+---
+
+## 7. What Is NOT Yet Implemented (Backend Gaps)
+
+| Gap | Severity | What's Missing |
+|-----|----------|---------------|
+| Firebase Auth integration | 🔴 Critical | `login()` in `use-auth.tsx` does email lookup in mock array — no `signInWithEmailAndPassword` call |
+| Real Firestore reads/writes | 🔴 Critical | `FirebaseAdapter` is a `MemoryDatabaseAdapter` stub |
+| `verifyAuth()` always true | 🔴 Critical | Any request passes auth — privilege escalation trivial |
+| `FormSubmissionSchema = z.any()` | 🟠 High | No input validation on form submissions |
+| Cloud Functions not deployed | 🟠 High | Booking atomicity, makeup credit issuance, calendar sync all undeployed |
+| Cardcom webhook handler | 🟠 High | `/api/cardcom-webhook` route exists but handler logic is stubbed |
+| Monthly auto-charge scheduler | 🟠 High | No deployed scheduled function |
+| Age-gate nightly function | 🟡 Medium | Under-13 enforcement unimplemented |
+| Credit expiry scheduler | 🟡 Medium | `MakeupCredit.expiresAt` not enforced automatically |
+| Google Calendar sync | 🟡 Medium | Spec exists; no OAuth token flow or API calls |

@@ -7,59 +7,67 @@
 │                             HARMONIA PLATFORM                                │
 │                                                                              │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                    NEXT.JS APP  (Firebase App Hosting)                 │  │
+│  │                    NEXT.JS 16 APP  (Firebase App Hosting)              │  │
 │  │                                                                        │  │
 │  │  ┌─────────────────┐  ┌─────────────────────┐  ┌──────────────────┐   │  │
 │  │  │   Public Site   │  │  Authenticated App  │  │   Admin Portal   │   │  │
-│  │  │  /              │  │  /[locale]/dashboard│  │  /admin          │   │  │
-│  │  │  /register      │  │  /schedule          │  │  /admin/teachers │   │  │
-│  │  │  /try           │  │  /forms             │  │  /admin/billing  │   │  │
-│  │  │  /about         │  │  /practice          │  │  /admin/reports  │   │  │
-│  │  │  /book/:id      │  │  /family            │  │  /admin/payroll  │   │  │
+│  │  │  / (root = he)  │  │  /[locale]/dashboard│  │  /dashboard/admin│   │  │
+│  │  │  /register      │  │  /schedule          │  │  /admin/branches │   │  │
+│  │  │  /try           │  │  /forms             │  │  /admin/payroll  │   │  │
+│  │  │  /about         │  │  /practice          │  │  /admin/rentals  │   │  │
+│  │  │  /enroll        │  │  /family            │  │  /admin/open-day │   │  │
+│  │  │  /musicians     │  │  /teacher/...       │  │  /admin/...      │   │  │
+│  │  │  /playing-school│  │  /school/...        │  │                  │   │  │
 │  │  └─────────────────┘  └─────────────────────┘  └──────────────────┘   │  │
 │  │                                                                        │  │
 │  │  Server Components (SSR / auth-validated)                              │  │
-│  │  Client Components (real-time dashboards, booking calendar)            │  │
-│  │  Server Actions (ALL data mutations — never client-direct Firestore)   │  │
+│  │  Client Components (dashboards, booking calendar)                      │  │
+│  │  Server Actions in src/app/actions.ts (all data mutations)             │  │
+│  │  ⚠️  Auth guard is client-side useAdminGuard() hook — NOT middleware   │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │                              ▼                                               │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │               CLOUD FUNCTIONS (2nd Gen — Cloud Run)                    │  │
+│  │         DATABASE ADAPTER LAYER  (src/lib/db/)                          │  │
 │  │                                                                        │  │
-│  │  CALLABLE (user-triggered):    TRIGGERED (event-driven):               │  │
-│  │  bookLessonSlot                onUserApproved → set Custom Claims       │  │
-│  │  bookMakeupLesson              onLessonCancelled → issue makeup credit  │  │
-│  │  rescheduleLesson              onLessonCompleted → update stats         │  │
-│  │  submitSickLeave               onPaymentWebhook → Cardcom callback      │  │
-│  │  createPaymentPage             onSheetMusicUploaded → PDF optimise      │  │
-│  │  getSignedUrl                  onPracticeVideoUploaded → transcode      │  │
+│  │  DB_BACKEND env var selects adapter at startup (singleton)             │  │
+│  │  'mock'      → MemoryDatabaseAdapter (default — no env var needed)     │  │
+│  │  'firebase'  → FirebaseAdapter   ⚠️ IS A MemoryDatabaseAdapter STUB   │  │
+│  │  'postgres'  → PostgresAdapter   ✅ Full read-write implementation     │  │
+│  │  'supabase'  → SupabaseAdapter   ✅ Full implementation                │  │
+│  │  'pocketbase'→ PocketBaseAdapter ✅ Full implementation                │  │
 │  │                                                                        │  │
-│  │  SCHEDULED:                    PUBSUB (async AI):                      │  │
-│  │  monthlyAutoCharge (1st, 06:00)  processAIJob (matchmaker, reports)    │  │
-│  │  syncTeacherCalendars (15 min)                                         │  │
-│  │  dailyAgeGateCheck (02:00)                                             │  │
-│  │  expireCredits (03:00)                                                 │  │
-│  │  sendLessonReminders (08:00)                                           │  │
+│  │  Auto-detection: if DATABASE_URL env set → postgres; else → mock      │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
-│                              ▼                                               │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                       FIREBASE SERVICES                                │  │
-│  │  Firestore (DB) · Auth + Custom Claims · Storage · App Check · FCM    │  │
+│  │         CLOUD FUNCTIONS SPECS  (src/lib/cloud-functions/)              │  │
+│  │         ⚠️  TYPED SPECS / PSEUDOCODE — NOT DEPLOYED                   │  │
+│  │                                                                        │  │
+│  │  booking.ts         bookLessonSlot (transaction spec)                  │  │
+│  │  makeup-booking.ts  bookMakeupLesson (atomic credit redemption spec)   │  │
+│  │  lesson-triggers.ts onLessonCancelled / onLessonCompleted (trigger spec│  │
+│  │  calendar-sync.ts   syncTeacherCalendars (every 15min spec)            │  │
+│  │  holiday-calendar.ts getIsraeliHolidaysForYear (Hebcal spec)           │  │
+│  │  payroll-export.ts  generatePayrollExport (callable spec)              │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │              ┌───────────────┼───────────────────────────────┐              │
 │              ▼               ▼                               ▼              │
 │  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────────────────┐ │
 │  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │     EXTERNAL SERVICES          │ │
-│  │  Gemini      │  │  Cardcom (IL)    │  │  Twilio (SMS + WhatsApp)       │ │
-│  │  Matchmaker  │  │  Hosted page     │  │  SendGrid (Email)              │ │
-│  │  Reports     │  │  Webhooks        │  │  Google Calendar API           │ │
-│  │  Help Agent  │  │  Recurring       │  │  Hebcal API (IL holidays)      │ │
-│  └──────────────┘  └──────────────────┘  │  Israel Tax Authority (Sec.46) │ │
-│                                          └────────────────────────────────┘ │
+│  │  Genkit 1.29 │  │  Cardcom  ⚠️stub │  │  Twilio SMS/WhatsApp ⚠️stub   │ │
+│  │  ✅ 6 flows  │  │  Pelecard ⚠️stub │  │  SendGrid Email      ⚠️stub   │ │
+│  │  match-teacher│  │  HYP      ⚠️stub │  │  Google Calendar     ⚠️spec  │ │
+│  │  draft-report │  │  Tranzila ⚠️stub │  │  Hebcal API          ⚠️spec  │ │
+│  │  help-asst   │  │  Stripe   ⚠️stub │  │                                │ │
+│  │  suggest-comp│  │  Via PAYMENT_    │  │                                │ │
+│  │  nurture-lead│  │  GATEWAY_PROVIDER│  │                                │ │
+│  │  event-poster│  │  env var         │  │                                │ │
+│  │  target-slots│  │                  │  │                                │ │
+│  └──────────────┘  └──────────────────┘  └────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────────────────────┘
+LEGEND: ✅ Implemented & active  ⚠️ Stub/spec only  ❌ Not started
 ```
 
 ---
@@ -68,106 +76,109 @@
 
 ### 2.1 Multi-Tenancy
 
-Every entity in the system is scoped to a `conservatoriumId`. This is enforced at three layers:
-1. **Data model:** every Firestore document includes `conservatoriumId`
-2. **Firestore Security Rules:** every read/write rule validates `request.auth.token.conservatoriumId == resource.data.conservatoriumId`
-3. **Server Actions / Cloud Functions:** all callable functions receive and validate `conservatoriumId` from Firebase Custom Claims — never from client input
+Every entity is scoped to a `conservatoriumId`. Currently enforced at:
+1. **Data model level:** every type includes `conservatoriumId`
+2. **Server Actions:** `src/app/actions.ts` uses the `withAuth()` wrapper and Zod schemas
+
+> ⚠️ **Gap vs. plan:** Firestore Security Rules are **not deployed** (no `firestore.rules` that enforces `conservatoriumId` isolation — the repo contains a template `firestore.rules` but it is incomplete). Middleware-level auth guard (`src/middleware.ts`) does **not exist** — auth is enforced client-side via `useAdminGuard()` hook only.
 
 ### 2.2 Server Actions as the Mutation Boundary
 
-All data writes flow through **Next.js Server Actions** or **Firebase Callable Cloud Functions**. Client components never write directly to Firestore. This boundary enforces:
-- Server-side Zod schema validation on every mutation
-- Role validation from Firebase Custom Claims (not localStorage)
-- Audit logging before any write
+All data writes flow through **Next.js Server Actions** (`src/app/actions.ts`, 1283 lines) and are validated using Zod schemas via the `withAuth()` HOC wrapper.
+
+> ⚠️ **Gap:** `verifyAuth()` in `src/lib/auth-utils.ts` unconditionally returns `true`. Role is not validated server-side — only via client `useAdminGuard()`.
 
 ### 2.3 Repository / Database Abstraction Layer
 
-A `DatabaseAdapter` interface (defined in `src/lib/db/types.ts`) abstracts all data access. The active backend is selected via the `DB_BACKEND` environment variable:
+✅ **Fully implemented.** `src/lib/db/index.ts` resolves the `DB_BACKEND` env var and returns the matching adapter as a singleton. The `DatabaseAdapter` interface in `src/lib/db/types.ts` defines 17 typed repositories.
 
-| Value | Backend | Use Case |
-|-------|---------|----------|
-| `firebase` | Cloud Firestore | Production cloud default |
-| `postgres` | PostgreSQL via Docker | Local development |
-| `supabase` | Supabase (PostgreSQL + Auth + Realtime) | Low-cost cloud alternative |
-| `pocketbase` | PocketBase (SQLite) | Single-conservatorium ultra-light installs |
+Key distinction from the SDD plan: the **`firebase` backend is currently a `MemoryDatabaseAdapter` stub** (8 lines, no Firestore SDK calls). Postgres, Supabase, and PocketBase adapters are real implementations.
 
-### 2.4 Service Layer Pattern
-
-UI components do not call data adapters or context functions directly. The call chain is:
-
+```typescript
+// src/lib/db/adapters/firebase.ts (actual)
+export class FirebaseAdapter extends MemoryDatabaseAdapter {
+  constructor() { super(buildDefaultSeed()); } // No Firestore — just in-memory seed
+}
 ```
-UI Component → Server Action / Service Function → DatabaseAdapter → Firestore / Postgres
-                    ↓
-             NotificationDispatcher → FCM / Twilio / SendGrid
-                    ↓
-             CalendarSyncService (optional) → Google Calendar API
-```
+
+### 2.4 Monolithic Context — Current Reality
+
+> ⚠️ **Critical gap:** `src/hooks/use-auth.tsx` is a **2,364-line monolithic React Context** holding the entire application state (35+ state arrays, 170+ mutation functions). This is the architecture the SDD documents identified as needing replacement, and it has **not been replaced yet**.
+
+Domain-specific hooks (`src/hooks/data/`) do exist and are partially built:
+
+| Hook | File | Status |
+|------|------|--------|
+| `useMyLessons` | `hooks/data/use-my-lessons.ts` | ✅ Exists — wraps `useAuth()` context |
+| `useMyInvoices` | `hooks/data/use-my-invoices.ts` | ✅ Exists — wraps `useAuth()` context |
+| `useLiveStats` | `hooks/data/use-live-stats.ts` | ✅ Exists — wraps `useAuth()` context |
+| `useMakeupCredits` | `hooks/data/use-makeup-credits.ts` | ✅ Exists |
+| `usePracticeLogs` | `hooks/data/use-practice-logs.ts` | ✅ Exists |
+| `usePreLessonSummary` | `hooks/data/use-pre-lesson-summary.ts` | ✅ Exists |
+| React Query (`@tanstack/react-query`) | — | ❌ **Not installed** |
+| Firestore `onSnapshot` listeners | — | ❌ **Not implemented** |
+
+All domain hooks read from the monolithic `useAuth()` context — they do not yet query a database directly.
 
 ### 2.5 Real-Time vs. Cache-First Data
 
-| Data Type | Strategy | Implementation |
-|-----------|----------|---------------|
-| Admin live dashboard (lesson count, alerts) | Real-time `onSnapshot` | Firestore listener on `/conservatoriums/{cid}/stats/live` |
-| Booking calendar (slot availability) | Real-time `onSnapshot` | Firestore listener on `lessonSlots` collection |
-| User's own schedule | Cache-first | React Query, `staleTime: 30s` |
-| Invoices and billing history | Cache-first | React Query, `staleTime: 5min` |
-| Practice logs | Cache-first | React Query, `staleTime: 2min` |
-| Notifications | Real-time | FCM push + Firestore listener |
+> ⚠️ **Gap vs. plan:** The planned React Query + Firestore `onSnapshot` architecture is not yet implemented. All data is served from the in-memory mock context synchronously. There is no stale-while-revalidate, no cache, and no real-time listener.
 
-### 2.6 Role-Scoped, Lazy-Loaded Data
+### 2.6 Dynamic Imports for Role Dashboards
 
-Each authenticated page loads only the data relevant to the current user's role. There is no shared global data context. Domain-specific hooks (`useLessons`, `useBilling`, `useForms`) load only when the component requiring them mounts.
-
-Role-specific dashboard bundles are loaded via **Next.js `dynamic()`** to prevent cross-role bundle pollution:
-
-```tsx
-const AdminCommandCenter = dynamic(() => import('@/components/dashboard/harmonia/admin-command-center'), { ssr: false });
-const TeacherDashboard    = dynamic(() => import('@/components/dashboard/harmonia/teacher-dashboard'),    { ssr: false });
-```
+> ⚠️ **Gap vs. plan:** Role-specific dashboard components are **not dynamically imported**. `AdminCommandCenter` is imported statically in `dashboard/admin/page.tsx`. The `dynamic()` pattern from the SDD plan is not in use.
 
 ---
 
-## 3. Module Dependency Graph
+## 3. AI Flows — Verified Implementation
 
-```
-Module 01 (Identity)  ──────────────────────────────────────────────┐
-    └── Module 02 (Registration) ──────────────────────────────────┐ │
-    └── Module 03 (Teachers)   ────────────────────────────────────┤ │
-        └── Module 04 (Scheduling) ────────────────────────────┐   │ │
-            └── Module 05 (Billing)  ────────────────────┐     │   │ │
-            └── Module 06 (Cancellation/Makeup) ─────────┤     │   │ │
-            └── Module 07 (Notifications)  ──────────────┘     │   │ │
-        └── Module 09 (LMS)  ──────────────────────────────────┘   │ │
-Module 08 (Forms)  ─────────────────────── depends on 01, 07       │ │
-Module 10 (AI)     ─────────────────────── depends on all          │ │
-Module 11 (Reporting) ───────────────────── depends on all         │ │
-Module 13 (Musicians for Hire) ─────────── depends on 01, 03, 05   │ │
-Module 17 (Scholarships) ───────────────── depends on 01, 02, 05   ┘ │
-Module 15 (i18n)   ─────────────────────── cross-cutting concern     ┘
-```
+✅ All 7 Genkit flows in `src/ai/flows/` are implemented and wired to server actions:
+
+| Flow File | Purpose | Wired In |
+|-----------|---------|---------|
+| `match-teacher-flow.ts` | Two-pass teacher matching (hard filter + LLM score) | `actions.ts` → `matchTeacherAction` |
+| `draft-progress-report-flow.ts` | AI progress report draft from practice logs | `actions.ts` → `draftProgressReportAction` |
+| `help-assistant-flow.ts` | RAG-based help chat over `help-articles.ts` | `actions.ts` → `askHelpAssistantAction` |
+| `suggest-compositions.ts` | Composition suggestions for form builder | `actions.ts` → `suggestCompositionsAction` |
+| `reschedule-flow.ts` | NLP rescheduling request handler | `actions.ts` → `handleRescheduleRequestAction` |
+| `generate-event-poster.ts` | AI event poster content generation | `actions.ts` → `generateEventPosterAction` |
+| `target-empty-slots-flow.ts` | Smart slot filling advisor | `actions.ts` → `getTargetedSlotsAction` |
+| `nurture-lead-flow.ts` | Playing School lead nurturing | `actions.ts` → `nurtureLead` |
 
 ---
 
 ## 4. Navigation Architecture
 
-The sidebar navigation is grouped into **role-specific sections** using the existing `SidebarGroup` / `SidebarGroupContent` components from `sidebar.tsx`. Each persona sees a different set of grouped links:
+✅ **Fully implemented** per SDD-NAV-01. The sidebar (`src/components/dashboard/sidebar-nav.tsx`, 556 lines) uses `SidebarGroup` / `SidebarGroupContent` components with role-scoped collapsible groups:
 
-| Persona | Groups |
-|---------|--------|
-| Admin | Overview · People · Schedule & Lessons · Programs & Events · Finance · Intelligence · Communication |
-| Teacher | My Workspace · My Profile · Finance · Communication |
-| Student | My Learning · Practice · Communication · Account |
-| Parent | Family Hub · Finance · Communication · Account |
+| Persona | Groups | Implementation |
+|---------|--------|---------------|
+| `conservatorium_admin` / `site_admin` | Overview · People · Schedule & Lessons · Programs & Events · Finance · Intelligence · Communication | ✅ |
+| `delegated_admin` | Same as admin, filtered by `delegatedAdminPermissions` | ✅ |
+| `teacher` | My Workspace · My Profile · Finance · Communication | ✅ |
+| `student` | My Learning · Practice · Communication · Account | ✅ |
+| `parent` | Family Hub · Finance · Communication · Account | ✅ |
+| `ministry_director` | Ministry Dashboard only | ✅ |
+| `school_coordinator` | School Dashboard | ✅ |
+
+Both `newFeaturesEnabled` (new grouped nav) and legacy flat-list rendering are supported via a feature flag on the conservatorium.
 
 ---
 
-## 5. Key Design Principles
+## 5. Locale Routing
 
-1. **Mobile-First, RTL-Always** — All interfaces designed for Hebrew/Arabic on mobile. `dir="rtl"` applied when `locale ∈ {he, ar}`.
-2. **Self-Service Over Phone Calls** — Every action a parent currently calls about must be completable in the app.
-3. **Zero Paperwork** — All forms, signatures, and approvals are digital; PDFs are generated server-side.
-4. **Automation Over Manual Labour** — If a rule can determine the outcome, a human shouldn't have to.
-5. **AI as Invisible Staff** — AI handles matching, scheduling suggestions, progress reports, and routine communications with human override always available.
-6. **Composable Modules** — A conservatorium can start with modules 01+02+04+05 and activate others incrementally.
-7. **Server-Side Authority** — No trust in client-provided roles, amounts, or IDs. Firebase Custom Claims are the sole role authority.
+✅ **Implemented.** `src/i18n/routing.ts` uses `localePrefix: 'as-needed'` — Hebrew (`he`) is the default and served at root `/`; other locales are prefixed (`/en/`, `/ar/`, `/ru/`). Locale detection reads a multi-file split-directory structure per locale (`src/messages/{locale}/*.json`) and deep-merges them.
 
+---
+
+## 6. Key Design Principles (Verified)
+
+| Principle | Status |
+|-----------|--------|
+| Mobile-First, RTL-Always | ✅ `dir` applied in layout.tsx based on locale |
+| Server Actions as mutation boundary | ✅ All writes via `src/app/actions.ts` with Zod |
+| Database Abstraction Layer | ✅ `src/lib/db/` with 5 adapter implementations |
+| AI as Invisible Staff | ✅ 8 Genkit flows active |
+| Composable Modules | ✅ `newFeaturesEnabled` flag gates new nav/UX |
+| Server-Side Role Authority (Firebase Custom Claims) | ❌ Not implemented — auth is mock/cookie |
+| No trust in client-provided data (Zod) | ✅ Server actions use Zod; ⚠️ `verifyAuth()` always true |

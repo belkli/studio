@@ -1,14 +1,20 @@
 # 05 — Data Persistence
 
-## 1. Primary Database
+## 1. Database Layer — Current Reality
 
-**Firebase Firestore** (NoSQL, document-based) is the production cloud database. It is accessed exclusively through the `DatabaseAdapter` interface — never called directly from UI components.
+> ⚠️ **The app runs on in-memory mock data by default.** The `DB_BACKEND` env var defaults to `mock` (if unset and no `DATABASE_URL` present), which loads all data from `src/lib/data.ts` into a `MemoryDatabaseAdapter`. No data is persisted between server restarts.
 
-A **multi-backend abstraction layer** (`src/lib/db/`) allows the backend to be switched via the `DB_BACKEND` environment variable, supporting local development (PostgreSQL), low-cost hosting (Supabase), and ultra-lightweight single-site installs (PocketBase).
+**Firebase Firestore** is the intended production cloud database, but the `FirebaseAdapter` (`src/lib/db/adapters/firebase.ts`) is currently an 8-line stub that simply extends `MemoryDatabaseAdapter` — it makes no Firestore SDK calls.
+
+**PostgreSQL** (via Docker) is the most complete real alternative: the `PostgresAdapter` (`src/lib/db/adapters/postgres.ts`, 1749 lines) has a full read-write implementation including schema migrations and seed scripts. When `DATABASE_URL` is set, the app automatically uses Postgres.
+
+A **multi-backend abstraction layer** (`src/lib/db/`) allows the backend to be switched via the `DB_BACKEND` environment variable:
 
 ---
 
-## 2. Canonical Firestore Schema
+## 2. Intended Firestore Schema (Production Target)
+
+> This describes the planned Firestore document hierarchy when the `FirebaseAdapter` is fully implemented. Current data lives in the `MemoryDatabaseAdapter` in-memory seed. The `DatabaseAdapter` interface in `src/lib/db/types.ts` defines 17 typed repositories that map to these collections.
 
 ```
 ROOT COLLECTIONS:
@@ -63,145 +69,113 @@ ROOT COLLECTIONS:
 
 ---
 
-## 3. Core Entity Models
+## 3. Core Entity Models (Verified from `src/lib/types.ts`)
+
+> All types below have been verified against the actual 1964-line `src/lib/types.ts`. Differences from the original SDD are noted.
 
 ### 3.1 User
 ```typescript
+// Verified — role values are LOWERCASE strings in code
 interface User {
-  id: string;                            // Firebase Auth UID
-  email?: string;                        // absent for STUDENT_UNDER_13
-  phone?: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
+  id: string;
+  name: string;                          // single full-name field (not firstName/lastName split)
+  email: string;
+  role: UserRole;                        // 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'school_coordinator'
   conservatoriumId: string;
+  conservatoriumName: string;            // denormalised for display
   approved: boolean;
-  dateOfBirth?: Date;                    // drives age-gate logic
-  parentId?: string;                     // child → parent link
-  childIds?: string[];                   // parent → children links
-  preferredLanguage?: 'he' | 'ar' | 'en' | 'ru';
-  oauthProviders?: UserOAuthProvider[];  // Google / Microsoft linked accounts
-  registrationSource: 'email' | 'google' | 'microsoft' | 'admin_created';
-  createdAt: Timestamp;
+  dateOfBirth?: string;                  // ISO Date (alias: birthDate)
+  parentId?: string;
+  childIds?: string[];
+  preferredLanguage?: string;            // not directly in User — via NotificationPreferences.language
+  oauthProviders?: UserOAuthProvider[];
+  registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
+  accountType?: 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
+  // + teacher-specific, student-specific, playing school fields embedded on User
 }
 ```
 
+> ⚠️ **Difference from SDD plan:** `User.name` is a single string field, not `firstName` + `lastName`. There is no `firstName`/`lastName` split in the type. Also `User.conservatoriumName` is denormalised (embedded string) which avoids a join but must be kept in sync.
+
 ### 3.2 LessonSlot
 ```typescript
+// Verified — matches SDD plan closely
 interface LessonSlot {
   id: string;
   conservatoriumId: string;
   teacherId: string;
   studentId: string;
   instrument: string;
-  startTime: Timestamp;
+  startTime: string;                     // ISO Timestamp (string, not Timestamp object)
   durationMinutes: 30 | 45 | 60;
-  recurrenceId?: string;                 // links slots in a recurring series
+  recurrenceId?: string;
   type: 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
   bookingSource: 'STUDENT_SELF' | 'PARENT' | 'TEACHER' | 'ADMIN' | 'AUTO_MAKEUP';
   roomId?: string;
+  branchId?: string;                     // Additional field vs SDD plan
   isVirtual: boolean;
   meetingLink?: string;
   packageId?: string;
   isCreditConsumed: boolean;
+  makeupCreditId?: string;               // Additional field — links to MakeupCredit
   status: SlotStatus;
-  attendanceMarkedAt?: Timestamp;
-  cancelledAt?: Timestamp;
+  attendanceMarkedAt?: string;
+  teacherNote?: string;
+  cancelledAt?: string;
   cancelledBy?: string;
   cancellationReason?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  rescheduledFrom?: string;              // Additional field — original time before reschedule
+  rescheduledAt?: string;
+  googleCalendarEventId?: string;        // Additional field — for calendar sync
+  effectiveRate?: number;                // Additional field — NIS rate at time of lesson
+  createdAt: string;
+  updatedAt: string;
 }
-
-type SlotStatus =
-  | 'SCHEDULED'
-  | 'COMPLETED'
-  | 'CANCELLED_STUDENT_NOTICED'
-  | 'CANCELLED_STUDENT_NO_NOTICE'
-  | 'CANCELLED_TEACHER'
-  | 'CANCELLED_CONSERVATORIUM'
-  | 'NO_SHOW_STUDENT'
-  | 'NO_SHOW_TEACHER';
 ```
 
 ### 3.3 Package
 ```typescript
+// Verified — simpler than SDD plan
 interface Package {
   id: string;
-  conservatoriumId: string;
-  studentId: string;
+  studentId?: string;
   type: 'TRIAL' | 'PACK_5' | 'PACK_10' | 'MONTHLY' | 'YEARLY' | 'ADHOC_SINGLE';
-  totalCredits: number;
-  usedCredits: number;
+  title: string;
+  description: string;
+  totalCredits?: number;
+  usedCredits?: number;
   price: number;
-  paymentStatus: 'PAID' | 'PENDING' | 'FAILED';
-  validFrom: Date;
-  validUntil: Date;
-  installments?: number;               // 1–12, for Israeli market
+  paymentStatus?: 'PAID' | 'PENDING' | 'FAILED';
+  validFrom?: string;
+  validUntil?: string;
+  // Note: no conservatoriumId, no installments field on Package itself
 }
 ```
+
+> ⚠️ **Gap vs. SDD plan:** `Package` lacks `conservatoriumId` and `installments`. The `LessonPackage` type (separate from `Package`) is the admin-configured catalog entry with full multi-locale names and per-conservatorium configuration.
 
 ### 3.4 Invoice
 ```typescript
+// Verified — simpler than SDD plan
 interface Invoice {
   id: string;
-  invoiceNumber: string;               // e.g. CON-2026-00142
+  invoiceNumber: string;
   conservatoriumId: string;
   payerId: string;
-  lineItems: InvoiceLineItem[];
-  subtotal: number;
-  discounts: number;
-  vatAmount: number;                   // 17% Israeli VAT
+  lineItems: { description: string; total: number }[];
   total: number;
-  status: 'DRAFT' | 'SENT' | 'PAID' | 'PARTIALLY_PAID' | 'OVERDUE' | 'CANCELLED' | 'REFUNDED';
-  dueDate: Date;
-  paidAt?: Date;
-  paidAmount?: number;
-  paymentMethod?: string;
-  installments?: number;
-  pdfUrl?: string;
-  createdAt: Timestamp;
+  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+  dueDate: string;
+  paidAt?: string;
 }
 ```
 
-### 3.5 MakeupCredit
-```typescript
-interface MakeupCredit {
-  id: string;
-  conservatoriumId: string;
-  studentId: string;
-  issuedForLessonSlotId: string;       // the cancelled lesson that generated this credit
-  issuedAt: Timestamp;
-  expiresAt: Timestamp;                // typically 30 days from issuance
-  status: 'AVAILABLE' | 'REDEEMED' | 'EXPIRED';
-  redeemedForLessonSlotId?: string;    // the makeup lesson that consumed this credit
-  redeemedAt?: Timestamp;
-}
-```
+> ⚠️ **Gap vs. SDD plan:** Missing `subtotal`, `discounts`, `vatAmount`, `paidAmount`, `paymentMethod`, `installments`, `pdfUrl` fields. VAT not modelled in type.
 
-### 3.6 Teacher Profile
-```typescript
-interface TeacherProfile {
-  id: string;
-  userId: string;
-  conservatoriumId: string;
-  instruments: string[];
-  specialties: TeacherSpecialty[];
-  gradeLevels: string[];
-  teachingLanguages: string[];
-  maxStudents: number;
-  employmentType: 'EMPLOYEE' | 'FREELANCE';
-  hourlyRate: number;
-  ratePerDuration: Record<number, number>;   // { 30: 80, 45: 110, 60: 140 }
-  assignedRoomIds: string[];
-  canTeachVirtual: boolean;
-  isActive: boolean;
-  isOnLeave: boolean;
-  leaveUntil?: Date;
-}
-```
+### 3.5 MakeupCredit — Verified (matches SDD plan)
+See `04-backend.md` §4.2 for the full verified type.
 
-### 3.7 Room
+### 3.6 Room — Verified (matches SDD-FIX-10)
 ```typescript
 interface Room {
   id: string;
@@ -209,46 +183,53 @@ interface Room {
   branchId: string;
   name: string;
   capacity: number;
-  instrumentEquipment: {
-    instrumentId: string;    // references instruments/{id}
-    quantity: number;
-    notes?: string;
-  }[];
-  blocks: {
-    id: string;
-    startDateTime: string;
-    endDateTime: string;
-    reason: string;
-    blockedByUserId: string;
-  }[];
+  instrumentEquipment: { instrumentId: string; quantity: number; notes?: string }[];
+  blocks: RoomBlock[];
   isActive: boolean;
+  description?: string;
+  photoUrl?: string;
+  equipment?: string[];                  // Legacy free-text field kept for backward compat
 }
 ```
 
-### 3.8 FormSubmission
+### 3.7 FormSubmission — Verified (hybrid model)
 ```typescript
+// Actual FormSubmission is a HYBRID — fields for all form types merged flat
 interface FormSubmission {
   id: string;
-  type: 'RECITAL' | 'CONFERENCE' | 'EXAM_REGISTRATION' | 'COMPOSITION_SUBMISSION'
-      | 'SCHOLARSHIP_REQUEST' | 'INSTRUMENT_REQUEST' | 'CUSTOM';
-  conservatoriumId: string;
-  submittedBy: string;
+  formType: string;
+  conservatoriumId?: string;
   studentId: string;
-  teacherId: string;
+  studentName: string;
   status: FormStatus;
-  workflowSteps: WorkflowStep[];
-  currentStep: number;
-  title: string;
-  formData: Record<string, unknown>;
-  attachments?: Attachment[];
-  approvalHistory: ApprovalHistoryEntry[];
-  ministryExportedAt?: Timestamp;
-  ministryReferenceNumber?: string;
-  pdfUrl?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  submissionDate: string;
+  repertoire: Composition[];
+  totalDuration: string;
+  workflowSteps?: WorkflowStepDefinition[];  // from formTemplateId reference
+  currentStep?: number;
+  approvalHistory?: ...;
+  // + 30+ flat optional fields covering all form types
 }
 ```
+
+> ⚠️ **Difference from SDD plan:** `FormSubmission` uses a flat optional-field design rather than the `formData: Record<string, unknown>` design in the SDD. All form type-specific fields (exam level, event name, conductor, etc.) are flat optional fields on the base type.
+
+### 3.8 Additional Verified Types (Not in Original SDD)
+
+The following types exist in `types.ts` and represent features beyond the original 17-module SDD:
+
+| Type | Module |
+|------|--------|
+| `PlayingSchoolInfo`, `PlayingSchoolInvoice`, `SchoolPartnership`, `PlayingSchoolEnrollment`, `SchoolGroupLesson` | SDD-PS (Playing School) |
+| `InstrumentInventory`, `InstrumentRental`, `InstrumentCheckout` | Rentals |
+| `AlumniProfile`, `Masterclass`, `MasterClassRegistration` | Alumni + Masterclasses |
+| `OpenDayEvent`, `OpenDayAppointment` | Open Day |
+| `PerformanceBooking`, `PerformanceProfile` | Musicians for Hire |
+| `ExamPrepTracker`, `GroupLessonSlot`, `Ensemble` | Exam prep + ensembles |
+| `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog` | PDPPA compliance |
+| `ConservatoriumLiveStats`, `RoomLock`, `TeacherException` | Production operational types |
+| `MinistryDirector`, `MinistryFormTemplate`, `MinistryInboxItem` | Ministry Director portal |
+| `AIJob`, `ConservatoriumInstrument`, `LessonPackage` | AI queue + admin catalog |
 
 ---
 
@@ -326,28 +307,32 @@ The following composite indexes are required (must be deployed before production
 
 ---
 
-## 7. Multi-Backend Strategy
-
-The `DatabaseAdapter` interface supports four backends, selected by `DB_BACKEND`:
+## 7. Multi-Backend Strategy (Verified from `src/lib/db/index.ts`)
 
 ```typescript
-// src/lib/db/index.ts
-export async function getDb(): Promise<DatabaseAdapter> {
-  switch (process.env.DB_BACKEND ?? 'firebase') {
-    case 'firebase':  return new FirebaseAdapter();
-    case 'postgres':  return new PostgresAdapter(process.env.DATABASE_URL!);
-    case 'supabase':  return new SupabaseAdapter(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
-    case 'pocketbase': return new PocketBaseAdapter(process.env.POCKETBASE_URL!);
-  }
+// src/lib/db/index.ts (actual auto-detection logic)
+function resolveBackend(): string {
+  const explicit = process.env.DB_BACKEND?.trim().toLowerCase();
+  if (explicit) return explicit;
+  if (process.env.DATABASE_URL) return 'postgres';  // auto-detect Postgres
+  return 'mock';  // default — in-memory seed data
 }
 ```
 
-| Backend | Recommended For | Cost |
-|---------|----------------|------|
-| `firebase` | Cloud production (default) | Pay-per-use |
-| `postgres` | Local development (Docker) | Free |
-| `supabase` | Low-cost cloud alternative | Free tier → $25/mo |
-| `pocketbase` | Single-site ultra-lightweight installs | Free (self-hosted) |
+| Backend | `DB_BACKEND` value | Implementation | Recommended For |
+|---------|-------------------|----------------|----------------|
+| `mock` | `mock` (default) | `MemoryDatabaseAdapter` — in-memory seed from `data.ts` | Local dev, demos |
+| `firebase` | `firebase` | ⚠️ **`MemoryDatabaseAdapter` stub** — no Firestore calls | Production (not yet) |
+| `postgres` | `postgres` (or auto-detected) | ✅ `PostgresAdapter` — 1749 lines, full read-write | Local dev with Docker |
+| `supabase` | `supabase` | ✅ `SupabaseAdapter` — full implementation | Low-cost cloud |
+| `pocketbase` | `pocketbase` | ✅ `PocketBaseAdapter` — full implementation | Single-site lightweight |
 
-> **Note:** The PostgreSQL schema migration scripts live in `scripts/db/`. Run these to seed a local Postgres instance with realistic mock data matching the `data.json` fixture.
+**PostgreSQL tooling:**
+```json
+"db:start":  "docker compose up -d"
+"db:migrate":"node scripts/db/run-sql-file.mjs scripts/db/schema.sql"
+"db:seed":   "node scripts/db/run-sql-file.mjs scripts/db/seed.sql ..."
+"db:reset":  "node scripts/db/reset.mjs"
+"db:studio": "npx drizzle-kit studio"
+```
 
