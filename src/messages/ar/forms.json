@@ -518,6 +518,14 @@
     "a": "أ-",
     "T": "ت"
   },
+  "Consent": {
+    "groupLabel": "الموافقات المطلوبة",
+    "dataProcessingLabel": "أوافق على جمع ومعالجة بياناتي الشخصية لأغراض خدمات التعليم الموسيقي، وفقاً لقانون حماية الخصوصية 5741-1981.",
+    "termsLabel": "أوافق على شروط الاستخدام وسياسة الخصوصية.",
+    "marketingLabel": "أوافق على تلقّي تحديثات حول الفعاليات والأنشطة من المعهد.",
+    "required": "مطلوب",
+    "customTermsTitle": "شروط إضافية من المعهد"
+  },
   "LessonManagement": {
     "bookPageTitle": "حجز درس جديد",
     "bookPageSubtitle": "اختر آلة موسيقية ومعلمًا وموعدًا متاحًا لجدولة درس جديد من حزمتك.",
@@ -525,6 +533,7 @@
     "addVoiceFeedback": "إضافة تغذية راجعة صوتية",
     "allStatuses": "جميع الحالات",
     "allTeachers": "جميع المعلمين",
+    "myConservatorium": "مدرستي الموسيقية",
     "availableTimeSlots": "أوقات التوفر",
     "bookLesson": "حجز الدرس",
     "cancelLessonAction": "إلغاء الدرس",

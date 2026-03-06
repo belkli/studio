@@ -1674,7 +1674,10 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
         <div className="text-center pb-6">
           <p className="text-sm text-muted-foreground">
             {t('common.alreadyHaveAccount')}{" "}
-            <Link href="/login" className="underline text-primary">
+            <Link
+              href={`/login?callbackUrl=${encodeURIComponent('/dashboard/schedule/book?tab=deals')}`}
+              className="underline text-primary"
+            >
               {t('common.loginHere')}
             </Link>
           </p>

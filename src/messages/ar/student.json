@@ -82,7 +82,14 @@
     "scholarshipsAndAid": "المنح والمساعدات المالية",
     "scholarshipsDesc": "هل تحتاج إلى مساعدة في الرسوم الدراسية؟ يمكنك التقدم بطلب للحصول على منحة.",
     "status": "الحالة",
-    "upgradePackage": "تحديث الباقة"
+    "upgradePackage": "تحديث الباقة",
+    "selectPackageDesc": "اختر الباقة التي تناسب احتياجاتك.",
+    "pack5Label": "باقة 5 دروس",
+    "pack10Label": "باقة 10 دروس",
+    "monthlyLabel": "اشتراك شهري",
+    "lessons": "دروس",
+    "packageSelected": "تم اختيار الباقة — إعادة التوجيه إلى الدفع...",
+    "select": "اختر"
   },
   "StudentPractice": {
     "attachVideo": "إرفاق فيديو",

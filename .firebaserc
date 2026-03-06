@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "harmonia-dev",
+    "staging": "harmonia-staging",
+    "production": "harmonia-production"
+  }
+}

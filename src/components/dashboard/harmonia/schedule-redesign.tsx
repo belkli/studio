@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
-import { useMemo, useState } from 'react';
-import { format, parseISO, startOfWeek, addDays, isWithinInterval } from 'date-fns';
+import { Fragment, useMemo, useState } from 'react';
+import { format, parseISO, startOfWeek, addDays, subDays, isWithinInterval, isValid } from 'date-fns';
 import type { Locale } from 'date-fns';
-import { Download } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,7 @@ function colorByInstrument(instrument: string) {
 }
 
 function formatWeekRange(weekStart: Date, localeDate: Locale) {
+  if (!isValid(weekStart)) return '';
   const weekEnd = addDays(weekStart, 5);
   return `${format(weekStart, 'PPP', { locale: localeDate })} - ${format(weekEnd, 'PPP', { locale: localeDate })}`;
 }
@@ -44,13 +45,25 @@ export function ScheduleRedesign() {
   const [instrumentFilter, setInstrumentFilter] = useState('all');
   const [roomFilter, setRoomFilter] = useState('all');
 
+  const goToPrevWeek = () => {
+    const parsed = parseISO(`${weekStartRaw}T00:00:00`);
+    if (isValid(parsed)) setWeekStartRaw(format(subDays(parsed, 7), 'yyyy-MM-dd'));
+  };
+  const goToNextWeek = () => {
+    const parsed = parseISO(`${weekStartRaw}T00:00:00`);
+    if (isValid(parsed)) setWeekStartRaw(format(addDays(parsed, 7), 'yyyy-MM-dd'));
+  };
+
   const allTeachers = useMemo(() => users.filter((entry) => entry.role === 'teacher'), [users]);
   const allInstruments = useMemo(() => {
     const values = Array.from(new Set(lessons.map((lesson) => lesson.instrument))).filter(Boolean);
     return values.sort((a, b) => a.localeCompare(b));
   }, [lessons]);
 
-  const weekStart = parseISO(`${weekStartRaw}T00:00:00`);
+  const weekStart = useMemo(() => {
+    const parsed = parseISO(`${weekStartRaw}T00:00:00`);
+    return isValid(parsed) ? parsed : startOfWeek(new Date(), { weekStartsOn: 0 });
+  }, [weekStartRaw]);
   const weekEnd = addDays(weekStart, 6);
 
   const relevantLessons = useMemo(() => {
@@ -152,9 +165,15 @@ export function ScheduleRedesign() {
           <ToggleGroupItem value="room">{t('viewByRoom')}</ToggleGroupItem>
         </ToggleGroup>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-muted-foreground">{t('weekLabel')}</label>
+        <div className="flex items-center gap-1">
+          <Button variant="outline" size="icon" onClick={isRtl ? goToNextWeek : goToPrevWeek} aria-label={t('prevWeek')}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <label className="text-sm text-muted-foreground px-1">{t('weekLabel')}</label>
           <input type="date" className="h-9 rounded-md border px-3 bg-background" value={weekStartRaw} onChange={(event) => setWeekStartRaw(event.target.value)} />
+          <Button variant="outline" size="icon" onClick={isRtl ? goToPrevWeek : goToNextWeek} aria-label={t('nextWeek')}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
 
         <Select value={teacherFilter} onValueChange={setTeacherFilter}>
@@ -202,8 +221,8 @@ export function ScheduleRedesign() {
               ))}
 
               {timeSlots.map((slot) => (
-                <>
-                  <div key={`time-${slot}`} className="border-b border-e p-2 text-xs text-muted-foreground">{slot}</div>
+                <Fragment key={slot}>
+                  <div className="border-b border-e p-2 text-xs text-muted-foreground">{slot}</div>
                   {weekDays.map((day) => {
                     const items = filteredLessons.filter((lesson) => {
                       const when = new Date(lesson.startTime);
@@ -224,7 +243,7 @@ export function ScheduleRedesign() {
                       </div>
                     );
                   })}
-                </>
+                </Fragment>
               ))}
             </div>
           </CardContent>
@@ -233,7 +252,7 @@ export function ScheduleRedesign() {
 
       {view === 'teacher' && (
         <div className="space-y-4">
-          {Array.from(byTeacher.entries()).map(([teacherId, lessons]) => {
+          {Array.from(byTeacher.entries()).map(([teacherId, teacherLessons]) => {
             const teacherName = users.find((entry) => entry.id === teacherId)?.name || t('unknown');
             return (
               <Card key={teacherId}>
@@ -248,10 +267,10 @@ export function ScheduleRedesign() {
                     ))}
 
                     {timeSlots.map((slot) => (
-                      <div key={`row-${teacherId}-${slot}`} className="contents">
+                      <Fragment key={`row-${teacherId}-${slot}`}>
                         <div className="border-b border-e p-2 text-xs text-muted-foreground">{slot}</div>
                         {weekDays.map((day) => {
-                          const items = lessons.filter((lesson) => {
+                          const items = teacherLessons.filter((lesson) => {
                             const when = new Date(lesson.startTime);
                             return when.getHours() === Number(slot.split(':')[0]) && format(when, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd');
                           });
@@ -262,14 +281,14 @@ export function ScheduleRedesign() {
                                 return (
                                   <div key={lesson.id} className={`rounded border p-1 text-[11px] ${colorByInstrument(lesson.instrument)}`}>
                                     <div className="font-semibold truncate">{meta.student}</div>
-                                    <div className="truncate">{lesson.instrument} ? {lesson.durationMinutes}</div>
+                                    <div className="truncate">{lesson.instrument} · {lesson.durationMinutes}</div>
                                   </div>
                                 );
                               })}
                             </div>
                           );
                         })}
-                      </div>
+                      </Fragment>
                     ))}
                   </div>
                 </CardContent>
@@ -282,11 +301,11 @@ export function ScheduleRedesign() {
 
       {view === 'instrument' && (
         <div className="space-y-4">
-          {Array.from(byInstrument.entries()).map(([instrument, lessons]) => (
+          {Array.from(byInstrument.entries()).map(([instrument, instrumentLessons]) => (
             <Card key={instrument}>
               <CardHeader><CardTitle className="text-start">{instrument}</CardTitle></CardHeader>
               <CardContent className="space-y-2">
-                {lessons.map((lesson) => {
+                {instrumentLessons.map((lesson) => {
                   const meta = lessonMeta(lesson);
                   return (
                     <div key={lesson.id} className="rounded border p-2 text-sm text-start">
@@ -305,11 +324,11 @@ export function ScheduleRedesign() {
 
       {view === 'room' && (
         <div className="space-y-4">
-          {Array.from(byRoom.entries()).map(([roomName, lessons]) => (
+          {Array.from(byRoom.entries()).map(([roomName, roomLessons]) => (
             <Card key={roomName}>
               <CardHeader><CardTitle className="text-start">{roomName}</CardTitle></CardHeader>
               <CardContent className="space-y-2">
-                {lessons.map((lesson) => {
+                {roomLessons.map((lesson) => {
                   const meta = lessonMeta(lesson);
                   return (
                     <div key={lesson.id} className="rounded border p-2 text-sm text-start">

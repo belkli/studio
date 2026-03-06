@@ -82,7 +82,14 @@
     "scholarshipsAndAid": "Стипендии и финансовая помощь",
     "scholarshipsDesc": "Нужна помощь с оплатой обучения? Вы можете подать заявку на стипендию.",
     "status": "Статус",
-    "upgradePackage": "Обновить пакет"
+    "upgradePackage": "Обновить пакет",
+    "selectPackageDesc": "Выберите пакет, который подходит вам.",
+    "pack5Label": "Пакет 5 уроков",
+    "pack10Label": "Пакет 10 уроков",
+    "monthlyLabel": "Ежемесячная подписка",
+    "lessons": "уроков",
+    "packageSelected": "Пакет выбран — перенаправление на оплату...",
+    "select": "Выбрать"
   },
   "StudentPractice": {
     "attachVideo": "Прикрепить видео",

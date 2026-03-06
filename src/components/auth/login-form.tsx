@@ -88,6 +88,7 @@ export function LoginForm() {
         }
 
         login(result.profile.email);
+        router.push(callbackUrl as any);
         return;
       }
 

@@ -82,7 +82,14 @@
     "status": "Status",
     "active": "Active",
     "credits": "Credits",
-    "payNow": "Pay Now"
+    "payNow": "Pay Now",
+    "selectPackageDesc": "Choose a package that fits your needs.",
+    "pack5Label": "5-Lesson Pack",
+    "pack10Label": "10-Lesson Pack",
+    "monthlyLabel": "Monthly Subscription",
+    "lessons": "lessons",
+    "packageSelected": "Package selected — redirecting to payment...",
+    "select": "Select"
   },
   "StudentPractice": {
     "durationMustBePositive": "Duration must be greater than zero.",

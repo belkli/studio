@@ -380,5 +380,12 @@
       "positiveDays": "Must enter a positive number of days.",
       "positiveNumber": "Must enter a positive number."
     }
+  },
+  "ConservatoriumSettings": {
+    "customTermsTitle": "Custom Registration Terms",
+    "customTermsDescription": "Add custom terms that will be displayed on the registration form alongside the standard terms.",
+    "customTermsPlaceholder": "Enter custom terms for this language...",
+    "saveCustomTerms": "Save terms",
+    "customTermsSaved": "Terms saved successfully"
   }
 }

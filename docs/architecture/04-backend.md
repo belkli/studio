@@ -6,7 +6,9 @@
 
 | Layer | Technology | File(s) | Status |
 |-------|-----------|---------|--------|
-| **Server Actions** | Next.js `'use server'` | `src/app/actions.ts` (1283 lines) | ✅ Active — Zod-validated; ⚠️ auth always passes |
+| **Server Actions** | Next.js `'use server'` | `src/app/actions.ts` (1283 lines) + `src/app/actions/*.ts` | ✅ Active — Zod-validated; auth via `verifyAuth()` layered strategy |
+| **Additional Server Actions** | Next.js `'use server'` | `src/app/actions/auth.ts`, `consent.ts`, `signatures.ts`, `storage.ts`, `user-preferences.ts` | ✅ Active — domain-specific action modules |
+| **Firebase Admin SDK** | `firebase-admin` | `src/lib/firebase-admin.ts` | ✅ `getAdminAuth()` — initialises from `FIREBASE_SERVICE_ACCOUNT_KEY`; returns null when absent |
 | **Database** | `DatabaseAdapter` | `src/lib/db/` | ✅ Adapter layer real; default = in-memory mock |
 | **Callable Cloud Functions** | Firebase CF specs | `src/lib/cloud-functions/` | ⚠️ Typed pseudocode specs — NOT deployed |
 | **Triggered/Scheduled CFs** | Firebase CF specs | `src/lib/cloud-functions/lesson-triggers.ts` | ⚠️ Spec only |
@@ -22,21 +24,56 @@
 Every action uses `withAuth()` HOC from `src/lib/auth-utils.ts`:
 
 ```typescript
-// src/lib/auth-utils.ts (actual)
-export async function verifyAuth(): Promise<boolean> {
-    return true;  // ⚠️ ALWAYS TRUE — no real auth check
+// src/lib/auth-utils.ts (actual — layered auth strategy)
+export async function verifyAuth(): Promise<HarmoniaClaims> {
+  // 1. Try Admin SDK session cookie verification (production path)
+  const adminAuth = getAdminAuth();
+  if (adminAuth) {
+    const sessionCookie = /* read __session cookie */;
+    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+    return { uid, email, role, conservatoriumId, approved };
+  }
+
+  // 2. Fallback: read x-user-* headers injected by proxy.ts
+  const claims = await getClaimsFromRequest();
+  if (claims) return claims;
+
+  // 3. Dev-only fallback: synthetic site_admin (NODE_ENV !== 'production')
+  if (process.env.NODE_ENV !== 'production') {
+    return { uid: 'dev-user', role: 'site_admin', ... };
+  }
+
+  throw new Error('UNAUTHENTICATED');
 }
 
 export function withAuth<Schema, R>(schema: Schema, action: (input) => Promise<R>) {
-    return async (input) => {
-        await verifyAuth();          // ⚠️ no-op
-        const parsed = schema.parse(input);  // ✅ Zod validation runs
-        return action(parsed);
-    };
+  return async (input) => {
+    await verifyAuth();           // ✅ Real auth check — throws on failure
+    const parsed = schema.parse(input);  // ✅ Zod validation
+    return action(parsed);
+  };
 }
 ```
 
-> ⚠️ **Critical security gap:** `verifyAuth()` unconditionally returns `true`. Any caller — authenticated or not — can invoke any server action. Role validation must be added here before production.
+> ✅ **Production auth is active.** `verifyAuth()` performs cryptographic session cookie verification via `admin.auth().verifySessionCookie()` when `FIREBASE_SERVICE_ACCOUNT_KEY` is configured. The dev bypass only activates when the Admin SDK is absent AND `NODE_ENV !== 'production'` — this path is unreachable in production Firebase App Hosting (which sets `NODE_ENV='production'` at build time).
+
+Additionally, `requireRole()` enforces RBAC:
+```typescript
+export async function requireRole(
+  allowedRoles: UserRole[],
+  conservatoriumIdMustMatch?: string
+): Promise<HarmoniaClaims> {
+  const claims = await verifyAuth();
+  if (!claims.approved) throw new Error('ACCOUNT_NOT_APPROVED');
+  if (!allowedRoles.includes(claims.role)) throw new Error('FORBIDDEN');
+  // Global admins (site_admin, superadmin) bypass tenant isolation
+  if (conservatoriumIdMustMatch && !GLOBAL_ADMIN_ROLES.includes(claims.role)
+      && claims.conservatoriumId !== conservatoriumIdMustMatch) {
+    throw new Error('TENANT_MISMATCH');
+  }
+  return claims;
+}
+```
 
 ### 2.2 Zod Validation Schemas (Verified Implemented)
 
@@ -48,6 +85,11 @@ Dedicated schemas exist in `src/lib/validation/`:
 | `forms.ts` | Form submission validation |
 | `practice-log.ts` | Practice log submission |
 | `user-schema.ts` | User create/update |
+| `conservatorium.ts` | Conservatorium settings validation |
+| `event-production.ts` | Event and performance production validation |
+| `form-submission-upsert.ts` | Form submission upsert validation |
+| `lesson-slot.ts` | Lesson slot creation/update validation |
+| `user-upsert.ts` | User upsert validation |
 
 Additionally, `actions.ts` itself contains inline Zod schemas for: `AnnouncementSchema`, `MasterClassSchema`, `ScholarshipApplicationSchema`, `DonationCauseSchema`, `DonationRecordSchema`, `BranchSchema`, `RoomSchema`, `LessonPackageSchema`, `ConservatoriumInstrumentSchema`, and more.
 
@@ -71,14 +113,27 @@ If the terminal number is missing, all gateways fall back to `/payment/mock?toke
 
 ---
 
-## 3. Cloud Function Specifications
+## 3. Cloud Functions (`functions/src/`)
 
-All 6 files in `src/lib/cloud-functions/` are **typed pseudocode specifications**, not deployed functions. They document the intended transaction logic using TypeScript interfaces and JSDoc.
+Firebase Cloud Functions are now partially implemented in the `functions/` directory (separate from the Next.js app). All functions are configured for `europe-west1` region (PDPPA data residency).
+
+### 3.1 Implemented Functions
+
+| Function | File | Type | Purpose |
+|----------|------|------|---------|
+| `onUserApproved` | `functions/src/auth/on-user-approved.ts` | Firestore trigger | Sets Firebase Custom Claims (`role`, `conservatoriumId`, `approved`) when a user's `approved` field changes to `true` |
+| `onUserCreated` | `functions/src/auth/on-user-created.ts` | Firestore trigger | New user lifecycle — initial claims, welcome notification |
+| `onUserDeleted` | `functions/src/auth/on-user-deleted.ts` | Firestore trigger | User deletion cleanup — revoke tokens, archive data |
+| `onUserParentSync` | `functions/src/users/on-user-parent-sync.ts` | Firestore trigger | Syncs `parentOf/{parentId_studentId}` denormalised documents for Security Rules |
+| `bookLessonSlot` | `functions/src/booking/book-lesson-slot.ts` | Callable | Atomic booking transaction: validate → check availability → acquire room lock → deduct package credit → create slot |
+| `bookMakeupLesson` | `functions/src/booking/book-makeup-lesson.ts` | Callable | Atomic makeup credit redemption: read credit in transaction → verify AVAILABLE → create slot + mark REDEEMED atomically |
+
+### 3.2 Specification Files (Phase 2 — Not Yet Deployed)
+
+The following specification files remain in `src/lib/cloud-functions/` as typed pseudocode for future implementation:
 
 | Spec File | Intended Function | Key Logic |
 |-----------|------------------|-----------|
-| `booking.ts` | `bookLessonSlot` (callable) | 8-step Firestore transaction: validate → check availability → acquire room lock → deduct package credit → create slot |
-| `makeup-booking.ts` | `bookMakeupLesson` (callable) | Atomic credit redemption: read credit in transaction → verify AVAILABLE → create slot + mark REDEEMED atomically |
 | `lesson-triggers.ts` | `onLessonCancelled` + `onLessonCompleted` (triggered) | Auto-issue makeup credits, update live stats, dispatch notifications |
 | `calendar-sync.ts` | `syncTeacherCalendars` (scheduled, every 15min) | Two-way Google Calendar sync: outbound new/changed slots, inbound conflict detection |
 | `holiday-calendar.ts` | `getIsraeliHolidaysForYear` (callable) | Hebcal API integration; maps Hebrew calendar holidays to `ClosureDate` documents |
@@ -195,13 +250,21 @@ All flows run **server-side only** (called from `actions.ts` which is `'use serv
 
 | Gap | Severity | What's Missing |
 |-----|----------|---------------|
-| Firebase Auth integration | 🔴 Critical | `login()` in `use-auth.tsx` does email lookup in mock array — no `signInWithEmailAndPassword` call |
 | Real Firestore reads/writes | 🔴 Critical | `FirebaseAdapter` is a `MemoryDatabaseAdapter` stub |
-| `verifyAuth()` always true | 🔴 Critical | Any request passes auth — privilege escalation trivial |
 | `FormSubmissionSchema = z.any()` | 🟠 High | No input validation on form submissions |
-| Cloud Functions not deployed | 🟠 High | Booking atomicity, makeup credit issuance, calendar sync all undeployed |
+| Cloud Functions Phase 2 not deployed | 🟠 High | Lesson triggers, calendar sync, payroll export, holiday calendar still undeployed |
 | Cardcom webhook handler | 🟠 High | `/api/cardcom-webhook` route exists but handler logic is stubbed |
 | Monthly auto-charge scheduler | 🟠 High | No deployed scheduled function |
 | Age-gate nightly function | 🟡 Medium | Under-13 enforcement unimplemented |
 | Credit expiry scheduler | 🟡 Medium | `MakeupCredit.expiresAt` not enforced automatically |
 | Google Calendar sync | 🟡 Medium | Spec exists; no OAuth token flow or API calls |
+
+### Resolved Since Last Audit
+
+| Previously a Gap | Resolution |
+|------------------|-----------|
+| `verifyAuth()` always returns `true` | ✅ Now implements layered auth: Admin SDK `verifySessionCookie()` → proxy header fallback → dev-only synthetic session |
+| No `src/middleware.ts` | ✅ Replaced by `src/proxy.ts` (Next.js 16 Edge Proxy) which validates `__session` cookies and injects auth headers |
+| Firebase Auth not called on login | ✅ `/api/auth/login` route creates session cookies via `admin.auth().createSessionCookie()` |
+| Cloud Functions not deployed | ✅ Partially deployed: `onUserApproved`, `onUserCreated`, `onUserDeleted`, `onUserParentSync`, `bookLessonSlot`, `bookMakeupLesson` in `functions/src/` |
+| Custom Claims not set on approval | ✅ `onUserApproved` Cloud Function sets Custom Claims when user is approved |

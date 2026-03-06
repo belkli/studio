@@ -519,6 +519,14 @@
     "a": "א-",
     "T": "ט"
   },
+  "Consent": {
+    "groupLabel": "הסכמות נדרשות",
+    "dataProcessingLabel": "אני מסכים/ה לאיסוף ועיבוד הנתונים האישיים שלי לצורך מתן שירותי חינוך מוסיקלי, בהתאם לחוק הגנת הפרטיות תשמ\"א-1981.",
+    "termsLabel": "אני מסכים/ה לתנאי השימוש ומדיניות הפרטיות.",
+    "marketingLabel": "אני מסכים/ה לקבל עדכונים ומידע על אירועים ופעילויות מהקונסרבטוריון.",
+    "required": "חובה",
+    "customTermsTitle": "תנאים נוספים מהקונסרבטוריון"
+  },
   "LessonManagement": {
     "bookPageTitle": "הזמנת שיעור חדש",
     "bookPageSubtitle": "בחר כלי, מורה ומועד פנוי כדי לקבוע שיעור חדש מהחבילה שלך.",
@@ -527,6 +535,7 @@
     "addVoiceFeedback": "הוסף משוב קולי",
     "allStatuses": "כל הסטטוסים",
     "allTeachers": "כל המורים",
+    "myConservatorium": "הקונסרבטוריון שלי",
     "availableTimeSlots": "שעות פנויות",
     "bookLesson": "הזמן שיעור",
     "cancelLessonAction": "בטל שיעור",

@@ -23,7 +23,7 @@
 │  │  Server Components (SSR / auth-validated)                              │  │
 │  │  Client Components (dashboards, booking calendar)                      │  │
 │  │  Server Actions in src/app/actions.ts (all data mutations)             │  │
-│  │  ⚠️  Auth guard is client-side useAdminGuard() hook — NOT middleware   │  │
+│  │  ✅  Auth guard: proxy.ts (Edge Proxy) + Server Actions (withAuth)     │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │                              ▼                                               │
@@ -41,15 +41,16 @@
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │         CLOUD FUNCTIONS SPECS  (src/lib/cloud-functions/)              │  │
-│  │         ⚠️  TYPED SPECS / PSEUDOCODE — NOT DEPLOYED                   │  │
+│  │         CLOUD FUNCTIONS  (functions/src/)                             │  │
+│  │         ✅ PARTIALLY IMPLEMENTED — Auth & Booking active              │  │
 │  │                                                                        │  │
-│  │  booking.ts         bookLessonSlot (transaction spec)                  │  │
-│  │  makeup-booking.ts  bookMakeupLesson (atomic credit redemption spec)   │  │
-│  │  lesson-triggers.ts onLessonCancelled / onLessonCompleted (trigger spec│  │
-│  │  calendar-sync.ts   syncTeacherCalendars (every 15min spec)            │  │
-│  │  holiday-calendar.ts getIsraeliHolidaysForYear (Hebcal spec)           │  │
-│  │  payroll-export.ts  generatePayrollExport (callable spec)              │  │
+│  │  auth/on-user-approved.ts     Set Custom Claims on approval      ✅   │  │
+│  │  auth/on-user-created.ts      New user lifecycle handling        ✅   │  │
+│  │  auth/on-user-deleted.ts      User deletion cleanup              ✅   │  │
+│  │  users/on-user-parent-sync.ts Parent-child link sync             ✅   │  │
+│  │  booking/book-lesson-slot.ts  Atomic booking transaction         ✅   │  │
+│  │  booking/book-makeup-lesson.ts Makeup credit redemption          ✅   │  │
+│  │  Lesson triggers, billing, calendar sync              ⚠️ Phase 2     │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │              ┌───────────────┼───────────────────────────────┐              │
@@ -169,7 +170,7 @@ Both `newFeaturesEnabled` (new grouped nav) and legacy flat-list rendering are s
 
 ## 5. Locale Routing
 
-✅ **Implemented.** `src/i18n/routing.ts` uses `localePrefix: 'as-needed'` — Hebrew (`he`) is the default and served at root `/`; other locales are prefixed (`/en/`, `/ar/`, `/ru/`). Locale detection reads a multi-file split-directory structure per locale (`src/messages/{locale}/*.json`) and deep-merges them.
+✅ **Implemented.** `src/i18n/routing.ts` uses `localePrefix: 'as-needed'` — Hebrew (`he`) is the default and served at root `/`; other locales are prefixed (`/en/`, `/ar/`, `/ru/`). Locale detection reads a split-directory structure per locale (`src/messages/{locale}/*.json`) and deep-merges them via static imports in `src/i18n/request.ts`. Legacy flat `{locale}.json` files have been **deleted** — only the split files are authoritative.
 
 ---
 

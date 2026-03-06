@@ -41,7 +41,15 @@ src/
 │   ├── globals.css
 │   ├── robots.ts / sitemap.ts
 │   ├── actions/                      # Additional server action modules
+│   │   ├── auth.ts                  # Auth actions (login, logout, session)
+│   │   ├── consent.ts               # PDPPA consent management
+│   │   ├── signatures.ts            # Digital signature capture
+│   │   ├── storage.ts               # File upload actions
+│   │   └── user-preferences.ts      # User preference management
 │   ├── api/                          # API route handlers
+│   │   ├── auth/                    # /api/auth/login, /api/auth/logout
+│   │   ├── bootstrap/               # /api/bootstrap — serves mock data
+│   │   └── cardcom-webhook/         # /api/cardcom-webhook — payment callbacks
 │   └── [locale]/                     # Locale-prefixed routes (he = root /)
 │       ├── layout.tsx                # NextIntlClientProvider + dir attribute
 │       ├── error.tsx
@@ -153,31 +161,49 @@ src/
 │   ├── routing.ts                    # locales: [he,en,ar,ru], localePrefix: 'as-needed'
 │   └── request.ts                    # Deep-merges split message files per locale
 ├── messages/
-│   ├── he.json · ar.json · en.json · ru.json   # Legacy single-file fallbacks
-│   └── he/ · ar/ · en/ · ru/                   # Split files (loaded & merged at runtime)
+│   └── he/ · ar/ · en/ · ru/                   # Split files (statically imported & merged at runtime)
 ├── lib/
 │   ├── types.ts                      # 1964-line master types file
 │   ├── data.ts / data.json           # Mock seed data
 │   ├── taxonomies.ts
 │   ├── utils.ts
 │   ├── firebase-client.ts            # Firebase Auth init only (no Firestore)
+│   ├── firebase-admin.ts             # Firebase Admin SDK init (getAdminAuth) for server-side auth
+│   ├── query-keys.ts                 # React Query key constants (future use)
 │   ├── help-articles.ts              # RAG source for help-assistant-flow
 │   ├── instrument-matching.ts
 │   ├── legal-contacts.ts
 │   ├── playing-school-utils.ts
 │   ├── room-allocation.ts            # Smart room assignment algorithm
 │   ├── auth/                         # OAuth helpers (google + microsoft)
-│   ├── auth-utils.ts                 # ⚠️ verifyAuth() returns true unconditionally
+│   ├── auth-utils.ts                 # verifyAuth() layered auth, requireRole() RBAC, withAuth() wrapper
 │   ├── cloud-functions/              # ⚠️ Typed specs — NOT deployed Firebase CFs
 │   ├── db/                           # Database adapter layer (5 implementations)
 │   ├── notifications/                # Notification dispatcher (Twilio stub)
 │   ├── payments/                     # Cardcom + 4 gateway stubs
 │   ├── utils/                        # Utility sub-modules
-│   └── validation/                   # Zod schemas: booking, forms, practice-log, user
+│   └── validation/                   # Zod schemas: booking, forms, practice-log, user, conservatorium, event-production, lesson-slot, user-upsert, form-submission-upsert
 └── ai/
     ├── genkit.ts                     # Genkit configuration
     ├── dev.ts                        # Dev server entry
     └── flows/                        # 8 Genkit flows (all active)
+
+# Top-level directories outside src/:
+e2e/                                   # Playwright end-to-end tests
+├── landing.spec.ts
+├── public-pages.spec.ts
+├── register.spec.ts
+├── playing-school.spec.ts
+├── dashboard.spec.ts
+└── api.spec.ts
+
+functions/                             # Firebase Cloud Functions (separate deployment)
+└── src/
+    ├── index.ts                      # Entry point — exports all functions
+    ├── types.ts                      # Shared types
+    ├── auth/                         # onUserApproved, onUserCreated, onUserDeleted
+    ├── users/                        # onUserParentSync
+    └── booking/                      # bookLessonSlot, bookMakeupLesson
 ```
 
 ---
@@ -198,10 +224,9 @@ All authenticated and public routes are nested under the `[locale]` dynamic segm
 2. Fallback to `he` (default locale)
 3. Messages loaded by deep-merging all `.json` files under `src/messages/{locale}/`
 
-> ⚠️ **Gap vs. plan:** `src/middleware.ts` does **not exist**. There is no server-side session cookie validation, no Firebase Custom Claims injection into request headers, and no server-side redirect for unapproved users. Auth is entirely client-side:
-> - `useAuth()` hook reads a `harmonia-user=1` cookie (set/cleared client-side on login/logout)
-> - `useAdminGuard()` hook redirects non-admin users on the client after mount
-> - No `x-user-role` header is injected for Server Components
+> ✅ **Auth architecture via Edge Proxy:** `src/proxy.ts` (Next.js 16 Edge Proxy, replaces the deleted `middleware.ts`) validates the `__session` Firebase cookie on dashboard routes and injects `x-user-id`, `x-user-role`, `x-user-conservatorium-id`, `x-user-approved`, and `x-user-email` headers for Server Components. In dev mode (no `FIREBASE_SERVICE_ACCOUNT_KEY`), synthetic `site_admin` claims are injected automatically.
+>
+> API routes (`/api/*`) pass through the proxy directly without intl middleware or auth checks. Public routes only get intl locale routing.
 
 ---
 
@@ -214,7 +239,7 @@ All authenticated and public routes are nested under the `[locale]` dynamic segm
 - 170+ mutation functions
 - All mock data populated from `src/lib/data.ts`
 - `useMemo` wrapping the context value (prevents re-renders on unchanged references ✅)
-- Login: email-only lookup in mock users array — **no password check, no Firebase Auth call**
+- Login: In mock mode, email-only lookup in mock users array — **no password check, no Firebase Auth call**. In production, Firebase Auth `signInWithEmailAndPassword` is used, and session cookies are created via `/api/auth/login`.
 
 All domain hooks in `src/hooks/data/` wrap `useAuth()` — they apply filtering/memoisation but **do not fetch from any database**.
 
@@ -253,20 +278,23 @@ export function useMyLessons(userId: string) {
 
 ### Translation File Structure (Verified)
 
-Messages live in two layers that are deep-merged at runtime:
-- `src/messages/{locale}.json` — legacy single-file fallback
-- `src/messages/{locale}/*.json` — split files, loaded alphabetically and merged
+Messages are loaded from split files via **static imports** in `src/i18n/request.ts` (Edge-compatible — no `node:fs`). Each locale has 10 namespaced JSON files that are deep-merged at runtime. English is the fallback: `deepMerge(fallbackMessages, messages)`.
 
-The split-directory approach allows large message namespaces to be maintained as separate files without a single unwieldy JSON blob. Hebrew (`he`) is the source of truth; other locales are synced using `npm run i18n:sync`.
+> **Legacy flat `{locale}.json` files have been deleted.** Only the split directory files are authoritative.
 
 ```
 src/messages/
-├── he.json  (fallback)       ar.json  en.json  ru.json
-├── he/                       ar/      en/      ru/
-│   ├── 00-common.json             (Namespace: common keys)
-│   ├── 01-auth.json               (Namespace: Auth)
-│   ├── 02-dashboard.json          ...
-│   └── ...
+├── he/ · ar/ · en/ · ru/           # Split files (statically imported & merged at runtime)
+│   ├── admin.json                   (Namespace: admin keys)
+│   ├── alumni.json                  (Namespace: alumni)
+│   ├── billing.json                 (Namespace: billing)
+│   ├── common.json                  (Namespace: common)
+│   ├── enrollment.json              (Namespace: enrollment)
+│   ├── forms.json                   (Namespace: forms)
+│   ├── OpenDay.json                 (Namespace: OpenDay)
+│   ├── public.json                  (Namespace: public — landing page, about, etc.)
+│   ├── settings.json                (Namespace: settings)
+│   └── student.json                 (Namespace: student)
 ```
 
 ### RTL Application Rule (Verified)
@@ -279,6 +307,23 @@ const sidebarSide = locale === 'he' || locale === 'ar' ? 'right' : 'left';
 ```
 
 All spacing uses CSS Logical Properties: `ms-` / `me-`, `ps-` / `pe-`, `text-start` / `text-end`.
+
+### Premium Teacher Badges
+
+Teachers with `isPremiumTeacher: true` display a visual badge on:
+- Slot tiles on the `/available-now` page (`slot-promotion-card.tsx`)
+- Teacher cards on the public landing page and `/about` directory
+- The book-lesson wizard (`book-lesson-wizard.tsx`) — Deals tab
+
+Premium packages (`PACK_5_PREMIUM`, `PACK_10_PREMIUM`, `PACK_DUET`) appear in the package selection step of the booking wizard when a premium teacher is selected.
+
+### Available-Now Slot Marketplace
+
+The `/available-now` page (`src/app/[locale]/available-now/page.tsx`) is a public browsing page listing open teacher slots. The `slot-promotion-card.tsx` component renders each slot tile with teacher name, instrument, time, and a "Book Now" CTA. Clicking "Book Now" saves the slot to `sessionStorage` as `pending_slot` and routes the user through the registration or login flow back to the authenticated booking wizard.
+
+### Book Lesson Wizard — Deals Tab
+
+`src/components/dashboard/harmonia/book-lesson-wizard.tsx` includes a "Deals" tab that reads `pending_slot` from `sessionStorage` and auto-opens the booking dialog pre-filled with the selected teacher, slot time, and conservatorium. This connects the public browsing funnel to the authenticated booking experience.
 
 ### i18n Tooling Scripts
 
@@ -321,4 +366,19 @@ Key requirements:
 | Dashboard initial load (admin) | < 2.5s | At risk — 35+ state arrays |
 | Role-specific bundle isolation | Required | ❌ No dynamic imports in use |
 | React Query caching | Required | ❌ Not installed |
+
+---
+
+## 8. End-to-End Testing (Playwright)
+
+✅ **Playwright e2e tests** exist in the `e2e/` directory at the project root. Configuration is in `playwright.config.ts`.
+
+| Test File | Coverage |
+|-----------|----------|
+| `e2e/landing.spec.ts` | Public landing page rendering and navigation |
+| `e2e/public-pages.spec.ts` | Public routes: about, accessibility, contact, privacy |
+| `e2e/register.spec.ts` | Registration wizard flow |
+| `e2e/playing-school.spec.ts` | Playing School enrollment wizard |
+| `e2e/dashboard.spec.ts` | Authenticated dashboard smoke tests |
+| `e2e/api.spec.ts` | API route health checks |
 

@@ -8,7 +8,27 @@
 
 **PostgreSQL** (via Docker) is the most complete real alternative: the `PostgresAdapter` (`src/lib/db/adapters/postgres.ts`, 1749 lines) has a full read-write implementation including schema migrations and seed scripts. When `DATABASE_URL` is set, the app automatically uses Postgres.
 
-A **multi-backend abstraction layer** (`src/lib/db/`) allows the backend to be switched via the `DB_BACKEND` environment variable:
+A **multi-backend abstraction layer** (`src/lib/db/`) allows the backend to be switched via the `DB_BACKEND` environment variable.
+
+### Mock Seed Data Sources
+
+The `MemoryDatabaseAdapter` (and the `buildDefaultMemorySeed()` function in `src/lib/db/default-memory-seed.ts`) populates the in-memory store from these sources:
+
+| Source File | Data |
+|-------------|------|
+| `docs/data/constadmin.json` | 85 Israeli conservatorium records with real names, cities, and contacts |
+| `docs/data/conservatoriums.json` | 68 directory teachers (18 from cons-15 Hod HaSharon + 50 from cons-66 Kiryat Ono) |
+| `src/lib/data.ts` | `mockUsers` (students, parents, teachers, admins), `devUser` (synthetic dev site_admin), `directoryTeacherUsers` |
+| `src/lib/data.json` | 5,217 music compositions (composer, title, instrument, grade) |
+
+The `/api/bootstrap` route serves all seed data to the client as JSON. When `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` is set, the client falls back to built-in mock data if the bootstrap endpoint fails.
+
+### PostgreSQL Seed Alignment
+
+The `scripts/db/seed.sql` file contains SQL inserts aligned with the mock data:
+- All 68 directory teachers as UUID-based records with `teacher_profiles`
+- 9 students, 5 parents, 10 lesson slots
+- Uses Postgres-native column names: `scheduled_at` (not `start_time`), lowercase `lesson_status` enum
 
 ---
 

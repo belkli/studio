@@ -380,5 +380,12 @@
     "saveChanges": "שמור שינויים",
     "studentRulesTitle": "כללי ביטול תלמיד",
     "successToast": "מדיניות הביטולים עודכנה בהצלחה!"
+  },
+  "ConservatoriumSettings": {
+    "customTermsTitle": "תנאי הרשמה מותאמים אישית",
+    "customTermsDescription": "הוסף תנאים מותאמים שיוצגו בטופס ההרשמה בנוסף לתנאים הסטנדרטיים.",
+    "customTermsPlaceholder": "הזן תנאים מותאמים לשפה זו...",
+    "saveCustomTerms": "שמור תנאים",
+    "customTermsSaved": "התנאים נשמרו בהצלחה"
   }
 }

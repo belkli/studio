@@ -4,15 +4,16 @@
 
 Harmonia stores Israeli ID numbers (ת"ז) of minors and parents, video/audio recordings of children, credit card histories, Ministry exam results, and scholarship financial disclosures. This makes a security breach a violation of the **Israeli Protection of Privacy Law (PDPPA / חוק הגנת הפרטיות, 5741-1981)** with civil and regulatory consequences.
 
-> ⚠️ **Current prototype security status — verified from code:**
-> - **Authentication:** `login()` in `use-auth.tsx` does a plain email lookup in the mock users array. No password check. No Firebase `signInWithEmailAndPassword` call.
-> - **Session:** A `harmonia-user=1` cookie is set/cleared client-side (`document.cookie`). The cookie value has no cryptographic significance.
-> - **Authorization:** `verifyAuth()` in `src/lib/auth-utils.ts` unconditionally returns `true`. Any unauthenticated caller can invoke any Server Action.
-> - **Route guards:** `useAdminGuard()` is a client-side hook that redirects after mount — it can be bypassed by disabling JavaScript or navigating directly.
+> **Current security status — verified from code:**
+> - **Authentication:** `src/lib/auth-utils.ts` implements layered auth: (1) Firebase Admin SDK `verifySessionCookie()` when `FIREBASE_SERVICE_ACCOUNT_KEY` is configured, (2) fallback to `x-user-*` headers injected by `proxy.ts`, (3) dev-only synthetic `site_admin` session when `NODE_ENV !== 'production'`.
+> - **Session:** Production uses Firebase `__session` cookie (created via `admin.auth().createSessionCookie()`). The old `harmonia-user=1` client-side cookie is still used for sidebar rendering in the mock data path but is **not** the auth mechanism.
+> - **Edge Proxy:** `src/proxy.ts` validates `__session` JWT on dashboard routes, injects user claims as request headers, and redirects unauthenticated users to `/login`. In dev mode, synthetic claims are injected automatically.
+> - **Authorization:** `requireRole()` enforces RBAC with tenant isolation. `withAuth()` wraps all Server Actions with `verifyAuth()` + Zod validation.
+> - **Route guards:** `useAdminGuard()` remains as a client-side hook for UX (immediate redirect); the proxy provides server-side protection.
 > - **Firestore rules:** `firestore.rules` is a template in the repo but not enforced (no Firestore is connected).
-> - **No `src/middleware.ts` exists.**
+> - **Dev bypass mode:** When `NODE_ENV !== 'production'` and `FIREBASE_SERVICE_ACCOUNT_KEY` is absent, both `proxy.ts` and `verifyAuth()` grant synthetic `site_admin` access. This is intentionally permissive for local development. **It is unreachable in production** because Firebase App Hosting sets `NODE_ENV='production'` at build time and `FIREBASE_SERVICE_ACCOUNT_KEY` is always provided via Secret Manager.
 >
-> **None of these must remain in production. All items in §8 Pre-Launch Checklist are blocking.**
+> **Items in §8 Pre-Launch Checklist that remain blocking are marked below.**
 
 ---
 
@@ -22,9 +23,9 @@ Harmonia stores Israeli ID numbers (ת"ז) of minors and parents, video/audio re
 
 | Method | Used By | Provider | Status |
 |--------|---------|----------|--------|
-| Email + Password | All roles | Mock array lookup — no Firebase Auth call | ⚠️ Mock only |
-| Google OAuth | All roles | Firebase Auth SDK in `src/lib/auth/oauth.ts` — falls back to mock profile when Firebase unconfigured | ⚠️ Partial |
-| Microsoft OAuth | All roles | Firebase Auth SDK — same fallback | ⚠️ Partial |
+| Email + Password | All roles | Firebase Auth `signInWithEmailAndPassword` → session cookie | ✅ Wired (requires Firebase project) |
+| Google OAuth | All roles | Firebase Auth SDK in `src/lib/auth/oauth.ts` — falls back to mock profile when Firebase unconfigured | ✅ Wired (requires Firebase project) |
+| Microsoft OAuth | All roles | Firebase Auth SDK — same fallback | ✅ Wired (requires Firebase project) |
 | Magic Link (Email) | Parents (low-tech) | `firebase/auth` `sendSignInLinkToEmail` | ❌ Not wired |
 | Phone OTP (SMS) | Student 13+, Parent | Firebase Auth + Twilio | ❌ Not implemented |
 
@@ -41,42 +42,46 @@ signInWithPopup (or mock)
 
 ### 2.3 Session Management (Verified — Current Reality)
 
+Production session management uses Firebase session cookies:
+
 ```typescript
-// src/hooks/use-auth.tsx (actual)
-const setAuthCookie = () => {
-  document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
-  // ⚠️ No JWT, no user ID, no role — just a presence flag
-};
+// src/lib/auth-utils.ts (actual)
+export async function createSessionCookie(idToken: string): Promise<string> {
+  const adminAuth = getAdminAuth();
+  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+    expiresIn: 14 * 24 * 60 * 60 * 1000, // 14 days
+  });
+  return sessionCookie;
+}
 ```
 
-The `harmonia-user=1` cookie is checked by the dashboard layout to decide whether to render the sidebar. It has no cryptographic content and conveys no identity or role information to the server.
+The `__session` cookie (Firebase hosting convention) is:
+- Created by `/api/auth/login` after client-side `signInWithEmailAndPassword` or OAuth
+- Validated by `proxy.ts` (JWT decode for header injection) and `verifyAuth()` (full `verifySessionCookie()` via Admin SDK)
+- Deleted by `/api/auth/logout` which also calls `admin.auth().revokeRefreshTokens()`
 
-**Target architecture (required before production):**
-- Firebase `signInWithEmailAndPassword` → Firebase ID token
-- Server-side Firebase session cookie via `admin.auth().createSessionCookie()`
-- `src/middleware.ts` validates `__session` cookie via `admin.auth().verifySessionCookie()` on every request
-- Custom Claims `{ role, conservatoriumId, approved }` injected into request headers for Server Components
+> ⚠️ The `harmonia-user=1` cookie still exists in the mock data path (`use-auth.tsx`) for sidebar rendering decisions but is **not** the auth mechanism for Server Actions or protected routes.
+
+**Dev mode:** When Firebase credentials are absent, `proxy.ts` injects synthetic claims without any cookie. The `verifyAuth()` function falls back to reading these headers or returning a synthetic session.
 
 ---
 
 ## 3. Authorisation — Role-Based Access Control
 
-### 3.1 Custom Claims (Planned — Not Yet Implemented)
+### 3.1 Custom Claims (Partially Implemented)
 
-The **intended** production design uses Firebase Custom Claims as the server-side role authority. This is **not yet active**. Current role checks use the mock `user.role` value from the in-memory context.
+Firebase Custom Claims are used as the server-side role authority. The `proxy.ts` Edge Proxy decodes the JWT from the `__session` cookie and injects claims as request headers. Server Actions read these claims via `getClaimsFromRequest()`.
 
-```typescript
-// Planned Custom Claims payload (not yet deployed):
-{
-  role: UserRole;
-  conservatoriumId: string;
-  approved: boolean;
-}
-```
+The `onUserApproved` Cloud Function (`functions/src/auth/on-user-approved.ts`) is now implemented and sets Custom Claims when a user's `approved` field changes to `true` in Firestore.
 
-The `onUserApproved` Cloud Function that would set these claims is a spec (`src/lib/cloud-functions/`) and not deployed.
+### 3.2 Current Route Protection (Verified — Server + Client)
 
-### 3.2 Current Route Protection (Verified — Client-Side Only)
+**Server-side (proxy.ts):**
+- Dashboard routes: `proxy.ts` validates `__session` cookie and redirects to `/login` if absent/expired
+- Unapproved users are redirected to `/pending-approval`
+- Auth headers injected for Server Components
+
+**Client-side (supplementary UX guard):**
 
 ```typescript
 // src/hooks/use-admin-guard.ts (actual — client-side only)
@@ -96,26 +101,32 @@ export function useAdminGuard() {
 }
 ```
 
-> ⚠️ This guard runs after the component mounts on the client. Admin pages render briefly before the redirect fires. JavaScript-disabled users or direct API calls bypass it entirely.
+> This client-side guard provides a UX redirect for non-admin users. Server-side protection is handled by `proxy.ts` and `requireRole()` in Server Actions.
 
-### 3.3 Server Action Guard (Target Pattern)
+### 3.3 Server Action Guard (Implemented)
 
-Once `verifyAuth()` is wired to real Firebase Admin SDK:
+`requireRole()` is the production RBAC enforcement for Server Actions:
 
 ```typescript
-// src/lib/auth-utils.ts (target)
+// src/lib/auth-utils.ts (actual implementation)
+const GLOBAL_ADMIN_ROLES: UserRole[] = ['site_admin', 'superadmin'];
+
 export async function requireRole(
   allowedRoles: UserRole[],
   conservatoriumIdMustMatch?: string
-): Promise<DecodedIdToken> {
-  const claims = await getClaimsFromRequestHeaders(); // from x-user-role header injected by middleware
+): Promise<HarmoniaClaims> {
+  const claims = await verifyAuth();
+  if (!claims.approved) throw new Error('ACCOUNT_NOT_APPROVED');
   if (!allowedRoles.includes(claims.role)) throw new Error('FORBIDDEN');
-  if (conservatoriumIdMustMatch && claims.conservatoriumId !== conservatoriumIdMustMatch) {
+  if (conservatoriumIdMustMatch && !GLOBAL_ADMIN_ROLES.includes(claims.role)
+      && claims.conservatoriumId !== conservatoriumIdMustMatch) {
     throw new Error('TENANT_MISMATCH');
   }
   return claims;
 }
 ```
+
+`withAuth()` wraps Server Actions with `verifyAuth()` + Zod validation. The `requireRole()` function is available for actions that need specific role checks beyond simple authentication.
 
 ---
 
@@ -172,12 +183,12 @@ service cloud.firestore {
 
 | Threat | Severity | Attack | Mitigation | Status |
 |--------|----------|--------|------------|--------|
-| **S**poofing — no password check | 🔴 Critical | Any email logs in without password | Replace mock login with `signInWithEmailAndPassword` | ❌ |
-| **T**ampering — `z.any()` on form/user/lesson schemas | 🟠 High | Inject arbitrary data via Server Actions | Replace `z.any()` with real Zod schemas | ❌ |
+| **S**poofing — session forgery | 🟡 Medium | Forge `__session` cookie | `verifySessionCookie()` performs cryptographic verification via Admin SDK | ✅ (requires Firebase project) |
+| **T**ampering — `z.any()` on form/user/lesson schemas | 🟠 High | Inject arbitrary data via Server Actions | Replace `z.any()` with real Zod schemas | ⚠️ Partially done |
 | **R**epudiation — no financial audit trail | 🟠 High | Deny authorising a payment | Cardcom webhook HMAC + `/complianceLogs` | ⚠️ Planned |
-| **I**nformation Disclosure — PII of minors | 🔴 Critical | Unauthenticated requests to Server Actions | `verifyAuth()` must validate real claims | ❌ |
+| **I**nformation Disclosure — PII of minors | 🟠 High | Unauthorised access to Server Actions | `verifyAuth()` + `requireRole()` enforce auth + RBAC | ✅ (in Server Actions) |
 | **D**enial of Service — booking function abuse | 🟡 Medium | Spam callable functions | Firebase App Check + rate limiting | ❌ |
-| **E**levation of Privilege — client-side role check | 🔴 Critical | Access admin pages with student account | Middleware + server-side Claims validation | ❌ |
+| **E**levation of Privilege — tenant escape | 🟡 Medium | Access another conservatorium's data | `requireRole()` checks `conservatoriumId` match | ✅ (in Server Actions) |
 
 ### Security Headers (✅ Already Configured in `next.config.ts`)
 
@@ -249,28 +260,32 @@ initializeAppCheck(app, {
 
 ### Blocking (must complete before first real user)
 
-- [ ] Replace mock `login()` with real Firebase `signInWithEmailAndPassword`
-- [ ] Implement Firebase session cookies — replace `harmonia-user=1` cookie
-- [ ] Create `src/middleware.ts` with `verifySessionCookie()` on every request
-- [ ] Deploy `onUserApproved` Cloud Function to set Custom Claims
-- [ ] Replace `verifyAuth(): return true` with real claims validation
+- [x] ~~Replace mock `login()` with real Firebase `signInWithEmailAndPassword`~~ — Done: `/api/auth/login` creates session cookies
+- [x] ~~Implement Firebase session cookies~~ — Done: `__session` cookie via `createSessionCookie()`
+- [x] ~~Create `src/middleware.ts` with `verifySessionCookie()`~~ — Done: `src/proxy.ts` (Edge Proxy) validates sessions and injects headers
+- [x] ~~Replace `verifyAuth(): return true`~~ — Done: layered auth in `auth-utils.ts`
+- [x] ~~Deploy `onUserApproved` Cloud Function to set Custom Claims~~ — Done: `functions/src/auth/on-user-approved.ts`
 - [ ] Replace `FormSubmissionSchema = z.any()`, `UserSchema = z.any()`, `LessonSchema = z.any()`
 - [ ] Deploy complete Firestore Security Rules (tenant isolation)
 - [ ] Deploy Firebase Storage Security Rules (no public URLs for PII)
 - [ ] Enable Firebase App Check on callable functions
 - [ ] Store all secrets in Google Secret Manager
-- [ ] Validate Cardcom HMAC signature on every webhook request
-- [ ] Remove pre-filled mock login (no password prompt in current UI)
+- [ ] Validate Cardcom HMAC signature on every webhook request (body verification — proxy checks header presence only)
 
 ### Already Done ✅
 
 - [x] HTTP Security Headers: HSTS, X-Frame-Options (`SAMEORIGIN`), X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP — in `next.config.ts`
 - [x] CSP allowlist includes Cardcom, Firebase, and Google API domains
-- [x] Zod schemas for booking, practice-log, user, announcement, master-class, scholarship, donation, branch, room, lesson-package
+- [x] Zod schemas for booking, practice-log, user, announcement, master-class, scholarship, donation, branch, room, lesson-package, conservatorium, event-production, lesson-slot, user-upsert, form-submission-upsert
 - [x] OAuth `signInWithPopup` implemented with Firebase SDK (pending Firebase project credentials)
 - [x] Israeli phone normalisation (`normalizeIsraeliPhone`) prevents format injection
 - [x] `/accessibility` statutory page present
 - [x] PDPPA types defined: `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog`, `RetentionPolicy`
+- [x] Edge Proxy (`src/proxy.ts`) validates `__session` cookie and injects auth headers
+- [x] `verifyAuth()` implements layered auth: Admin SDK → proxy headers → dev-only fallback
+- [x] `requireRole()` enforces RBAC with tenant isolation on Server Actions
+- [x] `/api/auth/login` creates Firebase session cookies via Admin SDK
+- [x] `/api/auth/logout` revokes refresh tokens and clears session cookie
 
 ---
 

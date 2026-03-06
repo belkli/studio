@@ -480,6 +480,7 @@ export type User = {
   lessonDurationsOffered?: (30 | 45 | 60)[];
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
+  spokenLanguages?: Language[];
   availability?: WeeklyAvailabilityBlock[];
   maxStudents?: number;
   teacherRatingAvg?: number;
@@ -511,6 +512,7 @@ export type User = {
   delegatedAdminPermissions?: AdminSection[];
   teacherAssignments?: TeacherAssignment[];
   isPrimaryConservatoriumAdmin?: boolean;
+  isPremiumTeacher?: boolean;
   oauthProviders?: UserOAuthProvider[];
   registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
   preferredLanguage?: 'he' | 'en' | 'ar' | 'ru';
@@ -552,6 +554,12 @@ export type Conservatorium = {
   photoUrls?: string[];
   translations?: ConservatoriumTranslations;
   translationMeta?: TranslationMeta;
+  customRegistrationTerms?: {
+    he?: string;
+    en?: string;
+    ar?: string;
+    ru?: string;
+  };
 };
 
 export type FormStatus = 'DRAFT' | 'PENDING_TEACHER' | 'PENDING_ADMIN' | 'APPROVED' | 'REJECTED' | 'REVISION_REQUIRED' | 'FINAL_APPROVED';
@@ -823,7 +831,7 @@ export type LessonSlot = {
   updatedAt: string; // ISO Timestamp
 };
 
-export type PackageType = 'TRIAL' | 'PACK_5' | 'PACK_10' | 'MONTHLY' | 'YEARLY' | 'ADHOC_SINGLE';
+export type PackageType = 'TRIAL' | 'PACK_5' | 'PACK_10' | 'MONTHLY' | 'YEARLY' | 'ADHOC_SINGLE' | 'PACK_5_PREMIUM' | 'PACK_10_PREMIUM' | 'PACK_DUET';
 export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED';
 
 export type Package = {

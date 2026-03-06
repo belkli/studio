@@ -12,10 +12,11 @@ import { Progress } from "@/components/ui/progress";
 import { Link } from '@/i18n/routing';
 import { useMemo, useState } from "react";
 import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 import { useDateLocale } from "@/hooks/use-date-locale";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 
 export function StudentBillingDashboard() {
@@ -24,6 +25,9 @@ export function StudentBillingDashboard() {
     const ti = useTranslations('Invoices');
     const tps = useTranslations('PlayingSchool.programBilling');
     const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+    const [upgradeOpen, setUpgradeOpen] = useState(false);
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
@@ -143,7 +147,7 @@ export function StudentBillingDashboard() {
                                 </CardTitle>
                                 <CardDescription className="pt-1">{currentPackage?.title || t('noActivePackage')}</CardDescription>
                             </div>
-                            <Button variant="outline" size="sm" onClick={() => toast({ title: t('upgradePackage'), description: 'Upgrade package - coming soon' })}>{t('upgradePackage')}</Button>
+                            <Button variant="outline" size="sm" onClick={() => setUpgradeOpen(true)}>{t('upgradePackage')}</Button>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -170,6 +174,32 @@ export function StudentBillingDashboard() {
                         </div>
                     </CardContent>
                 </Card>
+
+                <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+                    <DialogContent dir={isRtl ? 'rtl' : 'ltr'}>
+                        <DialogHeader>
+                            <DialogTitle>{t('upgradePackage')}</DialogTitle>
+                            <DialogDescription>{t('selectPackageDesc')}</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-3 mt-2">
+                            {[
+                                { type: 'PACK_5', label: t('pack5Label'), price: '₪450', credits: 5 },
+                                { type: 'PACK_10', label: t('pack10Label'), price: '₪850', credits: 10 },
+                                { type: 'MONTHLY', label: t('monthlyLabel'), price: '₪320', credits: null },
+                            ].map(pkg => (
+                                <div key={pkg.type} className="flex items-center justify-between border rounded-lg p-4">
+                                    <div>
+                                        <p className="font-semibold">{pkg.label}</p>
+                                        <p className="text-sm text-muted-foreground">{pkg.price}{pkg.credits ? ` · ${pkg.credits} ${t('lessons')}` : ''}</p>
+                                    </div>
+                                    <Button size="sm" onClick={() => { toast({ title: t('packageSelected') }); setUpgradeOpen(false); }}>
+                                        {t('select')}
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
                 <Card className="flex flex-col">
                     <CardHeader>

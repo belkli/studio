@@ -9,7 +9,7 @@ Harmonia targets **Israeli music conservatoriums** — institutions that today o
 | Eliminate administrative overhead | Reduce secretary time-per-week by ≥ 60% |
 | Enable self-service for families | ≥ 80% of bookings, cancellations, and payments completed without staff intervention |
 | Increase retention | Proactive makeup credit tracking and AI engagement reduce student dropout |
-| Expand revenue per conservatorium | Musicians for Hire marketplace and scholarship donation pipeline |
+| Expand revenue per conservatorium | Musicians for Hire marketplace, scholarship donation pipeline, and Premium Teacher tier upsell |
 | Regulatory compliance | Native Israeli Ministry of Education form submission, PDPPA privacy law, IS 5568 accessibility, payroll CSV export for Hilan/Merav Digital |
 
 The business model is **multi-tenant SaaS**: each conservatorium is a fully isolated tenant (`conservatoriumId`) with its own settings, users, pricing, and branding. A single deployment can serve a single branch or a national network.
@@ -153,3 +153,36 @@ Beyond roles, users have an `accountType` field that changes the experience:
 | Multi-child Family Hub | ⚠️ | ⚠️ | ✅ | ✅ |
 | LMS + Practice Logs + Gamification | ⚠️ | ✅ | ❌ | ✅ |
 | Payroll Export (Hilan-compatible CSV) | ⚠️ | ❌ | ✅ | ⚠️ spec |
+| Premium Teacher Tier | ❌ | ❌ | ❌ | ✅ |
+| Available-Now Slot Marketplace | ❌ | ❌ | ❌ | ✅ |
+
+---
+
+## 6. Premium Teacher Tier
+
+Conservatoriums can designate teachers as **Premium** (`isPremiumTeacher: true` on the `User` type). Premium designation is admin-gated: only `conservatorium_admin` or `site_admin` can set it.
+
+**Impact on the platform:**
+- **Premium Packages:** New `PackageType` values: `PACK_5_PREMIUM`, `PACK_10_PREMIUM`, and `PACK_DUET` — priced higher than standard packs.
+- **Visual Differentiation:** Premium teachers display a badge on their slot tiles, teacher cards, and in the book-lesson wizard.
+- **Revenue Upsell:** Enables conservatoriums to monetise senior or specialist teachers at a higher rate.
+
+---
+
+## 7. Slot Booking Funnel (Available-Now Flow)
+
+The Available-Now page (`/available-now`) lists teacher slots that are currently open for booking. This powers a public-facing acquisition funnel:
+
+```
+/available-now → Browse open slots → Click "Book Now"
+    │
+    ├── Saves slot details to sessionStorage as `pending_slot`
+    ├── Routes to /register with teacher + conservatorium query params
+    │
+    └── "Already have an account?" link
+          → /login?callbackUrl=/dashboard/schedule/book?tab=deals
+          → After login → Deals tab reads `pending_slot` from sessionStorage
+          → Auto-opens the slot booking dialog pre-filled with the selected slot
+```
+
+This flow reduces friction for new student acquisition by connecting the public browsing experience directly to the authenticated booking workflow.

@@ -601,7 +601,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('harmonia-user');
     clearAuthCookie();
     setUser(null);
-    router?.push?.('/login');
+    router?.push?.('/');
   };
 
   // --- Data Manipulation Functions ---

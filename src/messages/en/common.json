@@ -892,7 +892,11 @@
     "settingsDesc": "Settings Desc",
     "next": "Next",
     "back": "Back",
-    "done": "Done"
+    "done": "Done",
+    "availableNowTitle": "Available-Now Deals",
+    "availableNowDesc": "Check here for last-minute lesson openings at discounted rates.",
+    "premiumTeacherTitle": "Premium Teachers",
+    "premiumTeacherDesc": "A gold star next to a teacher's name means they are a premium instructor with advanced qualifications."
   },
   "SuggestionButton": {
     "successTitle": "Success Title",
@@ -965,23 +969,23 @@
     "generalTitle": "General",
     "generalBody": "This policy explains how the site collects, uses, stores, secures, and shares personal data when using Harmonia services.",
     "lawfulBasisTitle": "Legal Basis",
-    "lawfulBasisBody": "Data is processed under applicable law, contractual necessity, legitimate interests, and consent where required.",
+    "lawfulBasisBody": "Data is processed pursuant to the Israeli Privacy Protection Law 5741-1981, contractual necessity, legitimate interests, and consent where required.",
     "dataTitle": "Data We Collect",
     "dataItems": {
-      "item1": "Identification and contact data such as name, phone, and email.",
-      "item2": "Service data such as registrations, attendance, payments, and requests.",
+      "item1": "Identification and contact data such as name, phone, email, and ID number.",
+      "item2": "Service data such as lesson history, registrations, attendance, payment and billing information, and requests.",
       "item3": "Technical data such as browser type, device information, and IP address.",
       "item4": "Communication records including support and contact form messages."
     },
     "useTitle": "How We Use Data",
     "useItems": {
-      "item1": "Provide requested educational and administrative services.",
-      "item2": "Authenticate users, protect accounts, and prevent abuse.",
-      "item3": "Improve product quality, operations, and user support.",
+      "item1": "Provide requested educational and administrative services, including lesson scheduling and parent notifications.",
+      "item2": "Process billing, payments, and financial record-keeping.",
+      "item3": "Authenticate users, protect accounts, and prevent abuse.",
       "item4": "Meet legal, accounting, and regulatory obligations."
     },
     "sharingTitle": "Sharing and Processors",
-    "sharingBody": "Personal data is shared only with authorized processors and service providers under contractual confidentiality and security obligations.",
+    "sharingBody": "Personal data is shared only with authorized processors and service providers under contractual confidentiality and security obligations. These include Firebase (authentication and hosting), Cardcom (payment processing), and optionally Twilio (SMS notifications).",
     "transfersTitle": "Cross-Border Transfers",
     "transfersBody": "If data is transferred outside Israel, appropriate safeguards are applied according to applicable law.",
     "securityTitle": "Security Controls",
@@ -994,7 +998,7 @@
       "item4": "Object to direct marketing communications."
     },
     "retentionTitle": "Retention",
-    "retentionBody": "Data is retained only as long as required for service delivery, legal compliance, and audit requirements.",
+    "retentionBody": "Data is retained only as long as required for service delivery, legal compliance, and audit requirements. Financial records are retained for a minimum of 7 years in accordance with Israeli tax and accounting law.",
     "cookiesTitle": "Cookies",
     "cookiesBody": "The site uses cookies and similar technologies for functionality, analytics, and performance. Browser settings can be used to manage cookie preferences.",
     "minorsTitle": "Children and Minors",
@@ -1004,7 +1008,7 @@
     "termsTitle": "Terms of Use Summary",
     "termsBody": "By using the site, users agree to lawful use only, accurate data submission, and non-abuse of systems, content, or accounts.",
     "contactTitle": "Privacy Contact",
-    "contactDescription": "For privacy requests, correction, deletion, or clarification, contact the relevant conservatorium contact listed below.",
+    "contactDescription": "For privacy requests, correction, deletion, or clarification, contact privacy@harmonia.co.il or the relevant conservatorium contact listed below.",
     "contactResponseLabel": "Response time",
     "contactResponseValue": "Up to 30 days (up to 60 days in justified cases)",
     "contactDirectoryTitle": "Privacy Contacts by Conservatorium",

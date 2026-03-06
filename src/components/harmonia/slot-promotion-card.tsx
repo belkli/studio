@@ -78,9 +78,33 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
     };
 
     return (
-        <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center gap-4">
-                <Avatar className="w-12 h-12">
+        <div
+            dir={isRtl ? 'rtl' : 'ltr'}
+            onClick={handleBookNow}
+            className="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all duration-200 overflow-hidden cursor-pointer"
+        >
+            {/* ── Urgency banner ── */}
+            <div className={cn(
+                "flex items-center justify-between px-4 py-2.5",
+                isSlotToday
+                    ? "bg-amber-500"
+                    : "bg-indigo-500"
+            )}>
+                <div className="flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5 text-white" />
+                    <span className="text-white text-sm font-bold tracking-wide uppercase">
+                        {urgencyLabel}
+                    </span>
+                </div>
+                <div className="flex items-center gap-1 bg-black/20 rounded-full px-2.5 py-0.5">
+                    <Clock className="h-3 w-3 text-white" />
+                    <span className="text-white text-sm font-bold tabular-nums">{timeLabel}</span>
+                </div>
+            </div>
+
+            {/* ── Teacher info ── */}
+            <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+                <Avatar className="h-11 w-11 shrink-0 ring-2 ring-primary/30">
                     <AvatarImage src={slot.teacher.avatarUrl} alt={slot.teacher.name} />
                     <AvatarFallback className="bg-primary/15 text-primary font-bold text-sm">
                         {slot.teacher.name.charAt(0)}
@@ -91,6 +115,12 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                     <p className="font-bold text-slate-900 dark:text-slate-50 text-[15px] leading-tight truncate">
                         {slot.teacher.name}
                     </p>
+                    {slot.teacher.isPremiumTeacher && (
+                        <span className="inline-flex items-center gap-0.5 text-xs font-bold text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-full px-2 py-0.5 mt-0.5">
+                            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                            Premium
+                        </span>
+                    )}
                     {/* Conservatorium — slate-600 minimum for 4.5:1 */}
                     <p className="text-sm text-slate-600 dark:text-slate-400 truncate mt-0.5">
                         {consName}

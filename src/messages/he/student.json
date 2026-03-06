@@ -82,7 +82,14 @@
     "scholarshipsAndAid": "מלגות וסיוע כלכלי",
     "scholarshipsDesc": "זקוק/ה לעזרה בתשלום? ניתן להגיש בקשה למלגה.",
     "status": "סטטוס",
-    "upgradePackage": "שדרג חבילה"
+    "upgradePackage": "שדרג חבילה",
+    "selectPackageDesc": "בחרו חבילה שמתאימה לכם.",
+    "pack5Label": "חבילת 5 שיעורים",
+    "pack10Label": "חבילת 10 שיעורים",
+    "monthlyLabel": "מנוי חודשי",
+    "lessons": "שיעורים",
+    "packageSelected": "חבילה נבחרה — מעבר לתשלום...",
+    "select": "בחר"
   },
   "StudentPractice": {
     "attachVideo": "צירוף וידאו",

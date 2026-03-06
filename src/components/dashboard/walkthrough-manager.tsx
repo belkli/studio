@@ -14,6 +14,8 @@ export function useWalkthrough() {
         const studentSteps: DriveStep[] = [
             { element: '#nav-profile', popover: { title: t('studentProfileTitle'), description: t('studentProfileDesc'), side: 'left', align: 'start' } },
             { element: '#nav-schedule', popover: { title: t('scheduleTitle'), description: t('scheduleDesc'), side: 'left', align: 'start' } },
+            { element: '#nav-available-now', popover: { title: t('availableNowTitle'), description: t('availableNowDesc'), side: 'left', align: 'start' } },
+            { popover: { title: t('premiumTeacherTitle'), description: t('premiumTeacherDesc'), side: 'top' } },
             { element: '#nav-practice', popover: { title: t('practiceTitle'), description: t('practiceDesc'), side: 'left', align: 'start' } },
             { element: '#nav-forms', popover: { title: t('formsTitle'), description: t('formsDesc'), side: 'left', align: 'start' } },
             { element: '#nav-messages', popover: { title: t('messagesTitle'), description: t('messagesDesc'), side: 'left', align: 'start' } },

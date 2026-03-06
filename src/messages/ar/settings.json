@@ -380,5 +380,12 @@
     "saveChanges": "حفظ التغييرات",
     "studentRulesTitle": "قواعد إلغاء الطالب",
     "successToast": "تم تحديث سياسة الإلغاء بنجاح!"
+  },
+  "ConservatoriumSettings": {
+    "customTermsTitle": "شروط تسجيل مخصصة",
+    "customTermsDescription": "أضف شروطًا مخصصة ستظهر في نموذج التسجيل إلى جانب الشروط القياسية.",
+    "customTermsPlaceholder": "أدخل شروطًا مخصصة لهذه اللغة...",
+    "saveCustomTerms": "حفظ الشروط",
+    "customTermsSaved": "تم حفظ الشروط بنجاح"
   }
 }

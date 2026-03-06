@@ -17,8 +17,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { add, set, format, getDay, isBefore, isSameDay, isAfter, setHours, addDays } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import type { LessonSlot, User } from '@/lib/types';
-import { Loader2 } from 'lucide-react';
+import type { DayOfWeek, EmptySlot } from '@/lib/types';
+import { Loader2, Zap, Clock, MapPin, Music, Calendar as CalendarIcon, CreditCard, PackageOpen, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Combobox } from '@/components/ui/combobox';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -26,6 +26,7 @@ import { Info, AlertCircle } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { collectInstrumentTokensFromTeacherInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 // ─── Discount matrix (same as public marketplace) ────────────────────────────
 type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
@@ -379,7 +380,12 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="min-w-0 flex-1">
-                                    <p className="font-semibold text-sm truncate">{slot.teacher.name}</p>
+                                    <div className="flex items-center gap-1.5">
+                                        <p className="font-semibold text-sm truncate">{slot.teacher.name}</p>
+                                        {slot.teacher.isPremiumTeacher && (
+                                            <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-500 text-yellow-500" />
+                                        )}
+                                    </div>
                                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                         <Badge className="bg-primary/10 text-primary border-primary/20 text-xs px-1.5 py-0 h-5">
                                             {slot.instrument}
@@ -448,6 +454,15 @@ export function BookLessonWizard() {
     const dateLocale = useDateLocale();
 
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
+
+    const [teacherScope, setTeacherScope] = useState<'own' | 'all'>('own');
+
+    const filteredTeachers = useMemo(() => {
+        if (teacherScope === 'all') return teachers;
+        const ownId = user?.conservatoriumId;
+        const own = teachers.filter(t2 => t2.conservatoriumId === ownId);
+        return own.length > 0 ? own : teachers;
+    }, [teachers, teacherScope, user]);
 
     const form = useForm<BookingFormData>({
         resolver: zodResolver(getBookingSchema(t)) as any,
@@ -657,8 +672,14 @@ export function BookLessonWizard() {
                                         <FormField name="teacherId" control={form.control} render={({ field }) => (
                                             <FormItem className="flex flex-col">
                                                 <FormLabel>{t('teacher')}</FormLabel>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <ToggleGroup type="single" value={teacherScope} onValueChange={v => setTeacherScope((v || 'own') as 'own' | 'all')} size="sm">
+                                                        <ToggleGroupItem value="own" className="text-xs">{t('myConservatorium')}</ToggleGroupItem>
+                                                        <ToggleGroupItem value="all" className="text-xs">{t('allTeachers')}</ToggleGroupItem>
+                                                    </ToggleGroup>
+                                                </div>
                                                 <Combobox
-                                                    options={teachers.map(t2 => ({ value: t2.id, label: t2.name! }))}
+                                                    options={filteredTeachers.map(t2 => ({ value: t2.id, label: t2.isPremiumTeacher ? `⭐ ${t2.name!}` : t2.name! }))}
                                                     selectedValue={field.value}
                                                     onSelectedValueChange={field.onChange}
                                                     placeholder={t('selectTeacherPlaceholder')}
@@ -785,9 +806,12 @@ export function BookLessonWizard() {
                                 </div>{/* end outer grid */}
 
                                 <div className="pt-6">
-                                    <Button type="submit" disabled={!form.formState.isValid}>
+                                    <Button type="submit" disabled={!form.formState.isValid || !activePackage}>
                                         {t('bookLesson')}
                                     </Button>
+                                    {!activePackage && (
+                                        <p className="text-xs text-destructive text-center mt-1">{t('noActivePackage')}</p>
+                                    )}
                                 </div>
                             </form>
                         </FormProvider>

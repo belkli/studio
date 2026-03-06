@@ -38,6 +38,17 @@ services:
     volumes: [postgres_data:/var/lib/postgresql/data]
 ```
 
+### 1.3 Edge Runtime — Proxy (`src/proxy.ts`)
+
+✅ `src/proxy.ts` is the **Next.js 16 Edge Proxy** (replaces the deleted `middleware.ts`). It runs on the Edge Runtime and handles:
+- **API routes (`/api/*`):** Pass through directly — no intl middleware, no auth check
+- **Public routes:** Apply next-intl middleware for locale routing only
+- **Dashboard routes:** Validate `__session` Firebase cookie (JWT decode), inject `x-user-*` headers, chain with intl middleware
+- **Cardcom webhook:** Verify HMAC header presence when `CARDCOM_WEBHOOK_SECRET` is configured
+- **Dev bypass:** When `NODE_ENV !== 'production'` and `FIREBASE_SERVICE_ACCOUNT_KEY` is absent, inject synthetic `site_admin` claims
+
+The proxy uses JWT payload decoding (not full cryptographic verification) for header injection — full verification happens server-side in `auth-utils.ts` via `admin.auth().verifySessionCookie()`.
+
 ---
 
 ## 2. Firebase Project Configuration
@@ -48,7 +59,7 @@ services:
 |---------|---------|
 | **Firestore** | Primary document database |
 | **Authentication** | User identity + Custom Claims |
-| **Cloud Functions** (2nd Gen) | Serverless backend logic |
+| **Cloud Functions** (2nd Gen) | Serverless backend logic — `functions/src/` (auth, booking implemented) |
 | **Cloud Storage** | PDFs, videos, signatures, photos |
 | **FCM** | Push notifications |
 | **App Check** | Anti-abuse on callable functions |
@@ -103,7 +114,7 @@ All secrets are stored in **Google Secret Manager** in production. Never committ
 | `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Client | Firebase Auth domain | ⚠️ Optional |
 | `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Client | Firebase project ID | ⚠️ Optional |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | Client | Firebase app ID | ⚠️ Optional |
-| `FIREBASE_SERVICE_ACCOUNT_KEY` | Server | Admin SDK (base64 JSON) | ❌ Not yet used |
+| `FIREBASE_SERVICE_ACCOUNT_KEY` | Server | Admin SDK (base64 JSON) — enables `verifySessionCookie()` and `createSessionCookie()` | ✅ Used by `firebase-admin.ts` |
 | `DB_BACKEND` | All | `mock` \| `firebase` \| `postgres` \| `supabase` \| `pocketbase` | ✅ |
 | `DATABASE_URL` | Postgres | Auto-selects postgres when set | ✅ |
 | `PAYMENT_GATEWAY_PROVIDER` | Payments | `CARDCOM` (default) \| `PELECARD` \| `HYP` \| `TRANZILA` \| `STRIPE` | ⚠️ Stub |
@@ -127,19 +138,26 @@ All secrets are stored in **Google Secret Manager** in production. Never committ
 
 ## 4. CI/CD Pipeline
 
-> TODO: Requires manual documentation — specific GitHub Actions / Cloud Build pipeline configuration.
-
-### 4.1 Recommended Pipeline Stages
+✅ **Fully configured.** `.github/workflows/ci.yml` defines a multi-stage pipeline:
 
 ```
-Push to branch
-    └── Lint (ESLint) + Type check (tsc --noEmit)
-        └── Unit + Integration tests (Vitest)
-            └── Build (next build)
-                ├── [PR] → Deploy to Preview Channel (Firebase Hosting Preview)
-                └── [main] → Deploy to Staging
-                              └── [tag v*] → Deploy to Production
+Push to branch / PR
+    └── Stage 1: Lint (ESLint --max-warnings 780) + Type Check (tsc --noEmit) + i18n Audit
+        └── Stage 2a: Unit Tests (Vitest)
+        └── Stage 2b: DB Integration (Postgres 16 service container — schema migration)
+            └── Stage 3: Build (next build with DB_BACKEND=mock)
+                ├── [PR]  → Stage 4a: Deploy to Firebase Hosting Preview Channel (pr-{number}, expires 7d)
+                ├── [main] → Stage 4b: Deploy to Staging + Firestore Rules & Indexes
+                └── [tag v*] → Stage 4c: Deploy to Production + Firestore Rules & Indexes
 ```
+
+**Key details:**
+- Node.js 20 on `ubuntu-latest`
+- `concurrency` group with `cancel-in-progress` on PRs
+- Postgres service container for DB integration tests
+- Firebase Hosting Preview Channels for PR previews
+- Staging and Production environments with separate Firebase projects
+- Firestore rules and indexes deployed automatically on staging/production
 
 ### 4.2 Testing Infrastructure
 
@@ -147,8 +165,21 @@ Push to branch
 |------|------------|---------|
 | **Vitest** | `vitest.config.ts` | Unit tests, integration tests |
 | **React Testing Library** | `tests/setup.tsx` | Component tests |
+| **Playwright** | `playwright.config.ts` | End-to-end browser tests (`e2e/` directory) |
 | i18n completeness | `tests/i18n-completeness.test.ts` | Verifies all locales have all keys |
 | i18n locale integrity | `tests/i18n-locale-integrity.test.ts` | Validates no untranslated strings |
+| i18n landing keys | `tests/i18n-landing-keys.test.ts` | Landing page translation coverage |
+| Auth utils | `tests/lib/auth-utils.test.ts` | Auth utility unit tests |
+| Landing page component | `tests/components/landing-page.test.tsx` | Landing page component tests |
+| Instrument matching | `tests/lib/instrument-matching.test.ts` | Teacher-student instrument matching logic |
+
+**Playwright e2e test files (`e2e/`):**
+- `landing.spec.ts` — Public landing page rendering and navigation
+- `public-pages.spec.ts` — Public routes: about, accessibility, contact, privacy
+- `register.spec.ts` — Registration wizard flow
+- `playing-school.spec.ts` — Playing School enrollment wizard
+- `dashboard.spec.ts` — Authenticated dashboard smoke tests
+- `api.spec.ts` — API route health checks
 
 ---
 
@@ -200,13 +231,12 @@ Ministry XML/PDF export is handled via `FormSubmission` data with `ministryExpor
 - [x] `apphosting.yaml` present for Firebase App Hosting deployment
 
 ### Blocking Before Production 🔴
-- [ ] `src/middleware.ts` — does not exist; must be created with `verifySessionCookie()`
-- [ ] Firebase Custom Claims Cloud Function — not deployed
+- [x] ~~`src/middleware.ts`~~ — Replaced by `src/proxy.ts` (Next.js 16 Edge Proxy) with session validation and auth header injection
+- [x] ~~Firebase Custom Claims Cloud Function~~ — Implemented: `functions/src/auth/on-user-approved.ts`
 - [ ] Firestore Security Rules — incomplete template only
 - [ ] Firebase Storage Security Rules — not deployed
 - [ ] Firebase App Check — not configured in `firebase-client.ts`
 - [ ] All secrets in Google Secret Manager (currently rely on `.env.local`)
-- [ ] Cardcom webhook HMAC validation in `/api/cardcom-webhook`
-- [ ] Replace `harmonia-user=1` cookie auth with real Firebase session cookie
+- [ ] Cardcom webhook HMAC body verification in `/api/cardcom-webhook` (proxy checks header presence only)
 
 

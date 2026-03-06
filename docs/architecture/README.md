@@ -1,6 +1,6 @@
 # Harmonia — Architecture Documentation
 
-> **System Status:** Functional prototype with full UI, mock-data backend, and typed service-layer stubs. Real Firebase Auth, Firestore persistence, and third-party integrations (Cardcom, Twilio) are **not yet active** — the app runs against in-memory mock data and a `MemoryDatabaseAdapter` by default. All typed stubs, schemas, and specs are in place and ready for production wiring.
+> **System Status:** Functional prototype with full UI, mock-data backend, and typed service-layer stubs. Firebase Auth integration is **active** via session cookies (`__session`) and the Edge Proxy (`src/proxy.ts`). Real Firestore persistence and third-party integrations (Cardcom, Twilio) are **not yet active** — the app runs against in-memory mock data and a `MemoryDatabaseAdapter` by default. Postgres, Supabase, and PocketBase adapters are fully implemented alternatives. All typed stubs, schemas, and specs are in place and ready for production wiring.
 >
 > **Verified Stack:** Next.js 16 · React 19 · TypeScript 5 · Firebase SDK 12 · shadcn/ui (Radix) · Tailwind CSS v4 · next-intl 4 · Genkit 1.29 · Zod 4 · date-fns 4 · React Hook Form 7 · Recharts 3 · jsPDF 4 · react-signature-canvas · driver.js (walkthrough)
 
@@ -78,9 +78,9 @@ LEGEND:  ✅ Implemented  ⚠️ Stub/spec only  ❌ Not started
 | 01 | Identity, Family & Role Management | P0 | ✅ UI + mock data |
 | 02 | Student Registration & Enrollment | P0 | ✅ UI + mock data |
 | 03 | Teacher Management & Availability | P0 | ✅ UI + mock data |
-| 04 | Smart Scheduling & Booking Engine | P0 | ✅ UI + mock; ⚠️ CF spec only |
+| 04 | Smart Scheduling & Booking Engine | P0 | ✅ UI + mock; ✅ CF booking functions in `functions/src/booking/` |
 | 05 | Payment, Packages & Billing | P0 | ✅ UI + mock; ⚠️ Cardcom stub |
-| 06 | Cancellation, Makeup & Sick Leave | P0 | ✅ UI + mock; ⚠️ CF spec only |
+| 06 | Cancellation, Makeup & Sick Leave | P0 | ✅ UI + mock; ✅ CF makeup booking in `functions/src/booking/` |
 | 07 | Communication & Notifications | P1 | ⚠️ Dispatcher stub; no real sends |
 | 08 | Forms, Approvals & Ministry Submissions | P1 | ✅ UI + mock; signature UI present |
 | 09 | Learning Management System (LMS) | P2 | ✅ UI + mock data |

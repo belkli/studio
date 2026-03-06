@@ -8,7 +8,7 @@
 
 Harmonia is a comprehensive music conservatory management platform built for Israeli music schools. It brings together every aspect of conservatory life — lesson scheduling, practice tracking, repertoire management, billing, exams, events, and communications — into a single, unified system. The platform supports Hebrew (default, RTL), English, Arabic, and Russian, and is designed to work equally well on mobile and desktop devices.
 
-Harmonia serves seven distinct user personas: students, parents, teachers, conservatory administrators, delegated administrators, site administrators (platform-wide), and ministry directors. Each persona has a tailored dashboard and navigation experience. This guide covers all personas. Find the section that matches your role and refer to it for day-to-day usage.
+Harmonia serves seven distinct user personas: students, parents, teachers, conservatory administrators, delegated administrators, site administrators (platform-wide), ministry directors, and school coordinators (Playing School programme). Each persona has a tailored dashboard and navigation experience. This guide covers all personas. Find the section that matches your role and refer to it for day-to-day usage.
 
 ---
 
@@ -33,6 +33,8 @@ When you log in, you land on your **Profile Dashboard**. It gives you an at-a-gl
 - **Book a Makeup Lesson:** If you have makeup credits (earned when a lesson was cancelled with sufficient notice), use the "Book Makeup" button to find an available slot with your teacher.
 - **Cancel or Reschedule:** Click any lesson card to open a details dialog. From there, select "Cancel" or "Reschedule." Cancellation policies set by your conservatory determine whether a makeup credit is issued.
 - **Lesson History:** Scroll back to previous weeks to review past lessons, including attendance status and any notes your teacher left.
+- **Available-Now Deals:** Visit `/available-now` to browse open slots from teachers across the platform. If a slot catches your eye, click "Book Now" — the system saves it and takes you through to the booking wizard, pre-filling the teacher and time for you.
+- **Premium Teachers:** Some teachers carry a "Premium" badge, indicating they are senior or specialist instructors. Premium lessons may use dedicated package types (e.g., 5-lesson or 10-lesson premium packs) with enhanced pricing.
 
 ### 2.3 Practice Log (`/dashboard/practice`)
 
@@ -159,6 +161,7 @@ Harmonia reduces your administrative load so you can focus on teaching. Manage y
 - **Public Bio:** Edit the bio and profile photo that appear on the conservatory's public-facing musicians directory (`/musicians`). Include your performance background, qualifications, and teaching specialities.
 - **Instruments & Styles:** Maintain a structured list of the instruments you teach and the musical styles you specialise in. This data powers the AI teacher-matching flow for new enrolments.
 - **Availability Visibility:** Toggle whether your general availability is shown publicly to prospective students browsing the conservatory website.
+- **Premium Badge:** If your conservatory administrator has designated you as a Premium teacher, a badge appears on your public profile, teacher cards, and slot tiles. Premium status is set by the admin — you cannot toggle it yourself.
 
 ### 4.7 Exams Tracker (`/dashboard/teacher/exams`)
 
@@ -187,6 +190,7 @@ The admin dashboard gives you full visibility and control over every aspect of y
 - **Edit User Details:** Click any user to open their full admin profile. You can update their personal details, change their role, reassign them to a different teacher, or suspend/reactivate their account.
 - **Bulk Actions:** Select multiple users to bulk-send a notification, export their records to CSV, or change a shared attribute such as their assigned branch.
 - **Delegated Admin:** Assign a user the `delegated_admin` role to grant them partial admin rights scoped to a specific set of permissions you define.
+- **Premium Teacher Designation:** Mark a teacher as "Premium" from their user profile. Premium teachers display a badge across the platform and can be assigned to premium lesson packages (`PACK_5_PREMIUM`, `PACK_10_PREMIUM`, `PACK_DUET`) with higher pricing.
 
 ### 5.3 Approvals (`/dashboard/approvals`)
 
@@ -249,7 +253,7 @@ The admin dashboard gives you full visibility and control over every aspect of y
 ### 5.11 Conservatorium Settings (`/dashboard/settings/conservatorium`)
 
 - **General Settings:** Update your conservatory's name, logo, contact details, and public website description.
-- **Lesson Packages & Pricing:** Define available lesson packages (e.g., "8 lessons per month — 30 min"), set per-lesson rates for each teacher tier, and configure automatic renewal rules.
+- **Lesson Packages & Pricing:** Define available lesson packages (e.g., "8 lessons per month — 30 min"), set per-lesson rates for each teacher tier, and configure automatic renewal rules. Premium packages (`PACK_5_PREMIUM`, `PACK_10_PREMIUM`, `PACK_DUET`) are available for teachers designated as Premium.
 - **Cancellation Policy:** Set the notice period required for a cancellation to generate a makeup credit, and the expiry window for unused makeup credits.
 - **AI Features:** Enable or disable specific AI features — teacher matching, progress report drafting, practice coach, event poster generation, and targeted slot filling.
 - **New Features Flag:** Toggle `newFeaturesEnabled` to switch between the new grouped navigation experience and the legacy flat navigation for your conservatory.
@@ -303,30 +307,44 @@ Ministry directors have read-only visibility across all conservatoriums in their
 
 ---
 
-## 8. Common Features (All Roles)
+## 8. For School Coordinators (`school_coordinator`)
 
-### 8.1 Language & RTL Support
+School coordinators manage the Playing School (Beit Sefer Menagen) programme — the school-partnership group lesson initiative that brings conservatorium teachers into regular schools.
+
+### 8.1 School Dashboard (`/dashboard/school`)
+
+- **Partnership Overview:** View all school partnerships managed by your conservatorium, including school name, contact, active groups, and session schedule.
+- **Group Management:** Create and manage groups of students at each partner school. Assign teachers, set session times, and track attendance.
+- **Instrument Loans:** Track which students have been loaned instruments, with loan dates, condition reports, and return status.
+- **Excellence Track:** Nominate students who show exceptional progress for the excellence track, which offers additional individual lessons alongside their group sessions.
+- **Enrollment Pipeline:** Monitor incoming Playing School registrations from the token-based enrollment wizard. Approve placements, assign groups, and send confirmation notifications.
+
+---
+
+## 9. Common Features (All Roles)
+
+### 9.1 Language & RTL Support
 
 - **Available Languages:** Hebrew (default), English, Arabic, and Russian.
 - **Language Switching:** Open your profile menu (top right) and select "Language." The page reloads in the selected language.
-- **RTL Layouts:** Hebrew and Arabic trigger a full right-to-left layout automatically — all navigation, forms, tables, and buttons mirror to the correct orientation. No action is required from the user.
-- **Locale Routing:** The Hebrew (default) experience is served at the root URL (`/`). Other locales are served under a prefix: `/en/`, `/ar/`, `/ru/`.
+- **RTL Layouts:** Hebrew and Arabic trigger a full right-to-left layout automatically — all navigation, forms, tables, and buttons mirror to the correct orientation. No action is required from the user. The sidebar moves to the right side, text flows right-to-left, and all spacing and alignment adjust accordingly.
+- **Locale Routing:** The Hebrew (default) experience is served at the root URL (`/`). Other locales are served under a prefix: `/en/`, `/ar/`, `/ru/`. Switching languages updates the URL prefix automatically.
 
-### 8.2 Notifications (`/dashboard/notifications`)
+### 9.2 Notifications (`/dashboard/notifications`)
 
 - **Notification Centre:** The bell icon in the top navigation bar shows a badge count for unread notifications. Click it to open the notifications panel.
 - **Notification Types:** Lesson reminders (sent 24 hours and 1 hour before a lesson), form status updates, payment receipts, teacher messages, approval decisions, and system announcements.
 - **Notification Preferences:** In your account settings, choose which event types trigger in-app notifications, emails, or SMS/WhatsApp messages. (SMS and WhatsApp availability depends on your conservatory's communication configuration.)
 - **Mark as Read:** Click "Mark All as Read" to clear the badge counter, or dismiss individual notifications by clicking the X on each item.
 
-### 8.3 AI Assistant (`/help`)
+### 9.3 AI Assistant (`/help`)
 
 - **Help Chat:** The AI assistant at `/help` answers questions about how to use Harmonia. Type your question in natural language — for example, "How do I cancel a lesson?" or "Where do I find my invoices?"
 - **Context-Aware Answers:** The assistant is aware of your role and provides role-relevant guidance — a teacher asking "How do I add homework?" gets teacher-specific instructions; a parent asking the same question gets parent-relevant guidance.
 - **Article Links:** Alongside its answers, the assistant links to the relevant section of the help centre documentation so you can read further if needed.
 - **Escalation:** If the assistant cannot answer your question, it offers to submit a support ticket to the Harmonia support team on your behalf.
 
-### 8.4 Accessibility
+### 9.4 Accessibility
 
 - **Keyboard Navigation:** All major actions are reachable via keyboard. Tab order follows a logical sequence on every page.
 - **Screen Reader Support:** Harmonia uses semantic HTML and ARIA labels throughout. Forms, tables, and dialogs include descriptive labels for screen reader users.
@@ -335,7 +353,7 @@ Ministry directors have read-only visibility across all conservatoriums in their
 
 ---
 
-## 9. Getting Help
+## 10. Getting Help
 
 - **In-App Help (`/help`):** The AI assistant is your first port of call for how-to questions. It is available 24/7 and covers all features and all roles.
 - **Help Centre Articles:** The help centre (accessible from the `/help` page) contains structured articles grouped by topic and role. Articles are available in all four supported languages.

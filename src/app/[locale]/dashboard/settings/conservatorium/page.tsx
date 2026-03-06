@@ -1,27 +1,42 @@
 'use client';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from '@/i18n/routing';
 import { useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+
+const LOCALE_LABELS: Record<string, string> = { he: 'עברית', en: 'English', ar: 'العربية', ru: 'Русский' };
 
 export default function ConservatoriumSettingsPage() {
     const { toast } = useToast();
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const router = useRouter();
     const locale = useLocale();
+    const t = useTranslations('ConservatoriumSettings');
     const isRtl = locale === 'he' || locale === 'ar';
-    
+
+    const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
+
+    const [customTerms, setCustomTerms] = useState<Record<string, string>>(() => {
+        const existing = currentConservatorium?.customRegistrationTerms;
+        return {
+            he: existing?.he ?? '',
+            en: existing?.en ?? '',
+            ar: existing?.ar ?? '',
+            ru: existing?.ru ?? '',
+        };
+    });
+
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
         return <p>אין לך הרשאה לגשת לעמוד זה.</p>;
     }
-
-    const currentConservatorium = conservatoriums.find(c => c.id === user.conservatoriumId);
 
     if (!currentConservatorium) {
         return <p>לא נמצא קונסרבטוריון.</p>
@@ -36,6 +51,18 @@ export default function ConservatoriumSettingsPage() {
         // Force a reload to apply changes across the app
         setTimeout(() => window.location.reload(), 1500);
     }
+
+    const handleSaveCustomTerms = () => {
+        const terms: Record<string, string> = {};
+        for (const [key, value] of Object.entries(customTerms)) {
+            if (value.trim()) terms[key] = value.trim();
+        }
+        updateConservatorium({
+            ...currentConservatorium,
+            customRegistrationTerms: Object.keys(terms).length > 0 ? terms : undefined,
+        });
+        toast({ title: t('customTermsSaved') });
+    };
 
     return (
         <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -73,6 +100,29 @@ export default function ConservatoriumSettingsPage() {
                             aria-label="Toggle new features"
                         />
                     </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('customTermsTitle')}</CardTitle>
+                    <CardDescription>{t('customTermsDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {(['he', 'en', 'ar', 'ru'] as const).map((lang) => (
+                        <div key={lang} className="space-y-1">
+                            <Label htmlFor={`custom-terms-${lang}`}>{LOCALE_LABELS[lang]}</Label>
+                            <Textarea
+                                id={`custom-terms-${lang}`}
+                                dir={lang === 'he' || lang === 'ar' ? 'rtl' : 'ltr'}
+                                rows={3}
+                                value={customTerms[lang]}
+                                onChange={(e) => setCustomTerms((prev) => ({ ...prev, [lang]: e.target.value }))}
+                                placeholder={t('customTermsPlaceholder')}
+                            />
+                        </div>
+                    ))}
+                    <Button onClick={handleSaveCustomTerms}>{t('saveCustomTerms')}</Button>
                 </CardContent>
             </Card>
         </div>

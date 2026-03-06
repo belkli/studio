@@ -39,6 +39,8 @@
       "allInstruments": "All instruments",
       "filterRoom": "Room",
       "allRooms": "All rooms",
+      "prevWeek": "Previous week",
+      "nextWeek": "Next week",
       "export": "Export CSV",
       "time": "Time",
       "teacherHeading": "Teacher: {teacher}",

@@ -518,6 +518,14 @@
     "a": "A",
     "T": "T"
   },
+  "Consent": {
+    "groupLabel": "Required consents",
+    "dataProcessingLabel": "I agree to the collection and processing of my personal data for music education services, in accordance with the Privacy Protection Law 5741-1981.",
+    "termsLabel": "I agree to the Terms of Service and Privacy Policy.",
+    "marketingLabel": "I agree to receive updates about events and activities from the conservatorium.",
+    "required": "Required",
+    "customTermsTitle": "Additional conservatorium terms"
+  },
   "LessonManagement": {
     "bookPageTitle": "Book a New Lesson",
     "bookPageSubtitle": "Choose an instrument, teacher and available time to schedule a new lesson from your package.",
@@ -551,6 +559,7 @@
     "filterByTeacher": "Filter by Teacher",
     "filterByStatus": "Filter by Status",
     "allTeachers": "All Teachers",
+    "myConservatorium": "My conservatorium",
     "allStatuses": "All Statuses",
     "noLessons": "No lessons found",
     "duration": "{min} minutes",
