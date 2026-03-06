@@ -64,6 +64,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
       };
       fetchSuggestions();
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuggestions([]);
     }
   }, [open, slot, users, conservatoriumInstruments]);
@@ -97,7 +98,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
             </div>
           ) : (
             <ScrollArea className="h-64">
-              <div className="space-y-2 pr-2">
+              <div className="space-y-2 pe-2">
                 {suggestions.map(suggestion => {
                   const student = users.find(u => u.id === suggestion.recipientId);
                   if (!student) return null;

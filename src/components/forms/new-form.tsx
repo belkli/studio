@@ -116,13 +116,14 @@ export function NewForm() {
   useEffect(() => {
     if (user) {
       formTypeForm.reset({
-        formType: user.role === 'student' ? 'recital' : undefined,
+        formType: undefined,
         studentId: user.role === 'student' ? user.id : undefined,
       });
     }
   }, [user, formTypeForm]);
 
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedFormType = formTypeForm.watch('formType');
   const selectedStudentId = formTypeForm.watch('studentId');
 
@@ -132,17 +133,20 @@ export function NewForm() {
   );
 
   const formOptions = useMemo(() => {
-    const standardForms = [
-      { value: 'recital', label: t('types.recital') },
-      { value: 'kenes', label: t('types.kenes') },
-      { value: 'exam_registration', label: t('types.exam_registration') },
+    const allStandardForms = [
+      { value: 'recital', label: t('types.recital'), roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+      { value: 'kenes', label: t('types.kenes'), roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin'] },
+      { value: 'exam_registration', label: t('types.exam_registration'), roles: ['teacher', 'conservatorium_admin', 'site_admin'] },
     ];
+    const standardForms = allStandardForms
+      .filter(f => !user?.role || f.roles.includes(user.role))
+      .map(({ value, label }) => ({ value, label }));
     const customForms = formTemplates.map(t => ({
       value: t.id,
       label: t.title,
     }));
     return [...standardForms, ...customForms];
-  }, [formTemplates]);
+  }, [formTemplates, user?.role]);
 
   useEffect(() => {
     if (user) {

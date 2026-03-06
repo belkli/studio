@@ -1,4 +1,5 @@
 'use client';
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { Badge } from "@/components/ui/badge";
@@ -32,10 +33,13 @@ export function AdminFinancialDashboard() {
     const collectionRate = (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100;
 
     const teachers = users.filter(u => u.role === 'teacher');
-    const teacherRevenue = teachers.map(teacher => ({
-        name: teacher.name,
-        revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mock revenue
-    })).sort((a, b) => b.revenue - a.revenue);
+    const teacherRevenue = useMemo(() => {
+        return teachers.map(teacher => ({
+            name: teacher.name,
+            // eslint-disable-next-line react-hooks/purity
+            revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mock revenue
+        })).sort((a, b) => b.revenue - a.revenue);
+    }, [teachers]);
 
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -133,7 +137,7 @@ export function AdminFinancialDashboard() {
                                 <TableHead>{ti('dueDate')}</TableHead>
                                 <TableHead>{ti('amount')}</TableHead>
                                 <TableHead>{ti('status')}</TableHead>
-                                <TableHead className="text-left">{ti('actions')}</TableHead>
+                                <TableHead className="text-start">{ti('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -144,7 +148,7 @@ export function AdminFinancialDashboard() {
                                     <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
                                     <TableCell>{invoice.total} ₪</TableCell>
                                     <TableCell><Badge variant={invoice.status === 'OVERDUE' ? 'destructive' : 'secondary'}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
-                                    <TableCell className="text-left">
+                                    <TableCell className="text-start">
                                         <Button variant="outline" size="sm">{ti('sendReminder')}</Button>
                                     </TableCell>
                                 </TableRow>

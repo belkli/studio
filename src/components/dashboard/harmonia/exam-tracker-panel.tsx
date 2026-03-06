@@ -132,10 +132,10 @@ export function ExamTrackerPanel() {
 
     const renderStatusBadge = (status: string) => {
         switch (status) {
-            case 'NOT_STARTED': return <Badge variant="outline" className="text-gray-500 bg-gray-50"><Clock className="w-3 h-3 mr-1" /> {t('statusNotStarted')}</Badge>;
-            case 'IN_PROGRESS': return <Badge variant="secondary" className="text-blue-700 bg-blue-100"><Clock className="w-3 h-3 mr-1" /> {t('statusInProgress')}</Badge>;
-            case 'READY': return <Badge variant="default" className="bg-green-600"><CheckCircle className="w-3 h-3 mr-1" /> {t('statusReady')}</Badge>;
-            case 'EXAM_PASSED': return <Badge variant="default" className="bg-purple-600"><Award className="w-3 h-3 mr-1" /> {t('statusPassed')}</Badge>;
+            case 'NOT_STARTED': return <Badge variant="outline" className="text-gray-500 bg-gray-50"><Clock className="w-3 h-3 me-1" /> {t('statusNotStarted')}</Badge>;
+            case 'IN_PROGRESS': return <Badge variant="secondary" className="text-blue-700 bg-blue-100"><Clock className="w-3 h-3 me-1" /> {t('statusInProgress')}</Badge>;
+            case 'READY': return <Badge variant="default" className="bg-green-600"><CheckCircle className="w-3 h-3 me-1" /> {t('statusReady')}</Badge>;
+            case 'EXAM_PASSED': return <Badge variant="default" className="bg-purple-600"><Award className="w-3 h-3 me-1" /> {t('statusPassed')}</Badge>;
             default: return null;
         }
     };
@@ -149,7 +149,7 @@ export function ExamTrackerPanel() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <Button onClick={() => setShowNewForm(!showNewForm)}>
-                    <GraduationCap className="h-4 w-4 mr-2" />
+                    <GraduationCap className="h-4 w-4 me-2" />
                     {showNewForm ? t('cancelCreation') : t('createNewTracker')}
                 </Button>
             </div>
@@ -212,7 +212,7 @@ export function ExamTrackerPanel() {
                                     </CardDescription>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
-                                    <span className="text-sm text-muted-foreground mr-1">{t('examReadiness')}</span>
+                                    <span className="text-sm text-muted-foreground me-1">{t('examReadiness')}</span>
                                     <Badge variant="outline" className={`px-3 py-1 text-sm ${tracker.overallReadinessPercent >= 80 ? 'bg-green-100 text-green-800 border-green-300' :
                                         tracker.overallReadinessPercent >= 40 ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
                                             'bg-red-100 text-red-800 border-red-300'

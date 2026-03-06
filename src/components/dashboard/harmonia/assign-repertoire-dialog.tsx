@@ -68,11 +68,17 @@ export function AssignRepertoireDialog({ studentId, open, onOpenChange }: Assign
 
   const runSearch = useCallback(async (query: string) => {
     setIsLoading(true);
-    const results = await searchCompositions({ query, instrument: primaryInstrument || undefined });
-    setCompositionOptions(results.map((c) => ({ value: String(c.id), label: `${c.title} - ${c.composer}` })));
-    setIsLoading(false);
+    try {
+      const results = await searchCompositions({ query, instrument: primaryInstrument || undefined });
+      setCompositionOptions(results.map((c) => ({ value: String(c.id), label: `${c.title} - ${c.composer}` })));
+    } catch (error) {
+      console.error('[AssignRepertoireDialog] searchCompositions failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [primaryInstrument]);
 
+  // eslint-disable-next-line react-hooks/use-memo
   const debouncedSearch = useCallback(debounce(async (query: string) => {
     await runSearch(query);
   }, 250), [runSearch]);
@@ -152,6 +158,7 @@ export function AssignRepertoireDialog({ studentId, open, onOpenChange }: Assign
                     placeholder="הקלד/י לחיפוש מלחין או יצירה..."
                     searchPlaceholder="חיפוש..."
                     notFoundMessage="לא נמצאו יצירות."
+                    filter={false}
                   />
                   <FormMessage />
                 </FormItem>

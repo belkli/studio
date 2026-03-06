@@ -14,26 +14,21 @@ import { useMemo, useState } from "react";
 import { format, startOfMonth, addMonths, differenceInDays } from 'date-fns';
 import { useTranslations } from "next-intl";
 import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
+import { useDateLocale } from "@/hooks/use-date-locale";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 
 export function StudentBillingDashboard() {
     const { user, users, invoices, playingSchoolInvoices, packages, lessons, getMakeupCreditBalance } = useAuth();
     const t = useTranslations('StudentBilling');
-    const { useDateLocale } = require('@/hooks/use-date-locale'); // Importing inside if missing at top, but usually it's there
     const ti = useTranslations('Invoices');
     const tps = useTranslations('PlayingSchool.programBilling');
     const dateLocale = useDateLocale();
-
-    if (!user) return null;
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
         return [user.id, ...(user.childIds || [])];
     }, [user]);
-
-    const userInvoices = invoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
-
-    const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
 
     const studentChildren = useMemo(() => {
         if (!user) return [];
@@ -48,18 +43,6 @@ export function StudentBillingDashboard() {
         studentChildren.length > 0 ? studentChildren[0].id : undefined
     );
     const [isProcessingPayment, setIsProcessingPayment] = useState<string | null>(null);
-
-    const handlePayInvoice = async (invoiceId: string) => {
-        setIsProcessingPayment(invoiceId);
-        try {
-            const { url } = await getPlayingSchoolPaymentUrl(invoiceId);
-            window.location.href = url;
-        } catch (err) {
-            toast({ variant: 'destructive', title: 'Payment Error', description: 'Could not generate payment link. Please try again later.' });
-        } finally {
-            setIsProcessingPayment(null);
-        }
-    };
 
     const activeStudent = useMemo(() => {
         return studentChildren.find(s => s.id === selectedStudentId) || studentChildren[0];
@@ -105,6 +88,24 @@ export function StudentBillingDashboard() {
         return null;
     }, [currentPackage]);
 
+    if (!user) return null;
+
+    const userInvoices = invoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
+
+    const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
+
+    const handlePayInvoice = async (invoiceId: string) => {
+        setIsProcessingPayment(invoiceId);
+        try {
+            const { url } = await getPlayingSchoolPaymentUrl(invoiceId);
+            window.location.href = url;
+        } catch (err) {
+            toast({ variant: 'destructive', title: 'Payment Error', description: 'Could not generate payment link. Please try again later.' });
+        } finally {
+            setIsProcessingPayment(null);
+        }
+    };
+
 
     return (
         <div className="space-y-6">
@@ -124,7 +125,7 @@ export function StudentBillingDashboard() {
             )}
             {expiringPackageInfo && (
                 <Notice variant="critical">
-                    <AlertTriangle className="absolute left-4 top-4 h-5 w-5" />
+                    <AlertTriangle className="absolute start-4 top-4 h-5 w-5" />
                     <NoticeTitle>{t('packageExpiringNotice')}</NoticeTitle>
                     <NoticeDescription>
                         {t('packageExpiringDesc', { days: expiringPackageInfo.days, date: expiringPackageInfo.date })}
@@ -142,7 +143,7 @@ export function StudentBillingDashboard() {
                                 </CardTitle>
                                 <CardDescription className="pt-1">{currentPackage?.title || t('noActivePackage')}</CardDescription>
                             </div>
-                            <Button variant="outline" size="sm">{t('upgradePackage')}</Button>
+                            <Button variant="outline" size="sm" onClick={() => toast({ title: t('upgradePackage'), description: 'Upgrade package - coming soon' })}>{t('upgradePackage')}</Button>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -203,7 +204,7 @@ export function StudentBillingDashboard() {
                                     <TableHead>{ti('details')}</TableHead>
                                     <TableHead>{ti('amount')}</TableHead>
                                     <TableHead>{ti('status')}</TableHead>
-                                    <TableHead className="text-left">{ti('actions')}</TableHead>
+                                    <TableHead className="text-start">{ti('actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -214,8 +215,8 @@ export function StudentBillingDashboard() {
                                         <TableCell>{invoice.lineItems[0].description}</TableCell>
                                         <TableCell>{invoice.total} ₪</TableCell>
                                         <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
-                                        <TableCell className="text-left">
-                                            <Button variant="ghost" size="icon">
+                                        <TableCell className="text-start">
+                                            <Button variant="ghost" size="icon" onClick={() => toast({ title: ti('downloadInvoice'), description: 'Invoice download coming soon' })}>
                                                 <Download className="h-4 w-4" />
                                                 <span className="sr-only">{ti('downloadInvoice')}</span>
                                             </Button>
@@ -245,7 +246,7 @@ export function StudentBillingDashboard() {
                                         <TableHead>{ti('details')}</TableHead>
                                         <TableHead>{ti('amount')}</TableHead>
                                         <TableHead>{ti('status')}</TableHead>
-                                        <TableHead className="text-left">{ti('actions')}</TableHead>
+                                        <TableHead className="text-start">{ti('actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -262,7 +263,7 @@ export function StudentBillingDashboard() {
                                                     {ti(`statuses.${invoice.status}`)}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell className="text-left">
+                                            <TableCell className="text-start">
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -287,12 +288,27 @@ export function StudentBillingDashboard() {
                             <CardTitle>{t('manageSubscription')} {activeStudent?.name ? `(${activeStudent.name})` : ''}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
-                            <Button className="w-full">{t('managePaymentMethods')}</Button>
-                            <Button variant="outline" className="w-full text-muted-foreground"><PauseCircle className="ms-2 h-4 w-4" />{t('pauseSubscription')}</Button>
-                            <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={() => {
-                                // Added onClick handler to demonstrate action per child
-                                alert(`ביטול מנוי עבור ${activeStudent?.name || 'התלמיד'}`);
-                            }}><XCircle className="ms-2 h-4 w-4" />{t('cancelSubscription')}</Button>
+                            <Button className="w-full" onClick={() => toast({ title: t('managePaymentMethods'), description: 'Manage payment methods - coming soon' })}>{t('managePaymentMethods')}</Button>
+                            <Button variant="outline" className="w-full text-muted-foreground" onClick={() => toast({ title: t('pauseSubscription'), description: 'Pause subscription - coming soon' })}><PauseCircle className="ms-2 h-4 w-4" />{t('pauseSubscription')}</Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />{t('cancelSubscription')}</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>{t('cancelSubscription')}</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            {`Are you sure you want to cancel the subscription for ${activeStudent?.name || 'this student'}? This action cannot be undone.`}
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>{t('cancel') || 'Cancel'}</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => toast({ variant: 'destructive', title: t('cancelSubscription'), description: `Subscription cancellation for ${activeStudent?.name || 'this student'} - coming soon` })}>
+                                            {t('cancelSubscription')}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </CardContent>
                     </Card>
                     <Card>

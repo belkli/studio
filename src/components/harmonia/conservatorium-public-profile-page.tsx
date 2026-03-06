@@ -141,6 +141,7 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
   }, [localizedConservatoriums, conservatoriumId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedProfile(null);
   }, [selectedCons?.id]);
 

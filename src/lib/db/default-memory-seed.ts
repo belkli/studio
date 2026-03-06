@@ -1,6 +1,7 @@
 import {
   compositions,
   conservatoriums,
+  devUser,
   mockAlumni,
   mockAnnouncements,
   mockAuditLog,
@@ -85,6 +86,13 @@ export function buildDefaultMemorySeed(): MemorySeed {
     })) as RepertoireEntry[],
     donationCauses: clone(mockDonationCauses || []),
     donations: clone(mockDonations || []),
+    makeupCredits: [],
+    practiceLogs: [],
+    notifications: [],
+    roomLocks: [],
+    teacherExceptions: [],
+    consentRecords: [],
+    complianceLogs: [],
   };
 }
 

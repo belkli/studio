@@ -5,14 +5,17 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from '@/i18n/routing';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 
 export default function ConservatoriumSettingsPage() {
     const { toast } = useToast();
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const router = useRouter();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
         return <p>אין לך הרשאה לגשת לעמוד זה.</p>;
@@ -35,11 +38,11 @@ export default function ConservatoriumSettingsPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center gap-4">
                  <Button variant="ghost" size="icon" asChild>
                     <Link href="/dashboard/settings">
-                        <ArrowLeft className="h-4 w-4" />
+                        {isRtl ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
                     </Link>
                 </Button>
                 <div>
@@ -51,7 +54,7 @@ export default function ConservatoriumSettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>ניהול תכונות (Features)</CardTitle>
-                    <CardDescription>הפעל או כבה את מערכת "הרמוניה" החדשה עבור המוסד שלך.</CardDescription>
+                    <CardDescription>הפעל או כבה את מערכת &quot;הרמוניה&quot; החדשה עבור המוסד שלך.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center justify-between rounded-lg border p-4">

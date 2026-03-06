@@ -56,11 +56,11 @@ export function NotificationAuditLog() {
                 <Table dir={isRtl ? 'rtl' : 'ltr'}>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.user')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.channel')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.subject')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.status')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.time')}</TableHead>
+                            <TableHead className="text-start">{t('table.user')}</TableHead>
+                            <TableHead className="text-start">{t('table.channel')}</TableHead>
+                            <TableHead className="text-start">{t('table.subject')}</TableHead>
+                            <TableHead className="text-start">{t('table.status')}</TableHead>
+                            <TableHead className="text-start">{t('table.time')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

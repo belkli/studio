@@ -132,10 +132,10 @@ export function SchoolCoordinatorDashboard() {
                             <Table dir={isRtl ? 'rtl' : 'ltr'}>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('table.school')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('wizard.grade')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('tabs.billing')}</TableHead>
-                                        <TableHead className={isRtl ? "text-right" : "text-left"}>{t('table.pickupStatus')}</TableHead>
+                                        <TableHead className="text-start">{t('table.school')}</TableHead>
+                                        <TableHead className="text-start">{t('wizard.grade')}</TableHead>
+                                        <TableHead className="text-start">{t('tabs.billing')}</TableHead>
+                                        <TableHead className="text-start">{t('table.pickupStatus')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

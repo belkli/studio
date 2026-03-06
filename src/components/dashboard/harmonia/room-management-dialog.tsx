@@ -209,10 +209,13 @@ export function RoomManagementDialog({
 
                 <div className="space-y-3 md:col-span-2">
                   <Label>{t('instrumentEquipment')}</Label>
-                  {equipmentArray.fields.map((field, index) => (
+                  {equipmentArray.fields.map((field, index) => {
+                    // eslint-disable-next-line react-hooks/incompatible-library
+                    const instrumentId = form.watch(`instrumentEquipment.${index}.instrumentId`);
+                    return (
                     <div key={field.id} className="grid grid-cols-1 gap-3 rounded-md border p-3 md:grid-cols-[2fr_90px_2fr_auto]">
                       <Select
-                        value={form.watch(`instrumentEquipment.${index}.instrumentId`)}
+                        value={instrumentId}
                         onValueChange={(value) => form.setValue(`instrumentEquipment.${index}.instrumentId`, value, { shouldValidate: true })}
                       >
                         <SelectTrigger>
@@ -243,7 +246,7 @@ export function RoomManagementDialog({
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
-                  ))}
+                  );})}
 
                   <Button
                     type="button"

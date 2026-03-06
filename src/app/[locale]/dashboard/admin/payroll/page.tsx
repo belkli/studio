@@ -1,10 +1,15 @@
 ﻿'use client';
 
+import dynamic from 'next/dynamic';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { AdminPayrollPanel } from '@/components/dashboard/harmonia/admin-payroll-panel';
 import { useAdminGuard } from '@/hooks/use-admin-guard';
 import { Skeleton } from '@/components/ui/skeleton';
+
+const AdminPayrollPanel = dynamic(
+  () => import('@/components/dashboard/harmonia/admin-payroll-panel').then(mod => ({ default: mod.AdminPayrollPanel })),
+  { loading: () => <Skeleton className="h-96" /> }
+);
 
 export default function AdminPayrollPage() {
   const { user, isLoading } = useAdminGuard();

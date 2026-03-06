@@ -83,7 +83,7 @@ export function RecentForms() {
                                     <StatusBadge status={form.status} />
                                 </TableCell>
                                 <TableCell>{form.submissionDate}</TableCell>
-                                <TableCell className="text-left">
+                                <TableCell className="text-start">
                                     <Button variant="outline" size="sm" asChild>
                                         <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                                     </Button>

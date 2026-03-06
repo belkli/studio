@@ -199,16 +199,18 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
         token,
         registrationType: 'playing_school',
         studentDetails: {
-          name: studentName,
+          firstName: studentName.split(' ')[0] || studentName,
+          lastName: studentName.split(' ').slice(1).join(' ') || studentName,
           grade: studentGrade,
-          class: studentClass,
-          dob: studentDob,
+          schoolName: studentClass,
+          dateOfBirth: studentDob,
         },
         parentDetails: {
-          name: parentName,
+          firstName: parentName.split(' ')[0] || parentName,
+          lastName: parentName.split(' ').slice(1).join(' ') || parentName,
           phone: parentPhone,
           email: parentEmail,
-          id: parentId,
+          idNumber: parentId,
         },
         schoolId: schoolInfo.id,
         instrument,
@@ -233,31 +235,26 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4 flex items-center justify-center">
-        <Card className="w-full max-w-md p-8 text-center shadow-lg">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">{t('wizard.loadingSchoolInfo')}</p>
-          </div>
-        </Card>
-      </div>
+      <Card className="w-full max-w-md p-8 text-center shadow-lg">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-muted-foreground">{t('wizard.loadingSchoolInfo')}</p>
+        </div>
+      </Card>
     );
   }
 
   if (!schoolInfo) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4 flex items-center justify-center">
-        <Card className="w-full max-w-md p-8 text-center shadow-lg">
-          <p className="font-medium text-destructive">{t('wizard.loadProfileError')}</p>
-        </Card>
-      </div>
+      <Card className="w-full max-w-md p-8 text-center shadow-lg">
+        <p className="font-medium text-destructive">{t('wizard.loadProfileError')}</p>
+      </Card>
     );
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4 flex items-center justify-center">
-        <Card className="w-full max-w-2xl shadow-xl" dir={isRtl ? 'rtl' : 'ltr'}>
+      <Card className="w-full max-w-2xl shadow-xl" dir={isRtl ? 'rtl' : 'ltr'}>
           <CardContent className="space-y-4 py-10 text-center">
             <CheckCircle className="mx-auto h-16 w-16 text-green-600" />
             <h2 className="text-2xl font-bold">{t('wizard.success')}</h2>
@@ -268,13 +265,11 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
             </div>
           </CardContent>
         </Card>
-      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 p-4" dir={isRtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto w-full max-w-5xl space-y-5">
+    <div className="w-full max-w-5xl space-y-5" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="flex flex-col items-center pb-2 pt-8 text-center">
           <Link
             href="/playing-school"
@@ -415,17 +410,17 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                 </div>
                 <div className="space-y-2">
                   <Label>{t('wizard.parentPhone')}</Label>
-                  <Input type="tel" value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} dir="ltr" className="text-left" />
+                  <Input type="tel" value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} dir="ltr" className="text-start" />
                   {parentPhone.length > 0 && !isValidPhone && <p className="text-xs text-destructive">{t('wizard.validation.invalidPhone')}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>{t('wizard.parentEmail')}</Label>
-                  <Input type="email" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)} dir="ltr" className="text-left" />
+                  <Input type="email" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)} dir="ltr" className="text-start" />
                   {parentEmail.length > 0 && !isValidEmail && <p className="text-xs text-destructive">{t('wizard.validation.invalidEmail')}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label>{t('wizard.parentId')}</Label>
-                  <Input value={parentId} onChange={(e) => setParentId(e.target.value)} dir="ltr" className="text-left" />
+                  <Input value={parentId} onChange={(e) => setParentId(e.target.value)} dir="ltr" className="text-start" />
                 </div>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" onClick={prev} className="flex-1">
@@ -538,7 +533,6 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
             </>
           )}
         </Card>
-      </div>
     </div>
   );
 }

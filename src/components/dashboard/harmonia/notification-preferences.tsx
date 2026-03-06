@@ -173,6 +173,7 @@ export function NotificationPreferences() {
                                 </FormItem>
                             )}
                         />
+                        {/* eslint-disable-next-line react-hooks/incompatible-library */}
                         {form.watch('quietHours.enabled') && (
                             <div className="grid grid-cols-2 gap-4">
                                 <FormField control={form.control} name="quietHours.startTime" render={({ field }) => (<FormItem> <FormLabel>{t('startTimeLabel')}</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />

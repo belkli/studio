@@ -647,7 +647,18 @@
     "distance": "Расстояние",
     "allDistances": "Все расстояния",
     "distance10": "До 10 км",
-    "distance25": "До 25 км"
+    "distance25": "До 25 км",
+    "distance50": "До 50 км",
+    "clearAll": "Сбросить всё",
+    "resultsCount": "Найдено {count} доступных уроков",
+    "today": "Сегодня",
+    "tomorrow": "Завтра",
+    "anyDate": "Любая дата",
+    "searchTeacher": "Поиск по учителю",
+    "sortedByDistance": "Сортировка по расстоянию",
+    "useMyLocation": "Использовать моё местоположение",
+    "locating": "Определяем...",
+    "locationError": "Доступ к геолокации запрещён. Разрешите доступ в настройках браузера."
   },
   "ExcellenceTrack": {
     "acceptBtn": "Принять приглашение",

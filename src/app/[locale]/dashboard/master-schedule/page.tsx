@@ -1,28 +1,36 @@
 'use client';
 
-import { MasterScheduleCalendar } from "@/components/dashboard/harmonia/master-schedule-calendar";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
+
+const MasterScheduleCalendar = dynamic(
+    () => import("@/components/dashboard/harmonia/master-schedule-calendar").then(mod => ({ default: mod.MasterScheduleCalendar })),
+    { loading: () => <Skeleton className="h-[600px] w-full" /> }
+);
 
 export default function MasterSchedulePage() {
     const { user } = useAuth();
+    const t = useTranslations('DashboardPages');
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     if (!isAdmin) {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold">מערכת שעות ראשית</h1>
-                    <p className="text-muted-foreground">אין לך הרשאה לצפות בעמוד זה.</p>
+                    <h1 className="text-2xl font-bold">{t('masterSchedule.title')}</h1>
+                    <p className="text-muted-foreground">{t('masterSchedule.noPermissionDesc')}</p>
                 </div>
             </div>
         );
     }
-    
+
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold">מערכת שעות ראשית</h1>
-                <p className="text-muted-foreground">תצוגה כוללת של כל השיעורים בקונסרבטוריון. סנן לפי מורה, חדר או כלי נגינה.</p>
+                <h1 className="text-2xl font-bold">{t('masterSchedule.title')}</h1>
+                <p className="text-muted-foreground">{t('masterSchedule.description')}</p>
             </div>
             <MasterScheduleCalendar />
         </div>

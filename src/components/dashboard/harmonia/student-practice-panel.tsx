@@ -36,6 +36,7 @@ export function StudentPracticePanel() {
     const streak = user?.gamification?.currentStreak || 0;
     const points = user?.gamification?.points || 0;
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -56,6 +57,7 @@ export function StudentPracticePanel() {
             }
         });
         return last7Days;
+        // eslint-disable-next-line react-hooks/preserve-manual-memoization
     }, [myLogs]);
 
     const handleLogPractice = () => {
@@ -177,7 +179,7 @@ export function StudentPracticePanel() {
                     </CardContent>
                     <CardFooter>
                         <Button className="w-full" onClick={handleLogPractice} disabled={!repertoireId}>
-                            <PlayCircle className="w-4 h-4 mr-2" /> {t('sendReportBtn')}
+                            <PlayCircle className="w-4 h-4 me-2" /> {t('sendReportBtn')}
                         </Button>
                     </CardFooter>
                 </Card>
@@ -236,8 +238,8 @@ export function StudentPracticePanel() {
                                                 <TableCell>{log.durationMinutes} {t('chartMinAbbrev')}</TableCell>
                                                 <TableCell>
                                                     <div className="flex flex-col gap-1">
-                                                        {log.videoAttached && <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 w-fit text-[10px]"><Video className="w-3 h-3 mr-1" /> {t('systemFeedback')}</Badge>}
-                                                        <Badge variant="outline" className="w-fit text-[10px] text-yellow-600 border-yellow-200 bg-yellow-50"><Star className="w-3 h-3 mr-1 fill-yellow-400" /> +{log.pointsEarned} {t('ptsLabel')}</Badge>
+                                                        {log.videoAttached && <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 w-fit text-[10px]"><Video className="w-3 h-3 me-1" /> {t('systemFeedback')}</Badge>}
+                                                        <Badge variant="outline" className="w-fit text-[10px] text-yellow-600 border-yellow-200 bg-yellow-50"><Star className="w-3 h-3 me-1 fill-yellow-400" /> +{log.pointsEarned} {t('ptsLabel')}</Badge>
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

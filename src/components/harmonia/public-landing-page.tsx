@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Conservatorium, ConservatoriumInstrument, EventProduction, User } from '@/lib/types';
-import { Search, ClipboardList, Music, CalendarDays, CalendarClock, UserRound, Star } from 'lucide-react';
+import { Search, ClipboardList, Music, Music2, CalendarDays, CalendarClock, UserRound, Star, Building2, HeartHandshake, GraduationCap, ChevronLeft } from 'lucide-react';
 import { collectInstrumentTokensFromConservatoriumInstrument, collectInstrumentTokensFromTeacherInstrument, tokenSetsIntersect } from '@/lib/instrument-matching';
 
 const LANDING_HERO_IMAGE =
@@ -139,8 +139,6 @@ export function PublicLandingPage() {
       .slice(0, 3);
   }, [events]);
 
-  const testimonials = useMemo(() => [t('testimonial1'), t('testimonial2'), t('testimonial3')], [t]);
-
   const stats = useMemo(
     () => ({
       conservatoriumCount: uniqueConservatoriums.length,
@@ -150,6 +148,22 @@ export function PublicLandingPage() {
     }),
     [uniqueConservatoriums.length, users]
   );
+
+  // Intersection observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.section-animate').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const getInstrumentLabel = (item: ConservatoriumInstrument) => {
     if (locale === 'he') return item.names.he;
@@ -179,16 +193,48 @@ export function PublicLandingPage() {
       <PublicNavbar />
 
       <main className="flex-1 pt-14 text-start">
-        <section className="relative overflow-hidden border-b">
+        <style>{`
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideInFromStart {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .animate-fade-in-up { animation: fadeInUp 0.7s ease-out forwards; }
+  .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+  .animate-slide-in { animation: slideInFromStart 0.6s ease-out forwards; }
+  .animate-delay-100 { animation-delay: 0.1s; opacity: 0; }
+  .animate-delay-200 { animation-delay: 0.2s; opacity: 0; }
+  .animate-delay-300 { animation-delay: 0.3s; opacity: 0; }
+  .animate-delay-400 { animation-delay: 0.4s; opacity: 0; }
+  .animate-delay-500 { animation-delay: 0.5s; opacity: 0; }
+  .section-animate { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  .section-animate.in-view { opacity: 1; transform: translateY(0); }
+`}</style>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden border-b" aria-labelledby="hero-heading">
           <Image src={LANDING_HERO_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
 
-          <div className="relative mx-auto flex min-h-[90vh] max-w-6xl items-center justify-center px-4 py-16">
+          <div className="relative mx-auto flex min-h-[88vh] max-w-6xl items-center justify-center px-4 py-16">
             <div className="max-w-3xl text-center text-white">
-              <h1 className="text-4xl font-bold leading-tight md:text-5xl">{t('heroTitle')}</h1>
-              <p className="mx-auto mt-4 max-w-2xl text-base text-white/85 md:text-lg">{t('heroSubtitle')}</p>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white/90 backdrop-blur-sm animate-fade-in">
+                <Music className="h-4 w-4" />
+                {t('heroBadge')}
+              </div>
+              <h1 id="hero-heading" className="text-5xl font-extrabold leading-tight tracking-tight md:text-6xl lg:text-7xl animate-fade-in-up animate-delay-200">
+                {t('heroTitle')}
+              </h1>
+              <p className="mx-auto mt-4 max-w-2xl text-base text-white/85 md:text-lg animate-fade-in-up animate-delay-300">{t('heroSubtitle')}</p>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <div className="mt-8 flex flex-wrap justify-center gap-3 animate-fade-in-up animate-delay-400">
                 <Button size="lg" asChild>
                   <Link href="/register">{t('registerCta')}</Link>
                 </Button>
@@ -205,41 +251,39 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="border-b bg-background px-4 py-6">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 text-center md:grid-cols-4">
-            <div className="rounded-lg border bg-card p-3">
-              <p className="text-2xl font-bold">{stats.conservatoriumCount}</p>
-              <p className="text-xs text-muted-foreground">{t('statConservatories')}</p>
-            </div>
-            <div className="rounded-lg border bg-card p-3">
-              <p className="text-2xl font-bold">{stats.totalLessons.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{t('statLessons')}</p>
-            </div>
-            <div className="rounded-lg border bg-card p-3">
-              <p className="text-2xl font-bold">{stats.parentSatisfaction}%</p>
-              <p className="text-xs text-muted-foreground">{t('statSatisfaction')}</p>
-            </div>
-            <div className="rounded-lg border bg-card p-3">
-              <p className="text-2xl font-bold">+{stats.studentCount.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{t('statStudents')}</p>
-            </div>
+        {/* Stats Bar */}
+        <section className="border-y bg-primary px-4 py-8" aria-label={t('statConservatories')}>
+          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-0 divide-x divide-white/20 md:grid-cols-4">
+            {[
+              { value: stats.conservatoriumCount, label: t('statConservatories') },
+              { value: stats.totalLessons.toLocaleString(), label: t('statLessons') },
+              { value: `${stats.parentSatisfaction}%`, label: t('statSatisfaction') },
+              { value: `+${stats.studentCount.toLocaleString()}`, label: t('statStudents') },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-2 text-center first:ps-0 last:pe-0 section-animate">
+                <p className="text-3xl font-extrabold text-white">{value}</p>
+                <p className="mt-1 text-sm text-white/70">{label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="bg-muted/20 px-4 py-14">
+        {/* Find a Conservatory Section */}
+        <section id="find" className="bg-muted/20 px-4 py-14" aria-labelledby="find-heading">
           <div className="mx-auto max-w-6xl space-y-6">
             <div className="text-center">
-              <h2 className="text-3xl font-bold">{t('findTitle')}</h2>
+              <h2 id="find-heading" className="text-3xl font-bold">{t('findTitle')}</h2>
               <p className="mt-2 text-muted-foreground">{t('findSubtitle')}</p>
             </div>
 
             <div className="mx-auto grid max-w-4xl gap-3 rounded-xl border bg-card p-4 md:grid-cols-[1fr_180px_180px_auto]">
-              <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('searchPlaceholder')} />
-              <Input value={city} onChange={(event) => setCity(event.target.value)} placeholder={t('cityPlaceholder')} />
+              <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('searchPlaceholder')} aria-label={t('searchPlaceholder')} />
+              <Input value={city} onChange={(event) => setCity(event.target.value)} placeholder={t('cityPlaceholder')} aria-label={t('cityPlaceholder')} />
               <select
                 value={instrumentId}
                 onChange={(event) => setInstrumentId(event.target.value)}
                 className="h-10 rounded-md border bg-background px-3 text-sm"
+                aria-label={t('instrumentPlaceholder')}
               >
                 <option value="">{t('instrumentPlaceholder')}</option>
                 {platformInstruments.map((inst) => (
@@ -254,7 +298,7 @@ export function PublicLandingPage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 section-animate">
               {featuredConservatoriums.map((cons) => (
                 <Card key={cons.id}>
                   <CardHeader className="pb-2">
@@ -276,9 +320,10 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="border-y bg-muted/20 px-4 py-14">
+        {/* How It Works Section */}
+        <section id="how" className="border-y bg-muted/20 px-4 py-14" aria-labelledby="how-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-10 text-center text-3xl font-bold">{t('howItWorksTitle')}</h2>
+            <h2 id="how-heading" className="mb-10 text-center text-3xl font-bold">{t('howItWorksTitle')}</h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 { step: 1, icon: Search, title: t('step1Title'), desc: t('step1Desc') },
@@ -300,10 +345,11 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="px-4 py-14">
+        {/* Featured Teachers Section */}
+        <section className="px-4 py-14" aria-labelledby="teachers-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-10 text-center text-3xl font-bold">{t('featuredTeachersTitle')}</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <h2 id="teachers-heading" className="mb-10 text-center text-3xl font-bold">{t('featuredTeachersTitle')}</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 section-animate">
               {featuredTeachers.map((teacher) => (
                 <Card key={teacher.id}>
                   <CardContent className="p-5 text-center">
@@ -321,6 +367,9 @@ export function PublicLandingPage() {
                         <span>{teacher.teacherRatingAvg.toFixed(1)} ({teacher.teacherRatingCount})</span>
                       </p>
                     )}
+                    <Button variant="outline" size="sm" className="mt-3 w-full" asChild>
+                      <Link href="/register">{t('bookTrialLesson')}</Link>
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -328,9 +377,41 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="border-y bg-muted/20 px-4 py-14">
+        {/* Persona Cards Section */}
+        <section className="bg-gradient-to-br from-primary/8 to-amber-50/50 px-4 py-16" aria-labelledby="personas-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-10 text-center text-3xl font-bold">{t('upcomingEventsTitle')}</h2>
+            <div className="mb-10 text-center">
+              <h2 id="personas-heading" className="text-3xl font-bold">{t('personasTitle')}</h2>
+              <p className="mt-2 text-muted-foreground">{t('personasSubtitle')}</p>
+            </div>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 section-animate">
+              {[
+                { icon: Building2, title: t('personaAdminTitle'), desc: t('personaAdminDesc'), href: '/register' },
+                { icon: Music2, title: t('personaTeacherTitle'), desc: t('personaTeacherDesc'), href: '/register' },
+                { icon: HeartHandshake, title: t('personaParentTitle'), desc: t('personaParentDesc'), href: '/register' },
+                { icon: GraduationCap, title: t('personaStudentTitle'), desc: t('personaStudentDesc'), href: '/register' },
+              ].map(({ icon: Icon, title, desc, href }) => (
+                <Card key={title} className="group border-0 bg-white/80 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="mb-2 font-bold text-foreground">{title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
+                    <Button variant="ghost" size="sm" className="mt-3 px-0 text-primary" asChild>
+                      <Link href={href}>{t('personaCta')} <ChevronLeft className="ms-1 h-3 w-3" /></Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Upcoming Events Section */}
+        <section className="border-y bg-muted/20 px-4 py-14" aria-labelledby="events-heading">
+          <div className="mx-auto max-w-6xl">
+            <h2 id="events-heading" className="mb-10 text-center text-3xl font-bold">{t('upcomingEventsTitle')}</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {upcomingEvents.map((event) => (
                 <Card key={event.id}>
@@ -355,14 +436,24 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="border-b px-4 py-14">
+        {/* Testimonials Section */}
+        <section className="border-b px-4 py-14" aria-labelledby="testimonials-heading">
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-10 text-center text-3xl font-bold">{t('testimonialsTitle')}</h2>
+            <h2 id="testimonials-heading" className="mb-10 text-center text-3xl font-bold">{t('testimonialsTitle')}</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {testimonials.map((quote, index) => (
-                <Card key={'quote-' + index}>
+              {[
+                { quote: t('testimonial1'), author: t('testimonialAuthor1'), role: t('testimonialRole1') },
+                { quote: t('testimonial2'), author: t('testimonialAuthor2'), role: t('testimonialRole2') },
+                { quote: t('testimonial3'), author: t('testimonialAuthor3'), role: t('testimonialRole3') },
+              ].map(({ quote, author, role }, index) => (
+                <Card key={'quote-' + index} className="border-0 bg-muted/40">
                   <CardContent className="p-6">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{quote}</p>
+                    <p className="mb-4 text-2xl text-primary/30 leading-none">&quot;</p>
+                    <p className="text-sm leading-relaxed text-foreground">{quote}</p>
+                    <div className="mt-4 border-t pt-4">
+                      <p className="text-sm font-semibold">{author}</p>
+                      <p className="text-xs text-muted-foreground">{role}</p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -370,10 +461,11 @@ export function PublicLandingPage() {
           </div>
         </section>
 
-        <section className="px-4 py-14">
+        {/* Donate / Open Days CTA Section */}
+        <section className="px-4 py-14" aria-labelledby="donate-heading">
           <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 rounded-xl border bg-card p-6 md:flex-row md:items-center">
             <div>
-              <h3 className="text-2xl font-bold">{t('donateTitle')}</h3>
+              <h3 id="donate-heading" className="text-2xl font-bold">{t('donateTitle')}</h3>
               <p className="mt-1 text-muted-foreground">{t('donateSubtitle')}</p>
             </div>
             <div className="flex gap-3">

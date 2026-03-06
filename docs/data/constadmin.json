@@ -52,7 +52,7 @@
     { "id": 51, "location": "מרום הגליל", "manager_name": "דוד וקסלר", "organization": "מ.א מרום הגליל", "office_phone": null, "mobile": "050-4706000", "email": "dorvek@gmail.com" },
     { "id": 52, "location": "מרחבים", "manager_name": "מריה זביאגין", "organization": "מועצה אזורית מרחבים", "office_phone": "08-9929420", "mobile": "054-4571966", "email": "zerlina999@gmail.com" },
     { "id": 53, "location": "משגב", "manager_name": "אביטל חיים טוביס", "organization": "משגב הגליל עמותה לקידום ההתיישבות בגליל", "office_phone": null, "mobile": "052-8392323", "email": "music@misgav.org.il" },
-    { "id": 54, "location": "נהריה", "manager_name": "ראובן מלאך", "organization": "עיריית נהריה", "office_phone": null, "mobile": "052-4316316", "email": "reuvenmalach@gmail.com" },
+    { "id": 54, "location": "נהריה", "manager_name": "ראובן מלאך", "organization": "עיריית נהריה", "office_phone": null, "mobile": "052-4316316", "email": "reuvenmalach.nahariya@gmail.com" },
     { "id": 55, "location": "נס ציונה", "manager_name": "רן דוד", "organization": "מוסדות חינוך ותרבות נס ציונה", "office_phone": "08-9100499", "mobile": "052-6645400", "email": "vladimirk@ktnz.org.il; ran.david@ktnz.org.il" },
     { "id": 56, "location": "נצרת", "manager_name": "סמיר מחול", "organization": "עמותת עוד (וי.אן.אר.ג'י)", "office_phone": null, "mobile": "054-4607723", "email": "sameer.makhoul@gmail.com" },
     { "id": 57, "location": "נתיבות", "manager_name": "שמואל אלבז", "organization": "נתיבות החברה לקהילה ופנאי", "office_phone": "08-9934922", "mobile": "054-5790501", "email": "elbaz41@gmail.com" },

@@ -3,6 +3,8 @@ import type {
   Alumnus,
   Announcement,
   Branch,
+  ComplianceLog,
+  ConsentRecord,
   Conservatorium,
   ConservatoriumInstrument,
   EventProduction,
@@ -12,10 +14,15 @@ import type {
   LessonSlot,
   DonationCause,
   DonationRecord,
+  MakeupCredit,
   Masterclass,
+  Notification,
   PayrollSummary,
+  PracticeLog,
   Room,
+  RoomLock,
   ScholarshipApplication,
+  TeacherException,
   User,
 } from '@/lib/types';
 import type {
@@ -23,6 +30,8 @@ import type {
   AnnouncementRepository,
   ApprovalRepository,
   BranchRepository,
+  ComplianceLogRepository,
+  ConsentRecordRepository,
   ConservatoriumRepository,
   ConservatoriumInstrumentRepository,
   DatabaseAdapter,
@@ -30,7 +39,10 @@ import type {
   FormRepository,
   LessonPackageRepository,
   LessonRepository,
+  MakeupCreditRepository,
   MasterClassRepository,
+  NotificationRepository,
+  PracticeLogRepository,
   RepertoireEntry,
   RepertoireRepository,
   DonationCauseRepository,
@@ -39,9 +51,11 @@ import type {
   PayrollRepository,
   RentalRecord,
   RentalRepository,
+  RoomLockRepository,
   RoomRepository,
   ScholarshipRepository,
   ScopedRepository,
+  TeacherExceptionRepository,
   UserRepository,
 } from '@/lib/db/types';
 
@@ -67,6 +81,13 @@ export type MemorySeed = {
   repertoire: RepertoireEntry[];
   donationCauses: DonationCause[];
   donations: DonationRecord[];
+  makeupCredits: MakeupCredit[];
+  practiceLogs: PracticeLog[];
+  notifications: Notification[];
+  roomLocks: RoomLock[];
+  teacherExceptions: TeacherException[];
+  consentRecords: ConsentRecord[];
+  complianceLogs: ComplianceLog[];
 };
 
 function clone<T>(value: T): T {
@@ -236,6 +257,13 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
   repertoire: RepertoireRepository;
   donationCauses: DonationCauseRepository;
   donations: DonationRepository;
+  makeupCredits: MakeupCreditRepository;
+  practiceLogs: PracticeLogRepository;
+  notifications: NotificationRepository;
+  roomLocks: RoomLockRepository;
+  teacherExceptions: TeacherExceptionRepository;
+  consentRecords: ConsentRecordRepository;
+  complianceLogs: ComplianceLogRepository;
 
   constructor(seed: MemorySeed) {
     this.users = createUserRepository(seed.users);
@@ -261,6 +289,31 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
     this.repertoire = createScopedRepository<RepertoireEntry>(seed.repertoire, 'repr');
     this.donationCauses = createScopedRepository<DonationCause>(seed.donationCauses, 'dcause');
     this.donations = createScopedRepository<DonationRecord>(seed.donations, 'donation');
+
+    // New repositories (DBA gap analysis)
+    this.makeupCredits = createScopedRepository<MakeupCredit>(seed.makeupCredits, 'mkup');
+    this.practiceLogs = createScopedRepository<PracticeLog>(seed.practiceLogs, 'plog');
+    this.roomLocks = createScopedRepository<RoomLock>(seed.roomLocks, 'rlock');
+    this.teacherExceptions = createScopedRepository<TeacherException>(seed.teacherExceptions, 'texc');
+    this.consentRecords = createScopedRepository<ConsentRecord>(seed.consentRecords, 'consent');
+    this.complianceLogs = createScopedRepository<ComplianceLog>(seed.complianceLogs, 'clog');
+
+    // NotificationRepository has extra methods
+    const notifBase = createScopedRepository<Notification>(seed.notifications, 'notif');
+    this.notifications = {
+      ...notifBase,
+      async findByUser(userId: string, conservatoriumId?: string): Promise<Notification[]> {
+        const all = await notifBase.list();
+        return all.filter(n => {
+          if (n.userId !== userId) return false;
+          if (conservatoriumId && hasConservatoriumId(n) && n.conservatoriumId !== conservatoriumId) return false;
+          return true;
+        });
+      },
+      async markRead(id: string): Promise<void> {
+        await notifBase.update(id, { read: true } as Partial<Notification>);
+      },
+    };
   }
 }
 

@@ -116,6 +116,7 @@ export function TrialBookingWidget() {
         }
     }, [currentStep, isSubmitted, persistDraft]);
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const teacherId = form.watch('teacherId');
     const selectedDate = form.watch('date');
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);

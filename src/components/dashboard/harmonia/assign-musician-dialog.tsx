@@ -31,6 +31,7 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
   // When dialog opens, pre-select already assigned musicians
   useEffect(() => {
     if (booking?.assignedMusicians) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedMusicianIds(booking.assignedMusicians.map(m => m.userId));
     } else {
       setSelectedMusicianIds([]);

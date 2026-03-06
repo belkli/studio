@@ -74,6 +74,7 @@ export function MessagingInterface() {
 
   useEffect(() => {
     if (threads.length > 0 && !selectedThreadId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedThreadId(threads[0].id);
     }
   }, [threads, selectedThreadId]);

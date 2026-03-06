@@ -145,9 +145,7 @@ function ConservatoriumSearchPicker({
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
 
-    const localizedCons = useMemo(() =>
-        conservatoriums.map(c => getLocalizedConservatorium(c, locale)),
-        [locale]);
+    const localizedCons = conservatoriums.map(c => getLocalizedConservatorium(c, locale));
 
     const filtered = useMemo(() =>
         localizedCons

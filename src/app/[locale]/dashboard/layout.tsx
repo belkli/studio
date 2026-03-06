@@ -20,26 +20,24 @@ export default async function DashboardLayout({
   const tAccessibility = await getTranslations({ locale, namespace: 'AccessibilityPage' });
 
   return (
-    <div className="h-[100svh] overflow-hidden">
-      <SidebarProvider>
-        <Sidebar side={sidebarSide} collapsible="icon">
-          <SidebarNav />
-        </Sidebar>
-        <SidebarInset
-          className="overflow-y-auto overflow-x-hidden"
-          dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
-        >
-          <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6 lg:p-8">
-            <div className="flex-1">{children}</div>
-            <footer className="mt-8 border-t pt-4 text-sm text-muted-foreground">
-              <Link href="/accessibility" className="underline underline-offset-4">
-                {tAccessibility('footerLink')}
-              </Link>
-            </footer>
-          </div>
-        </SidebarInset>
-        <WalkthroughManager />
-      </SidebarProvider>
-    </div>
+    <SidebarProvider>
+      <Sidebar side={sidebarSide} collapsible="icon">
+        <SidebarNav />
+      </Sidebar>
+      <SidebarInset
+        className="min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain"
+        dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
+      >
+        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6 lg:p-8">
+          <div id="dashboard-content" className="flex-1">{children}</div>
+          <footer className="mt-8 border-t pt-4 text-sm text-muted-foreground">
+            <Link href="/accessibility" className="underline underline-offset-4">
+              {tAccessibility('footerLink')}
+            </Link>
+          </footer>
+        </div>
+      </SidebarInset>
+      <WalkthroughManager />
+    </SidebarProvider>
   );
 }

@@ -1,10 +1,19 @@
 'use client';
 
+import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
-import { AdminFinancialDashboard } from "@/components/dashboard/harmonia/admin-finance-dashboard";
-import { StudentBillingDashboard } from "@/components/dashboard/harmonia/student-billing-dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslations } from "next-intl";
+
+const AdminFinancialDashboard = dynamic(
+    () => import("@/components/dashboard/harmonia/admin-finance-dashboard").then(mod => ({ default: mod.AdminFinancialDashboard })),
+    { loading: () => <Skeleton className="h-[600px] w-full" /> }
+);
+
+const StudentBillingDashboard = dynamic(
+    () => import("@/components/dashboard/harmonia/student-billing-dashboard").then(mod => ({ default: mod.StudentBillingDashboard })),
+    { loading: () => <Skeleton className="h-[600px] w-full" /> }
+);
 
 export default function BillingPage() {
     const { user, isLoading } = useAuth();

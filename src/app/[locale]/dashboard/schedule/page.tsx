@@ -1,12 +1,18 @@
 ﻿'use client';
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { ScheduleRedesign } from '@/components/dashboard/harmonia/schedule-redesign';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const ScheduleRedesign = dynamic(
+  () => import('@/components/dashboard/harmonia/schedule-redesign').then(mod => ({ default: mod.ScheduleRedesign })),
+  { loading: () => <Skeleton className="h-[500px]" /> }
+);
 
 export default function SchedulePage() {
   const { user } = useAuth();

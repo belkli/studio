@@ -75,7 +75,7 @@ export function AdminBranchesDashboard() {
                                 <TableHead>{t('branchName')}</TableHead>
                                 <TableHead>{t('address')}</TableHead>
                                 {user?.role === 'site_admin' && <TableHead>{t('conservatorium')}</TableHead>}
-                                <TableHead className="text-left">{t('actions')}</TableHead>
+                                <TableHead className="text-start">{t('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -91,7 +91,7 @@ export function AdminBranchesDashboard() {
                                             {conservatoriums.find(c => c.id === branch.conservatoriumId)?.name || branch.conservatoriumId}
                                         </TableCell>
                                     )}
-                                    <TableCell className="text-left">
+                                    <TableCell className="text-start">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>

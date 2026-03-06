@@ -50,7 +50,7 @@ export default function PlayingSchoolPaymentReturnPage() {
                         <XCircle className="h-16 w-16 text-destructive mx-auto" />
                         <CardTitle className="text-2xl mt-4">Payment Failed</CardTitle>
                         <CardDescription>
-                            We couldn't process your payment. Please try again or contact support.
+                            We couldn&apos;t process your payment. Please try again or contact support.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-2">

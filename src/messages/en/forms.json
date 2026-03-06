@@ -162,9 +162,9 @@
       "required": "This field is required"
     },
     "types": {
-      "recital": "Recital",
-      "kenes": "Kenes",
-      "exam_registration": "Exam registration"
+      "recital": "רסיטל בגרות",
+      "kenes": "כנס / אירוע",
+      "exam_registration": "הרשמה לבחינה"
     }
   },
   "ApprovalsPage": {
@@ -519,7 +519,8 @@
     "T": "T"
   },
   "LessonManagement": {
-    "studentRequired": "Must select a student.",
+    "bookPageTitle": "Book a New Lesson",
+    "bookPageSubtitle": "Choose an instrument, teacher and available time to schedule a new lesson from your package.",
     "instrumentRequired": "Must select an instrument.",
     "teacherRequired": "Must select a teacher.",
     "timeRequired": "Must select a time.",
@@ -629,6 +630,29 @@
     "teacherNotes": "Teacher Notes",
     "rescheduleAction": "Reschedule",
     "cancelLessonAction": "Cancel Lesson",
-    "closeAction": "Close"
+    "closeAction": "Close",
+    "regularBookingTab": "Regular Booking",
+    "lastMinuteDealsTab": "Last-Minute Deals",
+    "instrumentHint": "Your registered instruments appear first — you can select any other instrument too",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "minutesShort": "min",
+    "allInstruments": "All Instruments",
+    "choosePaymentMethod": "How would you like to pay?",
+    "usePackageCredit": "Use Package Credit",
+    "usePackageCreditDesc": "Deduct from your \"{package}\" package",
+    "payPromotionalPrice": "Pay Promotional Price",
+    "payPromotionalPriceDesc": "Extra lesson outside your package at a special price",
+    "cancel": "Cancel",
+    "bookDealTitle": "Book Last-Minute Lesson",
+    "bookDealDesc": "Choose how you would like to pay for this lesson",
+    "noDealsAvailable": "No deals available right now",
+    "noDealsAvailableDesc": "Check back tomorrow — available slots are updated continuously",
+    "dealsFilteredForStudent": "Showing lessons for: {instruments}",
+    "dealBookedSuccess": "Lesson booked successfully!",
+    "dealBookedDescPromo": "Booked lesson at ₪{price} ({discount}% off)",
+    "dealBookedDescPackage": "Lesson deducted from your active package",
+    "selectTeacherFirst": "Select a teacher first to see available times",
+    "step3Time": "3. Choose Time"
   }
 }

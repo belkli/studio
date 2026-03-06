@@ -86,7 +86,7 @@ export function AdminWaitlistDashboard() {
                             <TableHead>{t('instrument')}</TableHead>
                             <TableHead>{t('joinedDate')}</TableHead>
                             <TableHead>{t('status')}</TableHead>
-                            <TableHead className="text-left">{t('actions')}</TableHead>
+                            <TableHead className="text-start">{t('actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -120,7 +120,7 @@ export function AdminWaitlistDashboard() {
                                             {t(`statuses.${entry.status}`)}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-left space-x-2 space-x-reverse">
+                                    <TableCell className="text-start space-x-2 space-x-reverse">
                                         <Button
                                             variant="outline"
                                             size="sm"

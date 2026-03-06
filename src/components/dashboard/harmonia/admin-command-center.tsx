@@ -55,21 +55,21 @@ export function AdminCommandCenter() {
                         <Link href="/dashboard/users?tab=pending">
                             <UserPlus className="h-6 w-6 mb-2" />
                             <span>{t('approveEnrollments')}</span>
-                            {stats.pendingUsers > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingUsers}</Badge>}
+                            {stats.pendingUsers > 0 && <Badge className="absolute -top-2 -end-2">{stats.pendingUsers}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/approvals">
                             <FileCheck className="h-6 w-6 mb-2" />
                             <span>{t('reviewForms')}</span>
-                            {stats.pendingForms > 0 && <Badge className="absolute -top-2 -right-2">{stats.pendingForms}</Badge>}
+                            {stats.pendingForms > 0 && <Badge className="absolute -top-2 -end-2">{stats.pendingForms}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24 relative" asChild>
                         <Link href="/dashboard/admin/payroll">
                             <Banknote className="h-6 w-6 mb-2" />
                             <span>{t('viewPayrollDrafts')}</span>
-                            {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -right-2">{stats.draftPayrolls}</Badge>}
+                            {stats.draftPayrolls > 0 && <Badge variant="secondary" className="absolute -top-2 -end-2">{stats.draftPayrolls}</Badge>}
                         </Link>
                     </Button>
                     <Button variant="outline" className="flex-col h-24" asChild>

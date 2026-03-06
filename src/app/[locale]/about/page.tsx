@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
@@ -31,8 +31,21 @@ import {
   ChevronRight,
   UserRound,
   Star,
+  LocateFixed,
+  Loader2,
 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 type PublicProfile = {
   id: string;
@@ -45,6 +58,7 @@ type PublicProfile = {
   email?: string;
   phone?: string;
   teacherUserId?: string;
+  teacherConservatoriumId?: string;
   availableForNewStudents?: boolean;
   teacherRatingAvg?: number;
   teacherRatingCount?: number;
@@ -262,11 +276,25 @@ export default function AboutPage() {
   const searchParams = useSearchParams();
   const { conservatoriums, conservatoriumInstruments, users } = useAuth();
 
-  const [search, setSearch] = useState('');
-  const [city, setCity] = useState('');
-  const [instrumentId, setInstrumentId] = useState('');
+  const [search, setSearch] = useState(() => searchParams.get('search') || '');
+  const [city, setCity] = useState(() => searchParams.get('city') || '');
+  const [instrumentId, setInstrumentId] = useState(() => searchParams.get('instrument') || '');
   const [selectedCons, setSelectedCons] = useState<Conservatorium | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<PublicProfile | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+
+  const handleLocate = useCallback(() => {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setLocating(false);
+      },
+      () => setLocating(false)
+    );
+  }, []);
 
   const localizedConservatoriums = useMemo(() => {
     const uniqueById = new Map<string, Conservatorium>();
@@ -336,24 +364,11 @@ export default function AboutPage() {
     return placeholderImageMap.get(value) || value;
   };
 
-  useEffect(() => {
-    setSearch(searchParams.get('search') || '');
-    setCity(searchParams.get('city') || '');
-    setInstrumentId(searchParams.get('instrument') || '');
-  }, [searchParams]);
-
-  useEffect(() => {
-    const selectedConsId = searchParams.get('cons');
-    if (!selectedConsId) return;
-    const found = localizedConservatoriums.find((item) => item.id === selectedConsId);
-    if (found) setSelectedCons(found);
-  }, [searchParams, localizedConservatoriums]);
-
   const filteredConservatoriums = useMemo(() => {
     const searchLower = search.trim().toLowerCase();
     const cityLower = city.trim().toLowerCase();
 
-    return localizedConservatoriums.filter((cons) => {
+    const filtered = localizedConservatoriums.filter((cons) => {
       const name = (cons.name || '').toLowerCase();
       const cityName = (cons.location?.city || '').toLowerCase();
 
@@ -372,7 +387,40 @@ export default function AboutPage() {
 
       return bySearch && byCity && byInstrument;
     });
-  }, [localizedConservatoriums, conservatoriumInstruments, search, city, instrumentId]);
+
+    // Sort by GPS location if the user granted geolocation
+    if (userLocation) {
+      return filtered.slice().sort((a, b) => {
+        const coordsA = a.location?.coordinates;
+        const coordsB = b.location?.coordinates;
+        const distA = coordsA ? haversineDistance(userLocation.lat, userLocation.lng, coordsA.lat, coordsA.lng) : Infinity;
+        const distB = coordsB ? haversineDistance(userLocation.lat, userLocation.lng, coordsB.lat, coordsB.lng) : Infinity;
+        return distA - distB;
+      });
+    }
+
+    if (!cityLower) return filtered;
+
+    // Find coordinates for the searched city from any conservatorium that matches
+    let referenceCoords: { lat: number; lng: number } | null = null;
+    for (const cons of localizedConservatoriums) {
+      const cityName = (cons.location?.city || '').toLowerCase();
+      if (cityName.includes(cityLower) && cons.location?.coordinates) {
+        referenceCoords = cons.location.coordinates;
+        break;
+      }
+    }
+
+    if (!referenceCoords) return filtered;
+
+    return filtered.slice().sort((a, b) => {
+      const coordsA = a.location?.coordinates;
+      const coordsB = b.location?.coordinates;
+      const distA = coordsA ? haversineDistance(referenceCoords.lat, referenceCoords.lng, coordsA.lat, coordsA.lng) : Infinity;
+      const distB = coordsB ? haversineDistance(referenceCoords.lat, referenceCoords.lng, coordsB.lat, coordsB.lng) : Infinity;
+      return distA - distB;
+    });
+  }, [localizedConservatoriums, conservatoriumInstruments, search, city, instrumentId, userLocation]);
 
   const teacherCountByConservatorium = useMemo(() => {
     const counts = new Map<string, number>();
@@ -416,6 +464,7 @@ export default function AboutPage() {
         email: matched?.email,
         phone: matched?.phone,
         teacherUserId: matched?.id,
+        teacherConservatoriumId: matched?.conservatoriumId,
         availableForNewStudents: matched?.availableForNewStudents,
         teacherRatingAvg: matched?.teacherRatingAvg,
         teacherRatingCount: matched?.teacherRatingCount,
@@ -436,6 +485,7 @@ export default function AboutPage() {
         email: teacher.email,
         phone: teacher.phone,
         teacherUserId: teacher.id,
+        teacherConservatoriumId: teacher.conservatoriumId,
         availableForNewStudents: teacher.availableForNewStudents,
         teacherRatingAvg: teacher.teacherRatingAvg,
         teacherRatingCount: teacher.teacherRatingCount,
@@ -505,7 +555,7 @@ export default function AboutPage() {
         </section>
 
         <section className="sticky top-14 z-30 border-b bg-background/95 px-4 py-4 backdrop-blur">
-          <div className="mx-auto grid max-w-6xl gap-3 md:grid-cols-[1fr_220px_220px]">
+          <div className="mx-auto grid max-w-6xl gap-3 md:grid-cols-[1fr_auto_220px]">
             <div className="relative">
               <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -515,7 +565,28 @@ export default function AboutPage() {
                 className="ps-9"
               />
             </div>
-            <Input value={city} onChange={(event) => setCity(event.target.value)} placeholder={t('citySortPlaceholder')} />
+            <div className="flex items-center gap-2">
+              <Input
+                value={city}
+                onChange={(event) => {
+                  setCity(event.target.value);
+                  if (event.target.value) setUserLocation(null);
+                }}
+                placeholder={t('citySortPlaceholder')}
+                className="w-[180px] md:w-[200px]"
+              />
+              <Button
+                type="button"
+                variant={userLocation ? 'default' : 'outline'}
+                size="icon"
+                onClick={handleLocate}
+                disabled={locating}
+                title={locating ? t('locating') : t('locateMe')}
+                aria-label={locating ? t('locating') : t('locateMe')}
+              >
+                {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+              </Button>
+            </div>
             <select
               value={instrumentId}
               onChange={(event) => setInstrumentId(event.target.value)}
@@ -534,11 +605,17 @@ export default function AboutPage() {
         <section className="px-4 py-8">
           <div className="mx-auto max-w-6xl">
             <div className="mb-6 flex items-center justify-between text-sm text-muted-foreground">
-              <span>
+              <span className="flex items-center gap-2">
                 {t('foundCount', {
                   found: filteredConservatoriums.length,
                   total: localizedConservatoriums.length,
                 })}
+                {userLocation && (
+                  <Badge variant="secondary" className="text-[11px]">
+                    <LocateFixed className="me-1 h-3 w-3" />
+                    {t('sortedByDistance')}
+                  </Badge>
+                )}
               </span>
               <button
                 type="button"
@@ -547,6 +624,7 @@ export default function AboutPage() {
                   setSearch('');
                   setCity('');
                   setInstrumentId('');
+                  setUserLocation(null);
                 }}
               >
                 {t('clearFilters')}
@@ -867,7 +945,7 @@ export default function AboutPage() {
                 )}
                 {selectedProfile.source === 'teacher' && selectedProfile.teacherUserId && selectedProfile.availableForNewStudents && (
                   <Button asChild>
-                    <Link href={`/register?teacher=${selectedProfile.teacherUserId}&conservatorium=${selectedCons.id}`}>{tAbout('bookWithTeacher')}</Link>
+                    <Link href={`/register?teacher=${selectedProfile.teacherUserId}&conservatorium=${selectedProfile.teacherConservatoriumId || selectedCons.id}`}>{tAbout('bookWithTeacher')}</Link>
                   </Button>
                 )}
               </div>

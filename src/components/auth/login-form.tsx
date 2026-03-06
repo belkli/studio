@@ -1,6 +1,7 @@
 "use client"
 import { Link, useRouter } from "@/i18n/routing";
 import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
@@ -11,6 +12,9 @@ import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
 import { useTranslations, useLocale } from "next-intl"
 import { signInWithGoogle, signInWithMicrosoft, type OAuthProfile } from '@/lib/auth/oauth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getClientAuth } from '@/lib/firebase-client';
+import { createSessionAction } from '@/app/actions/auth';
 
 export function LoginForm() {
   const t = useTranslations("Auth")
@@ -18,6 +22,8 @@ export function LoginForm() {
   const { login, users, updateUser } = useAuth()
   const locale = useLocale()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
   const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -73,6 +79,14 @@ export function LoginForm() {
       const existing = users.find((entry) => entry.email.toLowerCase() === result.profile.email.toLowerCase());
       if (existing) {
         linkOAuthToExistingUser(result.profile);
+
+        // Create session cookie if Firebase is configured
+        const auth = getClientAuth();
+        if (auth && auth.currentUser) {
+          const idToken = await auth.currentUser.getIdToken();
+          await createSessionAction(idToken);
+        }
+
         login(result.profile.email);
         return;
       }
@@ -99,7 +113,7 @@ export function LoginForm() {
     toast({ title: t('passwordResetSent') ?? 'Password reset link sent', description: t('passwordResetSentDesc') ?? 'Check your inbox for instructions.' })
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) {
       toast({
@@ -119,30 +133,81 @@ export function LoginForm() {
     }
     setLoading(true)
 
-    setTimeout(() => {
-      const { user, status } = login(email);
+    const auth = getClientAuth();
 
-      if (status === 'approved' && user) {
+    if (auth) {
+      // ── Production path: real Firebase Auth ──
+      try {
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        const idToken = await credential.user.getIdToken();
+
+        const result = await createSessionAction(idToken);
+        if (!result.ok) {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.loginFailed'),
+            description: result.error,
+          });
+          setLoading(false);
+          return;
+        }
+
         toast({
           title: t('toasts.loginSuccess'),
-          description: t('toasts.loginSuccessDesc', { name: user.name.split(' ')[0] }),
+          description: t('toasts.loginSuccessDesc', { name: credential.user.displayName?.split(' ')[0] || email.split('@')[0] }),
         });
-      } else if (status === 'pending') {
-        toast({
-          variant: 'destructive',
-          title: t('toasts.pendingAccount'),
-          description: t('toasts.pendingAccountDesc'),
-        });
-        setLoading(false);
-      } else {
-        toast({
-          variant: 'destructive',
-          title: t('toasts.loginFailed'),
-          description: t('toasts.loginFailedDesc'),
-        });
+        router.push(callbackUrl as any);
+      } catch (error: unknown) {
+        const code = (error as { code?: string })?.code;
+        if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.loginFailed'),
+            description: t('toasts.loginFailedDesc'),
+          });
+        } else if (code === 'auth/too-many-requests') {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.loginFailed'),
+            description: 'Too many attempts. Please try again later.',
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.loginFailed'),
+            description: t('toasts.loginFailedDesc'),
+          });
+        }
         setLoading(false);
       }
-    }, 500);
+    } else {
+      // ── Dev fallback: mock login when Firebase is not configured ──
+      setTimeout(() => {
+        const { user, status } = login(email);
+
+        if (status === 'approved' && user) {
+          toast({
+            title: t('toasts.loginSuccess'),
+            description: t('toasts.loginSuccessDesc', { name: user.name.split(' ')[0] }),
+          });
+          router.push(callbackUrl as any);
+        } else if (status === 'pending') {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.pendingAccount'),
+            description: t('toasts.pendingAccountDesc'),
+          });
+          setLoading(false);
+        } else {
+          toast({
+            variant: 'destructive',
+            title: t('toasts.loginFailed'),
+            description: t('toasts.loginFailedDesc'),
+          });
+          setLoading(false);
+        }
+      }, 500);
+    }
   }
 
   const handleMagicLink = (e: React.FormEvent) => {

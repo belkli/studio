@@ -43,7 +43,7 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 import { School, Building, MapPin } from 'lucide-react';
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
-    const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons } = useAuth();
+    const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons, conservatoriums } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const dateLocale = useDateLocale();
     const locale = useLocale();
@@ -52,6 +52,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
     const userLogs = useMemo(() => practiceLogs.filter(log => log.studentId === student.id), [practiceLogs, student.id]);
     const userRepertoire = useMemo(() => assignedRepertoire.filter(rep => rep.studentId === student.id), [assignedRepertoire, student.id]);
     const currentPackage = useMemo(() => packages.find(p => p.id === student.packageId), [packages, student.packageId]);
+    const currentConservatorium = useMemo(() => conservatoriums.find(c => c.id === student.conservatoriumId), [conservatoriums, student.conservatoriumId]);
     const userNotes = useMemo(() => {
         return lessonNotes
             .filter(note => note.studentId === student.id && (note.isSharedWithStudent || note.isSharedWithParent))
@@ -210,7 +211,30 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                 </Card>
             )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Building className="text-indigo-500" /> {t('myConservatorium')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {currentConservatorium ? (
+                            <>
+                                <p className="text-lg font-medium">{currentConservatorium.name}</p>
+                                {currentConservatorium.location?.city && (
+                                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                        <MapPin className="h-3.5 w-3.5" />
+                                        {currentConservatorium.location.city}
+                                    </p>
+                                )}
+                                {currentConservatorium.location?.address && (
+                                    <p className="text-xs text-muted-foreground mt-1">{currentConservatorium.location.address}</p>
+                                )}
+                            </>
+                        ) : (
+                            <p className="text-muted-foreground">{t('noConservatoriumAssigned')}</p>
+                        )}
+                    </CardContent>
+                </Card>
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><UserCircle className="text-primary" /> {t('myTeacher')}</CardTitle>

@@ -45,7 +45,7 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
     if (isCancelled) {
         return (
             <div
-                className="bg-gray-100 border-r-4 border-gray-400 p-2 rounded-lg text-xs h-full overflow-hidden text-gray-500 italic cursor-pointer hover:bg-gray-200 transition-colors"
+                className="bg-gray-100 border-e-4 border-gray-400 p-2 rounded-lg text-xs h-full overflow-hidden text-gray-500 italic cursor-pointer hover:bg-gray-200 transition-colors"
                 onClick={onClick}
             >
                 <p className="font-bold truncate">בוטל</p>
@@ -62,8 +62,8 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
             className={cn(
                 "p-2 rounded-lg text-xs h-full overflow-hidden flex flex-col justify-between cursor-pointer transition-all hover:shadow-md",
                 lesson.status === 'COMPLETED' || isPast
-                    ? 'bg-gray-100 border-r-4 border-gray-300 text-gray-500'
-                    : cn('border-r-4', typeClasses)
+                    ? 'bg-gray-100 border-e-4 border-gray-300 text-gray-500'
+                    : cn('border-e-4', typeClasses)
             )}
             onClick={onClick}
         >

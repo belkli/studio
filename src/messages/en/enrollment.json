@@ -647,7 +647,17 @@
     "distance": "Distance",
     "allDistances": "All distances",
     "distance10": "Up to 10 km",
-    "distance25": "Up to 25 km"
+    "distance25": "Up to 25 km",
+    "clearAll": "Clear all",
+    "resultsCount": "{count} available lessons found",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "anyDate": "Any date",
+    "searchTeacher": "Search by teacher",
+    "sortedByDistance": "Sorted by distance",
+    "useMyLocation": "Use my location",
+    "locating": "Locating...",
+    "locationError": "Location access denied. Please enable location in your browser."
   },
   "ExcellenceTrack": {
     "successTitle": "Enrollment confirmed",

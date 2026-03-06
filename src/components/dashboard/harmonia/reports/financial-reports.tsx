@@ -71,6 +71,7 @@ export function FinancialReports() {
         const teachers = users.filter(u => u.role === 'teacher');
         const teacherRevenueData = teachers.map(teacher => ({
             name: teacher.name,
+            // eslint-disable-next-line react-hooks/purity
             revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mocked for simplicity
         })).sort((a, b) => b.revenue - a.revenue);
 
@@ -175,14 +176,14 @@ export function FinancialReports() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>{t('teacher')}</TableHead>
-                                <TableHead className="text-left">{t('monthlyRevenueEstimate')}</TableHead>
+                                <TableHead className="text-start">{t('monthlyRevenueEstimate')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {teacherRevenue.slice(0, 5).map((teacher) => (
                                 <TableRow key={teacher.name}>
                                     <TableCell className="font-medium">{teacher.name}</TableCell>
-                                    <TableCell className="text-left font-mono">₪{teacher.revenue.toLocaleString()}</TableCell>
+                                    <TableCell className="text-start font-mono">₪{teacher.revenue.toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

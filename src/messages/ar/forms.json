@@ -159,9 +159,9 @@
     "successTitle": "تم إنشاء نموذج {type}",
     "title": "نموذج / طلب جديد",
     "types": {
-      "exam_registration": "تسجيل لامتحان",
-      "kenes": "مؤتمر",
-      "recital": "ريسيتال"
+      "exam_registration": "הרשמה לבחינה",
+      "kenes": "כנס / אירוע",
+      "recital": "רסיטל בגרות"
     },
     "validation": {
       "required": "هذا الحقل مطلوب"
@@ -519,7 +519,8 @@
     "T": "ت"
   },
   "LessonManagement": {
-    "additionalPracticeNote": "ملاحظة تدريب إضافية",
+    "bookPageTitle": "حجز درس جديد",
+    "bookPageSubtitle": "اختر آلة موسيقية ومعلمًا وموعدًا متاحًا لجدولة درس جديد من حزمتك.",
     "additionalPracticeNotePlaceholder": "مثال: يرجى الانتباه لديناميكيات الإيقاع في الإيقاعات 15-20.",
     "addVoiceFeedback": "إضافة تغذية راجعة صوتية",
     "allStatuses": "جميع الحالات",
@@ -629,6 +630,29 @@
     "virtualLessonLink": "رابط الدرس الافتراضي",
     "visibleToStudentParent": "(مرئي للطالب وولي الأمر)",
     "whatDidWeLearn": "ماذا تعلمنا اليوم؟",
-    "whatDidWeLearnPlaceholder": "مثال: ركزنا اليوم على السلالم وتقنية الأصابع..."
+    "whatDidWeLearnPlaceholder": "مثال: ركزنا اليوم على السلالم وتقنية الأصابع...",
+    "regularBookingTab": "حجز عادي",
+    "lastMinuteDealsTab": "عروض اللحظة الأخيرة",
+    "instrumentHint": "آلاتك المسجلة تظهر أولاً — يمكنك اختيار أي آلة أخرى أيضاً",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "minutesShort": "د",
+    "allInstruments": "جميع الآلات",
+    "choosePaymentMethod": "كيف تريد الدفع؟",
+    "usePackageCredit": "استخدام رصيد الحزمة",
+    "usePackageCreditDesc": "خصم من حزمة \"{package}\"",
+    "payPromotionalPrice": "الدفع بسعر العرض",
+    "payPromotionalPriceDesc": "درس إضافي خارج الحزمة بسعر خاص",
+    "cancel": "إلغاء",
+    "bookDealTitle": "حجز درس اللحظة الأخيرة",
+    "bookDealDesc": "اختر طريقة الدفع لهذا الدرس",
+    "noDealsAvailable": "لا توجد عروض متاحة الآن",
+    "noDealsAvailableDesc": "تحقق مجدداً غداً — يتم تحديث الأوقات المتاحة باستمرار",
+    "dealsFilteredForStudent": "عرض دروس لـ: {instruments}",
+    "dealBookedSuccess": "تم حجز الدرس بنجاح!",
+    "dealBookedDescPromo": "تم حجز الدرس بسعر ₪{price} (خصم {discount}%)",
+    "dealBookedDescPackage": "تم خصم الدرس من حزمتك النشطة",
+    "selectTeacherFirst": "اختر معلماً أولاً لرؤية الأوقات المتاحة",
+    "step3Time": "3. اختر الوقت"
   }
 }

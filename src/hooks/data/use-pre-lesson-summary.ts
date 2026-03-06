@@ -51,6 +51,7 @@ export function usePreLessonSummary(
         const lastLessonDate = lastLesson?.startTime ?? null;
 
         const daysSince = lastLessonDate
+            // eslint-disable-next-line react-hooks/purity
             ? Math.floor((Date.now() - new Date(lastLessonDate).getTime()) / (1000 * 60 * 60 * 24))
             : 0;
 

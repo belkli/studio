@@ -9,8 +9,13 @@
 
 import type { Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, EventProduction, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, StudentMasterClassAllowance, User } from '@/lib/types';
 import { getDb } from '@/lib/db';
-import { withAuth } from '@/lib/auth-utils';
+import { withAuth, requireRole, verifyAuth } from '@/lib/auth-utils';
 import { z } from 'zod';
+import { FormSubmissionUpsertSchema } from '@/lib/validation/form-submission-upsert';
+import { UserUpsertSchema } from '@/lib/validation/user-upsert';
+import { LessonSlotUpsertSchema } from '@/lib/validation/lesson-slot';
+import { ConservatoriumUpsertSchema } from '@/lib/validation/conservatorium';
+import { EventProductionUpsertSchema } from '@/lib/validation/event-production';
 
 type ComposerSearchResult = {
   id: string;
@@ -266,13 +271,13 @@ const RoomSchema = z.object({
 });
 
 
-const FormSubmissionSchema = z.any();
-const EventProductionSchema = z.any();
+const FormSubmissionSchema = FormSubmissionUpsertSchema;
+const EventProductionSchema = EventProductionUpsertSchema;
 
 
-const UserSchema = z.any();
-const LessonSchema = z.any();
-const ConservatoriumSchema = z.any();
+const UserSchema = UserUpsertSchema;
+const LessonSchema = LessonSlotUpsertSchema;
+const ConservatoriumSchema = ConservatoriumUpsertSchema;
 
 const DeleteAlumnusSchema = z.string();
 
@@ -284,13 +289,34 @@ const ResolveTokenSchema = z.union([
     locale: AppLocaleSchema.optional(),
   }),
 ]);
+const StudentDetailsSchema = z.object({
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  gender: z.string().optional(),
+  grade: z.string().optional(),
+  schoolName: z.string().optional(),
+  schoolSymbol: z.string().optional(),
+  idNumber: z.string().max(20).optional(),
+});
+
+const ParentDetailsSchema = z.object({
+  firstName: z.string().min(1).max(100),
+  lastName: z.string().min(1).max(100),
+  email: z.string().email(),
+  phone: z.string().min(9).max(15),
+  idNumber: z.string().max(20).optional(),
+  city: z.string().optional(),
+  address: z.string().optional(),
+});
+
 const CreateEnrollmentSchema = z.object({
-  token: z.string(),
-  registrationType: z.string(),
-  studentDetails: z.any(),
-  parentDetails: z.any(),
+  token: z.string().min(1),
+  registrationType: z.string().min(1),
+  studentDetails: StudentDetailsSchema,
+  parentDetails: ParentDetailsSchema,
   schoolId: z.string(),
-  instrument: z.string(),
+  instrument: z.string().min(1),
   paymentMethod: z.string().optional(),
 });
 
@@ -670,6 +696,7 @@ export const getTeacherMatches = withAuth(
 export const draftProgressReport = withAuth(
   DraftProgressReportInputSchema,
   async (input: DraftProgressReportInput): Promise<DraftProgressReportOutput> => {
+    await requireRole(['teacher', 'conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await invokeDraftProgressReport(input);
   }
 );
@@ -706,6 +733,7 @@ export const getAiHelpResponse = withAuth(
 export const getTargetedSlotSuggestions = withAuth(
   TargetSlotsInputSchema,
   async (input: TargetSlotsInput): Promise<TargetSlotsOutput> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await getTargetedSlots(input);
   }
 );
@@ -718,6 +746,7 @@ export const getTargetedSlotSuggestions = withAuth(
 export const generateNurtureMessage = withAuth(
   NurtureLeadInputSchema,
   async (input: NurtureLeadInput): Promise<NurtureLeadOutput> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await nurtureLead(input);
   }
 );
@@ -730,6 +759,7 @@ export const generateNurtureMessage = withAuth(
 export const saveAlumnus = withAuth(
   AlumnusSchema,
   async (alumnus: z.infer<typeof AlumnusSchema>) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], alumnus.conservatoriumId);
     const db = await getDb();
     if (alumnus.id) {
       return await db.alumni.update(alumnus.id, alumnus as any);
@@ -746,6 +776,7 @@ export const saveAlumnus = withAuth(
 export const deleteAlumnus = withAuth(
   DeleteAlumnusSchema,
   async (id: string) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     await db.alumni.delete(id);
     return { success: true };
@@ -755,6 +786,7 @@ export const deleteAlumnus = withAuth(
 export const createAnnouncement = withAuth(
   AnnouncementSchema,
   async (payload: z.infer<typeof AnnouncementSchema>): Promise<Announcement> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.announcements.create(payload as any);
   }
@@ -763,6 +795,7 @@ export const createAnnouncement = withAuth(
 export const createMasterClassAction = withAuth(
   MasterClassSchema,
   async (payload: z.infer<typeof MasterClassSchema>): Promise<Masterclass> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.masterClasses.create(payload as any);
   }
@@ -771,6 +804,7 @@ export const createMasterClassAction = withAuth(
 export const publishMasterClassAction = withAuth(
   z.string(),
   async (masterClassId: string): Promise<Masterclass> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     return await db.masterClasses.update(masterClassId, { status: 'published' } as any);
   }
@@ -779,6 +813,7 @@ export const publishMasterClassAction = withAuth(
 export const registerToMasterClassAction = withAuth(
   RegisterMasterClassSchema,
   async (payload: z.infer<typeof RegisterMasterClassSchema>) => {
+    await requireRole(['student', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     const target = await db.masterClasses.findById(payload.masterClassId);
     if (!target) return { success: false as const, reason: 'not_found' as const };
@@ -831,6 +866,7 @@ export const registerToMasterClassAction = withAuth(
 export const createScholarshipApplicationAction = withAuth(
   ScholarshipApplicationSchema,
   async (payload: z.infer<typeof ScholarshipApplicationSchema>) => {
+    await requireRole(['student', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.scholarships.create(payload as any);
   }
@@ -839,6 +875,7 @@ export const createScholarshipApplicationAction = withAuth(
 export const updateScholarshipStatusAction = withAuth(
   ScholarshipStatusUpdateSchema,
   async ({ applicationId, status }: z.infer<typeof ScholarshipStatusUpdateSchema>) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     const existing = await db.scholarships.findById(applicationId);
     if (!existing) {
@@ -857,6 +894,7 @@ export const updateScholarshipStatusAction = withAuth(
 export const markScholarshipPaidAction = withAuth(
   z.string(),
   async (applicationId: string) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     const existing = await db.scholarships.findById(applicationId);
     if (!existing) {
@@ -873,6 +911,7 @@ export const markScholarshipPaidAction = withAuth(
 export const createDonationCauseAction = withAuth(
   DonationCauseSchema,
   async (payload: z.infer<typeof DonationCauseSchema>) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.donationCauses.create(payload as any);
   }
@@ -899,6 +938,7 @@ export const recordDonationAction = withAuth(
 export const createBranchAction = withAuth(
   BranchSchema,
   async (payload: z.infer<typeof BranchSchema>): Promise<Branch> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.branches.create(payload as any);
   }
@@ -907,6 +947,7 @@ export const createBranchAction = withAuth(
 export const updateBranchAction = withAuth(
   BranchSchema.extend({ id: z.string() }),
   async (payload: z.infer<typeof BranchSchema> & { id: string }): Promise<Branch> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     const existing = await db.branches.findById(payload.id);
     if (existing) {
@@ -919,6 +960,7 @@ export const updateBranchAction = withAuth(
 export const createConservatoriumInstrumentAction = withAuth(
   ConservatoriumInstrumentSchema,
   async (payload: z.infer<typeof ConservatoriumInstrumentSchema>): Promise<ConservatoriumInstrument> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.conservatoriumInstruments.create(payload as any);
   }
@@ -927,6 +969,7 @@ export const createConservatoriumInstrumentAction = withAuth(
 export const updateConservatoriumInstrumentAction = withAuth(
   ConservatoriumInstrumentSchema.extend({ id: z.string() }),
   async (payload: z.infer<typeof ConservatoriumInstrumentSchema> & { id: string }): Promise<ConservatoriumInstrument> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     const existing = await db.conservatoriumInstruments.findById(payload.id);
     if (existing) {
@@ -939,6 +982,7 @@ export const updateConservatoriumInstrumentAction = withAuth(
 export const deleteConservatoriumInstrumentAction = withAuth(
   z.string(),
   async (id: string) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     await db.conservatoriumInstruments.delete(id);
     return { success: true as const };
@@ -948,6 +992,7 @@ export const deleteConservatoriumInstrumentAction = withAuth(
 export const createLessonPackageAction = withAuth(
   LessonPackageSchema,
   async (payload: z.infer<typeof LessonPackageSchema>): Promise<LessonPackage> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.lessonPackages.create(payload as any);
   }
@@ -956,6 +1001,7 @@ export const createLessonPackageAction = withAuth(
 export const updateLessonPackageAction = withAuth(
   LessonPackageSchema.extend({ id: z.string() }),
   async (payload: z.infer<typeof LessonPackageSchema> & { id: string }): Promise<LessonPackage> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     const existing = await db.lessonPackages.findById(payload.id);
     if (existing) {
@@ -968,6 +1014,7 @@ export const updateLessonPackageAction = withAuth(
 export const deleteLessonPackageAction = withAuth(
   z.string(),
   async (id: string) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     await db.lessonPackages.delete(id);
     return { success: true as const };
@@ -977,6 +1024,7 @@ export const deleteLessonPackageAction = withAuth(
 export const createRoomAction = withAuth(
   RoomSchema,
   async (payload: z.infer<typeof RoomSchema>): Promise<Room> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.rooms.create(payload as any);
   }
@@ -985,6 +1033,7 @@ export const createRoomAction = withAuth(
 export const updateRoomAction = withAuth(
   RoomSchema.extend({ id: z.string() }),
   async (payload: z.infer<typeof RoomSchema> & { id: string }): Promise<Room> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     const existing = await db.rooms.findById(payload.id);
     if (existing) {
@@ -997,6 +1046,7 @@ export const updateRoomAction = withAuth(
 export const deleteRoomAction = withAuth(
   z.string(),
   async (id: string) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     await db.rooms.delete(id);
     return { success: true as const };
@@ -1007,6 +1057,7 @@ export const deleteRoomAction = withAuth(
 export const upsertFormSubmissionAction = withAuth(
   FormSubmissionSchema,
   async (payload: FormSubmission): Promise<FormSubmission> => {
+    await requireRole(['student', 'teacher', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
       return await db.forms.create(payload as any);
@@ -1021,7 +1072,8 @@ export const upsertFormSubmissionAction = withAuth(
 
 export const createEventAction = withAuth(
   EventProductionSchema,
-  async (payload: EventProduction): Promise<EventProduction> => {
+  async (payload) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     return await db.events.create(payload as any);
   }
@@ -1029,7 +1081,8 @@ export const createEventAction = withAuth(
 
 export const updateEventAction = withAuth(
   EventProductionSchema,
-  async (payload: EventProduction): Promise<EventProduction> => {
+  async (payload) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
       return await db.events.create(payload as any);
@@ -1045,7 +1098,8 @@ export const updateEventAction = withAuth(
 
 export const upsertUserAction = withAuth(
   UserSchema,
-  async (payload: User): Promise<User> => {
+  async (payload) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
       return await db.users.create(payload as any);
@@ -1061,6 +1115,7 @@ export const upsertUserAction = withAuth(
 export const upsertLessonAction = withAuth(
   LessonSchema,
   async (payload: LessonSlot): Promise<LessonSlot> => {
+    await requireRole(['teacher', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
       return await db.lessons.create(payload as any);
@@ -1076,6 +1131,7 @@ export const upsertLessonAction = withAuth(
 export const upsertConservatoriumAction = withAuth(
   ConservatoriumSchema,
   async (payload: Conservatorium): Promise<Conservatorium> => {
+    await requireRole(['site_admin', 'superadmin']);
     const db = await getDb();
     if (!payload?.id) {
       return await db.conservatoriums.create(payload as any);
@@ -1192,6 +1248,7 @@ export const getPlayingSchoolPaymentUrl = withAuth(
 export const acceptExcellenceTrackOffer = withAuth(
   ExcellenceTrackResponseSchema,
   async (data: { studentId: string }) => {
+    await requireRole(['student', 'parent']);
     console.log('Accepting excellence track for student:', data.studentId);
 
     // Simulate API delay
@@ -1210,6 +1267,7 @@ export const acceptExcellenceTrackOffer = withAuth(
 export const declineExcellenceTrackOffer = withAuth(
   ExcellenceTrackResponseSchema,
   async (data: { studentId: string; reason?: string }) => {
+    await requireRole(['student', 'parent']);
     console.log('Declining excellence track for student:', data.studentId, 'Reason:', data.reason);
 
     // Simulate API delay
@@ -1228,6 +1286,7 @@ export const declineExcellenceTrackOffer = withAuth(
 export const inviteSchoolCoordinator = withAuth(
   InviteCoordinatorSchema,
   async (data: { partnershipId: string; email: string }) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     console.log('Inviting coordinator:', data.email, 'for partnership:', data.partnershipId);
 
     // Simulate API delay
@@ -1275,7 +1334,30 @@ export const createDonationCheckout = withAuth(
 export const generateAiEventPoster = withAuth(
   GenerateEventPosterSchema,
   async (input: z.infer<typeof GenerateEventPosterSchema>): Promise<GenerateEventPosterOutput> => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await generateEventPoster(input as GenerateEventPosterInput);
+  }
+);
+
+// ── User Language Preference ──────────────────────────────────
+
+const UpdateLanguagePreferenceSchema = z.object({
+  locale: z.enum(['he', 'en', 'ar', 'ru']),
+});
+
+/**
+ * Updates the current user's preferredLanguage in their Firestore profile.
+ * Any authenticated user can update their own preference.
+ */
+export const updateUserLanguagePreference = withAuth(
+  UpdateLanguagePreferenceSchema,
+  async (input: z.infer<typeof UpdateLanguagePreferenceSchema>): Promise<{ success: boolean }> => {
+    const claims = await verifyAuth();
+    // Skip DB update for synthetic dev session (no real user record)
+    if (claims.uid === 'dev-user') return { success: true };
+    const db = await getDb();
+    await db.users.update(claims.uid, { preferredLanguage: input.locale } as any);
+    return { success: true };
   }
 );
 

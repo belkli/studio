@@ -7,9 +7,7 @@ import { Calendar, Clock, CheckCircle2, Guitar, LocateFixed, Music, Users } from
 import { useLocale, useTranslations } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
-import { useDateLocale } from '@/hooks/use-date-locale';
 import { useToast } from '@/hooks/use-toast';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { collectInstrumentTokensFromConservatoriumInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 
 import { Button } from '@/components/ui/button';
@@ -46,10 +44,7 @@ export function OpenDayLandingPage() {
   const t = useTranslations('OpenDay');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
-  const dateLocale = useDateLocale();
   const { toast } = useToast();
-
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'open-day-hero');
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
@@ -65,10 +60,6 @@ export function OpenDayLandingPage() {
 
   const activeEvents = useMemo(() => openDayEvents.filter((item) => item.isActive), [openDayEvents]);
   const activeEvent = useMemo(() => activeEvents.find((item) => item.id === selectedEventId), [activeEvents, selectedEventId]);
-  const nextEvent = useMemo(
-    () => (activeEvents.length > 0 ? [...activeEvents].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] : null),
-    [activeEvents]
-  );
 
   const cityOptions = useMemo(() => {
     const set = new Set<string>();
@@ -206,29 +197,89 @@ export function OpenDayLandingPage() {
 
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'}>
-      <section className="relative flex h-[60vh] w-full items-center justify-center bg-slate-800 text-center text-white">
-        {heroImage && (
-          <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            fill
-            className="z-0 object-cover brightness-50"
-            data-ai-hint={heroImage.imageHint}
-            priority
-            sizes="100vw"
-          />
-        )}
-        <div className="relative z-10 space-y-4 p-4">
-          <h1 className="text-4xl font-bold tracking-tighter md:text-6xl">{t('heroTitle')}</h1>
-          <p className="mx-auto max-w-2xl text-lg text-neutral-200 md:text-xl">{t('heroSubtitle')}</p>
-          {nextEvent && (
-            <p className="inline-block rounded-full bg-primary/20 px-4 py-1 text-xl font-semibold backdrop-blur-sm">
-              {t('startingFrom', { date: format(new Date(nextEvent.date), 'EEEE, dd MMMM yyyy', { locale: dateLocale }) })}
-            </p>
-          )}
-          <div className="pt-4">
-            <Button size="lg" asChild>
-              <a href="#register">{t('registerNow')}</a>
+      {/* Hero */}
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden text-white">
+        <Image
+          src="https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?q=80&w=2200&auto=format&fit=crop"
+          alt="Children discovering music at an open day"
+          fill
+          style={{ objectFit: 'cover' }}
+          className="z-0"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/55 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/80 via-indigo-900/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-teal-900/20 z-10" />
+
+        <style>{`
+          @keyframes openDayUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+          }
+          .od-hero-1 { animation: openDayUp 0.8s ease-out 0.1s both; }
+          .od-hero-2 { animation: openDayUp 0.8s ease-out 0.3s both; }
+          .od-hero-3 { animation: openDayUp 0.8s ease-out 0.5s both; }
+          .od-hero-cta { animation: openDayUp 0.8s ease-out 0.7s both; }
+          .sparkle-1 { animation: sparkle 2s ease-in-out infinite; animation-delay: 0s; }
+          .sparkle-2 { animation: sparkle 2s ease-in-out infinite; animation-delay: 0.7s; }
+          .sparkle-3 { animation: sparkle 2s ease-in-out infinite; animation-delay: 1.4s; }
+          @keyframes cardSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .feature-chip { animation: cardSlideUp 0.5s ease-out forwards; opacity: 0; }
+          .feature-chip:nth-child(1) { animation-delay: 0.1s; }
+          .feature-chip:nth-child(2) { animation-delay: 0.2s; }
+          .feature-chip:nth-child(3) { animation-delay: 0.3s; }
+          .feature-chip:nth-child(4) { animation-delay: 0.4s; }
+          .event-card-enter { animation: cardSlideUp 0.5s ease-out both; }
+          .event-card-enter:nth-child(1) { animation-delay: 0.05s; }
+          .event-card-enter:nth-child(2) { animation-delay: 0.15s; }
+          .event-card-enter:nth-child(3) { animation-delay: 0.25s; }
+          .event-card-enter:nth-child(4) { animation-delay: 0.35s; }
+        `}</style>
+
+        {/* Sparkle decorations */}
+        <div className="absolute top-20 start-16 text-yellow-300 text-3xl sparkle-1 z-20 select-none">✦</div>
+        <div className="absolute top-32 end-24 text-teal-300 text-2xl sparkle-2 z-20 select-none">✦</div>
+        <div className="absolute top-48 start-1/3 text-purple-300 text-xl sparkle-3 z-20 select-none">✦</div>
+
+        <div className="relative z-20 px-4 py-24 max-w-5xl mx-auto text-center space-y-6">
+          {/* Badge */}
+          <div className="od-hero-1 inline-flex items-center gap-2 rounded-full border border-teal-300/40 bg-teal-400/10 px-5 py-2 text-sm text-teal-200 backdrop-blur-sm">
+            <Calendar className="h-4 w-4" />
+            {t('openDayBadge', { fallback: 'ימים פתוחים ברחבי הארץ' })}
+          </div>
+
+          <h1 className="od-hero-2 text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
+            {t('heroTitle')}
+          </h1>
+
+          <p className="od-hero-3 max-w-2xl mx-auto text-lg md:text-xl text-white/85 leading-relaxed">
+            {t('heroSubtitle')}
+          </p>
+
+          {/* Feature chips */}
+          <div className="od-hero-cta flex flex-wrap justify-center gap-3 pt-2">
+            {[
+              { icon: '🎵', label: t('featureChip1', { fallback: 'נסו כלי נגינה' }) },
+              { icon: '👩‍🏫', label: t('featureChip2', { fallback: 'הכירו מורים' }) },
+              { icon: '🎓', label: t('featureChip3', { fallback: 'גלו תוכניות לימוד' }) },
+              { icon: '🆓', label: t('featureChip4', { fallback: 'כניסה חופשית' }) },
+            ].map(({ icon, label }) => (
+              <span key={label} className="feature-chip inline-flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-2 text-sm backdrop-blur-sm border border-white/20">
+                <span>{icon}</span> {label}
+              </span>
+            ))}
+          </div>
+
+          <div className="od-hero-cta flex flex-wrap justify-center gap-4 pt-2">
+            <Button size="lg" className="bg-teal-500 hover:bg-teal-400 text-white font-bold text-lg px-8 py-6 shadow-lg shadow-teal-500/30 transition-all hover:scale-105 rounded-full" asChild>
+              <a href="#events">{t('registerBtn')}</a>
             </Button>
           </div>
         </div>
@@ -247,7 +298,32 @@ export function OpenDayLandingPage() {
         </div>
       </section>
 
-      <section className="py-12 md:py-24" id="register">
+      {/* How open day works */}
+      <section className="bg-gradient-to-br from-indigo-50/50 to-teal-50/30 py-14">
+        <div className="mx-auto max-w-5xl px-4">
+          <h2 className="text-2xl font-bold text-center mb-8">{t('howItWorksTitle', { fallback: 'מה קורה ביום פתוח?' })}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { step: '01', icon: <Guitar className="h-6 w-6 text-teal-600" />, title: t('step1Title', { fallback: 'נסו כלים' }), desc: t('step1Desc', { fallback: 'ניסיון חופשי עם מגוון כלי נגינה.' }) },
+              { step: '02', icon: <Users className="h-6 w-6 text-indigo-600" />, title: t('step2Title', { fallback: 'הכירו מורים' }), desc: t('step2Desc', { fallback: 'שיחה אישית עם מורים ומנהל הקונסרבטוריון.' }) },
+              { step: '03', icon: <Music className="h-6 w-6 text-purple-600" />, title: t('step3Title', { fallback: 'הרשמו לשיעור ניסיון' }), desc: t('step3Desc', { fallback: 'קבלת שיעור ניסיון חינמי ממורה מקצועי.' }) },
+            ].map(({ step, icon, title, desc }) => (
+              <div key={step} className="flex gap-4 rounded-2xl border bg-white/70 p-6 shadow-sm backdrop-blur-sm">
+                <div>
+                  <div className="text-3xl font-black text-muted-foreground/20 leading-none mb-2">{step}</div>
+                  <div className="rounded-xl bg-muted/60 p-2.5 w-fit">{icon}</div>
+                </div>
+                <div>
+                  <h3 className="font-bold mb-1">{title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-24" id="events">
         <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
           <div className="mb-8 space-y-4 text-center">
             <h2 className="text-3xl font-bold md:text-4xl">{t('formTitle')}</h2>
@@ -296,7 +372,7 @@ export function OpenDayLandingPage() {
                 {filteredEvents.map((event) => {
                   const cons = conservatoriums.find((item) => item.id === event.conservatoriumId);
                   return (
-                    <Card key={event.id} className="flex cursor-pointer flex-col transition-colors hover:border-primary" onClick={() => setSelectedEventId(event.id)}>
+                    <Card key={event.id} className="event-card-enter flex cursor-pointer flex-col transition-colors hover:border-primary" onClick={() => setSelectedEventId(event.id)}>
                       <CardHeader>
                         <CardTitle className="text-lg">{event.name}</CardTitle>
                         <CardDescription>{cons?.name}</CardDescription>

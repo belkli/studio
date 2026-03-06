@@ -20,11 +20,14 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { draftProgressReport } from '@/app/actions';
 import { AssignRepertoireDialog } from '@/components/dashboard/harmonia/assign-repertoire-dialog';
 import { MultimediaFeedbackCard } from '@/components/dashboard/harmonia/multimedia-feedback-card';
+import { useTranslations, useLocale } from 'next-intl';
 
 
 export default function TeacherStudentProfilePage() {
     const params = useParams();
     const studentId = params.id as string;
+    const t = useTranslations('TeacherStudentProfile');
+    const locale = useLocale();
     const {
         user: teacher,
         users,
@@ -42,14 +45,13 @@ export default function TeacherStudentProfilePage() {
     const router = useRouter();
     const { toast } = useToast();
 
+    const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
 
-    const [practiceGoal, setPracticeGoal] = useState(120);
+    const [practiceGoal, setPracticeGoal] = useState(() => student?.weeklyPracticeGoal ?? 120);
     const [reportDraft, setReportDraft] = useState<string | null>(null);
     const [isDrafting, setIsDrafting] = useState(false);
     const [newNote, setNewNote] = useState('');
     const [isAssignRepertoireOpen, setIsAssignRepertoireOpen] = useState(false);
-
-    const student = useMemo(() => users.find(u => u.id === studentId), [users, studentId]);
 
     useEffect(() => {
         if (!teacher) return;
@@ -80,6 +82,7 @@ export default function TeacherStudentProfilePage() {
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [progressReports, student]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -87,7 +90,7 @@ export default function TeacherStudentProfilePage() {
             d.setDate(today.getDate() - i);
             return {
                 date: d.toISOString().split('T')[0],
-                name: d.toLocaleDateString('he-IL', { weekday: 'short' }),
+                name: d.toLocaleDateString(locale, { weekday: 'short' }),
                 minutes: 0,
             };
         }).reverse();
@@ -141,12 +144,6 @@ export default function TeacherStudentProfilePage() {
         return { streak: currentStreak, totalMinutesThisMonth, piecesLearned };
     }, [studentLogs, studentRepertoire]);
 
-    useEffect(() => {
-        if (student?.weeklyPracticeGoal) {
-            setPracticeGoal(student.weeklyPracticeGoal);
-        }
-    }, [student]);
-
     if (!teacher || !student) {
         return null; // Or a loading skeleton
     }
@@ -159,14 +156,14 @@ export default function TeacherStudentProfilePage() {
             summary: newNote,
         });
         setNewNote('');
-        toast({ title: "הערה נוספה" });
+        toast({ title: t('noteAdded') });
     };
 
     const handleSetPracticeGoal = () => {
         updateUserPracticeGoal(student.id, practiceGoal);
         toast({
-            title: "יעד אימון עודכן",
-            description: `יעד האימון השבועי של ${student.name} עודכן ל-${practiceGoal} דקות.`,
+            title: t('goalUpdated'),
+            description: t('goalUpdatedDesc', { name: student.name, minutes: practiceGoal }),
         });
     };
 
@@ -177,8 +174,8 @@ export default function TeacherStudentProfilePage() {
         const input = {
             studentName: student.name,
             teacherName: teacher.name,
-            instrument: student.instruments?.[0]?.instrument || 'כלי נגינה',
-            period: 'סמסטר אביב 2024',
+            instrument: student.instruments?.[0]?.instrument || t('instrument'),
+            period: t('semesterSpring2024'),
             practiceLogs: studentLogs.map(l => ({
                 date: l.date.split('T')[0],
                 durationMinutes: l.durationMinutes,
@@ -201,13 +198,13 @@ export default function TeacherStudentProfilePage() {
         addProgressReport({
             studentId: student.id,
             teacherId: teacher.id,
-            period: 'סמסטר אביב 2024',
+            period: t('semesterSpring2024'),
             reportText: reportDraft,
         });
 
         toast({
-            title: 'דוח התקדמות נשלח',
-            description: `הדוח עבור ${student.name} נשמר ונשלח להורים.`
+            title: t('reportSent'),
+            description: t('reportSentDesc', { name: student.name }),
         });
         setReportDraft(null);
     };
@@ -219,7 +216,7 @@ export default function TeacherStudentProfilePage() {
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/teacher">
                         <ArrowLeft className="ms-2 h-4 w-4" />
-                        חזרה לתלמידים
+                        {t('backToStudents')}
                     </Link>
                 </Button>
             </div>
@@ -231,7 +228,7 @@ export default function TeacherStudentProfilePage() {
                     </Avatar>
                     <div>
                         <CardTitle className="text-2xl">{student.name}</CardTitle>
-                        <CardDescription>{student.instruments?.map(i => i.instrument).join(', ')} • כיתה {student.grade}</CardDescription>
+                        <CardDescription>{student.instruments?.map(i => i.instrument).join(', ')} {t('gradeLabel', { grade: student.grade ?? '' })}</CardDescription>
                     </div>
                 </CardHeader>
             </Card>
@@ -239,32 +236,32 @@ export default function TeacherStudentProfilePage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">רצף אימונים</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('practiceStreak')}</CardTitle>
                         <Flame className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">🔥 {streak} ימים</div>
-                        <p className="text-xs text-muted-foreground">ימים רצופים של אימון מתועד</p>
+                        <div className="text-2xl font-bold">{t('streakDays', { count: streak })}</div>
+                        <p className="text-xs text-muted-foreground">{t('streakDesc')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">זמן אימון (החודש)</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('practiceTimeMonth')}</CardTitle>
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{(totalMinutesThisMonth / 60).toFixed(1)} שעות</div>
-                        <p className="text-xs text-muted-foreground">{totalMinutesThisMonth} דקות בסך הכל</p>
+                        <div className="text-2xl font-bold">{t('hours', { count: (totalMinutesThisMonth / 60).toFixed(1) })}</div>
+                        <p className="text-xs text-muted-foreground">{t('totalMinutes', { count: totalMinutesThisMonth })}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">רפרטואר שהושלם</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('completedRepertoire')}</CardTitle>
                         <Medal className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{piecesLearned} יצירות</div>
-                        <p className="text-xs text-muted-foreground">בסך הכל מתחילת השנה</p>
+                        <div className="text-2xl font-bold">{t('pieces', { count: piecesLearned })}</div>
+                        <p className="text-xs text-muted-foreground">{t('sinceYearStart')}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -272,18 +269,18 @@ export default function TeacherStudentProfilePage() {
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2"><Music /> רפרטואר</CardTitle>
+                        <CardTitle className="flex items-center gap-2"><Music /> {t('repertoire')}</CardTitle>
                         <Button variant="outline" size="sm" onClick={() => setIsAssignRepertoireOpen(true)}>
                             <PlusCircle className="ms-2 h-4 w-4" />
-                            הקצה יצירה חדשה
+                            {t('assignNewPiece')}
                         </Button>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>יצירה</TableHead>
-                                    <TableHead className="w-[150px]">סטטוס</TableHead>
+                                    <TableHead>{t('piece')}</TableHead>
+                                    <TableHead className="w-[150px]">{t('statusCol')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -299,14 +296,14 @@ export default function TeacherStudentProfilePage() {
                                                 <Select
                                                     value={rep.status}
                                                     onValueChange={(newStatus: RepertoireStatus) => updateRepertoireStatus(rep.id, newStatus)}
-                                                    dir="rtl"
+                                                    dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
                                                 >
                                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="LEARNING">למידה</SelectItem>
-                                                        <SelectItem value="POLISHING">ליטוש</SelectItem>
-                                                        <SelectItem value="PERFORMANCE_READY">מוכן להופעה</SelectItem>
-                                                        <SelectItem value="COMPLETED">הושלם</SelectItem>
+                                                        <SelectItem value="LEARNING">{t('statusLearning')}</SelectItem>
+                                                        <SelectItem value="POLISHING">{t('statusPolishing')}</SelectItem>
+                                                        <SelectItem value="PERFORMANCE_READY">{t('statusPerformanceReady')}</SelectItem>
+                                                        <SelectItem value="COMPLETED">{t('statusCompleted')}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </TableCell>
@@ -319,9 +316,9 @@ export default function TeacherStudentProfilePage() {
                 </Card>
                 <div className="space-y-6">
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2"><Target /> יעד אימון שבועי</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><Target /> {t('weeklyPracticeGoal')}</CardTitle></CardHeader>
                         <CardContent className="space-y-2">
-                            <Label htmlFor="practice-goal">דקות אימון בשבוע</Label>
+                            <Label htmlFor="practice-goal">{t('minutesPerWeek')}</Label>
                             <div className="flex gap-2">
                                 <Input
                                     id="practice-goal"
@@ -330,22 +327,22 @@ export default function TeacherStudentProfilePage() {
                                     onChange={(e) => setPracticeGoal(Number(e.target.value))}
                                     step={15}
                                 />
-                                <Button onClick={handleSetPracticeGoal}>הגדר</Button>
+                                <Button onClick={handleSetPracticeGoal}>{t('setGoal')}</Button>
                             </div>
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2"><Activity /> פעילות אימונים (7 ימים אחרונים)</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2"><Activity /> {t('practiceActivity')}</CardTitle></CardHeader>
                         <CardContent className="h-[250px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={weeklyPracticeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                     <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${''}${value} ד`} />
+                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => t('minutesShort', { value })} />
                                     <Tooltip
                                         cursor={{ fill: 'hsl(var(--muted))' }}
-                                        contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
-                                        formatter={(value: any) => [`${value} דקות`, 'זמן אימון']}
+                                        contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}
+                                        formatter={(value: any) => [t('minutesShort', { value }), t('practiceTime')]}
                                     />
                                     <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                                 </BarChart>
@@ -358,80 +355,80 @@ export default function TeacherStudentProfilePage() {
             <MultimediaFeedbackCard student={student} />
 
             <Card>
-                <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> הערות שיעור</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="flex items-center gap-2"><Pencil /> {t('lessonNotes')}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+                    <div className="space-y-4 max-h-64 overflow-y-auto pe-2">
                         {studentNotes.length > 0 ? studentNotes.map(note => (
                             <div key={note.id} className="border-b pb-2">
                                 <p className="text-sm">{note.summary}</p>
-                                <p className="text-xs text-muted-foreground">{new Date(note.createdAt).toLocaleString('he-IL')}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(note.createdAt).toLocaleString(locale)}</p>
                             </div>
                         )) : (
-                            <p className="text-center text-muted-foreground py-4">אין עדיין הערות לשיעור.</p>
+                            <p className="text-center text-muted-foreground py-4">{t('noNotesYet')}</p>
                         )}
                     </div>
                     <div className="flex gap-2">
-                        <Textarea placeholder="כתוב הערה חדשה..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
-                        <Button onClick={handleAddNote}>הוסף</Button>
+                        <Textarea placeholder={t('writeNewNote')} value={newNote} onChange={(e) => setNewNote(e.target.value)} />
+                        <Button onClick={handleAddNote}>{t('addNote')}</Button>
                     </div>
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><FileSignature /> דוח התקדמות סמסטריאלי</CardTitle>
-                    <CardDescription>צור טיוטה של דוח התקדמות עבור התלמיד/ה באמצעות AI, ולאחר מכן ערוך ושלח.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><FileSignature /> {t('semesterReport')}</CardTitle>
+                    <CardDescription>{t('semesterReportDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {!reportDraft && (
                         <div className="text-center">
                             <Button onClick={handleGenerateReport} disabled={isDrafting}>
-                                {isDrafting ? <><Loader2 className="ms-2 h-4 w-4 animate-spin" /> יוצר טיוטה...</> : 'צור טיוטת דוח בעזרת AI'}
+                                {isDrafting ? <><Loader2 className="ms-2 h-4 w-4 animate-spin" /> {t('generatingDraft')}</> : t('generateDraft')}
                             </Button>
                         </div>
                     )}
                     {isDrafting && !reportDraft && (
                         <div className="flex justify-center items-center p-8 text-muted-foreground">
                             <Loader2 className="ms-2 h-6 w-6 animate-spin" />
-                            <span>מנתח נתונים וכותב את הדוח...</span>
+                            <span>{t('analyzingData')}</span>
                         </div>
                     )}
                     {reportDraft && (
                         <div>
-                            <Label htmlFor="report-draft">טיוטת דוח (ניתן לערוך)</Label>
+                            <Label htmlFor="report-draft">{t('reportDraftLabel')}</Label>
                             <Textarea id="report-draft" rows={15} value={reportDraft} onChange={(e) => setReportDraft(e.target.value)} className="mt-2 bg-background" />
                         </div>
                     )}
                 </CardContent>
                 {reportDraft && (
                     <CardFooter className="justify-end gap-2">
-                        <Button variant="ghost" onClick={() => setReportDraft(null)}>מחק טיוטה</Button>
-                        <Button onClick={handleSendReport}>שלח דוח להורים</Button>
+                        <Button variant="ghost" onClick={() => setReportDraft(null)}>{t('deleteDraft')}</Button>
+                        <Button onClick={handleSendReport}>{t('sendReport')}</Button>
                     </CardFooter>
                 )}
             </Card>
 
             {studentReports.length > 0 && (
                 <Card>
-                    <CardHeader><CardTitle className="flex items-center gap-2"><FileText /> דוחות שמורים</CardTitle></CardHeader>
+                    <CardHeader><CardTitle className="flex items-center gap-2"><FileText /> {t('savedReports')}</CardTitle></CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>תקופה</TableHead>
-                                    <TableHead>תאריך שליחה</TableHead>
-                                    <TableHead className="text-left">פעולות</TableHead>
+                                    <TableHead>{t('period')}</TableHead>
+                                    <TableHead>{t('dateSent')}</TableHead>
+                                    <TableHead className="text-start">{t('actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {studentReports.map(report => (
                                     <TableRow key={report.id}>
                                         <TableCell>{report.period}</TableCell>
-                                        <TableCell>{new Date(report.createdAt).toLocaleDateString('he-IL')}</TableCell>
-                                        <TableCell className="text-left">
+                                        <TableCell>{new Date(report.createdAt).toLocaleDateString(locale)}</TableCell>
+                                        <TableCell className="text-start">
                                             <Button variant="outline" size="sm" disabled>
                                                 <Download className="ms-2 h-3 w-3" />
-                                                הורד
+                                                {t('download')}
                                             </Button>
                                         </TableCell>
                                     </TableRow>

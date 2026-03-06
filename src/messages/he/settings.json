@@ -86,11 +86,11 @@
           "forceRetranslate": "כפה תרגום מחדש",
           "tabs": {
             "basic": "מידע בסיסי",
-            "contact": "במידת הצורך, ניצור איתך קשר להשלמת פרטים.",
+            "contact": "פרטי יצירת קשר",
             "location": "מיקום",
-            "team": "קְבוּצָה",
-            "social": "חֶברָתִי",
-            "media": "כְּלֵי תִקְשׁוֹרֶת"
+            "team": "צוות",
+            "social": "רשתות חברתיות",
+            "media": "מדיה"
           },
           "basic": {
             "title": "מידע בסיסי",
@@ -99,7 +99,7 @@
             "name": "שם הקונסרבטוריון",
             "about": "אודותינו (תיאור)",
             "foundedYear": "שנת ייסוד",
-            "foundedYearPlaceholder": "לְמָשָׁל 1995"
+            "foundedYearPlaceholder": "לדוגמה 1995"
           },
           "toasts": {
             "contentChangedTitle": "התוכן השתנה",
@@ -203,6 +203,21 @@
       "conflictDesc": "דוא\"ל זה כבר רשום עם: {methods}.",
       "emailMismatchTitle": "אי התאמה באימייל",
       "emailMismatchDesc": "דוא\"ל הספק חייב להתאים לאימייל החשבון הנוכחי שלך."
+    },
+    "languagePreference": {
+      "title": "שפת ממשק",
+      "description": "בחר את השפה המועדפת עליך להצגת הממשק.",
+      "label": "שפה מועדפת",
+      "save": "שמור שפה",
+      "success": "השפה עודכנה",
+      "successDesc": "העדפת השפה שלך עודכנה בהצלחה.",
+      "error": "עדכון השפה נכשל",
+      "languages": {
+        "he": "עברית",
+        "en": "English",
+        "ar": "العربية",
+        "ru": "Русский"
+      }
     }
   },
   "CancellationPolicy": {

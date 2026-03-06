@@ -74,7 +74,7 @@ export function ParentPaymentPanel() {
                                 {isProcessing ? t('processing') : t('proceedToPayment')}
                             </Button>
                             <Button variant="outline" className="w-full text-blue-700 border-blue-200 hover:bg-blue-50" onClick={handleSetupRecurring} disabled={isProcessing}>
-                                <ShieldCheck className="w-4 h-4 mr-2" />
+                                <ShieldCheck className="w-4 h-4 me-2" />
                                 {t('setupAltPayment')}
                             </Button>
                         </div>
@@ -106,7 +106,7 @@ export function ParentPaymentPanel() {
                                             <TableHead>{t('requestNo')}</TableHead>
                                             <TableHead>{t('month')}</TableHead>
                                             <TableHead>{t('details')}</TableHead>
-                                            <TableHead className="text-right">{t('amount')}</TableHead>
+                                            <TableHead className="text-end">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -119,8 +119,8 @@ export function ParentPaymentPanel() {
                                                     <TableCell className="font-medium text-xs text-muted-foreground">{inv.id}</TableCell>
                                                     <TableCell>{inv.month}</TableCell>
                                                     <TableCell className="text-sm text-gray-600">{inv.note || t('conservatoryTuition')}</TableCell>
-                                                    <TableCell className="text-right font-bold text-red-600">₪{inv.amount}</TableCell>
-                                                    <TableCell className="text-left">
+                                                    <TableCell className="text-end font-bold text-red-600">₪{inv.amount}</TableCell>
+                                                    <TableCell className="text-start">
                                                         <Button size="sm" onClick={handlePayNow} className="px-3 rounded-full h-7 text-xs">{t('payBtn')}</Button>
                                                     </TableCell>
                                                 </TableRow>
@@ -141,7 +141,7 @@ export function ParentPaymentPanel() {
                                             <TableHead>{t('receiptNo')}</TableHead>
                                             <TableHead>{t('month')}</TableHead>
                                             <TableHead>{t('status')}</TableHead>
-                                            <TableHead className="text-right">{t('amount')}</TableHead>
+                                            <TableHead className="text-end">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -152,13 +152,13 @@ export function ParentPaymentPanel() {
                                                 <TableCell>{inv.month}</TableCell>
                                                 <TableCell>
                                                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                                        <CheckCircle2 className="w-3 h-3 mr-1" /> {t('paidStatus')}
+                                                        <CheckCircle2 className="w-3 h-3 me-1" /> {t('paidStatus')}
                                                     </Badge>
                                                 </TableCell>
-                                                <TableCell className="text-right font-medium">₪{inv.amount}</TableCell>
-                                                <TableCell className="text-left">
+                                                <TableCell className="text-end font-medium">₪{inv.amount}</TableCell>
+                                                <TableCell className="text-start">
                                                     <Button variant="ghost" size="sm" className="h-7 px-2 text-blue-600 whitespace-nowrap">
-                                                        {t('downloadReceipt')} <ExternalLink className="w-3 h-3 ml-1" />
+                                                        {t('downloadReceipt')} <ExternalLink className="w-3 h-3 ms-1" />
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>

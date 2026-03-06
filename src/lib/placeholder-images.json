@@ -37,6 +37,12 @@
       "imageHint": "string quartet event"
     },
     {
+      "id": "musicians-hero-vibrant",
+      "description": "A dramatic wide-shot of an elegant string quartet performing at a candlelit event, warm golden lighting.",
+      "imageUrl": "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?q=80&w=2200&auto=format&fit=crop",
+      "imageHint": "string quartet candlelit"
+    },
+    {
       "id": "musician-miriam",
       "description": "A professional portrait of a female pianist.",
       "imageUrl": "https://images.unsplash.com/photo-1594125528292-941130194364?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMGZlbWFsZSUyMHBpYW5pc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -56,21 +62,21 @@
     },
     {
       "id": "event-wedding",
-      "description": "A musician playing at a beautiful wedding ceremony.",
-      "imageUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-      "imageHint": "wedding music"
+      "description": "A violinist playing at a beautiful outdoor wedding ceremony with flowers.",
+      "imageUrl": "https://images.unsplash.com/photo-1529543544282-ea669407fca3?q=80&w=800&auto=format&fit=crop",
+      "imageHint": "violinist wedding ceremony"
     },
     {
       "id": "event-corporate",
-      "description": "A jazz trio performing at an upscale corporate event.",
-      "imageUrl": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-      "imageHint": "jazz trio"
+      "description": "A jazz pianist performing at an elegant corporate gala event.",
+      "imageUrl": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop",
+      "imageHint": "jazz piano corporate event"
     },
     {
       "id": "event-private",
-      "description": "Musicians performing at an intimate private party or event.",
-      "imageUrl": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtdXNpYyUyMGV2ZW50fGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "music event"
+      "description": "A string duo serenading guests at an intimate private garden party.",
+      "imageUrl": "https://images.unsplash.com/photo-1507838153414-b4b713384a76?q=80&w=800&auto=format&fit=crop",
+      "imageHint": "string duo garden party"
     },
     {
       "id": "open-day-hero",
@@ -95,6 +101,24 @@
       "description": "Dynamic shot of a musician playing an instrument, with a sense of urgency and opportunity.",
       "imageUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxndWl0YXJpc3QlMjBvbiUyMHN0YWdlfGVufDB8fHx8MTc3MTg2Mzk2MXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "musician stage"
+    },
+    {
+      "id": "open-day-hero-vibrant",
+      "description": "Children excitedly exploring musical instruments at an open day event, colorful and joyful.",
+      "imageUrl": "https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?q=80&w=2200&auto=format&fit=crop",
+      "imageHint": "children music open day"
+    },
+    {
+      "id": "open-day-instruments",
+      "description": "A colorful array of musical instruments laid out for children to try.",
+      "imageUrl": "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?q=80&w=1200&auto=format&fit=crop",
+      "imageHint": "musical instruments display"
+    },
+    {
+      "id": "open-day-teacher-child",
+      "description": "A warm moment of a teacher showing a child how to play guitar.",
+      "imageUrl": "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?q=80&w=1200&auto=format&fit=crop",
+      "imageHint": "teacher child guitar lesson"
     }
   ]
 }

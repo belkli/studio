@@ -18,6 +18,8 @@ import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Separator } from '@/components/ui/separator';
+import { SignatureCapture, type SignatureCaptureResult } from '@/components/forms/signature-capture';
+import { submitSignatureAction } from '@/app/actions/signatures';
 import { RecitalForm } from '@/components/forms/recital-form';
 import { KenesForm } from '@/components/forms/kenes-form';
 import { ExamRegistrationForm } from '@/components/forms/exam-registration-form';
@@ -70,6 +72,7 @@ export default function FormDetailsPage() {
 
     const [isEditing, setIsEditing] = useState(() => searchParams.get('edit') === 'true' && isRevisable);
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
+    const [isSignatureSubmitting, setSignatureSubmitting] = useState(false);
     const [isMinistryRejectionDialogOpen, setMinistryRejectionDialogOpen] = useState(false);
     const [ministryRejectionReason, setMinistryRejectionReason] = useState("");
     const sigPadRef = useRef<SignatureCanvas>(null);
@@ -133,7 +136,7 @@ export default function FormDetailsPage() {
                     [formUser?.email, tl('email')],
                 ]);
             }
-            if (form.formType === '?????????? ??????????') {
+            if (form.formType === 'רסיטל בגרות') {
                 addSection(t("schoolDetails"), [
                     [form.schoolDetails?.schoolName, tl('school')],
                     [form.schoolDetails?.schoolSymbol, tl('schoolSymbol')],
@@ -222,21 +225,39 @@ export default function FormDetailsPage() {
         toast({ variant: "destructive", title: tt("rejected"), description: tt("rejectedDesc", { name: form.studentName }) });
     }
 
-    const handleConfirmApproval = () => {
-        if (sigPadRef.current?.isEmpty()) {
-            toast({
-                variant: 'destructive',
-                title: tt("signatureMissing"),
-                description: tt("signatureMissingDesc"),
+    const handleConfirmApproval = async (result: SignatureCaptureResult) => {
+        setSignatureSubmitting(true);
+        try {
+            const res = await submitSignatureAction({
+                formSubmissionId: form.id,
+                signatureDataUrl: result.dataUrl,
+                signatureHash: result.signatureHash,
+                newStatus: 'APPROVED',
             });
-            return;
-        }
-        const signatureDataUrl = sigPadRef.current?.getTrimmedCanvas().toDataURL('image/png');
-        const updatedForm = { ...form, status: 'APPROVED' as FormStatus, signatureUrl: signatureDataUrl, signedAt: new Date().toLocaleDateString('he-IL') };
-        updateForm(updatedForm);
 
-        toast({ title: tt("signed"), description: tt("signedDesc", { name: form.studentName }) });
-        setSignatureDialogOpen(false);
+            if (!res.ok) {
+                toast({
+                    variant: 'destructive',
+                    title: tt('signatureFailed'),
+                    description: res.error,
+                });
+                return;
+            }
+
+            // Update local state for immediate UI feedback
+            const updatedForm = {
+                ...form,
+                status: 'APPROVED' as FormStatus,
+                signatureUrl: result.dataUrl,
+                signedAt: new Date().toLocaleDateString('he-IL'),
+            };
+            updateForm(updatedForm);
+
+            toast({ title: tt('signed'), description: tt('signedDesc', { name: form.studentName }) });
+            setSignatureDialogOpen(false);
+        } finally {
+            setSignatureSubmitting(false);
+        }
     }
 
     const handleMinistryFinalApprove = () => {
@@ -646,7 +667,7 @@ export default function FormDetailsPage() {
                                 <CardTitle>{t('teacherComment')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm italic">"{form.teacherComment}"</p>
+                                <p className="text-sm italic">&quot;{form.teacherComment}&quot;</p>
                             </CardContent>
                         </Card>
                     )}
@@ -656,7 +677,7 @@ export default function FormDetailsPage() {
                                 <CardTitle className="text-purple-800">{t('ministryComment')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm italic text-purple-700">"{form.ministryComment}"</p>
+                                <p className="text-sm italic text-purple-700">&quot;{form.ministryComment}&quot;</p>
                             </CardContent>
                         </Card>
                     )}
@@ -681,21 +702,11 @@ export default function FormDetailsPage() {
                             {t('signatureDialogDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="relative w-full aspect-[3/1] rounded-lg border bg-background">
-                        <SignatureCanvas
-                            ref={sigPadRef}
-                            penColor='black'
-                            canvasProps={{ className: 'w-full h-full' }}
-                        />
-                        <Button variant="ghost" size="icon" className="absolute top-2 left-2" onClick={clearSignature}>
-                            <Trash className="h-4 w-4 text-destructive" />
-                            <span className="sr-only">{t('clearSignature')}</span>
-                        </Button>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t('labels.cancel' as any) || 'ביטול'}</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmApproval}>{t('approveAndSign')}</AlertDialogAction>
-                    </AlertDialogFooter>
+                    <SignatureCapture
+                        onConfirm={handleConfirmApproval}
+                        onCancel={() => setSignatureDialogOpen(false)}
+                        isSubmitting={isSignatureSubmitting}
+                    />
                 </AlertDialogContent>
             </AlertDialog>
 

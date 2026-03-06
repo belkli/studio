@@ -83,7 +83,7 @@ export function MinistryInboxPanel() {
                     <CardTitle className="text-purple-900 text-lg flex items-center gap-2">
                         <FileSignature className="w-5 h-5" />
                         {t('inboxTitle')}
-                        {pendingForms.length > 0 && <Badge variant="destructive" className="ml-auto rounded-full">{pendingForms.length}</Badge>}
+                        {pendingForms.length > 0 && <Badge variant="destructive" className="ms-auto rounded-full">{pendingForms.length}</Badge>}
                     </CardTitle>
                 </CardHeader>
                 <Tabs defaultValue="pending" className="flex-1 flex flex-col">
@@ -145,7 +145,7 @@ export function MinistryInboxPanel() {
                                     <CardTitle className="text-2xl">{activeForm.studentName}</CardTitle>
                                     <CardDescription className="text-base mt-1">{activeForm.conservatorium}</CardDescription>
                                 </div>
-                                <div className="text-left text-sm text-muted-foreground">
+                                <div className="text-start text-sm text-muted-foreground">
                                     <div className="flex items-center justify-end gap-1 mb-1"><Clock className="w-3 h-3" /> {t('submittedDate')} {format(new Date(activeForm.submittedAt), 'dd/MM/yyyy')}</div>
                                     {activeForm.status !== 'SUBMITTED' && (
                                         <Badge className={`mt-2 ${activeForm.status === 'APPROVED' ? 'bg-green-600' : activeForm.status === 'REJECTED' ? 'bg-red-600' : 'bg-yellow-600'}`}>
@@ -212,11 +212,11 @@ export function MinistryInboxPanel() {
                                     <div className="flex items-center justify-between w-full">
                                         <div className="flex gap-2">
                                             <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50" onClick={() => setIsRejectionBoxOpen(true)}>
-                                                <XCircle className="w-4 h-4 mr-2" /> {t('cancelRejection')}
+                                                <XCircle className="w-4 h-4 me-2" /> {t('cancelRejection')}
                                             </Button>
                                         </div>
                                         <Button className="bg-green-600 hover:bg-green-700 font-bold px-8" onClick={() => handleAction(activeForm.id, 'APPROVED')}>
-                                            <CheckCircle className="w-4 h-4 mr-2" /> {t('ministryApprove')}
+                                            <CheckCircle className="w-4 h-4 me-2" /> {t('ministryApprove')}
                                         </Button>
                                     </div>
                                 ) : (

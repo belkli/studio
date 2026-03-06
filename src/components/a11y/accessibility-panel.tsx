@@ -46,38 +46,42 @@ function applyPrefs(prefs: A11yPrefs) {
 export function AccessibilityPanel() {
   const t = useTranslations('AccessibilityWidget');
   const [open, setOpen] = useState(false);
-  const [prefs, setPrefs] = useState<A11yPrefs>(DEFAULT_PREFS);
+  const [prefs, setPrefs] = useState<A11yPrefs>(() => {
+    if (typeof window === 'undefined') return DEFAULT_PREFS;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? (JSON.parse(raw) as Partial<A11yPrefs>) : {};
+      const next = { ...DEFAULT_PREFS, ...parsed };
+      next.fontScale = clampFontScale(next.fontScale ?? DEFAULT_PREFS.fontScale);
+      return next;
+    } catch {
+      return DEFAULT_PREFS;
+    }
+  });
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const [panelPosition, setPanelPosition] = useState<{ left: number; top: number } | null>(null);
   const [minimized, setMinimized] = useState(false);
+  const minimizedInitialized = useRef(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(MINIMIZED_KEY) === '1') setMinimized(true);
+    } catch { /* ignore */ }
+    minimizedInitialized.current = true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number } | null>(null);
   const suppressClickRef = useRef(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const parsed = raw ? (JSON.parse(raw) as Partial<A11yPrefs>) : {};
-      const next = { ...DEFAULT_PREFS, ...parsed };
-      next.fontScale = clampFontScale(next.fontScale ?? DEFAULT_PREFS.fontScale);
-      setPrefs(next);
-      applyPrefs(next);
-    } catch {
-      applyPrefs(DEFAULT_PREFS);
-    }
+    applyPrefs(prefs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(MINIMIZED_KEY);
-      setMinimized(raw === '1');
-    } catch {
-      setMinimized(false);
-    }
-  }, []);
-
-  useEffect(() => {
+    if (!minimizedInitialized.current) return;
     try {
       localStorage.setItem(MINIMIZED_KEY, minimized ? '1' : '0');
     } catch {

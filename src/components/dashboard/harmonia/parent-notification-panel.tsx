@@ -61,7 +61,7 @@ export function ParentNotificationPanel() {
                     <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2"><Settings className="w-4 h-4" /> {t('channelsTitle')}</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-medium text-sm text-center mb-2 px-4">
-                        <div className={`hidden md:block ${isRtl ? 'text-right' : 'text-left'}`}>{t('colUpdateType')}</div>
+                        <div className={`hidden md:block text-start`}>{t('colUpdateType')}</div>
                         <div className="flex items-center justify-center gap-2 text-blue-700 bg-blue-50 py-2 rounded-md"><Smartphone className="w-4 h-4" /> {t('colSms')}</div>
                         <div className="flex items-center justify-center gap-2 text-indigo-700 bg-indigo-50 py-2 rounded-md"><Mail className="w-4 h-4" /> {t('colEmail')}</div>
                     </div>
@@ -145,7 +145,7 @@ export function ParentNotificationPanel() {
 
                 <div className={`pt-4 flex ${isRtl ? 'justify-end' : 'justify-start'}`}>
                     <Button onClick={handleSave} disabled={isSaving} className="px-8">
-                        {isSaving ? t('savingBtn') : <><Save className="w-4 h-4 mr-2" /> {t('saveBtn')}</>}
+                        {isSaving ? t('savingBtn') : <><Save className="w-4 h-4 me-2" /> {t('saveBtn')}</>}
                     </Button>
                 </div>
 

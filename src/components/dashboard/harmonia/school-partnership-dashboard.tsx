@@ -133,7 +133,7 @@ function CreatePartnershipDialog({ onCreated, isRtl }: { onCreated: (p: SchoolPa
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button><Plus className={isRtl ? "h-4 w-4 ml-2" : "h-4 w-4 mr-2"} />{t('addPartnership')}</Button>
+                <Button><Plus className="h-4 w-4 me-2" />{t('addPartnership')}</Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader>
@@ -322,7 +322,7 @@ export function SchoolPartnershipDashboard() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">תשפ"ו</div>
+                        <div className="text-2xl font-bold">תשפ&quot;ו</div>
                         <p className="text-xs text-muted-foreground">{t('activeYear')}</p>
                     </CardContent>
                 </Card>
@@ -345,12 +345,12 @@ export function SchoolPartnershipDashboard() {
                             <Table dir={isRtl ? 'rtl' : 'ltr'}>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.school')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.symbol')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.model')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.students')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.status')}</TableHead>
-                                        <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.actions')}</TableHead>
+                                        <TableHead className="text-start">{t('table.school')}</TableHead>
+                                        <TableHead className="text-start">{t('table.symbol')}</TableHead>
+                                        <TableHead className="text-start">{t('table.model')}</TableHead>
+                                        <TableHead className="text-start">{t('table.students')}</TableHead>
+                                        <TableHead className="text-start">{t('table.status')}</TableHead>
+                                        <TableHead className="text-start">{t('table.actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

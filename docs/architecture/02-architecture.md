@@ -80,13 +80,13 @@ Every entity is scoped to a `conservatoriumId`. Currently enforced at:
 1. **Data model level:** every type includes `conservatoriumId`
 2. **Server Actions:** `src/app/actions.ts` uses the `withAuth()` wrapper and Zod schemas
 
-> ⚠️ **Gap vs. plan:** Firestore Security Rules are **not deployed** (no `firestore.rules` that enforces `conservatoriumId` isolation — the repo contains a template `firestore.rules` but it is incomplete). Middleware-level auth guard (`src/middleware.ts`) does **not exist** — auth is enforced client-side via `useAdminGuard()` hook only.
+> ✅ **Proxy auth guard active (dev bypass):** `src/proxy.ts` (Next.js 16 Edge Proxy) replaces the old `middleware.ts` (deleted). In production, it validates Firebase session cookies and injects user claims as request headers. In development (`NODE_ENV !== 'production'` with no `FIREBASE_SERVICE_ACCOUNT_KEY`), a dev bypass injects synthetic `site_admin` claims automatically. Firestore Security Rules are ⚠️ **not yet deployed**.
 
 ### 2.2 Server Actions as the Mutation Boundary
 
 All data writes flow through **Next.js Server Actions** (`src/app/actions.ts`, 1283 lines) and are validated using Zod schemas via the `withAuth()` HOC wrapper.
 
-> ⚠️ **Gap:** `verifyAuth()` in `src/lib/auth-utils.ts` unconditionally returns `true`. Role is not validated server-side — only via client `useAdminGuard()`.
+> ✅ **`verifyAuth()` implements layered auth:** In production, `verifyAuth()` validates the Firebase `__session` cookie via `admin.auth().verifySessionCookie()`. If the Admin SDK is not configured (local dev without `FIREBASE_SERVICE_ACCOUNT_KEY`), it falls back to reading claims from middleware-injected `x-user-*` headers. If neither is available and `NODE_ENV !== 'production'`, it returns a synthetic `site_admin` session for local development. In production, this fallback is unreachable.
 
 ### 2.3 Repository / Database Abstraction Layer
 
@@ -100,6 +100,8 @@ export class FirebaseAdapter extends MemoryDatabaseAdapter {
   constructor() { super(buildDefaultSeed()); } // No Firestore — just in-memory seed
 }
 ```
+
+**Dev mode data flow:** `buildDefaultMemorySeed()` (in `src/lib/db/default-memory-seed.ts`) seeds the in-memory adapter with all mock data including a synthetic `devUser` (`id: 'dev-user'`, `role: 'site_admin'`) that matches the dev bypass session. The `/api/bootstrap` route serves all seed data to the client. `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` enables client-side fallback when the bootstrap route fails.
 
 ### 2.4 Monolithic Context — Current Reality
 
@@ -180,5 +182,49 @@ Both `newFeaturesEnabled` (new grouped nav) and legacy flat-list rendering are s
 | Database Abstraction Layer | ✅ `src/lib/db/` with 5 adapter implementations |
 | AI as Invisible Staff | ✅ 8 Genkit flows active |
 | Composable Modules | ✅ `newFeaturesEnabled` flag gates new nav/UX |
-| Server-Side Role Authority (Firebase Custom Claims) | ❌ Not implemented — auth is mock/cookie |
-| No trust in client-provided data (Zod) | ✅ Server actions use Zod; ⚠️ `verifyAuth()` always true |
+| Server-Side Role Authority (Firebase Custom Claims) | ✅ Dev bypass via proxy.ts; ⚠️ Production requires Firebase Custom Claims deployment |
+| No trust in client-provided data (Zod) | ✅ Server actions use Zod; ⚠️ `FormSubmissionSchema = z.any()` still unresolved |
+
+---
+
+## 7. Development Mode Architecture
+
+When running locally without Firebase credentials, Harmonia uses a full dev bypass stack:
+
+```
+Browser → Next.js App
+    │
+    ├── proxy.ts (Edge Proxy — replaces deleted middleware.ts)
+    │     isDevBypass = NODE_ENV !== 'production' && !FIREBASE_SERVICE_ACCOUNT_KEY
+    │     Production: validates __session JWT cookie, extracts claims, injects x-user-* headers
+    │     Dev bypass: injects synthetic headers: x-user-id=dev-user, x-user-role=site_admin
+    │     API routes (/api/*): pass through directly — no intl middleware, no auth check
+    │
+    ├── /api/bootstrap (API Route)
+    │     → getDb() → MemoryDatabaseAdapter (seeded from buildDefaultMemorySeed())
+    │     → returns 85 conservatoriums + all mock data as JSON
+    │     → NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1 enables client fallback
+    │
+    ├── Server Actions (src/app/actions.ts)
+    │     → verifyAuth() chain:
+    │       1. Try Admin SDK verifySessionCookie() (production path)
+    │       2. Fallback: read x-user-* headers from proxy (local dev with proxy running)
+    │       3. Fallback: synthetic site_admin session (dev mode, no Firebase at all)
+    │     → withAuth() wraps each action with verifyAuth() + Zod schema validation
+    │
+    └── Client (use-auth.tsx)
+          → loadBootstrapData() fetches /api/bootstrap
+          → applyMockBootstrapFallback() if NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1
+```
+
+### Key Dev Mode Files
+
+| File | Purpose |
+|------|---------|
+| `src/proxy.ts` | Next.js 16 Edge Proxy: validates `__session` cookie in production, injects synthetic `site_admin` claims in dev bypass |
+| `src/lib/auth-utils.ts` | `verifyAuth()`: Admin SDK `verifySessionCookie()` → header fallback → dev synthetic session. `withAuth()`: wraps Server Actions with auth + Zod. `requireRole()`: RBAC enforcement with tenant isolation. |
+| `src/lib/firebase-admin.ts` | `getAdminAuth()`: initialises Firebase Admin SDK from `FIREBASE_SERVICE_ACCOUNT_KEY`; returns null when env var absent |
+| `src/lib/db/default-memory-seed.ts` | `buildDefaultMemorySeed()`: seeds MemoryAdapter with all 85 conservatoriums + mock data |
+| `src/lib/data.ts` | Source of mock data: `mockUsers`, `conservatoriums`, `devUser`, `directoryTeacherUsers` (68 teachers) |
+| `src/lib/data.json` | 5,217 composition entries (fixed: invalid JSON with embedded Hebrew chars was corrected) |
+| `.env.local` | `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` |

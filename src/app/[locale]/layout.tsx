@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import '../globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/use-auth';
+import { QueryProvider } from '@/providers/query-provider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
@@ -12,7 +13,7 @@ import { AccessibilityPanel } from '@/components/a11y/accessibility-panel';
 import { Rubik } from 'next/font/google';
 
 const rubik = Rubik({
-    subsets: ['latin', 'hebrew', 'cyrillic'],
+    subsets: ['latin', 'hebrew', 'arabic', 'cyrillic'],
     weight: ['400', '700'],
     variable: '--font-rubik',
     display: 'swap',
@@ -78,10 +79,12 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <main id="main-content" tabIndex={-1}>
             <AuthProvider>
-              {children}
-              <AccessibilityPanel />
-              <Toaster />
-              <AiHelpAssistant />
+              <QueryProvider>
+                {children}
+                <AccessibilityPanel />
+                <Toaster />
+                <AiHelpAssistant />
+              </QueryProvider>
             </AuthProvider>
           </main>
         </NextIntlClientProvider>

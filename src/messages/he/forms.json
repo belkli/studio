@@ -159,9 +159,9 @@
     "successTitle": "טופס {type} נוצר בהצלחה",
     "title": "טופס / בקשה חדשה",
     "types": {
-      "exam_registration": "רישום לבחינה",
-      "kenes": "כנס",
-      "recital": "רסיטל"
+      "exam_registration": "הרשמה לבחינה",
+      "kenes": "כנס / אירוע",
+      "recital": "רסיטל בגרות"
     },
     "validation": {
       "required": "שדה זה הוא חובה"
@@ -520,6 +520,8 @@
     "T": "ט"
   },
   "LessonManagement": {
+    "bookPageTitle": "הזמנת שיעור חדש",
+    "bookPageSubtitle": "בחר כלי, מורה ומועד פנוי כדי לקבוע שיעור חדש מהחבילה שלך.",
     "additionalPracticeNote": "הערת תרגול נוספת",
     "additionalPracticeNotePlaceholder": "לדוגמה: שים לב לדינמיקה בתיבות 15-20.",
     "addVoiceFeedback": "הוסף משוב קולי",
@@ -630,6 +632,29 @@
     "virtualLessonLink": "קישור לשיעור וירטואלי",
     "visibleToStudentParent": "(גלוי לתלמיד/ה ולהורה)",
     "whatDidWeLearn": "מה למדנו היום?",
-    "whatDidWeLearnPlaceholder": "לדוגמה: היום התמקדנו בגמות וטכניקת אצבועות..."
+    "whatDidWeLearnPlaceholder": "לדוגמה: היום התמקדנו בגמות וטכניקת אצבועות...",
+    "regularBookingTab": "הזמנה רגילה",
+    "lastMinuteDealsTab": "עסקאות של הרגע האחרון",
+    "instrumentHint": "הכלים הרשומים שלך מופיעים ראשונים — תוכל לבחור כל כלי אחר",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "minutesShort": "דק'",
+    "allInstruments": "כל הכלים",
+    "choosePaymentMethod": "כיצד תרצה לשלם?",
+    "usePackageCredit": "השתמש בקרדיט מהחבילה",
+    "usePackageCreditDesc": "השיעור יקוזז מחבילת \"{package}\"",
+    "payPromotionalPrice": "שלם מחיר מבצע",
+    "payPromotionalPriceDesc": "שיעור נוסף מחוץ לחבילה במחיר מיוחד",
+    "cancel": "ביטול",
+    "bookDealTitle": "הזמנת שיעור של הרגע האחרון",
+    "bookDealDesc": "בחר כיצד תרצה לשלם עבור שיעור זה",
+    "noDealsAvailable": "אין עסקאות זמינות כרגע",
+    "noDealsAvailableDesc": "בדוק שוב מחר — שיעורים פנויים עודכנים ברציפות",
+    "dealsFilteredForStudent": "מציג שיעורים עבור: {instruments}",
+    "dealBookedSuccess": "השיעור הוזמן בהצלחה!",
+    "dealBookedDescPromo": "הוזמן שיעור במחיר ₪{price} (הנחה של {discount}%)",
+    "dealBookedDescPackage": "השיעור קוזז מהחבילה הפעילה שלך",
+    "selectTeacherFirst": "בחר מורה תחילה כדי לראות שעות פנויות",
+    "step3Time": "3. בחר שעה"
   }
 }

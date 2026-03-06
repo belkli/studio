@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Save } from "lucide-react";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import type { LessonSlot, WeeklyAvailabilityBlock, DayOfWeek } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -16,26 +16,24 @@ const times = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "1
 export function AvailabilityGrid() {
     const { user, users, lessons, updateUser } = useAuth();
     const { toast } = useToast();
-    const [availableSlots, setAvailableSlots] = useState<Record<string, boolean>>({});
+    const [availableSlots, setAvailableSlots] = useState<Record<string, boolean>>(() => {
+        if (!user?.availability) return {};
+        const grid: Record<string, boolean> = {};
+        user.availability.forEach(block => {
+            const startHour = parseInt(block.startTime.split(':')[0]);
+            const endHour = parseInt(block.endTime.split(':')[0]);
+            for (let hour = startHour; hour < endHour; hour++) {
+                const time = `${String(hour).padStart(2, '0')}:00`;
+                grid[`${block.dayOfWeek}-${time}`] = true;
+            }
+        });
+        return grid;
+    });
     const [isDirty, setIsDirty] = useState(false);
     const t = useTranslations('AvailabilityGrid');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
-    useEffect(() => {
-        if (user?.availability) {
-            const grid: Record<string, boolean> = {};
-            user.availability.forEach(block => {
-                const startHour = parseInt(block.startTime.split(':')[0]);
-                const endHour = parseInt(block.endTime.split(':')[0]);
-                for (let hour = startHour; hour < endHour; hour++) {
-                    const time = `${String(hour).padStart(2, '0')}:00`;
-                    grid[`${block.dayOfWeek}-${time}`] = true;
-                }
-            });
-            setAvailableSlots(grid);
-        }
-    }, [user?.availability]);
 
     const teacherLessons = useMemo(() => {
         if (!user) return {};
@@ -126,7 +124,7 @@ export function AvailabilityGrid() {
                                             onClick={() => handleSlotClick(dayKey, time)}
                                         >
                                             {isBooked && (
-                                                <div className={cn("bg-blue-500/10 p-1 rounded-sm text-xs h-full overflow-hidden", isRtl ? "border-r-4 border-blue-500 text-right" : "border-l-4 border-blue-500 text-left")}>
+                                                <div className={cn("bg-blue-500/10 p-1 rounded-sm text-xs h-full overflow-hidden border-s-4 border-blue-500 text-start")}>
                                                     <p className="font-bold truncate text-blue-800 dark:text-blue-200">{isBooked.instrument}</p>
                                                     <p className="truncate text-blue-700 dark:text-blue-300">{user?.students?.find(s => s === isBooked.studentId) ? users.find(u => u.id === isBooked.studentId)?.name : t('studentFallback')}
                                                     </p>

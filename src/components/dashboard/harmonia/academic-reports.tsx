@@ -27,6 +27,7 @@ export function AcademicReports() {
         repertoireAdvancement,
         engagementByTeacher,
         avgMinutesByInstrument,
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -191,9 +192,9 @@ export function AcademicReports() {
                     <Table dir={isRtl ? 'rtl' : 'ltr'}>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colTeacher')}</TableHead>
-                                <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colTotalMinutes')}</TableHead>
+                                <TableHead className="text-start">{t('colStudent')}</TableHead>
+                                <TableHead className="text-start">{t('colTeacher')}</TableHead>
+                                <TableHead className="text-end">{t('colTotalMinutes')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -207,7 +208,7 @@ export function AcademicReports() {
                                         {student.name}
                                     </TableCell>
                                     <TableCell>{student.instruments?.[0]?.teacherName}</TableCell>
-                                    <TableCell className={isRtl ? "text-left font-mono" : "text-right font-mono"}>{totalMinutes} {t('minutesUnit')}</TableCell>
+                                    <TableCell className="text-end font-mono">{totalMinutes} {t('minutesUnit')}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

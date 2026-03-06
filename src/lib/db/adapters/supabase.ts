@@ -939,6 +939,13 @@ async function loadSeedFromSupabase(url: string, serviceKey: string): Promise<Me
     repertoire: repertoireSeed,
     donationCauses: mapDonationCauses(donationCauseRows),
     donations: mapDonationRecords(donationRecordRows),
+    makeupCredits: [],
+    practiceLogs: [],
+    notifications: [],
+    roomLocks: [],
+    teacherExceptions: [],
+    consentRecords: [],
+    complianceLogs: [],
   };
 }
 

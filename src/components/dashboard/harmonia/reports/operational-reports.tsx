@@ -23,6 +23,7 @@ export function OperationalReports() {
         capacityData,
         trialConversionRate,
         makeupUtilizationRate
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         // Cancellation breakdown
         const cancellationData = [

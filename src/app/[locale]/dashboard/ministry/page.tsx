@@ -32,6 +32,7 @@ export default function MinistryDashboard() {
     return allForms.filter(form => ministryViewableStatuses.includes(form.status));
   }, [allForms]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredForms = useMemo(() => {
     return formsForMinistry.filter(form => {
       const student = users.find(u => u.id === form.studentId);
@@ -89,11 +90,11 @@ export default function MinistryDashboard() {
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div className="relative col-span-full lg:col-span-2">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder={t('searchPlaceholder')}
-                className="w-full rounded-lg bg-background pr-10 text-right"
+                className="w-full rounded-lg bg-background pe-10 text-end"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -156,7 +157,7 @@ export default function MinistryDashboard() {
                 <TableHead>{tc('grade')}</TableHead>
                 <TableHead>{tc('status')}</TableHead>
                 <TableHead>{tc('submissionDate')}</TableHead>
-                <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
+                <TableHead className="text-start"><span className="sr-only">{tc('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -170,7 +171,7 @@ export default function MinistryDashboard() {
                     <StatusBadge status={form.status} />
                   </TableCell>
                   <TableCell>{form.submissionDate}</TableCell>
-                  <TableCell className="text-left">
+                  <TableCell className="text-start">
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/dashboard/forms/${form.id}`}>{t('viewAndProcess')}</Link>
                     </Button>

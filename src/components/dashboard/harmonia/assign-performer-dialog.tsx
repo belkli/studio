@@ -31,6 +31,7 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
     resolver: zodResolver(schema),
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedStudentId = form.watch('studentId');
 
   const students = useMemo(() => users.filter(u => u.role === 'student' && u.approved), [users]);

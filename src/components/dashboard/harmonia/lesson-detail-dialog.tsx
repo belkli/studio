@@ -82,7 +82,7 @@ export function LessonDetailDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]" dir="rtl">
-                <DialogHeader className="text-right">
+                <DialogHeader className="text-start">
                     <div className="flex justify-between items-start mb-2">
                         <Badge variant="outline" className={cn("font-medium", typeInfo.color)}>
                             {typeInfo.label}
@@ -96,7 +96,7 @@ export function LessonDetailDialog({
                         <Music className="h-5 w-5 text-muted-foreground" />
                         {t('instrumentLesson', { instrument: lesson.instrument })}
                     </DialogTitle>
-                    <DialogDescription className="text-right">
+                    <DialogDescription className="text-start">
                         {t('fullLessonDetails')}
                     </DialogDescription>
                 </DialogHeader>
@@ -158,7 +158,7 @@ export function LessonDetailDialog({
                                 <Info className="h-3 w-3" />
                                 {t('teacherNotes')}
                             </div>
-                            <p className="text-sm italic">"{lesson.teacherNote}"</p>
+                            <p className="text-sm italic">&quot;{lesson.teacherNote}&quot;</p>
                         </div>
                     )}
                 </div>

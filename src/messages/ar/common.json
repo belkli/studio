@@ -953,7 +953,10 @@
     "shareErrorDesc": "تعذّر مشاركة الرابط.",
     "lastMinute": "فرصة اللحظة الأخيرة!",
     "discount": "خصم {percent}%",
-    "bookNow": "احجز الآن"
+    "bookNow": "احجز الآن",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "minutes": "دقيقة"
   },
   "PrivacyPage": {
     "title": "بيان الخصوصية وشروط الاستخدام",
@@ -1118,5 +1121,14 @@
       "back": "السابق"
     }
   },
-  "SheetMusicViewer": {}
+  "SheetMusicViewer": {},
+  "Signature": {
+    "title": "التوقيع الرقمي",
+    "description": "وقّع باستخدام الماوس أو اللمس داخل المنطقة أدناه. سيتم تضمين توقيعك في النموذج.",
+    "canvasAriaLabel": "منطقة التوقيع الرقمي — ارسم توقيعك هنا",
+    "clear": "مسح التوقيع",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد التوقيع",
+    "errorEmpty": "يرجى التوقيع قبل التأكيد"
+  }
 }

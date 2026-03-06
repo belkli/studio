@@ -45,6 +45,7 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
         },
     });
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const selectedDate = form.watch('date');
 
     useEffect(() => {

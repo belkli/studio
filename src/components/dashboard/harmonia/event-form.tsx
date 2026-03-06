@@ -76,6 +76,7 @@ export function EventForm() {
                                     <FormLabel htmlFor="isPublic" className="!mt-0">{t('isPublicLabel')}</FormLabel>
                                 </FormItem>
                             )} />
+                            {/* eslint-disable-next-line react-hooks/incompatible-library */}
                             <FormField control={form.control} name="ticketPrice" render={({ field }) => (<FormItem> <FormLabel>{t('ticketPriceLabel')}</FormLabel> <InputGroup><InputGroupText>₪</InputGroupText><FormControl><Input type="number" {...field} disabled={!form.watch('isPublic')} /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
                         </div>
 

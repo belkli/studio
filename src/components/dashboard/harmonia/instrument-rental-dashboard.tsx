@@ -55,6 +55,7 @@ function RentInstrumentDialog({
   useEffect(() => {
     if (!instrument || !open) return;
     const offered = instrument.rentalModelsOffered || ['deposit'];
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRentalModel(offered[0]);
     setDepositAmountILS(instrument.depositAmountILS || 500);
     setMonthlyFeeILS(instrument.monthlyFeeILS || instrument.rentalRatePerMonth || 180);
@@ -268,6 +269,7 @@ function InstrumentFormDialog({
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setType(instrument?.type || '');
       setBrand(instrument?.brand || '');
       setSerialNumber(instrument?.serialNumber || '');

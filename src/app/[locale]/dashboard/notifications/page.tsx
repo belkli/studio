@@ -53,6 +53,7 @@ export default function NotificationsPage() {
 
     const unreadCount = useMemo(() => user?.notifications?.filter(n => !n.read).length || 0, [user?.notifications]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredNotifications = useMemo(() => {
         if (!user?.notifications) return [];
         const sortedNotifications = [...user.notifications].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

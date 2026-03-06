@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { routing } from '@/i18n/routing';
+import { updateUserLanguagePreference } from '@/app/actions';
 
 type LocaleOption = {
     code: 'he' | 'en' | 'ru' | 'ar';
@@ -78,6 +79,8 @@ export function LanguageSwitcher() {
     const handleLocaleChange = (newLocale: LocaleOption['code']) => {
         if (newLocale === locale) return;
         localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
+        // Persist to user profile (fire-and-forget — best effort)
+        updateUserLanguagePreference({ locale: newLocale }).catch(() => {});
         router.replace(normalizedPathname as any, { locale: newLocale as any });
     };
 

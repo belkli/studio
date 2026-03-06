@@ -203,6 +203,21 @@
       "conflictDesc": "This email is already registered with: {methods}.",
       "emailMismatchTitle": "Email mismatch",
       "emailMismatchDesc": "Provider email must match your current account email."
+    },
+    "languagePreference": {
+      "title": "Interface Language",
+      "description": "Choose your preferred language for the interface.",
+      "label": "Preferred Language",
+      "save": "Save Language",
+      "success": "Language Updated",
+      "successDesc": "Your language preference has been updated successfully.",
+      "error": "Failed to update language preference",
+      "languages": {
+        "he": "עברית",
+        "en": "English",
+        "ar": "العربية",
+        "ru": "Русский"
+      }
     }
   },
   "CancellationPolicy": {

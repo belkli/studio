@@ -1,10 +1,15 @@
 ﻿'use client';
 
-import { InstrumentRentalDashboard } from "@/components/dashboard/harmonia/instrument-rental-dashboard";
+import dynamic from 'next/dynamic';
 import { useLocale, useTranslations } from "next-intl";
 
 import { useAdminGuard } from "@/hooks/use-admin-guard";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const InstrumentRentalDashboard = dynamic(
+    () => import("@/components/dashboard/harmonia/instrument-rental-dashboard").then(mod => ({ default: mod.InstrumentRentalDashboard })),
+    { loading: () => <Skeleton className="h-96" /> }
+);
 
 export default function InstrumentRentalsPage() {
     const { user, isLoading } = useAdminGuard();

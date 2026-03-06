@@ -37,6 +37,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
 
   return useMemo(() => {
     const items: WhatsNewItem[] = [];
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
 
     const isAdmin = role === 'site_admin' || role === 'conservatorium_admin' || role === 'delegated_admin';

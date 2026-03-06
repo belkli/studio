@@ -45,7 +45,6 @@ export default function InstrumentsSettingsPage() {
   useEffect(() => {
     if (user && !canAccess) router.push('/403');
   }, [canAccess, router, user]);
-  if (user && !canAccess) return null;
 
   const rows = useMemo(
     () => conservatoriumInstruments.filter((item) => item.conservatoriumId === user?.conservatoriumId),
@@ -63,6 +62,8 @@ export default function InstrumentsSettingsPage() {
       isActive: true,
     },
   });
+
+  if (user && !canAccess) return null;
 
   const onCreate = () => {
     setEditing(null);
@@ -134,6 +135,7 @@ export default function InstrumentsSettingsPage() {
             <Input {...form.register('nameEn')} placeholder={t('nameEn')} />
             <Input {...form.register('nameRu')} placeholder={t('nameRu')} />
             <Input {...form.register('nameAr')} placeholder={t('nameAr')} />
+            {/* eslint-disable-next-line react-hooks/incompatible-library */}
             <div className="flex items-center justify-between"><span>{t('availableForRegistration')}</span><Switch checked={form.watch('availableForRegistration')} onCheckedChange={(v) => form.setValue('availableForRegistration', v)} /></div>
             <div className="flex items-center justify-between"><span>{t('availableForRental')}</span><Switch checked={form.watch('availableForRental')} onCheckedChange={(v) => form.setValue('availableForRental', v)} /></div>
             <div className="flex items-center justify-between"><span>{t('isActive')}</span><Switch checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v)} /></div>

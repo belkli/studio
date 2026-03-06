@@ -425,6 +425,7 @@
     "viewAll": "הצג את כל ההתראות",
     "whatsNew": "מה חדש",
     "newBadge": "חדש",
+    "mainNavigation": "ניווט ראשי",
     "settings": "הגדרות",
     "help": "עזרה",
     "groupOverview": "סקירה כללית",
@@ -728,5 +729,63 @@
     "performances": "ניהול הופעות",
     "alumni": "בוגרים",
     "conservatorium_profile": "פרופיל הקונסרבטוריום"
+  },
+  "DashboardPages": {
+    "noPermission": "אין לך הרשאה לגשת לעמוד זה.",
+    "events": {
+      "title": "ניהול אירועים ורסיטלים",
+      "description": "תכנן, נהל והפק את כל האירועים של הקונסרבטוריון.",
+      "createButton": "צור אירוע חדש"
+    },
+    "newEvent": {
+      "title": "יצירת אירוע חדש",
+      "description": "הזן את הפרטים הבסיסיים כדי ליצור אירוע חדש במערכת."
+    },
+    "family": {
+      "title": "המשפחה שלי",
+      "description": "לוח הבקרה המרכזי לניהול הפעילות של ילדיך בקונסרבטוריון."
+    },
+    "library": {
+      "title": "ספרייה",
+      "description": "מרכז הידע והתוכן שלך.",
+      "underConstruction": "הספרייה בבנייה",
+      "underConstructionDesc": "בעתיד, כאן תוכלו למצוא ולנהל תווים, חומרי לימוד, ועוד."
+    },
+    "masterSchedule": {
+      "title": "מערכת שעות ראשית",
+      "description": "תצוגה כוללת של כל השיעורים בקונסרבטוריון. סנן לפי מורה, חדר או כלי נגינה.",
+      "noPermissionDesc": "אין לך הרשאה לצפות בעמוד זה."
+    },
+    "practice": {
+      "title": "רישום אימון",
+      "description": "תעד את האימונים שלך כדי לעקוב אחר ההתקדמות.",
+      "uploadVideo": "העלה וידאו למשוב",
+      "openCoach": "פתח מאמן AI"
+    },
+    "practiceUpload": {
+      "title": "העלאת וידאו למשוב",
+      "description": "קבל/י פידבק מהמורה שלך בין השיעורים."
+    },
+    "practiceCoach": {
+      "title": "מאמן אימון AI",
+      "description": "הקלט/י את עצמך וקבל/י משוב מיידי על הנגינה שלך."
+    },
+    "aiReschedule": {
+      "title": "עוזר תיאום AI",
+      "noPermissionDesc": "עמוד זה זמין לתלמידים והורים בלבד."
+    },
+    "applyForAid": {
+      "metaTitle": "בקשת תמיכה כלכלית | הַרמוֹנְיָה",
+      "title": "מלגות וסיוע כלכלי",
+      "description": "הגשת מועמדות לקבלת מלגת לימודים מקופת הקרן של הקונסרבטוריון."
+    },
+    "parentSettings": {
+      "title": "הגדרות חשבון",
+      "description": "ניהול התראות והעדפות קשר מול הקונסרבטוריון."
+    },
+    "parentBilling": {
+      "title": "תשלומים וחשבוניות",
+      "description": "מעקב אחר שכר לימוד, תשלומים פתוחים ואפשרות לסליקה מאובטחת באמצעות Cardcom."
+    }
   }
 }

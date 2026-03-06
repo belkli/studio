@@ -117,16 +117,26 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
 
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
-        const results = await searchComposers(query);
-        setComposerOptions(results);
-        setIsLoadingComposers(false);
+        try {
+            const results = await searchComposers(query);
+            setComposerOptions(results);
+        } catch (error) {
+            console.error('[KenesForm] searchComposers failed:', error);
+        } finally {
+            setIsLoadingComposers(false);
+        }
     }, 300), []);
 
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
-        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, locale });
-        setCompositionOptions(results);
-        setIsLoadingCompositions(false);
+        try {
+            const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, locale });
+            setCompositionOptions(results);
+        } catch (error) {
+            console.error('[KenesForm] searchCompositions failed:', error);
+        } finally {
+            setIsLoadingCompositions(false);
+        }
     }, 300), [selectedComposer, selectedComposerId, locale]);
 
     useEffect(() => {
@@ -304,6 +314,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
         }, 1500);
     };
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const numParticipants = form.watch('numParticipants');
     const repertoire = form.watch('repertoire');
 

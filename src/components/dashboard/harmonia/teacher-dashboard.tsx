@@ -166,21 +166,27 @@ export function TeacherDashboard() {
     const locale = useLocale();
     const { toast } = useToast();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
+    const t = useTranslations("Dashboard.Teacher");
 
-    if (!user) return null;
-
-    const assignedStudents = users.filter(u => user.students?.includes(u.id));
-
-    const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
+    const assignedStudents = user ? users.filter(u => user.students?.includes(u.id)) : [];
 
     const pendingApprovals = useMemo(() => {
+        if (!user) return [];
         return formSubmissions.filter(form =>
             form.status === 'PENDING_TEACHER' &&
             user.students?.includes(form.studentId)
         )
-    }, [formSubmissions, user.students]);
+    }, [formSubmissions, user]);
 
-    const t = useTranslations("Dashboard.Teacher");
+    const teacherPerformances = useMemo(() => {
+        return events.filter(event =>
+            event.program.some(slot => assignedStudents.some(s => s.id === slot.studentId))
+        );
+    }, [assignedStudents, events]);
+
+    if (!user) return null;
+
+    const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
 
     const handleAttendance = (lessonId: string, status: SlotStatus) => {
         updateLessonStatus(lessonId, status);
@@ -189,13 +195,6 @@ export function TeacherDashboard() {
             description: t('lessonUpdated')
         });
     };
-
-
-    const teacherPerformances = useMemo(() => {
-        return events.filter(event =>
-            event.program.some(slot => assignedStudents.some(s => s.id === slot.studentId))
-        );
-    }, [assignedStudents]);
 
     return (
         <div className="space-y-8 p-8">

@@ -1,11 +1,14 @@
 'use client';
 
-import { FormBuilder } from "@/components/dashboard/harmonia/form-builder";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-
-
 import { useAdminGuard } from "@/hooks/use-admin-guard";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const FormBuilder = dynamic(
+    () => import("@/components/dashboard/harmonia/form-builder").then(mod => ({ default: mod.FormBuilder })),
+    { loading: () => <Skeleton className="h-96" /> }
+);
 
 export default function FormBuilderPage() {
     const { user, isLoading } = useAdminGuard();

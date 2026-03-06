@@ -96,7 +96,7 @@ export default function MakeupsPage() {
                                         <TableHead>{t('details.table.source')}</TableHead>
                                         <TableHead>{t('details.table.grantedAt')}</TableHead>
                                         <TableHead>{t('details.table.expiresAt')}</TableHead>
-                                        <TableHead className="text-right">{t('details.table.status')}</TableHead>
+                                        <TableHead className="text-end">{t('details.table.status')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -111,7 +111,7 @@ export default function MakeupsPage() {
                                             <TableCell>
                                                 {format(new Date(credit.expiresAt), 'PP', { locale: dateLocale })}
                                             </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="text-end">
                                                 <Badge variant="outline" className={statusStyles[credit.status as keyof typeof statusStyles]}>
                                                     {t(`details.statuses.${credit.status}`)}
                                                 </Badge>

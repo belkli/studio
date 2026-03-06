@@ -1,7 +1,59 @@
-# Settings to manage and configure a Firebase App Hosting backend.
+# Harmonia — Firebase App Hosting Configuration
 # https://firebase.google.com/docs/app-hosting/configure
+#
+# IMPORTANT: This is the PRODUCTION configuration.
+# minInstances: 1 to avoid cold starts (conservatorium SLA requirement).
+# Secrets are stored in Google Secret Manager and referenced below.
 
 runConfig:
-  # Increase this value if you'd like to automatically spin up
-  # more instances in response to increased traffic.
-  maxInstances: 1
+  minInstances: 1
+  maxInstances: 10
+  cpu: 2
+  memoryMiB: 1024
+
+env:
+  # ── Database Backend ──
+  - variable: DB_BACKEND
+    value: firebase
+
+  # ── Firebase Client Config (public — safe to expose in client-side JS) ──
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: harmonia-production
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: REPLACE_WITH_FIREBASE_API_KEY
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: harmonia-production.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: REPLACE_WITH_FIREBASE_APP_ID
+
+  # ── Firebase Admin (server-side) ──
+  - variable: FIREBASE_SERVICE_ACCOUNT_KEY
+    secret: FIREBASE_SERVICE_ACCOUNT_KEY
+
+  # ── Payment Gateway: Cardcom ──
+  - variable: CARDCOM_TERMINAL_NUMBER
+    secret: CARDCOM_TERMINAL_NUMBER
+  - variable: CARDCOM_API_NAME
+    secret: CARDCOM_API_NAME
+  - variable: CARDCOM_API_PASSWORD
+    secret: CARDCOM_API_PASSWORD
+  - variable: CARDCOM_WEBHOOK_SECRET
+    secret: CARDCOM_WEBHOOK_SECRET
+
+  # ── Twilio (SMS + WhatsApp) ──
+  - variable: TWILIO_ACCOUNT_SID
+    secret: TWILIO_ACCOUNT_SID
+  - variable: TWILIO_AUTH_TOKEN
+    secret: TWILIO_AUTH_TOKEN
+
+  # ── SendGrid (Email) ──
+  - variable: SENDGRID_API_KEY
+    secret: SENDGRID_API_KEY
+
+  # ── Google AI / Genkit ──
+  - variable: GOOGLE_API_KEY
+    secret: GOOGLE_API_KEY
+
+  # ── Firebase App Check (reCAPTCHA v3 — public site key) ──
+  - variable: NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+    value: REPLACE_WITH_RECAPTCHA_SITE_KEY

@@ -51,7 +51,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
     return (
         <Card>
             <CardHeader>
-                <CardTitle>לוח חזרות וסאונד-צ'ק</CardTitle>
+                <CardTitle>לוח חזרות וסאונד-צ&apos;ק</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 {event.dressRehearsalDate && (
@@ -91,7 +91,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
                             {event.program.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={2} className="text-center h-24">
-                                        שבץ מבצעים כדי ליצור לו"ז חזרות.
+                                        שבץ מבצעים כדי ליצור לו&quot;ז חזרות.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -102,7 +102,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
             <CardFooter>
                 <Button className="w-full" onClick={handleSendSchedule} disabled={!event.soundCheckSchedule || event.soundCheckSchedule.length === 0}>
                     <Send className="me-2 h-4 w-4" />
-                    שלח לו"ז למבצעים
+                    שלח לו&quot;ז למבצעים
                 </Button>
             </CardFooter>
         </Card>

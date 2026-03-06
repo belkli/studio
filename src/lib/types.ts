@@ -38,6 +38,8 @@ export type InstrumentInfo = {
 
 export type Notification = {
   id: string;
+  userId?: string;
+  conservatoriumId?: string;
   title: string;
   message: string;
   timestamp: string;
@@ -511,6 +513,7 @@ export type User = {
   isPrimaryConservatoriumAdmin?: boolean;
   oauthProviders?: UserOAuthProvider[];
   registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
+  preferredLanguage?: 'he' | 'en' | 'ar' | 'ru';
   status?: 'active' | 'graduated' | 'inactive';
   graduationYear?: number;
 };
@@ -825,6 +828,7 @@ export type PaymentStatus = 'PAID' | 'PENDING' | 'FAILED';
 
 export type Package = {
   id: string;
+  conservatoriumId: string;
   studentId?: string;
   type: PackageType;
   title: string;
@@ -835,6 +839,9 @@ export type Package = {
   paymentStatus?: PaymentStatus;
   validFrom?: string; // ISO Date
   validUntil?: string; // ISO Date
+  installments?: InstallmentOption;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
@@ -844,11 +851,37 @@ export type Invoice = {
   invoiceNumber: string;
   conservatoriumId: string;
   payerId: string; // Parent or adult Student
-  lineItems: { description: string; total: number; }[];
+  lineItems: {
+    description: string;
+    quantity?: number;
+    unitPrice?: number;
+    total: number;
+  }[];
+  subtotal?: number;
+  discounts?: {
+    type: string;
+    amount: number;
+    description?: string;
+  }[];
+  vatRate?: number; // 0.17 for Israeli 17% VAT
+  vatAmount?: number;
   total: number;
+  paidAmount?: number;
   status: InvoiceStatus;
   dueDate: string; // ISO Date
   paidAt?: string; // ISO Date
+  paymentMethod?: 'CREDIT_CARD' | 'BANK_TRANSFER' | 'CASH' | 'CHEQUE' | 'CARDCOM';
+  installments?: {
+    count: number;
+    monthlyAmount: number;
+    paidInstallments: number;
+    nextPaymentDate?: string;
+  };
+  pdfUrl?: string;
+  cardcomTransactionId?: string;
+  issuedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type PracticeLog = {
@@ -1377,6 +1410,7 @@ export type ClosureDate = {
 
 // SDD-P1: Room Double-Booking Prevention
 export type RoomLock = {
+  id: string;
   slotId: string;
   bookedAt: string;                     // ISO Timestamp
   releasedAt: string;                   // ISO Timestamp

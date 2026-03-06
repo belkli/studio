@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { Icons } from "@/components/icons";
 import { signInWithGoogle, signInWithMicrosoft } from '@/lib/auth/oauth';
 import type { UserOAuthProvider } from '@/lib/types';
 import { useState, type ReactNode } from 'react';
+import { updatePreferredLanguageAction } from '@/app/actions/user-preferences';
 
 export default function SettingsPage() {
     const t = useTranslations("SettingsPage");
@@ -18,7 +20,12 @@ export default function SettingsPage() {
     const isRtl = locale === "he" || locale === "ar";
     const { toast } = useToast();
     const { user, updateUser, newFeaturesEnabled } = useAuth();
+    const router = useRouter();
     const [linkingProvider, setLinkingProvider] = useState<'google' | 'microsoft' | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState<'he' | 'en' | 'ar' | 'ru'>(
+        user?.preferredLanguage ?? (locale as 'he' | 'en' | 'ar' | 'ru') ?? 'he'
+    );
+    const [isSavingLanguage, setIsSavingLanguage] = useState(false);
 
     if (!user) {
         return null;
@@ -38,6 +45,36 @@ export default function SettingsPage() {
             title: t('password.success'),
             description: t('password.successDesc')
         });
+    };
+
+    const handleSaveLanguage = async () => {
+        setIsSavingLanguage(true);
+        try {
+            const result = await updatePreferredLanguageAction({
+                userId: user.id,
+                preferredLanguage: selectedLanguage,
+            });
+            if (result.success) {
+                updateUser({ ...user, preferredLanguage: selectedLanguage });
+                toast({
+                    title: t('languagePreference.success'),
+                    description: t('languagePreference.successDesc'),
+                });
+                router.replace('/dashboard/settings', { locale: selectedLanguage });
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: t('languagePreference.error'),
+                });
+            }
+        } catch {
+            toast({
+                variant: 'destructive',
+                title: t('languagePreference.error'),
+            });
+        } finally {
+            setIsSavingLanguage(false);
+        }
     };
 
     const linkProvider = async (provider: 'google' | 'microsoft') => {
@@ -257,6 +294,37 @@ export default function SettingsPage() {
                 <CardFooter>
                     <Button asChild>
                         <Link href="/dashboard/settings/notifications">{t('notifications.manage')}</Link>
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('languagePreference.title')}</CardTitle>
+                    <CardDescription>{t('languagePreference.description')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-2">
+                        <Label htmlFor="preferred-language">{t('languagePreference.label')}</Label>
+                        <Select
+                            value={selectedLanguage}
+                            onValueChange={(value) => setSelectedLanguage(value as 'he' | 'en' | 'ar' | 'ru')}
+                        >
+                            <SelectTrigger id="preferred-language" className="w-48">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="he">{t('languagePreference.languages.he')}</SelectItem>
+                                <SelectItem value="en">{t('languagePreference.languages.en')}</SelectItem>
+                                <SelectItem value="ar">{t('languagePreference.languages.ar')}</SelectItem>
+                                <SelectItem value="ru">{t('languagePreference.languages.ru')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button onClick={handleSaveLanguage} disabled={isSavingLanguage}>
+                        {t('languagePreference.save')}
                     </Button>
                 </CardFooter>
             </Card>

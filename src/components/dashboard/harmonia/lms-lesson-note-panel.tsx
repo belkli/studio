@@ -31,6 +31,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
 
     useEffect(() => {
         if (existingNote) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setPublicSummary(existingNote.lessonSummary || existingNote.summary || '');
             if (existingNote.homeworkAssignment) {
                 setHomeworkDesc(existingNote.homeworkAssignment.description || '');
@@ -93,7 +94,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Public Section */}
-                    <div className="space-y-4 border-l pl-6">
+                    <div className="space-y-4 border-s ps-6">
                         <div className="flex items-center gap-2 font-semibold text-lg text-primary">
                             <FileText className="w-5 h-5" />
                             <span>{t('publicSummaryTasks')}</span>

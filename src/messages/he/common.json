@@ -189,8 +189,8 @@
     "questions": "שאלות? צור קשר עם {support}"
   },
   "AlumniPage": {
-    "title": "כּוֹתֶרֶת",
-    "subtitle": "כְּתוּבִית",
+    "title": "רשת בוגרים",
+    "subtitle": "התחברו מחדש עם חברים, מורים והקונסרבטוריון.",
     "alumnusUpdated": "פרטי הבוגר עודכנו בהצלחה.",
     "alumnusAdded": "הבוגר נוסף בהצלחה.",
     "alumnusDeleted": "הבוגר נמחק בהצלחה.",
@@ -953,7 +953,10 @@
     "shareErrorDesc": "לא ניתן היה לשתף את הקישור.",
     "lastMinute": "הזדמנות של הרגע האחרון!",
     "discount": "{percent}% הנחה",
-    "bookNow": "הזמן עכשיו"
+    "bookNow": "הזמן עכשיו",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "minutes": "דקות"
   },
   "PrivacyPage": {
     "title": "הצהרת פרטיות ותנאי שימוש",
@@ -1118,5 +1121,14 @@
       "back": "חזרה"
     }
   },
-  "SheetMusicViewer": {}
+  "SheetMusicViewer": {},
+  "Signature": {
+    "title": "חתימה דיגיטלית",
+    "description": "חתום באמצעות העכבר או המגע בתוך השטח למטה. החתימה תוטמע בטופס.",
+    "canvasAriaLabel": "אזור חתימה דיגיטלית — צייר את חתימתך כאן",
+    "clear": "נקה חתימה",
+    "cancel": "ביטול",
+    "confirm": "אשר חתימה",
+    "errorEmpty": "נא לחתום לפני האישור"
+  }
 }

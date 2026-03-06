@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { usePathname } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
 
@@ -32,7 +32,7 @@ import {
   ShieldQuestion, CalendarPlus, HandCoins, GraduationCap,
   FileText, PencilRuler, MessageCircleQuestion, ChevronDown,
   Book, User, Bot, Users, Gift,
-  // NEW icons â€” SDD-NAV-01 Â§3 Icon Rationalisation
+  // NEW icons â€" SDD-NAV-01 Â§3 Icon Rationalisation
   Music2, HeartHandshake, Dumbbell, CalendarSearch, CalendarDays,
   CalendarRange, CalendarCheck, TrendingUp, CreditCard,
   UsersRound, ChartNoAxesCombined, Theater, Landmark, School,
@@ -51,7 +51,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { Badge } from '@/components/ui/badge';
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ Types â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 type NavItem = {
   href: string;
@@ -69,11 +69,11 @@ type NavGroup = {
   items: NavItem[];
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ NavGroup Definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// SDD-NAV-01 Â§5.3  â€” All 5 personas + school_coordinator (SDD-PS Â§7.1)
+// â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ NavGroup Definitions â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
+// SDD-NAV-01 Â§5.3  â€" All 5 personas + school_coordinator (SDD-PS Â§7.1)
 
 const harmoniaNavGroups: NavGroup[] = [
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ADMIN GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ ADMIN GROUPS â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupOverview', icon: LayoutDashboard,
     roles: ['conservatorium_admin', 'site_admin', 'delegated_admin'],
@@ -144,7 +144,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TEACHER GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ TEACHER GROUPS â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupMyWorkspace', icon: Music2,
     roles: ['teacher'],
@@ -182,7 +182,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STUDENT GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ STUDENT GROUPS â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupMyLearning', icon: GraduationCap,
     roles: ['student'],
@@ -221,7 +221,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PARENT GROUPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ PARENT GROUPS â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupMyFamily', icon: HeartHandshake,
     roles: ['parent'],
@@ -266,7 +266,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MINISTRY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ MINISTRY â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupMinistryOverview', icon: Landmark,
     roles: ['ministry_director'],
@@ -275,7 +275,7 @@ const harmoniaNavGroups: NavGroup[] = [
     ],
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SCHOOL COORDINATOR (SDD-PS Â§7.1) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ SCHOOL COORDINATOR (SDD-PS Â§7.1) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
   {
     labelKey: 'groupMySchool', icon: School,
     roles: ['school_coordinator'],
@@ -285,7 +285,7 @@ const harmoniaNavGroups: NavGroup[] = [
   },
 ]; // end harmoniaNavGroups
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Notification Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ Notification Item â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
   const dateLocale = useDateLocale();
@@ -308,7 +308,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
   );
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Legacy type (unchanged) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ Legacy type (unchanged) â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 
 type LinkItem = {
   href: string;
@@ -318,12 +318,25 @@ type LinkItem = {
   id?: string;
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——————————————————————————— Inner Props ——————————————————————————————————————
 
-export function SidebarNav() {
+type SidebarNavInnerProps = {
+  user: import('@/lib/types').User;
+  logout: () => void;
+  updateUser: (user: import('@/lib/types').User) => void;
+  newFeaturesEnabled: boolean;
+};
+
+// ——————————————————————————— Memoized Inner Component ————————————————————————
+
+const SidebarNavInner = memo(function SidebarNavInner({
+  user,
+  logout,
+  updateUser,
+  newFeaturesEnabled,
+}: SidebarNavInnerProps) {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
 
   // Track which groups are collapsed (keyed by labelKey)
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(
@@ -343,8 +356,6 @@ export function SidebarNav() {
     }
   };
 
-  if (!user) return null;
-
   const userRole = user.role;
   const hasSeenNewFeatures = (user as any).hasSeenNewFeatures ?? true;
   const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
@@ -363,7 +374,7 @@ export function SidebarNav() {
     pathname === href ||
     (href !== '/dashboard' && href !== '/dashboard/teacher' && pathname.startsWith(href));
 
-  // â”€â”€ Legacy mode: unchanged flat rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —— Legacy mode: unchanged flat rendering ——————————————————————————————————
   if (!newFeaturesEnabled) {
     const legacyLinks: LinkItem[] = [
       { href: '/dashboard', label: t('dashboard'), icon: LayoutDashboard, roles: ['student', 'teacher', 'conservatorium_admin', 'site_admin', 'ministry_director'] },
@@ -392,7 +403,7 @@ export function SidebarNav() {
                 <SidebarMenuItem key={link.href} id={link.id}>
                   <Link href={link.href}>
                     <SidebarMenuButton isActive={active}>
-                      <link.icon />
+                      <link.icon aria-hidden="true" />
                       <span>{link.label}</span>
                     </SidebarMenuButton>
                   </Link>
@@ -404,8 +415,8 @@ export function SidebarNav() {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={logout} tooltip={t('logout')}>
-                <LogOut />
+              <SidebarMenuButton onClick={logout} tooltip={t('logout')} aria-label={t('logout')}>
+                <LogOut aria-hidden="true" />
                 <span>{t('logout')}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -415,7 +426,7 @@ export function SidebarNav() {
     );
   }
 
-  // â”€â”€ New grouped nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // —— New grouped nav ————————————————————————————————————————————————————————
   const delegatedAllowedSections = new Set<AdminSection>(user.delegatedAdminPermissions ?? []);
 
   const visibleGroups = harmoniaNavGroups
@@ -437,20 +448,30 @@ export function SidebarNav() {
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
+        <nav aria-label={t('mainNavigation')}>
         {visibleGroups.map(group => {
           const isCollapsed = !!collapsedGroups[group.labelKey];
           return (
             <SidebarGroup key={group.labelKey}>
               <SidebarGroupLabel
                 className="flex items-center justify-between cursor-pointer hover:text-foreground transition-colors select-none"
+                role="button"
+                aria-expanded={!isCollapsed}
+                tabIndex={0}
                 onClick={() => toggleGroup(group.labelKey)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleGroup(group.labelKey);
+                  }
+                }}
               >
                 <span className="flex items-center gap-2">
-                  <group.icon className="h-3.5 w-3.5" />
+                  <group.icon className="h-3.5 w-3.5" aria-hidden="true" />
                   {t(group.labelKey)}
                 </span>
-                <ChevronDown className={cn(
-                  'h-3.5 w-3.5 transition-transform duration-200',
+                <ChevronDown aria-hidden="true" className={cn(
+                  'h-3.5 w-3.5 transition-transform duration-200 motion-reduce:transition-none',
                   isCollapsed && '-rotate-90'
                 )} />
               </SidebarGroupLabel>
@@ -461,7 +482,7 @@ export function SidebarNav() {
                       <SidebarMenuItem key={item.href} id={item.id}>
                         <Link href={item.href}>
                           <SidebarMenuButton isActive={isActive(item.href)}>
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className="h-4 w-4" aria-hidden="true" />
                             <span>{t(item.labelKey)}</span>
                           </SidebarMenuButton>
                         </Link>
@@ -473,6 +494,7 @@ export function SidebarNav() {
             </SidebarGroup>
           );
         })}
+        </nav>
       </SidebarContent>
 
       <SidebarFooter>
@@ -484,10 +506,10 @@ export function SidebarNav() {
 
           <DropdownMenu onOpenChange={(open) => open && handleNotificationsOpen()}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative rounded-full group-data-[collapsible=icon]:hidden">
-                <Bell className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="relative rounded-full group-data-[collapsible=icon]:hidden" aria-label={unreadCount > 0 ? `${t('notifications')} (${unreadCount})` : t('notifications')}>
+                <Bell className="h-5 w-5" aria-hidden="true" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                  <span className="absolute top-1 end-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                     {unreadCount}
                   </span>
                 )}
@@ -517,7 +539,7 @@ export function SidebarNav() {
             <SidebarMenuItem>
                 <Link href="/dashboard/whats-new">
                     <SidebarMenuButton id="nav-whats-new" isActive={pathname.startsWith('/dashboard/whats-new')} tooltip={t('whatsNew')}>
-                        <Gift />
+                        <Gift aria-hidden="true" />
                         <span className="flex items-center justify-between w-full">
                             {t('whatsNew')}
                             {!hasSeenNewFeatures && <Badge variant="secondary" className="h-5">{t('newBadge')}</Badge>}
@@ -528,20 +550,20 @@ export function SidebarNav() {
           <SidebarMenuItem>
             <Link href="/dashboard/settings">
               <SidebarMenuButton id="nav-settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip={t('settings')}>
-                <Settings />
+                <Settings aria-hidden="true" />
                 <span>{t('settings')}</span>
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton id="sidebar-help-button" onClick={handleHelpClick} tooltip={t('help')}>
-              <MessageCircleQuestion />
+              <MessageCircleQuestion aria-hidden="true" />
               <span>{t('help')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout} tooltip={t('logout')}>
-              <LogOut />
+            <SidebarMenuButton onClick={logout} tooltip={t('logout')} aria-label={t('logout')}>
+              <LogOut aria-hidden="true" />
               <span>{t('logout')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -549,7 +571,31 @@ export function SidebarNav() {
       </SidebarFooter>
     </>
   );
+}, (prev, next) => {
+  // Custom comparator: only re-render when sidebar-relevant data changes
+  if (prev.newFeaturesEnabled !== next.newFeaturesEnabled) return false;
+  if (prev.user.role !== next.user.role) return false;
+  if (prev.user.name !== next.user.name) return false;
+  if (prev.user.avatarUrl !== next.user.avatarUrl) return false;
+  if ((prev.user.notifications?.length ?? 0) !== (next.user.notifications?.length ?? 0)) return false;
+  if ((prev.user.notifications?.filter(n => !n.read).length ?? 0) !== (next.user.notifications?.filter(n => !n.read).length ?? 0)) return false;
+  if (prev.user.delegatedAdminPermissions?.length !== next.user.delegatedAdminPermissions?.length) return false;
+  return true;
+});
+
+// ——————————————————————————— Outer Wrapper (thin, calls useAuth) ———————————
+
+export function SidebarNav() {
+  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
+
+  if (!user) return null;
+
+  return (
+    <SidebarNavInner
+      user={user}
+      logout={logout}
+      updateUser={updateUser}
+      newFeaturesEnabled={newFeaturesEnabled}
+    />
+  );
 }
-
-
-

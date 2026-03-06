@@ -647,7 +647,18 @@
     "distance": "מֶרְחָק",
     "allDistances": "כל המרחקים",
     "distance10": "עד 10 ק\"מ",
-    "distance25": "עד 25 ק\"מ"
+    "distance25": "עד 25 ק\"מ",
+    "distance50": "עד 50 ק\"מ",
+    "clearAll": "נקה הכל",
+    "resultsCount": "נמצאו {count} שיעורים פנויים",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "anyDate": "כל תאריך",
+    "searchTeacher": "חיפוש לפי מורה",
+    "sortedByDistance": "מסודר לפי מרחק",
+    "useMyLocation": "השתמש במיקום שלי",
+    "locating": "מאתר...",
+    "locationError": "לא ניתן לאתר מיקום. יש לאפשר גישה למיקום בדפדפן."
   },
   "ExcellenceTrack": {
     "acceptBtn": "אישור ההזמנה",

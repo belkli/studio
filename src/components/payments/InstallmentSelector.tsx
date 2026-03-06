@@ -67,7 +67,7 @@ export function InstallmentSelector({
                                 /חודש
                             </span>
                             {isSelected && (
-                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                <div className="absolute -top-1 -end-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                                     <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
@@ -78,7 +78,7 @@ export function InstallmentSelector({
                 })}
             </div>
             <div className="flex justify-between items-center pt-2 border-t border-border text-sm" dir="rtl">
-                <span className="text-muted-foreground">סה"כ לתשלום:</span>
+                <span className="text-muted-foreground">סה&quot;כ לתשלום:</span>
                 <span className="font-bold text-foreground">{formatCurrency(totalAmount, currency)}</span>
             </div>
             {selectedCount > 1 && (

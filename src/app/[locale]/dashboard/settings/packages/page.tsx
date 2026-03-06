@@ -49,7 +49,6 @@ export default function PackagesSettingsPage() {
   useEffect(() => {
     if (user && !canAccess) router.push('/403');
   }, [canAccess, router, user]);
-  if (user && !canAccess) return null;
 
   const rows = useMemo(
     () => lessonPackages.filter((item) => item.conservatoriumId === user?.conservatoriumId),
@@ -83,6 +82,8 @@ export default function PackagesSettingsPage() {
       instrumentIds: [],
     },
   });
+
+  if (user && !canAccess) return null;
 
   const onCreate = () => {
     setEditing(null);
@@ -207,6 +208,7 @@ export default function PackagesSettingsPage() {
               <div className="text-sm font-medium text-start">Instruments</div>
               <div className="grid grid-cols-1 gap-2 rounded-md border p-3 md:grid-cols-2">
                 {instrumentRows.map((item) => {
+                  // eslint-disable-next-line react-hooks/incompatible-library
                   const checked = form.watch('instrumentIds').includes(item.id);
                   return (
                     <label key={item.id} className="flex items-center gap-2 text-sm">

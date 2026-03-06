@@ -52,7 +52,7 @@ export function SheetMusicViewer() {
                                 <button
                                     key={piece.id}
                                     onClick={() => handleViewPiece(piece.id)}
-                                    className={`w-full ${isRtl ? 'text-right' : 'text-left'} p-3 rounded-lg border transition-all ${selectedPieceId === piece.id ? 'bg-primary/5 border-primary shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}
+                                    className={`w-full text-start p-3 rounded-lg border transition-all ${selectedPieceId === piece.id ? 'bg-primary/5 border-primary shadow-sm' : 'bg-card hover:bg-muted/50 border-border'}`}
                                 >
                                     <div className="font-medium text-sm">{(piece as any).compositionDetails?.title || t('piece')}</div>
                                     <div className="text-xs text-muted-foreground mt-1 truncate">{(piece as any).compositionDetails?.composer}</div>
@@ -113,7 +113,7 @@ export function SheetMusicViewer() {
             <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
                 <DialogContent className="max-w-[100vw] w-screen max-h-[100vh] h-screen p-0 m-0 border-none sm:rounded-none flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                     <div className="bg-black text-white p-3 flex justify-between items-center shrink-0">
-                        <span className={`font-medium ${isRtl ? 'ml-4' : 'mr-4'}`}>{(activePiece as any)?.compositionDetails?.title} - {(activePiece as any)?.compositionDetails?.composer}</span>
+                        <span className="font-medium me-4">{(activePiece as any)?.compositionDetails?.title} - {(activePiece as any)?.compositionDetails?.composer}</span>
                         <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(false)} className="text-white hover:bg-white/20">
                             <X className="h-5 w-5" />
                         </Button>
@@ -125,7 +125,7 @@ export function SheetMusicViewer() {
                             <h3 className="text-xl text-muted-foreground mt-2">{(activePiece as any)?.compositionDetails?.composer}</h3>
 
                             <div className="mt-12 w-full text-center border-t pt-8 text-muted-foreground relative">
-                                <Badge variant="outline" className={`text-xl absolute -top-4 ${isRtl ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'} bg-white`}>{t('fullScreenViewer')}</Badge>
+                                <Badge variant="outline" className="text-xl absolute -top-4 start-1/2 -translate-x-1/2 rtl:translate-x-1/2 bg-white">{t('fullScreenViewer')}</Badge>
                                 <p>{t('fullScreenSupport')}</p>
                             </div>
                         </div>

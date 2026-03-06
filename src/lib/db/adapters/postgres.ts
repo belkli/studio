@@ -1682,6 +1682,13 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
     repertoire: mapCompositions(compositionRows),
     donationCauses: mapDonationCauses(donationCauseRows, idMap),
     donations: mapDonationRecords(donationRecordRows, idMap),
+    makeupCredits: [],
+    practiceLogs: [],
+    notifications: [],
+    roomLocks: [],
+    teacherExceptions: [],
+    consentRecords: [],
+    complianceLogs: [],
   };
 }
 

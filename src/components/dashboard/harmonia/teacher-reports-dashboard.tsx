@@ -150,25 +150,25 @@ export function TeacherReportsDashboard() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colType')}</TableHead>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colDate')}</TableHead>
-                                <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStatus')}</TableHead>
+                                <TableHead className="text-start">{t('colStudent')}</TableHead>
+                                <TableHead className="text-start">{t('colType')}</TableHead>
+                                <TableHead className="text-start">{t('colDate')}</TableHead>
+                                <TableHead className="text-start">{t('colStatus')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {stats.upcomingExams.length > 0 ? stats.upcomingExams.map((form: FormSubmission) => (
                                 <TableRow key={form.id}>
-                                    <TableCell className={`font-medium flex items-center gap-2 ${isRtl ? 'text-right' : 'text-left'}`}>
+                                    <TableCell className="font-medium flex items-center gap-2 text-start">
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage src={users.find((u: User) => u.id === form.studentId)?.avatarUrl} />
                                             <AvatarFallback>{form.studentName.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         {form.studentName}
                                     </TableCell>
-                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>{form.formType}</TableCell>
-                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>{form.submissionDate}</TableCell>
-                                    <TableCell className={isRtl ? 'text-right' : 'text-left'}>
+                                    <TableCell className="text-start">{form.formType}</TableCell>
+                                    <TableCell className="text-start">{form.submissionDate}</TableCell>
+                                    <TableCell className="text-start">
                                         <span className="text-sm text-muted-foreground">{form.status}</span>
                                     </TableCell>
                                 </TableRow>

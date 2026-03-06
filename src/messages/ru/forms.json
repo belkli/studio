@@ -159,9 +159,9 @@
     "successTitle": "Форма «{type}» создана",
     "title": "Новая Форма / Запрос",
     "types": {
-      "exam_registration": "Регистрация на экзамен",
-      "kenes": "Кенес",
-      "recital": "Реситаль"
+      "exam_registration": "הרשמה לבחינה",
+      "kenes": "כנס / אירוע",
+      "recital": "רסיטל בגרות"
     },
     "validation": {
       "required": "Это поле обязательно"
@@ -519,7 +519,8 @@
     "T": "Т"
   },
   "LessonManagement": {
-    "additionalPracticeNote": "Дополнительное практическое примечание",
+    "bookPageTitle": "Записаться на новый урок",
+    "bookPageSubtitle": "Выберите инструмент, учителя и свободное время для записи нового урока из вашего пакета.",
     "additionalPracticeNotePlaceholder": "е.г., Пожалуйста оплатить аттентион для дйнамикс в меасурес 15-20.",
     "addVoiceFeedback": "Добавить Голос Феедбакк",
     "allStatuses": "Все статусы",
@@ -629,6 +630,29 @@
     "virtualLessonLink": "Виртуальный Урок Ссылка",
     "visibleToStudentParent": "(Висибле для ученик и родитель)",
     "whatDidWeLearn": "Что мы узнали сегодня?",
-    "whatDidWeLearnPlaceholder": "например, сегодня мы сосредоточились на гаммах и технике аппликатуры..."
+    "whatDidWeLearnPlaceholder": "например, сегодня мы сосредоточились на гаммах и технике аппликатуры...",
+    "regularBookingTab": "Обычное бронирование",
+    "lastMinuteDealsTab": "Акции последней минуты",
+    "instrumentHint": "Ваши зарегистрированные инструменты отображаются первыми — можно выбрать любой другой",
+    "today": "Сегодня",
+    "tomorrow": "Завтра",
+    "minutesShort": "мин",
+    "allInstruments": "Все инструменты",
+    "choosePaymentMethod": "Как вы хотите оплатить?",
+    "usePackageCredit": "Использовать кредит пакета",
+    "usePackageCreditDesc": "Списать из пакета \"{package}\"",
+    "payPromotionalPrice": "Оплатить акционную цену",
+    "payPromotionalPriceDesc": "Дополнительный урок вне пакета по специальной цене",
+    "cancel": "Отмена",
+    "bookDealTitle": "Бронирование урока последней минуты",
+    "bookDealDesc": "Выберите способ оплаты для этого урока",
+    "noDealsAvailable": "Акций сейчас нет",
+    "noDealsAvailableDesc": "Проверьте завтра — доступные слоты обновляются постоянно",
+    "dealsFilteredForStudent": "Показаны уроки для: {instruments}",
+    "dealBookedSuccess": "Урок успешно забронирован!",
+    "dealBookedDescPromo": "Урок забронирован за ₪{price} (скидка {discount}%)",
+    "dealBookedDescPackage": "Урок списан из вашего активного пакета",
+    "selectTeacherFirst": "Сначала выберите учителя, чтобы увидеть доступное время",
+    "step3Time": "Шаг 3: Выберите время"
   }
 }

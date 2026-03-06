@@ -52,7 +52,7 @@ export function AiMatchmakerForm() {
     return (
         <Card className="max-w-3xl mx-auto shadow-sm border-t-4 border-t-purple-500 overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b relative">
-                <div className="absolute top-4 left-4 opacity-20">
+                <div className="absolute top-4 start-4 opacity-20">
                     <Bot className="w-24 h-24 text-purple-600" />
                 </div>
                 <div className="relative z-10">
@@ -80,7 +80,7 @@ export function AiMatchmakerForm() {
                     <div className="flex flex-col items-center justify-center h-full space-y-4 py-12">
                         <div className="relative">
                             <Bot className="w-16 h-16 text-purple-600 animate-pulse" />
-                            <Sparkles className="w-6 h-6 text-yellow-400 absolute -top-2 -right-2 animate-spin-slow" />
+                            <Sparkles className="w-6 h-6 text-yellow-400 absolute -top-2 -end-2 animate-spin-slow" />
                         </div>
                         <h3 className="text-xl font-semibold text-purple-900">{t('analyzingTitle')}</h3>
                         <p className="text-muted-foreground text-center max-w-sm">
@@ -158,7 +158,7 @@ export function AiMatchmakerForm() {
                         <div className="grid gap-4">
                             {/* Top Match */}
                             <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50/50 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 bg-green-500 text-white px-4 py-1 rounded-bl-lg text-sm font-bold flex items-center gap-1">
+                                <div className="absolute top-0 end-0 bg-green-500 text-white px-4 py-1 rounded-bl-lg text-sm font-bold flex items-center gap-1">
                                     <Star className="w-4 h-4 fill-white" /> {t('topMatchLabel')}
                                 </div>
                                 <div className="flex gap-4 items-start mt-2">
@@ -186,7 +186,7 @@ export function AiMatchmakerForm() {
 
                             {/* Runner Up */}
                             <div className="border rounded-xl p-6 bg-card relative opacity-90">
-                                <div className="absolute top-0 right-0 bg-gray-200 text-gray-700 px-3 py-1 rounded-bl-lg text-xs font-semibold">
+                                <div className="absolute top-0 end-0 bg-gray-200 text-gray-700 px-3 py-1 rounded-bl-lg text-xs font-semibold">
                                     {t('runnerUpLabel')}
                                 </div>
                                 <div className="flex gap-4 items-center">

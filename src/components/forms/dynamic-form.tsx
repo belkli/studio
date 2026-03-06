@@ -102,7 +102,7 @@ const generateSchema = (fields: FormTemplate['fields']) => {
 export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
   const t = useTranslations('Forms');
   const locale = useLocale();
-  const { users, conservatoriumInstruments } = useAuth();
+  const { users, conservatoriumInstruments, compositions } = useAuth();
   const signatureRefs = useRef<Record<string, SignatureCanvas | null>>({});
   const formSchema = useMemo(() => generateSchema(template.fields), [template.fields]);
 
@@ -116,6 +116,7 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
     }, {} as Record<string, any>),
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const values = form.watch();
 
   const teacherOptions = users
@@ -125,6 +126,24 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
   const instrumentOptions = conservatoriumInstruments
     .filter((i) => i.isActive && i.availableForRegistration)
     .map((i) => ({ value: i.names.he, label: getLocalizedLabel(locale, i.names) }));
+
+  const composerOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const opts: { value: string; label: string }[] = [];
+    for (const c of compositions) {
+      const id = c.composerId || c.composer;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      const label =
+        (locale === 'he' && c.composerNames?.he) ||
+        (locale === 'ar' && c.composerNames?.ar) ||
+        (locale === 'ru' && c.composerNames?.ru) ||
+        c.composerNames?.en ||
+        c.composer;
+      opts.push({ value: id, label });
+    }
+    return opts.sort((a, b) => a.label.localeCompare(b.label));
+  }, [compositions, locale]);
 
   const sortedFields = [...template.fields].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
@@ -156,7 +175,9 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
                         ? teacherOptions
                         : field.type === 'instrument_select'
                           ? instrumentOptions
-                          : getFieldOptions(field.options).map((opt) => ({ value: opt.value, label: getLocalizedLabel(locale, opt.label) }));
+                          : field.type === 'composer_select'
+                            ? composerOptions
+                            : getFieldOptions(field.options).map((opt) => ({ value: opt.value, label: getLocalizedLabel(locale, opt.label) }));
 
                     const renderInput = () => {
                       switch (field.type) {

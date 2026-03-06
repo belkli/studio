@@ -20,52 +20,48 @@ import { getLocalizedUserProfile } from "@/lib/utils/localized-content";
 const OccasionTile = ({ imageId, title, icon }: { imageId: string, title: string, icon: React.ReactNode }) => {
     const image = PlaceHolderImages.find(img => img.id === imageId);
     return (
-        <Card className="overflow-hidden group cursor-pointer">
-            <div className="relative h-32">
-                {image && <Image src={image.imageUrl} alt={image.description} layout="fill" objectFit="cover" className="group-hover:scale-105 transition-transform duration-300" data-ai-hint={image.imageHint} />}
+        <Card className="overflow-hidden group cursor-pointer border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="relative h-52">
+                {image && <Image src={image.imageUrl} alt={image.description} fill style={{ objectFit: 'cover' }} className="group-hover:scale-110 transition-transform duration-500" data-ai-hint={image.imageHint} />}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 start-0 end-0 p-4 flex items-center gap-3 text-white">
+                    {icon}
+                    <span className="font-bold text-lg drop-shadow">{title}</span>
+                </div>
             </div>
-            <CardContent className="p-4 flex items-center gap-3">
-                {icon}
-                <span className="font-semibold">{title}</span>
-            </CardContent>
         </Card>
-    )
-}
+    );
+};
 
 const MusicianCard = ({ musician: originalMusician }: { musician: User }) => {
     const t = useTranslations('MusiciansForHire');
     const locale = useLocale();
     const musician = getLocalizedUserProfile(originalMusician, locale);
-    const image = PlaceHolderImages.find(img => img.id === musician.avatarUrl); // Using avatarUrl as imageId
-
     return (
-        <Card>
-            <CardHeader className="flex-row items-center gap-4">
-                <Avatar className="h-16 w-16">
-                    {image ? <AvatarImage src={image.imageUrl} alt={musician.name} /> : <AvatarImage src={musician.avatarUrl} alt={musician.name} />}
-                    <AvatarFallback>{musician.name.charAt(0)}</AvatarFallback>
+        <Card className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+            <div className="relative h-40 bg-gradient-to-br from-primary/20 to-amber-50">
+                <Avatar className="absolute bottom-0 start-1/2 -translate-x-1/2 translate-y-1/2 h-20 w-20 border-4 border-background shadow-lg">
+                    <AvatarImage src={musician.avatarUrl} alt={musician.name} />
+                    <AvatarFallback className="text-xl font-bold">{musician.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div>
-                    <CardTitle>{musician.name}</CardTitle>
-                    <CardDescription>{musician.localizedHeadline || musician.performanceProfile?.headline}</CardDescription>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2">
+            </div>
+            <CardContent className="pt-12 pb-4 text-center space-y-2">
+                <h3 className="font-bold text-lg">{musician.name}</h3>
+                <p className="text-sm text-muted-foreground">{musician.localizedHeadline || musician.performanceProfile?.headline}</p>
+                <p className="text-xs text-muted-foreground/80 line-clamp-2 px-2">
                     {musician.localizedPerformanceBio || musician.performanceProfile?.performanceBio}
                 </p>
-                <Button variant="link" className="p-0 mt-2">{t('viewProfile')}</Button>
+                <Button variant="outline" size="sm" className="mt-2 w-full">{t('viewProfile')}</Button>
             </CardContent>
         </Card>
-    )
-}
+    );
+};
 
 export function MusiciansForHire() {
     const t = useTranslations('MusiciansForHire');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
     const { users } = useAuth();
-    const heroImage = PlaceHolderImages.find(img => img.id === 'musicians-hero');
 
     const performers = useMemo(() =>
         users.filter(u => u.role === 'teacher' && u.performanceProfile?.isOptedIn && u.performanceProfile?.adminApproved)
@@ -80,51 +76,100 @@ export function MusiciansForHire() {
 
     return (
         <>
-            <section className="relative w-full h-[70vh] flex items-center justify-center text-center text-white bg-slate-900">
-                {heroImage && (
-                    <Image
-                        src={heroImage.imageUrl}
-                        alt={heroImage.description}
-                        layout="fill"
-                        objectFit="cover"
-                        className="z-0 brightness-50"
-                        data-ai-hint={heroImage.imageHint}
-                        priority
-                    />
-                )}
-                <div className="relative z-10 p-4 space-y-6">
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">{t('heroTitle')}</h1>
-                    <p className="max-w-3xl mx-auto text-lg md:text-xl text-neutral-200">
+            {/* ── Hero ── */}
+            <section className="relative w-full min-h-[88vh] flex items-center justify-center text-center text-white overflow-hidden">
+                {/* Background image */}
+                <Image
+                    src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?q=80&w=2200&auto=format&fit=crop"
+                    alt="String quartet performing at an elegant event"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    className="z-0"
+                    priority
+                />
+                {/* Multi-layer overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20 z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-900/30 via-transparent to-indigo-900/30 z-10" />
+
+                {/* Animated musical notes — pure CSS */}
+                <style>{`
+                    @keyframes floatUp {
+                        0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+                        100% { transform: translateY(-100vh) rotate(20deg); opacity: 0; }
+                    }
+                    .note-1 { animation: floatUp 8s ease-in infinite; animation-delay: 0s; }
+                    .note-2 { animation: floatUp 11s ease-in infinite; animation-delay: 2s; }
+                    .note-3 { animation: floatUp 9s ease-in infinite; animation-delay: 4s; }
+                    .note-4 { animation: floatUp 13s ease-in infinite; animation-delay: 1s; }
+                    @keyframes heroFadeUp {
+                        from { opacity: 0; transform: translateY(30px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                    .hero-line-1 { animation: heroFadeUp 0.8s ease-out 0.2s both; }
+                    .hero-line-2 { animation: heroFadeUp 0.8s ease-out 0.4s both; }
+                    .hero-line-3 { animation: heroFadeUp 0.8s ease-out 0.6s both; }
+                    .hero-cta { animation: heroFadeUp 0.8s ease-out 0.8s both; }
+                `}</style>
+
+                {/* Floating music note decorations */}
+                <div className="absolute bottom-20 start-10 text-white/20 text-6xl note-1 z-10 select-none">♪</div>
+                <div className="absolute bottom-32 end-16 text-white/15 text-5xl note-2 z-10 select-none">♫</div>
+                <div className="absolute bottom-40 start-1/4 text-white/10 text-4xl note-3 z-10 select-none">♩</div>
+                <div className="absolute bottom-24 end-1/3 text-white/20 text-7xl note-4 z-10 select-none">𝄞</div>
+
+                <div className="relative z-20 px-4 py-20 max-w-4xl mx-auto space-y-6">
+                    {/* Badge */}
+                    <div className="hero-line-1 inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-5 py-2 text-sm text-amber-200 backdrop-blur-sm">
+                        <Music className="h-4 w-4" />
+                        {t('heroTitle')}
+                    </div>
+                    <h1 className="hero-line-2 text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
+                        {t('heroTitle')}
+                    </h1>
+                    <p className="hero-line-3 max-w-2xl mx-auto text-lg md:text-xl text-neutral-200/90 leading-relaxed">
                         {t('heroSubtitle')}
                     </p>
-                    <Button size="lg" className="text-lg py-7 px-8" asChild>
-                        <a href="#quote-configurator">{t('getQuote')}</a>
-                    </Button>
-                </div>
-            </section>
-
-            <section className="py-12 md:py-20 bg-muted/30">
-                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                            <BadgeCheck className="h-10 w-10 text-primary" />
-                            <h3 className="text-xl font-bold">{t('features.experienced')}</h3>
-                            <p className="text-muted-foreground">{t('features.experiencedDesc')}</p>
-                        </div>
-                        <div className="flex flex-col items-center gap-3">
-                            <Shield className="h-10 w-10 text-primary" />
-                            <h3 className="text-xl font-bold">{t('features.backup')}</h3>
-                            <p className="text-muted-foreground">{t('features.backupDesc')}</p>
-                        </div>
-                        <div className="flex flex-col items-center gap-3">
-                            <Heart className="h-10 w-10 text-primary" />
-                            <h3 className="text-xl font-bold">{t('features.professional')}</h3>
-                            <p className="text-muted-foreground">{t('features.professionalDesc')}</p>
-                        </div>
+                    <div className="hero-cta flex flex-wrap justify-center gap-4">
+                        <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-lg px-8 py-6 shadow-lg shadow-amber-500/30 transition-all hover:scale-105" asChild>
+                            <a href="#quote-configurator">{t('getQuote')}</a>
+                        </Button>
+                        <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 text-lg px-8 py-6 backdrop-blur-sm" asChild>
+                            <a href="#musicians">{t('musiciansTitle')}</a>
+                        </Button>
                     </div>
                 </div>
             </section>
 
+            {/* ── Features ── */}
+            <section className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/40">
+                <style>{`
+                    @keyframes sectionFadeUp {
+                        from { opacity: 0; transform: translateY(24px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                    .feature-card { opacity: 0; animation: sectionFadeUp 0.6s ease-out forwards; }
+                    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+                    .feature-card:nth-child(2) { animation-delay: 0.25s; }
+                    .feature-card:nth-child(3) { animation-delay: 0.4s; }
+                `}</style>
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        {[
+                            { icon: <BadgeCheck className="h-10 w-10 text-amber-500" />, title: t('features.experienced'), desc: t('features.experiencedDesc') },
+                            { icon: <Shield className="h-10 w-10 text-primary" />, title: t('features.backup'), desc: t('features.backupDesc') },
+                            { icon: <Heart className="h-10 w-10 text-rose-500" />, title: t('features.professional'), desc: t('features.professionalDesc') },
+                        ].map(({ icon, title, desc }) => (
+                            <div key={title} className="feature-card flex flex-col items-center gap-4 rounded-2xl border bg-card/60 p-8 shadow-sm backdrop-blur-sm transition-shadow hover:shadow-md">
+                                <div className="rounded-2xl bg-muted/60 p-4">{icon}</div>
+                                <h3 className="text-xl font-bold">{title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">{desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── Occasions ── */}
             <section className="py-12 md:py-20">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
@@ -139,6 +184,7 @@ export function MusiciansForHire() {
                 </div>
             </section>
 
+            {/* ── Quote configurator ── */}
             <section id="quote-configurator" className="py-12 md:py-24 bg-muted/30">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
@@ -185,7 +231,8 @@ export function MusiciansForHire() {
                 </div>
             </section>
 
-            <section className="py-12 md:py-20">
+            {/* ── Musicians ── */}
+            <section id="musicians" className="py-12 md:py-20">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                     <div className="text-center space-y-4 mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">{t('musiciansTitle')}</h2>

@@ -38,8 +38,8 @@ export function PublicEventPage() {
           <Image
             src={heroImage.imageUrl}
             alt={heroImage.description}
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: 'cover' }}
             className="z-0 brightness-50"
             data-ai-hint={heroImage.imageHint}
             priority

@@ -61,13 +61,13 @@ export function Header() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/dashboard/settings">
-              <Settings className="ms-2 h-4 w-4" />
+              <Settings className="me-2 h-4 w-4" />
               <span>{t('settings')}</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <LogOut className="ms-2 h-4 w-4" />
+            <LogOut className="me-2 h-4 w-4" />
             <span>{t('logout')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

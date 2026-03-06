@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
+import { getTranslations, getLocale } from 'next-intl/server';
+import type { useTranslations } from 'next-intl';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { getConservatoriumStatementContacts, type StatementContactSource } from '@/lib/legal-contacts';
@@ -15,8 +15,8 @@ function getSourceLabel(
 }
 
 export default async function AccessibilityPage() {
-  const t = useTranslations('AccessibilityPage');
-  const locale = useLocale();
+  const t = await getTranslations('AccessibilityPage');
+  const locale = await getLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const rows = (await getConservatoriumStatementContacts('accessibility')).map((row) => {
     const localized = getLocalizedConservatorium(row.conservatorium, locale);

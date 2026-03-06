@@ -96,6 +96,11 @@ const SidebarProvider = React.forwardRef<
         : setOpen((open) => !open)
     }, [isMobile, setOpen, setOpenMobile])
 
+    // Close mobile sidebar when switching to desktop viewport.
+    React.useEffect(() => {
+      if (!isMobile) setOpenMobile(false)
+    }, [isMobile])
+
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -326,7 +331,7 @@ const SidebarInset = React.forwardRef<
       ref={ref}
       data-sidebar="inset"
       className={cn(
-        "relative flex h-full flex-1 flex-col overflow-hidden bg-background transition-[margin] duration-200 ease-linear",
+        "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-background transition-[margin] duration-200 ease-linear",
         // Default sidebar variant margins
         "md:peer-data-[side=left]:[margin-inline-start:var(--sidebar-width)]",
         "md:peer-data-[side=right]:[margin-inline-end:var(--sidebar-width)]",
@@ -665,6 +670,7 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
   // Random width between 50 to 90%.
   const width = React.useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
     return `${Math.floor(Math.random() * 40) + 50}%`
   }, [])
 

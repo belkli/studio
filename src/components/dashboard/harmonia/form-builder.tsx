@@ -110,6 +110,7 @@ export function FormBuilder() {
   const previewTemplate: FormTemplate = useMemo(() => ({
     id: 'preview-template',
     conservatoriumId: 'preview',
+    // eslint-disable-next-line react-hooks/incompatible-library
     title: form.watch('title') || t('previewTitle'),
     description: form.watch('description') || '',
     createdAt: new Date().toISOString(),

@@ -2,6 +2,8 @@
   Alumnus,
   Announcement,
   Branch,
+  ComplianceLog,
+  ConsentRecord,
   Conservatorium,
   ConservatoriumInstrument,
   EventProduction,
@@ -12,10 +14,15 @@
   Composition,
   DonationCause,
   DonationRecord,
+  MakeupCredit,
   Masterclass,
+  Notification,
   PayrollSummary,
+  PracticeLog,
   Room,
+  RoomLock,
   ScholarshipApplication,
+  TeacherException,
   User,
 } from '@/lib/types';
 
@@ -73,6 +80,19 @@ export interface RepertoireRepository extends ScopedRepository<RepertoireEntry> 
 export interface DonationCauseRepository extends ScopedRepository<DonationCause> {}
 export interface DonationRepository extends ScopedRepository<DonationRecord> {}
 
+// ── New repositories (DBA gap analysis) ──────────────────────
+
+export interface MakeupCreditRepository extends ScopedRepository<MakeupCredit> {}
+export interface PracticeLogRepository extends ScopedRepository<PracticeLog> {}
+export interface NotificationRepository extends ScopedRepository<Notification> {
+  findByUser(userId: string, conservatoriumId?: string): Promise<Notification[]>;
+  markRead(id: string): Promise<void>;
+}
+export interface RoomLockRepository extends ScopedRepository<RoomLock> {}
+export interface TeacherExceptionRepository extends ScopedRepository<TeacherException> {}
+export interface ConsentRecordRepository extends ScopedRepository<ConsentRecord> {}
+export interface ComplianceLogRepository extends ScopedRepository<ComplianceLog> {}
+
 export interface DatabaseAdapter {
   users: UserRepository;
   conservatoriums: ConservatoriumRepository;
@@ -94,6 +114,15 @@ export interface DatabaseAdapter {
   repertoire: RepertoireRepository;
   donationCauses: DonationCauseRepository;
   donations: DonationRepository;
+
+  // New repositories (DBA gap analysis — 7 missing collections)
+  makeupCredits: MakeupCreditRepository;       // /conservatoriums/{cid}/makeupCredits — write:false (Cloud Functions only)
+  practiceLogs: PracticeLogRepository;          // /conservatoriums/{cid}/practiceLogs — student create, teacher comment
+  notifications: NotificationRepository;        // /conservatoriums/{cid}/notifications — Cloud Functions create, user reads own
+  roomLocks: RoomLockRepository;                // /conservatoriums/{cid}/roomLocks — write:false (transactional Cloud Functions only)
+  teacherExceptions: TeacherExceptionRepository; // /conservatoriums/{cid}/teacherExceptions — teacher creates own
+  consentRecords: ConsentRecordRepository;      // /consentRecords/{id} — TOP-LEVEL, immutable after creation
+  complianceLogs: ComplianceLogRepository;      // /conservatoriums/{cid}/complianceLogs — write:false (append-only Cloud Functions)
 }
 
 

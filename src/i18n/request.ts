@@ -1,16 +1,57 @@
 
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+
+// Static imports of all message files — avoids node:fs in Edge Runtime
+import heAdmin from '../messages/he/admin.json';
+import heAlumni from '../messages/he/alumni.json';
+import heBilling from '../messages/he/billing.json';
+import heCommon from '../messages/he/common.json';
+import heEnrollment from '../messages/he/enrollment.json';
+import heForms from '../messages/he/forms.json';
+import heOpenDay from '../messages/he/OpenDay.json';
+import hePublic from '../messages/he/public.json';
+import heSettings from '../messages/he/settings.json';
+import heStudent from '../messages/he/student.json';
+
+import enAdmin from '../messages/en/admin.json';
+import enAlumni from '../messages/en/alumni.json';
+import enBilling from '../messages/en/billing.json';
+import enCommon from '../messages/en/common.json';
+import enEnrollment from '../messages/en/enrollment.json';
+import enForms from '../messages/en/forms.json';
+import enOpenDay from '../messages/en/OpenDay.json';
+import enPublic from '../messages/en/public.json';
+import enSettings from '../messages/en/settings.json';
+import enStudent from '../messages/en/student.json';
+
+import arAdmin from '../messages/ar/admin.json';
+import arAlumni from '../messages/ar/alumni.json';
+import arBilling from '../messages/ar/billing.json';
+import arCommon from '../messages/ar/common.json';
+import arEnrollment from '../messages/ar/enrollment.json';
+import arForms from '../messages/ar/forms.json';
+import arOpenDay from '../messages/ar/OpenDay.json';
+import arPublic from '../messages/ar/public.json';
+import arSettings from '../messages/ar/settings.json';
+import arStudent from '../messages/ar/student.json';
+
+import ruAdmin from '../messages/ru/admin.json';
+import ruAlumni from '../messages/ru/alumni.json';
+import ruBilling from '../messages/ru/billing.json';
+import ruCommon from '../messages/ru/common.json';
+import ruEnrollment from '../messages/ru/enrollment.json';
+import ruForms from '../messages/ru/forms.json';
+import ruOpenDay from '../messages/ru/OpenDay.json';
+import ruPublic from '../messages/ru/public.json';
+import ruSettings from '../messages/ru/settings.json';
+import ruStudent from '../messages/ru/student.json';
 
 // Helper function to deeply merge two objects.
-// This is used to merge the fallback messages with the locale-specific messages.
 function deepMerge(base: any, override: any): any {
     const result = { ...base };
     for (const key in override) {
         if (Object.prototype.hasOwnProperty.call(override, key)) {
-            // If the key exists in both and they are both objects (but not arrays), recurse.
             if (
                 typeof result[key] === 'object' && result[key] !== null &&
                 typeof override[key] === 'object' && override[key] !== null &&
@@ -18,7 +59,6 @@ function deepMerge(base: any, override: any): any {
             ) {
                 result[key] = deepMerge(result[key], override[key]);
             } else {
-                // Otherwise, the override value takes precedence.
                 result[key] = override[key];
             }
         }
@@ -26,59 +66,32 @@ function deepMerge(base: any, override: any): any {
     return result;
 }
 
-async function readJsonFileIfExists(filePath: string) {
-    try {
-        const raw = await fs.readFile(filePath, 'utf8');
-        return JSON.parse(raw);
-    } catch {
-        return {};
-    }
+const allMessages: Record<string, object[]> = {
+    he: [heAdmin, heAlumni, heBilling, heCommon, heEnrollment, heForms, heOpenDay, hePublic, heSettings, heStudent],
+    en: [enAdmin, enAlumni, enBilling, enCommon, enEnrollment, enForms, enOpenDay, enPublic, enSettings, enStudent],
+    ar: [arAdmin, arAlumni, arBilling, arCommon, arEnrollment, arForms, arOpenDay, arPublic, arSettings, arStudent],
+    ru: [ruAdmin, ruAlumni, ruBilling, ruCommon, ruEnrollment, ruForms, ruOpenDay, ruPublic, ruSettings, ruStudent],
+};
+
+function mergeMessages(locale: string): object {
+    const files = allMessages[locale] ?? allMessages['en'];
+    return files.reduce((acc, msg) => deepMerge(acc, msg), {});
 }
-
-async function loadLocaleMessages(locale: string) {
-    const splitDir = path.resolve('src/messages', locale);
-    let merged = {};
-
-    try {
-        const entries = await fs.readdir(splitDir, { withFileTypes: true });
-        const splitFiles = entries
-            .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
-            .map((entry) => entry.name)
-            .sort((a, b) => a.localeCompare(b, 'en'));
-
-        for (const fileName of splitFiles) {
-            const filePath = path.join(splitDir, fileName);
-            const splitMessages = await readJsonFileIfExists(filePath);
-            merged = deepMerge(merged, splitMessages);
-        }
-    } catch {
-        // Split directory missing; return empty object and let fallback merge handle display safety.
-    }
-
-    return merged;
-}
-
 
 export default getRequestConfig(async ({ requestLocale }) => {
     const resolvedLocale = await requestLocale;
     let locale = resolvedLocale;
-    
+
     // Validate that the incoming `locale` parameter is valid
     if (!locale || !routing.locales.includes(locale as any)) {
         locale = routing.defaultLocale;
     }
 
-    // Load locale root + optional split bundles.
-    const messages = await loadLocaleMessages(locale);
-    
-    // Always load English (root + split) as fallback language.
-    const fallbackMessages = await loadLocaleMessages('en');
-    
+    const messages = mergeMessages(locale);
+    const fallbackMessages = mergeMessages('en');
+
     return {
         locale,
-        // Merge the fallback messages with the requested locale's messages.
-        // This ensures that any missing keys in the requested locale are
-        // replaced by their English counterparts, preventing broken UI.
         messages: deepMerge(fallbackMessages, messages),
     };
 });

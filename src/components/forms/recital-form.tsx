@@ -125,19 +125,31 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     const selectedComposer = currentRepertoireItem?.composer;
     const selectedInstrument = watch('instrumentDetails.instrument');
 
+    // eslint-disable-next-line react-hooks/use-memo
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
-        const results = await searchComposers({ query, instrument: selectedInstrument });
-        setComposerOptions(results);
-        setIsLoadingComposers(false);
+        try {
+            const results = await searchComposers({ query, instrument: selectedInstrument });
+            setComposerOptions(results);
+        } catch (error) {
+            console.error('[RecitalForm] searchComposers failed:', error);
+        } finally {
+            setIsLoadingComposers(false);
+        }
     }, 300), [selectedInstrument]);
 
+    // eslint-disable-next-line react-hooks/use-memo
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
-        const instrument = getValues('instrumentDetails.instrument');
-        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
-        setCompositionOptions(results);
-        setIsLoadingCompositions(false);
+        try {
+            const instrument = getValues('instrumentDetails.instrument');
+            const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
+            setCompositionOptions(results);
+        } catch (error) {
+            console.error('[RecitalForm] searchCompositions failed:', error);
+        } finally {
+            setIsLoadingCompositions(false);
+        }
     }, 300), [selectedComposer, selectedComposerId, getValues, locale]);
 
     useEffect(() => {
@@ -408,8 +420,8 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
                                     </FormControl>
                                     <SelectContent>
                                         <SelectItem value="י">י</SelectItem>
-                                        <SelectItem value={'י"א'}>י"א</SelectItem>
-                                        <SelectItem value={'י"ב'}>י"ב</SelectItem>
+                                        <SelectItem value={'י"א'}>י&quot;א</SelectItem>
+                                        <SelectItem value={'י"ב'}>י&quot;ב</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -419,28 +431,28 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
                         <FormField control={form.control} name="applicantDetails.city" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('city')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} disabled={!!student.city} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="applicantDetails.phone" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('phone')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} disabled={!!student.phone} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="applicantDetails.gender" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('gender')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} disabled={!!student.gender} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="applicantDetails.birthDate" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('birthDate')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} disabled={!!student.birthDate} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -530,7 +542,7 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
                         <FormField control={form.control} name="instrumentDetails.instrument" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('instrument')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} readOnly={!!student.instruments?.[0]?.instrument} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -566,7 +578,7 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
                         <FormField control={form.control} name="teacherDetails.name" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('teacherName')}</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
+                                <FormControl><Input {...field} readOnly={!!student.instruments?.[0]?.teacherName} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />

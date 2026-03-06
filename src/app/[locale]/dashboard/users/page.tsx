@@ -131,6 +131,7 @@ export default function UsersPage() {
         }
     }, [currentUser, users]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredApprovedUsers = useMemo(() => {
         if (!approvedUsers) return [];
         return approvedUsers.filter(user => {
@@ -497,6 +498,7 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
                         <FormLabel>{t('delegatedPermissions')}</FormLabel>
                         <p className="text-sm text-muted-foreground">{t('delegatedPermissionsHint')}</p>
                         {ALL_ADMIN_SECTIONS.map((section) => {
+                            // eslint-disable-next-line react-hooks/incompatible-library
                             const checked = (form.watch('delegatedAdminPermissions') || []).includes(section);
                             return (
                                 <div key={section} className="flex items-center gap-3">

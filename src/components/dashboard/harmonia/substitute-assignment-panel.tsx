@@ -27,6 +27,7 @@ export function SubstituteAssignmentPanel() {
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
         const teachers = users.filter(u => u.role === 'teacher');
 
@@ -106,11 +107,11 @@ export function SubstituteAssignmentPanel() {
                 <Table dir={isRtl ? 'rtl' : 'ltr'}>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.date')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.student')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.instrument')}</TableHead>
-                            <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('table.originalTeacher')}</TableHead>
-                            <TableHead className={isRtl ? 'w-[300px] text-right' : 'w-[300px] text-left'}>{t('table.assignSubstitute')}</TableHead>
+                            <TableHead className="text-start">{t('table.date')}</TableHead>
+                            <TableHead className="text-start">{t('table.student')}</TableHead>
+                            <TableHead className="text-start">{t('table.instrument')}</TableHead>
+                            <TableHead className="text-start">{t('table.originalTeacher')}</TableHead>
+                            <TableHead className="w-[300px] text-start">{t('table.assignSubstitute')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

@@ -26,9 +26,9 @@ export function WhatsNewFeed() {
   const isRtl = locale === 'he' || locale === 'ar';
   const { user } = useAuth();
 
-  if (!user) return null;
+  const items = useWhatsNew(user?.id ?? '', user?.role ?? 'student', user?.conservatoriumId);
 
-  const items = useWhatsNew(user.id, user.role, user.conservatoriumId);
+  if (!user) return null;
 
   return (
     <Card dir={isRtl ? 'rtl' : 'ltr'}>

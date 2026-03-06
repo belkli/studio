@@ -1,6 +1,12 @@
 'use client';
 
-import { SheetMusicViewer } from "@/components/dashboard/harmonia/sheet-music-viewer";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const SheetMusicViewer = dynamic(
+    () => import("@/components/dashboard/harmonia/sheet-music-viewer").then(mod => ({ default: mod.SheetMusicViewer })),
+    { loading: () => <Skeleton className="h-[600px] w-full" /> }
+);
 
 export default function StudentRepertoirePage() {
     return (

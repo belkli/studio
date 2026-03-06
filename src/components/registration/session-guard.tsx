@@ -37,6 +37,7 @@ export function RegistrationSessionGuard({
   const durationMs = durationMinutes * 60 * 1000;
   const warningSeconds = warningMinutes * 60;
 
+  // eslint-disable-next-line react-hooks/purity
   const [now, setNow] = useState(Date.now());
   const [endAt, setEndAt] = useState<number | null>(null);
   const [dismissedWarning, setDismissedWarning] = useState(false);

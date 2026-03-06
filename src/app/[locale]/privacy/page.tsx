@@ -1,4 +1,5 @@
-import { useLocale, useTranslations } from 'next-intl';
+import { getLocale, getTranslations } from 'next-intl/server';
+import type { useTranslations } from 'next-intl';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { getConservatoriumStatementContacts, type StatementContactSource } from '@/lib/legal-contacts';
@@ -14,8 +15,8 @@ function getSourceLabel(
 }
 
 export default async function PrivacyPage() {
-  const t = useTranslations('PrivacyPage');
-  const locale = useLocale();
+  const t = await getTranslations('PrivacyPage');
+  const locale = await getLocale();
   const isRtl = locale === 'he' || locale === 'ar';
 
   const privacyRows = (await getConservatoriumStatementContacts('privacy')).map((row) => {

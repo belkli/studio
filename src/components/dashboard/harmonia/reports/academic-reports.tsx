@@ -25,6 +25,7 @@ export function AcademicReports() {
         repertoireAdvancement,
         engagementByTeacher,
         avgMinutesByInstrument,
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -191,7 +192,7 @@ export function AcademicReports() {
                             <TableRow>
                                 <TableHead>{t('student')}</TableHead>
                                 <TableHead>{t('teacher')}</TableHead>
-                                <TableHead className="text-left">{t('totalMinutes')}</TableHead>
+                                <TableHead className="text-start">{t('totalMinutes')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -205,7 +206,7 @@ export function AcademicReports() {
                                         {student.name}
                                     </TableCell>
                                     <TableCell>{student.instruments?.[0]?.teacherName}</TableCell>
-                                    <TableCell className="text-left font-mono">{t('minutesLabel', { count: totalMinutes })}</TableCell>
+                                    <TableCell className="text-start font-mono">{t('minutesLabel', { count: totalMinutes })}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

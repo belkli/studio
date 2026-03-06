@@ -24,6 +24,68 @@ interface StudentMakeupBalance {
 const MAKEUP_EXPIRY_DAYS = 60;
 const EXPIRING_SOON_DAYS = 7;
 
+function MakeupTable({ balancesToShow, isRtl, t }: { balancesToShow: StudentMakeupBalance[]; isRtl: boolean; t: (key: string, params?: Record<string, unknown>) => string }) {
+    return (
+        <Table dir={isRtl ? 'rtl' : 'ltr'}>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="text-start">{t('colStudent')}</TableHead>
+                    <TableHead className="text-start">{t('colTeacher')}</TableHead>
+                    <TableHead className="text-center">{t('colBalance')}</TableHead>
+                    <TableHead className="text-start">{t('colExpiry')}</TableHead>
+                    <TableHead className="text-end">{t('colActions')}</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {balancesToShow.length > 0 ? balancesToShow.map(item => {
+                    const expiryDate = addDays(item.earliestCreditDate, MAKEUP_EXPIRY_DAYS);
+                    const daysUntilExpiry = differenceInDays(expiryDate, new Date());
+                    const isExpiringSoon = daysUntilExpiry <= EXPIRING_SOON_DAYS;
+
+                    return (
+                        <TableRow key={item.student.id}>
+                            <TableCell className="font-medium flex items-center gap-3">
+                                <Avatar className="h-9 w-9">
+                                    <AvatarImage src={item.student.avatarUrl} />
+                                    <AvatarFallback>{item.student.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                {item.student.name}
+                            </TableCell>
+                            <TableCell className="text-start">{item.teacherName || t('unassigned')}</TableCell>
+                            <TableCell className="text-center font-semibold">{item.balance}</TableCell>
+                            <TableCell className="text-start">
+                                <Badge variant={isExpiringSoon ? 'destructive' : 'secondary'}>
+                                    {t('expiresInDays', { days: daysUntilExpiry })}
+                                </Badge>
+                            </TableCell>
+                            <TableCell className="text-end">
+                                <Button variant="outline" size="sm" disabled>
+                                    <CalendarPlus className="me-2 h-4 w-4" />
+                                    {t('scheduleBtn')}
+                                </Button>
+                                <Button variant="ghost" size="sm" disabled className="ms-2">
+                                    <Clock className="me-2 h-4 w-4" />
+                                    {t('extendBtn')}
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    )
+                }) : (
+                    <TableRow>
+                        <TableCell colSpan={5} className="p-0">
+                            <EmptyState
+                                icon={Coins}
+                                title={t('emptyTitle')}
+                                description={t('emptyDesc')}
+                            />
+                        </TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        </Table>
+    );
+}
+
 export function AdminMakeupDashboard() {
     const { users, lessons, getMakeupCreditBalance } = useAuth();
     const t = useTranslations('AdminMakeupDashboard');
@@ -72,66 +134,6 @@ export function AdminMakeupDashboard() {
     }, [makeupBalances]);
 
 
-    const MakeupTable = ({ balancesToShow }: { balancesToShow: StudentMakeupBalance[] }) => (
-        <Table dir={isRtl ? 'rtl' : 'ltr'}>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colStudent')}</TableHead>
-                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colTeacher')}</TableHead>
-                    <TableHead className="text-center">{t('colBalance')}</TableHead>
-                    <TableHead className={isRtl ? "text-right" : "text-left"}>{t('colExpiry')}</TableHead>
-                    <TableHead className={isRtl ? "text-left" : "text-right"}>{t('colActions')}</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {balancesToShow.length > 0 ? balancesToShow.map(item => {
-                    const expiryDate = addDays(item.earliestCreditDate, MAKEUP_EXPIRY_DAYS);
-                    const daysUntilExpiry = differenceInDays(expiryDate, new Date());
-                    const isExpiringSoon = daysUntilExpiry <= EXPIRING_SOON_DAYS;
-
-                    return (
-                        <TableRow key={item.student.id}>
-                            <TableCell className="font-medium flex items-center gap-3">
-                                <Avatar className="h-9 w-9">
-                                    <AvatarImage src={item.student.avatarUrl} />
-                                    <AvatarFallback>{item.student.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                {item.student.name}
-                            </TableCell>
-                            <TableCell className={isRtl ? "text-right" : "text-left"}>{item.teacherName || t('unassigned')}</TableCell>
-                            <TableCell className="text-center font-semibold">{item.balance}</TableCell>
-                            <TableCell className={isRtl ? "text-right" : "text-left"}>
-                                <Badge variant={isExpiringSoon ? 'destructive' : 'secondary'}>
-                                    {t('expiresInDays', { days: daysUntilExpiry })}
-                                </Badge>
-                            </TableCell>
-                            <TableCell className={isRtl ? "text-left" : "text-right"}>
-                                <Button variant="outline" size="sm" disabled>
-                                    <CalendarPlus className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
-                                    {t('scheduleBtn')}
-                                </Button>
-                                <Button variant="ghost" size="sm" disabled className={isRtl ? "me-2" : "ms-2"}>
-                                    <Clock className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
-                                    {t('extendBtn')}
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    )
-                }) : (
-                    <TableRow>
-                        <TableCell colSpan={5} className="p-0">
-                            <EmptyState
-                                icon={Coins}
-                                title={t('emptyTitle')}
-                                description={t('emptyDesc')}
-                            />
-                        </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
-    );
-
     return (
         <Tabs defaultValue="all" dir={isRtl ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-2">
@@ -148,7 +150,7 @@ export function AdminMakeupDashboard() {
                         <CardDescription>{t('descAll')}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <MakeupTable balancesToShow={makeupBalances} />
+                        <MakeupTable balancesToShow={makeupBalances} isRtl={isRtl} t={t} />
                     </CardContent>
                 </TabsContent>
                 <TabsContent value="expiring" className="m-0">
@@ -157,7 +159,7 @@ export function AdminMakeupDashboard() {
                         <CardDescription>{t('descExpiring', { days: EXPIRING_SOON_DAYS })}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <MakeupTable balancesToShow={expiringSoonBalances} />
+                        <MakeupTable balancesToShow={expiringSoonBalances} isRtl={isRtl} t={t} />
                     </CardContent>
                 </TabsContent>
             </Card>

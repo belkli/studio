@@ -1,11 +1,17 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { useRouter } from '@/i18n/routing';
 import { useAuth } from '@/hooks/use-auth';
-import { AlumniPortal } from '@/components/dashboard/harmonia/alumni-portal';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const AlumniPortal = dynamic(
+  () => import('@/components/dashboard/harmonia/alumni-portal').then(mod => ({ default: mod.AlumniPortal })),
+  { loading: () => <Skeleton className="h-96" /> }
+);
 
 export default function AlumniPage() {
   const t = useTranslations('AlumniPage');

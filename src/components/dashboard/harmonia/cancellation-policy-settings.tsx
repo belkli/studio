@@ -118,7 +118,7 @@ export function CancellationPolicySettings() {
                 </div>
                 <div className={`flex ${isRtl ? 'justify-end' : 'justify-start'} mt-6`}>
                     <Button type="submit" disabled={!form.formState.isDirty}>
-                        <Save className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+                        <Save className="me-2 h-4 w-4" />
                         {t('saveChanges')}
                     </Button>
                 </div>

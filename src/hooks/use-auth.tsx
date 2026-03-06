@@ -576,9 +576,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Logs the user out by clearing state and localStorage.
+   * Logs the user out by clearing state, localStorage, and session cookie.
    */
-  const logout = () => {
+  const logout = async () => {
+    // Sign out from Firebase client SDK if available
+    try {
+      const { getClientAuth } = await import('@/lib/firebase-client');
+      const auth = getClientAuth();
+      if (auth) {
+        const { signOut } = await import('firebase/auth');
+        await signOut(auth);
+      }
+    } catch {
+      // Firebase may not be configured — continue with cleanup
+    }
+
+    // Clear server-side session cookie
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // Network error — clear local state anyway
+    }
+
     localStorage.removeItem('harmonia-user');
     clearAuthCookie();
     setUser(null);

@@ -1,7 +1,13 @@
 
 'use client';
-import { MessagingInterface } from "@/components/dashboard/harmonia/messaging-interface";
+import dynamic from 'next/dynamic';
 import { useTranslations } from "next-intl";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const MessagingInterface = dynamic(
+    () => import("@/components/dashboard/harmonia/messaging-interface").then(mod => ({ default: mod.MessagingInterface })),
+    { loading: () => <Skeleton className="h-[500px]" /> }
+);
 
 export default function MessagesPage() {
     const t = useTranslations('MessagesPage');

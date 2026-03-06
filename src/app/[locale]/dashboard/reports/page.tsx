@@ -1,7 +1,13 @@
 'use client';
-import { AdminReportsDashboard } from "@/components/dashboard/harmonia/admin-reports-dashboard";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "next-intl";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const AdminReportsDashboard = dynamic(
+    () => import("@/components/dashboard/harmonia/admin-reports-dashboard").then(mod => ({ default: mod.AdminReportsDashboard })),
+    { loading: () => <Skeleton className="h-[600px] w-full" /> }
+);
 
 export default function ReportsPage() {
     const { user } = useAuth();

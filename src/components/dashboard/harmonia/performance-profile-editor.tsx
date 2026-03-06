@@ -105,6 +105,7 @@ export function PerformanceProfileEditor() {
                         </CardHeader>
                     </Card>
 
+                    {/* eslint-disable-next-line react-hooks/incompatible-library */}
                     {form.watch('isOptedIn') && (
                         <>
                             <Card>

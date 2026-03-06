@@ -49,6 +49,7 @@ export async function getDb(): Promise<DatabaseAdapter> {
     `[db] resolved backend=${backend} adapter=${adapterName} source=${source}${fallbackReason ? ` reason=${fallbackReason}` : ''}`
   );
 
+  if (!dbInstance) throw new Error('[db] dbInstance not initialized');
   return dbInstance;
 }
 

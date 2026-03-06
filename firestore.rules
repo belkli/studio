@@ -1,5 +1,6 @@
 // Harmonia Firestore Security Rules
-// SDD-P7 (Security Architect) — Complete RBAC + Data Isolation
+// Production RBAC + Tenant Isolation + PDPPA Under-13 Protection
+// Last updated: 2026-03-06 by DBA (production-readiness initiative)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -7,6 +8,8 @@ service cloud.firestore {
     // ============================================================
     // HELPER FUNCTIONS
     // ============================================================
+
+    // Authentication checks
     function isSignedIn() {
       return request.auth != null;
     }
@@ -15,6 +18,7 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.approved == true;
     }
 
+    // Role accessors
     function role() {
       return request.auth.token.role;
     }
@@ -23,6 +27,7 @@ service cloud.firestore {
       return request.auth.token.conservatoriumId;
     }
 
+    // Role checks (all require approved status)
     function isSiteAdmin() {
       return isApproved() && role() == 'site_admin';
     }
@@ -31,8 +36,12 @@ service cloud.firestore {
       return isApproved() && role() == 'conservatorium_admin';
     }
 
+    function isDelegatedAdmin() {
+      return isApproved() && role() == 'delegated_admin';
+    }
+
     function isAdminFor(cid) {
-      return isConservatoryAdmin() && conservatoriumId() == cid;
+      return (isConservatoryAdmin() || isDelegatedAdmin()) && conservatoriumId() == cid;
     }
 
     function isTeacher() {
@@ -55,36 +64,67 @@ service cloud.firestore {
       return isApproved() && role() == 'ministry_director';
     }
 
+    function isSchoolCoordinator() {
+      return isApproved() && role() == 'school_coordinator';
+    }
+
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // Parent-child relationship check (denormalized collection)
+    // Tenant membership (approved user belongs to this conservatorium)
+    function isMemberOf(cid) {
+      return isApproved() && conservatoriumId() == cid;
+    }
+
+    // Parent-child relationship check (denormalized collection for O(1) lookup)
+    // LIMIT: Firestore allows max 10 exists() calls per request. For families with
+    // 1-4 children this is well within limits. If a single request needs more than
+    // 10 parent-child checks, batch the queries or use a Cloud Function.
     function isParentOfStudent(studentId) {
-      return exists(/databases/$(database)/documents/parentOf/$(request.auth.uid + '_' + studentId));
+      return isParent()
+        && exists(/databases/$(database)/documents/parentOf/$(request.auth.uid + '_' + studentId));
     }
 
     // ============================================================
-    // USER DOCUMENTS
+    // USER DOCUMENTS (root collection — cross-conservatorium identity)
     // ============================================================
     match /users/{userId} {
+      // Users can read their own profile.
+      // Site admin and ministry director can read any user.
+      // Conservatorium admin can read users in their tenant.
+      // Teachers can read student profiles in their tenant.
+      // Parents can read their own children's profiles.
       allow read: if isOwner(userId)
                   || isSiteAdmin()
                   || isMinistryDirector()
                   || (isAdminFor(resource.data.conservatoriumId))
                   || (isTeacherFor(resource.data.conservatoriumId)
-                      && resource.data.role == 'student');
+                      && resource.data.role in ['student', 'parent'])
+                  || (isParent() && resource.data.parentId == request.auth.uid);
+
+      // Self-registration: user creates their own profile document
       allow create: if isSignedIn() && request.auth.uid == userId;
-      // Users can update their own profile, but NEVER their role or approval status
+
+      // Users can update their own profile but NEVER role, approval status,
+      // conservatoriumId, or sensitive payment fields.
+      // Admins can update any user in their conservatorium.
+      // Site admins can update any user.
       allow update: if (isOwner(userId)
                     && !request.resource.data.diff(resource.data).affectedKeys()
-                       .hasAny(['role', 'approved', 'conservatoriumId', 'cardToken']))
+                       .hasAny(['role', 'approved', 'conservatoriumId', 'cardToken',
+                                'isPrimaryConservatoriumAdmin', 'isDelegatedAdmin',
+                                'delegatedAdminPermissions']))
                     || isAdminFor(resource.data.conservatoriumId)
                     || isSiteAdmin();
+
+      // Users are never deleted client-side (PDPPA: use ComplianceLog + Cloud Function)
+      allow delete: if false;
     }
 
     // ============================================================
-    // PARENT-CHILD LINKS (denormalized for Security Rules)
+    // PARENT-CHILD LINKS (denormalized for Security Rules lookups)
+    // Format: /parentOf/{parentId}_{studentId}
     // ============================================================
     match /parentOf/{linkId} {
       allow read: if isSignedIn()
@@ -101,104 +141,192 @@ service cloud.firestore {
                   && (conservatoriumId() == cid || isMinistryDirector() || isSiteAdmin());
       allow write: if isSiteAdmin() || isAdminFor(cid);
 
-      // ── Settings ──
+      // ── Settings (cancellationPolicy, payroll, pricing) ──
       match /settings/{settingType} {
         allow read: if isAdminFor(cid) || isSiteAdmin();
         allow write: if isAdminFor(cid) || isSiteAdmin();
       }
 
-      // ── Live Stats ──
+      // ── Live Stats (pre-aggregated dashboard document) ──
       match /stats/live {
         allow read: if isAdminFor(cid) || isSiteAdmin() || isMinistryDirector();
-        allow write: if false; // Cloud Functions only
+        allow write: if false; // Cloud Functions only — never client-written
+      }
+
+      // ── Teachers ──
+      match /teachers/{teacherId} {
+        allow read: if isMemberOf(cid) || isMinistryDirector() || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Teacher Availability ──
+      match /teacherAvailability/{availId} {
+        allow read: if isAdminFor(cid)
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
+        allow create: if isTeacherFor(cid) && request.resource.data.teacherId == request.auth.uid;
+        allow update: if isTeacherFor(cid) && resource.data.teacherId == request.auth.uid;
+        allow delete: if isAdminFor(cid);
+      }
+
+      // ── Teacher Exceptions (sick leave, personal days) ──
+      match /teacherExceptions/{exceptionId} {
+        allow read: if isAdminFor(cid)
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
+        allow create: if isTeacherFor(cid) && request.resource.data.teacherId == request.auth.uid;
+        allow update: if isAdminFor(cid);
+        allow delete: if isAdminFor(cid);
       }
 
       // ── Lesson Slots ──
       match /lessonSlots/{slotId} {
         allow read: if isAdminFor(cid)
+                    || isSiteAdmin()
                     || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
-                    || (isStudent() && resource.data.studentId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId))
                     || isMinistryDirector();
+
+        // Only admins and teachers can create slots
         allow create: if isAdminFor(cid) || isTeacherFor(cid);
+
+        // Teachers can only update attendance and notes fields on their own lessons
         allow update: if isAdminFor(cid)
                       || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid
                           && request.resource.data.diff(resource.data).affectedKeys()
                              .hasOnly(['status', 'attendanceMarkedAt', 'teacherNote', 'updatedAt']));
-        // Students NEVER write slots directly — must use Cloud Functions
+
+        // Students NEVER write slots directly — must use Cloud Functions / Server Actions
+        allow delete: if isAdminFor(cid);
       }
 
       // ── Lesson Notes (sub-collection of slots) ──
       match /lessonSlots/{slotId}/notes/{noteId} {
         allow read: if isAdminFor(cid)
                     || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
-                    || (isStudent() && resource.data.studentId == request.auth.uid
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid
                         && resource.data.isSharedWithStudent == true)
                     || (isParent() && isParentOfStudent(resource.data.studentId)
                         && resource.data.isSharedWithParent == true);
         allow create, update: if isTeacherFor(cid)
                               && request.resource.data.teacherId == request.auth.uid;
+        allow delete: if isAdminFor(cid);
       }
 
-      // ── Room Locks ──
+      // ── Room Locks (short-TTL coordination primitives) ──
       match /roomLocks/{lockKey} {
         allow read: if isAdminFor(cid) || isTeacherFor(cid);
         allow write: if false; // Cloud Functions only (transactional)
       }
 
+      // ── Rooms ──
+      match /rooms/{roomId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
       // ── Invoices ──
       match /invoices/{invoiceId} {
         allow read: if isAdminFor(cid)
-                    || resource.data.payerId == request.auth.uid
+                    || isSiteAdmin()
+                    || (isMemberOf(cid) && resource.data.payerId == request.auth.uid)
+                    || (isParent() && isParentOfStudent(resource.data.payerId))
                     || isMinistryDirector();
-        allow write: if isAdminFor(cid);
+        // Admin can create/update invoices; all payment confirmation via Cloud Functions
+        allow create, update: if isAdminFor(cid);
+        allow delete: if false; // Invoices are immutable for audit trail; use CANCELLED status
       }
 
       // ── Makeup Credits ──
       match /makeupCredits/{creditId} {
         allow read: if isAdminFor(cid)
-                    || (isStudent() && resource.data.studentId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId))
                     || isTeacherFor(cid);
-        allow write: if false; // Cloud Functions only
+        allow write: if false; // Cloud Functions only — lifecycle managed server-side
       }
 
-      // ── Packages ──
+      // ── Packages (student lesson packages) ──
       match /packages/{packageId} {
         allow read: if isAdminFor(cid)
-                    || (isStudent() && resource.data.studentId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId));
-        allow write: if isAdminFor(cid);
+        allow create, update: if isAdminFor(cid);
+        allow delete: if isAdminFor(cid);
       }
 
       // ── Practice Logs ──
       match /practiceLogs/{logId} {
         allow read: if isAdminFor(cid)
                     || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
-                    || (isStudent() && resource.data.studentId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId));
-        allow create: if (isStudent() && request.resource.data.studentId == request.auth.uid)
+
+        // Students and parents can create practice logs
+        allow create: if (isStudent() && conservatoriumId() == cid
+                          && request.resource.data.studentId == request.auth.uid)
                       || (isParent() && isParentOfStudent(request.resource.data.studentId));
+
+        // Teachers can only add comments
         allow update: if (isTeacherFor(cid)
                           && request.resource.data.diff(resource.data).affectedKeys()
-                             .hasOnly(['teacherComment', 'teacherCommentedAt']));
+                             .hasOnly(['teacherComment', 'teacherCommentedAt']))
+                      || isAdminFor(cid);
+
+        allow delete: if isAdminFor(cid);
       }
 
-      // ── Payroll ──
+      // ── Assigned Repertoire ──
+      match /assignedRepertoire/{repId} {
+        allow read: if isAdminFor(cid)
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
+                    || (isParent() && isParentOfStudent(resource.data.studentId));
+        allow create, update: if isTeacherFor(cid) || isAdminFor(cid);
+        allow delete: if isAdminFor(cid);
+      }
+
+      // ── Exam Prep Trackers ──
+      match /examPrepTrackers/{trackerId} {
+        allow read: if isAdminFor(cid)
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
+                    || (isParent() && isParentOfStudent(resource.data.studentId))
+                    || isMinistryDirector();
+        allow create, update: if isTeacherFor(cid) || isAdminFor(cid);
+        allow delete: if isAdminFor(cid);
+      }
+
+      // ── Payroll Periods ──
       match /payrollPeriods/{periodId} {
         allow read: if isAdminFor(cid)
+                    || isSiteAdmin()
                     || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
-        allow write: if isAdminFor(cid);
+        allow create, update: if isAdminFor(cid) || isSiteAdmin();
+        allow delete: if false; // Payroll records are immutable for audit
       }
 
       // ── Form Submissions ──
       match /formSubmissions/{formId} {
         allow read: if isAdminFor(cid)
-                    || resource.data.studentId == request.auth.uid
+                    || isSiteAdmin()
+                    || (isMemberOf(cid) && resource.data.studentId == request.auth.uid)
                     || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId))
                     || isMinistryDirector();
+
+        // Any approved member of the conservatorium can submit forms
         allow create: if isApproved() && conservatoriumId() == cid;
+
+        // Teachers can add comments and update teacher-specific fields
+        // Ministry directors can review and add comments
+        // Admins have full update access
         allow update: if isAdminFor(cid)
                       || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid
                           && request.resource.data.diff(resource.data).affectedKeys()
@@ -207,95 +335,253 @@ service cloud.firestore {
                           && request.resource.data.diff(resource.data).affectedKeys()
                              .hasOnly(['status', 'ministryComment', 'ministryReviewedAt',
                                        'ministryReviewedByDirectorId', 'ministryDirectorComment']));
+
+        allow delete: if isAdminFor(cid);
+      }
+
+      // ── Form Templates ──
+      match /formTemplates/{templateId} {
+        allow read: if isMemberOf(cid) || isMinistryDirector() || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
       }
 
       // ── Scholarship Applications ──
       match /scholarshipApplications/{appId} {
         allow read: if isAdminFor(cid)
-                    || resource.data.studentId == request.auth.uid
+                    || isSiteAdmin()
+                    || (isMemberOf(cid) && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId));
-        allow create: if (isStudent() && request.resource.data.studentId == request.auth.uid)
+        allow create: if (isStudent() && conservatoriumId() == cid
+                          && request.resource.data.studentId == request.auth.uid)
                       || (isParent() && isParentOfStudent(request.resource.data.studentId));
-        allow update: if isAdminFor(cid);
+        allow update: if isAdminFor(cid) || isSiteAdmin();
+        allow delete: if isAdminFor(cid);
       }
 
-      // ── Instruments ──
+      // ── Donation Causes ──
+      match /donationCauses/{causeId} {
+        allow read: if true; // Public — donation pages are publicly accessible
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Donation Records ──
+      match /donationRecords/{donationId} {
+        allow read: if isAdminFor(cid)
+                    || isSiteAdmin()
+                    || (isSignedIn() && resource.data.donorId == request.auth.uid);
+        allow create: if isSignedIn(); // Authenticated donors can create donation records
+        allow update, delete: if false; // Donation records are immutable
+      }
+
+      // ── Instruments Catalog ──
       match /instruments/{instrumentId} {
-        allow read: if isApproved() && conservatoriumId() == cid;
-        allow write: if isAdminFor(cid);
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
       }
 
       // ── Instrument Checkouts ──
       match /instrumentCheckouts/{checkoutId} {
         allow read: if isAdminFor(cid)
-                    || resource.data.studentId == request.auth.uid
+                    || isSiteAdmin()
+                    || (isMemberOf(cid) && resource.data.studentId == request.auth.uid)
                     || (isParent() && isParentOfStudent(resource.data.studentId));
-        allow write: if isAdminFor(cid);
-      }
-
-      // ── Closure Dates ──
-      match /closureDates/{dateKey} {
-        allow read: if isApproved() && conservatoriumId() == cid;
         allow write: if isAdminFor(cid) || isSiteAdmin();
       }
 
-      // ── Teacher Exceptions (sick leave, etc.) ──
-      match /teacherExceptions/{exceptionId} {
+      // ── Closure Dates (holidays, closures) ──
+      match /closureDates/{dateKey} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Waitlist Entries ──
+      match /waitlistEntries/{entryId} {
         allow read: if isAdminFor(cid)
-                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
-        allow create: if isTeacherFor(cid) && request.resource.data.teacherId == request.auth.uid;
-        allow update: if isAdminFor(cid);
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid)
+                    || (isStudent() && conservatoriumId() == cid
+                        && resource.data.studentId == request.auth.uid)
+                    || (isParent() && isParentOfStudent(resource.data.studentId));
+        allow create: if isMemberOf(cid);
+        allow update, delete: if isAdminFor(cid);
       }
 
-      // ── Events ──
+      // ── Events (recitals, concerts) ──
       match /events/{eventId} {
-        allow read: if isApproved() && conservatoriumId() == cid;
-        allow write: if isAdminFor(cid);
-      }
-
-      // ── AI Jobs ──
-      match /aiJobs/{jobId} {
-        allow read: if isApproved() && conservatoriumId() == cid;
-        allow write: if false; // Cloud Functions only
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
       }
 
       // ── Notifications ──
       match /notifications/{notifId} {
-        allow read: if resource.data.userId == request.auth.uid;
-        allow write: if false; // Cloud Functions only
+        allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+        allow update: if isSignedIn() && resource.data.userId == request.auth.uid
+                      && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['read']);
+        allow create, delete: if false; // Cloud Functions only
       }
 
-      // ── Compliance Logs ──
-      match /complianceLogs/{logId} {
+      // ── Notification Audit Log ──
+      match /notificationAuditLog/{logId} {
         allow read: if isAdminFor(cid) || isSiteAdmin();
         allow write: if false; // Cloud Functions only (append-only)
       }
+
+      // ── Message Threads ──
+      match /messageThreads/{threadId} {
+        allow read: if isSignedIn() && isMemberOf(cid)
+                    && request.auth.uid in resource.data.participants;
+        allow create: if isMemberOf(cid);
+        allow update: if isSignedIn() && isMemberOf(cid)
+                      && request.auth.uid in resource.data.participants;
+        allow delete: if false;
+      }
+
+      // ── AI Jobs ──
+      match /aiJobs/{jobId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin();
+        allow write: if false; // Cloud Functions only
+      }
+
+      // ── Compliance Logs (PDPPA audit trail) ──
+      match /complianceLogs/{logId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin();
+        allow write: if false; // Cloud Functions only (append-only, immutable)
+      }
+
+      // ── Playing School: School Partnerships ──
+      match /schoolPartnerships/{partnershipId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin()
+                    || isSchoolCoordinator()
+                    || isMinistryDirector();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Playing School: Enrollments ──
+      match /playingSchoolEnrollments/{enrollmentId} {
+        allow read: if isAdminFor(cid)
+                    || isSiteAdmin()
+                    || isSchoolCoordinator()
+                    || (isParent() && isParentOfStudent(resource.data.studentId));
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Playing School: Group Lessons ──
+      match /schoolGroupLessons/{lessonId} {
+        allow read: if isAdminFor(cid)
+                    || isSiteAdmin()
+                    || isSchoolCoordinator()
+                    || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
+        allow create, update: if isAdminFor(cid)
+                              || (isTeacherFor(cid) && resource.data.teacherId == request.auth.uid);
+        allow delete: if isAdminFor(cid);
+      }
+
+      // ── Ensembles ──
+      match /ensembles/{ensembleId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Announcements ──
+      match /announcements/{announcementId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Open Day Events ──
+      match /openDayEvents/{eventId} {
+        allow read: if true; // Public — registration pages are publicly accessible
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Open Day Appointments ──
+      match /openDayAppointments/{appointmentId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin();
+        allow create: if true; // Public — anyone can register for an open day
+        allow update, delete: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Performance Bookings (Musicians for Hire) ──
+      match /performanceBookings/{bookingId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin();
+        allow create: if true; // Public inquiry form
+        allow update: if isAdminFor(cid) || isSiteAdmin();
+        allow delete: if false;
+      }
+
+      // ── Alumni Profiles ──
+      match /alumni/{alumniId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin()
+                    || (resource.data.isPublic == true); // Public profiles
+        allow write: if isAdminFor(cid) || isSiteAdmin()
+                     || (isMemberOf(cid) && resource.data.userId == request.auth.uid);
+      }
+
+      // ── Masterclasses ──
+      match /masterclasses/{masterclassId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Conservatorium Instruments ──
+      match /conservatoriumInstruments/{instrumentId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Lesson Packages (admin-configured catalog) ──
+      match /lessonPackages/{packageId} {
+        allow read: if isMemberOf(cid) || isSiteAdmin();
+        allow write: if isAdminFor(cid) || isSiteAdmin();
+      }
+
+      // ── Playing School Interest Leads ──
+      match /interestLeads/{leadId} {
+        allow read: if isAdminFor(cid) || isSiteAdmin();
+        allow create: if true; // Public interest form
+        allow update, delete: if isAdminFor(cid) || isSiteAdmin();
+      }
     }
 
     // ============================================================
-    // CONSENT RECORDS (top-level for PDPPA compliance)
+    // CONSENT RECORDS (top-level — PDPPA compliance)
     // ============================================================
     match /consentRecords/{recordId} {
       allow read: if isOwner(resource.data.userId) || isSiteAdmin();
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if false; // immutable once created; revoke creates new record
+      // Users create their own consent; parents create for minors
+      allow create: if isSignedIn()
+                    && (request.resource.data.userId == request.auth.uid
+                        || isParentOfStudent(request.resource.data.userId));
+      // Consent records are IMMUTABLE — revocation creates a new record
+      allow update, delete: if false;
     }
 
     // ============================================================
-    // SIGNATURE AUDIT RECORDS
+    // SIGNATURE AUDIT RECORDS (top-level)
     // ============================================================
     match /signatureAuditRecords/{auditId} {
-      allow read: if isAdminFor(resource.data.conservatoriumId) || isSiteAdmin() || isMinistryDirector();
+      allow read: if isAdminFor(resource.data.conservatoriumId)
+                  || isSiteAdmin()
+                  || isMinistryDirector();
       allow write: if false; // Cloud Functions only (append-only, immutable)
     }
 
     // ============================================================
-    // AGE UPGRADE INVITATIONS
+    // AGE UPGRADE INVITATIONS (top-level)
+    // When a student turns 13, invite them to take over their account
     // ============================================================
     match /ageUpgradeInvitations/{inviteId} {
-      allow read: if resource.data.parentId == request.auth.uid
-                  || resource.data.studentId == request.auth.uid;
+      allow read: if isSignedIn()
+                  && (resource.data.parentId == request.auth.uid
+                      || resource.data.studentId == request.auth.uid);
       allow write: if false; // Cloud Functions only
+    }
+
+    // ============================================================
+    // CATCH-ALL: Deny everything not explicitly matched
+    // ============================================================
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

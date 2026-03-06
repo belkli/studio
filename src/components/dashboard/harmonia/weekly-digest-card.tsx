@@ -111,7 +111,7 @@ export function WeeklyDigestCard({ child }: { child: User }) {
                 <div>
                     <p className="font-semibold flex items-center gap-2"><Pencil className="h-4 w-4 text-orange-500" />{t('lastLessonNotesTitle', { teacherName: childData.teacher?.name.split(' ')[0] || t('genericTeacherName') })}</p>
                     {childData.lastNote ? (
-                        <p className="text-muted-foreground italic pe-2">"{childData.lastNote.summary}"</p>
+                        <p className="text-muted-foreground italic pe-2">&quot;{childData.lastNote.summary}&quot;</p>
                     ) : (
                         <p className="text-muted-foreground pe-2">{t('noLastLessonNotes')}</p>
                     )}

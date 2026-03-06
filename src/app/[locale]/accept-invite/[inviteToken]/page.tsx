@@ -38,7 +38,7 @@ export default function AcceptInvitePage() {
 
                 <Card className="border-none shadow-2xl overflow-hidden rounded-3xl">
                     <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-8 text-white relative">
-                        <ShieldCheck className="absolute top-4 right-4 h-12 w-12 text-white/10" />
+                        <ShieldCheck className="absolute top-4 end-4 h-12 w-12 text-white/10" />
                         <h2 className="text-xl font-bold">{t('cardTitle')}</h2>
                         <p className="text-indigo-100 text-sm mt-1">{t('cardDesc')}</p>
                     </div>

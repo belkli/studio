@@ -189,8 +189,8 @@
     "questions": "Questions"
   },
   "AlumniPage": {
-    "title": "Title",
-    "subtitle": "Subtitle",
+    "title": "Alumni Network",
+    "subtitle": "Reconnect with friends, teachers, and the conservatorium.",
     "alumnusUpdated": "Alumnus Updated",
     "alumnusAdded": "Alumnus Added",
     "alumnusDeleted": "Alumnus Deleted",
@@ -953,7 +953,10 @@
     "shareErrorDesc": "Share Error Desc",
     "lastMinute": "Last Minute",
     "discount": "Discount",
-    "bookNow": "Book Now"
+    "bookNow": "Book Now",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "minutes": "min"
   },
   "PrivacyPage": {
     "title": "Privacy Statement and Terms of Use",
@@ -1117,5 +1120,14 @@
     "Common": {
       "back": "Back"
     }
+  },
+  "Signature": {
+    "title": "Digital Signature",
+    "description": "Sign using your mouse or touch inside the area below. Your signature will be embedded in the form.",
+    "canvasAriaLabel": "Digital signature area — draw your signature here",
+    "clear": "Clear signature",
+    "cancel": "Cancel",
+    "confirm": "Confirm signature",
+    "errorEmpty": "Please sign before confirming"
   }
 }

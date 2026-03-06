@@ -647,7 +647,18 @@
     "distance": "مسافة",
     "allDistances": "كل المسافات",
     "distance10": "ما يصل إلى 10 كم",
-    "distance25": "يصل إلى 25 كم"
+    "distance25": "يصل إلى 25 كم",
+    "distance50": "تصل إلى 50 كم",
+    "clearAll": "مسح الكل",
+    "resultsCount": "تم العثور على {count} درس متاح",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "anyDate": "أي تاريخ",
+    "searchTeacher": "البحث حسب المعلم",
+    "sortedByDistance": "مرتب حسب المسافة",
+    "useMyLocation": "استخدم موقعي",
+    "locating": "جارٍ التحديد...",
+    "locationError": "تم رفض الوصول إلى الموقع. يرجى تفعيل الموقع في المتصفح."
   },
   "ExcellenceTrack": {
     "acceptBtn": "قبول الدعوة",

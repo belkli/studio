@@ -2,9 +2,14 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 
-import { PerformanceBookingDashboard } from '@/components/dashboard/harmonia/performance-booking-dashboard';
+import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAdminGuard } from '@/hooks/use-admin-guard';
+
+const PerformanceBookingDashboard = dynamic(
+    () => import('@/components/dashboard/harmonia/performance-booking-dashboard').then(mod => ({ default: mod.PerformanceBookingDashboard })),
+    { loading: () => <Skeleton className="h-96" /> }
+);
 
 export default function AdminPerformancesPage() {
   const { user, isLoading } = useAdminGuard();

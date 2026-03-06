@@ -425,6 +425,7 @@
     "viewAll": "View All",
     "whatsNew": "Whats New",
     "newBadge": "New Badge",
+    "mainNavigation": "Main navigation",
     "settings": "Settings",
     "help": "Help",
     "groupOverview": "Overview",
@@ -728,5 +729,63 @@
     "performances": "performances",
     "alumni": "alumni",
     "conservatorium_profile": "conservatorium profile"
+  },
+  "DashboardPages": {
+    "noPermission": "You do not have permission to access this page.",
+    "events": {
+      "title": "Events & Recitals Management",
+      "description": "Plan, manage, and produce all conservatorium events.",
+      "createButton": "Create New Event"
+    },
+    "newEvent": {
+      "title": "Create New Event",
+      "description": "Enter the basic details to create a new event in the system."
+    },
+    "family": {
+      "title": "My Family",
+      "description": "The central dashboard for managing your children's activities at the conservatorium."
+    },
+    "library": {
+      "title": "Library",
+      "description": "Your knowledge and content center.",
+      "underConstruction": "Library Under Construction",
+      "underConstructionDesc": "In the future, you will be able to find and manage sheet music, study materials, and more."
+    },
+    "masterSchedule": {
+      "title": "Master Schedule",
+      "description": "A full overview of all lessons in the conservatorium. Filter by teacher, room, or instrument.",
+      "noPermissionDesc": "You do not have permission to view this page."
+    },
+    "practice": {
+      "title": "Practice Log",
+      "description": "Document your practice sessions to track your progress.",
+      "uploadVideo": "Upload Video for Feedback",
+      "openCoach": "Open AI Coach"
+    },
+    "practiceUpload": {
+      "title": "Upload Video for Feedback",
+      "description": "Get feedback from your teacher between lessons."
+    },
+    "practiceCoach": {
+      "title": "AI Practice Coach",
+      "description": "Record yourself and get instant feedback on your playing."
+    },
+    "aiReschedule": {
+      "title": "AI Scheduling Assistant",
+      "noPermissionDesc": "This page is available for students and parents only."
+    },
+    "applyForAid": {
+      "metaTitle": "Financial Aid Application | Harmonia",
+      "title": "Scholarships & Financial Aid",
+      "description": "Apply for a study scholarship from the conservatorium's fund."
+    },
+    "parentSettings": {
+      "title": "Account Settings",
+      "description": "Manage notifications and contact preferences with the conservatorium."
+    },
+    "parentBilling": {
+      "title": "Payments & Invoices",
+      "description": "Track tuition fees, open payments, and securely pay via Cardcom."
+    }
   }
 }

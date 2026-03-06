@@ -49,7 +49,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
         {studentVideos.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">התלמיד/ה עוד לא העלה/תה סרטונים.</p>
         ) : (
-          <ScrollArea className="h-96 pr-4">
+          <ScrollArea className="h-96 pe-4">
             <div className="space-y-6">
               {studentVideos.map(video => (
                 <div key={video.id} className="p-4 border rounded-lg bg-muted/30">
@@ -62,7 +62,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                     </div>
                     <Button variant="outline" size="sm">צפה בסרטון</Button>
                   </div>
-                  {video.studentNote && <p className="text-sm italic mt-2 p-2 bg-background/50 rounded-md">"{video.studentNote}"</p>}
+                  {video.studentNote && <p className="text-sm italic mt-2 p-2 bg-background/50 rounded-md">&quot;{video.studentNote}&quot;</p>}
 
                   <div className="mt-4 space-y-3">
                     <h5 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" />המשוב שלך:</h5>

@@ -1,12 +1,20 @@
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getTranslations } from "next-intl/server";
 
-import { PracticeCoach } from "@/components/dashboard/harmonia/practice-coach";
+const PracticeCoach = dynamic(
+    () => import("@/components/dashboard/harmonia/practice-coach").then(mod => ({ default: mod.PracticeCoach })),
+    { loading: () => <Skeleton className="h-96 w-full max-w-2xl" /> }
+);
 
-export default function PracticeCoachPage() {
+export default async function PracticeCoachPage() {
+    const t = await getTranslations('DashboardPages');
+
     return (
         <div className="space-y-6">
              <div>
-                <h1 className="text-2xl font-bold">מאמן אימון AI</h1>
-                <p className="text-muted-foreground">הקלט/י את עצמך וקבל/י משוב מיידי על הנגינה שלך.</p>
+                <h1 className="text-2xl font-bold">{t('practiceCoach.title')}</h1>
+                <p className="text-muted-foreground">{t('practiceCoach.description')}</p>
             </div>
             <div className="flex justify-center">
                 <PracticeCoach />

@@ -143,7 +143,7 @@ export default function MinistryExportPage() {
                 <TableHead>{t('gradeLevel')}</TableHead>
                 <TableHead>{tc('status')}</TableHead>
                 <TableHead>{t('approvalDate')}</TableHead>
-                <TableHead className="text-left"><span className="sr-only">{tc('actions')}</span></TableHead>
+                <TableHead className="text-start"><span className="sr-only">{tc('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -166,7 +166,7 @@ export default function MinistryExportPage() {
                       <StatusBadge status={form.status} />
                     </TableCell>
                     <TableCell>{form.signedAt || new Date(form.submissionDate).toLocaleDateString('he-IL')}</TableCell>
-                    <TableCell className="text-left">
+                    <TableCell className="text-start">
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
                       </Button>

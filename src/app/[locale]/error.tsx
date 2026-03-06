@@ -31,7 +31,7 @@ export default function Error({
         </Button>
       </div>
       {process.env.NODE_ENV !== 'production' && (
-        <pre className="text-xs text-left bg-muted p-4 rounded max-w-lg overflow-auto mt-4">
+        <pre className="text-xs text-start bg-muted p-4 rounded max-w-lg overflow-auto mt-4">
           {error.message}
           {error.digest && `\n\nDigest: ${error.digest}`}
         </pre>

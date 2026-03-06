@@ -161,6 +161,7 @@ const DetailItem = ({ label, value }: { label: string; value: React.ReactNode })
 const BookFirstLessonStep = () => {
   const t = useTranslations('EnrollmentWizard');
   const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const dateLocale = useDateLocale();
   const form = useFormContext<FormData>();
   const { users, lessons } = useAuth();
@@ -173,6 +174,7 @@ const BookFirstLessonStep = () => {
 
   useEffect(() => {
     if (!teacherId || !selectedDate) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAvailableSlots([]);
       return;
     }
@@ -256,7 +258,7 @@ const BookFirstLessonStep = () => {
               {!isLoadingSlots && availableSlots.map(slot => (
                 <FormItem key={slot}>
                   <FormControl>
-                    <label className="flex flex-row-reverse items-center gap-3 p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl">
+                    <label className="flex items-center gap-3 p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir={isRtl ? 'rtl' : 'ltr'}>
                       <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" />
                       <span className="font-mono">{slot}</span>
                     </label>
@@ -275,6 +277,7 @@ const BookFirstLessonStep = () => {
 const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void }) => {
   const t = useTranslations('EnrollmentWizard');
   const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const form = useFormContext<FormData>();
   const { toast } = useToast();
   const registrationType = form.watch('registrationType');
@@ -381,17 +384,17 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
           <CardHeader>
             <CardTitle>{t('admin.enrollSection')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2" dir="rtl">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormField name="registrationType" control={form.control} render={({ field }) => (
               <FormItem className="space-y-3">
                 <FormLabel>{t('role.title')}</FormLabel>
                 <FormControl>
-                  <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3" dir="rtl">
-                    <FormItem className="flex flex-row-reverse items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3" dir={isRtl ? 'rtl' : 'ltr'}>
+                    <FormItem className="flex items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="parent" /></FormControl>
                       <FormLabel className="flex-1 cursor-pointer font-normal text-start">{t('role.parent')}</FormLabel>
                     </FormItem>
-                    <FormItem className="flex flex-row-reverse items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
+                    <FormItem className="flex items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="self" /></FormControl>
                       <FormLabel className="flex-1 cursor-pointer font-normal text-start">{t('role.self')}</FormLabel>
                     </FormItem>
@@ -401,7 +404,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               </FormItem>
             )} />
             <FormField name="conservatorium" render={({ field }) => (
-              <FormItem className="flex flex-col" dir="rtl">
+              <FormItem className="flex flex-col">
                 <FormLabel>{t('role.conservatorium')}</FormLabel>
                 {isSiteAdmin ? (
                   <Combobox options={adminConservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
@@ -496,12 +499,12 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
             <FormField name="packageId" control={form.control} render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('summary.package')}</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} dir="rtl">
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger dir="rtl"><SelectValue placeholder={t('package.placeholder')} /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('package.placeholder')} /></SelectTrigger>
                   </FormControl>
-                  <SelectContent dir="rtl">
-                    {availablePackages.map((p) => <SelectItem key={p.id} value={p.id} dir="rtl">{p.names.he} - {p.priceILS} ILS</SelectItem>)}
+                  <SelectContent>
+                    {availablePackages.map((p) => <SelectItem key={p.id} value={p.id}>{p.names.he} - {p.priceILS} ILS</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -518,7 +521,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               <p className="text-sm font-medium">{t('admin.manualAssign')}</p>
               <FormField name="teacherId" control={form.control} render={({ field }) => (
                 <FormItem>
-                  <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={t('admin.selectTeacher')} /></SelectTrigger>
                     </FormControl>
@@ -601,7 +604,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               <FormField name="isVirtualOk" control={form.control} render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('schedule.virtual')}</FormLabel>
-                  <Select dir="rtl" value={field.value} onValueChange={field.onChange}>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder={t('schedule.virtual')} /></SelectTrigger>
                     </FormControl>
@@ -652,6 +655,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
 export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, conservatoriumIdFromQuery }: { isAdminFlow?: boolean; teacherIdFromQuery?: string; conservatoriumIdFromQuery?: string }) {
   const t = useTranslations('EnrollmentWizard');
   const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const searchParams = useSearchParams();
 
   const steps = [
@@ -797,6 +801,9 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
 
     if (!teacherIdQueryParam) return;
 
+    // Wait until users data has loaded before checking for teacher
+    if (users.length === 0) return;
+
     const matchedTeacher = users.find((candidate) => candidate.id === teacherIdQueryParam && candidate.role === 'teacher' && candidate.approved);
     if (!matchedTeacher) {
       toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.noTeachersForFilters') });
@@ -886,6 +893,10 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // When arriving via a direct teacher/conservatorium link, skip draft restore so that
+    // the URL-param values set by the earlier effect are not wiped by form.reset().
+    if (teacherIdQueryParam || conservatoriumIdQueryParam) return;
+
     const raw = localStorage.getItem(draftStorageKey);
     if (!raw) return;
 
@@ -904,7 +915,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     } catch {
       localStorage.removeItem(draftStorageKey);
     }
-  }, [draftStorageKey, form, steps.length]);
+  }, [draftStorageKey, form, steps.length, teacherIdQueryParam, conservatoriumIdQueryParam]);
 
   const persistDraft = useCallback(() => {
     if (typeof window === 'undefined' || isSubmitted) return;
@@ -1161,6 +1172,36 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     });
   };
 
+  const formData = form.getValues();
+  const selectedPackage = filteredPackages.find(p => p.id === formData.packageId);
+  const paymentSchedule = useMemo(() => {
+    if (!selectedPackage) return [];
+
+    const installmentsByType: Record<string, number> = {
+      single: 1,
+      monthly: 4,
+      semester: 4,
+      annual: 12,
+    };
+
+    const installments = installmentsByType[selectedPackage.type] ?? 1;
+    const amount = Number((selectedPackage.priceILS / installments).toFixed(2));
+    const formatter = new Intl.DateTimeFormat(
+      locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
+      { day: '2-digit', month: '2-digit', year: 'numeric' }
+    );
+
+    return Array.from({ length: installments }, (_, index) => {
+      const dueDate = new Date();
+      dueDate.setMonth(dueDate.getMonth() + index);
+      return {
+        index: index + 1,
+        amount,
+        dueDate: formatter.format(dueDate),
+      };
+    });
+  }, [locale, selectedPackage]);
+
   if (isSubmitted) {
     return (
       <Card className="w-full max-w-2xl mx-auto text-center">
@@ -1204,36 +1245,6 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   }
 
 
-  const formData = form.getValues();
-  const selectedPackage = filteredPackages.find(p => p.id === formData.packageId);
-  const paymentSchedule = useMemo(() => {
-    if (!selectedPackage) return [];
-
-    const installmentsByType: Record<string, number> = {
-      single: 1,
-      monthly: 4,
-      semester: 4,
-      annual: 12,
-    };
-
-    const installments = installmentsByType[selectedPackage.type] ?? 1;
-    const amount = Number((selectedPackage.priceILS / installments).toFixed(2));
-    const formatter = new Intl.DateTimeFormat(
-      locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar-SA' : locale === 'ru' ? 'ru-RU' : 'en-US',
-      { day: '2-digit', month: '2-digit', year: 'numeric' }
-    );
-
-    return Array.from({ length: installments }, (_, index) => {
-      const dueDate = new Date();
-      dueDate.setMonth(dueDate.getMonth() + index);
-      return {
-        index: index + 1,
-        amount,
-        dueDate: formatter.format(dueDate),
-      };
-    });
-  }, [locale, selectedPackage]);
-
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-xl">
       <CardHeader>
@@ -1255,7 +1266,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
-                dir="rtl"
+                dir={isRtl ? 'rtl' : 'ltr'}
               >
                 {currentStepId === 'role' && (
                   <div className="space-y-6">
@@ -1267,17 +1278,17 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                             onValueChange={field.onChange}
                             value={field.value}
                             className="flex flex-col gap-3"
-                            dir="rtl"
+                            dir={isRtl ? 'rtl' : 'ltr'}
                           >
-                            <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
+                            <FormItem className="flex items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer">
                               <FormLabel className="font-normal flex-1 cursor-pointer text-start">{t('role.parent')}</FormLabel>
                               <FormControl><RadioGroupItem value="parent" /></FormControl>
                             </FormItem>
-                            <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
+                            <FormItem className="flex items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer">
                               <FormLabel className="font-normal flex-1 cursor-pointer text-start">{t('role.self')}</FormLabel>
                               <FormControl><RadioGroupItem value="self" /></FormControl>
                             </FormItem>
-                            <FormItem className="flex flex-row-reverse items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer" dir="rtl">
+                            <FormItem className="flex items-center justify-end gap-3 rounded-md border p-4 bg-background/50 hover:bg-accent transition-colors cursor-pointer">
                               <div className="flex flex-col flex-1 text-start">
                                 <FormLabel className="font-medium cursor-pointer">{t('role.playingSchool')}</FormLabel>
                                 <span className="text-xs text-muted-foreground">{t('role.playingSchoolDescription')}</span>
@@ -1292,7 +1303,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
 
                     {registrationType !== 'playing_school' && (
                       <FormField name="conservatorium" render={({ field }) => (
-                        <FormItem className="flex flex-col" dir="rtl">
+                        <FormItem className="flex flex-col">
                           <FormLabel>{t('role.conservatorium')}</FormLabel>
                           <Combobox options={conservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
                           <FormMessage />
@@ -1321,7 +1332,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                                 variant="outline"
                                 className="justify-start h-auto py-3 px-4 text-start"
                                 onClick={() => router.push(`/register/school?token=mock-token-${s.symbol}`)}
-                                dir="rtl"
+                                dir={isRtl ? 'rtl' : 'ltr'}
                               >
                                 <div className="flex flex-col items-start gap-1">
                                   <span className="font-medium">{s.name}</span>
@@ -1407,8 +1418,8 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
 
                 {currentStepId === 'musical' && (
                   <div className="space-y-6">
-                    <FormField name="instrument" render={({ field }) => (<FormItem> <FormLabel>{t('musical.instrument')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.instrumentPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> {filteredInstrumentOptions.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem>)} />
-                    <FormField name="level" render={({ field }) => (<FormItem> <FormLabel>{t('musical.level')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.levelPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Beginner">{t('musical.levels.Beginner')}</SelectItem> <SelectItem value="Intermediate">{t('musical.levels.Intermediate')}</SelectItem> <SelectItem value="Advanced">{t('musical.levels.Advanced')}</SelectItem> <SelectItem value="Exam Candidate">{t('musical.levels.Exam')}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="instrument" render={({ field }) => (<FormItem> <FormLabel>{t('musical.instrument')}</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.instrumentPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> {filteredInstrumentOptions.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)} </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="level" render={({ field }) => (<FormItem> <FormLabel>{t('musical.level')}</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.levelPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Beginner">{t('musical.levels.Beginner')}</SelectItem> <SelectItem value="Intermediate">{t('musical.levels.Intermediate')}</SelectItem> <SelectItem value="Advanced">{t('musical.levels.Advanced')}</SelectItem> <SelectItem value="Exam Candidate">{t('musical.levels.Exam')}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
                     <FormField name="previousExperience" render={({ field }) => (<FormItem><FormLabel>{t('musical.experience')}</FormLabel><FormControl><Textarea placeholder={t('musical.experiencePlaceholder')} {...field} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField name="goals" render={() => (
                       <FormItem>
@@ -1431,7 +1442,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <FormField name="lessonDuration" render={({ field }) => (<FormItem> <FormLabel>{t('musical.duration')}</FormLabel> <Select dir="rtl" onValueChange={(v: any) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.durationPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">{t('musical.minutes', { min: 30 })}</SelectItem> <SelectItem value="45">{t('musical.minutes', { min: 45 })}</SelectItem> <SelectItem value="60">{t('musical.minutes', { min: 60 })}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="lessonDuration" render={({ field }) => (<FormItem> <FormLabel>{t('musical.duration')}</FormLabel> <Select onValueChange={(v: any) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.durationPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">{t('musical.minutes', { min: 30 })}</SelectItem> <SelectItem value="45">{t('musical.minutes', { min: 45 })}</SelectItem> <SelectItem value="60">{t('musical.minutes', { min: 60 })}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
                   </div>
                 )}
 

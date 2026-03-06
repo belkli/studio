@@ -82,19 +82,31 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     const selectedComposer = currentRepertoireItem?.composer;
     const selectedInstrument = watch('instrument');
 
+    // eslint-disable-next-line react-hooks/use-memo
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
-        const results = await searchComposers({ query, instrument: selectedInstrument });
-        setComposerOptions(results);
-        setIsLoadingComposers(false);
+        try {
+            const results = await searchComposers({ query, instrument: selectedInstrument });
+            setComposerOptions(results);
+        } catch (error) {
+            console.error('[ExamRegistrationForm] searchComposers failed:', error);
+        } finally {
+            setIsLoadingComposers(false);
+        }
     }, 300), [selectedInstrument]);
 
+    // eslint-disable-next-line react-hooks/use-memo
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
-        const instrument = getValues('instrument');
-        const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
-        setCompositionOptions(results);
-        setIsLoadingCompositions(false);
+        try {
+            const instrument = getValues('instrument');
+            const results = await searchCompositions({ query, composer: selectedComposer, composerId: selectedComposerId, instrument, locale });
+            setCompositionOptions(results);
+        } catch (error) {
+            console.error('[ExamRegistrationForm] searchCompositions failed:', error);
+        } finally {
+            setIsLoadingCompositions(false);
+        }
     }, 300), [selectedComposer, selectedComposerId, getValues, locale]);
 
     useEffect(() => {

@@ -11,7 +11,6 @@ import { useMemo } from "react";
 export default function ProgressPage() {
     const { user, practiceLogs } = useAuth();
     const t = useTranslations("ProgressPage");
-    if (!user) return null;
 
     const userLogs = useMemo(() => {
         if (!user) return [];
@@ -82,6 +81,8 @@ export default function ProgressPage() {
         return { weeklyPracticeData: last7Days, totalMinutesThisWeek, weeklyGoal, totalMinutesThisMonth, streak: currentStreak };
 
     }, [userLogs]);
+
+    if (!user) return null;
 
     return (
         <div className="space-y-6">

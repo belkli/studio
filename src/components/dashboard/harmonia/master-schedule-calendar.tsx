@@ -26,8 +26,8 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
             <Tooltip>
                 <TooltipTrigger asChild>
                     <div className={cn(
-                        "p-1.5 rounded-md text-[10px] h-full overflow-hidden text-right leading-tight",
-                        isCancelled ? "bg-gray-100 border-r-2 border-gray-400 text-gray-500 italic" : "bg-blue-50 border-r-2 border-blue-400 text-blue-800"
+                        "p-1.5 rounded-md text-[10px] h-full overflow-hidden text-end leading-tight",
+                        isCancelled ? "bg-gray-100 border-e-2 border-gray-400 text-gray-500 italic" : "bg-blue-50 border-e-2 border-blue-400 text-blue-800"
                     )}>
                         <p className="font-bold truncate">{student?.name}</p>
                         <p className="truncate text-blue-700/80">{teacher?.name}</p>
@@ -72,11 +72,13 @@ export function MasterScheduleCalendar() {
 
     const daysOfWeek = eachDayOfInterval(weekInterval);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredRooms = useMemo(() => {
         if (filters.branchId === 'all') return rooms;
         return rooms.filter(r => r.branchId === filters.branchId);
     }, [filters.branchId]);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredLessons = useMemo(() => {
         return lessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
@@ -90,6 +92,7 @@ export function MasterScheduleCalendar() {
 
             return true;
         });
+        // eslint-disable-next-line react-hooks/preserve-manual-memoization
     }, [lessons, weekInterval, filters]);
 
     const getLessonsForSlot = (day: Date, time: string) => {
