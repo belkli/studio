@@ -57,7 +57,7 @@
 │  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────────────────┐ │
 │  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │     EXTERNAL SERVICES          │ │
 │  │  Genkit 1.29 │  │  Cardcom  ⚠️stub │  │  Twilio SMS/WhatsApp ⚠️stub   │ │
-│  │  ✅ 6 flows  │  │  Pelecard ⚠️stub │  │  SendGrid Email      ⚠️stub   │ │
+│  │  ✅ 8 flows  │  │  Pelecard ⚠️stub │  │  SendGrid Email      ⚠️stub   │ │
 │  │  match-teacher│  │  HYP      ⚠️stub │  │  Google Calendar     ⚠️spec  │ │
 │  │  draft-report │  │  Tranzila ⚠️stub │  │  Hebcal API          ⚠️spec  │ │
 │  │  help-asst   │  │  Stripe   ⚠️stub │  │                                │ │
@@ -132,7 +132,7 @@ All domain hooks read from the monolithic `useAuth()` context — they do not ye
 
 ## 3. AI Flows — Verified Implementation
 
-✅ All 7 Genkit flows in `src/ai/flows/` are implemented and wired to server actions:
+✅ All 8 Genkit flows in `src/ai/flows/` are implemented and wired to server actions:
 
 | Flow File | Purpose | Wired In |
 |-----------|---------|---------|

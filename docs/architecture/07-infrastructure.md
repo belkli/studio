@@ -123,24 +123,6 @@ All secrets are stored in **Google Secret Manager** in production. Never committ
 | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | App Check | reCAPTCHA v3 | ❌ Not yet wired |
 | `GOOGLE_API_KEY` / `GENKIT_API_KEY` | AI | Gemini/Genkit key | ✅ Required for AI flows |
 
-| Variable | Required | Description |
-|----------|---------|-------------|
-| `FIREBASE_PROJECT_ID` | All | Firebase project identifier |
-| `FIREBASE_SERVICE_ACCOUNT_KEY` | Server-side | Admin SDK service account (base64 JSON) |
-| `DB_BACKEND` | All | `firebase` \| `postgres` \| `supabase` \| `pocketbase` |
-| `DATABASE_URL` | Postgres/Supabase | PostgreSQL connection string |
-| `CARDCOM_TERMINAL_NUMBER` | Prod / Staging | Cardcom merchant terminal |
-| `CARDCOM_API_KEY` | Prod / Staging | Cardcom API key |
-| `TWILIO_ACCOUNT_SID` | Prod / Staging | Twilio account |
-| `TWILIO_AUTH_TOKEN` | Prod / Staging | Twilio auth token |
-| `TWILIO_WHATSAPP_NUMBER` | Prod / Staging | WhatsApp sender number (`+972...`) |
-| `SENDGRID_API_KEY` | Prod / Staging | Transactional email |
-| `GOOGLE_CALENDAR_CLIENT_ID` | Prod / Staging | Teacher calendar sync |
-| `GOOGLE_CALENDAR_CLIENT_SECRET` | Prod / Staging | Teacher calendar sync |
-| `HEBCAL_API_KEY` | Prod / Staging | Israeli holiday calendar feed |
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Client-side | App Check reCAPTCHA v3 |
-| `GENKIT_API_KEY` | Server-side | Gemini/Genkit AI key |
-
 ---
 
 ## 4. CI/CD Pipeline
@@ -209,32 +191,22 @@ Ministry XML/PDF export is handled via `FormSubmission` data with `ministryExpor
 
 ## 6. Security Hardening Checklist
 
-The following must be completed before any production user is onboarded:
+> See `06-security.md §8` for the full detailed checklist. Summary of infrastructure-level items:
 
-### Sprint 0 — Non-Negotiable Pre-Launch Security
+### Already Done ✅ (verified in `next.config.ts`)
+- [x] HSTS, X-Frame-Options (`SAMEORIGIN`), X-Content-Type-Options, Referrer-Policy, Permissions-Policy applied to all routes via `next.config.ts`
+- [x] Content Security Policy configured (includes Cardcom, Firebase, Google APIs)
+- [x] `docker-compose.yml` + Postgres scripts ensure local dev never touches production data
+- [x] `apphosting.yaml` present for Firebase App Hosting deployment
 
-- [ ] Deploy Firebase Custom Claims (`onUserApproved` Cloud Function)
-- [ ] Remove `localStorage` auth; replace with Firebase session cookies
-- [ ] Deploy all Firestore Security Rules
-- [ ] Deploy all Firebase Storage Security Rules (signed URLs for all sensitive files)
-- [ ] Enable Firebase App Check on all callable functions
-- [ ] Set all secrets in Google Secret Manager (remove from `.env` files)
-- [ ] Configure Next.js security headers in `next.config.ts`:
-  - `Content-Security-Policy`
-  - `Strict-Transport-Security`
-  - `X-Frame-Options: DENY`
-  - `X-Content-Type-Options: nosniff`
-  - `Referrer-Policy: strict-origin-when-cross-origin`
-  - `Permissions-Policy`
-- [ ] Validate Cardcom HMAC on every webhook request
-- [ ] Implement Zod validation on every Server Action and Callable Function input
-- [ ] Remove pre-filled `password: 'password'` default from login form
+### Blocking Before Production 🔴
+- [ ] `src/middleware.ts` — does not exist; must be created with `verifySessionCookie()`
+- [ ] Firebase Custom Claims Cloud Function — not deployed
+- [ ] Firestore Security Rules — incomplete template only
+- [ ] Firebase Storage Security Rules — not deployed
+- [ ] Firebase App Check — not configured in `firebase-client.ts`
+- [ ] All secrets in Google Secret Manager (currently rely on `.env.local`)
+- [ ] Cardcom webhook HMAC validation in `/api/cardcom-webhook`
+- [ ] Replace `harmonia-user=1` cookie auth with real Firebase session cookie
 
-### Ongoing Security Operations
-
-- [ ] Firebase Emulator Suite used for all development — no writes to production from developer machines
-- [ ] Service account keys rotated quarterly
-- [ ] Security Rules unit tests run in CI pipeline
-- [ ] PDPPA consent version tracked; re-consent triggered on policy update
-- [ ] Annual IS 5568 accessibility audit
 

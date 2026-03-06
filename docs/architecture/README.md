@@ -59,7 +59,7 @@ Its key differentiators over existing tools (My Music Staff, TeacherZone, Jackra
 │  ┌──────────────┐  ┌──────────────────┐  ┌─────────────────────┐   │
 │  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │  EXTERNAL SERVICES  │   │
 │  │  Genkit 1.29 │  │  Cardcom (stub)  │  │  Twilio (stub)      │   │
-│  │  6 AI flows  │  │  +4 alternatives │  │  SendGrid (stub)    │   │
+│  │  8 AI flows  │  │  +4 alternatives │  │  SendGrid (stub)    │   │
 │  │  ACTIVE ✅   │  │  ⚠️ stubs only   │  │  Google Calendar    │   │
 │  └──────────────┘  └──────────────────┘  │  (stub)             │   │
 │                                          │  Hebcal (stub)      │   │
@@ -84,7 +84,7 @@ LEGEND:  ✅ Implemented  ⚠️ Stub/spec only  ❌ Not started
 | 07 | Communication & Notifications | P1 | ⚠️ Dispatcher stub; no real sends |
 | 08 | Forms, Approvals & Ministry Submissions | P1 | ✅ UI + mock; signature UI present |
 | 09 | Learning Management System (LMS) | P2 | ✅ UI + mock data |
-| 10 | AI Agents & Automation | P2 | ✅ 6 Genkit flows active |
+| 10 | AI Agents & Automation | P2 | ✅ 8 Genkit flows active |
 | 11 | Reporting, Analytics & Admin Dashboard | P2 | ✅ UI + mock aggregations |
 | 12 | Smart Slot Filling | P2 | ✅ `target-empty-slots-flow.ts` |
 | 13 | Musicians for Hire Marketplace | P2 | ✅ UI + mock data |
