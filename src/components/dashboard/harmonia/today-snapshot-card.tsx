@@ -10,11 +10,11 @@ export function TodaySnapshotCard() {
     const t = useTranslations('TodaySnapshot');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const { mockLessons, users, mockInvoices } = useAuth();
+    const { lessons, users, invoices } = useAuth();
 
     const today = new Date();
-    const todayLessons = mockLessons.filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
-    const failedPayments = mockInvoices.filter(inv => inv.status === 'OVERDUE');
+    const todayLessons = lessons.filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
+    const failedPayments = invoices.filter(inv => inv.status === 'OVERDUE');
 
     return (
         <Card className="h-full">

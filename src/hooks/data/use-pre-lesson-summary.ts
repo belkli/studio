@@ -30,7 +30,7 @@ export function usePreLessonSummary(
     studentId: string,
     teacherId: string
 ): { summary: PreLessonSummary | null; isLoading: boolean } {
-    const { users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes } = useAuth();
+    const { users, lessons, practiceLogs, assignedRepertoire, lessonNotes } = useAuth();
 
     const summary = useMemo((): PreLessonSummary | null => {
         if (!studentId || !teacherId) return null;
@@ -39,7 +39,7 @@ export function usePreLessonSummary(
         if (!student) return null;
 
         // Find the last completed lesson with this teacher
-        const pastLessons = (mockLessons ?? [])
+        const pastLessons = (lessons ?? [])
             .filter(l =>
                 l.studentId === studentId &&
                 l.teacherId === teacherId &&
@@ -55,7 +55,7 @@ export function usePreLessonSummary(
             : 0;
 
         // Practice since last lesson
-        const practiceAfterLastLesson = (mockPracticeLogs ?? []).filter(l =>
+        const practiceAfterLastLesson = (practiceLogs ?? []).filter(l =>
             l.studentId === studentId &&
             (!lastLessonDate || l.date > lastLessonDate.slice(0, 10))
         );
@@ -71,13 +71,13 @@ export function usePreLessonSummary(
         const avgMood = moods.length ? (moodScore / moods.length >= 2.5 ? 'GREAT' : moodScore / moods.length >= 1.5 ? 'OKAY' : 'HARD') : 'N/A';
 
         // Current repertoire
-        const currentRepertoire = (mockAssignedRepertoire ?? []).filter(r =>
+        const currentRepertoire = (assignedRepertoire ?? []).filter(r =>
             r.studentId === studentId && r.status !== 'COMPLETED'
         );
 
         // Last lesson notes
         const lastNote = lastLesson
-            ? (mockLessonNotes ?? []).find(n => n.lessonSlotId === lastLesson.id) ?? null
+            ? (lessonNotes ?? []).find(n => n.lessonSlotId === lastLesson.id) ?? null
             : null;
 
         return {
@@ -95,7 +95,7 @@ export function usePreLessonSummary(
             lastLessonNotes: lastNote,
             unreadStudentMessages: 0,
         };
-    }, [studentId, teacherId, users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes]);
+    }, [studentId, teacherId, users, lessons, practiceLogs, assignedRepertoire, lessonNotes]);
 
     return { summary, isLoading: false };
 }

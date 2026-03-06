@@ -35,7 +35,7 @@ export function SickLeaveModal({ open, onOpenChange }: SickLeaveModalProps) {
   const isRtl = locale === 'he' || locale === 'ar';
 
   const { toast } = useToast();
-  const { mockLessons, reportSickLeave, user } = useAuth();
+  const { lessons, reportSickLeave, user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const schema = useMemo(
@@ -135,13 +135,13 @@ export function SickLeaveModal({ open, onOpenChange }: SickLeaveModalProps) {
     if (!from || !to || !user) return [];
     const toInclusive = new Date(to.getTime() + 86399999);
 
-    return mockLessons
+    return lessons
       .filter((lesson: any) => {
         const lessonDate = new Date(lesson.startTime);
         return lesson.teacherId === user.id && lessonDate >= from && lessonDate <= toInclusive;
       })
       .sort((a: any, b: any) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-  }, [from, to, user, mockLessons]);
+  }, [from, to, user, lessons]);
 
   const onSubmit = async (values: FormValues) => {
     if (!values.dateRange.from || !values.dateRange.to || !user) return;

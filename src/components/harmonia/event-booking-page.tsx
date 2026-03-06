@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/routing';
 
 export function EventBookingPage() {
-  const { mockEvents, bookEventTickets, user } = useAuth();
+  const { events, bookEventTickets, user } = useAuth();
   const params = useParams();
   const locale = useLocale();
   const t = useTranslations('Events');
@@ -22,7 +22,7 @@ export function EventBookingPage() {
   const isRtl = locale === 'he' || locale === 'ar';
 
   const eventId = params.id as string;
-  const event = useMemo(() => mockEvents.find((item) => item.id === eventId), [mockEvents, eventId]);
+  const event = useMemo(() => events.find((item) => item.id === eventId), [events, eventId]);
   const [step, setStep] = useState(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [attendee, setAttendee] = useState({ name: user?.name || '', email: user?.email || '', phone: user?.phone || '' });

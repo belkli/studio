@@ -1,18 +1,19 @@
-'use client';
+﻿'use client';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
-import { instruments } from "@/lib/data";
+import { instruments } from "@/lib/taxonomies";
 import { useTranslations } from "next-intl";
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
     const t = useTranslations('Reports');
-    const { mockPracticeLogs, users, mockAssignedRepertoire } = useAuth();
+    const { practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
 
     const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
@@ -31,7 +32,7 @@ export function AcademicReports() {
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(today.getMonth() - 1);
 
-        const logsThisWeek = mockPracticeLogs.filter(log => {
+        const logsThisWeek = practiceLogs.filter(log => {
             const logDate = new Date(log.date);
             return logDate >= oneWeekAgo && logDate <= today;
         });
@@ -44,7 +45,7 @@ export function AcademicReports() {
             : 0;
 
         const studentsPractice = students.map(student => {
-            const totalMinutes = mockPracticeLogs
+            const totalMinutes = practiceLogs
                 .filter(log => log.studentId === student.id)
                 .reduce((sum, log) => sum + log.durationMinutes, 0);
             return { student, totalMinutes };
@@ -55,7 +56,7 @@ export function AcademicReports() {
             .sort((a, b) => a.totalMinutes - b.totalMinutes)
             .slice(0, 5);
 
-        const repAdvancement = mockAssignedRepertoire.filter(rep => {
+        const repAdvancement = assignedRepertoire.filter(rep => {
             if (!rep.completedAt) return false;
             const completedDate = new Date(rep.completedAt);
             return completedDate >= oneMonthAgo && completedDate <= today;
@@ -66,7 +67,7 @@ export function AcademicReports() {
             if (teacherStudents.length === 0) return { name: teacher.name, engagement: 0 };
 
             const practicedStudents = new Set(
-                mockPracticeLogs
+                practiceLogs
                     .filter(log => {
                         const logDate = new Date(log.date);
                         return logDate >= oneWeekAgo && teacherStudents.some(s => s.id === log.studentId);
@@ -81,10 +82,10 @@ export function AcademicReports() {
         });
 
         const instrumentAvgMinutes = instruments.map(instrument => {
-            const studentsWithInstrument = students.filter(s => s.instruments?.some(i => i.instrument === instrument));
+            const studentsWithInstrument = students.filter((s) => userHasInstrument((s.instruments || []).map((i) => i.instrument), instrument, conservatoriumInstruments, s.conservatoriumId));
             if (studentsWithInstrument.length === 0) return { name: instrument, avgMinutes: 0 };
 
-            const logsForInstrument = mockPracticeLogs.filter(log => {
+            const logsForInstrument = practiceLogs.filter(log => {
                 const logDate = new Date(log.date);
                 return logDate >= oneMonthAgo && studentsWithInstrument.some(s => s.id === log.studentId);
             });
@@ -103,7 +104,7 @@ export function AcademicReports() {
             engagementByTeacher: teacherEngagementData,
             avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [mockPracticeLogs, students, teachers, mockAssignedRepertoire]);
+    }, [practiceLogs, students, teachers, assignedRepertoire]);
 
 
     return (

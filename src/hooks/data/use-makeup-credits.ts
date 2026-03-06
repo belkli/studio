@@ -19,11 +19,11 @@ export interface UseMakeupCreditsReturn {
 }
 
 export function useMakeupCredits(studentId?: string): UseMakeupCreditsReturn {
-    const { user, mockMakeupCredits } = useAuth();
+    const { user, makeupCredits } = useAuth();
 
     const result = useMemo(() => {
         const targetId = studentId || user?.id;
-        if (!targetId || !mockMakeupCredits) {
+        if (!targetId || !makeupCredits) {
             return {
                 credits: [],
                 availableCredits: [],
@@ -36,9 +36,9 @@ export function useMakeupCredits(studentId?: string): UseMakeupCreditsReturn {
         // For parents, show credits for all children
         let credits: MakeupCredit[];
         if (user?.role === 'parent' && user.childIds?.length) {
-            credits = mockMakeupCredits.filter(c => user.childIds!.includes(c.studentId));
+            credits = makeupCredits.filter(c => user.childIds!.includes(c.studentId));
         } else {
-            credits = mockMakeupCredits.filter(c => c.studentId === targetId);
+            credits = makeupCredits.filter(c => c.studentId === targetId);
         }
 
         const now = new Date().toISOString();
@@ -58,7 +58,7 @@ export function useMakeupCredits(studentId?: string): UseMakeupCreditsReturn {
             expiredCredits,
             availableCount: availableCredits.length,
         };
-    }, [user, studentId, mockMakeupCredits]);
+    }, [user, studentId, makeupCredits]);
 
     return {
         ...result,

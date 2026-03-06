@@ -80,7 +80,7 @@ const BookingActions = ({
 );
 
 export function PerformanceBookingDashboard() {
-  const { mockPerformanceBookings, user, assignMusiciansToPerformance, updatePerformanceBookingStatus } = useAuth();
+  const { performanceBookings, user, assignMusiciansToPerformance, updatePerformanceBookingStatus } = useAuth();
   const { toast } = useToast();
   const t = useTranslations('PerformanceBooking');
   const dateLocale = useDateLocale();
@@ -92,8 +92,8 @@ export function PerformanceBookingDashboard() {
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
 
   const bookings = useMemo(
-    () => mockPerformanceBookings.filter((item) => item.conservatoriumId === user?.conservatoriumId),
-    [mockPerformanceBookings, user]
+    () => performanceBookings.filter((item) => item.conservatoriumId === user?.conservatoriumId),
+    [performanceBookings, user]
   );
 
   const bookingsByColumn = useMemo(() => {

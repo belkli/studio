@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
@@ -27,8 +27,9 @@ import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calenda
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
-import { conservatoriums, instruments, schools, mockTeachers } from "@/lib/data";
-import type { StudentGoal, DayOfWeek, TimeRange, User, Package, LessonSlot } from "@/lib/types";
+import { instruments, schools } from "@/lib/taxonomies";
+import type { StudentGoal, DayOfWeek, TimeRange, User, Package, LessonSlot, LessonPackage, ConservatoriumInstrument } from "@/lib/types";
+import { collectInstrumentTokensFromConservatoriumInstrument, normalizeInstrumentToken, userHasInstrument } from '@/lib/instrument-matching';
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
@@ -99,8 +100,6 @@ const getFormSchema = (t: any) => z.object({
 
 type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
-const conservatoriumOptions = conservatoriums.map(c => ({ value: c.id, label: c.name }));
-
 // These will be localized inside the component
 const getGoalOptions = (t: any) => [
   { id: 'EXAMS', label: t('musical.goals_options.EXAMS') },
@@ -125,6 +124,31 @@ const getTimeOptions = (t: any) => [
   { id: 'EVENING', label: t('schedule.times_options.EVENING') }
 ];
 
+const packageSupportsSelectedInstrument = (
+  pkg: LessonPackage,
+  selectedInstrumentLabel: string | undefined,
+  availableConservatoriumInstruments: ConservatoriumInstrument[],
+) => {
+  if (!selectedInstrumentLabel) return true;
+
+  const normalizedLabel = selectedInstrumentLabel.trim().toLowerCase();
+  const matchingInstrumentRows = availableConservatoriumInstruments.filter((item) =>
+    [item.names.he, item.names.en, item.names.ar, item.names.ru]
+      .filter(Boolean)
+      .some((name) => String(name).trim().toLowerCase() === normalizedLabel)
+  );
+
+  if (matchingInstrumentRows.length > 0) {
+    const rowIds = new Set(matchingInstrumentRows.map((item) => item.id));
+    const catalogIds = new Set(matchingInstrumentRows.map((item) => item.instrumentCatalogId).filter(Boolean) as string[]);
+
+    if ((pkg.conservatoriumInstrumentIds || []).some((id) => rowIds.has(id))) return true;
+    if ((pkg.instrumentCatalogIds || []).some((id) => catalogIds.has(id))) return true;
+  }
+
+  return (pkg.instruments || []).some((name) => String(name).trim().toLowerCase() === normalizedLabel);
+};
+
 const ENROLLMENT_DRAFT_STORAGE_PREFIX = 'enrollment-wizard-draft:v1';
 
 const DetailItem = ({ label, value }: { label: string; value: React.ReactNode }) => (
@@ -139,7 +163,7 @@ const BookFirstLessonStep = () => {
   const locale = useLocale();
   const dateLocale = useDateLocale();
   const form = useFormContext<FormData>();
-  const { users, mockLessons } = useAuth();
+  const { users, lessons } = useAuth();
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
@@ -173,7 +197,7 @@ const BookFirstLessonStep = () => {
         return;
       }
 
-      const dayLessons = mockLessons.filter(l =>
+      const dayLessons = lessons.filter(l =>
         l.teacherId === teacherId &&
         format(new Date(l.startTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
       );
@@ -199,7 +223,7 @@ const BookFirstLessonStep = () => {
       setIsLoadingSlots(false);
     }, 300);
 
-  }, [teacherId, selectedDate, duration, users, mockLessons]);
+  }, [teacherId, selectedDate, duration, users, lessons]);
 
   return (
     <div className="grid md:grid-cols-2 gap-8">
@@ -232,7 +256,7 @@ const BookFirstLessonStep = () => {
               {!isLoadingSlots && availableSlots.map(slot => (
                 <FormItem key={slot}>
                   <FormControl>
-                    <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl">
+                    <label className="flex flex-row-reverse items-center gap-3 p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl">
                       <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" />
                       <span className="font-mono">{slot}</span>
                     </label>
@@ -287,17 +311,14 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
     if (!item.isActive) return false;
     if (item.conservatoriumId !== selectedConservatoriumId) return false;
     if (item.durationMinutes !== selectedDuration) return false;
-    if (item.instruments && item.instruments.length > 0) {
-      return item.instruments.includes(selectedInstrument || '');
-    }
-    return true;
+    return packageSupportsSelectedInstrument(item, selectedInstrument, conservatoriumInstruments);
   });
 
   const availableTeachers = users.filter((item) => {
     if (item.role !== 'teacher' || !item.approved) return false;
     if (selectedConservatoriumId && item.conservatoriumId !== selectedConservatoriumId) return false;
     if (!selectedInstrument) return true;
-    return (item.instruments || []).some((instrument) => instrument.instrument === selectedInstrument);
+    return userHasInstrument((item.instruments || []).map((instrument) => instrument.instrument), selectedInstrument, conservatoriumInstruments, item.conservatoriumId);
   });
 
   const runTeacherSuggestion = async () => {
@@ -366,13 +387,13 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                 <FormLabel>{t('role.title')}</FormLabel>
                 <FormControl>
                   <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3" dir="rtl">
-                    <FormItem className="flex items-center justify-start space-x-2 space-x-reverse rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
+                    <FormItem className="flex flex-row-reverse items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="parent" /></FormControl>
-                      <FormLabel className="flex-1 cursor-pointer font-normal">{t('role.parent')}</FormLabel>
+                      <FormLabel className="flex-1 cursor-pointer font-normal text-start">{t('role.parent')}</FormLabel>
                     </FormItem>
-                    <FormItem className="flex items-center justify-start space-x-2 space-x-reverse rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
+                    <FormItem className="flex flex-row-reverse items-center justify-start gap-2 rounded-md border bg-background/50 p-4 transition-colors hover:bg-accent">
                       <FormControl><RadioGroupItem value="self" /></FormControl>
-                      <FormLabel className="flex-1 cursor-pointer font-normal">{t('role.self')}</FormLabel>
+                      <FormLabel className="flex-1 cursor-pointer font-normal text-start">{t('role.self')}</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -628,7 +649,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
   )
 }
 
-export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { isAdminFlow?: boolean; teacherIdFromQuery?: string }) {
+export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, conservatoriumIdFromQuery }: { isAdminFlow?: boolean; teacherIdFromQuery?: string; conservatoriumIdFromQuery?: string }) {
   const t = useTranslations('EnrollmentWizard');
   const locale = useLocale();
   const searchParams = useSearchParams();
@@ -657,6 +678,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
   const { toast } = useToast();
   const router = useRouter();
   const { user, users, addUser, addLesson, addToWaitlist, lessonPackages, conservatoriumInstruments, conservatoriums: authConservatoriums } = useAuth();
+  const conservatoriumOptions = useMemo(() => authConservatoriums.map((item) => ({ value: item.id, label: item.name })), [authConservatoriums]);
 
   const formSchema = useMemo(() => getFormSchema(t), [t]);
 
@@ -690,6 +712,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
 
   const draftStorageKey = `${ENROLLMENT_DRAFT_STORAGE_PREFIX}:${locale}:${isAdminFlow ? 'admin' : 'public'}`;
   const teacherIdQueryParam = (teacherIdFromQuery || searchParams.get('teacher') || '').trim();
+  const conservatoriumIdQueryParam = (conservatoriumIdFromQuery || searchParams.get('conservatorium') || '').trim();
 
   const resolveTeacherInstrument = useCallback((teacher: User) => {
     const teacherInstrument = (teacher.instruments || []).find((item) => Boolean(item?.instrument))?.instrument;
@@ -709,6 +732,34 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
     if (matchedInstrument) return matchedInstrument.names.he;
     return teacherInstrument;
   }, [conservatoriumInstruments]);
+
+  const resolveTeacherConservatoriumIds = useCallback((teacher: User) => {
+    const ids = new Set<string>();
+
+    if (teacher.conservatoriumId) {
+      ids.add(teacher.conservatoriumId);
+    }
+
+    const teacherAny = teacher as unknown as {
+      conservatoriumIds?: string[];
+      assignedConservatoriumIds?: string[];
+      conservatoriumRoles?: Array<{ conservatoriumId?: string }>;
+    };
+
+    for (const id of teacherAny.conservatoriumIds || []) {
+      if (id) ids.add(id);
+    }
+
+    for (const id of teacherAny.assignedConservatoriumIds || []) {
+      if (id) ids.add(id);
+    }
+
+    for (const item of teacherAny.conservatoriumRoles || []) {
+      if (item?.conservatoriumId) ids.add(item.conservatoriumId);
+    }
+
+    return Array.from(ids);
+  }, []);
 
 
   useEffect(() => {
@@ -736,22 +787,61 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
 
   useEffect(() => {
     if (isAdminFlow) return;
+
+    if (conservatoriumIdQueryParam) {
+      const conservatoriumExists = authConservatoriums.some((item) => item.id === conservatoriumIdQueryParam);
+      if (conservatoriumExists) {
+        form.setValue('conservatorium', conservatoriumIdQueryParam, { shouldValidate: true });
+      }
+    }
+
     if (!teacherIdQueryParam) return;
 
     const matchedTeacher = users.find((candidate) => candidate.id === teacherIdQueryParam && candidate.role === 'teacher' && candidate.approved);
-    if (!matchedTeacher) return;
-
-    if (matchedTeacher.conservatoriumId) {
-      form.setValue('conservatorium', matchedTeacher.conservatoriumId, { shouldValidate: true });
+    if (!matchedTeacher) {
+      toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.noTeachersForFilters') });
+      return;
     }
+
+    const teacherConservatoriumIds = resolveTeacherConservatoriumIds(matchedTeacher);
+    const teacherPrimaryConservatoriumId = teacherConservatoriumIds[0] || '';
+    const requestedConservatoriumId = conservatoriumIdQueryParam || '';
+    const hasRequestedConservatoriumMismatch = Boolean(requestedConservatoriumId && teacherConservatoriumIds.length > 0 && !teacherConservatoriumIds.includes(requestedConservatoriumId));
+
+    const resolvedConservatoriumId = hasRequestedConservatoriumMismatch
+      ? requestedConservatoriumId
+      : (requestedConservatoriumId || teacherPrimaryConservatoriumId);
+
+    if (resolvedConservatoriumId) {
+      form.setValue('conservatorium', resolvedConservatoriumId, { shouldValidate: true });
+    }
+
+    const hasTeacherAvailability = matchedTeacher.availableForNewStudents !== false && Array.isArray(matchedTeacher.availability) && matchedTeacher.availability.length > 0;
 
     const instrumentFromTeacher = resolveTeacherInstrument(matchedTeacher);
     if (instrumentFromTeacher) {
       form.setValue('instrument', instrumentFromTeacher, { shouldValidate: true });
     }
 
+    if (hasRequestedConservatoriumMismatch || !hasTeacherAvailability) {
+      form.setValue('teacherId', undefined, { shouldValidate: true });
+      toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('admin.noTeachersForFilters') });
+      return;
+    }
+
     form.setValue('teacherId', matchedTeacher.id, { shouldValidate: true });
-  }, [form, isAdminFlow, resolveTeacherInstrument, teacherIdQueryParam, users]);
+  }, [
+    authConservatoriums,
+    conservatoriumIdQueryParam,
+    form,
+    isAdminFlow,
+    resolveTeacherConservatoriumIds,
+    resolveTeacherInstrument,
+    t,
+    teacherIdQueryParam,
+    toast,
+    users,
+  ]);
 
   const instrumentLabelByLocale = useCallback((item: { names: { he: string; en: string; ar?: string; ru?: string } }) => {
     if (locale === 'he') return item.names.he;
@@ -763,6 +853,13 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
   const selectedConservatoriumId = form.watch('conservatorium');
   const selectedDuration = form.watch('lessonDuration') || 45;
   const selectedInstrument = form.watch('instrument');
+
+  const availableTeachers = useMemo(() => users.filter((item) => {
+    if (item.role !== 'teacher' || !item.approved) return false;
+    if (selectedConservatoriumId && item.conservatoriumId !== selectedConservatoriumId) return false;
+    if (!selectedInstrument) return true;
+    return userHasInstrument((item.instruments || []).map((instrument) => instrument.instrument), selectedInstrument, conservatoriumInstruments, item.conservatoriumId);
+  }), [users, selectedConservatoriumId, selectedInstrument]);
 
   const filteredInstrumentOptions = useMemo(() => {
     const filtered = conservatoriumInstruments
@@ -777,10 +874,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
       if (!item.isActive) return false;
       if (item.conservatoriumId !== selectedConservatoriumId) return false;
       if (item.durationMinutes !== selectedDuration) return false;
-      if (item.instruments && item.instruments.length > 0) {
-        return item.instruments.includes(selectedInstrument || '');
-      }
-      return true;
+      return packageSupportsSelectedInstrument(item, selectedInstrument, conservatoriumInstruments);
     });
   }, [lessonPackages, selectedConservatoriumId, selectedDuration, selectedInstrument]);
 
@@ -862,12 +956,12 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
     try {
       const result = await getTeacherMatches({
         studentProfile,
-        availableTeachers: mockTeachers.map(t => ({
-          id: t.id!,
-          name: t.name!,
-          bio: t.bio,
-          specialties: t.specialties as string[],
-          teachingLanguages: t.teachingLanguages as string[],
+        availableTeachers: availableTeachers.map((item) => ({
+          id: item.id,
+          name: item.name,
+          bio: item.bio || '',
+          specialties: (item.specialties || []).map((specialty) => String(specialty)),
+          teachingLanguages: item.teachingLanguages || [],
         })),
         locale
       });
@@ -968,7 +1062,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
       createdUser.oauthProviders = (createdUser.oauthProviders || []).map((item) => ({ ...item, userId: createdUser.id }));
     }
 
-    const conservatorium = conservatoriums.find(c => c.name === data.conservatorium);
+    const conservatorium = authConservatoriums.find((c) => c.id === data.conservatorium || c.name === data.conservatorium);
 
     addToWaitlist({
       studentId: createdUser.id,
@@ -1322,14 +1416,14 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                         <div className="grid grid-cols-2 gap-4">
                           {goalOptions.map((item) => (
                             <FormField key={item.id} name="goals" render={({ field }) => (
-                              <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
+                              <FormItem key={item.id} className="flex flex-row-reverse items-center gap-3 space-y-0 rounded-md border p-3">
                                 <FormControl>
                                   <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
                                     return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value: string) => value !== item.id))
                                   }} />
 
                                 </FormControl>
-                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                <FormLabel className="font-normal flex-1 text-start">{item.label}</FormLabel>
                               </FormItem>
                             )} />
                           ))}
@@ -1349,14 +1443,14 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                         <div className="grid grid-cols-3 gap-4">
                           {dayOptions.map((item) => (
                             <FormField key={item.id} name="availableDays" render={({ field }) => (
-                              <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
+                              <FormItem key={item.id} className="flex flex-row-reverse items-center gap-3 space-y-0 rounded-md border p-3">
                                 <FormControl>
                                   <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
                                     return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value: string) => value !== item.id))
                                   }} />
 
                                 </FormControl>
-                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                <FormLabel className="font-normal flex-1 text-start">{item.label}</FormLabel>
                               </FormItem>
                             )} />
                           ))}
@@ -1370,14 +1464,14 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                         <div className="grid grid-cols-3 gap-4">
                           {timeOptions.map((item) => (
                             <FormField key={item.id} name="availableTimes" render={({ field }) => (
-                              <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-x-reverse space-y-0 rounded-md border p-3">
+                              <FormItem key={item.id} className="flex flex-row-reverse items-center gap-3 space-y-0 rounded-md border p-3">
                                 <FormControl>
                                   <Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => {
                                     return checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value: string) => value !== item.id))
                                   }} />
 
                                 </FormControl>
-                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                <FormLabel className="font-normal flex-1 text-start">{item.label}</FormLabel>
                               </FormItem>
                             )} />
                           ))}
@@ -1389,18 +1483,18 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                       <FormItem className="space-y-3">
                         <FormLabel>{t('schedule.virtual')}</FormLabel>
                         <FormControl>
-                          <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col space-y-2">
-                            <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                          <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-2">
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-4">
                               <FormControl><RadioGroupItem value="yes" /></FormControl>
-                              <FormLabel className="font-normal flex-1">{t('schedule.virtualOptions.yes')}</FormLabel>
+                              <FormLabel className="font-normal flex-1 text-start">{t('schedule.virtualOptions.yes')}</FormLabel>
                             </FormItem>
-                            <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-4">
                               <FormControl><RadioGroupItem value="no" /></FormControl>
-                              <FormLabel className="font-normal flex-1">{t('schedule.virtualOptions.no')}</FormLabel>
+                              <FormLabel className="font-normal flex-1 text-start">{t('schedule.virtualOptions.no')}</FormLabel>
                             </FormItem>
-                            <FormItem className="flex items-center space-x-3 space-x-reverse rounded-md border p-4">
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-4">
                               <FormControl><RadioGroupItem value="only" /></FormControl>
-                              <FormLabel className="font-normal flex-1">{t('schedule.virtualOptions.only')}</FormLabel>
+                              <FormLabel className="font-normal flex-1 text-start">{t('schedule.virtualOptions.only')}</FormLabel>
                             </FormItem>
                           </RadioGroup>
                         </FormControl>
@@ -1424,7 +1518,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                           <FormControl>
                             <RadioGroup onValueChange={field.onChange} value={field.value} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
                               {teacherMatches.matches.map(match => {
-                                const teacher = mockTeachers.find(t => t.id === match.teacherId);
+                                const teacher = availableTeachers.find((candidate) => candidate.id === match.teacherId);
                                 if (!teacher) return null;
                                 return (
                                   <FormItem key={match.teacherId}>
@@ -1484,7 +1578,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                                         </div>
                                       </CardHeader>
                                       <CardContent>
-                                        <p className="text-2xl font-bold">{pkg.priceILS} ₪</p>
+                                        <p className="text-2xl font-bold">{pkg.priceILS} â‚ª</p>
                                         <p className="text-xs text-muted-foreground">{pkg.type === 'monthly' ? t('package.perMonth') : ''}</p>
                                       </CardContent>
                                     </label>
@@ -1509,7 +1603,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                             <div key={entry.index} className="grid grid-cols-3 gap-2 text-sm">
                               <span>{t('paymentPlan.installment', { index: entry.index })}</span>
                               <span className="text-muted-foreground">{entry.dueDate}</span>
-                              <span className="font-medium text-start">{entry.amount} ₪</span>
+                              <span className="font-medium text-start">{entry.amount} â‚ª</span>
                             </div>
                           ))}
                         </CardContent>
@@ -1538,12 +1632,12 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
                             <DetailItem label={t('summary.email')} value={formData.parentDetails.parentEmail} />
                           </>
                         )}
-                        <DetailItem label={t('role.conservatorium')} value={formData.conservatorium} />
+                        <DetailItem label={t('role.conservatorium')} value={authConservatoriums.find((item) => item.id === formData.conservatorium)?.name || formData.conservatorium} />
                         <DetailItem label={t('musical.instrument')} value={formData.instrument} />
-                        <DetailItem label={t('summary.teacher')} value={mockTeachers.find(t => t.id === formData.teacherId)?.name || t('summary.notSelected')} />
+                        <DetailItem label={t('summary.teacher')} value={users.find((candidate) => candidate.id === formData.teacherId)?.name || t('summary.notSelected')} />
                         <DetailItem label={t('summary.package')} value={selectedPackage?.names.he} />
                         <DetailItem label={t('summary.firstLesson')} value={formData.firstLessonDate && formData.firstLessonTime ? `${format(formData.firstLessonDate, 'dd/MM/yyyy')} ${t('summary.atTime')} ${formData.firstLessonTime}` : t('summary.later')} />
-                        {selectedPackage && <DetailItem label={t('summary.price')} value={`${selectedPackage.priceILS} ₪`} />}
+                        {selectedPackage && <DetailItem label={t('summary.price')} value={`${selectedPackage.priceILS} â‚ª`} />}
                       </CardContent>
                     </Card>
                   </div>
@@ -1578,3 +1672,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery }: { 
     </Card>
   );
 }
+
+
+
+

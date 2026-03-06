@@ -31,10 +31,10 @@ export interface UseMyLessonsReturn {
 }
 
 export function useMyLessons(filters?: LessonFilters): UseMyLessonsReturn {
-    const { user, mockLessons } = useAuth();
+    const { user, lessons } = useAuth();
 
     const result = useMemo(() => {
-        if (!user || !mockLessons) {
+        if (!user || !lessons) {
             return {
                 lessons: [],
                 todayLessons: [],
@@ -51,7 +51,7 @@ export function useMyLessons(filters?: LessonFilters): UseMyLessonsReturn {
         const rangeEnd = addWeeks(now, filters?.dateRangeWeeks ?? 4);
 
         // Role-scoped filtering
-        let scopedLessons = mockLessons.filter((lesson) => {
+        let scopedLessons = lessons.filter((lesson) => {
             switch (user.role as UserRole) {
                 case 'teacher':
                     return lesson.teacherId === user.id;
@@ -113,7 +113,7 @@ export function useMyLessons(filters?: LessonFilters): UseMyLessonsReturn {
             completedLessons,
             cancelledLessons,
         };
-    }, [user, mockLessons, filters?.dateRangeWeeks, filters?.statusFilter, filters?.teacherIdFilter, filters?.studentIdFilter]);
+    }, [user, lessons, filters?.dateRangeWeeks, filters?.statusFilter, filters?.teacherIdFilter, filters?.studentIdFilter]);
 
     return {
         ...result,

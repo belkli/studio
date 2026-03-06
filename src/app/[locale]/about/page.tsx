@@ -30,6 +30,7 @@ import {
   ArrowLeft,
   ChevronRight,
   UserRound,
+  Star,
 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -45,6 +46,8 @@ type PublicProfile = {
   phone?: string;
   teacherUserId?: string;
   availableForNewStudents?: boolean;
+  teacherRatingAvg?: number;
+  teacherRatingCount?: number;
   source: 'teacher' | 'manager' | 'staff';
 };
 
@@ -68,7 +71,13 @@ function getLocalizedUserBio(user: User, locale: string) {
 
 function buildTeacherInstruments(teacher: User, allInstruments: ConservatoriumInstrument[], locale: string) {
   const names = (teacher.instruments || []).map((item) => {
-    const match = allInstruments.find((inst) => inst.names.he === item.instrument || inst.id === item.instrument);
+    const match = allInstruments.find(
+      (inst) =>
+        inst.names.he === item.instrument ||
+        inst.names.en === item.instrument ||
+        inst.instrumentCatalogId === item.instrument ||
+        inst.id === item.instrument
+    );
     if (match) return getInstrumentName(match, locale);
     return item.instrument;
   });
@@ -102,18 +111,93 @@ function getProgramKey(consId: string, program: unknown, index: number, locale: 
   return `${consId}-program-${index}`;
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function hasLocaleConservatoriumTranslation(cons: Conservatorium, locale: string) {
+  if (locale === 'he') return true;
+  const translations = cons.translations as Record<string, unknown> | undefined;
+  const byLocale = translations?.[locale] as Record<string, unknown> | undefined;
+  if (!byLocale) return false;
+
+  return (
+    isNonEmptyString(byLocale.name) ||
+    isNonEmptyString(byLocale.about) ||
+    (Array.isArray(byLocale.programs) && byLocale.programs.length > 0) ||
+    (Array.isArray(byLocale.departments) && byLocale.departments.length > 0)
+  );
+}
+
+function conservatoriumQualityScore(cons: Conservatorium) {
+  return (
+    (cons.about?.trim().length || 0) +
+    (cons.departments?.length || 0) * 20 +
+    (cons.programs?.length || 0) * 12 +
+    (cons.teachers?.length || 0) * 16 +
+    (cons.photoUrls?.length || 0) * 10 +
+    (cons.tel ? 6 : 0) +
+    (cons.email ? 6 : 0) +
+    (cons.officialSite ? 8 : 0)
+  );
+}
+
+function buildConservatoriumDedupKey(cons: Conservatorium) {
+  const normalizedName = normalizeName(cons.name || '');
+  const normalizedCity = normalizeName(cons.location?.city || '');
+  const normalizedSite = normalizeName(cons.officialSite || '');
+  const normalizedPhone = normalizeName(cons.tel || '');
+
+  if (normalizedSite) return `site:${normalizedSite}`;
+  if (normalizedPhone && normalizedCity) return `phone-city:${normalizedPhone}-${normalizedCity}`;
+  return `name-city:${normalizedName}-${normalizedCity}`;
+}
+
+const CONSERVATORIUM_FALLBACK_IMAGE_IDS = [
+  'donate-hero',
+  'musicians-hero',
+  'open-day-hero',
+  'available-now-hero',
+  'student-story-1',
+  'student-story-2',
+  'student-story-3',
+  'event-corporate',
+  'event-private',
+  'event-wedding',
+];
+
+function hashString(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function getConservatoriumFallbackImage(consId: string, imageById: Map<string, string>) {
+  const candidates = CONSERVATORIUM_FALLBACK_IMAGE_IDS
+    .map((id) => imageById.get(id))
+    .filter((url): url is string => Boolean(url));
+
+  if (candidates.length === 0) return undefined;
+  const idx = hashString(consId || 'fallback') % candidates.length;
+  return candidates[idx];
+}
+
 function ConservatoriumCard({
   cons,
   teacherCount,
   onOpen,
   viewLabel,
+  fallbackHeroPhoto,
 }: {
   cons: Conservatorium;
   teacherCount: number;
   onOpen: () => void;
   viewLabel: string;
+  fallbackHeroPhoto?: string;
 }) {
-  const heroPhoto = cons.photoUrls?.[0];
+  const heroPhoto = cons.photoUrls?.[0] || fallbackHeroPhoto;
 
   return (
     <Card className="group overflow-hidden border-border/70 transition hover:border-primary/40 hover:shadow-lg">
@@ -189,7 +273,26 @@ export default function AboutPage() {
     for (const item of conservatoriums) {
       if (!uniqueById.has(item.id)) uniqueById.set(item.id, item);
     }
-    return Array.from(uniqueById.values()).map((item) => getLocalizedConservatorium(item, locale));
+
+    const byLocalizedIdentity = new Map<string, Conservatorium>();
+    for (const rawItem of Array.from(uniqueById.values())) {
+      if (!hasLocaleConservatoriumTranslation(rawItem, locale)) continue;
+
+      const localizedItem = getLocalizedConservatorium(rawItem, locale);
+      const dedupKey = buildConservatoriumDedupKey(localizedItem);
+      const existing = byLocalizedIdentity.get(dedupKey);
+
+      if (!existing) {
+        byLocalizedIdentity.set(dedupKey, localizedItem);
+        continue;
+      }
+
+      if (conservatoriumQualityScore(localizedItem) > conservatoriumQualityScore(existing)) {
+        byLocalizedIdentity.set(dedupKey, localizedItem);
+      }
+    }
+
+    return Array.from(byLocalizedIdentity.values());
   }, [conservatoriums, locale]);
 
   const localizedTeachers = useMemo(() => {
@@ -218,6 +321,15 @@ export default function AboutPage() {
     () => new Map(PlaceHolderImages.map((image) => [image.id, image.imageUrl])),
     []
   );
+
+  const conservatoriumFallbackImages = useMemo(() => {
+    const byConservatoriumId = new Map<string, string>();
+    for (const cons of localizedConservatoriums) {
+      const fallback = getConservatoriumFallbackImage(cons.id, placeholderImageMap);
+      if (fallback) byConservatoriumId.set(cons.id, fallback);
+    }
+    return byConservatoriumId;
+  }, [localizedConservatoriums, placeholderImageMap]);
 
   const resolveAvatarUrl = (value?: string) => {
     if (!value) return undefined;
@@ -305,6 +417,8 @@ export default function AboutPage() {
         phone: matched?.phone,
         teacherUserId: matched?.id,
         availableForNewStudents: matched?.availableForNewStudents,
+        teacherRatingAvg: matched?.teacherRatingAvg,
+        teacherRatingCount: matched?.teacherRatingCount,
         source: 'teacher',
       });
     }
@@ -323,6 +437,8 @@ export default function AboutPage() {
         phone: teacher.phone,
         teacherUserId: teacher.id,
         availableForNewStudents: teacher.availableForNewStudents,
+        teacherRatingAvg: teacher.teacherRatingAvg,
+        teacherRatingCount: teacher.teacherRatingCount,
         source: 'teacher',
       });
     }
@@ -448,6 +564,7 @@ export default function AboutPage() {
                     setSelectedCons(cons);
                   }}
                   viewLabel={tCommon('view')}
+                  fallbackHeroPhoto={conservatoriumFallbackImages.get(cons.id)}
                 />
               ))}
             </div>
@@ -670,6 +787,12 @@ export default function AboutPage() {
                           {profile.instruments.length > 0 && (
                             <p className="line-clamp-1 text-[11px] text-muted-foreground">{profile.instruments.join(', ')}</p>
                           )}
+                          {typeof profile.teacherRatingAvg === 'number' && (profile.teacherRatingCount || 0) > 0 && (
+                            <p className="mt-1 flex items-center gap-1 text-[11px] text-amber-600">
+                              <Star className="h-3.5 w-3.5 fill-current" />
+                              <span>{profile.teacherRatingAvg.toFixed(1)} ({profile.teacherRatingCount})</span>
+                            </p>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -698,6 +821,12 @@ export default function AboutPage() {
                   {selectedProfile.role && <p className="text-sm text-muted-foreground">{selectedProfile.role}</p>}
                   {selectedProfile.instruments.length > 0 && (
                     <p className="text-sm text-muted-foreground">{selectedProfile.instruments.join(', ')}</p>
+                  )}
+                  {typeof selectedProfile.teacherRatingAvg === 'number' && (selectedProfile.teacherRatingCount || 0) > 0 && (
+                    <p className="flex items-center gap-1 text-sm text-amber-600">
+                      <Star className="h-4 w-4 fill-current" />
+                      <span>{selectedProfile.teacherRatingAvg.toFixed(1)} ({selectedProfile.teacherRatingCount})</span>
+                    </p>
                   )}
                 </div>
               </div>
@@ -738,7 +867,7 @@ export default function AboutPage() {
                 )}
                 {selectedProfile.source === 'teacher' && selectedProfile.teacherUserId && selectedProfile.availableForNewStudents && (
                   <Button asChild>
-                    <Link href={`/register?teacher=${selectedProfile.teacherUserId}`}>{tAbout('bookWithTeacher')}</Link>
+                    <Link href={`/register?teacher=${selectedProfile.teacherUserId}&conservatorium=${selectedCons.id}`}>{tAbout('bookWithTeacher')}</Link>
                   </Button>
                 )}
               </div>

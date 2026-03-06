@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { collectInstrumentTokensFromConservatoriumInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,7 +42,7 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 }
 
 export function OpenDayLandingPage() {
-  const { mockOpenDayEvents, mockOpenDayAppointments, addOpenDayAppointment, conservatoriums, conservatoriumInstruments } = useAuth();
+  const { openDayEvents, openDayAppointments, addOpenDayAppointment, conservatoriums, conservatoriumInstruments } = useAuth();
   const t = useTranslations('OpenDay');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -62,7 +63,7 @@ export function OpenDayLandingPage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
 
-  const activeEvents = useMemo(() => mockOpenDayEvents.filter((item) => item.isActive), [mockOpenDayEvents]);
+  const activeEvents = useMemo(() => openDayEvents.filter((item) => item.isActive), [openDayEvents]);
   const activeEvent = useMemo(() => activeEvents.find((item) => item.id === selectedEventId), [activeEvents, selectedEventId]);
   const nextEvent = useMemo(
     () => (activeEvents.length > 0 ? [...activeEvents].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] : null),
@@ -78,9 +79,17 @@ export function OpenDayLandingPage() {
   }, [conservatoriums, locale]);
 
   const instrumentOptions = useMemo(() => {
-    const set = new Set<string>();
-    conservatoriumInstruments.filter((item) => item.isActive).forEach((item) => set.add(item.names.he));
-    return Array.from(set).sort((a, b) => a.localeCompare(b, locale === 'he' ? 'he' : 'en'));
+    const localeName = (item: (typeof conservatoriumInstruments)[number]) => {
+      if (locale === 'he') return item.names.he;
+      if (locale === 'ar') return item.names.ar || item.names.en;
+      if (locale === 'ru') return item.names.ru || item.names.en;
+      return item.names.en;
+    };
+
+    return conservatoriumInstruments
+      .filter((item) => item.isActive)
+      .map((item) => ({ value: item.id, label: localeName(item) }))
+      .sort((a, b) => a.label.localeCompare(b.label, locale === 'he' ? 'he' : 'en'));
   }, [conservatoriumInstruments, locale]);
 
   const filteredEvents = useMemo(() => {
@@ -99,9 +108,12 @@ export function OpenDayLandingPage() {
 
       const byInstrument = (() => {
         if (instrument === 'all') return true;
-        return conservatoriumInstruments.some(
-          (item) => item.conservatoriumId === event.conservatoriumId && item.isActive && item.names.he === instrument
-        );
+        const selectedToken = normalizeInstrumentToken(instrument);
+        return conservatoriumInstruments.some((item) => {
+          if (item.conservatoriumId !== event.conservatoriumId || !item.isActive) return false;
+          const tokens = collectInstrumentTokensFromConservatoriumInstrument(item);
+          return tokens.has(selectedToken);
+        });
       })();
 
       const byDate = (() => {
@@ -130,13 +142,13 @@ export function OpenDayLandingPage() {
 
     while (isBefore(currentTime, endTime)) {
       const slotIso = currentTime.toISOString();
-      const isBooked = mockOpenDayAppointments.some((item) => item.eventId === activeEvent.id && item.appointmentTime === slotIso);
+      const isBooked = openDayAppointments.some((item) => item.eventId === activeEvent.id && item.appointmentTime === slotIso);
       if (!isBooked) slots.push(slotIso);
       currentTime = add(currentTime, { minutes: activeEvent.appointmentDuration });
     }
 
     return slots;
-  }, [activeEvent, mockOpenDayAppointments]);
+  }, [activeEvent, openDayAppointments]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) return;
@@ -267,7 +279,7 @@ export function OpenDayLandingPage() {
                   <SelectTrigger><SelectValue placeholder={t('filterInstrument')} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('allInstruments')}</SelectItem>
-                    {instrumentOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                    {instrumentOptions.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
 
@@ -344,7 +356,7 @@ export function OpenDayLandingPage() {
                       <Label htmlFor="instrumentInterest">{t('instrumentInterest')}</Label>
                       <Select dir={isRtl ? 'rtl' : 'ltr'} name="instrumentInterest" required>
                         <SelectTrigger><SelectValue placeholder={t('selectInstrument')} /></SelectTrigger>
-                        <SelectContent>{instrumentOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
+                        <SelectContent>{instrumentOptions.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                   </div>

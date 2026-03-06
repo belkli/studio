@@ -480,6 +480,8 @@ export type User = {
   teachingLanguages?: Language[];
   availability?: WeeklyAvailabilityBlock[];
   maxStudents?: number;
+  teacherRatingAvg?: number;
+  teacherRatingCount?: number;
   employmentType?: 'EMPLOYEE' | 'FREELANCE';
   ratePerDuration?: {
     '30': number;
@@ -615,8 +617,8 @@ export type AdditionalMusicDetails = {
 export type PreviousRepertoire = {
   piece: string;
   composer: string;
-  scope: string; // ×”×™×§×£ ×”×‘×™×¦×•×¢
-  performedByHeart: boolean; // × ×•×’×Ÿ ×‘×¢"×¤
+  scope: string; // ��"קף ���"צ�"ע
+  performedByHeart: boolean; // נ�"��x �ע"פ
 };
 
 
@@ -1399,7 +1401,7 @@ export type TeacherCompensation = {
 export type PayrollExportRow = {
   employeeId: string;
   employeeName: string;
-  idNumber?: string;                    // ×ª"×–
+  idNumber?: string;                    // ת"�
   employmentType: 'EMPLOYEE' | 'FREELANCE';
   periodStart: string;                  // 'YYYY-MM-DD'
   periodEnd: string;
@@ -1577,19 +1579,19 @@ export const ACHIEVEMENT_DEFINITIONS: Record<AchievementType, Omit<Achievement, 
   FORM_SUBMITTED: { type: 'FORM_SUBMITTED', title: 'Form Submitted', titleHe: '×˜×•×¤×¡ ×”×•×’×©!', description: '×”×’×©×ª ×˜×•×¤×¡ ×¨××©×•×Ÿ', icon: 'ðŸ“‹', points: 10, },
   EXAM_REGISTERED: { type: 'EXAM_REGISTERED', title: 'Exam Registered', titleHe: '× ×¨×©×ž×ª ×œ×‘×—×™× ×”!', description: '× ×¨×©×ž×ª ×œ×‘×—×™× ×” ×¨××©×•× ×”', icon: 'ðŸ“', points: 50, },
   EXAM_PASSED: { type: 'EXAM_PASSED', title: 'Exam Passed!', titleHe: '×¢×‘×¨×ª ×‘×—×™× ×”!', description: '×¢×‘×¨×ª ×‘×—×™× ×ª ×ž×©×¨×“ ×”×—×™× ×•×š', icon: 'ðŸŽ“', points: 300, },
-  FIRST_PLAYING_SCHOOL_LESSON: { type: 'FIRST_PLAYING_SCHOOL_LESSON', title: 'School Music Debut', titleHe: '×©×™×¢×•×¨ × ×’×™× ×” ×¨××©×•×Ÿ ×‘×‘×™×”"×¡!', description: '×”×ª×—×œ×ª ×œ×œ×ž×•×“ ×ž×•×–×™×§×” ×‘×‘×™×ª ×”×¡×¤×¨', icon: 'ðŸ«', points: 30, },
-  INSTRUMENT_COLLECTED: { type: 'INSTRUMENT_COLLECTED', title: 'Got My Instrument!', titleHe: '×§×™×‘×œ×ª×™ ×›×œ×™ × ×’×™× ×”!', description: '××¡×¤×ª ××ª ×›×œ×™ ×”× ×’×™× ×” ×©×œ×š ×ž×”×§×•× ×¡×¨×‘×˜×•×¨×™×•×Ÿ', icon: 'ðŸŽº', points: 20, },
+  FIRST_PLAYING_SCHOOL_LESSON: { type: 'FIRST_PLAYING_SCHOOL_LESSON', title: 'School Music Debut', titleHe: '×©×™×¢×•×¨ × ×’×™× ×” ×¨××©×•×Ÿ ×‘×‘×™×”"ס!', description: '�ת��Sת �S�S�~�"� �~�"��"ק� ���"ת �ספר', icon: '�x��', points: 30, },
+  INSTRUMENT_COLLECTED: { type: 'INSTRUMENT_COLLECTED', title: 'Got My Instrument!', titleHe: 'ק�"��Sת�" �:�S�" נ��"נ�!', description: 'אספת את �:�S�" �נ��"נ� ש�S�a �~�ק�"נסר����"ר�"�"�x', icon: '�x}�', points: 20, },
 };
 
 // SDD-P3: Student Level Calculator
 export function calculateStudentLevel(achievements: Achievement[]): { level: number; points: number; title: string; titleHe: string } {
   const points = achievements.reduce((sum, a) => sum + (a.points ?? 0), 0);
   const levels = [
-    { level: 1, min: 0, title: 'Beginner', titleHe: '×ž×ª×—×™×œ' },
-    { level: 2, min: 100, title: 'Learner', titleHe: '×œ×•×ž×“' },
-    { level: 3, min: 300, title: 'Practitioner', titleHe: '×ž×ª×¨×’×œ' },
-    { level: 4, min: 700, title: 'Musician', titleHe: '×ž×•×–×™×§××™' },
-    { level: 5, min: 1500, title: 'Artist', titleHe: '××ž×Ÿ' },
+    { level: 1, min: 0, title: 'Beginner', titleHe: '�~ת��"�S' },
+    { level: 2, min: 100, title: 'Learner', titleHe: '�S�"�~�' },
+    { level: 3, min: 300, title: 'Practitioner', titleHe: '�~תר��S' },
+    { level: 4, min: 700, title: 'Musician', titleHe: '�~�"��"קא�"' },
+    { level: 5, min: 1500, title: 'Artist', titleHe: 'א�~�x' },
   ];
   const current = [...levels].reverse().find(l => points >= l.min) ?? levels[0];
   return { level: current.level, points, title: current.title, titleHe: current.titleHe };
@@ -1762,7 +1764,7 @@ export type ComplianceStatusCard = {
 
 // SDD-P5: Ministry Exam Export
 export type MinistryExamRecord = {
-  studentIdNumber: string;              // ×ª"×–
+  studentIdNumber: string;              // ת"×–
   studentFirstName: string;
   studentLastName: string;
   dateOfBirth: string;                  // DD/MM/YYYY
@@ -1780,9 +1782,17 @@ export type MinistryExamRecord = {
 
 // Ministry instrument name mapping (Hebrew)
 export const MINISTRY_INSTRUMENT_NAMES: Record<string, string> = {
-  'PIANO': '×¤×¡× ×ª×¨', 'VIOLIN': '×›×™× ×•×¨', 'CELLO': "×¦'×œ×•", 'GUITAR': '×’×™×˜×¨×”',
-  'FLUTE': '×—×œ×™×œ ×¦×“', 'CLARINET': '×§×œ×¨×™× ×˜', 'TRUMPET': '×—×¦×•×¦×¨×”',
-  'SAXOPHONE': '×¡×§×¡×•×¤×•×Ÿ', 'DRUMS': '×ª×•×¤×™×', 'VOICE': '×©×™×¨×”', 'THEORY': '×ª××•×¨×™×”',
+  PIANO: '\u05e4\u05e1\u05e0\u05ea\u05e8',
+  VIOLIN: '\u05db\u05d9\u05e0\u05d5\u05e8',
+  CELLO: "\u05e6'\u05dc\u05d5",
+  GUITAR: '\u05d2\u05d9\u05d8\u05e8\u05d4',
+  FLUTE: '\u05d7\u05dc\u05d9\u05dc \u05e6\u05d3',
+  CLARINET: '\u05e7\u05dc\u05e8\u05d9\u05e0\u05d8',
+  TRUMPET: '\u05d7\u05e6\u05d5\u05e6\u05e8\u05d4',
+  SAXOPHONE: '\u05e1\u05e7\u05e1\u05d5\u05e4\u05d5\u05df',
+  DRUMS: '\u05ea\u05d5\u05e4\u05d9\u05dd',
+  VOICE: '\u05e9\u05d9\u05e8\u05d4',
+  THEORY: '\u05ea\u05d0\u05d5\u05e8\u05d9\u05d4',
 };
 
 // SDD-P8: AI Job Queue
@@ -1920,6 +1930,7 @@ export type PlayingSchoolInterestLead = {
 export type ConservatoriumInstrument = {
   id: string;
   conservatoriumId: string;
+  instrumentCatalogId?: string;
   names: {
     he: string;
     en: string;
@@ -1943,6 +1954,10 @@ export type LessonPackage = {
   durationMinutes: 30 | 45 | 60;
   priceILS: number;
   isActive: boolean;
+  // Legacy free-text instrument labels (kept for backward compatibility)
   instruments?: string[];
+  // Normalized IDs from lesson_package_instruments
+  conservatoriumInstrumentIds?: string[];
+  instrumentCatalogIds?: string[];
   notes?: string;
 };

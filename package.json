@@ -15,15 +15,16 @@
     "i18n:add-key": "node scripts/i18n/add-key.mjs",
     "i18n:fix-status": "node scripts/i18n/add-status-keys.mjs",
     "i18n:validate": "node scripts/i18n/audit.mjs && echo 'All translations complete'",
+    "i18n:normalize": "node scripts/i18n/normalize-locales.mjs",
+    "i18n:sync": "node scripts/i18n/sync-from-en.mjs",
+    "i18n:fix-question": "node scripts/i18n/fix-question-placeholders.mjs",
     "db:start": "docker compose up -d",
     "db:stop": "docker compose down",
     "db:migrate": "node scripts/db/run-sql-file.mjs scripts/db/schema.sql",
-    "db:seed": "node scripts/db/seed-repertoire.mjs && node scripts/db/run-sql-file.mjs scripts/db/seed.sql && node scripts/db/run-sql-file.mjs scripts/db/repertoire.seed.sql",
+    "db:seed": "node scripts/db/run-sql-file.mjs scripts/db/seed.sql && node scripts/db/run-sql-file.mjs scripts/db/repertoire.seed.sql",
     "db:reset": "node scripts/db/reset.mjs",
-    "db:studio": "npx drizzle-kit studio",
-    "i18n:normalize": "node scripts/i18n/normalize-locales.mjs",
-    "i18n:sync": "node scripts/i18n/sync-from-en.mjs",
-    "db:seed:repertoire": "node scripts/db/seed-repertoire.mjs && node scripts/db/run-sql-file.mjs scripts/db/repertoire.seed.sql"
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.29.0",

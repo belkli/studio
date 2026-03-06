@@ -12,7 +12,7 @@ import { useTranslations } from 'next-intl';
 export function RecentForms() {
     const t = useTranslations('Dashboard.recentForms');
     const tc = useTranslations('Common.shared');
-    const { user, mockFormSubmissions } = useAuth();
+    const { user, formSubmissions } = useAuth();
 
     if (!user) {
         return null; // Or some loading state
@@ -22,14 +22,14 @@ export function RecentForms() {
         if (!user) return [];
         switch (user.role) {
             case 'student':
-                return mockFormSubmissions.filter(form => form.studentId === user.id);
+                return formSubmissions.filter(form => form.studentId === user.id);
             case 'teacher':
-                return mockFormSubmissions.filter(form => user.students?.includes(form.studentId));
+                return formSubmissions.filter(form => user.students?.includes(form.studentId));
             case 'conservatorium_admin':
-                return mockFormSubmissions.filter(form => form.conservatoriumName === user.conservatoriumName);
+                return formSubmissions.filter(form => form.conservatoriumName === user.conservatoriumName);
             case 'site_admin':
             case 'ministry_director':
-                return mockFormSubmissions;
+                return formSubmissions;
             default:
                 return [];
         }

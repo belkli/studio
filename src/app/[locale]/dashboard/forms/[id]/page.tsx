@@ -1,6 +1,5 @@
 'use client';
 
-import { mockUsers, conservatoriums, examLevels, examTypes } from '@/lib/data';
 import { notFound, useParams, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -47,7 +46,7 @@ export default function FormDetailsPage() {
     const searchParams = useSearchParams();
     const formId = params.id as string;
     const { toast } = useToast();
-    const { user, mockFormSubmissions: forms, updateForm, mockFormTemplates } = useAuth();
+    const { user, users, conservatoriums, formSubmissions: forms, updateForm, formTemplates } = useAuth();
     const t = useTranslations('Forms');
     const ts = useTranslations('Status');
     const tl = useTranslations('Forms.labels');
@@ -83,8 +82,8 @@ export default function FormDetailsPage() {
         return null;
     }
 
-    const formUser = mockUsers.find(u => u.id === form.studentId);
-    const customFormTemplate = form.formTemplateId ? mockFormTemplates.find(t => t.id === form.formTemplateId) : undefined;
+    const formUser = users.find(u => u.id === form.studentId);
+    const customFormTemplate = form.formTemplateId ? formTemplates.find(t => t.id === form.formTemplateId) : undefined;
 
 
     const generatePdf = (form: FormSubmission) => {

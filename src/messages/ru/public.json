@@ -181,8 +181,8 @@
     "submitButton": "Пожертвовать ₪{amount}",
     "chooseCause": "Выберите, куда пойдет ваше пожертвование",
     "chooseCauseHint": "Выберите конкретную причину или сделайте пожертвование в общий фонд.",
-    "generalFund": "????? ?????",
-    "generalFundDesc": "???????????? ?????? ? ???????????? ????????????? ????? ??????????????? ?? ???????? ???????????? ????????.",
+    "generalFund": "Общий вклад",
+    "generalFundDesc": "Поддерживает гибкое и справедливое распределение средств между консерваториями на основе реальных потребностей студентов.",
     "raisedProgress": "Поднято: {percent}% от целевого значения"
   },
   "PublicEventPage": {
@@ -238,34 +238,34 @@
     "welcomeMessage": "Здравствуйте! Я Гармония, ваш AI-ассистент. Чем я могу вам помочь сегодня?",
     "quickQuestions": {
       "default": {
-        "cancelLesson": "How do I cancel a lesson?",
-        "makeupBalance": "Where can I see my makeup lesson balance?",
-        "recitalForm": "How do I submit a recital form?",
-        "updateAvailability": "How do I update my availability? (teachers)"
+        "cancelLesson": "Как отменить урок?",
+        "makeupBalance": "Где я могу увидеть баланс уроков по макияжу?",
+        "recitalForm": "Как отправить форму на концерт?",
+        "updateAvailability": "Как мне обновить доступность? (учителя)"
       },
       "schedule": {
-        "bookMakeup": "How do I book a makeup lesson?",
-        "cancelNextWeek": "Can I cancel next week's lesson?",
-        "cancellationPolicy": "What is the conservatory cancellation policy?",
-        "syncCalendar": "How can I sync my calendar?"
+        "bookMakeup": "Как записаться на урок макияжа?",
+        "cancelNextWeek": "Могу ли я отменить урок на следующей неделе?",
+        "cancellationPolicy": "Каковы правила отмены зимнего сада?",
+        "syncCalendar": "Как я могу синхронизировать свой календарь?"
       },
       "billing": {
-        "invoices": "Where can I find my invoices?",
-        "updateCard": "How do I update my payment card?",
-        "nextCharge": "When is my next charge due?",
-        "siblingDiscount": "How does sibling discount work?"
+        "invoices": "Где я могу найти свои счета?",
+        "updateCard": "Как обновить платежную карту?",
+        "nextCharge": "Когда должен быть произведен следующий платеж?",
+        "siblingDiscount": "Как работает скидка для братьев и сестер?"
       },
       "forms": {
-        "approveRecital": "How long does recital form approval take?",
-        "rejectedForm": "My form was rejected, what should I do?",
-        "downloadPdf": "How do I download approved form PDF?",
-        "whoApproves": "Who needs to approve my form?"
+        "approveRecital": "Сколько времени занимает утверждение формы отчета?",
+        "rejectedForm": "Моя форма была отклонена, что мне делать?",
+        "downloadPdf": "Как загрузить утвержденную форму PDF?",
+        "whoApproves": "Кто должен утвердить мою форму?"
       },
       "admin": {
-        "approveEnrollment": "How do I approve a new student enrollment?",
-        "packagePricing": "Where do I configure package pricing?",
-        "sendAnnouncement": "How do I send an announcement to all parents?",
-        "financialReports": "Where can I view financial reports?"
+        "approveEnrollment": "Как мне одобрить набор нового студента?",
+        "packagePricing": "Где мне настроить цену пакета?",
+        "sendAnnouncement": "Как отправить объявление всем родителям?",
+        "financialReports": "Где я могу просмотреть финансовые отчеты?"
       }
     }
   },

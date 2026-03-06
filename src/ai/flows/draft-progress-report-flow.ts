@@ -10,7 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import type { PracticeLog, LessonNote, AssignedRepertoire } from '@/lib/types';
-import { compositions } from '@/lib/data';
+import { getDb } from '@/lib/db';
 
 const PracticeLogSchema = z.object({
   date: z.string(),
@@ -111,13 +111,16 @@ const draftProgressReportFlow = ai.defineFlow(
     outputSchema: DraftProgressReportOutputSchema,
   },
   async (input) => {
+    const db = await getDb();
+    const compositions = await db.repertoire.list();
+
     const repertoireWithDetails = input.repertoire.map(rep => {
       const composition = compositions.find(c => c.id === rep.compositionId);
       return {
         title: composition?.title || 'Unknown Piece',
         composer: composition?.composer || 'Unknown Composer',
         status: rep.status,
-      }
+      };
     });
 
     const { output } = await prompt({

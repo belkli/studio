@@ -28,7 +28,7 @@ const getStatusConfig = (t: any): Record<AuditLogEntry['status'], { icon: React.
 });
 
 export function NotificationAuditLog() {
-    const { mockAuditLog, users } = useAuth();
+    const { auditLog, users } = useAuth();
     const t = useTranslations('NotificationAuditLog');
     const locale = useLocale();
     const dateLocale = useDateLocale();
@@ -38,11 +38,11 @@ export function NotificationAuditLog() {
     const statusConfig = getStatusConfig(t);
 
     const auditLogWithUsers = useMemo(() => {
-        return mockAuditLog.map(log => ({
+        return auditLog.map(log => ({
             ...log,
             user: users.find(u => u.id === log.userId)
         })).sort((a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime());
-    }, [mockAuditLog, users]);
+    }, [auditLog, users]);
 
     return (
         <Card dir={isRtl ? 'rtl' : 'ltr'}>

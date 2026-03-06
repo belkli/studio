@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import type { User, PracticeLog, FormSubmission } from "@/lib/types";
 
 export function TeacherReportsDashboard() {
-    const { user: teacher, users, mockLessons, mockPracticeLogs, mockFormSubmissions }: { user: User | null, users: User[], mockLessons: any[], mockPracticeLogs: PracticeLog[], mockFormSubmissions: FormSubmission[] } = useAuth();
+    const { user: teacher, users, lessons, practiceLogs, formSubmissions }: { user: User | null, users: User[], lessons: any[], practiceLogs: PracticeLog[], formSubmissions: FormSubmission[] } = useAuth();
     const t = useTranslations('TeacherReports');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
@@ -28,12 +28,12 @@ export function TeacherReportsDashboard() {
         const start = startOfMonth(now);
         const end = endOfMonth(now);
 
-        const lessonsThisMonth = mockLessons.filter((l: any) => {
+        const lessonsThisMonth = lessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && l.status === 'COMPLETED';
         });
 
-        const cancellationsThisMonth = mockLessons.filter((l: any) => {
+        const cancellationsThisMonth = lessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && (l.status.startsWith('CANCELLED'));
         });
@@ -41,14 +41,14 @@ export function TeacherReportsDashboard() {
         // Mock earnings calculation
         const earningsThisMonth = lessonsThisMonth.length * 150; // Assuming 150 per lesson
 
-        const studentsWhoPracticed = new Set(mockPracticeLogs.filter((log: PracticeLog) => {
+        const studentsWhoPracticed = new Set(practiceLogs.filter((log: PracticeLog) => {
             const logDate = new Date(log.date);
             return isWithinInterval(logDate, { start, end }) && assignedStudents.some((s: User) => s.id === log.studentId);
         }).map((log: PracticeLog) => log.studentId));
 
         const practiceEngagement = assignedStudents.length > 0 ? (studentsWhoPracticed.size / assignedStudents.length) * 100 : 0;
 
-        const upcomingExams = mockFormSubmissions.filter((f: FormSubmission) =>
+        const upcomingExams = formSubmissions.filter((f: FormSubmission) =>
             (f.formType === 'רסיטל בגרות' || f.formType === 'הרשמה לבחינה') &&
             assignedStudents.some((s: User) => s.id === f.studentId) &&
             f.status !== 'REJECTED' && f.status !== 'DRAFT'
@@ -61,16 +61,16 @@ export function TeacherReportsDashboard() {
             practiceEngagement: practiceEngagement,
             upcomingExams: upcomingExams,
         }
-    }, [teacher, mockLessons, mockPracticeLogs, assignedStudents, mockFormSubmissions]);
+    }, [teacher, lessons, practiceLogs, assignedStudents, formSubmissions]);
 
     const practiceEngagementData = useMemo(() => {
         return assignedStudents.map((student: User) => {
-            const totalMinutes = mockPracticeLogs
+            const totalMinutes = practiceLogs
                 .filter((log: PracticeLog) => log.studentId === student.id)
                 .reduce((sum: number, log: PracticeLog) => sum + log.durationMinutes, 0);
             return { name: student.name.split(' ')[0], minutes: totalMinutes };
         }).sort((a: { name: string, minutes: number }, b: { name: string, minutes: number }) => b.minutes - a.minutes);
-    }, [assignedStudents, mockPracticeLogs]);
+    }, [assignedStudents, practiceLogs]);
 
     if (!teacher) return null;
 

@@ -32,7 +32,7 @@ interface RescheduleLessonDialogProps {
 }
 
 export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }: RescheduleLessonDialogProps) {
-    const { users, mockLessons } = useAuth();
+    const { users, lessons } = useAuth();
     const dateLocale = useDateLocale();
     const { toast } = useToast();
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -82,7 +82,7 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
                 return;
             }
 
-            const dayLessons = mockLessons.filter(l =>
+            const dayLessons = lessons.filter(l =>
                 l.teacherId === lesson.teacherId &&
                 l.id !== lesson.id && // Exclude the lesson being rescheduled
                 format(new Date(l.startTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
@@ -110,7 +110,7 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
             setIsLoadingSlots(false);
         }, 300);
 
-    }, [lesson, selectedDate, users, mockLessons]);
+    }, [lesson, selectedDate, users, lessons]);
 
     const onSubmit = (data: RescheduleFormData) => {
         if (!lesson) return;

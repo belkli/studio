@@ -49,7 +49,7 @@ function formatMinutes(totalMinutes: number): string {
 }
 
 export function TeacherPayrollView() {
-  const { user, users, mockLessons } = useAuth();
+  const { user, users, lessons: allLessons } = useAuth();
   const t = useTranslations('TeacherPayroll');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -64,7 +64,7 @@ export function TeacherPayrollView() {
     const monthStart = new Date(`${period}-01T00:00:00`);
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const lessons = mockLessons
+    const lessons = allLessons
       .filter((lesson) => lesson.teacherId === user.id)
       .filter((lesson) => {
         const when = new Date(lesson.startTime);
@@ -91,7 +91,7 @@ export function TeacherPayrollView() {
       absentCount,
       lessons: rows,
     };
-  }, [mockLessons, period, user, users]);
+  }, [allLessons, period, user, users]);
 
   const exportMyPayroll = () => {
     if (!user) return;

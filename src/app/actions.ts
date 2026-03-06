@@ -7,8 +7,8 @@
  * and their inputs are validated using Zod schemas, providing a secure and robust API layer.
  */
 
-import type { Composition } from '@/lib/types';
-import { compositions as allCompositions } from '@/lib/data';
+import type { Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, EventProduction, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, StudentMasterClassAllowance, User } from '@/lib/types';
+import { getDb } from '@/lib/db';
 import { withAuth } from '@/lib/auth-utils';
 import { z } from 'zod';
 
@@ -111,6 +111,168 @@ const AlumnusSchema = z.object({
   socialLinks: z.object({ website: z.string().optional(), youtube: z.string().optional(), spotify: z.string().optional(), instagram: z.string().optional() }).optional(),
   availableForMasterClasses: z.boolean().default(false),
 });
+
+const AnnouncementSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  title: z.string().min(1),
+  body: z.string().min(1),
+  targetAudience: z.enum(['ALL', 'STUDENTS', 'PARENTS', 'TEACHERS']).default('ALL'),
+  channels: z.array(z.enum(['IN_APP', 'EMAIL', 'SMS', 'WHATSAPP'])).default(['IN_APP']),
+  sentAt: z.string().optional(),
+});
+
+const MasterClassSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  title: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
+  description: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
+  instructor: z.object({
+    userId: z.string(),
+    displayName: z.string(),
+    instrument: z.string(),
+    bio: z.string().optional(),
+    photoUrl: z.string().optional(),
+  }),
+  instrument: z.string(),
+  maxParticipants: z.number().int().positive().default(20),
+  targetAudience: z.enum(['beginners', 'intermediate', 'advanced', 'all']).default('all'),
+  date: z.string(),
+  startTime: z.string(),
+  durationMinutes: z.number().int().positive().default(90),
+  location: z.string(),
+  isOnline: z.boolean().default(false),
+  streamUrl: z.string().optional(),
+  includedInPackage: z.boolean().default(false),
+  priceILS: z.number().optional(),
+  packageMasterClassCount: z.number().optional(),
+  status: z.enum(['draft', 'published', 'completed', 'cancelled']).default('draft'),
+  registrations: z.array(z.object({
+    studentId: z.string(),
+    registeredAt: z.string(),
+    attendanceStatus: z.enum(['registered','attended','no_show']),
+    isPartOfPackage: z.boolean(),
+  })).default([]),
+});
+
+const RegisterMasterClassSchema = z.object({
+  masterClassId: z.string(),
+  studentId: z.string(),
+  allowances: z.array(
+    z.object({
+      studentId: z.string(),
+      conservatoriumId: z.string(),
+      academicYear: z.string(),
+      totalAllowed: z.number().int(),
+      used: z.number().int(),
+      remaining: z.number().int(),
+    })
+  ).default([]),
+});
+
+
+const ScholarshipApplicationSchema = z.object({
+  id: z.string().optional(),
+  studentId: z.string(),
+  studentName: z.string(),
+  instrument: z.string(),
+  conservatoriumId: z.string(),
+  academicYear: z.string(),
+  status: z.enum(['SUBMITTED','UNDER_REVIEW','APPROVED','PARTIALLY_APPROVED','WAITLISTED','REJECTED','EXPIRED']).default('SUBMITTED'),
+  submittedAt: z.string(),
+  priorityScore: z.number(),
+  approvedAt: z.string().optional(),
+  rejectedAt: z.string().optional(),
+  paymentStatus: z.enum(['UNPAID','PAID']).optional(),
+  paidAt: z.string().optional(),
+});
+
+const ScholarshipStatusUpdateSchema = z.object({
+  applicationId: z.string(),
+  status: z.enum(['APPROVED','REJECTED']),
+});
+
+const DonationCauseSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  names: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
+  descriptions: z.object({ he: z.string(), en: z.string() }),
+  category: z.enum(['financial_aid','excellence','equipment','events','general']),
+  priority: z.number().int(),
+  isActive: z.boolean().default(true),
+  targetAmountILS: z.number().optional(),
+  raisedAmountILS: z.number().default(0),
+  imageUrl: z.string().optional(),
+});
+
+const DonationRecordSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  causeId: z.string(),
+  amountILS: z.number(),
+  frequency: z.enum(['once','monthly','yearly']),
+  donorName: z.string().optional(),
+  donorEmail: z.string().optional(),
+  donorId: z.string().optional(),
+  status: z.enum(['INITIATED','PAID','FAILED']).default('INITIATED'),
+  createdAt: z.string(),
+});
+
+const BranchSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  name: z.string(),
+  address: z.string(),
+});
+
+const ConservatoriumInstrumentSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  instrumentCatalogId: z.string().optional(),
+  names: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
+  isActive: z.boolean(),
+  teacherCount: z.number().int(),
+  availableForRegistration: z.boolean(),
+  availableForRental: z.boolean(),
+});
+
+const LessonPackageSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  names: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
+  type: z.enum(['monthly', 'semester', 'annual', 'single']),
+  lessonCount: z.number().int().nullable(),
+  durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+  priceILS: z.number(),
+  isActive: z.boolean(),
+  instruments: z.array(z.string()).optional(),
+  conservatoriumInstrumentIds: z.array(z.string()).optional(),
+  instrumentCatalogIds: z.array(z.string()).optional(),
+  notes: z.string().optional(),
+});
+
+const RoomSchema = z.object({
+  id: z.string().optional(),
+  conservatoriumId: z.string(),
+  branchId: z.string(),
+  name: z.string(),
+  capacity: z.number().int(),
+  instrumentEquipment: z.array(z.object({ instrumentId: z.string(), quantity: z.number().int(), notes: z.string().optional() })),
+  blocks: z.array(z.object({ id: z.string(), startDateTime: z.string(), endDateTime: z.string(), reason: z.string(), blockedByUserId: z.string() })),
+  isActive: z.boolean(),
+  description: z.string().optional(),
+  photoUrl: z.string().optional(),
+  equipment: z.array(z.string()).optional(),
+});
+
+
+const FormSubmissionSchema = z.any();
+const EventProductionSchema = z.any();
+
+
+const UserSchema = z.any();
+const LessonSchema = z.any();
+const ConservatoriumSchema = z.any();
 
 const DeleteAlumnusSchema = z.string();
 
@@ -421,6 +583,8 @@ export const searchComposers = withAuth(
     const query = typeof input === 'string' ? input : input.query;
     const instrument = typeof input === 'string' ? undefined : input.instrument;
     const lowerCaseQuery = query.toLowerCase();
+    const db = await getDb();
+    const allCompositions = await db.repertoire.list();
 
     const source = instrument
       ? allCompositions.filter((composition) => matchesInstrument(composition.instrument, instrument))
@@ -457,7 +621,8 @@ export const searchComposers = withAuth(
 export const searchCompositions = withAuth(
   SearchCompositionsSchema,
   async ({ query, composer, composerId, instrument, locale = 'he' }: z.infer<typeof SearchCompositionsSchema>): Promise<Composition[]> => {
-    let source = allCompositions;
+    const db = await getDb();
+    let source = await db.repertoire.list();
 
     if (composerId) source = source.filter(c => c.composerId === composerId);
     if (composer) source = source.filter(c => c.composer === composer);
@@ -565,10 +730,11 @@ export const generateNurtureMessage = withAuth(
 export const saveAlumnus = withAuth(
   AlumnusSchema,
   async (alumnus: z.infer<typeof AlumnusSchema>) => {
-    // In a real app, this would perform a database operation.
-    // For now, we simulate a successful save.
-    console.log('Saving alumnus:', alumnus);
-    return { ...alumnus, id: alumnus.id || `alumni-${Math.random().toString(36).substr(2, 9)}` };
+    const db = await getDb();
+    if (alumnus.id) {
+      return await db.alumni.update(alumnus.id, alumnus as any);
+    }
+    return await db.alumni.create(alumnus as any);
   }
 );
 
@@ -580,16 +746,348 @@ export const saveAlumnus = withAuth(
 export const deleteAlumnus = withAuth(
   DeleteAlumnusSchema,
   async (id: string) => {
-    // In a real app, this would perform a database operation.
-    // For now, we simulate a successful deletion.
-    console.log('Deleting alumnus with ID:', id);
+    const db = await getDb();
+    await db.alumni.delete(id);
     return { success: true };
   }
 );
 
+export const createAnnouncement = withAuth(
+  AnnouncementSchema,
+  async (payload: z.infer<typeof AnnouncementSchema>): Promise<Announcement> => {
+    const db = await getDb();
+    return await db.announcements.create(payload as any);
+  }
+);
+
+export const createMasterClassAction = withAuth(
+  MasterClassSchema,
+  async (payload: z.infer<typeof MasterClassSchema>): Promise<Masterclass> => {
+    const db = await getDb();
+    return await db.masterClasses.create(payload as any);
+  }
+);
+
+export const publishMasterClassAction = withAuth(
+  z.string(),
+  async (masterClassId: string): Promise<Masterclass> => {
+    const db = await getDb();
+    return await db.masterClasses.update(masterClassId, { status: 'published' } as any);
+  }
+);
+
+export const registerToMasterClassAction = withAuth(
+  RegisterMasterClassSchema,
+  async (payload: z.infer<typeof RegisterMasterClassSchema>) => {
+    const db = await getDb();
+    const target = await db.masterClasses.findById(payload.masterClassId);
+    if (!target) return { success: false as const, reason: 'not_found' as const };
+    if (target.status !== 'published') return { success: false as const, reason: 'not_published' as const };
+    if (target.registrations.some((entry) => entry.studentId === payload.studentId)) {
+      return { success: false as const, reason: 'already_registered' as const };
+    }
+    if (target.registrations.length >= target.maxParticipants) {
+      return { success: false as const, reason: 'full' as const };
+    }
+
+    const allowance = payload.allowances.find((item) =>
+      item.studentId === payload.studentId && item.conservatoriumId === target.conservatoriumId
+    );
+
+    const isPartOfPackage = Boolean(target.includedInPackage && allowance && allowance.remaining > 0);
+    const registration = {
+      studentId: payload.studentId,
+      registeredAt: new Date().toISOString(),
+      attendanceStatus: 'registered' as const,
+      isPartOfPackage,
+    };
+
+    const updatedMasterClass = await db.masterClasses.update(payload.masterClassId, {
+      registrations: [...target.registrations, registration],
+    } as any);
+
+    const updatedAllowances: StudentMasterClassAllowance[] =
+      isPartOfPackage && allowance
+        ? payload.allowances.map((item) =>
+            item.studentId === allowance.studentId && item.conservatoriumId === allowance.conservatoriumId
+              ? { ...item, used: item.used + 1, remaining: Math.max(0, item.remaining - 1) }
+              : item
+          )
+        : payload.allowances;
+
+    const nextAllowance = isPartOfPackage && allowance ? Math.max(0, allowance.remaining - 1) : allowance?.remaining;
+    const chargedILS = !isPartOfPackage && (target.priceILS || 0) > 0 ? target.priceILS || 0 : 0;
+
+    return {
+      success: true as const,
+      chargedILS,
+      remaining: nextAllowance,
+      masterClass: updatedMasterClass,
+      allowances: updatedAllowances,
+    };
+  }
+);
+
+export const createScholarshipApplicationAction = withAuth(
+  ScholarshipApplicationSchema,
+  async (payload: z.infer<typeof ScholarshipApplicationSchema>) => {
+    const db = await getDb();
+    return await db.scholarships.create(payload as any);
+  }
+);
+
+export const updateScholarshipStatusAction = withAuth(
+  ScholarshipStatusUpdateSchema,
+  async ({ applicationId, status }: z.infer<typeof ScholarshipStatusUpdateSchema>) => {
+    const db = await getDb();
+    const existing = await db.scholarships.findById(applicationId);
+    if (!existing) {
+      return { success: false as const, reason: 'not_found' as const };
+    }
+    const now = new Date().toISOString();
+    const updated = await db.scholarships.update(applicationId, {
+      status,
+      approvedAt: status === 'APPROVED' ? now : existing.approvedAt,
+      rejectedAt: status === 'REJECTED' ? now : existing.rejectedAt,
+    } as any);
+    return { success: true as const, scholarship: updated };
+  }
+);
+
+export const markScholarshipPaidAction = withAuth(
+  z.string(),
+  async (applicationId: string) => {
+    const db = await getDb();
+    const existing = await db.scholarships.findById(applicationId);
+    if (!existing) {
+      return { success: false as const, reason: 'not_found' as const };
+    }
+    const updated = await db.scholarships.update(applicationId, {
+      paymentStatus: 'PAID',
+      paidAt: new Date().toISOString(),
+    } as any);
+    return { success: true as const, scholarship: updated };
+  }
+);
+
+export const createDonationCauseAction = withAuth(
+  DonationCauseSchema,
+  async (payload: z.infer<typeof DonationCauseSchema>) => {
+    const db = await getDb();
+    return await db.donationCauses.create(payload as any);
+  }
+);
+
+export const recordDonationAction = withAuth(
+  DonationRecordSchema,
+  async (payload: z.infer<typeof DonationRecordSchema>) => {
+    const db = await getDb();
+    const donation = await db.donations.create(payload as any);
+    const cause = await db.donationCauses.findById(payload.causeId);
+    if (cause) {
+      await db.donationCauses.update(cause.id, {
+        raisedAmountILS: (cause.raisedAmountILS || 0) + payload.amountILS,
+      } as any);
+    }
+    return donation;
+  }
+);
 /**
  * Resolves a Playing School registration token to program details.
  */
+
+export const createBranchAction = withAuth(
+  BranchSchema,
+  async (payload: z.infer<typeof BranchSchema>): Promise<Branch> => {
+    const db = await getDb();
+    return await db.branches.create(payload as any);
+  }
+);
+
+export const updateBranchAction = withAuth(
+  BranchSchema.extend({ id: z.string() }),
+  async (payload: z.infer<typeof BranchSchema> & { id: string }): Promise<Branch> => {
+    const db = await getDb();
+    const existing = await db.branches.findById(payload.id);
+    if (existing) {
+      return await db.branches.update(payload.id, payload as any);
+    }
+    return await db.branches.create(payload as any);
+  }
+);
+
+export const createConservatoriumInstrumentAction = withAuth(
+  ConservatoriumInstrumentSchema,
+  async (payload: z.infer<typeof ConservatoriumInstrumentSchema>): Promise<ConservatoriumInstrument> => {
+    const db = await getDb();
+    return await db.conservatoriumInstruments.create(payload as any);
+  }
+);
+
+export const updateConservatoriumInstrumentAction = withAuth(
+  ConservatoriumInstrumentSchema.extend({ id: z.string() }),
+  async (payload: z.infer<typeof ConservatoriumInstrumentSchema> & { id: string }): Promise<ConservatoriumInstrument> => {
+    const db = await getDb();
+    const existing = await db.conservatoriumInstruments.findById(payload.id);
+    if (existing) {
+      return await db.conservatoriumInstruments.update(payload.id, payload as any);
+    }
+    return await db.conservatoriumInstruments.create(payload as any);
+  }
+);
+
+export const deleteConservatoriumInstrumentAction = withAuth(
+  z.string(),
+  async (id: string) => {
+    const db = await getDb();
+    await db.conservatoriumInstruments.delete(id);
+    return { success: true as const };
+  }
+);
+
+export const createLessonPackageAction = withAuth(
+  LessonPackageSchema,
+  async (payload: z.infer<typeof LessonPackageSchema>): Promise<LessonPackage> => {
+    const db = await getDb();
+    return await db.lessonPackages.create(payload as any);
+  }
+);
+
+export const updateLessonPackageAction = withAuth(
+  LessonPackageSchema.extend({ id: z.string() }),
+  async (payload: z.infer<typeof LessonPackageSchema> & { id: string }): Promise<LessonPackage> => {
+    const db = await getDb();
+    const existing = await db.lessonPackages.findById(payload.id);
+    if (existing) {
+      return await db.lessonPackages.update(payload.id, payload as any);
+    }
+    return await db.lessonPackages.create(payload as any);
+  }
+);
+
+export const deleteLessonPackageAction = withAuth(
+  z.string(),
+  async (id: string) => {
+    const db = await getDb();
+    await db.lessonPackages.delete(id);
+    return { success: true as const };
+  }
+);
+
+export const createRoomAction = withAuth(
+  RoomSchema,
+  async (payload: z.infer<typeof RoomSchema>): Promise<Room> => {
+    const db = await getDb();
+    return await db.rooms.create(payload as any);
+  }
+);
+
+export const updateRoomAction = withAuth(
+  RoomSchema.extend({ id: z.string() }),
+  async (payload: z.infer<typeof RoomSchema> & { id: string }): Promise<Room> => {
+    const db = await getDb();
+    const existing = await db.rooms.findById(payload.id);
+    if (existing) {
+      return await db.rooms.update(payload.id, payload as any);
+    }
+    return await db.rooms.create(payload as any);
+  }
+);
+
+export const deleteRoomAction = withAuth(
+  z.string(),
+  async (id: string) => {
+    const db = await getDb();
+    await db.rooms.delete(id);
+    return { success: true as const };
+  }
+);
+
+
+export const upsertFormSubmissionAction = withAuth(
+  FormSubmissionSchema,
+  async (payload: FormSubmission): Promise<FormSubmission> => {
+    const db = await getDb();
+    if (!payload?.id) {
+      return await db.forms.create(payload as any);
+    }
+    const existing = await db.forms.findById(payload.id);
+    if (existing) {
+      return await db.forms.update(payload.id, payload as any);
+    }
+    return await db.forms.create(payload as any);
+  }
+);
+
+export const createEventAction = withAuth(
+  EventProductionSchema,
+  async (payload: EventProduction): Promise<EventProduction> => {
+    const db = await getDb();
+    return await db.events.create(payload as any);
+  }
+);
+
+export const updateEventAction = withAuth(
+  EventProductionSchema,
+  async (payload: EventProduction): Promise<EventProduction> => {
+    const db = await getDb();
+    if (!payload?.id) {
+      return await db.events.create(payload as any);
+    }
+    const existing = await db.events.findById(payload.id);
+    if (existing) {
+      return await db.events.update(payload.id, payload as any);
+    }
+    return await db.events.create(payload as any);
+  }
+);
+
+
+export const upsertUserAction = withAuth(
+  UserSchema,
+  async (payload: User): Promise<User> => {
+    const db = await getDb();
+    if (!payload?.id) {
+      return await db.users.create(payload as any);
+    }
+    const existing = await db.users.findById(payload.id);
+    if (existing) {
+      return await db.users.update(payload.id, payload as any);
+    }
+    return await db.users.create(payload as any);
+  }
+);
+
+export const upsertLessonAction = withAuth(
+  LessonSchema,
+  async (payload: LessonSlot): Promise<LessonSlot> => {
+    const db = await getDb();
+    if (!payload?.id) {
+      return await db.lessons.create(payload as any);
+    }
+    const existing = await db.lessons.findById(payload.id);
+    if (existing) {
+      return await db.lessons.update(payload.id, payload as any);
+    }
+    return await db.lessons.create(payload as any);
+  }
+);
+
+export const upsertConservatoriumAction = withAuth(
+  ConservatoriumSchema,
+  async (payload: Conservatorium): Promise<Conservatorium> => {
+    const db = await getDb();
+    if (!payload?.id) {
+      return await db.conservatoriums.create(payload as any);
+    }
+    const existing = await db.conservatoriums.findById(payload.id);
+    if (existing) {
+      return await db.conservatoriums.update(payload.id, payload as any);
+    }
+    return await db.conservatoriums.create(payload as any);
+  }
+);
+
 export const resolvePlayingSchoolToken = withAuth(
   ResolveTokenSchema,
   async (input: z.infer<typeof ResolveTokenSchema>) => {
@@ -780,3 +1278,5 @@ export const generateAiEventPoster = withAuth(
     return await generateEventPoster(input as GenerateEventPosterInput);
   }
 );
+
+

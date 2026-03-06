@@ -19,7 +19,7 @@ export function MessagingInterface() {
   const t = useTranslations('MessagesPage');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
-  const { user, users, mockMessageThreads, addMessage, createMessageThread } = useAuth();
+  const { user, users, messageThreads, addMessage, createMessageThread } = useAuth();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [showNewMessage, setShowNewMessage] = useState(false);
@@ -63,14 +63,14 @@ export function MessagingInterface() {
 
   const threads = useMemo(() => {
     if (!user) return [];
-    return mockMessageThreads
+    return messageThreads
       .filter((thread) => thread.participants.includes(user.id))
       .sort((a, b) => {
         const aDate = a.messages.length > 0 ? new Date(a.messages[a.messages.length - 1].sentAt).getTime() : 0;
         const bDate = b.messages.length > 0 ? new Date(b.messages[b.messages.length - 1].sentAt).getTime() : 0;
         return bDate - aDate;
       });
-  }, [user, mockMessageThreads]);
+  }, [user, messageThreads]);
 
   useEffect(() => {
     if (threads.length > 0 && !selectedThreadId) {

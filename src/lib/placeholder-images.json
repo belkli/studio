@@ -33,7 +33,7 @@
     {
       "id": "musicians-hero",
       "description": "A string quartet playing elegantly at an event.",
-      "imageUrl": "https://images.unsplash.com/photo-1588492398394-1578338d3568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdHJpbmclMjBxdWFydGV0JTIwZXZlbnR8ZW58MHx8fHwxNzcxNzE3NTU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1665118439071-8bc2c89f73af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       "imageHint": "string quartet event"
     },
     {
@@ -57,13 +57,13 @@
     {
       "id": "event-wedding",
       "description": "A musician playing at a beautiful wedding ceremony.",
-      "imageUrl": "https://images.unsplash.com/photo-1511285560921-5c3453b37a85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwbXVzaWNpYW5zfGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       "imageHint": "wedding music"
     },
     {
       "id": "event-corporate",
       "description": "A jazz trio performing at an upscale corporate event.",
-      "imageUrl": "https://images.unsplash.com/photo-1520869562321-393baf247a39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqYXp6JTIwdHJpbyUyMGV2ZW50fGVufDB8fHx8MTc3MTcxODIwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       "imageHint": "jazz trio"
     },
     {
@@ -75,7 +75,7 @@
     {
       "id": "open-day-hero",
       "description": "A welcoming shot of a music classroom with various instruments, bright and inviting.",
-      "imageUrl": "https://images.unsplash.com/photo-1519414442722-f175d5a64946?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtdXNpYyUyMGNsYXNzcm9vbXxlbnwwfHx8fDE3NzE3ODc0NjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1642940141270-ab08508c9c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       "imageHint": "music classroom"
     },
     {

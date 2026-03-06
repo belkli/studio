@@ -71,7 +71,7 @@ function formatMinutes(totalMinutes: number): string {
 }
 
 export function AdminPayrollPanel() {
-  const { users, mockLessons } = useAuth();
+  const { users, lessons } = useAuth();
   const t = useTranslations('Payroll');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -86,7 +86,7 @@ export function AdminPayrollPanel() {
     const teachers = users.filter((user) => user.role === 'teacher');
 
     const byTeacher = teachers.map((teacher) => {
-      const teacherLessons = mockLessons.filter((lesson) => {
+      const teacherLessons = lessons.filter((lesson) => {
         const when = new Date(lesson.startTime);
         return lesson.teacherId === teacher.id && when >= monthStart && when <= monthEnd;
       });
@@ -121,7 +121,7 @@ export function AdminPayrollPanel() {
       totalHours: Number((totalMinutes / 60).toFixed(2)),
       byTeacher,
     };
-  }, [mockLessons, period, users]);
+  }, [lessons, period, users]);
 
   const generateReport = async () => {
     setIsLoading(true);

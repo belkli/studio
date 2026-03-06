@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/ui/empty-state';
 import { UserCog } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 interface AffectedLesson extends LessonSlot {
     originalTeacher?: User;
@@ -19,7 +20,7 @@ interface AffectedLesson extends LessonSlot {
 }
 
 export function SubstituteAssignmentPanel() {
-    const { users, mockLessons, assignSubstitute } = useAuth();
+    const { users, lessons, assignSubstitute, conservatoriumInstruments } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('SubstituteAssignmentPanel');
     const dateLocale = useDateLocale();
@@ -29,7 +30,7 @@ export function SubstituteAssignmentPanel() {
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
         const teachers = users.filter(u => u.role === 'teacher');
 
-        const affected = mockLessons
+        const affected = lessons
             .filter(lesson => lesson.status === 'CANCELLED_TEACHER' && isFuture(new Date(lesson.startTime)))
             .map(lesson => {
                 const lessonDate = new Date(lesson.startTime);
@@ -40,7 +41,7 @@ export function SubstituteAssignmentPanel() {
                 const availableSubstitutes = teachers.filter(teacher => {
                     if (teacher.id === lesson.teacherId) return false;
 
-                    const teachesInstrument = teacher.instruments?.some(i => i.instrument === lesson.instrument);
+                    const teachesInstrument = userHasInstrument((teacher.instruments || []).map((i) => i.instrument), lesson.instrument, conservatoriumInstruments, teacher.conservatoriumId);
                     if (!teachesInstrument) return false;
 
                     const dayAvailability = teacher.availability?.find(a => a.dayOfWeek === lessonDayOfWeek);
@@ -50,7 +51,7 @@ export function SubstituteAssignmentPanel() {
                     const endHour = parseInt(dayAvailability.endTime.split(':')[0]);
                     if (lessonHour < startHour || lessonHour >= endHour) return false;
 
-                    const isBooked = mockLessons.some(l =>
+                    const isBooked = lessons.some(l =>
                         l.teacherId === teacher.id &&
                         new Date(l.startTime).getTime() === lessonDate.getTime() &&
                         l.status === 'SCHEDULED'
@@ -70,7 +71,7 @@ export function SubstituteAssignmentPanel() {
 
         return affected.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
-    }, [mockLessons, users]);
+    }, [lessons, users]);
 
     const handleAssignSubstitute = (lessonId: string, newTeacherId: string) => {
         const lesson = lessonsNeedingSub.find(l => l.id === lessonId);

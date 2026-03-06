@@ -7,9 +7,14 @@ export async function getDb(): Promise<DatabaseAdapter> {
     return dbInstance;
   }
 
-  const backend = process.env.DB_BACKEND ?? 'firebase';
+  const backend = resolveBackend();
 
   switch (backend) {
+    case 'mock': {
+      const { MemoryDatabaseAdapter, buildDefaultSeed } = await import('./adapters/shared');
+      dbInstance = new MemoryDatabaseAdapter(buildDefaultSeed());
+      break;
+    }
     case 'firebase': {
       const { FirebaseAdapter } = await import('./adapters/firebase');
       dbInstance = new FirebaseAdapter();
@@ -37,7 +42,29 @@ export async function getDb(): Promise<DatabaseAdapter> {
       throw new Error(`Unknown DB_BACKEND: ${backend}`);
   }
 
+  const adapterName = (dbInstance as any)?.constructor?.name || 'UnknownAdapter';
+  const source = (dbInstance as any)?.source || 'primary';
+  const fallbackReason = (dbInstance as any)?.fallbackReason || '';
+  console.info(
+    `[db] resolved backend=${backend} adapter=${adapterName} source=${source}${fallbackReason ? ` reason=${fallbackReason}` : ''}`
+  );
+
   return dbInstance;
+}
+
+function resolveBackend(): string {
+  const explicit = (process.env.DB_BACKEND || '').trim().toLowerCase();
+
+  if (explicit) {
+    return explicit;
+  }
+
+  // Prefer Postgres when configured, otherwise use mock data.
+  if (process.env.DATABASE_URL) {
+    return 'postgres';
+  }
+
+  return 'mock';
 }
 
 function requireEnv(name: string): string {

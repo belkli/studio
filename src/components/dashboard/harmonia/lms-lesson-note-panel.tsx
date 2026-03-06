@@ -14,7 +14,7 @@ import { Save, AlertTriangle, Music, Mic, FileText, CheckCircle2 } from 'lucide-
 import { useTranslations } from 'next-intl';
 
 export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, studentId: string }) {
-    const { mockLessonNotes, addLessonNote, users } = useAuth();
+    const { lessonNotes, addLessonNote, users } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('LessonManagement');
 
@@ -27,7 +27,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
 
     const student = users.find(u => u.id === studentId);
 
-    const existingNote = mockLessonNotes.find(n => n.slotId === lessonId || n.lessonSlotId === lessonId);
+    const existingNote = lessonNotes.find(n => n.slotId === lessonId || n.lessonSlotId === lessonId);
 
     useEffect(() => {
         if (existingNote) {

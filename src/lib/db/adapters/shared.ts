@@ -1,25 +1,17 @@
-import {
-  conservatoriums,
-  mockAlumni,
-  mockAnnouncements,
-  mockEvents,
-  mockFormSubmissions,
-  mockInvoices,
-  mockLessons,
-  mockMasterclasses,
-  mockPayrolls,
-  mockRooms,
-  mockScholarshipApplications,
-  mockUsers,
-} from '@/lib/data';
+import { buildDefaultMemorySeed } from '@/lib/db/default-memory-seed';
 import type {
   Alumnus,
   Announcement,
+  Branch,
   Conservatorium,
+  ConservatoriumInstrument,
   EventProduction,
   FormSubmission,
   Invoice,
+  LessonPackage,
   LessonSlot,
+  DonationCause,
+  DonationRecord,
   Masterclass,
   PayrollSummary,
   Room,
@@ -30,12 +22,19 @@ import type {
   AlumniRepository,
   AnnouncementRepository,
   ApprovalRepository,
+  BranchRepository,
   ConservatoriumRepository,
+  ConservatoriumInstrumentRepository,
   DatabaseAdapter,
   EventRepository,
   FormRepository,
+  LessonPackageRepository,
   LessonRepository,
   MasterClassRepository,
+  RepertoireEntry,
+  RepertoireRepository,
+  DonationCauseRepository,
+  DonationRepository,
   PaymentRepository,
   PayrollRepository,
   RentalRecord,
@@ -51,7 +50,10 @@ type Entity = { id: string; conservatoriumId?: string | null };
 export type MemorySeed = {
   users: User[];
   conservatoriums: Conservatorium[];
+  conservatoriumInstruments: ConservatoriumInstrument[];
+  lessonPackages: LessonPackage[];
   lessons: LessonSlot[];
+  branches: Branch[];
   rooms: Room[];
   events: EventProduction[];
   forms: FormSubmission[];
@@ -62,6 +64,9 @@ export type MemorySeed = {
   announcements: Announcement[];
   alumni: Alumnus[];
   masterClasses: Masterclass[];
+  repertoire: RepertoireEntry[];
+  donationCauses: DonationCause[];
+  donations: DonationRecord[];
 };
 
 function clone<T>(value: T): T {
@@ -213,7 +218,10 @@ function createFormRepositories(
 export class MemoryDatabaseAdapter implements DatabaseAdapter {
   users: UserRepository;
   conservatoriums: ConservatoriumRepository;
+  conservatoriumInstruments: ConservatoriumInstrumentRepository;
+  lessonPackages: LessonPackageRepository;
   lessons: LessonRepository;
+  branches: BranchRepository;
   rooms: RoomRepository;
   events: EventRepository;
   forms: FormRepository;
@@ -225,11 +233,17 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
   announcements: AnnouncementRepository;
   alumni: AlumniRepository;
   masterClasses: MasterClassRepository;
+  repertoire: RepertoireRepository;
+  donationCauses: DonationCauseRepository;
+  donations: DonationRepository;
 
   constructor(seed: MemorySeed) {
     this.users = createUserRepository(seed.users);
     this.conservatoriums = createConservatoriumRepository(seed.conservatoriums);
+    this.conservatoriumInstruments = createScopedRepository<ConservatoriumInstrument>(seed.conservatoriumInstruments, 'cinst');
+    this.lessonPackages = createScopedRepository<LessonPackage>(seed.lessonPackages, 'lpkg');
     this.lessons = createScopedRepository<LessonSlot>(seed.lessons, 'lesson');
+    this.branches = createScopedRepository<Branch>(seed.branches, 'branch');
     this.rooms = createScopedRepository<Room>(seed.rooms, 'room');
     this.events = createScopedRepository<EventProduction>(seed.events, 'event');
 
@@ -244,23 +258,16 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
     this.announcements = createScopedRepository<Announcement>(seed.announcements, 'announce');
     this.alumni = createScopedRepository<Alumnus>(seed.alumni, 'alumni');
     this.masterClasses = createScopedRepository<Masterclass>(seed.masterClasses, 'mc');
+    this.repertoire = createScopedRepository<RepertoireEntry>(seed.repertoire, 'repr');
+    this.donationCauses = createScopedRepository<DonationCause>(seed.donationCauses, 'dcause');
+    this.donations = createScopedRepository<DonationRecord>(seed.donations, 'donation');
   }
 }
 
 export function buildDefaultSeed(): MemorySeed {
-  return {
-    users: clone(mockUsers),
-    conservatoriums: clone(conservatoriums),
-    lessons: clone(mockLessons),
-    rooms: clone(mockRooms),
-    events: clone(mockEvents),
-    forms: clone(mockFormSubmissions),
-    scholarships: clone(mockScholarshipApplications as ScholarshipApplication[]),
-    rentals: [],
-    payments: clone(mockInvoices),
-    payrolls: clone(mockPayrolls),
-    announcements: clone(mockAnnouncements),
-    alumni: clone(mockAlumni),
-    masterClasses: clone(mockMasterclasses),
-  };
+  return buildDefaultMemorySeed();
 }
+
+
+
+

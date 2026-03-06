@@ -62,9 +62,9 @@ export function AlumniPortal() {
   const {
     user,
     users,
-    mockAlumni,
-    mockMasterclasses,
-    mockMasterClassAllowances,
+    alumni,
+    masterClasses,
+    masterClassAllowances,
     graduateStudent,
     upsertAlumniProfile,
     createMasterClass,
@@ -82,34 +82,34 @@ export function AlumniPortal() {
 
   const ownProfile = useMemo(() => {
     if (!user) return null;
-    return mockAlumni.find((item) => item.userId === user.id) || null;
-  }, [mockAlumni, user]);
+    return alumni.find((item) => item.userId === user.id) || null;
+  }, [alumni, user]);
 
   const canCreateMasterClass = isAdmin || role === 'teacher' || Boolean(ownProfile?.availableForMasterClasses);
 
   const publicAlumni = useMemo(() => {
-    return mockAlumni.filter((item) => {
+    return alumni.filter((item) => {
       if (!item.isPublic) return false;
       if (yearFilter !== 'all' && String(item.graduationYear) !== yearFilter) return false;
       if (instrumentFilter !== 'all' && item.primaryInstrument !== instrumentFilter) return false;
       return true;
     });
-  }, [instrumentFilter, mockAlumni, yearFilter]);
+  }, [instrumentFilter, alumni, yearFilter]);
 
   const reviewQueue = useMemo(() => {
     if (!user) return [] as Masterclass[];
-    return mockMasterclasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'draft');
-  }, [mockMasterclasses, user]);
+    return masterClasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'draft');
+  }, [masterClasses, user]);
 
   const publishedMasterClasses = useMemo(() => {
     if (!user) return [] as Masterclass[];
-    return mockMasterclasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'published');
-  }, [mockMasterclasses, user]);
+    return masterClasses.filter((item) => item.conservatoriumId === user.conservatoriumId && item.status === 'published');
+  }, [masterClasses, user]);
 
   const allowance = useMemo(() => {
     if (!user || role !== 'student') return null;
-    return mockMasterClassAllowances.find((item) => item.studentId === user.id && item.conservatoriumId === user.conservatoriumId) || null;
-  }, [mockMasterClassAllowances, role, user]);
+    return masterClassAllowances.find((item) => item.studentId === user.id && item.conservatoriumId === user.conservatoriumId) || null;
+  }, [masterClassAllowances, role, user]);
 
   const gradCandidates = useMemo(() => {
     if (!user) return [];
@@ -221,7 +221,7 @@ export function AlumniPortal() {
                   <SelectTrigger><SelectValue placeholder={t('filterYear')} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value='all'>{t('allYears')}</SelectItem>
-                    {Array.from(new Set(mockAlumni.map((item) => String(item.graduationYear)))).sort().map((year) => (
+                    {Array.from(new Set(alumni.map((item) => String(item.graduationYear)))).sort().map((year) => (
                       <SelectItem key={year} value={year}>{year}</SelectItem>
                     ))}
                   </SelectContent>
@@ -230,7 +230,7 @@ export function AlumniPortal() {
                   <SelectTrigger><SelectValue placeholder={t('filterInstrument')} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value='all'>{t('allInstruments')}</SelectItem>
-                    {Array.from(new Set(mockAlumni.map((item) => item.primaryInstrument))).sort().map((name) => (
+                    {Array.from(new Set(alumni.map((item) => item.primaryInstrument))).sort().map((name) => (
                       <SelectItem key={name} value={name}>{name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -404,8 +404,8 @@ export function AlumniPortal() {
                     {role === 'student' && user && (
                       <Button
                         type='button'
-                        onClick={() => {
-                          const result = registerToMasterClass(item.id, user.id);
+                        onClick={async () => {
+                          const result = await registerToMasterClass(item.id, user.id);
                           if (!result.success) {
                             toast({ variant: 'destructive', title: t('registrationFailed') });
                             return;
@@ -484,3 +484,4 @@ export function AlumniPortal() {
     </div>
   );
 }
+

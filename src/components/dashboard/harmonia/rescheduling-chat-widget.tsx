@@ -24,7 +24,7 @@ export function ReschedulingChatWidget() {
   const [messages, setMessages] = useState<Message[]>([{ sender: 'bot', text: 'שלום! אני סוכן ה-AI של הרמוניה. איך אוכל לעזור לך עם מערכת השעות שלך היום? למשל: "אני צריך/ה לבטל את השיעור שלי מחר" או "מתי השיעור הבא שלי?"' }]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user, mockLessons, users, cancelLesson, rescheduleLesson } = useAuth();
+  const { user, lessons, users, cancelLesson, rescheduleLesson } = useAuth();
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -46,11 +46,11 @@ export function ReschedulingChatWidget() {
     setIsLoading(true);
 
     // Prepare context for the AI flow
-    const upcomingLessons = mockLessons.filter(l => l.studentId === user.id && new Date(l.startTime) > new Date());
+    const upcomingLessons = lessons.filter(l => l.studentId === user.id && new Date(l.startTime) > new Date());
 
     // Create some mock availability for the teacher
     const teacher = users.find(u => u.id === upcomingLessons[0]?.teacherId);
-    let mockAvailability: string[] = [];
+    let teacherAvailabilitySlots: string[] = [];
     if (teacher) {
       const today = new Date();
       for (let i = 1; i < 7; i++) { // Next 7 days
@@ -59,7 +59,7 @@ export function ReschedulingChatWidget() {
           let currentTime = set(day, { hours: parseInt(block.startTime.split(':')[0]), minutes: 0 });
           const endTime = set(day, { hours: parseInt(block.endTime.split(':')[0]), minutes: 0 });
           while (currentTime < endTime) {
-            mockAvailability.push(currentTime.toISOString());
+            teacherAvailabilitySlots.push(currentTime.toISOString());
             currentTime = add(currentTime, { minutes: 45 }); // Assuming 45 min slots
           }
         })
@@ -70,7 +70,7 @@ export function ReschedulingChatWidget() {
       userId: user.id,
       userMessage: input,
       upcomingLessons: upcomingLessons.map(l => ({ id: l.id, startTime: l.startTime, instrument: l.instrument, teacherId: l.teacherId })),
-      teacherAvailability: mockAvailability,
+      teacherAvailability: teacherAvailabilitySlots,
       currentTime: new Date().toISOString(),
     });
 
@@ -92,11 +92,11 @@ export function ReschedulingChatWidget() {
 
     if (type === 'CANCEL' && lessonId) {
       cancelLesson(lessonId, false);
-      const lesson = mockLessons.find(l => l.id === lessonId);
+      const lesson = lessons.find(l => l.id === lessonId);
       toast({ title: 'השיעור בוטל', description: `שיעור ${lesson?.instrument} בוטל בהצלחה.` });
     } else if (type === 'RESCHEDULE' && lessonId && 'newStartTime' in response.proposedChange) {
       rescheduleLesson(lessonId, response.proposedChange.newStartTime);
-      const lesson = mockLessons.find(l => l.id === lessonId);
+      const lesson = lessons.find(l => l.id === lessonId);
       toast({ title: 'השיעור נקבע מחדש', description: `שיעור ${lesson?.instrument} נקבע למועד חדש.` });
     }
 

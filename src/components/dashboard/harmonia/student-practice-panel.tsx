@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function StudentPracticePanel() {
-    const { user, mockPracticeLogs, mockAssignedRepertoire, addPracticeLog } = useAuth();
+    const { user, practiceLogs, assignedRepertoire, addPracticeLog } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('StudentPractice');
     const dateLocale = useDateLocale();
@@ -29,8 +29,8 @@ export function StudentPracticePanel() {
     const [videoAttached, setVideoAttached] = useState(false);
 
     // Derived state
-    const myLogs = mockPracticeLogs.filter(pl => pl.studentId === user?.id).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    const myRepertoire = mockAssignedRepertoire.filter(r => r.studentId === user?.id && r.status !== 'COMPLETED');
+    const myLogs = practiceLogs.filter(pl => pl.studentId === user?.id).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const myRepertoire = assignedRepertoire.filter(r => r.studentId === user?.id && r.status !== 'COMPLETED');
 
     const totalMinutes = myLogs.reduce((acc, log) => acc + log.durationMinutes, 0);
     const streak = user?.gamification?.currentStreak || 0;
@@ -222,7 +222,7 @@ export function StudentPracticePanel() {
                                     <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">{t('noLogsFound')}</TableCell></TableRow>
                                 ) : (
                                     myLogs.slice(0, 10).map(log => {
-                                        const rep = mockAssignedRepertoire.find(r => r.id === log.repertoireId);
+                                        const rep = assignedRepertoire.find(r => r.id === log.repertoireId);
                                         const title = log.repertoireId === 'general' ? t('generalPractice') : (rep?.compositionDetails?.title || t('unknownPiece'));
                                         return (
                                             <TableRow key={log.id}>

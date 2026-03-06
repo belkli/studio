@@ -10,10 +10,10 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 import type { Channel } from '@/lib/types';
 
 export function RecentAnnouncementsCard() {
-    const { mockAnnouncements, user } = useAuth();
+    const { announcements, user } = useAuth();
     const dateLocale = useDateLocale();
 
-    const relevantAnnouncements = mockAnnouncements
+    const relevantAnnouncements = announcements
         .filter(ann => ann.conservatoriumId === user?.conservatoriumId)
         .slice(0, 3);
 

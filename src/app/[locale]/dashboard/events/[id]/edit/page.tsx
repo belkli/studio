@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { EventEditForm } from '@/components/dashboard/harmonia/event-edit-form';
 
 export default function EditEventPage() {
-  const { user, mockEvents } = useAuth();
+  const { user, events } = useAuth();
   const router = useRouter();
   const params = useParams();
   const locale = useLocale();
@@ -15,7 +15,7 @@ export default function EditEventPage() {
   const isRtl = locale === 'he' || locale === 'ar';
 
   const eventId = params.id as string;
-  const event = useMemo(() => mockEvents.find((item) => item.id === eventId), [mockEvents, eventId]);
+  const event = useMemo(() => events.find((item) => item.id === eventId), [events, eventId]);
   const canAccess = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
   useEffect(() => {

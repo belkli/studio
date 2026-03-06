@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { conservatoriums } from "@/lib/data";
+import { useAuth } from "@/hooks/use-auth";
 import type { Conservatorium } from "@/lib/types";
 import { useState, useMemo } from "react";
 import { useLocale } from 'next-intl';
@@ -141,6 +141,7 @@ function ConservatoriumSearchPicker({
 }) {
     const t = useTranslations('ContactPage');
     const locale = useLocale();
+    const { conservatoriums } = useAuth();
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
 

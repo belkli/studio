@@ -16,22 +16,22 @@ import { useTranslations } from 'next-intl';
 
 export function AdminCommandCenter() {
     const t = useTranslations('AdminDashboard');
-    const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
+    const { user, users, formSubmissions, payrolls } = useAuth();
 
     const stats = useMemo(() => {
         if (!user) return { pendingUsers: 0, pendingForms: 0, draftPayrolls: 0 };
 
         const pendingUsers = users.filter(u => u.conservatoriumId === user.conservatoriumId && !u.approved).length;
 
-        const pendingForms = mockFormSubmissions.filter(f =>
+        const pendingForms = formSubmissions.filter(f =>
             f.conservatoriumId === user.conservatoriumId &&
             (f.status === 'PENDING_ADMIN' || f.status === 'REVISION_REQUIRED')
         ).length;
 
-        const draftPayrolls = mockPayrolls.filter(p => p.status === 'DRAFT').length;
+        const draftPayrolls = payrolls.filter(p => p.status === 'DRAFT').length;
 
         return { pendingUsers, pendingForms, draftPayrolls };
-    }, [user, users, mockFormSubmissions, mockPayrolls]);
+    }, [user, users, formSubmissions, payrolls]);
 
     if (!user) return null;
 

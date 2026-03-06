@@ -17,14 +17,14 @@ import { Link } from '@/i18n/routing';
 export function PublicEventPage() {
   const params = useParams();
   const eventId = params.id as string;
-  const { mockEvents } = useAuth();
+  const { events } = useAuth();
   const [ticketCount, setTicketCount] = useState(1);
   const t = useTranslations('PublicEventPage');
   const locale = useLocale();
   const dateLocale = useDateLocale();
   const isRtl = locale === 'he' || locale === 'ar';
 
-  const event = useMemo(() => mockEvents.find((item) => item.id === eventId), [mockEvents, eventId]);
+  const event = useMemo(() => events.find((item) => item.id === eventId), [events, eventId]);
   const heroImage = PlaceHolderImages.find((img) => img.id === 'event-wedding');
 
   if (!event) {

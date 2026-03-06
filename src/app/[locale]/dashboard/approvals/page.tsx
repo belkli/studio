@@ -176,7 +176,7 @@ const ApprovalsTable = ({
 }
 
 export default function ApprovalsPage() {
-    const { user, mockFormSubmissions, updateForm } = useAuth();
+    const { user, formSubmissions, updateForm } = useAuth();
     const { toast } = useToast();
     const t = useTranslations("ApprovalsPage");
     const locale = useLocale();
@@ -186,7 +186,7 @@ export default function ApprovalsPage() {
         if (!user) return { myQueue: [], allPending: [] };
 
         const openStatuses: FormSubmission['status'][] = ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED', 'APPROVED'];
-        const myQueueForms = mockFormSubmissions.filter((form) => {
+        const myQueueForms = formSubmissions.filter((form) => {
             if (form.status === 'DRAFT' || form.status === 'REJECTED' || form.status === 'FINAL_APPROVED') {
                 return false;
             }
@@ -206,7 +206,7 @@ export default function ApprovalsPage() {
             }
         });
 
-        const allPendingForms = mockFormSubmissions.filter((form) => {
+        const allPendingForms = formSubmissions.filter((form) => {
             if (!openStatuses.includes(form.status)) {
                 return false;
             }
@@ -223,7 +223,7 @@ export default function ApprovalsPage() {
         });
 
         return { myQueue: myQueueForms, allPending: allPendingForms };
-    }, [user, mockFormSubmissions]);
+    }, [user, formSubmissions]);
 
     const handleApprove = (form: FormSubmission) => {
         let nextStatus: FormSubmission['status'] | null = null;

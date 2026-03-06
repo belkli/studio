@@ -14,7 +14,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 export function FinancialReports() {
     const t = useTranslations('Reports');
     const tInvoices = useTranslations('Invoices');
-    const { mockInvoices, users, mockPackages, mockLessons } = useAuth();
+    const { invoices, users, packages, lessons } = useAuth();
     const dateLocale = useDateLocale();
     const locale = useLocale();
 
@@ -34,7 +34,7 @@ export function FinancialReports() {
             revenueByMonth[monthKey] = 0;
         }
 
-        mockInvoices.filter(inv => inv.status === 'PAID' && inv.paidAt).forEach(inv => {
+        invoices.filter(inv => inv.status === 'PAID' && inv.paidAt).forEach(inv => {
             const paidDate = new Date(inv.paidAt!);
             const monthKey = format(paidDate, 'MMM', { locale: dateLocale });
             if (monthKey in revenueByMonth) {
@@ -50,7 +50,7 @@ export function FinancialReports() {
             'ANNUAL_SUB': 0, 'MONTHLY_SUB': 0, 'PACKAGES': 0, 'SINGLE_LESSONS': 0
         };
 
-        mockInvoices.filter(i => i.status === 'PAID').forEach(invoice => {
+        invoices.filter(i => i.status === 'PAID').forEach(invoice => {
             totalRevenue += invoice.total;
             const desc = invoice.lineItems[0].description;
             if (desc.includes('שנתי') || desc.includes('Annual')) revenueByPackageType['ANNUAL_SUB'] += invoice.total;
@@ -65,7 +65,7 @@ export function FinancialReports() {
         }));
 
         // Collection Rate
-        const collectionRate = mockInvoices.length > 0 ? (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100 : 0;
+        const collectionRate = invoices.length > 0 ? (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100 : 0;
 
         // Teacher Revenue
         const teachers = users.filter(u => u.role === 'teacher');
@@ -81,18 +81,18 @@ export function FinancialReports() {
             teacherRevenue: teacherRevenueData,
         }
 
-    }, [mockInvoices, users, locale, t]);
+    }, [invoices, users, locale, t]);
 
     const creditsIssuedThisMonth = useMemo(() => {
         const thisMonth = new Date().getMonth();
         const thisYear = new Date().getFullYear();
-        return mockLessons.filter(lesson => {
+        return lessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
             return (lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'CANCELLED_CONSERVATORIUM') &&
                 lessonDate.getMonth() === thisMonth &&
                 lessonDate.getFullYear() === thisYear;
         }).length;
-    }, [mockLessons]);
+    }, [lessons]);
 
     return (
         <div className="space-y-6 mt-6">
@@ -148,7 +148,7 @@ export function FinancialReports() {
                         <div className="text-4xl font-bold text-green-600">{collectionRate.toFixed(1)}%</div>
                         <Progress value={collectionRate} className="mt-2 h-3" />
                         <p className="text-xs text-muted-foreground mt-2">
-                            {t('overdueInvoices', { count: mockInvoices.filter(i => i.status === 'OVERDUE').length })}
+                            {t('overdueInvoices', { count: invoices.filter(i => i.status === 'OVERDUE').length })}
                         </p>
                     </CardContent>
                 </Card>

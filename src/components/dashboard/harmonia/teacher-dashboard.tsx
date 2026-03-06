@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock, Music } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { User, PracticeLog, Package, LessonSlot, SlotStatus, EventProduction } from "@/lib/types";
-import { mockEvents } from "@/lib/data";
 import { format } from "date-fns";
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useToast } from "@/hooks/use-toast";
@@ -81,7 +80,7 @@ function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlo
 }
 
 
-function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }: { student: User, practiceLogs: PracticeLog[], mockPackages: Package[], lessons: LessonSlot[], id?: string }) {
+function StudentRosterCard({ student, practiceLogs, packages, lessons, id }: { student: User, practiceLogs: PracticeLog[], packages: Package[], lessons: LessonSlot[], id?: string }) {
 
     const weeklyPractice = useMemo(() => {
         const today = new Date();
@@ -97,7 +96,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
         }, 0);
     }, [practiceLogs]);
 
-    const studentPackage = mockPackages.find(p => p.id === student.packageId);
+    const studentPackage = packages.find(p => p.id === student.packageId);
 
     const nextLesson = useMemo(() => {
         const now = new Date();
@@ -163,7 +162,7 @@ function StudentRosterCard({ student, practiceLogs, mockPackages, lessons, id }:
 }
 
 export function TeacherDashboard() {
-    const { user, users, mockLessons, mockFormSubmissions, mockPracticeLogs, mockPackages, updateLessonStatus } = useAuth();
+    const { user, users, lessons, formSubmissions, practiceLogs, packages, events, updateLessonStatus } = useAuth();
     const locale = useLocale();
     const { toast } = useToast();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
@@ -172,14 +171,14 @@ export function TeacherDashboard() {
 
     const assignedStudents = users.filter(u => user.students?.includes(u.id));
 
-    const teacherLessons = mockLessons.filter(lesson => lesson.teacherId === user.id);
+    const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
 
     const pendingApprovals = useMemo(() => {
-        return mockFormSubmissions.filter(form =>
+        return formSubmissions.filter(form =>
             form.status === 'PENDING_TEACHER' &&
             user.students?.includes(form.studentId)
         )
-    }, [mockFormSubmissions, user.students]);
+    }, [formSubmissions, user.students]);
 
     const t = useTranslations("Dashboard.Teacher");
 
@@ -193,7 +192,7 @@ export function TeacherDashboard() {
 
 
     const teacherPerformances = useMemo(() => {
-        return mockEvents.filter(event =>
+        return events.filter(event =>
             event.program.some(slot => assignedStudents.some(s => s.id === slot.studentId))
         );
     }, [assignedStudents]);
@@ -314,7 +313,7 @@ export function TeacherDashboard() {
                     <CardDescription>{t('myStudentsDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {assignedStudents.map((student, index) => <StudentRosterCard key={student.id} id={index === 0 ? "student-roster-card" : undefined} student={student} practiceLogs={mockPracticeLogs.filter(log => log.studentId === student.id)} mockPackages={mockPackages} lessons={mockLessons} />)}
+                    {assignedStudents.map((student, index) => <StudentRosterCard key={student.id} id={index === 0 ? "student-roster-card" : undefined} student={student} practiceLogs={practiceLogs.filter(log => log.studentId === student.id)} packages={packages} lessons={lessons} />)}
                 </CardContent>
             </Card>
             <SickLeaveModal open={isSickLeaveModalOpen} onOpenChange={setIsSickLeaveModalOpen} />

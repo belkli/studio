@@ -24,7 +24,7 @@ type VideoUploadFormData = z.infer<typeof videoUploadSchema>;
 
 export function PracticeVideoUploadForm() {
   const { toast } = useToast();
-  const { user, addPracticeVideo, mockAssignedRepertoire, compositions } = useAuth();
+  const { user, addPracticeVideo, assignedRepertoire, compositions } = useAuth();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -32,8 +32,8 @@ export function PracticeVideoUploadForm() {
 
   const studentRepertoire = useMemo(() => {
     if (!studentId) return [];
-    return mockAssignedRepertoire.filter(rep => rep.studentId === studentId);
-  }, [mockAssignedRepertoire, studentId]);
+    return assignedRepertoire.filter(rep => rep.studentId === studentId);
+  }, [assignedRepertoire, studentId]);
 
   const form = useForm<VideoUploadFormData>({
     resolver: zodResolver(videoUploadSchema),

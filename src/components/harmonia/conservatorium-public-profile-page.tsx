@@ -47,6 +47,34 @@ function normalizeName(value: string) {
   return value.toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
+function looksCorruptedText(value?: string) {
+  if (!value) return false;
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (/^\?+$/.test(trimmed) || trimmed.includes('???')) return true;
+  if (trimmed.includes('\uFFFD')) return true;
+  if (/[\u00D0\u00D9\u00D7]/.test(trimmed)) return true;
+  return false;
+}
+
+function getRoleLabel(role: string | undefined, locale: string) {
+  if (!role || looksCorruptedText(role)) return undefined;
+  const normalized = role.trim().toLowerCase();
+  if (normalized === 'teacher') {
+    if (locale === 'en') return 'Teacher';
+    return undefined;
+  }
+  return role;
+}
+
+function getInstrumentLabelFromToken(token: string, locale: string) {
+  const normalized = token.trim().toLowerCase();
+  if (!normalized) return '';
+  if (looksCorruptedText(token)) return '';
+  if (locale !== 'en' && /^[a-z0-9_ -]+$/i.test(normalized)) return '';
+  return token;
+}
+
 function getLocalizedUserBio(user: User, locale: string) {
   if (locale === 'en') return user.translations?.en?.bio || user.bio;
   if (locale === 'ar') return user.translations?.ar?.bio || user.translations?.en?.bio || user.bio;
@@ -56,9 +84,9 @@ function getLocalizedUserBio(user: User, locale: string) {
 
 function buildTeacherInstruments(teacher: User, allInstruments: ConservatoriumInstrument[], locale: string) {
   const names = (teacher.instruments || []).map((item) => {
-    const match = allInstruments.find((inst) => inst.names.he === item.instrument || inst.id === item.instrument);
+    const match = allInstruments.find((inst) => inst.names.he === item.instrument || inst.names.en === item.instrument || inst.instrumentCatalogId === item.instrument || inst.id === item.instrument);
     if (match) return getInstrumentName(match, locale);
-    return item.instrument;
+    return getInstrumentLabelFromToken(item.instrument, locale);
   });
   return Array.from(new Set(names.filter(Boolean)));
 }
@@ -164,14 +192,19 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
       const matched = teacherByName.get(normalizeName(dirTeacher.name));
       if (matched) matchedTeacherIds.add(matched.id);
 
-      const instruments = matched ? buildTeacherInstruments(matched, platformInstruments, locale) : dirTeacher.instruments || [];
+      const instruments = matched
+        ? buildTeacherInstruments(matched, platformInstruments, locale)
+        : (dirTeacher.instruments || [])
+            .map((token) => getInstrumentLabelFromToken(token, locale))
+            .filter(Boolean);
       const bio = dirTeacher.bio || (matched ? getLocalizedUserBio(matched, locale) : undefined);
+      const normalizedBio = looksCorruptedText(bio) ? undefined : bio;
 
       profiles.push({
         id: matched?.id || 'dir-' + selectedCons.id + '-' + dirTeacher.name,
         name: dirTeacher.name,
-        role: dirTeacher.role || matched?.role,
-        bio: bio || undefined,
+        role: getRoleLabel(dirTeacher.role || matched?.role, locale),
+        bio: normalizedBio || undefined,
         photoUrl: resolveAvatarUrl(dirTeacher.photoUrl || matched?.avatarUrl),
         instruments,
         education: matched?.education,
@@ -188,8 +221,8 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
       profiles.push({
         id: teacher.id,
         name: teacher.name,
-        role: teacher.role,
-        bio: getLocalizedUserBio(teacher, locale),
+        role: getRoleLabel(teacher.role, locale),
+        bio: looksCorruptedText(getLocalizedUserBio(teacher, locale)) ? undefined : getLocalizedUserBio(teacher, locale),
         photoUrl: resolveAvatarUrl(teacher.avatarUrl),
         instruments: buildTeacherInstruments(teacher, platformInstruments, locale),
         education: teacher.education,
@@ -205,8 +238,8 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
       profiles.push({
         id: 'manager-' + selectedCons.id,
         name: selectedCons.manager.name,
-        role: selectedCons.manager.role,
-        bio: selectedCons.manager.bio,
+        role: getRoleLabel(selectedCons.manager.role, locale),
+        bio: looksCorruptedText(selectedCons.manager.bio) ? undefined : selectedCons.manager.bio,
         photoUrl: resolveAvatarUrl(selectedCons.manager.photoUrl),
         instruments: [],
         source: 'manager',
@@ -217,8 +250,8 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
       profiles.push({
         id: 'team-' + selectedCons.id + '-' + member.name,
         name: member.name,
-        role: member.role,
-        bio: member.bio,
+        role: getRoleLabel(member.role, locale),
+        bio: looksCorruptedText(member.bio) ? undefined : member.bio,
         photoUrl: resolveAvatarUrl(member.photoUrl),
         instruments: [],
         source: 'staff',
@@ -521,7 +554,7 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
                       )}
                       {selectedProfile.source === 'teacher' && selectedProfile.teacherUserId && selectedProfile.availableForNewStudents && (
                         <Button asChild>
-                          <Link href={'/register?teacher=' + selectedProfile.teacherUserId}>{tAbout('bookWithTeacher')}</Link>
+                          <Link href={'/register?teacher=' + selectedProfile.teacherUserId + '&conservatorium=' + selectedCons.id}>{tAbout('bookWithTeacher')}</Link>
                         </Button>
                       )}
                     </div>

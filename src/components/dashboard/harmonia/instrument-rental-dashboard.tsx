@@ -384,8 +384,8 @@ function InstrumentFormDialog({
 export function InstrumentRentalDashboard() {
   const {
     users,
-    mockInstrumentInventory,
-    mockInstrumentRentals,
+    instrumentInventory,
+    instrumentRentals,
     addInstrument,
     updateInstrument,
     deleteInstrument,
@@ -403,19 +403,19 @@ export function InstrumentRentalDashboard() {
 
   const { available, rentals } = useMemo(() => {
     const activeInstrumentIds = new Set(
-      mockInstrumentRentals
+      instrumentRentals
         .filter(r => r.status === 'pending_signature' || r.status === 'active' || r.status === 'overdue')
         .map(r => r.instrumentId)
     );
 
-    const available = mockInstrumentInventory.filter(inst => !activeInstrumentIds.has(inst.id));
-    const rentals = mockInstrumentRentals
+    const available = instrumentInventory.filter(inst => !activeInstrumentIds.has(inst.id));
+    const rentals = instrumentRentals
       .filter(r => r.status !== 'returned')
       .sort((a, b) => b.startDate.localeCompare(a.startDate));
     return { available, rentals };
-  }, [mockInstrumentInventory, mockInstrumentRentals]);
+  }, [instrumentInventory, instrumentRentals]);
 
-  const getInstrument = (id: string) => mockInstrumentInventory.find(inst => inst.id === id);
+  const getInstrument = (id: string) => instrumentInventory.find(inst => inst.id === id);
   const getStudent = (id: string) => users.find(u => u.id === id);
 
   const modelLabel = (model: RentalModel) => (

@@ -12,8 +12,8 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function OperationalReports() {
     const t = useTranslations('Reports');
-    const { mockLessons, users } = useAuth();
-    const mockTeachers = users.filter(u => u.role === 'teacher');
+    const { lessons, users } = useAuth();
+    const teachersList = users.filter(u => u.role === 'teacher');
     const dateLocale = useDateLocale();
     const locale = useLocale();
 
@@ -26,10 +26,10 @@ export function OperationalReports() {
     } = useMemo(() => {
         // Cancellation breakdown
         const cancellationData = [
-            { name: t('cancellationTypes.STUDENT_NOTICED'), value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
-            { name: t('cancellationTypes.STUDENT_NO_NOTICE'), value: mockLessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
-            { name: t('cancellationTypes.TEACHER'), value: mockLessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
-            { name: t('cancellationTypes.NO_SHOW_STUDENT'), value: mockLessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
+            { name: t('cancellationTypes.STUDENT_NOTICED'), value: lessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
+            { name: t('cancellationTypes.STUDENT_NO_NOTICE'), value: lessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
+            { name: t('cancellationTypes.TEACHER'), value: lessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
+            { name: t('cancellationTypes.NO_SHOW_STUDENT'), value: lessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
         ];
 
         // Cancellations by day
@@ -41,7 +41,7 @@ export function OperationalReports() {
         }
 
         const dailyCancellations = days.map(day => ({ name: day, cancellations: 0 }));
-        mockLessons.forEach(lesson => {
+        lessons.forEach(lesson => {
             if (lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW')) {
                 const dayIndex = getDay(new Date(lesson.startTime));
                 dailyCancellations[dayIndex].cancellations++;
@@ -49,7 +49,7 @@ export function OperationalReports() {
         });
 
         // Teacher capacity
-        const teacherCapacity = mockTeachers.map(teacher => {
+        const teacherCapacity = teachersList.map(teacher => {
             if (!teacher.students || !teacher.maxStudents) {
                 return { name: teacher.name, capacity: 0 };
             }
@@ -61,8 +61,8 @@ export function OperationalReports() {
         }).sort((a, b) => b.capacity - a.capacity);
 
         // Makeup utilization
-        const issuedCredits = mockLessons.filter(l => ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM'].includes(l.status)).length;
-        const usedCredits = mockLessons.filter(l => l.type === 'MAKEUP' && l.status === 'COMPLETED').length;
+        const issuedCredits = lessons.filter(l => ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM'].includes(l.status)).length;
+        const usedCredits = lessons.filter(l => l.type === 'MAKEUP' && l.status === 'COMPLETED').length;
         const makeupUtilization = issuedCredits > 0 ? (usedCredits / issuedCredits) * 100 : 0;
 
         return {
@@ -73,7 +73,7 @@ export function OperationalReports() {
             makeupUtilizationRate: makeupUtilization
         }
 
-    }, [mockLessons, mockTeachers, locale, t]);
+    }, [lessons, teachersList, locale, t]);
 
     return (
         <div className="space-y-6 mt-6">

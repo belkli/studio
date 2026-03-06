@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useAuth } from "@/hooks/use-auth";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { performanceGenres } from "@/lib/data";
+import { performanceGenres } from "@/lib/taxonomies";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle, Save, Trash2, Video } from "lucide-react";
 import { Switch } from "@/components/ui/switch";

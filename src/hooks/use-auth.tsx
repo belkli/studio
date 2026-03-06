@@ -9,12 +9,12 @@
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
-import * as initialMockData from '@/lib/data';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { add, differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
 import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertUserAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
 
 /**
  * Defines the shape of the authentication context, including all state and action dispatchers.
@@ -23,38 +23,67 @@ interface AuthContextType {
   user: User | null;
   users: User[];
   mockFormSubmissions: FormSubmission[];
+  formSubmissions: FormSubmission[];
   compositions: Composition[];
   mockLessons: LessonSlot[];
+  lessons: LessonSlot[];
   mockPackages: Package[];
+  packages: Package[];
   mockInvoices: Invoice[];
+  invoices: Invoice[];
   mockPracticeLogs: PracticeLog[];
+  practiceLogs: PracticeLog[];
   mockAssignedRepertoire: AssignedRepertoire[];
+  assignedRepertoire: AssignedRepertoire[];
   mockLessonNotes: LessonNote[];
+  lessonNotes: LessonNote[];
   mockMessageThreads: MessageThread[];
+  messageThreads: MessageThread[];
   mockProgressReports: ProgressReport[];
+  progressReports: ProgressReport[];
   mockAnnouncements: Announcement[];
+  announcements: Announcement[];
   mockFormTemplates: FormTemplate[];
+  formTemplates: FormTemplate[];
   mockAuditLog: AuditLogEntry[];
+  auditLog: AuditLogEntry[];
   mockPlayingSchoolInvoices: PlayingSchoolInvoice[];
+  playingSchoolInvoices: PlayingSchoolInvoice[];
   mockEvents: EventProduction[];
+  events: EventProduction[];
   mockInstrumentInventory: InstrumentInventory[];
+  instrumentInventory: InstrumentInventory[];
   mockInstrumentRentals: InstrumentRental[];
+  instrumentRentals: InstrumentRental[];
   mockPerformanceBookings: PerformanceBooking[];
+  performanceBookings: PerformanceBooking[];
   mockScholarshipApplications: ScholarshipApplication[];
+  scholarshipApplications: ScholarshipApplication[];
   mockDonationCauses: DonationCause[];
+  donationCauses: DonationCause[];
   mockDonations: DonationRecord[];
+  donations: DonationRecord[];
   mockOpenDayEvents: OpenDayEvent[];
+  openDayEvents: OpenDayEvent[];
   mockOpenDayAppointments: OpenDayAppointment[];
+  openDayAppointments: OpenDayAppointment[];
   mockPracticeVideos: PracticeVideo[];
+  practiceVideos: PracticeVideo[];
   mockAlumni: Alumnus[];
+  alumni: Alumnus[];
   mockMasterclasses: Masterclass[];
+  masterClasses: Masterclass[];
   mockMasterClassAllowances: StudentMasterClassAllowance[];
+  masterClassAllowances: StudentMasterClassAllowance[];
   mockMakeupCredits: MakeupCredit[];
+  makeupCredits: MakeupCredit[];
   mockRepertoire: Composition[];
+  repertoire: Composition[];
   conservatoriums: Conservatorium[];
   conservatoriumInstruments: ConservatoriumInstrument[];
   lessonPackages: LessonPackage[];
   mockBranches: Branch[];
+  branches: Branch[];
   login: (email: string) => { user: User | null; status: 'approved' | 'pending' | 'not_found' };
   logout: () => void;
   approveUser: (userId: string) => void;
@@ -108,7 +137,7 @@ interface AuthContextType {
   upsertAlumniProfile: (payload: Partial<Alumnus> & { userId: string }) => Alumnus;
   createMasterClass: (payload: Partial<Masterclass>) => Masterclass;
   publishMasterClass: (masterClassId: string) => void;
-  registerToMasterClass: (masterClassId: string, studentId: string) => { success: boolean; chargedILS?: number; remaining?: number; reason?: string };
+  registerToMasterClass: (masterClassId: string, studentId: string) => Promise<{ success: boolean; chargedILS?: number; remaining?: number; reason?: string }>;
   markWalkthroughAsSeen: (userId: string) => void;
   addUser: (userData: Partial<User>, isAdminFlow?: boolean) => User;
   addBranch: (branchData: Partial<Branch>) => void;
@@ -120,6 +149,7 @@ interface AuthContextType {
   updateLessonPackage: (packageId: string, packageData: Partial<LessonPackage>) => void;
   deleteLessonPackage: (packageId: string) => void;
   mockRooms: Room[];
+  rooms: Room[];
   addRoom: (roomData: Partial<Room>) => void;
   updateRoom: (roomId: string, roomData: Partial<Room>) => void;
   deleteRoom: (roomId: string) => void;
@@ -130,7 +160,9 @@ interface AuthContextType {
   assignRepertoire: (studentIds: string | string[], compositionId: string) => void;
   awardAchievement: (studentId: string, type: AchievementType) => void;
   mockWaitlist: WaitlistEntry[];
+  waitlist: WaitlistEntry[];
   mockPayrolls: PayrollSummary[];
+  payrolls: PayrollSummary[];
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
   updateEvent: (event: EventProduction) => void;
   updateEventStatus: (eventId: string, status: EventProductionStatus) => void;
@@ -155,19 +187,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // State for the currently logged-in user
   const [user, setUser] = useState<User | null>(null);
   // State for all mock data sets
-  const [users, setUsers] = useState<User[]>(initialMockData.mockUsers);
-  const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>(initialMockData.mockFormSubmissions);
-  const [mockLessons, setMockLessons] = useState<LessonSlot[]>(initialMockData.mockLessons);
-  const [mockPackages, setMockPackages] = useState<Package[]>(initialMockData.mockPackages);
-  const [mockInvoices, setMockInvoices] = useState<Invoice[]>(initialMockData.mockInvoices);
-  const [mockPracticeLogs, setMockPracticeLogs] = useState<PracticeLog[]>(initialMockData.mockPracticeLogs);
-  const [mockAssignedRepertoire, setMockAssignedRepertoire] = useState<AssignedRepertoire[]>(initialMockData.mockAssignedRepertoire);
-  const [mockLessonNotes, setMockLessonNotes] = useState<LessonNote[]>(initialMockData.mockLessonNotes);
-  const [mockMessageThreads, setMockMessageThreads] = useState<MessageThread[]>(initialMockData.mockMessageThreads);
-  const [mockProgressReports, setMockProgressReports] = useState<ProgressReport[]>(initialMockData.mockProgressReports);
-  const [mockAnnouncements, setMockAnnouncements] = useState<Announcement[]>(initialMockData.mockAnnouncements);
-  const [mockFormTemplates, setMockFormTemplates] = useState<FormTemplate[]>(initialMockData.mockFormTemplates);
-  const [mockAuditLog, setMockAuditLog] = useState<AuditLogEntry[]>(initialMockData.mockAuditLog);
+  const [users, setUsers] = useState<User[]>([]);
+  const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);
+  const [mockLessons, setMockLessons] = useState<LessonSlot[]>([]);
+  const [mockPackages, setMockPackages] = useState<Package[]>([]);
+  const [mockInvoices, setMockInvoices] = useState<Invoice[]>([]);
+  const [mockPracticeLogs, setMockPracticeLogs] = useState<PracticeLog[]>([]);
+  const [mockAssignedRepertoire, setMockAssignedRepertoire] = useState<AssignedRepertoire[]>([]);
+  const [mockLessonNotes, setMockLessonNotes] = useState<LessonNote[]>([]);
+  const [mockMessageThreads, setMockMessageThreads] = useState<MessageThread[]>([]);
+  const [mockProgressReports, setMockProgressReports] = useState<ProgressReport[]>([]);
+  const [mockAnnouncements, setMockAnnouncements] = useState<Announcement[]>([]);
+  const [mockFormTemplates, setMockFormTemplates] = useState<FormTemplate[]>([]);
+  const [mockAuditLog, setMockAuditLog] = useState<AuditLogEntry[]>([]);
   const [mockPlayingSchoolInvoices, setMockPlayingSchoolInvoices] = useState<PlayingSchoolInvoice[]>([]);
 
   useEffect(() => {
@@ -187,9 +219,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setMockPlayingSchoolInvoices(initialPsInvoices);
     }
   }, [user, users]);
-  const [mockEvents, setMockEvents] = useState<EventProduction[]>(initialMockData.mockEvents);
-  const [mockInstrumentInventory, setMockInstrumentInventory] = useState<InstrumentInventory[]>(initialMockData.mockInstrumentInventory);
-  const [mockInstrumentRentals, setMockInstrumentRentals] = useState<InstrumentRental[]>(initialMockData.mockInstrumentRentals || []);
+  const [mockEvents, setMockEvents] = useState<EventProduction[]>([]);
+  const [mockInstrumentInventory, setMockInstrumentInventory] = useState<InstrumentInventory[]>([]);
+  const [mockInstrumentRentals, setMockInstrumentRentals] = useState<InstrumentRental[]>([]);
 
   useEffect(() => {
     const now = new Date();
@@ -238,140 +270,218 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
     );
   }, [mockInstrumentInventory, mockInstrumentRentals]);
-  const [mockPerformanceBookings, setMockPerformanceBookings] = useState<PerformanceBooking[]>(initialMockData.mockPerformanceBookings);
-  const [mockScholarshipApplications, setMockScholarshipApplications] = useState<ScholarshipApplication[]>(initialMockData.mockScholarshipApplications);
-  const [mockDonationCauses, setMockDonationCauses] = useState<DonationCause[]>(initialMockData.mockDonationCauses || []);
-  const [mockDonations, setMockDonations] = useState<DonationRecord[]>(initialMockData.mockDonations || []);
-  const [mockOpenDayEvents, setMockOpenDayEvents] = useState<OpenDayEvent[]>(initialMockData.mockOpenDayEvents);
-  const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>(initialMockData.mockOpenDayAppointments);
-  const [mockBranches, setMockBranches] = useState<Branch[]>(initialMockData.mockBranches);
-  const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>(initialMockData.mockPracticeVideos);
-  const [mockAlumni, setMockAlumni] = useState<Alumnus[]>(initialMockData.mockAlumni);
-  const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>(initialMockData.mockMasterclasses);
-  const [mockMasterClassAllowances, setMockMasterClassAllowances] = useState<StudentMasterClassAllowance[]>([
-    { studentId: 'student-user-1', conservatoriumId: 'cons-15', academicYear: '2025-2026', totalAllowed: 2, used: 0, remaining: 2 },
-    { studentId: 'student-user-2', conservatoriumId: 'cons-15', academicYear: '2025-2026', totalAllowed: 0, used: 0, remaining: 0 },
-  ]);
-  const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>(initialMockData.mockWaitlist);
-  const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>(initialMockData.mockPayrolls);
-  const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>(initialMockData.mockMakeupCredits || []);
-  const [mockRepertoire, setMockRepertoire] = useState<Composition[]>(initialMockData.mockRepertoire || initialMockData.compositions);
-  const [mockRooms, setMockRooms] = useState<Room[]>(initialMockData.mockRooms);
-  const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>(initialMockData.conservatoriums);
-  const [conservatoriumInstruments, setConservatoriumInstruments] = useState<ConservatoriumInstrument[]>(initialMockData.mockConservatoriumInstruments || []);
-  const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>(initialMockData.mockLessonPackages || []);
+  const [mockPerformanceBookings, setMockPerformanceBookings] = useState<PerformanceBooking[]>([]);
+  const [mockScholarshipApplications, setMockScholarshipApplications] = useState<ScholarshipApplication[]>([]);
+  const [mockDonationCauses, setMockDonationCauses] = useState<DonationCause[]>([]);
+  const [mockDonations, setMockDonations] = useState<DonationRecord[]>([]);
+  const [mockOpenDayEvents, setMockOpenDayEvents] = useState<OpenDayEvent[]>([]);
+  const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>([]);
+  const [mockBranches, setMockBranches] = useState<Branch[]>([]);
+  const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>([]);
+  const [mockAlumni, setMockAlumni] = useState<Alumnus[]>([]);
+  const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>([]);
+  const [mockMasterClassAllowances, setMockMasterClassAllowances] = useState<StudentMasterClassAllowance[]>([]);
+  const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>([]);
+  const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>([]);
+  const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>([]);
+  const [mockRepertoire, setMockRepertoire] = useState<Composition[]>([]);
+  const [mockRooms, setMockRooms] = useState<Room[]>([]);
+  const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>([]);
+  const [conservatoriumInstruments, setConservatoriumInstruments] = useState<ConservatoriumInstrument[]>([]);
+  const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [bootstrapResolved, setBootstrapResolved] = useState(false);
+  const [bootstrapUsedMockFallback, setBootstrapUsedMockFallback] = useState(false);
+
+  const applyMockBootstrapFallback = () => {
+    setBootstrapUsedMockFallback(true);
+    setUsers([]);
+    setConservatoriums([]);
+    setConservatoriumInstruments([]);
+    setLessonPackages([]);
+    setMockLessons([]);
+    setMockFormSubmissions([]);
+    setMockEvents([]);
+    setMockRooms([]);
+    setMockPayrolls([]);
+    setMockRepertoire([]);
+
+    setMockPackages([]);
+    setMockInvoices([]);
+    setMockPracticeLogs([]);
+    setMockAssignedRepertoire([]);
+    setMockLessonNotes([]);
+    setMockMessageThreads([]);
+    setMockProgressReports([]);
+    setMockAnnouncements([]);
+    setMockFormTemplates([]);
+    setMockAuditLog([]);
+    setMockInstrumentInventory([]);
+    setMockInstrumentRentals([]);
+    setMockPerformanceBookings([]);
+    setMockScholarshipApplications([]);
+    setMockDonationCauses([]);
+    setMockDonations([]);
+    setMockOpenDayEvents([]);
+    setMockOpenDayAppointments([]);
+    setMockBranches([]);
+    setMockPracticeVideos([]);
+    setMockAlumni([]);
+    setMockMasterclasses([]);
+    setMockWaitlist([]);
+    setMockMakeupCredits([]);
+    setMockPlayingSchoolInvoices([]);
+    setMockMasterClassAllowances([]);
+  };
 
   useEffect(() => {
     let active = true;
 
+    const allowClientMockBootstrapFallback = process.env.NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK === '1';
+
     const loadBootstrapData = async () => {
       try {
-        const response = await fetch('/api/bootstrap', { cache: 'no-store' });
-        if (!response.ok) return;
+        const bootstrapUrl = typeof window !== 'undefined'
+          ? new URL('/api/bootstrap', window.location.origin).toString()
+          : '/api/bootstrap';
+        const response = await fetch(bootstrapUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          if (active && allowClientMockBootstrapFallback) applyMockBootstrapFallback();
+          return;
+        }
 
-        const payload = await response.json();
+        const payload = await response.json() as {
+          meta?: { backend?: string; source?: string; fallbackReason?: string };
+          users?: User[];
+          conservatoriums?: Conservatorium[];
+          conservatoriumInstruments?: ConservatoriumInstrument[];
+          lessonPackages?: LessonPackage[];
+          lessons?: LessonSlot[];
+          forms?: FormSubmission[];
+          events?: EventProduction[];
+          rooms?: Room[];
+          payrolls?: PayrollSummary[];
+          repertoire?: Composition[];
+          scholarships?: ScholarshipApplication[];
+          rentals?: unknown[];
+          payments?: Invoice[];
+          announcements?: Announcement[];
+          alumni?: Alumnus[];
+          masterClasses?: Masterclass[];
+          packages?: Package[];
+          invoices?: Invoice[];
+          practiceLogs?: PracticeLog[];
+          assignedRepertoire?: AssignedRepertoire[];
+          lessonNotes?: LessonNote[];
+          messageThreads?: MessageThread[];
+          progressReports?: ProgressReport[];
+          formTemplates?: FormTemplate[];
+          auditLog?: AuditLogEntry[];
+          instrumentInventory?: InstrumentInventory[];
+          performanceBookings?: PerformanceBooking[];
+          donationCauses?: DonationCause[];
+          donations?: DonationRecord[];
+          openDayEvents?: OpenDayEvent[];
+          openDayAppointments?: OpenDayAppointment[];
+          branches?: Branch[];
+          practiceVideos?: PracticeVideo[];
+          waitlist?: WaitlistEntry[];
+          makeupCredits?: MakeupCredit[];
+          playingSchoolInvoices?: PlayingSchoolInvoice[];
+          masterClassAllowances?: StudentMasterClassAllowance[];
+        };
         if (!active) return;
 
-        const normalizeText = (value: string) => value.trim().toLowerCase();
+        const bootstrapSource = payload?.meta?.source;
+        const bootstrapBackend = payload?.meta?.backend;
+        const isFallbackBootstrap = bootstrapSource === 'fallback';
+        const isAuthoritativeSource = Boolean((bootstrapSource && bootstrapSource !== 'fallback' && bootstrapSource !== 'unknown') || bootstrapBackend === 'postgres' || bootstrapBackend === 'supabase');
+        const shouldApplyMockExtras = bootstrapBackend === 'mock' || isFallbackBootstrap;
+
+        if (bootstrapBackend === 'postgres' && isFallbackBootstrap) {
+          console.warn('[auth] bootstrap is using fallback seed instead of PostgreSQL', payload?.meta?.fallbackReason);
+        }
+
+        if (shouldApplyMockExtras) {
+          setBootstrapUsedMockFallback(true);
+        }
+
+        const payloadUsers = Array.isArray(payload.users) ? payload.users : [];
+        const payloadConservatoriums = Array.isArray(payload.conservatoriums) ? payload.conservatoriums : [];
+
+        const hasPayloadLists = payloadUsers.length > 0 || payloadConservatoriums.length > 0;
+        if (!isAuthoritativeSource && !hasPayloadLists) {
+          if (allowClientMockBootstrapFallback) applyMockBootstrapFallback();
+          return;
+        }
+
         const placeholderImageMap = new Map(PlaceHolderImages.map((image) => [image.id, image.imageUrl]));
         const normalizeAvatarUrl = (value?: string) => {
           if (!value) return value;
           return placeholderImageMap.get(value) || value;
         };
 
-        const mergedUsers = Array.isArray(payload.users)
-          ? (() => {
-              const localUsers = initialMockData.mockUsers;
-              const matchedIndexes = new Set<number>();
-
-              const merged = localUsers.map((localUser) => {
-                const foundIndex = payload.users.findIndex((remoteUser: User) => {
-                  if (remoteUser.id === localUser.id) return true;
-                  return normalizeText(remoteUser.email) === normalizeText(localUser.email);
-                });
-
-                if (foundIndex < 0) return localUser;
-                matchedIndexes.add(foundIndex);
-                const remoteUser = payload.users[foundIndex];
-
-                return {
-                  ...localUser,
-                  ...remoteUser,
-                  avatarUrl: remoteUser.avatarUrl || localUser.avatarUrl,
-                  bio: remoteUser.bio || localUser.bio,
-                  education: (remoteUser.education && remoteUser.education.length > 0) ? remoteUser.education : localUser.education,
-                  instruments: (remoteUser.instruments && remoteUser.instruments.length > 0) ? remoteUser.instruments : localUser.instruments,
-                } as User;
-              });
-
-              payload.users.forEach((remoteUser: User, index: number) => {
-                if (!matchedIndexes.has(index)) {
-                  merged.push(remoteUser);
-                }
-              });
-
-              return merged;
-            })()
-          : null;
-
-        const mergedConservatoriums = Array.isArray(payload.conservatoriums)
-          ? (() => {
-              const localConservatoriums = initialMockData.conservatoriums;
-              const matchedIndexes = new Set<number>();
-
-              const merged = localConservatoriums.map((localCons) => {
-                const foundIndex = payload.conservatoriums.findIndex((remoteCons: Conservatorium) => {
-                  if (remoteCons.id === localCons.id) return true;
-                  return normalizeText(remoteCons.name) === normalizeText(localCons.name);
-                });
-
-                if (foundIndex < 0) return localCons;
-                matchedIndexes.add(foundIndex);
-                const remoteCons = payload.conservatoriums[foundIndex];
-
-                return {
-                  ...localCons,
-                  ...remoteCons,
-                  about: remoteCons.about || localCons.about,
-                  departments: (remoteCons.departments && remoteCons.departments.length > 0) ? remoteCons.departments : localCons.departments,
-                  teachers: (remoteCons.teachers && remoteCons.teachers.length > 0) ? remoteCons.teachers : localCons.teachers,
-                  branchesInfo: (remoteCons.branchesInfo && remoteCons.branchesInfo.length > 0) ? remoteCons.branchesInfo : localCons.branchesInfo,
-                  programs: (remoteCons.programs && remoteCons.programs.length > 0) ? remoteCons.programs : localCons.programs,
-                  socialMedia: remoteCons.socialMedia || localCons.socialMedia,
-                  photoUrls: (remoteCons.photoUrls && remoteCons.photoUrls.length > 0) ? remoteCons.photoUrls : localCons.photoUrls,
-                } as Conservatorium;
-              });
-
-              payload.conservatoriums.forEach((remoteCons: Conservatorium, index: number) => {
-                if (!matchedIndexes.has(index)) {
-                  merged.push(remoteCons);
-                }
-              });
-
-              return merged;
-            })()
-          : null;
-
-        const finalUsers = mergedUsers
+        const finalUsers = payloadUsers.length > 0
           ? Array.from(
               new Map(
-                mergedUsers.map((entry) => [entry.id, { ...entry, avatarUrl: normalizeAvatarUrl(entry.avatarUrl) }])
+                payloadUsers.map((entry: User) => [entry.id, { ...entry, avatarUrl: normalizeAvatarUrl(entry.avatarUrl) }])
               ).values()
             )
           : null;
 
-        const finalConservatoriums = mergedConservatoriums
-          ? Array.from(new Map(mergedConservatoriums.map((entry) => [entry.id, entry])).values())
+        const finalConservatoriums = payloadConservatoriums.length > 0
+          ? Array.from(new Map(payloadConservatoriums.map((entry: Conservatorium) => [entry.id, entry])).values())
           : null;
 
         if (finalUsers) setUsers(finalUsers);
         if (finalConservatoriums) setConservatoriums(finalConservatoriums);
+        if (Array.isArray(payload.conservatoriumInstruments)) setConservatoriumInstruments(payload.conservatoriumInstruments);
+        if (Array.isArray(payload.lessonPackages)) setLessonPackages(payload.lessonPackages);
         if (Array.isArray(payload.lessons)) setMockLessons(payload.lessons);
         if (Array.isArray(payload.forms)) setMockFormSubmissions(payload.forms);
         if (Array.isArray(payload.events)) setMockEvents(payload.events);
         if (Array.isArray(payload.rooms)) setMockRooms(payload.rooms);
         if (Array.isArray(payload.payrolls)) setMockPayrolls(payload.payrolls);
+        if (Array.isArray(payload.repertoire)) setMockRepertoire(payload.repertoire);
+        if (Array.isArray(payload.scholarships)) setMockScholarshipApplications(payload.scholarships);
+        if (Array.isArray(payload.rentals)) setMockInstrumentRentals(payload.rentals as InstrumentRental[]);
+        if (Array.isArray(payload.payments)) setMockInvoices(payload.payments);
+        if (Array.isArray(payload.announcements)) setMockAnnouncements(payload.announcements);
+        if (Array.isArray(payload.alumni)) setMockAlumni(payload.alumni);
+        if (Array.isArray(payload.masterClasses)) setMockMasterclasses(payload.masterClasses);
+        if (Array.isArray(payload.instrumentInventory)) setMockInstrumentInventory(payload.instrumentInventory);
+        if (Array.isArray(payload.performanceBookings)) setMockPerformanceBookings(payload.performanceBookings);
+        if (Array.isArray(payload.donationCauses)) setMockDonationCauses(payload.donationCauses);
+        if (Array.isArray(payload.donations)) setMockDonations(payload.donations);
+        if (Array.isArray(payload.openDayEvents)) setMockOpenDayEvents(payload.openDayEvents);
+        if (Array.isArray(payload.openDayAppointments)) setMockOpenDayAppointments(payload.openDayAppointments);
+        if (Array.isArray(payload.branches)) setMockBranches(payload.branches);
+        if (Array.isArray(payload.practiceVideos)) setMockPracticeVideos(payload.practiceVideos);
+        if (Array.isArray(payload.waitlist)) setMockWaitlist(payload.waitlist);
+        if (Array.isArray(payload.makeupCredits)) setMockMakeupCredits(payload.makeupCredits);
+        if (Array.isArray(payload.playingSchoolInvoices)) setMockPlayingSchoolInvoices(payload.playingSchoolInvoices);
+        if (Array.isArray(payload.masterClassAllowances)) setMockMasterClassAllowances(payload.masterClassAllowances);
+        if (shouldApplyMockExtras) {
+          if (Array.isArray(payload.packages)) setMockPackages(payload.packages);
+          if (Array.isArray(payload.invoices)) setMockInvoices(payload.invoices);
+          if (Array.isArray(payload.practiceLogs)) setMockPracticeLogs(payload.practiceLogs);
+          if (Array.isArray(payload.assignedRepertoire)) setMockAssignedRepertoire(payload.assignedRepertoire);
+          if (Array.isArray(payload.lessonNotes)) setMockLessonNotes(payload.lessonNotes);
+          if (Array.isArray(payload.messageThreads)) setMockMessageThreads(payload.messageThreads);
+          if (Array.isArray(payload.progressReports)) setMockProgressReports(payload.progressReports);
+          if (Array.isArray(payload.formTemplates)) setMockFormTemplates(payload.formTemplates);
+          if (Array.isArray(payload.auditLog)) setMockAuditLog(payload.auditLog);
+        } else {
+          // Authoritative DB source: clear any stale mock-only extras from prior fallback boots.
+          setMockPackages([]);
+          setMockPracticeLogs([]);
+          setMockAssignedRepertoire([]);
+          setMockLessonNotes([]);
+          setMockMessageThreads([]);
+          setMockProgressReports([]);
+          setMockFormTemplates([]);
+          setMockAuditLog([]);
+        }
 
         if (finalUsers) {
           setUser((currentUser) => {
@@ -385,6 +495,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         console.warn('[auth] bootstrap data fetch failed', error);
+        if (!active) return;
+        if (allowClientMockBootstrapFallback) applyMockBootstrapFallback();
+      } finally {
+        if (active) setBootstrapResolved(true);
       }
     };
 
@@ -423,7 +537,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         clearAuthCookie();
       }
     }
-    setIsLoading(false);
   }, []);
 
   /**
@@ -431,20 +544,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
    * @param email The email to log in with.
    * @returns An object with the user and their approval status.
    */
+  useEffect(() => {
+    if (bootstrapResolved) setIsLoading(false);
+  }, [bootstrapResolved]);
+
   const login = (email: string): { user: User | null; status: 'approved' | 'pending' | 'not_found' } => {
-    const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const normalizedEmail = email.toLowerCase();
+    const userPool = users;
+    const foundUser = userPool.find((u) => typeof u?.email === 'string' && u.email.toLowerCase() === normalizedEmail);
+
     if (foundUser) {
-      if (foundUser.approved) {
+      if (foundUser.approved !== false) {
         localStorage.setItem('harmonia-user', JSON.stringify(foundUser));
         setAuthCookie();
         setUser(foundUser);
-        router.push('/dashboard');
+        router?.push?.('/dashboard');
         return { user: foundUser, status: 'approved' };
-      } else {
-        router.push('/pending-approval');
-        return { user: foundUser, status: 'pending' };
       }
+
+      router?.push?.('/pending-approval');
+      return { user: foundUser, status: 'pending' };
     }
+
     return { user: null, status: 'not_found' };
   };
 
@@ -455,18 +576,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('harmonia-user');
     clearAuthCookie();
     setUser(null);
-    router.push('/login');
+    router?.push?.('/login');
   };
 
   // --- Data Manipulation Functions ---
   // These functions simulate backend operations by directly manipulating the state.
 
   const approveUser = (userId: string) => {
-    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? { ...u, approved: true } : u));
+    const target = users.find(u => u.id === userId);
+    if (!target) return;
+    const approvedUser = { ...target, approved: true, rejectionReason: undefined };
+
+    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? approvedUser : u));
+
+    void upsertUserAction(approvedUser)
+      .then((saved) => {
+        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to approve user in DB', error);
+      });
   };
 
   const rejectUser = (userId: string, reason: string) => {
-    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? { ...u, approved: false, rejectionReason: reason } : u));
+    const target = users.find(u => u.id === userId);
+    if (!target) return;
+    const rejectedUser = { ...target, approved: false, rejectionReason: reason };
+
+    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? rejectedUser : u));
+
+    void upsertUserAction(rejectedUser)
+      .then((saved) => {
+        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to reject user in DB', error);
+      });
   };
 
   const updateForm = (updatedForm: FormSubmission) => {
@@ -478,6 +623,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return [...prevForms, updatedForm];
       }
     });
+
+    void upsertFormSubmissionAction(updatedForm)
+      .then((saved) => {
+        setMockFormSubmissions(prevForms => {
+          const formIndex = prevForms.findIndex(f => f.id === saved.id);
+          if (formIndex > -1) {
+            return prevForms.map((form, index) => index === formIndex ? saved : form);
+          }
+          return [...prevForms, saved];
+        });
+      })
+      .catch((error) => {
+        console.warn('Failed to persist form submission', error);
+      });
   };
 
   const updateUserPaymentMethod = (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => {
@@ -508,6 +667,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
       setAuthCookie();
     }
+
+    void upsertUserAction(updatedUser)
+      .then((saved) => {
+        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
+
+        setUser(prevCurrent => {
+          if (prevCurrent?.id !== saved.id) return prevCurrent;
+          localStorage.setItem('harmonia-user', JSON.stringify(saved));
+          setAuthCookie();
+          return saved;
+        });
+      })
+      .catch((error) => {
+        console.warn('Failed to persist user', error);
+      });
   };
 
   const updateNotificationPreferences = (preferences: NotificationPreferences) => {
@@ -526,6 +700,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatedAt: new Date().toISOString(),
       ...lessonData
     } as LessonSlot;
+
+    if (!newLesson.startTime) {
+      const now = new Date();
+      now.setMinutes(0, 0, 0);
+      newLesson.startTime = now.toISOString();
+    }
+    if (!newLesson.durationMinutes || Number.isNaN(newLesson.durationMinutes)) {
+      newLesson.durationMinutes = 45;
+    }
+    if (!newLesson.instrument) {
+      newLesson.instrument = 'general_music';
+    }
 
     const conservatoriumRoomPool = mockRooms.filter((room) => room.conservatoriumId === newLesson.conservatoriumId);
 
@@ -560,20 +746,56 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return [...shifted, newLesson];
         });
 
+        void upsertLessonAction(newLesson)
+          .catch((error) => {
+            console.warn('Failed to persist lesson', error);
+          });
+
         toast({ title: 'Room reallocated automatically for better fit' });
         return;
       }
     }
 
     setMockLessons(prev => [...prev, newLesson]);
+
+    void upsertLessonAction(newLesson)
+      .then((saved) => {
+        setMockLessons(prev => prev.map(item => item.id === newLesson.id ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson', error);
+      });
   };
 
   const cancelLesson = (lessonId: string, withNotice: boolean) => {
-    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: withNotice ? 'CANCELLED_STUDENT_NOTICED' : 'CANCELLED_STUDENT_NO_NOTICE' } : l));
+    const nextStatus = withNotice ? 'CANCELLED_STUDENT_NOTICED' : 'CANCELLED_STUDENT_NO_NOTICE';
+    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: nextStatus } : l));
+
+    const snapshot = mockLessons.find((item) => item.id === lessonId);
+    if (!snapshot) return;
+
+    void upsertLessonAction({ ...snapshot, status: nextStatus } as LessonSlot)
+      .then((saved) => {
+        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson cancel', error);
+      });
   };
 
   const rescheduleLesson = (lessonId: string, newStartTime: string) => {
     setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, startTime: newStartTime } : l));
+
+    const snapshot = mockLessons.find((item) => item.id === lessonId);
+    if (!snapshot) return;
+
+    void upsertLessonAction({ ...snapshot, startTime: newStartTime } as LessonSlot)
+      .then((saved) => {
+        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson reschedule', error);
+      });
   };
 
   const getMakeupCreditBalance = (studentIds: string[]) => {
@@ -614,10 +836,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     switch (type) {
       case 'PIECE_COMPLETED':
-        newAchievement = { id: `ach-${Date.now()}`, type, title: '×™×¦×™×¨×” ×”×•×©×œ×ž×”!', titleHe: '×™×¦×™×¨×” ×”×•×©×œ×ž×”!', description: '×›×œ ×”×›×‘×•×“ ×¢×œ ×¡×™×•× ×™×¦×™×¨×” ×—×“×©×”.', icon: 'ðŸŽµ', points: 75, achievedAt: new Date().toISOString() };
+        newAchievement = { id: `ach-${Date.now()}`, type, title: 'Amazing progress!', titleHe: 'Amazing progress!', description: 'You completed all your weekly goals.', icon: 'star', points: 75, achievedAt: new Date().toISOString() };
         break;
       case 'PRACTICE_STREAK_7':
-        newAchievement = { id: `ach-${Date.now()}`, type, title: '×¨×¦×£ ××™×ž×•× ×™× ×©×œ 7 ×™×ž×™×!', titleHe: '×¨×¦×£ ××™×ž×•× ×™× ×©×œ 7 ×™×ž×™×!', description: '×”×ª×ž×“×” ×”×™× ×”×ž×¤×ª×— ×œ×”×¦×œ×—×”. ×›×œ ×”×›×‘×•×“!', icon: 'ðŸ”¥', points: 50, achievedAt: new Date().toISOString() };
+        newAchievement = { id: `ach-${Date.now()}`, type, title: 'Practiced for 7 days in a row!', titleHe: 'Practiced for 7 days in a row!', description: 'Excellent consistency this week. Keep going!', icon: 'star', points: 50, achievedAt: new Date().toISOString() };
         break;
     }
 
@@ -763,7 +985,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const addAnnouncement = (announcementData: Partial<Announcement>) => {
     const newAnnouncement: Announcement = {
-      id: `ann-${Date.now()}`,
+      id: `ann-${Date.now()}` ,
       conservatoriumId: user?.conservatoriumId || 'cons-15',
       sentAt: new Date().toISOString(),
       ...announcementData
@@ -771,7 +993,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockAnnouncements(prev => [newAnnouncement, ...prev]);
 
     const newAuditLogEntry: AuditLogEntry = {
-      id: `log-${Date.now()}`,
+      id: `log-${Date.now()}` ,
       notificationId: newAnnouncement.id,
       userId: 'system',
       channel: 'IN_APP',
@@ -781,6 +1003,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       body: newAnnouncement.body,
     };
     setMockAuditLog(prev => [newAuditLogEntry, ...prev]);
+
+    if (newAnnouncement.title && newAnnouncement.body) {
+      void createAnnouncement(newAnnouncement)
+        .then((serverAnnouncement) => {
+          setMockAnnouncements((prev) => prev.map((item) => (item.id === newAnnouncement.id ? serverAnnouncement : item)));
+        })
+        .catch((error) => {
+          console.warn('Failed to persist announcement', error);
+        });
+    }
   };
   const assignSubstitute = (lessonId: string, newTeacherId: string) => {
     setMockLessons(prev => prev.map(lesson =>
@@ -810,6 +1042,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const updateLessonStatus = (lessonId: string, status: SlotStatus) => {
     setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status, attendanceMarkedAt: new Date().toISOString() } : l));
+
+    const snapshot = mockLessons.find((item) => item.id === lessonId);
+    if (!snapshot) return;
+
+    void upsertLessonAction({ ...snapshot, status, attendanceMarkedAt: new Date().toISOString() } as LessonSlot)
+      .then((saved) => {
+        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson status', error);
+      });
   };
   const addToWaitlist = (waitlistEntry: Partial<WaitlistEntry>) => {
     const newEntry: WaitlistEntry = {
@@ -835,6 +1078,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const updateConservatorium = (updatedConservatorium: Conservatorium) => {
     setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
+
+    void upsertConservatoriumAction(updatedConservatorium)
+      .then((saved) => {
+        setConservatoriums(prev => prev.map(item => item.id === saved.id ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist conservatorium', error);
+      });
   };
   const addEvent = (eventData: Partial<EventProduction>) => {
     const newEvent: EventProduction = {
@@ -856,14 +1107,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...eventData,
     } as EventProduction;
     setMockEvents(prev => [newEvent, ...prev]);
+
+    void createEventAction(newEvent)
+      .then((saved) => {
+        setMockEvents(prev => prev.map(item => (item.id === newEvent.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist event', error);
+      });
   };
 
   const updateEvent = (updatedEvent: EventProduction) => {
     setMockEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
+
+    void updateEventAction(updatedEvent)
+      .then((saved) => {
+        setMockEvents(prev => prev.map(item => (item.id === saved.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist event update', error);
+      });
   };
 
   const updateEventStatus = (eventId: string, status: EventProductionStatus) => {
     setMockEvents(prev => prev.map(e => e.id === eventId ? { ...e, status } : e));
+
+    const snapshot = mockEvents.find((event) => event.id === eventId);
+    if (!snapshot) return;
+
+    void updateEventAction({ ...snapshot, status })
+      .then((saved) => {
+        setMockEvents(prev => prev.map(item => (item.id === eventId ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist event status update', error);
+      });
   };
 
 
@@ -873,9 +1151,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     attendee: { name: string; email: string; phone: string },
     userId = 'guest'
   ): { success: boolean; soldOut?: boolean; bookingRef?: string; totalAmount: number } => {
-    const bookingRef = `BK-${Date.now()}`;
+    const bookingRef = 'BK-' + Date.now();
     let totalAmount = 0;
     let soldOut = false;
+    let updatedEventSnapshot: EventProduction | null = null;
 
     setMockEvents(prev => prev.map(event => {
       if (event.id !== eventId) return event;
@@ -883,7 +1162,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const currentBookedSeats = [...(event.bookedSeats || [])];
       const fallbackFreeTier = {
         id: 'tier-free',
-        name: { he: '????? ????', en: 'Free Entry', ru: '?????????? ????', ar: '???? ?????' },
+        name: { he: 'Free Entry', en: 'Free Entry', ru: 'Free Entry', ar: 'Free Entry' },
         priceILS: 0,
         availableCount: Math.max(0, (event.totalSeats || 0) - currentBookedSeats.length),
       };
@@ -917,17 +1196,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (soldOut) return event;
 
       const remainingTotal = tiers.reduce((acc: number, tier: TicketTier) => acc + tier.availableCount, 0);
-      return {
+      const updatedEvent = {
         ...event,
         ticketPrices: event.ticketPrices && event.ticketPrices.length > 0 ? tiers : event.ticketPrices,
         bookedSeats: currentBookedSeats,
         totalSeats: event.totalSeats ?? remainingTotal + currentBookedSeats.length,
         status: remainingTotal <= 0 ? 'CLOSED' : event.status,
       };
+      updatedEventSnapshot = updatedEvent;
+      return updatedEvent;
     }));
 
     if (soldOut) {
       return { success: false, soldOut: true, totalAmount: 0 };
+    }
+
+    if (updatedEventSnapshot) {
+      void updateEventAction(updatedEventSnapshot)
+        .then((saved) => {
+          setMockEvents(prev => prev.map(item => item.id === saved.id ? saved : item));
+        })
+        .catch((error) => {
+          console.warn('Failed to persist ticket booking event state', error);
+        });
     }
 
     return { success: true, bookingRef, totalAmount };
@@ -935,16 +1226,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addPerformanceToEvent = (eventId: string, studentId: string, repertoireId: string) => {
     const student = users.find(u => u.id === studentId);
-    const repertoireItem = initialMockData.mockAssignedRepertoire.find(r => r.id === repertoireId);
-    const composition = initialMockData.compositions.find(c => c.id === repertoireItem?.compositionId);
+    const repertoireItem = mockAssignedRepertoire.find(r => r.id === repertoireId);
+    const composition = mockRepertoire.find(c => c.id === repertoireItem?.compositionId);
 
     if (!student || !repertoireItem || !composition) {
-      toast({ variant: 'destructive', title: '×©×’×™××” ×‘×”×•×¡×¤×ª ×ž×‘×¦×¢' });
+      toast({ variant: 'destructive', title: 'Description will be added soon' });
       return;
     }
 
     const newPerformance: PerformanceSlot = {
-      id: `ps-${Date.now()}`,
+      id: 'ps-' + Date.now(),
       studentId,
       studentName: student.name,
       compositionTitle: composition.title,
@@ -952,20 +1243,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       duration: composition.duration,
     };
 
-    setMockEvents(prev => prev.map(event =>
-      event.id === eventId
-        ? { ...event, program: [...event.program, newPerformance] }
-        : event
-    ));
-    toast({ title: `${student.name} × ×•×¡×£/×” ×œ×ª×•×›× ×™×ª!` });
+    let updatedEventSnapshot: EventProduction | null = null;
+    setMockEvents(prev => prev.map(event => {
+      if (event.id !== eventId) return event;
+      const updatedEvent = { ...event, program: [...event.program, newPerformance] };
+      updatedEventSnapshot = updatedEvent;
+      return updatedEvent;
+    }));
+
+    if (updatedEventSnapshot) {
+      void updateEventAction(updatedEventSnapshot)
+        .then((saved) => {
+          setMockEvents(prev => prev.map(item => item.id === saved.id ? saved : item));
+        })
+        .catch((error) => {
+          console.warn('Failed to persist added performance', error);
+        });
+    }
+    toast({ title: student.name + ' added to program!' });
   };
+
   const removePerformanceFromEvent = (eventId: string, performanceId: string) => {
-    setMockEvents(prev => prev.map(event =>
-      event.id === eventId
-        ? { ...event, program: event.program.filter(p => p.id !== performanceId) }
-        : event
-    ));
-    toast({ title: '×”×‘×™×¦×•×¢ ×”×•×¡×¨ ×ž×”×ª×•×›× ×™×ª' });
+    let updatedEventSnapshot: EventProduction | null = null;
+    setMockEvents(prev => prev.map(event => {
+      if (event.id !== eventId) return event;
+      const updatedEvent = { ...event, program: event.program.filter(p => p.id !== performanceId) };
+      updatedEventSnapshot = updatedEvent;
+      return updatedEvent;
+    }));
+
+    if (updatedEventSnapshot) {
+      void updateEventAction(updatedEventSnapshot)
+        .then((saved) => {
+          setMockEvents(prev => prev.map(item => item.id === saved.id ? saved : item));
+        })
+        .catch((error) => {
+          console.warn('Failed to persist removed performance', error);
+        });
+    }
+    toast({ title: 'Performance removed from program' });
   };
 
   const assignInstrumentToStudent = (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => {
@@ -1126,19 +1442,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...instrumentData,
     } as InstrumentInventory;
     setMockInstrumentInventory(prev => [...prev, newInstrument]);
-    toast({ title: '×”×›×œ×™ ×”×ª×•×•×¡×£ ×œ×ž×œ××™ ×‘×”×¦×œ×—×”' });
+    toast({ title: 'Instrument added to inventory' });
   };
 
   const updateInstrument = (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => {
     setMockInstrumentInventory(prev => prev.map(inst =>
       inst.id === instrumentId ? { ...inst, ...instrumentData } : inst
     ));
-    toast({ title: '×¤×¨×˜×™ ×”×›×œ×™ ×¢×•×“×›× ×• ×‘×”×¦×œ×—×”' });
+    toast({ title: 'Instrument details updated' });
   };
 
   const deleteInstrument = (instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.filter(inst => inst.id !== instrumentId));
-    toast({ title: '×”×›×œ×™ × ×ž×—×§ ×ž×”×ž×œ××™' });
+    toast({ title: 'Room details updated' });
   };
   const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
     if (!user) return;
@@ -1223,6 +1539,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...applicationData
     } as ScholarshipApplication;
     setMockScholarshipApplications(prev => [...prev, newApplication]);
+
+    void (async () => {
+      try {
+        const normalizedStatus =
+          newApplication.status === 'DRAFT' || newApplication.status === 'DOCUMENTS_PENDING'
+            ? 'SUBMITTED'
+            : newApplication.status;
+        const saved = await createScholarshipApplicationAction({
+          id: newApplication.id,
+          studentId: newApplication.studentId,
+          studentName: newApplication.studentName,
+          instrument: newApplication.instrument,
+          conservatoriumId: newApplication.conservatoriumId,
+          academicYear: newApplication.academicYear,
+          status: normalizedStatus,
+          submittedAt: newApplication.submittedAt,
+          priorityScore: newApplication.priorityScore,
+          approvedAt: newApplication.approvedAt,
+          rejectedAt: newApplication.rejectedAt,
+          paymentStatus: newApplication.paymentStatus,
+          paidAt: newApplication.paidAt,
+        });
+        setMockScholarshipApplications(prev =>
+          prev.map(app => (app.id === newApplication.id ? { ...app, ...saved } : app))
+        );
+      } catch {
+        // Keep optimistic entry in memory even if persistence fails.
+      }
+    })();
   };
 
   const updateScholarshipStatus = (applicationId: string, status: 'APPROVED' | 'REJECTED') => {
@@ -1236,6 +1581,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         rejectedAt: status === 'REJECTED' ? now : app.rejectedAt,
       };
     }));
+
+    void (async () => {
+      try {
+        const result = await updateScholarshipStatusAction({ applicationId, status });
+        if (result?.success && result.scholarship) {
+          setMockScholarshipApplications(prev =>
+            prev.map(app => (app.id === applicationId ? { ...app, ...result.scholarship } : app))
+          );
+        }
+      } catch {
+        // Keep optimistic state in memory if persistence fails.
+      }
+    })();
   };
 
   const markScholarshipAsPaid = (applicationId: string) => {
@@ -1243,6 +1601,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockScholarshipApplications(prev => prev.map(app => app.id === applicationId
       ? { ...app, paymentStatus: 'PAID', paidAt: now }
       : app));
+
+    void (async () => {
+      try {
+        const result = await markScholarshipPaidAction(applicationId);
+        if (result?.success && result.scholarship) {
+          setMockScholarshipApplications(prev =>
+            prev.map(app => (app.id === applicationId ? { ...app, ...result.scholarship } : app))
+          );
+        }
+      } catch {
+        // Keep optimistic state in memory if persistence fails.
+      }
+    })();
   };
 
   const addDonationCause = (cause: { names: { he: string; en: string }; descriptions: { he: string; en: string }; category: DonationCauseCategory; targetAmountILS?: number; }): DonationCause => {
@@ -1258,6 +1629,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       raisedAmountILS: 0,
     };
     setMockDonationCauses(prev => [...prev, newCause]);
+
+    void (async () => {
+      try {
+        const saved = await createDonationCauseAction({
+          id: newCause.id,
+          conservatoriumId: newCause.conservatoriumId,
+          names: { ...newCause.names, ru: newCause.names.en, ar: newCause.names.en },
+          descriptions: newCause.descriptions,
+          category: newCause.category,
+          priority: newCause.priority,
+          isActive: newCause.isActive,
+          targetAmountILS: newCause.targetAmountILS,
+          raisedAmountILS: newCause.raisedAmountILS,
+          imageUrl: newCause.imageUrl,
+        });
+        setMockDonationCauses(prev =>
+          prev.map(item => (item.id === newCause.id ? { ...item, ...saved } : item))
+        );
+      } catch {
+        // Keep optimistic entry in memory even if persistence fails.
+      }
+    })();
+
     return newCause;
   };
 
@@ -1279,6 +1673,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockDonationCauses(prev => prev.map(cause => cause.id === donation.causeId
       ? { ...cause, raisedAmountILS: cause.raisedAmountILS + donation.amountILS }
       : cause));
+
+    void (async () => {
+      try {
+        const saved = await recordDonationAction({
+          id: newDonation.id,
+          conservatoriumId: newDonation.conservatoriumId,
+          causeId: newDonation.causeId,
+          amountILS: newDonation.amountILS,
+          frequency: newDonation.frequency,
+          donorName: newDonation.donorName,
+          donorEmail: newDonation.donorEmail,
+          donorId: newDonation.donorId,
+          status: newDonation.status,
+          createdAt: newDonation.createdAt,
+        });
+        setMockDonations(prev =>
+          prev.map(item => (item.id === newDonation.id ? { ...item, ...saved } : item))
+        );
+      } catch {
+        // Keep optimistic state in memory if persistence fails.
+      }
+    })();
 
     return newDonation;
   };
@@ -1327,6 +1743,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (existing) {
       const merged = { ...existing, ...payload } as Alumnus;
       setMockAlumni((prev) => prev.map((item) => (item.userId === payload.userId ? merged : item)));
+      void saveAlumnus(merged)
+        .then((serverAlumnus) => {
+          setMockAlumni((prev) => prev.map((item) => (item.userId === payload.userId ? serverAlumnus : item)));
+        })
+        .catch((error) => {
+          console.warn('Failed to persist alumni profile', error);
+        });
       return merged;
     }
 
@@ -1348,6 +1771,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     setMockAlumni((prev) => [created, ...prev]);
+    void saveAlumnus(created)
+      .then((serverAlumnus) => {
+        setMockAlumni((prev) => prev.map((item) => (item.userId === payload.userId ? serverAlumnus : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist alumni profile', error);
+      });
     return created;
   };
 
@@ -1356,8 +1786,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const created: Masterclass = {
       id: payload.id || ('mc-' + Date.now()),
       conservatoriumId: payload.conservatoriumId || user?.conservatoriumId || 'cons-15',
-      title: payload.title || { he: payload.instrument || '???? ???', en: payload.instrument || 'Master Class' },
-      description: payload.description || { he: '????? ?????? ?????', en: 'Description will be added soon' },
+      title: payload.title || { he: payload.instrument || 'Master class', en: payload.instrument || 'Master Class' },
+      description: payload.description || { he: 'Description will be added soon', en: 'Description will be added soon' },
       instructor: payload.instructor || {
         userId: user?.id || 'unknown',
         displayName: user?.name || 'Instructor',
@@ -1382,6 +1812,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     setMockMasterclasses((prev) => [created, ...prev]);
+    void createMasterClassAction(created)
+      .then((serverMasterClass) => {
+        setMockMasterclasses((prev) => prev.map((item) => (item.id === created.id ? serverMasterClass : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist master class', error);
+      });
     return created;
   };
 
@@ -1389,9 +1826,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockMasterclasses((prev) => prev.map((item) =>
       item.id === masterClassId ? { ...item, status: 'published' } : item
     ));
+    void publishMasterClassAction(masterClassId)
+      .then((serverMasterClass) => {
+        setMockMasterclasses((prev) => prev.map((item) => (item.id === masterClassId ? serverMasterClass : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to publish master class', error);
+      });
   };
 
-  const registerToMasterClass = (masterClassId: string, studentId: string) => {
+  const registerToMasterClass = async (masterClassId: string, studentId: string) => {
     const target = mockMasterclasses.find((item) => item.id === masterClassId);
     const student = users.find((item) => item.id === studentId);
     if (!target || !student) return { success: false, reason: 'not_found' };
@@ -1431,7 +1875,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const nextAllowance = isPartOfPackage && allowance ? Math.max(0, allowance.remaining - 1) : allowance?.remaining;
-    return { success: true, chargedILS: 0, remaining: nextAllowance };
+    const optimisticResult = { success: true, chargedILS: 0, remaining: nextAllowance };
+    try {
+      const serverResult = await registerToMasterClassAction({
+        masterClassId,
+        studentId,
+        allowances: mockMasterClassAllowances,
+      });
+      if (!serverResult.success) {
+        console.warn('Master class registration rejected by server', serverResult.reason);
+        return serverResult;
+      }
+      setMockMasterclasses((prev) => prev.map((item) =>
+        item.id === masterClassId ? serverResult.masterClass : item
+      ));
+      setMockMasterClassAllowances(serverResult.allowances);
+      return { success: true, chargedILS: serverResult.chargedILS, remaining: serverResult.remaining };
+    } catch (error) {
+      console.warn('Failed to persist master class registration', error);
+      return optimisticResult;
+    }
   };
   const markWalkthroughAsSeen = (userId: string) => {
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, hasSeenWalkthrough: true } : u));
@@ -1447,7 +1910,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const isConservatoriumAdmin = userData.role === 'conservatorium_admin' || userData.role === 'delegated_admin';
     const newUser: User = {
       id: `user-${Date.now()}`,
-      approved: isAdminFlow, // Admins auto-approve
+      approved: isAdminFlow,
       avatarUrl: userData.avatarUrl || ('https://i.pravatar.cc/150?u=' + Date.now()),
       achievements: [],
       registrationSource: userData.registrationSource || (isAdminFlow ? 'admin_created' : 'email'),
@@ -1458,25 +1921,60 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ...userData,
     } as User;
     setUsers(prev => [...prev, newUser]);
+
+    void upsertUserAction(newUser)
+      .then((saved) => {
+        setUsers(prev => prev.map(item => item.id === newUser.id ? saved : item));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist new user', error);
+      });
+
     return newUser;
   };
 
   const addBranch = (branchData: Partial<Branch>) => {
     const newBranch: Branch = {
-      id: `branch-${Date.now()}`,
-      ...branchData
-    } as Branch;
+      id: branchData.id || `branch-${Date.now()}`,
+      conservatoriumId: branchData.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      name: branchData.name || 'Branch',
+      address: branchData.address || '',
+    };
     setMockBranches(prev => [...prev, newBranch]);
+
+    void createBranchAction(newBranch)
+      .then((saved) => {
+        setMockBranches(prev => prev.map(item => (item.id === newBranch.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist branch', error);
+      });
   };
 
   const updateBranch = (updatedBranch: Branch) => {
     setMockBranches(prev => prev.map(b => b.id === updatedBranch.id ? updatedBranch : b));
+
+    void updateBranchAction(updatedBranch)
+      .then((saved) => {
+        setMockBranches(prev => prev.map(item => (item.id === saved.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist branch update, retrying as create', error);
+        void createBranchAction({ ...updatedBranch, id: updatedBranch.id })
+          .then((saved) => {
+            setMockBranches(prev => prev.map(item => (item.id === updatedBranch.id ? saved : item)));
+          })
+          .catch((createError) => {
+            console.warn('Failed to create branch during update fallback', createError);
+          });
+      });
   };
 
   const addConservatoriumInstrument = (instrumentData: Partial<ConservatoriumInstrument>) => {
     const newInstrument: ConservatoriumInstrument = {
       id: instrumentData.id || `cons-inst-${Date.now()}`,
       conservatoriumId: instrumentData.conservatoriumId || user?.conservatoriumId || 'cons-15',
+      instrumentCatalogId: instrumentData.instrumentCatalogId,
       names: instrumentData.names || { he: '', en: '' },
       isActive: instrumentData.isActive ?? true,
       teacherCount: instrumentData.teacherCount ?? 0,
@@ -1484,14 +1982,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       availableForRental: instrumentData.availableForRental ?? true,
     };
     setConservatoriumInstruments(prev => [...prev, newInstrument]);
+
+    void createConservatoriumInstrumentAction(newInstrument)
+      .then((saved) => {
+        setConservatoriumInstruments(prev => prev.map(item => (item.id === newInstrument.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist conservatorium instrument', error);
+      });
   };
 
   const updateConservatoriumInstrument = (instrumentId: string, instrumentData: Partial<ConservatoriumInstrument>) => {
     setConservatoriumInstruments(prev => prev.map(item => item.id === instrumentId ? { ...item, ...instrumentData } : item));
+
+    const snapshot = conservatoriumInstruments.find((item) => item.id === instrumentId);
+    if (!snapshot) return;
+
+    void updateConservatoriumInstrumentAction({ ...snapshot, ...instrumentData, id: instrumentId })
+      .then((saved) => {
+        setConservatoriumInstruments(prev => prev.map(item => (item.id === instrumentId ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist conservatorium instrument update, retrying as create', error);
+        void createConservatoriumInstrumentAction({ ...snapshot, ...instrumentData, id: instrumentId })
+          .then((saved) => {
+            setConservatoriumInstruments(prev => prev.map(item => (item.id === instrumentId ? saved : item)));
+          })
+          .catch((createError) => {
+            console.warn('Failed to create conservatorium instrument during update fallback', createError);
+          });
+      });
   };
 
   const deleteConservatoriumInstrument = (instrumentId: string) => {
     setConservatoriumInstruments(prev => prev.filter(item => item.id !== instrumentId));
+
+    void deleteConservatoriumInstrumentAction(instrumentId)
+      .catch((error) => {
+        console.warn('Failed to delete conservatorium instrument', error);
+      });
   };
 
   const addLessonPackage = (packageData: Partial<LessonPackage>) => {
@@ -1505,22 +2034,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       priceILS: packageData.priceILS || 0,
       isActive: packageData.isActive ?? true,
       instruments: packageData.instruments || [],
+      conservatoriumInstrumentIds: packageData.conservatoriumInstrumentIds,
+      instrumentCatalogIds: packageData.instrumentCatalogIds,
       notes: packageData.notes,
     };
     setLessonPackages(prev => [...prev, newPackage]);
+
+    void createLessonPackageAction(newPackage)
+      .then((saved) => {
+        setLessonPackages(prev => prev.map(item => (item.id === newPackage.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson package', error);
+      });
   };
 
   const updateLessonPackage = (packageId: string, packageData: Partial<LessonPackage>) => {
     setLessonPackages(prev => prev.map(item => item.id === packageId ? { ...item, ...packageData } : item));
+
+    const snapshot = lessonPackages.find((item) => item.id === packageId);
+    if (!snapshot) return;
+
+    void updateLessonPackageAction({ ...snapshot, ...packageData, id: packageId })
+      .then((saved) => {
+        setLessonPackages(prev => prev.map(item => (item.id === packageId ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist lesson package update, retrying as create', error);
+        void createLessonPackageAction({ ...snapshot, ...packageData, id: packageId })
+          .then((saved) => {
+            setLessonPackages(prev => prev.map(item => (item.id === packageId ? saved : item)));
+          })
+          .catch((createError) => {
+            console.warn('Failed to create lesson package during update fallback', createError);
+          });
+      });
   };
 
   const deleteLessonPackage = (packageId: string) => {
     setLessonPackages(prev => prev.filter(item => item.id !== packageId));
+
+    void deleteLessonPackageAction(packageId)
+      .catch((error) => {
+        console.warn('Failed to delete lesson package', error);
+      });
   };
 
   const addRoom = (roomData: Partial<Room>) => {
     const newRoom: Room = {
-      id: `room-${Date.now()}`,
+      id: roomData.id || `room-${Date.now()}`,
       conservatoriumId: roomData.conservatoriumId || user?.conservatoriumId || 'cons-15',
       branchId: roomData.branchId || mockBranches[0]?.id || 'branch-1',
       name: roomData.name || 'Room',
@@ -1534,16 +2096,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     setMockRooms(prev => [...prev, newRoom]);
     toast({ title: 'Room added successfully' });
+
+    void createRoomAction(newRoom)
+      .then((saved) => {
+        setMockRooms(prev => prev.map(item => (item.id === newRoom.id ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist room', error);
+      });
   };
 
   const updateRoom = (roomId: string, roomData: Partial<Room>) => {
     setMockRooms(prev => prev.map(r => r.id === roomId ? { ...r, ...roomData } : r));
-    toast({ title: '×¤×¨×˜×™ ×”×—×“×¨ ×¢×•×“×›× ×•' });
+    toast({ title: 'Room details updated' });
+
+    const snapshot = mockRooms.find((room) => room.id === roomId);
+    if (!snapshot) return;
+
+    void updateRoomAction({ ...snapshot, ...roomData, id: roomId })
+      .then((saved) => {
+        setMockRooms(prev => prev.map(item => (item.id === roomId ? saved : item)));
+      })
+      .catch((error) => {
+        console.warn('Failed to persist room update, retrying as create', error);
+        void createRoomAction({ ...snapshot, ...roomData, id: roomId })
+          .then((saved) => {
+            setMockRooms(prev => prev.map(item => (item.id === roomId ? saved : item)));
+          })
+          .catch((createError) => {
+            console.warn('Failed to create room during update fallback', createError);
+          });
+      });
   };
 
   const deleteRoom = (roomId: string) => {
     setMockRooms(prev => prev.filter(r => r.id !== roomId));
-    toast({ title: '×”×—×“×¨ × ×ž×—×§' });
+    toast({ title: 'Room deleted' });
+
+    void deleteRoomAction(roomId)
+      .catch((error) => {
+        console.warn('Failed to delete room', error);
+      });
   };
 
   const assignRepertoire = (studentIds: string | string[], compositionId: string) => {
@@ -1577,40 +2170,71 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     users,
     mockFormSubmissions,
-    compositions: initialMockData.compositions,
+    formSubmissions: mockFormSubmissions,
+    compositions: mockRepertoire,
     mockLessons,
+    lessons: mockLessons,
     mockPackages,
+    packages: mockPackages,
     mockInvoices,
+    invoices: mockInvoices,
     mockPracticeLogs,
+    practiceLogs: mockPracticeLogs,
     mockAssignedRepertoire,
+    assignedRepertoire: mockAssignedRepertoire,
     mockLessonNotes,
+    lessonNotes: mockLessonNotes,
     mockMessageThreads,
+    messageThreads: mockMessageThreads,
     mockProgressReports,
+    progressReports: mockProgressReports,
     mockAnnouncements,
+    announcements: mockAnnouncements,
     mockFormTemplates,
+    formTemplates: mockFormTemplates,
     mockAuditLog,
+    auditLog: mockAuditLog,
     mockPlayingSchoolInvoices,
+    playingSchoolInvoices: mockPlayingSchoolInvoices,
     mockEvents,
+    events: mockEvents,
     mockInstrumentInventory,
+    instrumentInventory: mockInstrumentInventory,
     mockInstrumentRentals,
+    instrumentRentals: mockInstrumentRentals,
     mockPerformanceBookings,
+    performanceBookings: mockPerformanceBookings,
     mockScholarshipApplications,
+    scholarshipApplications: mockScholarshipApplications,
     mockDonationCauses,
+    donationCauses: mockDonationCauses,
     mockDonations,
+    donations: mockDonations,
     mockOpenDayEvents,
+    openDayEvents: mockOpenDayEvents,
     mockOpenDayAppointments,
+    openDayAppointments: mockOpenDayAppointments,
     mockPracticeVideos,
+    practiceVideos: mockPracticeVideos,
     mockAlumni,
+    alumni: mockAlumni,
     mockMasterclasses,
+    masterClasses: mockMasterclasses,
     mockMasterClassAllowances,
+    masterClassAllowances: mockMasterClassAllowances,
     mockMakeupCredits,
+    makeupCredits: mockMakeupCredits,
     mockRepertoire,
+    repertoire: mockRepertoire,
     conservatoriums,
     conservatoriumInstruments,
     lessonPackages,
     mockBranches,
+    branches: mockBranches,
     mockWaitlist,
+    waitlist: mockWaitlist,
     mockPayrolls,
+    payrolls: mockPayrolls,
     login,
     logout,
     approveUser,
@@ -1679,6 +2303,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateLessonPackage,
     deleteLessonPackage,
     mockRooms,
+    rooms: mockRooms,
     addRoom,
     updateRoom,
     deleteRoom,
@@ -1718,6 +2343,16 @@ export const useAuth = () => {
   }
   return context;
 };
+
+
+
+
+
+
+
+
+
+
 
 
 

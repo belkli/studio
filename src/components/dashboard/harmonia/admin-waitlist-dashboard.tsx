@@ -38,12 +38,12 @@ export function AdminWaitlistDashboard() {
     const tCommon = useTranslations('Common');
     const dateLocale = useDateLocale();
 
-    const { user, mockWaitlist, updateWaitlistStatus, users } = useAuth();
+    const { user, waitlist: waitlistEntries, updateWaitlistStatus, users } = useAuth();
     const { toast } = useToast();
 
-    const waitlist = useMemo(() => {
+    const visibleWaitlist = useMemo(() => {
         if (!user) return [];
-        return mockWaitlist.map(entry => {
+        return waitlistEntries.map(entry => {
             const student = users.find(u => u.id === entry.studentId);
             const teacher = users.find(u => u.id === entry.teacherId);
             return {
@@ -53,7 +53,7 @@ export function AdminWaitlistDashboard() {
             }
         }).filter(entry => entry.status === 'WAITING' || entry.status === 'OFFERED')
             .sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
-    }, [user, mockWaitlist, users, t]);
+    }, [user, waitlistEntries, users, t]);
 
     const handleOffer = (entryId: string, studentName: string) => {
         updateWaitlistStatus(entryId, 'OFFERED');
@@ -90,7 +90,7 @@ export function AdminWaitlistDashboard() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {waitlist.length === 0 ? (
+                        {visibleWaitlist.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="p-0">
                                     <EmptyState
@@ -102,7 +102,7 @@ export function AdminWaitlistDashboard() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            waitlist.map(entry => (
+                            visibleWaitlist.map(entry => (
                                 <TableRow key={entry.id}>
                                     <TableCell className="font-medium">{entry.studentName}</TableCell>
                                     <TableCell>{entry.teacherName}</TableCell>

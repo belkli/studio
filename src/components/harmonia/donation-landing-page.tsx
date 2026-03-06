@@ -40,7 +40,7 @@ export function DonationLandingPage() {
     const t = useTranslations('DonatePage');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const { mockDonationCauses, recordDonation, user } = useAuth();
+    const { donationCauses, recordDonation, user } = useAuth();
     const heroImage = PlaceHolderImages.find(img => img.id === 'donate-hero');
     const [amountChoice, setAmountChoice] = useState('250');
     const [customAmount, setCustomAmount] = useState('');
@@ -63,10 +63,10 @@ export function DonationLandingPage() {
 
     const activeCauses = useMemo(() => {
         const selectedConservatoriumId = user?.conservatoriumId || 'cons-15';
-        return mockDonationCauses
+        return donationCauses
             .filter((cause) => cause.isActive && cause.conservatoriumId === selectedConservatoriumId)
             .sort((a, b) => a.priority - b.priority);
-    }, [mockDonationCauses, user?.conservatoriumId]);
+    }, [donationCauses, user?.conservatoriumId]);
 
 
     const handleDonateSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

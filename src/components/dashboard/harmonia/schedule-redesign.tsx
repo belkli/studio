@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useLocale, useTranslations } from 'next-intl';
 import type { LessonSlot } from '@/lib/types';
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 const timeSlots = Array.from({ length: 13 }, (_, index) => `${String(index + 8).padStart(2, '0')}:00`);
 
@@ -31,7 +32,7 @@ function formatWeekRange(weekStart: Date, localeDate: Locale) {
 }
 
 export function ScheduleRedesign() {
-  const { user, users, mockLessons, mockRooms } = useAuth();
+  const { user, users, lessons, rooms, conservatoriumInstruments } = useAuth();
   const t = useTranslations('AdminPages.schedule');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -45,22 +46,22 @@ export function ScheduleRedesign() {
 
   const allTeachers = useMemo(() => users.filter((entry) => entry.role === 'teacher'), [users]);
   const allInstruments = useMemo(() => {
-    const values = Array.from(new Set(mockLessons.map((lesson) => lesson.instrument))).filter(Boolean);
+    const values = Array.from(new Set(lessons.map((lesson) => lesson.instrument))).filter(Boolean);
     return values.sort((a, b) => a.localeCompare(b));
-  }, [mockLessons]);
+  }, [lessons]);
 
   const weekStart = parseISO(`${weekStartRaw}T00:00:00`);
   const weekEnd = addDays(weekStart, 6);
 
   const relevantLessons = useMemo(() => {
     if (!user) return [];
-    return mockLessons.filter((lesson) => {
+    return lessons.filter((lesson) => {
       if (user.role === 'student') return lesson.studentId === user.id;
       if (user.role === 'parent') return user.childIds?.includes(lesson.studentId) || false;
       if (user.role === 'teacher') return lesson.teacherId === user.id;
       return true;
     });
-  }, [mockLessons, user]);
+  }, [lessons, user]);
 
   const filteredLessons = useMemo(() => {
     return relevantLessons
@@ -69,17 +70,17 @@ export function ScheduleRedesign() {
         return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
       })
       .filter((lesson) => (teacherFilter === 'all' ? true : lesson.teacherId === teacherFilter))
-      .filter((lesson) => (instrumentFilter === 'all' ? true : lesson.instrument === instrumentFilter))
+      .filter((lesson) => userHasInstrument([lesson.instrument], instrumentFilter, conservatoriumInstruments, lesson.conservatoriumId))
       .filter((lesson) => (roomFilter === 'all' ? true : (lesson.roomId || '') === roomFilter))
       .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-  }, [instrumentFilter, relevantLessons, roomFilter, teacherFilter, weekEnd, weekStart]);
+  }, [conservatoriumInstruments, instrumentFilter, relevantLessons, roomFilter, teacherFilter, weekEnd, weekStart]);
 
   const weekDays = useMemo(() => Array.from({ length: 6 }, (_, index) => addDays(weekStart, index)), [weekStart]);
 
   const lessonMeta = (lesson: LessonSlot) => {
     const teacher = users.find((entry) => entry.id === lesson.teacherId)?.name || t('unknown');
     const student = users.find((entry) => entry.id === lesson.studentId)?.name || t('unknown');
-    const room = mockRooms.find((entry) => entry.id === lesson.roomId)?.name || lesson.roomId || t('notAssigned');
+    const room = rooms.find((entry) => entry.id === lesson.roomId)?.name || lesson.roomId || t('notAssigned');
     return { teacher, student, room };
   };
 
@@ -176,7 +177,7 @@ export function ScheduleRedesign() {
           <SelectTrigger className="w-[200px]"><SelectValue placeholder={t('filterRoom')} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('allRooms')}</SelectItem>
-            {mockRooms.map((room) => <SelectItem key={room.id} value={room.id}>{room.name}</SelectItem>)}
+            {rooms.map((room) => <SelectItem key={room.id} value={room.id}>{room.name}</SelectItem>)}
           </SelectContent>
         </Select>
 

@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 export function AdminBranchesDashboard() {
     const t = useTranslations('Branches');
     const tCommon = useTranslations('Common');
-    const { user, mockBranches, addBranch, updateBranch, conservatoriums } = useAuth();
+    const { user, branches, addBranch, updateBranch, conservatoriums } = useAuth();
     const { toast } = useToast();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,9 +26,9 @@ export function AdminBranchesDashboard() {
 
     const conservatoriumBranches = useMemo(() => {
         if (!user) return [];
-        if (user.role === 'site_admin') return mockBranches;
-        return mockBranches.filter(b => b.conservatoriumId === user.conservatoriumId);
-    }, [user, mockBranches]);
+        if (user.role === 'site_admin') return branches;
+        return branches.filter(b => b.conservatoriumId === user.conservatoriumId);
+    }, [user, branches]);
 
     const handleAddClick = () => {
         setEditingBranch(null);

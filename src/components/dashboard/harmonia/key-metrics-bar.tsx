@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 export function KeyMetricsBar() {
     const t = useTranslations('KeyMetrics');
     const alerts = useAdminAlerts();
-    const { users, mockLessons, mockFormSubmissions } = useAuth();
+    const { users, lessons, formSubmissions } = useAuth();
 
     const stats = useMemo(() => {
         const activeStudents = users.filter(u => u.role === 'student' && u.approved).length;
@@ -18,15 +18,15 @@ export function KeyMetricsBar() {
         const weekStart = startOfWeek(today, { weekStartsOn: 0 }); // Sunday
         const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
 
-        const lessonsThisWeek = mockLessons.filter(l => {
+        const lessonsThisWeek = lessons.filter(l => {
             const lessonDate = new Date(l.startTime);
             return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
         }).length;
 
-        const pendingForms = mockFormSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
+        const pendingForms = formSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
 
         return { activeStudents, lessonsThisWeek, pendingForms };
-    }, [users, mockLessons, mockFormSubmissions]);
+    }, [users, lessons, formSubmissions]);
 
 
     const metrics = [

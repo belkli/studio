@@ -22,5 +22,49 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test -- --run
+
       - name: Validate translations
         run: npm run i18n:audit
+
+  db-setup:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: harmonia
+          POSTGRES_PASSWORD: harmonia_pass
+          POSTGRES_DB: harmonia_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U harmonia -d harmonia_dev"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://harmonia:harmonia_pass@localhost:5432/harmonia_dev
+      DB_BACKEND: postgres
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Greenfield DB setup
+        run: npm run db:reset

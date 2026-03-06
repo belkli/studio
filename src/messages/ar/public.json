@@ -181,8 +181,8 @@
     "submitButton": "تبرع بـ {amount}₪",
     "chooseCause": "اختر أين يذهب تبرعك",
     "chooseCauseHint": "حدد سببًا محددًا أو تبرع للصندوق العام.",
-    "generalFund": "?????? ????",
-    "generalFundDesc": "???? ??????? ????? ??????? ??? ??????? ????????? ??? ???????? ?????? ???????.",
+    "generalFund": "المساهمة العامة",
+    "generalFundDesc": "يدعم التوزيع المرن والعادل عبر المعاهد الموسيقية بناءً على احتياجات الطلاب الحقيقية.",
     "raisedProgress": "أثار: {percent}% من الهدف"
   },
   "PublicEventPage": {
@@ -238,34 +238,34 @@
     "welcomeMessage": "أهلاً! أنا هارموني، مساعد الذكاء الاصطناعي. كيف يمكنني مساعدتك اليوم؟",
     "quickQuestions": {
       "default": {
-        "cancelLesson": "How do I cancel a lesson?",
-        "makeupBalance": "Where can I see my makeup lesson balance?",
-        "recitalForm": "How do I submit a recital form?",
-        "updateAvailability": "How do I update my availability? (teachers)"
+        "cancelLesson": "كيف يمكنني إلغاء الدرس؟",
+        "makeupBalance": "أين يمكنني رؤية رصيد درس الماكياج الخاص بي؟",
+        "recitalForm": "كيف يمكنني تقديم نموذج الحيثية؟",
+        "updateAvailability": "كيف أقوم بتحديث التوفر الخاص بي؟ (المعلمين)"
       },
       "schedule": {
-        "bookMakeup": "How do I book a makeup lesson?",
-        "cancelNextWeek": "Can I cancel next week's lesson?",
-        "cancellationPolicy": "What is the conservatory cancellation policy?",
-        "syncCalendar": "How can I sync my calendar?"
+        "bookMakeup": "كيف أحجز درس مكياج؟",
+        "cancelNextWeek": "هل يمكنني إلغاء درس الأسبوع المقبل؟",
+        "cancellationPolicy": "ما هي سياسة إلغاء المعهد الموسيقي؟",
+        "syncCalendar": "كيف يمكنني مزامنة التقويم الخاص بي؟"
       },
       "billing": {
-        "invoices": "Where can I find my invoices?",
-        "updateCard": "How do I update my payment card?",
-        "nextCharge": "When is my next charge due?",
-        "siblingDiscount": "How does sibling discount work?"
+        "invoices": "أين يمكنني العثور على فواتيري؟",
+        "updateCard": "كيف أقوم بتحديث بطاقة الدفع الخاصة بي؟",
+        "nextCharge": "متى يحين موعد استحقاق الرسوم التالية؟",
+        "siblingDiscount": "كيف يعمل خصم الأخوة؟"
       },
       "forms": {
-        "approveRecital": "How long does recital form approval take?",
-        "rejectedForm": "My form was rejected, what should I do?",
-        "downloadPdf": "How do I download approved form PDF?",
-        "whoApproves": "Who needs to approve my form?"
+        "approveRecital": "كم من الوقت تستغرق الموافقة على نموذج الحيثية؟",
+        "rejectedForm": "تم رفض استمارتي، ماذا علي أن أفعل؟",
+        "downloadPdf": "كيف يمكنني تنزيل النموذج المعتمد PDF؟",
+        "whoApproves": "من يحتاج إلى الموافقة على النموذج الخاص بي؟"
       },
       "admin": {
-        "approveEnrollment": "How do I approve a new student enrollment?",
-        "packagePricing": "Where do I configure package pricing?",
-        "sendAnnouncement": "How do I send an announcement to all parents?",
-        "financialReports": "Where can I view financial reports?"
+        "approveEnrollment": "كيف يمكنني الموافقة على تسجيل طالب جديد؟",
+        "packagePricing": "أين يمكنني تكوين تسعير الحزمة؟",
+        "sendAnnouncement": "كيف أرسل إعلانًا لجميع أولياء الأمور؟",
+        "financialReports": "أين يمكنني الاطلاع على التقارير المالية؟"
       }
     }
   },

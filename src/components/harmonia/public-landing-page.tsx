@@ -14,7 +14,8 @@ import { useAuth } from '@/hooks/use-auth';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Conservatorium, ConservatoriumInstrument, EventProduction, User } from '@/lib/types';
-import { Search, ClipboardList, Music, CalendarDays, CalendarClock, UserRound } from 'lucide-react';
+import { Search, ClipboardList, Music, CalendarDays, CalendarClock, UserRound, Star } from 'lucide-react';
+import { collectInstrumentTokensFromConservatoriumInstrument, collectInstrumentTokensFromTeacherInstrument, tokenSetsIntersect } from '@/lib/instrument-matching';
 
 const LANDING_HERO_IMAGE =
   'https://images.unsplash.com/photo-1460036521480-ff49c08c2781?q=80&w=2200&auto=format&fit=crop';
@@ -24,7 +25,7 @@ export function PublicLandingPage() {
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const router = useRouter();
-  const { conservatoriums, conservatoriumInstruments, users, mockEvents } = useAuth();
+  const { conservatoriums, conservatoriumInstruments, users, events } = useAuth();
 
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');
@@ -67,28 +68,76 @@ export function PublicLandingPage() {
 
   const featuredTeachers = useMemo(() => {
     const seen = new Set<string>();
+    const cityQuery = city.trim().toLowerCase();
+    const selectedInstrument = conservatoriumInstruments.find((inst) => inst.id === instrumentId);
+    const selectedInstrumentTokens = selectedInstrument
+      ? collectInstrumentTokensFromConservatoriumInstrument(selectedInstrument)
+      : new Set<string>();
+
+    const conservatoriumCityById = new Map(
+      uniqueConservatoriums.map((cons) => [cons.id, (cons.location?.city || '').toLowerCase()])
+    );
+
     const teachers = users
       .filter((user) => user.role === 'teacher' && user.approved)
-      .map((user) => getLocalizedUserProfile(user, locale) as User & { localizedRole?: string })
+      .map((user) => getLocalizedUserProfile(user, locale) as User & { localizedRole?: string; localizedBio?: string })
       .filter((user) => {
         if (seen.has(user.id)) return false;
         seen.add(user.id);
-        return true;
-      });
+        return user.availableForNewStudents !== false;
+      })
+      .map((teacher) => {
+        const teacherTokens = new Set<string>();
+        (teacher.instruments || []).forEach((item) => {
+          collectInstrumentTokensFromTeacherInstrument(
+            item.instrument,
+            conservatoriumInstruments,
+            teacher.conservatoriumId
+          ).forEach((token) => teacherTokens.add(token));
+        });
+
+        const hasInstrumentMatch =
+          selectedInstrumentTokens.size === 0 || tokenSetsIntersect(selectedInstrumentTokens, teacherTokens);
+
+        const teacherCity = (teacher.city || '').toLowerCase();
+        const conservatoriumCity = conservatoriumCityById.get(teacher.conservatoriumId) || '';
+        const hasCityMatch = !cityQuery || teacherCity.includes(cityQuery) || conservatoriumCity.includes(cityQuery);
+
+        let score = 0;
+        if (teacher.availableForNewStudents !== false) score += 80;
+        if (hasInstrumentMatch && selectedInstrumentTokens.size > 0) score += 40;
+        if (hasCityMatch && cityQuery) score += 30;
+        if (Array.isArray(teacher.availability) && teacher.availability.length > 0) score += 20;
+        if (typeof teacher.teacherRatingAvg === 'number') score += teacher.teacherRatingAvg * 15;
+        if (typeof teacher.teacherRatingCount === 'number') score += Math.min(teacher.teacherRatingCount, 20);
+        if ((teacher.localizedBio || teacher.bio || '').trim().length > 0) score += 10;
+        if (teacher.avatarUrl) score += 8;
+        if (Array.isArray(teacher.education) && teacher.education.length > 0) score += 5;
+
+        return {
+          teacher,
+          score,
+          hasCityMatch,
+          hasInstrumentMatch,
+        };
+      })
+      .filter((item) => item.hasCityMatch && item.hasInstrumentMatch)
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.teacher);
 
     return teachers.slice(0, 4);
-  }, [users, locale]);
+  }, [users, locale, city, instrumentId, conservatoriumInstruments, uniqueConservatoriums]);
 
   const upcomingEvents = useMemo(() => {
     const now = new Date();
-    return mockEvents
+    return events
       .filter((event) => {
         const when = new Date(event.eventDate);
         return Number.isFinite(when.getTime()) && when >= now;
       })
       .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())
       .slice(0, 3);
-  }, [mockEvents]);
+  }, [events]);
 
   const testimonials = useMemo(() => [t('testimonial1'), t('testimonial2'), t('testimonial3')], [t]);
 
@@ -266,6 +315,12 @@ export function PublicLandingPage() {
                     </Avatar>
                     <p className="mt-3 font-semibold">{teacher.name}</p>
                     <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{teacher.localizedRole || teacher.role || t('teacherFallback')}</p>
+                    {typeof teacher.teacherRatingAvg === 'number' && (teacher.teacherRatingCount || 0) > 0 && (
+                      <p className="mt-2 flex items-center justify-center gap-1 text-sm text-amber-600">
+                        <Star className="h-4 w-4 fill-current" />
+                        <span>{teacher.teacherRatingAvg.toFixed(1)} ({teacher.teacherRatingCount})</span>
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               ))}

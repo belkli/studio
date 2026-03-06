@@ -13,12 +13,12 @@ function getSourceLabel(
   return t('sources.defaults');
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
   const t = useTranslations('PrivacyPage');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
 
-  const privacyRows = getConservatoriumStatementContacts('privacy').map((row) => {
+  const privacyRows = (await getConservatoriumStatementContacts('privacy')).map((row) => {
     const localized = getLocalizedConservatorium(row.conservatorium, locale);
     const conservatoriumName =
       locale === 'en' && row.conservatorium.nameEn

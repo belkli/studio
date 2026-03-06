@@ -21,7 +21,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
-import { instruments, mockTeachers } from "@/lib/data";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 
 const getTrialSchema = (t: ReturnType<typeof useTranslations>) => z.object({
@@ -44,7 +43,7 @@ export function TrialBookingWidget() {
     const locale = useLocale();
     const dateLocale = useDateLocale();
     const { toast } = useToast();
-    const { addLesson, users } = useAuth();
+    const { users, conservatoriumInstruments } = useAuth();
 
     const steps = [
         { id: 'instrument', title: t('steps.instrument') },
@@ -202,7 +201,20 @@ export function TrialBookingWidget() {
         );
     }
 
-    const teacherOptions = mockTeachers.map(t => ({ value: t.id!, label: t.name! }));
+    const teacherOptions = users
+        .filter((candidate) => candidate.role === 'teacher')
+        .map((candidate) => ({ value: candidate.id, label: candidate.name }));
+
+    const instrumentOptions = (() => {
+        const fromDb = conservatoriumInstruments
+            .map((entry) => entry.names.he || entry.names.en)
+            .filter(Boolean) as string[];
+        const fromTeachers = users
+            .flatMap((candidate) => (candidate.instruments || []).map((inst) => inst.instrument))
+            .filter(Boolean);
+        const source = fromDb.length > 0 ? fromDb : fromTeachers;
+        return Array.from(new Set(source)).map((name) => ({ value: name, label: name }));
+    })();
 
     return (
         <Card className="w-full max-w-3xl mx-4">
@@ -225,7 +237,7 @@ export function TrialBookingWidget() {
                                 transition={{ duration: 0.3 }}
                                 dir="rtl"
                             >
-                                {currentStep === 0 && <FormField name="instrument" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('instrument')}</FormLabel> <Combobox options={instruments.map(i => ({ value: i, label: i }))} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('instrumentPlaceholder')} /> <FormMessage /> </FormItem>)} />}
+                                {currentStep === 0 && <FormField name="instrument" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('instrument')}</FormLabel> <Combobox options={instrumentOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('instrumentPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 1 && <FormField name="teacherId" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('teacher')}</FormLabel> <Combobox options={teacherOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('teacherPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 2 && (
                                     <div className="grid md:grid-cols-2 gap-8">

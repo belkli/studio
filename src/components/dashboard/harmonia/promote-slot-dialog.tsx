@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useLocale } from 'next-intl';
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 
 
@@ -24,7 +25,7 @@ interface PromoteSlotDialogProps {
 }
 
 export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialogProps) {
-  const { users } = useAuth();
+  const { users, conservatoriumInstruments } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<TargetSlotsOutput['suggestions']>([]);
@@ -35,7 +36,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
     if (open && slot) {
       const fetchSuggestions = async () => {
         setIsLoading(true);
-        const eligibleRecipients = users.filter(u => u.role === 'student' && u.instruments?.some(i => i.instrument === slot.instrument));
+        const eligibleRecipients = users.filter((u) => u.role === 'student' && userHasInstrument((u.instruments || []).map((i) => i.instrument), slot.instrument, conservatoriumInstruments, u.conservatoriumId));
 
         const result = await getTargetedSlotSuggestions({
           emptySlot: {
@@ -65,7 +66,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
     } else {
       setSuggestions([]);
     }
-  }, [open, slot, users]);
+  }, [open, slot, users, conservatoriumInstruments]);
 
   const handleSendPromotions = () => {
     toast({

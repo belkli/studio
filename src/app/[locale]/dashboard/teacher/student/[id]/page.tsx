@@ -28,11 +28,11 @@ export default function TeacherStudentProfilePage() {
     const {
         user: teacher,
         users,
-        mockPracticeLogs,
-        mockAssignedRepertoire,
+        practiceLogs,
+        assignedRepertoire,
         compositions,
-        mockLessonNotes,
-        mockProgressReports,
+        lessonNotes,
+        progressReports,
         updateRepertoireStatus,
         addLessonNote,
         updateUserPracticeGoal,
@@ -60,25 +60,25 @@ export default function TeacherStudentProfilePage() {
 
     const studentLogs = useMemo(() => {
         if (!student) return [];
-        return mockPracticeLogs.filter(log => log.studentId === student.id);
-    }, [mockPracticeLogs, student]);
+        return practiceLogs.filter(log => log.studentId === student.id);
+    }, [practiceLogs, student]);
 
     const studentRepertoire = useMemo(() => {
         if (!student) return [];
-        return mockAssignedRepertoire.filter(rep => rep.studentId === student.id);
-    }, [mockAssignedRepertoire, student]);
+        return assignedRepertoire.filter(rep => rep.studentId === student.id);
+    }, [assignedRepertoire, student]);
 
     const studentNotes = useMemo(() => {
         if (!student) return [];
-        return mockLessonNotes.filter(note => note.studentId === student.id)
+        return lessonNotes.filter(note => note.studentId === student.id)
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }, [mockLessonNotes, student]);
+    }, [lessonNotes, student]);
 
     const studentReports = useMemo(() => {
         if (!student) return [];
-        return mockProgressReports.filter(report => report.studentId === student.id)
+        return progressReports.filter(report => report.studentId === student.id)
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }, [mockProgressReports, student]);
+    }, [progressReports, student]);
 
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();

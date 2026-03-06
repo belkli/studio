@@ -11,12 +11,12 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { conservatoriums, instruments } from '@/lib/data';
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 const ministryViewableStatuses: FormStatus[] = ['APPROVED', 'REVISION_REQUIRED', 'FINAL_APPROVED'];
 
 export default function MinistryDashboard() {
-  const { user, users, mockFormSubmissions: allForms } = useAuth();
+  const { user, users, conservatoriums, conservatoriumInstruments, formSubmissions: allForms } = useAuth();
   const t = useTranslations('Ministry');
   const tc = useTranslations('Common.shared');
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,7 +44,7 @@ export default function MinistryDashboard() {
       const conservatoriumMatch = filters.conservatorium === 'all' || form.conservatoriumName === filters.conservatorium;
       const gradeMatch = filters.grade === 'all' || form.grade === filters.grade;
       const statusMatch = filters.status === 'all' || form.status === filters.status;
-      const instrumentMatch = filters.instrument === 'all' || student?.instruments?.some(i => i.instrument === filters.instrument);
+      const instrumentMatch = userHasInstrument((student?.instruments || []).map((i) => i.instrument), filters.instrument, conservatoriumInstruments, student?.conservatoriumId);
 
       return searchMatch && typeMatch && conservatoriumMatch && gradeMatch && statusMatch && instrumentMatch;
     });
@@ -65,6 +65,14 @@ export default function MinistryDashboard() {
 
   const formTypes = Array.from(new Set(formsForMinistry.map(f => f.formType)));
   const grades = Array.from(new Set(formsForMinistry.map(f => f.grade).filter(Boolean) as string[])).sort();
+
+  const instrumentOptions = Array.from(
+    new Set(
+      conservatoriumInstruments
+        .map((entry) => entry.names.he || entry.names.en)
+        .filter(Boolean)
+    )
+  );
 
 
   return (
@@ -127,7 +135,7 @@ export default function MinistryDashboard() {
               <SelectTrigger><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t('allInstruments')}</SelectItem>
-                {instruments.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
+                {instrumentOptions.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

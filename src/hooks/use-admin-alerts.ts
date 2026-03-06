@@ -24,7 +24,7 @@ import { useTranslations } from 'next-intl';
 
 export function useAdminAlerts(): AdminAlert[] {
     const t = useTranslations('AdminAlerts');
-    const { users, mockLessons, mockPracticeLogs, mockInvoices } = useAuth();
+    const { users, lessons, practiceLogs, invoices } = useAuth();
     const dateLocale = useDateLocale();
 
     // Helper to get demand pattern
@@ -64,14 +64,14 @@ export function useAdminAlerts(): AdminAlert[] {
         // Alert 2: Student disengaged
         students.forEach(student => {
             const thirtyDaysAgo = subDays(new Date(), 30);
-            const noShows = mockLessons.filter(l =>
+            const noShows = lessons.filter(l =>
                 l.studentId === student.id &&
                 l.status === 'NO_SHOW_STUDENT' &&
                 l.attendanceMarkedAt &&
                 new Date(l.attendanceMarkedAt) > thirtyDaysAgo
             ).length;
 
-            const hasPracticed = mockPracticeLogs.some(p => p.studentId === student.id && new Date(p.date) > thirtyDaysAgo);
+            const hasPracticed = practiceLogs.some(p => p.studentId === student.id && new Date(p.date) > thirtyDaysAgo);
 
             if (noShows >= 2 && !hasPracticed) {
                 allAlerts.push({
@@ -88,8 +88,8 @@ export function useAdminAlerts(): AdminAlert[] {
 
         // Alert 3: Makeup backlog
         students.forEach(student => {
-            const grantedCredits = mockLessons.filter(l => l.studentId === student.id && (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM')).length;
-            const usedCredits = mockLessons.filter(l => l.studentId === student.id && l.type === 'MAKEUP').length;
+            const grantedCredits = lessons.filter(l => l.studentId === student.id && (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM')).length;
+            const usedCredits = lessons.filter(l => l.studentId === student.id && l.type === 'MAKEUP').length;
             const balance = grantedCredits - usedCredits;
 
             if (balance > 3) {
@@ -106,7 +106,7 @@ export function useAdminAlerts(): AdminAlert[] {
         });
 
         // Alert 4: Payment failure spike
-        const overdueInvoices = mockInvoices.filter(inv => inv.status === 'OVERDUE');
+        const overdueInvoices = invoices.filter(inv => inv.status === 'OVERDUE');
         if (overdueInvoices.length > 0) {
             allAlerts.push({
                 id: `payment-spike`,
@@ -120,7 +120,7 @@ export function useAdminAlerts(): AdminAlert[] {
         }
 
         // Alert 5: Substitute Needed
-        const lessonsNeedingSub = mockLessons.filter(l => l.status === 'CANCELLED_TEACHER' && isFuture(new Date(l.startTime)));
+        const lessonsNeedingSub = lessons.filter(l => l.status === 'CANCELLED_TEACHER' && isFuture(new Date(l.startTime)));
         if (lessonsNeedingSub.length > 0) {
             allAlerts.push({
                 id: 'substitute-needed',
@@ -150,14 +150,14 @@ export function useAdminAlerts(): AdminAlert[] {
                     const slotTime = setHours(date, hour);
                     if (!isAfter(slotTime, new Date())) continue;
 
-                    const isBooked = mockLessons.some(l =>
+                    const isBooked = lessons.some(l =>
                         l.teacherId === teacher.id &&
                         isSameDay(new Date(l.startTime), date) &&
                         new Date(l.startTime).getHours() === hour
                     );
 
                     if (!isBooked) {
-                        const demandString = getDemandLevel(mockLessons, slotTime);
+                        const demandString = getDemandLevel(lessons, slotTime);
                         if (demandString === 'CRITICAL' || demandString === 'HIGH') {
                             potentialSlots.push({
                                 id: `${teacher.id}-${date.toISOString()}-${hour}`,
@@ -198,7 +198,7 @@ export function useAdminAlerts(): AdminAlert[] {
 
 
         return allAlerts;
-    }, [users, mockLessons, mockPracticeLogs, mockInvoices, dateLocale, t]);
+    }, [users, lessons, practiceLogs, invoices, dateLocale, t]);
 
     return alerts;
 }

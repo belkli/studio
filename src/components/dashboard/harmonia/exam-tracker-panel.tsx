@@ -66,7 +66,7 @@ export function ExamTrackerPanel() {
     const t = useTranslations('ExamTracker');
     const dateLocale = useDateLocale();
 
-    // For a real app, mockTrackers would come from context/context state.
+    // For a real app, trackersState would come from context/context state.
     const [trackers, setTrackers] = useState<ExamPrepTracker[]>(MOCK_TRACKERS);
 
     // Students of this teacher

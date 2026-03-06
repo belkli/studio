@@ -19,7 +19,7 @@ const modelKeyByValue = {
 } as const;
 
 export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental; token: string }) {
-  const { confirmRentalSignature, users, mockInstrumentInventory } = useAuth();
+  const { confirmRentalSignature, users, instrumentInventory } = useAuth();
   const t = useTranslations('InstrumentRental');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -35,7 +35,7 @@ export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental;
 
   const parent = useMemo(() => users.find((entry) => entry.id === rental.parentId), [users, rental.parentId]);
   const student = useMemo(() => users.find((entry) => entry.id === rental.studentId), [users, rental.studentId]);
-  const instrument = useMemo(() => mockInstrumentInventory.find((entry) => entry.id === rental.instrumentId), [mockInstrumentInventory, rental.instrumentId]);
+  const instrument = useMemo(() => instrumentInventory.find((entry) => entry.id === rental.instrumentId), [instrumentInventory, rental.instrumentId]);
 
   const sendOtp = () => {
     setOtpSent(true);

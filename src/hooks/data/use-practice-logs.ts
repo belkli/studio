@@ -78,11 +78,11 @@ function calculateStreak(logs: PracticeLog[]): { current: number; longest: numbe
 }
 
 export function usePracticeLogs(studentId?: string): UsePracticeLogsReturn {
-    const { user, mockPracticeLogs } = useAuth();
+    const { user, practiceLogs } = useAuth();
 
     const result = useMemo(() => {
         const targetId = studentId || user?.id;
-        if (!targetId || !mockPracticeLogs) {
+        if (!targetId || !practiceLogs) {
             return {
                 logs: [],
                 stats: {
@@ -95,7 +95,7 @@ export function usePracticeLogs(studentId?: string): UsePracticeLogsReturn {
             };
         }
 
-        const logs = mockPracticeLogs
+        const logs = practiceLogs
             .filter(l => l.studentId === targetId)
             .sort((a, b) => b.date.localeCompare(a.date));
 
@@ -135,7 +135,7 @@ export function usePracticeLogs(studentId?: string): UsePracticeLogsReturn {
             },
             recentLogs: logs.slice(0, 10),
         };
-    }, [user, studentId, mockPracticeLogs]);
+    }, [user, studentId, practiceLogs]);
 
     return { ...result, isLoading: false };
 }

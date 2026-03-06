@@ -5,7 +5,7 @@ import { LmsLessonNotePanel } from '@/components/dashboard/harmonia/lms-lesson-n
 import { notFound } from 'next/navigation';
 
 export default function LessonNotePage({ params }: { params: { id: string } }) {
-    const { user, mockLessons } = useAuth();
+    const { user, lessons } = useAuth();
 
     if (user?.role !== 'teacher') {
         return <p>אין לך הרשאות לגשת לעמוד זה.</p>;
@@ -13,7 +13,7 @@ export default function LessonNotePage({ params }: { params: { id: string } }) {
 
     // In a real app, this would be fetched from DB
     const lessonId = params.id;
-    const lesson = mockLessons.find(l => l.id === lessonId);
+    const lesson = lessons.find(l => l.id === lessonId);
 
     if (!lesson) {
         return notFound();

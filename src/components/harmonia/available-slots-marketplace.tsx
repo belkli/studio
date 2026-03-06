@@ -8,6 +8,7 @@ import { addDays, getDay, isAfter, isSameDay, setHours } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SlotPromotionCard } from './slot-promotion-card';
 import { Loader2 } from 'lucide-react';
+import { collectInstrumentTokensFromTeacherInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 
 export type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
 export type SlotDemandLevel = 'HIGH_DEMAND' | 'MEDIUM_DEMAND' | 'LOW_DEMAND';
@@ -30,7 +31,7 @@ export function AvailableSlotsMarketplace() {
   const t = useTranslations('AvailableNow');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
-  const { users, mockLessons, conservatoriums, conservatoriumInstruments } = useAuth();
+  const { users, lessons, conservatoriums, conservatoriumInstruments } = useAuth();
   const [filters, setFilters] = useState({
     city: 'all',
     distance: 'all',
@@ -60,7 +61,7 @@ export function AvailableSlotsMarketplace() {
         const teacherDayAvailability = teacher.availability?.find((a) => a.dayOfWeek === dayOfWeek);
         if (!teacherDayAvailability) return;
 
-        const dayLessons = mockLessons.filter(
+        const dayLessons = lessons.filter(
           (l) => l.teacherId === teacher.id && isSameDay(new Date(l.startTime), date)
         );
 
@@ -106,7 +107,7 @@ export function AvailableSlotsMarketplace() {
     return Array.from(new Map(slots.map((item) => [item.id, item])).values()).sort(
       (a, b) => a.startTime.getTime() - b.startTime.getTime()
     );
-  }, [users, mockLessons]);
+  }, [users, lessons]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -145,7 +146,18 @@ export function AvailableSlotsMarketplace() {
       const cityMatch = filters.city === 'all' || slotCity === filters.city;
       const distanceMatch =
         filters.distance === 'all' || filters.city === 'all' || filters.distance === '10' ? cityMatch : true;
-      const instrumentMatch = filters.instrument === 'all' || slot.instrument === filters.instrument;
+      const instrumentMatch = (() => {
+        if (filters.instrument === 'all') return true;
+
+        const selected = normalizeInstrumentToken(filters.instrument);
+        const slotTokens = collectInstrumentTokensFromTeacherInstrument(
+          slot.instrument,
+          conservatoriumInstruments,
+          slot.teacher.conservatoriumId
+        );
+
+        return slotTokens.has(selected);
+      })();
       const durationMatch = filters.duration === 'all' || slot.durationMinutes === Number(filters.duration);
 
       return conservatoriumMatch && cityMatch && distanceMatch && instrumentMatch && durationMatch;

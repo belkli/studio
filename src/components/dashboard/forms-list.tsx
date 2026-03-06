@@ -17,8 +17,8 @@ export function FormsList({
 }) {
     const t = useTranslations('FormsPage');
     const tc = useTranslations('Common.shared');
-    const { user, mockFormSubmissions } = useAuth();
-    let forms = user ? mockFormSubmissions : [];
+    const { user, formSubmissions } = useAuth();
+    let forms = user ? formSubmissions : [];
 
     if (user) {
         if (user.role === 'conservatorium_admin' || user.role === 'delegated_admin') {

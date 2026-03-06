@@ -76,14 +76,14 @@ export default async function RootLayout({
       <body className={`${rubik.variable} font-body antialiased`}>
         <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
-          <AuthProvider>
-            <main id="main-content" tabIndex={-1}>
+          <main id="main-content" tabIndex={-1}>
+            <AuthProvider>
               {children}
-            </main>
-            <AccessibilityPanel />
-            <Toaster />
-            <AiHelpAssistant />
-          </AuthProvider>
+              <AccessibilityPanel />
+              <Toaster />
+              <AiHelpAssistant />
+            </AuthProvider>
+          </main>
         </NextIntlClientProvider>
       </body>
     </html>

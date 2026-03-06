@@ -4,7 +4,7 @@ import type { FormStatus, FormSubmission, User } from '@/lib/types';
 import { isThisWeek, isToday } from 'date-fns';
 
 export function useLiveStats() {
-    const { user, users, mockFormSubmissions, mockPayrolls } = useAuth();
+    const { user, users, formSubmissions, payrolls } = useAuth();
 
     const stats = useMemo(() => {
         if (!user) {
@@ -30,8 +30,8 @@ export function useLiveStats() {
 
         // Filter data for the current conservatorium
         const conservatoriumUsers = users.filter(u => u.conservatoriumId === conservatoriumId);
-        const conservatoriumForms = mockFormSubmissions.filter(f => f.conservatoriumId === conservatoriumId);
-        const conservatoriumPayrolls = mockPayrolls.filter(p => p.conservatoriumId === conservatoriumId);
+        const conservatoriumForms = formSubmissions.filter(f => f.conservatoriumId === conservatoriumId);
+        const conservatoriumPayrolls = payrolls.filter(p => p.conservatoriumId === conservatoriumId);
 
         // User stats
         const pendingUsers = conservatoriumUsers.filter(u => !u.approved).length;
@@ -86,7 +86,7 @@ export function useLiveStats() {
             totalForms: conservatoriumForms.length,
             totalPaidOut
         };
-    }, [user, users, mockFormSubmissions, mockPayrolls]);
+    }, [user, users, formSubmissions, payrolls]);
 
     return stats;
 }

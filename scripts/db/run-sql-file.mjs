@@ -36,7 +36,11 @@ const result = spawnSync(
     resolvedFile,
   ],
   {
-    stdio: 'inherit'
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      PGCLIENTENCODING: 'UTF8',
+    },
   }
 );
 

@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { mockRooms } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,14 +10,14 @@ import { format, startOfWeek, addDays } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`); // 08:00 to 20:00
-const totalRooms = mockRooms.length;
 
 export function RoomOccupancyHeatmap() {
     const t = useTranslations('Reports');
-    const { mockLessons } = useAuth();
+    const { lessons, rooms } = useAuth();
     const locale = useLocale();
 
     const dateLocale = useDateLocale();
+    const totalRooms = Math.max(1, rooms.length);
 
     const days = useMemo(() => {
         const start = startOfWeek(new Date(), { weekStartsOn: 0, locale: dateLocale });
@@ -34,7 +33,7 @@ export function RoomOccupancyHeatmap() {
     const occupancyData = useMemo(() => {
         const grid: Record<string, { booked: number, rooms: string[] }> = {};
 
-        mockLessons.forEach(lesson => {
+        lessons.forEach(lesson => {
             if (lesson.status === 'SCHEDULED' || lesson.status === 'COMPLETED') {
                 const lessonDate = new Date(lesson.startTime);
                 const dayKey = lessonDate.getDay();
@@ -53,7 +52,7 @@ export function RoomOccupancyHeatmap() {
         });
         return grid;
 
-    }, [mockLessons]);
+    }, [lessons]);
 
     const getOccupancyLevel = (bookedCount: number): 'none' | 'low' | 'medium' | 'high' | 'full' => {
         if (bookedCount === 0) return 'none';

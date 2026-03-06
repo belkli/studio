@@ -34,7 +34,7 @@ export function NewForm() {
   const locale = useLocale();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
   const { toast } = useToast();
-  const { user, users, mockFormSubmissions, updateForm, mockFormTemplates } = useAuth();
+  const { user, users, formSubmissions, updateForm, formTemplates } = useAuth();
   const router = useRouter();
 
   const [studentList, setStudentList] = useState<User[]>([]);
@@ -137,12 +137,12 @@ export function NewForm() {
       { value: 'kenes', label: t('types.kenes') },
       { value: 'exam_registration', label: t('types.exam_registration') },
     ];
-    const customForms = mockFormTemplates.map(t => ({
+    const customForms = formTemplates.map(t => ({
       value: t.id,
       label: t.title,
     }));
     return [...standardForms, ...customForms];
-  }, [mockFormTemplates]);
+  }, [formTemplates]);
 
   useEffect(() => {
     if (user) {
@@ -172,7 +172,7 @@ export function NewForm() {
 
     // Default needs student selection
     let needsStudentSelection = true;
-    if (selectedFormType === 'kenes' || mockFormTemplates.some(t => t.id === selectedFormType)) {
+    if (selectedFormType === 'kenes' || formTemplates.some(t => t.id === selectedFormType)) {
       needsStudentSelection = false;
     }
 
@@ -190,7 +190,7 @@ export function NewForm() {
         return <ExamRegistrationForm key={selectedStudent!.id} user={user} student={selectedStudent!} onSubmit={(data) => onFormSubmit(data)} />;
       default:
         // This handles custom forms
-        const template = mockFormTemplates.find(t => t.id === selectedFormType);
+        const template = formTemplates.find(t => t.id === selectedFormType);
         if (template) {
           return <DynamicForm template={template} onSubmit={(data) => onFormSubmit(data, template)} />;
         }

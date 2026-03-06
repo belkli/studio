@@ -25,7 +25,7 @@ interface AssignPerformerDialogProps {
 }
 
 export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPerformerDialogProps) {
-  const { users, mockAssignedRepertoire, compositions, addPerformanceToEvent } = useAuth();
+  const { users, assignedRepertoire, compositions, addPerformanceToEvent } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -37,7 +37,7 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
 
   const availableRepertoire = useMemo(() => {
     if (!selectedStudentId) return [];
-    return mockAssignedRepertoire
+    return assignedRepertoire
       .filter(r => r.studentId === selectedStudentId && r.status === 'PERFORMANCE_READY')
       .map(r => {
         const composition = compositions.find(c => c.id === r.compositionId);
@@ -46,7 +46,7 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
           label: composition ? `${composition.title} (${composition.composer})` : 'יצירה לא ידועה',
         };
       });
-  }, [selectedStudentId, mockAssignedRepertoire, compositions]);
+  }, [selectedStudentId, assignedRepertoire, compositions]);
   
   useEffect(() => {
     form.resetField('repertoireId');

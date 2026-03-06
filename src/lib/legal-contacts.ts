@@ -1,4 +1,4 @@
-import { conservatoriums, mockUsers } from '@/lib/data';
+import { getDb } from '@/lib/db';
 import type { Conservatorium, ConservatoriumPolicyContact, User } from '@/lib/types';
 
 export type StatementContactKind = 'privacy' | 'accessibility';
@@ -45,7 +45,7 @@ function normalizeEmail(value?: string) {
 export function resolveConservatoriumStatementContact(
   conservatorium: Conservatorium,
   kind: StatementContactKind,
-  users: User[] = mockUsers
+  users: User[]
 ): ResolvedConservatoriumContact {
   const configuredContact =
     kind === 'privacy' ? conservatorium.privacyContact : conservatorium.accessibilityContact;
@@ -75,8 +75,11 @@ export function resolveConservatoriumStatementContact(
   return { conservatorium, contact, source };
 }
 
-export function getConservatoriumStatementContacts(kind: StatementContactKind) {
+export async function getConservatoriumStatementContacts(kind: StatementContactKind) {
+  const db = await getDb();
+  const [conservatoriums, users] = await Promise.all([db.conservatoriums.list(), db.users.list()]);
+
   return conservatoriums.map((conservatorium) =>
-    resolveConservatoriumStatementContact(conservatorium, kind, mockUsers)
+    resolveConservatoriumStatementContact(conservatorium, kind, users)
   );
 }

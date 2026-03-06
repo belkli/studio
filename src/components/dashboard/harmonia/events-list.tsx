@@ -11,8 +11,8 @@ import { useTranslations } from 'next-intl';
 export function EventsList() {
     const t = useTranslations('Events');
     const dateLocale = useDateLocale();
-    const { mockEvents, user } = useAuth();
-    const events = mockEvents.filter(e => e.conservatoriumId === user?.conservatoriumId);
+    const { events: allEvents, user } = useAuth();
+    const events = allEvents.filter(e => e.conservatoriumId === user?.conservatoriumId);
 
     return (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -14,11 +14,11 @@ function getSourceLabel(
   return t('sources.defaults');
 }
 
-export default function AccessibilityPage() {
+export default async function AccessibilityPage() {
   const t = useTranslations('AccessibilityPage');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
-  const rows = getConservatoriumStatementContacts('accessibility').map((row) => {
+  const rows = (await getConservatoriumStatementContacts('accessibility')).map((row) => {
     const localized = getLocalizedConservatorium(row.conservatorium, locale);
     const conservatoriumName =
       locale === 'en' && row.conservatorium.nameEn

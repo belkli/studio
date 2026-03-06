@@ -9,14 +9,14 @@ import { useMemo } from "react";
 
 
 export default function ProgressPage() {
-    const { user, mockPracticeLogs } = useAuth();
+    const { user, practiceLogs } = useAuth();
     const t = useTranslations("ProgressPage");
     if (!user) return null;
 
     const userLogs = useMemo(() => {
         if (!user) return [];
-        return mockPracticeLogs.filter(log => log.studentId === user.id);
-    }, [mockPracticeLogs, user]);
+        return practiceLogs.filter(log => log.studentId === user.id);
+    }, [practiceLogs, user]);
 
     const { weeklyPracticeData, totalMinutesThisWeek, weeklyGoal, totalMinutesThisMonth, streak } = useMemo(() => {
         const today = new Date();

@@ -8,7 +8,7 @@ import * as z from 'zod';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { languages, teacherSpecialties } from '@/lib/data';
+import { languages, teacherSpecialties } from '@/lib/taxonomies';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

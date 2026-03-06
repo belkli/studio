@@ -23,10 +23,10 @@ export interface UseMyInvoicesReturn {
 }
 
 export function useMyInvoices(filters?: InvoiceFilters): UseMyInvoicesReturn {
-    const { user, mockInvoices } = useAuth();
+    const { user, invoices } = useAuth();
 
     const result = useMemo(() => {
-        if (!user || !mockInvoices) {
+        if (!user || !invoices) {
             return {
                 invoices: [],
                 unpaidInvoices: [],
@@ -36,7 +36,7 @@ export function useMyInvoices(filters?: InvoiceFilters): UseMyInvoicesReturn {
         }
 
         // Payer-scoped: only show invoices this user is responsible for
-        let scopedInvoices = mockInvoices.filter((inv) => {
+        let scopedInvoices = invoices.filter((inv) => {
             if (user.role === 'conservatorium_admin' || user.role === 'site_admin') {
                 return inv.conservatoriumId === user.conservatoriumId;
             }
@@ -68,7 +68,7 @@ export function useMyInvoices(filters?: InvoiceFilters): UseMyInvoicesReturn {
             overdueInvoices,
             totalOutstanding,
         };
-    }, [user, mockInvoices, filters?.statusFilter, filters?.limit]);
+    }, [user, invoices, filters?.statusFilter, filters?.limit]);
 
     return {
         ...result,

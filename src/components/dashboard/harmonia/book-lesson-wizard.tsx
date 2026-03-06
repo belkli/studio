@@ -34,7 +34,7 @@ const getBookingSchema = (t: any) => z.object({
 type BookingFormData = z.infer<ReturnType<typeof getBookingSchema>>;
 
 export function BookLessonWizard() {
-    const { user, users, mockLessons, addLesson, mockPackages } = useAuth();
+    const { user, users, lessons, addLesson, packages } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -86,7 +86,7 @@ export function BookLessonWizard() {
                 return;
             }
 
-            const dayLessons = mockLessons.filter(l =>
+            const dayLessons = lessons.filter(l =>
                 l.teacherId === selectedTeacherId &&
                 format(new Date(l.startTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
             );
@@ -109,7 +109,7 @@ export function BookLessonWizard() {
             setIsLoadingSlots(false);
         }, 300); // Debounce/throttle in real app
 
-    }, [selectedTeacherId, selectedDate, duration, users, mockLessons]);
+    }, [selectedTeacherId, selectedDate, duration, users, lessons]);
 
     const onSubmit = (data: BookingFormData) => {
         const studentId = data.studentId;
@@ -143,8 +143,8 @@ export function BookLessonWizard() {
     }, [selectedStudentId, users]);
 
     const activePackage = useMemo(() => {
-        return mockPackages?.find(p => p.studentId === selectedStudentId);
-    }, [selectedStudentId, mockPackages]);
+        return packages?.find(p => p.studentId === selectedStudentId);
+    }, [selectedStudentId, packages]);
 
     const hasCredits = useMemo(() => {
         if (!activePackage) return false;

@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from 'next-intl';
 
 // A placeholder PDF viewer component logic
 export function SheetMusicViewer() {
-    const { user, mockAssignedRepertoire, compositions } = useAuth();
+    const { user, assignedRepertoire, compositions } = useAuth();
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const t = useTranslations('SheetMusicViewer');
@@ -20,13 +20,13 @@ export function SheetMusicViewer() {
 
     // Filter and join repertoire assigned to this student
     const myRepertoire = useMemo(() => {
-        return mockAssignedRepertoire
+        return assignedRepertoire
             .filter(r => r.studentId === user?.id)
             .map(r => ({
                 ...r,
                 compositionDetails: compositions.find(c => c.id === r.compositionId)
             }));
-    }, [mockAssignedRepertoire, user?.id, compositions]);
+    }, [assignedRepertoire, user?.id, compositions]);
 
     const activePiece = myRepertoire.find(r => r.id === selectedPieceId);
 

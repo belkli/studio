@@ -11,10 +11,10 @@ export default function PublicAlumniPage() {
   const t = useTranslations('AlumniPage');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
-  const { mockAlumni, mockMasterclasses } = useAuth();
+  const { alumni, masterClasses } = useAuth();
 
-  const publicAlumni = mockAlumni.filter((item) => item.isPublic);
-  const publishedMasterClasses = mockMasterclasses.filter((item) => item.status === 'published');
+  const publicAlumni = alumni.filter((item) => item.isPublic);
+  const publishedMasterClasses = masterClasses.filter((item) => item.status === 'published');
 
   return (
     <div className='flex min-h-dvh flex-col bg-background' dir={isRtl ? 'rtl' : 'ltr'}>

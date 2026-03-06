@@ -1,11 +1,17 @@
-import type {
+﻿import type {
   Alumnus,
   Announcement,
+  Branch,
   Conservatorium,
+  ConservatoriumInstrument,
   EventProduction,
   FormSubmission,
   Invoice,
+  LessonPackage,
   LessonSlot,
+  Composition,
+  DonationCause,
+  DonationRecord,
   Masterclass,
   PayrollSummary,
   Room,
@@ -19,6 +25,7 @@ export type DbEntity = {
 };
 
 export type RentalRecord = DbEntity & Record<string, unknown>;
+export type RepertoireEntry = Omit<Composition, 'id'> & DbEntity;
 
 export interface ScopedRepository<T extends DbEntity> {
   findById(id: string): Promise<T | null>;
@@ -43,8 +50,11 @@ export interface UserRepository extends ScopedRepository<User> {
 }
 
 export interface ConservatoriumRepository extends ScopedRepository<Conservatorium> {}
+export interface ConservatoriumInstrumentRepository extends ScopedRepository<ConservatoriumInstrument> {}
+export interface LessonPackageRepository extends ScopedRepository<LessonPackage> {}
 export interface LessonRepository extends ScopedRepository<LessonSlot> {}
 export interface RoomRepository extends ScopedRepository<Room> {}
+export interface BranchRepository extends ScopedRepository<Branch> {}
 export interface EventRepository extends ScopedRepository<EventProduction> {}
 export interface FormRepository extends ScopedRepository<FormSubmission> {}
 
@@ -59,11 +69,17 @@ export interface PayrollRepository extends ScopedRepository<PayrollSummary> {}
 export interface AnnouncementRepository extends ScopedRepository<Announcement> {}
 export interface AlumniRepository extends ScopedRepository<Alumnus> {}
 export interface MasterClassRepository extends ScopedRepository<Masterclass> {}
+export interface RepertoireRepository extends ScopedRepository<RepertoireEntry> {}
+export interface DonationCauseRepository extends ScopedRepository<DonationCause> {}
+export interface DonationRepository extends ScopedRepository<DonationRecord> {}
 
 export interface DatabaseAdapter {
   users: UserRepository;
   conservatoriums: ConservatoriumRepository;
+  conservatoriumInstruments: ConservatoriumInstrumentRepository;
+  lessonPackages: LessonPackageRepository;
   lessons: LessonRepository;
+  branches: BranchRepository;
   rooms: RoomRepository;
   events: EventRepository;
   forms: FormRepository;
@@ -75,4 +91,10 @@ export interface DatabaseAdapter {
   announcements: AnnouncementRepository;
   alumni: AlumniRepository;
   masterClasses: MasterClassRepository;
+  repertoire: RepertoireRepository;
+  donationCauses: DonationCauseRepository;
+  donations: DonationRepository;
 }
+
+
+

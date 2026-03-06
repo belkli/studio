@@ -2,6 +2,7 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import * as initialMockData from '@/lib/data';
 import type { FormTemplate, NotificationPreferences } from '@/lib/types';
 
 vi.mock('@/hooks/use-toast', () => ({
@@ -18,10 +19,55 @@ describe('AuthProvider smoke coverage', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                meta: { backend: 'mock', source: 'fallback' },
+                users: initialMockData.mockUsers,
+                conservatoriums: initialMockData.conservatoriums,
+                conservatoriumInstruments: initialMockData.mockConservatoriumInstruments || [],
+                lessonPackages: initialMockData.mockLessonPackages || [],
+                lessons: initialMockData.mockLessons,
+                forms: initialMockData.mockFormSubmissions,
+                events: initialMockData.mockEvents,
+                rooms: initialMockData.mockRooms,
+                payrolls: initialMockData.mockPayrolls,
+                repertoire: initialMockData.mockRepertoire || initialMockData.compositions,
+                scholarships: initialMockData.mockScholarshipApplications || [],
+                rentals: initialMockData.mockInstrumentRentals || [],
+                payments: initialMockData.mockInvoices || [],
+                announcements: initialMockData.mockAnnouncements || [],
+                alumni: initialMockData.mockAlumni || [],
+                masterClasses: initialMockData.mockMasterclasses || [],
+                packages: initialMockData.mockPackages || [],
+                invoices: initialMockData.mockInvoices || [],
+                practiceLogs: initialMockData.mockPracticeLogs || [],
+                assignedRepertoire: initialMockData.mockAssignedRepertoire || [],
+                lessonNotes: initialMockData.mockLessonNotes || [],
+                messageThreads: initialMockData.mockMessageThreads || [],
+                progressReports: initialMockData.mockProgressReports || [],
+                formTemplates: initialMockData.mockFormTemplates || [],
+                auditLog: initialMockData.mockAuditLog || [],
+                instrumentInventory: initialMockData.mockInstrumentInventory || [],
+                performanceBookings: initialMockData.mockPerformanceBookings || [],
+                donationCauses: initialMockData.mockDonationCauses || [],
+                donations: initialMockData.mockDonations || [],
+                openDayEvents: initialMockData.mockOpenDayEvents || [],
+                openDayAppointments: initialMockData.mockOpenDayAppointments || [],
+                branches: initialMockData.mockBranches || [],
+                practiceVideos: initialMockData.mockPracticeVideos || [],
+                waitlist: initialMockData.mockWaitlist || [],
+                makeupCredits: initialMockData.mockMakeupCredits || [],
+                playingSchoolInvoices: [],
+                masterClassAllowances: [],
+            }),
+        }) as unknown as typeof fetch;
     });
 
     it('executes core auth and mutation flows with current signatures', async () => {
         const { result } = renderHook(() => useAuth(), { wrapper });
+
+        await waitFor(() => expect(result.current.users.length).toBeGreaterThan(0));
 
         await act(async () => {
             result.current.login('admin@example.com');
@@ -200,4 +246,47 @@ describe('AuthProvider smoke coverage', () => {
 
         expect(result.current.user).toBeNull();
     });
+
+    it('does not override DB payments with empty mock invoices on authoritative bootstrap', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                meta: { backend: 'postgres', source: 'postgres' },
+                users: initialMockData.mockUsers,
+                conservatoriums: initialMockData.conservatoriums,
+                conservatoriumInstruments: initialMockData.mockConservatoriumInstruments || [],
+                lessonPackages: initialMockData.mockLessonPackages || [],
+                lessons: [],
+                forms: [],
+                events: [],
+                rooms: [],
+                payrolls: [],
+                repertoire: [],
+                scholarships: [],
+                rentals: [],
+                payments: [{
+                    id: 'db-payment-1',
+                    invoiceNumber: 'INV-DB-1',
+                    conservatoriumId: 'cons-1',
+                    payerId: 'parent-user-1',
+                    lineItems: [],
+                    total: 123,
+                    status: 'SENT',
+                    dueDate: '2026-03-31',
+                }],
+                announcements: [],
+                alumni: [],
+                masterClasses: [],
+                packages: [],
+                invoices: [],
+            }),
+        }) as unknown as typeof fetch;
+
+        const { result } = renderHook(() => useAuth(), { wrapper });
+
+        await waitFor(() => expect(result.current.users.length).toBeGreaterThan(0));
+        await waitFor(() => expect(result.current.mockInvoices.length).toBe(1));
+        expect(result.current.mockInvoices[0].id).toBe('db-payment-1');
+    });
+
 });

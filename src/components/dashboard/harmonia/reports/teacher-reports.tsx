@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 
 export function TeacherReports() {
     const t = useTranslations('Reports');
-    const { users, mockLessons, mockPracticeLogs } = useAuth();
+    const { users, lessons, practiceLogs } = useAuth();
 
     const teacherStats = useMemo(() => {
         const teachers = users.filter(u => u.role === 'teacher');
@@ -21,7 +21,7 @@ export function TeacherReports() {
         return teachers.map(teacher => {
             const assignedStudents = teacher.students || [];
 
-            const lessonsThisMonth = mockLessons.filter(l =>
+            const lessonsThisMonth = lessons.filter(l =>
                 l.teacherId === teacher.id &&
                 isWithinInterval(new Date(l.startTime), { start, end })
             );
@@ -34,7 +34,7 @@ export function TeacherReports() {
             const cancellationRate = (scheduledLessons + teacherCancellations) > 0 ? (teacherCancellations / (scheduledLessons + teacherCancellations)) * 100 : 0;
 
             const studentsWhoPracticed = new Set(
-                mockPracticeLogs.filter(log => {
+                practiceLogs.filter(log => {
                     const logDate = new Date(log.date);
                     return isWithinInterval(logDate, { start, end }) && assignedStudents.includes(log.studentId);
                 }).map(log => log.studentId)
@@ -51,7 +51,7 @@ export function TeacherReports() {
                 practiceEngagement,
             };
         });
-    }, [users, mockLessons, mockPracticeLogs]);
+    }, [users, lessons, practiceLogs]);
 
     return (
         <div className="space-y-6 mt-6">

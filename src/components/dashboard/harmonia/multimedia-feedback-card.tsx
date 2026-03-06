@@ -19,16 +19,16 @@ interface MultimediaFeedbackCardProps {
 }
 
 export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps) {
-  const { mockPracticeVideos, addVideoFeedback } = useAuth();
+  const { practiceVideos, addVideoFeedback } = useAuth();
   const dateLocale = useDateLocale();
   const { toast } = useToast();
   const [newFeedback, setNewFeedback] = useState<Record<string, string>>({});
 
   const studentVideos = useMemo(() => {
-    return mockPracticeVideos
+    return practiceVideos
       .filter(v => v.studentId === student.id)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [mockPracticeVideos, student.id]);
+  }, [practiceVideos, student.id]);
 
   const handleSendFeedback = (videoId: string) => {
     const comment = newFeedback[videoId];

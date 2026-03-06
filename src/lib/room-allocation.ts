@@ -1,4 +1,4 @@
-﻿import type { ConservatoriumInstrument, LessonSlot, Room } from '@/lib/types';
+import type { ConservatoriumInstrument, LessonSlot, Room } from '@/lib/types';
 
 const REQUIRED_EQUIPMENT_IDS = new Set(['piano', 'drums', 'organ']);
 
@@ -14,6 +14,12 @@ const INSTRUMENT_ROOM_COMPATIBILITY: Record<string, { preferred: string[]; accep
   saxophone: { preferred: [], acceptable: ['piano'], incompatible: ['drums'] },
 };
 
+const INSTRUMENT_ALIASES: Record<string, string> = {
+  vocals: 'voice',
+  singing: 'voice',
+  drum: 'drums',
+};
+
 const normalize = (value: string) =>
   value
     .toLowerCase()
@@ -22,19 +28,33 @@ const normalize = (value: string) =>
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 
+function canonicalizeInstrumentToken(value: string): string {
+  const token = normalize(value);
+  return INSTRUMENT_ALIASES[token] || token;
+}
+
 export function resolveInstrumentId(rawInstrument: string, conservatoriumInstruments: ConservatoriumInstrument[]): string {
-  const normalized = normalize(rawInstrument);
-  const byId = conservatoriumInstruments.find((item) => normalize(item.id) === normalized);
+  const normalized = canonicalizeInstrumentToken(rawInstrument);
+
+  const byId = conservatoriumInstruments.find((item) => canonicalizeInstrumentToken(item.id) === normalized);
   if (byId) return byId.id;
+
+  const byCatalog = conservatoriumInstruments.find((item) =>
+    item.instrumentCatalogId && canonicalizeInstrumentToken(item.instrumentCatalogId) === normalized
+  );
+  if (byCatalog) return byCatalog.id;
 
   const byName = conservatoriumInstruments.find((item) => {
     const names = [item.names.he, item.names.en, item.names.ar || '', item.names.ru || '']
-      .map((name) => normalize(name))
+      .map((name) => canonicalizeInstrumentToken(name))
       .filter(Boolean);
     return names.some((name) => name === normalized || normalized.includes(name) || name.includes(normalized));
   });
 
-  return byName?.id || rawInstrument.toLowerCase();
+  if (byName) return byName.id;
+
+  // Fall back to canonical token for compatibility scoring.
+  return normalized;
 }
 
 function overlaps(startA: string, endA: string, startB: string, endB: string) {
@@ -51,7 +71,7 @@ export function isRoomBlocked(room: Room, startTime: string, endTime: string): b
 
 export function scoreRoom(room: Room, instrumentId: string, studentCount = 1): number {
   const compat = INSTRUMENT_ROOM_COMPATIBILITY[instrumentId] || { preferred: [], acceptable: [], incompatible: [] };
-  const roomInstruments = (room.instrumentEquipment || []).map((entry) => entry.instrumentId);
+  const roomInstruments = (room.instrumentEquipment || []).map((entry) => canonicalizeInstrumentToken(entry.instrumentId));
 
   let score = 100;
 
@@ -93,31 +113,43 @@ export function allocateRoomWithConflictResolution(input: {
   existingLessons: LessonSlot[];
   conservatoriumInstruments: ConservatoriumInstrument[];
 }): SmartAllocationResult {
-  const instrumentId = resolveInstrumentId(input.lesson.instrument, input.conservatoriumInstruments);
+  const instrumentId = canonicalizeInstrumentToken(
+    resolveInstrumentId(input.lesson.instrument, input.conservatoriumInstruments)
+  );
   const startTime = input.lesson.startTime;
   const endTime = getLessonEnd(startTime, input.lesson.durationMinutes);
 
-  const candidateRooms = input.rooms
+  const roomsInConservatorium = input.rooms.filter(
+    (room) => room.conservatoriumId === input.lesson.conservatoriumId
+  );
+
+  const lessonsInConservatorium = input.existingLessons.filter(
+    (lesson) => lesson.conservatoriumId === input.lesson.conservatoriumId
+  );
+
+  const candidateRooms = roomsInConservatorium
     .filter((room) => room.isActive)
     .filter((room) => !isRoomBlocked(room, startTime, endTime))
     .map((room) => ({ room, score: scoreRoom(room, instrumentId, input.lesson.studentCount || 1) }))
     .sort((a, b) => b.score - a.score);
 
   for (const candidate of candidateRooms) {
-    const conflict = getConflictingLesson(input.existingLessons, candidate.room.id, startTime, endTime);
+    const conflict = getConflictingLesson(lessonsInConservatorium, candidate.room.id, startTime, endTime);
 
     if (!conflict) {
       return { action: 'assigned', roomId: candidate.room.id };
     }
 
-    const conflictInstrumentId = resolveInstrumentId(conflict.instrument, input.conservatoriumInstruments);
+    const conflictInstrumentId = canonicalizeInstrumentToken(
+      resolveInstrumentId(conflict.instrument, input.conservatoriumInstruments)
+    );
     const conflictEndTime = getLessonEnd(conflict.startTime, conflict.durationMinutes);
 
-    const alternatives = input.rooms
+    const alternatives = roomsInConservatorium
       .filter((room) => room.isActive)
       .filter((room) => room.id !== candidate.room.id)
       .filter((room) => !isRoomBlocked(room, conflict.startTime, conflictEndTime))
-      .filter((room) => !getConflictingLesson(input.existingLessons.filter((item) => item.id !== conflict.id), room.id, conflict.startTime, conflictEndTime))
+      .filter((room) => !getConflictingLesson(lessonsInConservatorium.filter((item) => item.id !== conflict.id), room.id, conflict.startTime, conflictEndTime))
       .map((room) => ({ room, score: scoreRoom(room, conflictInstrumentId) }))
       .sort((a, b) => b.score - a.score);
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { LessonPackage } from '@/lib/types';
+import type { ConservatoriumInstrument, LessonPackage } from '@/lib/types';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z.object({
   nameHe: z.string().min(1),
@@ -22,6 +23,7 @@ const formSchema = z.object({
   durationMinutes: z.enum(['30', '45', '60']),
   priceILS: z.coerce.number().min(1),
   isActive: z.boolean(),
+  instrumentIds: z.array(z.string()).default([]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -31,7 +33,14 @@ export default function PackagesSettingsPage() {
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const router = useRouter();
-  const { user, lessonPackages, addLessonPackage, updateLessonPackage, deleteLessonPackage } = useAuth();
+  const {
+    user,
+    lessonPackages,
+    conservatoriumInstruments,
+    addLessonPackage,
+    updateLessonPackage,
+    deleteLessonPackage,
+  } = useAuth();
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<LessonPackage | null>(null);
@@ -47,17 +56,60 @@ export default function PackagesSettingsPage() {
     [lessonPackages, user?.conservatoriumId],
   );
 
+  const instrumentRows = useMemo(
+    () =>
+      conservatoriumInstruments.filter(
+        (item) => item.conservatoriumId === user?.conservatoriumId && item.isActive
+      ),
+    [conservatoriumInstruments, user?.conservatoriumId]
+  );
+
+  const getInstrumentLabel = (item: ConservatoriumInstrument) => {
+    if (locale === 'he') return item.names.he;
+    if (locale === 'ar') return item.names.ar || item.names.en;
+    if (locale === 'ru') return item.names.ru || item.names.en;
+    return item.names.en;
+  };
+
   const form = useForm<FormValues>({
-    defaultValues: { nameHe: '', nameEn: '', type: 'monthly', lessonCount: 4, durationMinutes: '45', priceILS: 500, isActive: true },
+    defaultValues: {
+      nameHe: '',
+      nameEn: '',
+      type: 'monthly',
+      lessonCount: 4,
+      durationMinutes: '45',
+      priceILS: 500,
+      isActive: true,
+      instrumentIds: [],
+    },
   });
 
   const onCreate = () => {
     setEditing(null);
-    form.reset({ nameHe: '', nameEn: '', type: 'monthly', lessonCount: 4, durationMinutes: '45', priceILS: 500, isActive: true });
+    form.reset({
+      nameHe: '',
+      nameEn: '',
+      type: 'monthly',
+      lessonCount: 4,
+      durationMinutes: '45',
+      priceILS: 500,
+      isActive: true,
+      instrumentIds: [],
+    });
     setOpen(true);
   };
 
   const onEdit = (item: LessonPackage) => {
+    const selectedIds = (item.conservatoriumInstrumentIds && item.conservatoriumInstrumentIds.length > 0)
+      ? item.conservatoriumInstrumentIds
+      : instrumentRows
+          .filter((row) =>
+            (item.instruments || []).some(
+              (legacy) => legacy.trim().toLowerCase() === row.names.he.trim().toLowerCase()
+            )
+          )
+          .map((row) => row.id);
+
     setEditing(item);
     form.reset({
       nameHe: item.names.he,
@@ -67,6 +119,7 @@ export default function PackagesSettingsPage() {
       durationMinutes: String(item.durationMinutes) as '30' | '45' | '60',
       priceILS: item.priceILS,
       isActive: item.isActive,
+      instrumentIds: selectedIds,
     });
     setOpen(true);
   };
@@ -75,6 +128,9 @@ export default function PackagesSettingsPage() {
     const parsed = formSchema.safeParse(rawValues);
     if (!parsed.success) return;
     const values = parsed.data;
+
+    const selectedRows = instrumentRows.filter((row) => values.instrumentIds.includes(row.id));
+
     const payload: Partial<LessonPackage> = {
       conservatoriumId: user?.conservatoriumId,
       names: { he: values.nameHe, en: values.nameEn },
@@ -83,6 +139,15 @@ export default function PackagesSettingsPage() {
       durationMinutes: Number(values.durationMinutes) as 30 | 45 | 60,
       priceILS: values.priceILS,
       isActive: values.isActive,
+      conservatoriumInstrumentIds: values.instrumentIds,
+      instrumentCatalogIds: Array.from(
+        new Set(
+          selectedRows
+            .map((row) => row.instrumentCatalogId)
+            .filter((id): id is string => Boolean(id))
+        )
+      ),
+      instruments: selectedRows.map((row) => row.names.he),
     };
 
     if (editing) updateLessonPackage(editing.id, payload);
@@ -138,6 +203,30 @@ export default function PackagesSettingsPage() {
               <SelectContent><SelectItem value="30">30</SelectItem><SelectItem value="45">45</SelectItem><SelectItem value="60">60</SelectItem></SelectContent>
             </Select>
             <Input type="number" value={form.watch('priceILS')} onChange={(e) => form.setValue('priceILS', Number(e.target.value))} placeholder={t('price')} />
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-start">Instruments</div>
+              <div className="grid grid-cols-1 gap-2 rounded-md border p-3 md:grid-cols-2">
+                {instrumentRows.map((item) => {
+                  const checked = form.watch('instrumentIds').includes(item.id);
+                  return (
+                    <label key={item.id} className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(next) => {
+                          const current = form.getValues('instrumentIds');
+                          if (next) {
+                            form.setValue('instrumentIds', Array.from(new Set([...current, item.id])));
+                          } else {
+                            form.setValue('instrumentIds', current.filter((id) => id !== item.id));
+                          }
+                        }}
+                      />
+                      <span>{getInstrumentLabel(item)}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
             <div className="flex items-center justify-between"><span>{t('isActive')}</span><Switch checked={form.watch('isActive')} onCheckedChange={(v) => form.setValue('isActive', v)} /></div>
             <DialogFooter><Button type="submit">{t('save')}</Button></DialogFooter>
           </form>

@@ -13,8 +13,9 @@ import { PlusCircle, Send, Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import { SaveStatusBar, type SaveState } from './save-status-bar';
-import { conservatoriums, priceMatrix, genres } from '@/lib/data';
+import { priceMatrix, genres } from '@/lib/taxonomies';
 import { Notice, NoticeDescription, NoticeTitle } from '../ui/notice';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
@@ -285,6 +286,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
     });
 
     const { toast } = useToast();
+    const { conservatoriums } = useAuth();
     const { isDirty } = form.formState;
     const [saveState, setSaveState] = React.useState<SaveState>('idle');
     const [lastSaved, setLastSaved] = React.useState<Date | null>(null);

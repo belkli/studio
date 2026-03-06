@@ -25,7 +25,7 @@ const MAKEUP_EXPIRY_DAYS = 60;
 const EXPIRING_SOON_DAYS = 7;
 
 export function AdminMakeupDashboard() {
-    const { users, mockLessons, getMakeupCreditBalance } = useAuth();
+    const { users, lessons, getMakeupCreditBalance } = useAuth();
     const t = useTranslations('AdminMakeupDashboard');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
@@ -39,12 +39,12 @@ export function AdminMakeupDashboard() {
             const balance = getMakeupCreditBalance(studentIds);
 
             if (balance > 0) {
-                const grantedLessons = mockLessons.filter(l =>
+                const grantedLessons = lessons.filter(l =>
                     l.studentId === student.id &&
                     (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
                 ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
-                const usedCredits = mockLessons.filter(l =>
+                const usedCredits = lessons.filter(l =>
                     l.studentId === student.id &&
                     l.type === 'MAKEUP'
                 ).length;
@@ -61,7 +61,7 @@ export function AdminMakeupDashboard() {
             }
         });
         return balances;
-    }, [users, mockLessons, getMakeupCreditBalance]);
+    }, [users, lessons, getMakeupCreditBalance]);
 
     const expiringSoonBalances = useMemo(() => {
         const now = new Date();

@@ -11,7 +11,7 @@ import { DollarSign, FileWarning, Users, TrendingUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function AdminFinancialDashboard() {
-    const { mockInvoices, users } = useAuth();
+    const { invoices, users } = useAuth();
     const t = useTranslations('FinancialDashboard');
     const ti = useTranslations('Invoices');
 
@@ -28,8 +28,8 @@ export function AdminFinancialDashboard() {
         { name: t('revenueByPackage'), value: 100 }, // Using existing key for simplicity as mock
     ];
 
-    const outstandingInvoices = mockInvoices.filter(inv => inv.status === 'SENT' || inv.status === 'OVERDUE');
-    const collectionRate = (mockInvoices.filter(i => i.status === 'PAID').length / mockInvoices.length) * 100;
+    const outstandingInvoices = invoices.filter(inv => inv.status === 'SENT' || inv.status === 'OVERDUE');
+    const collectionRate = (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100;
 
     const teachers = users.filter(u => u.role === 'teacher');
     const teacherRevenue = teachers.map(teacher => ({
@@ -59,7 +59,7 @@ export function AdminFinancialDashboard() {
                         <FileWarning className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{mockInvoices.filter(i => i.status === 'OVERDUE').length}</div>
+                        <div className="text-2xl font-bold">{invoices.filter(i => i.status === 'OVERDUE').length}</div>
                         <p className="text-xs text-muted-foreground">{t('totalOverdueAmount', { amount: '1,840' })}</p>
                     </CardContent>
                 </Card>

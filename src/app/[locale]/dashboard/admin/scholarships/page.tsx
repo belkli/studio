@@ -33,8 +33,8 @@ type CauseFormData = z.infer<typeof causeSchema>;
 export default function AdminScholarshipsPage() {
   const { user, isLoading } = useAdminGuard();
   const {
-    mockScholarshipApplications,
-    mockDonationCauses,
+    scholarshipApplications,
+    donationCauses,
     updateScholarshipStatus,
     markScholarshipAsPaid,
     addDonationCause,
@@ -88,7 +88,7 @@ export default function AdminScholarshipsPage() {
     EXPIRED: { label: t('statuses.EXPIRED'), icon: XCircle, className: 'bg-gray-100 text-gray-800' },
   };
 
-  const applications = mockScholarshipApplications.filter((app) => app.conservatoriumId === user.conservatoriumId);
+  const applications = scholarshipApplications.filter((app) => app.conservatoriumId === user.conservatoriumId);
 
   const handleApprove = async (applicationId: string) => {
     setProcessingId(applicationId);
@@ -294,7 +294,7 @@ export default function AdminScholarshipsPage() {
           </Form>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {mockDonationCauses
+            {donationCauses
               .filter((cause) => cause.conservatoriumId === user.conservatoriumId && cause.isActive)
               .sort((a, b) => a.priority - b.priority)
               .map((cause) => (

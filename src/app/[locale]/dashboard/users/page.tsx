@@ -24,6 +24,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { isValidIsraeliID } from "@/lib/utils";
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { userHasInstrument } from '@/lib/instrument-matching';
 
 const ALL_ADMIN_SECTIONS: AdminSection[] = ['users', 'registrations', 'approvals', 'announcements', 'events', 'scheduling', 'rooms', 'rentals', 'scholarships', 'donations', 'reports', 'payroll', 'open-day', 'performances', 'alumni', 'conservatorium-profile'];
 const DAY_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;
@@ -78,7 +79,7 @@ export default function UsersPage() {
     const t = useTranslations('UserManagement');
     const locale = useLocale();
     const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
-    const { users, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
+    const { users, conservatoriumInstruments, approveUser, rejectUser, updateUser, newFeaturesEnabled } = useAuth();
     const defaultTab = searchParams.get('tab') || 'approved';
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -135,7 +136,7 @@ export default function UsersPage() {
         return approvedUsers.filter(user => {
             const searchMatch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
             if (user.role !== 'student' || !newFeaturesEnabled) return searchMatch;
-            const instrumentMatch = instrumentFilter === 'all' || user.instruments?.some(i => i.instrument === instrumentFilter);
+            const instrumentMatch = userHasInstrument((user.instruments || []).map((i) => i.instrument), instrumentFilter, conservatoriumInstruments, user.conservatoriumId);
             const teacherMatch = teacherFilter === 'all' || user.instruments?.some(i => i.teacherName === teacherFilter);
             const gradeMatch = gradeFilter === 'all' || user.grade === gradeFilter;
             return searchMatch && instrumentMatch && teacherMatch && gradeMatch;
@@ -603,18 +604,18 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="×™×‘">×™"×‘</SelectItem>
-                                                <SelectItem value="×™×">×™"×</SelectItem>
-                                                <SelectItem value="×™">×™'</SelectItem>
-                                                <SelectItem value="×˜">×˜'</SelectItem>
-                                                <SelectItem value="×—">×—'</SelectItem>
-                                                <SelectItem value="×–">×–'</SelectItem>
-                                                <SelectItem value="×•">×•'</SelectItem>
-                                                <SelectItem value="×”">×”'</SelectItem>
-                                                <SelectItem value="×“">×“'</SelectItem>
-                                                <SelectItem value="×’">×’'</SelectItem>
-                                                <SelectItem value="×‘">×‘'</SelectItem>
-                                                <SelectItem value="×">×'</SelectItem>
+                                                <SelectItem value={"\u05D9\"\u05D1"}>{"\u05D9\"\u05D1"}</SelectItem>
+                                                <SelectItem value={"\u05D9\"\u05D0"}>{"\u05D9\"\u05D0"}</SelectItem>
+                                                <SelectItem value={"\u05D9'"}>{"\u05D9'"}</SelectItem>
+                                                <SelectItem value={"\u05D8'"}>{"\u05D8'"}</SelectItem>
+                                                <SelectItem value={"\u05D7'"}>{"\u05D7'"}</SelectItem>
+                                                <SelectItem value={"\u05D6'"}>{"\u05D6'"}</SelectItem>
+                                                <SelectItem value={"\u05D5'"}>{"\u05D5'"}</SelectItem>
+                                                <SelectItem value={"\u05D4'"}>{"\u05D4'"}</SelectItem>
+                                                <SelectItem value={"\u05D3'"}>{"\u05D3'"}</SelectItem>
+                                                <SelectItem value={"\u05D2'"}>{"\u05D2'"}</SelectItem>
+                                                <SelectItem value={"\u05D1'"}>{"\u05D1'"}</SelectItem>
+                                                <SelectItem value={"\u05D0'"}>{"\u05D0'"}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

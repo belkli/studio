@@ -53,7 +53,7 @@ function appointmentToRegistration(item: OpenDayAppointment): OpenDayRegistratio
 }
 
 export function OpenDayAdminDashboard() {
-  const { user, users, mockOpenDayAppointments, mockOpenDayEvents } = useAuth();
+  const { user, users, openDayAppointments, openDayEvents } = useAuth();
   const t = useTranslations('AdminOpenDay');
   const { toast } = useToast();
 
@@ -66,19 +66,19 @@ export function OpenDayAdminDashboard() {
 
   const currentEvent = useMemo(() => {
     if (!user) return null;
-    return mockOpenDayEvents.find((item) => item.conservatoriumId === user.conservatoriumId && item.isActive) || null;
-  }, [mockOpenDayEvents, user]);
+    return openDayEvents.find((item) => item.conservatoriumId === user.conservatoriumId && item.isActive) || null;
+  }, [openDayEvents, user]);
 
   useEffect(() => {
     if (!currentEvent) {
       setRegistrations([]);
       return;
     }
-    const filtered = mockOpenDayAppointments
+    const filtered = openDayAppointments
       .filter((item) => item.eventId === currentEvent.id)
       .map(appointmentToRegistration);
     setRegistrations(filtered);
-  }, [currentEvent, mockOpenDayAppointments]);
+  }, [currentEvent, openDayAppointments]);
 
   const teachers = useMemo(() => {
     if (!user) return [] as User[];

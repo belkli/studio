@@ -26,7 +26,7 @@ import { useTranslations, useLocale } from 'next-intl';
 export function EventDetails() {
     const params = useParams();
     const eventId = params.id as string;
-    const { user, mockEvents, removePerformanceFromEvent, updateEventStatus, updateEvent } = useAuth();
+    const { user, events, removePerformanceFromEvent, updateEventStatus, updateEvent } = useAuth();
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
     const { toast } = useToast();
     const t = useTranslations('EventDetails');
@@ -41,7 +41,7 @@ export function EventDetails() {
         COMPLETED: { label: t('statusCompleted'), className: 'bg-green-100 text-green-800' },
     };
 
-    const event = useMemo(() => mockEvents.find(e => e.id === eventId), [mockEvents, eventId]);
+    const event = useMemo(() => events.find(e => e.id === eventId), [events, eventId]);
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     const handlePrintProgram = () => {

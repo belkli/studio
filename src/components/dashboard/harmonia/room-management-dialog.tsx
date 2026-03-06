@@ -38,7 +38,7 @@ export function RoomManagementDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { user, mockRooms, addRoom, updateRoom, deleteRoom, conservatoriumInstruments } = useAuth();
+  const { user, rooms, addRoom, updateRoom, deleteRoom, conservatoriumInstruments } = useAuth();
   const t = useTranslations('RoomManagementDialog');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -67,8 +67,8 @@ export function RoomManagementDialog({
 
   const branchRooms = useMemo(() => {
     if (!branch) return [];
-    return mockRooms.filter((room) => room.branchId === branch.id);
-  }, [mockRooms, branch]);
+    return rooms.filter((room) => room.branchId === branch.id);
+  }, [rooms, branch]);
 
   const instrumentsForBranch = useMemo(() => {
     if (!branch) return [];

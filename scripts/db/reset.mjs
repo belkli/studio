@@ -13,7 +13,6 @@ if (!databaseUrl) {
 
 const parsed = new URL(databaseUrl);
 const dbName = decodeURIComponent(parsed.pathname.replace(/^\//, ''));
-
 if (!dbName) {
   console.error('DATABASE_URL must include a database name.');
   process.exit(1);
@@ -22,10 +21,10 @@ if (!dbName) {
 const adminUrl = new URL(databaseUrl);
 adminUrl.pathname = '/postgres';
 
-function runPsql(args, captureOutput = false) {
+function runPsql(args) {
   return spawnSync('psql', args, {
-    stdio: captureOutput ? 'pipe' : 'inherit',
-    encoding: captureOutput ? 'utf8' : undefined
+    stdio: 'inherit',
+    env: { ...process.env, PGCLIENTENCODING: 'UTF8' },
   });
 }
 
@@ -37,49 +36,44 @@ function quoteSqlIdent(value) {
   return `"${value.replace(/"/g, '""')}"`;
 }
 
-const existsResult = runPsql(
-  [
-    '--no-psqlrc',
-    '--tuples-only',
-    '--no-align',
-    '--quiet',
-    '--dbname',
-    adminUrl.toString(),
-    '-v',
-    'ON_ERROR_STOP=1',
-    '-c',
-    `SELECT 1 FROM pg_database WHERE datname='${quoteSqlText(dbName)}';`,
-  ],
-  true
-);
+const terminateResult = runPsql([
+  '--no-psqlrc',
+  '--dbname',
+  adminUrl.toString(),
+  '-v',
+  'ON_ERROR_STOP=1',
+  '-c',
+  `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${quoteSqlText(dbName)}' AND pid <> pg_backend_pid();`,
+]);
+if (terminateResult.status !== 0) process.exit(terminateResult.status ?? 1);
 
-if (existsResult.status !== 0) {
-  process.stderr.write(existsResult.stderr || 'Failed to check database existence.\n');
-  process.exit(existsResult.status ?? 1);
-}
+const dropResult = runPsql([
+  '--no-psqlrc',
+  '--dbname',
+  adminUrl.toString(),
+  '-v',
+  'ON_ERROR_STOP=1',
+  '-c',
+  `DROP DATABASE IF EXISTS ${quoteSqlIdent(dbName)};`,
+]);
+if (dropResult.status !== 0) process.exit(dropResult.status ?? 1);
 
-const exists = (existsResult.stdout || '').trim() === '1';
-
-if (!exists) {
-  const createResult = runPsql([
-    '--no-psqlrc',
-    '--dbname',
-    adminUrl.toString(),
-    '-v',
-    'ON_ERROR_STOP=1',
-    '-c',
-    `CREATE DATABASE ${quoteSqlIdent(dbName)};`,
-  ]);
-
-  if (createResult.status !== 0) {
-    process.exit(createResult.status ?? 1);
-  }
-}
+const createResult = runPsql([
+  '--no-psqlrc',
+  '--dbname',
+  adminUrl.toString(),
+  '-v',
+  'ON_ERROR_STOP=1',
+  '-c',
+  `CREATE DATABASE ${quoteSqlIdent(dbName)};`,
+]);
+if (createResult.status !== 0) process.exit(createResult.status ?? 1);
 
 const schemaPath = path.resolve(process.cwd(), 'scripts/db/schema.sql');
 const seedPath = path.resolve(process.cwd(), 'scripts/db/seed.sql');
+const repertoireSeedPath = path.resolve(process.cwd(), 'scripts/db/repertoire.seed.sql');
 
-for (const filePath of [schemaPath, seedPath]) {
+for (const filePath of [schemaPath, seedPath, repertoireSeedPath]) {
   const runResult = runPsql([
     '--no-psqlrc',
     '--dbname',
@@ -89,10 +83,7 @@ for (const filePath of [schemaPath, seedPath]) {
     '-f',
     filePath,
   ]);
-
-  if (runResult.status !== 0) {
-    process.exit(runResult.status ?? 1);
-  }
+  if (runResult.status !== 0) process.exit(runResult.status ?? 1);
 }
 
-console.log('Database reset complete.');
+console.log('Database reset complete (drop/recreate + schema + seed + repertoire).');

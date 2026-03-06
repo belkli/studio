@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 const exportableStatuses: FormStatus[] = ['APPROVED'];
 
 export default function MinistryExportPage() {
-  const { user, users, mockFormSubmissions } = useAuth();
+  const { user, users, formSubmissions } = useAuth();
   const { toast } = useToast();
   const t = useTranslations('MinistryExport');
   const tc = useTranslations('Common.shared');
@@ -24,12 +24,12 @@ export default function MinistryExportPage() {
 
   const formsForExport = useMemo(() => {
     if (!user) return [];
-    return mockFormSubmissions.filter(form =>
+    return formSubmissions.filter(form =>
       form.conservatoriumId === user.conservatoriumId &&
       exportableStatuses.includes(form.status) &&
       (form.formType === 'רסיטל בגרות' || form.formType === 'הרשמה לבחינה')
     );
-  }, [user, mockFormSubmissions]);
+  }, [user, formSubmissions]);
 
   const handleSelectAll = (checked: boolean | string) => {
     if (checked) {

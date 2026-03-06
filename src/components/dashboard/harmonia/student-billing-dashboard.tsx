@@ -17,7 +17,7 @@ import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 
 
 export function StudentBillingDashboard() {
-    const { user, users, mockInvoices, mockPlayingSchoolInvoices, mockPackages, mockLessons, getMakeupCreditBalance } = useAuth();
+    const { user, users, invoices, playingSchoolInvoices, packages, lessons, getMakeupCreditBalance } = useAuth();
     const t = useTranslations('StudentBilling');
     const { useDateLocale } = require('@/hooks/use-date-locale'); // Importing inside if missing at top, but usually it's there
     const ti = useTranslations('Invoices');
@@ -31,7 +31,7 @@ export function StudentBillingDashboard() {
         return [user.id, ...(user.childIds || [])];
     }, [user]);
 
-    const userInvoices = mockInvoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
+    const userInvoices = invoices.filter(inv => userAndChildrenIds.some(id => inv.payerId === id));
 
     const makeupCreditBalance = getMakeupCreditBalance(userAndChildrenIds);
 
@@ -68,12 +68,12 @@ export function StudentBillingDashboard() {
     const currentPackage = useMemo(() => {
         if (!activeStudent) return null;
 
-        const pkg = mockPackages.find(p => p.id === activeStudent.packageId);
+        const pkg = packages.find(p => p.id === activeStudent.packageId);
         if (!pkg) return null;
 
         let creditsRemaining: number | undefined;
         if (pkg.totalCredits) {
-            const lessonsUsed = mockLessons.filter(l => l.studentId === activeStudent.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
+            const lessonsUsed = lessons.filter(l => l.studentId === activeStudent.id && l.packageId === pkg.id && l.status === 'COMPLETED').length;
             creditsRemaining = pkg.totalCredits - lessonsUsed;
         }
 
@@ -87,7 +87,7 @@ export function StudentBillingDashboard() {
             creditsRemaining,
             nextBillingDate,
         };
-    }, [mockPackages, user, mockLessons, users, activeStudent]);
+    }, [packages, user, lessons, users, activeStudent]);
 
 
     const expiringPackageInfo = useMemo(() => {
@@ -228,7 +228,7 @@ export function StudentBillingDashboard() {
                     </CardContent>
                 </Card>
 
-                {mockPlayingSchoolInvoices && mockPlayingSchoolInvoices.length > 0 && (
+                {playingSchoolInvoices && playingSchoolInvoices.length > 0 && (
                     <Card className="md:col-span-2 border-indigo-100 bg-indigo-50/10">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export function StudentBillingDashboard() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {mockPlayingSchoolInvoices.map(invoice => (
+                                    {playingSchoolInvoices.map(invoice => (
                                         <TableRow key={invoice.id}>
                                             <TableCell>{format(new Date(invoice.dueDate), 'P', { locale: dateLocale })}</TableCell>
                                             <TableCell>

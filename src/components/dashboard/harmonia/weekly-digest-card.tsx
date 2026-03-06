@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 export function WeeklyDigestCard({ child }: { child: User }) {
-    const { users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes, compositions } = useAuth();
+    const { users, lessons, practiceLogs, assignedRepertoire, lessonNotes, compositions } = useAuth();
     const t = useTranslations('WeeklyDigestCard');
     const dateLocale = useDateLocale();
 
@@ -30,21 +30,21 @@ export function WeeklyDigestCard({ child }: { child: User }) {
         const start = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
         const end = endOfWeek(now, { weekStartsOn: 0 });
 
-        const upcomingLessons = mockLessons
+        const upcomingLessons = lessons
             .filter(l => l.studentId === child.id && new Date(l.startTime) >= now)
             .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
         const nextLesson = upcomingLessons.length > 0 ? upcomingLessons[0] : null;
 
         const teacher = nextLesson ? users.find(u => u.id === nextLesson!.teacherId) : null;
 
-        const repertoire = mockAssignedRepertoire.filter(r => r.studentId === child.id && r.status !== 'COMPLETED');
+        const repertoire = assignedRepertoire.filter(r => r.studentId === child.id && r.status !== 'COMPLETED');
 
-        const recentNotes = mockLessonNotes
+        const recentNotes = lessonNotes
             .filter(n => n.studentId === child.id && (n.isSharedWithParent || n.isSharedWithStudent))
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         const lastNote = recentNotes.length > 0 ? recentNotes[0] : null;
 
-        const practiceThisWeek = mockPracticeLogs.filter(log => {
+        const practiceThisWeek = practiceLogs.filter(log => {
             const logDate = new Date(log.date);
             return log.studentId === child.id && isWithinInterval(logDate, { start, end });
         });
@@ -63,7 +63,7 @@ export function WeeklyDigestCard({ child }: { child: User }) {
             practiceSessions,
         }
 
-    }, [child, users, mockLessons, mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes]);
+    }, [child, users, lessons, practiceLogs, assignedRepertoire, lessonNotes]);
 
     return (
         <Card className="w-full">

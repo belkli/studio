@@ -14,7 +14,7 @@ const DAY_KEYS: DayOfWeek[] = ["SUN", "MON", "TUE", "WED", "THU", "FRI"];
 const times = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 export function AvailabilityGrid() {
-    const { user, users, mockLessons, updateUser } = useAuth();
+    const { user, users, lessons, updateUser } = useAuth();
     const { toast } = useToast();
     const [availableSlots, setAvailableSlots] = useState<Record<string, boolean>>({});
     const [isDirty, setIsDirty] = useState(false);
@@ -40,7 +40,7 @@ export function AvailabilityGrid() {
     const teacherLessons = useMemo(() => {
         if (!user) return {};
         const lessonMap: Record<string, LessonSlot> = {};
-        mockLessons.filter(l => l.teacherId === user.id).forEach(lesson => {
+        lessons.filter(l => l.teacherId === user.id).forEach(lesson => {
             const date = new Date(lesson.startTime);
             const dayIndex = date.getDay();
             const dayKey = (DAY_KEYS[dayIndex] || ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][dayIndex]) as DayOfWeek;
@@ -50,7 +50,7 @@ export function AvailabilityGrid() {
             }
         });
         return lessonMap;
-    }, [user, mockLessons]);
+    }, [user, lessons]);
 
     const handleSlotClick = (day: DayOfWeek, time: string) => {
         const key = `${day}-${time}`;

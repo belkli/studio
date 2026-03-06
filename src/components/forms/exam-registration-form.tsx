@@ -18,7 +18,7 @@ import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { SuggestionButton } from './suggestion-button';
-import { examLevels, examTypes, genres } from '@/lib/data';
+import { examLevels, examTypes, genres } from '@/lib/taxonomies';
 import { Checkbox } from '../ui/checkbox';
 
 

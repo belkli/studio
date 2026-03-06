@@ -17,7 +17,7 @@ import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
-import { schools, genres } from '@/lib/data';
+import { schools, genres } from '@/lib/taxonomies';
 import { useLocale, useTranslations } from 'next-intl';
 
 const getCompositionSchema = (t: any) => z.object({

@@ -43,20 +43,20 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 import { School, Building, MapPin } from 'lucide-react';
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
-    const { mockPracticeLogs, mockPackages, mockAssignedRepertoire, compositions, mockLessonNotes, mockLessons } = useAuth();
+    const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons } = useAuth();
     const [activeTab, setActiveTab] = useState('overview');
     const dateLocale = useDateLocale();
     const locale = useLocale();
     const t = useTranslations("StudentDashboard");
 
-    const userLogs = useMemo(() => mockPracticeLogs.filter(log => log.studentId === student.id), [mockPracticeLogs, student.id]);
-    const userRepertoire = useMemo(() => mockAssignedRepertoire.filter(rep => rep.studentId === student.id), [mockAssignedRepertoire, student.id]);
-    const currentPackage = useMemo(() => mockPackages.find(p => p.id === student.packageId), [mockPackages, student.packageId]);
+    const userLogs = useMemo(() => practiceLogs.filter(log => log.studentId === student.id), [practiceLogs, student.id]);
+    const userRepertoire = useMemo(() => assignedRepertoire.filter(rep => rep.studentId === student.id), [assignedRepertoire, student.id]);
+    const currentPackage = useMemo(() => packages.find(p => p.id === student.packageId), [packages, student.packageId]);
     const userNotes = useMemo(() => {
-        return mockLessonNotes
+        return lessonNotes
             .filter(note => note.studentId === student.id && (note.isSharedWithStudent || note.isSharedWithParent))
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }, [mockLessonNotes, student.id]);
+    }, [lessonNotes, student.id]);
 
 
     const { totalMinutesThisWeek, weeklyGoal, streak } = useMemo(() => {
@@ -103,11 +103,11 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
     const upcomingLessons = useMemo(() => {
         if (!student) return [];
         const now = new Date();
-        return mockLessons
+        return lessons
             .filter(l => l.studentId === student.id && new Date(l.startTime) >= now && l.status === 'SCHEDULED')
             .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
             .slice(0, 3); // show next 3
-    }, [mockLessons, student]);
+    }, [lessons, student]);
 
     const getStatusColor = (status: RepertoireStatus) => {
         switch (status) {
@@ -240,7 +240,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <CardTitle className="flex items-center gap-2"><Target className="text-red-500" /> {t('weeklyGoal')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-lg font-medium">{totalMinutesThisWeek} / {weeklyGoal} {t('minutes')}</p>
+                        <p className="text-lg font-medium">{t('weeklyGoalProgress', { current: totalMinutesThisWeek, goal: weeklyGoal })}</p>
                         <p className="text-sm text-muted-foreground">{t('weeklyGoalDesc')}</p>
                         <Progress value={(totalMinutesThisWeek / weeklyGoal) * 100} className="mt-2" />
                     </CardContent>
@@ -317,7 +317,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                                         <p className="text-xs text-muted-foreground">{(log.pieces ?? []).map(p => p.title).join(', ')}</p>
                                     </div>
                                     <Badge variant={log.mood === 'GREAT' ? 'default' : 'secondary'} className={log.mood === 'HARD' ? 'bg-red-100 text-red-800' : ''}>
-                                        {log.durationMinutes} {t('minutes')}
+                                        {t('minutes', { min: log.durationMinutes })}
                                     </Badge>
                                 </div>
                             ))}

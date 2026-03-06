@@ -28,11 +28,11 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
   const {
     user,
     users,
-    mockAnnouncements,
-    mockEvents,
-    mockFormSubmissions,
-    mockInvoices,
-    mockMasterclasses,
+    announcements,
+    events,
+    formSubmissions,
+    invoices,
+    masterClasses,
   } = useAuth();
 
   return useMemo(() => {
@@ -46,7 +46,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         ? users.filter((entry) => entry.parentId === userId).map((entry) => entry.id)
         : [];
 
-    const announcementItems = mockAnnouncements
+    const announcementItems = announcements
       .filter((ann) => {
         if (role === 'site_admin') return true;
         return ann.conservatoriumId === conservatoriumId;
@@ -62,7 +62,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         isRead: false,
       }));
 
-    const eventItems = mockEvents
+    const eventItems = events
       .filter((event) => {
         if (!event.eventDate) return false;
         const eventTime = new Date(`${event.eventDate}T${event.startTime || '00:00'}:00`).getTime();
@@ -81,7 +81,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         isRead: false,
       }));
 
-    const formItems = mockFormSubmissions
+    const formItems = formSubmissions
       .filter((form) => {
         if (!PENDING_FORM_STATUSES.has(form.status)) return false;
         if (role === 'site_admin' || role === 'ministry_director') return true;
@@ -102,7 +102,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         isRead: false,
       }));
 
-    const paymentItems = mockInvoices
+    const paymentItems = invoices
       .filter((invoice) => {
         const activeStatus = invoice.status === 'OVERDUE' || invoice.status === 'SENT';
         if (!activeStatus) return false;
@@ -139,7 +139,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         isRead: notification.read,
       }));
 
-    const masterClassItems = mockMasterclasses
+    const masterClassItems = masterClasses
       .filter((masterclass) => {
         const eventTime = new Date(masterclass.date).getTime();
         if (Number.isNaN(eventTime) || eventTime < now) return false;
@@ -163,11 +163,11 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
       .slice(0, 10);
   }, [
     conservatoriumId,
-    mockAnnouncements,
-    mockEvents,
-    mockFormSubmissions,
-    mockInvoices,
-    mockMasterclasses,
+    announcements,
+    events,
+    formSubmissions,
+    invoices,
+    masterClasses,
     role,
     user?.notifications,
     user?.students,

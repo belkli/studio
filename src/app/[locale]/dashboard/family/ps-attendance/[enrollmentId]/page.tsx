@@ -20,7 +20,7 @@ export default function PlayingSchoolAttendancePage() {
     const { users, user } = useAuth();
 
     // Mock attendance data for demonstration
-    const mockAttendance = [
+    const attendanceLog = [
         { id: '1', date: '2024-03-24T08:30:00Z', status: 'PRESENT', topic: 'Introduction to Breath Support' },
         { id: '2', date: '2024-03-17T08:30:00Z', status: 'PRESENT', topic: 'First Scale: G Major' },
         { id: '3', date: '2024-03-10T08:30:00Z', status: 'EXCUSED', topic: 'Note Reading Basics' },
@@ -96,7 +96,7 @@ export default function PlayingSchoolAttendancePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockAttendance.map((item) => (
+                            {attendanceLog.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="font-medium">
                                         {format(new Date(item.date), 'PPP', { locale: dateLocale })}
