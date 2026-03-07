@@ -137,9 +137,15 @@ function isNonEmptyString(value: unknown): value is string {
 
 function hasLocaleConservatoriumTranslation(cons: Conservatorium, locale: string) {
   if (locale === 'he') return true;
+  // Accept any conservatorium that has a translations entry OR a top-level nameEn
+  // (scraped data stores English name in nameEn, not in translations object)
+  if (cons.nameEn) return true;
   const translations = cons.translations as Record<string, unknown> | undefined;
   const byLocale = translations?.[locale] as Record<string, unknown> | undefined;
-  if (!byLocale) return false;
+  if (!byLocale) {
+    // No locale-specific translations — still include it; it will display Hebrew as fallback
+    return true;
+  }
 
   return (
     isNonEmptyString(byLocale.name) ||

@@ -35,8 +35,14 @@ export default function StudentProfileForParentPage() {
         );
     }
 
-    // Security check: ensure the logged-in user is the parent of this student.
-    if (!parent || !student || !parent.childIds?.includes(student.id)) {
+    // Security check: parent must own this student, teachers/admins can view any student.
+    const isAdmin = parent?.role === 'site_admin' || parent?.role === 'conservatorium_admin' || parent?.role === 'delegated_admin';
+    const isTeacher = parent?.role === 'teacher';
+    const isParentOfStudent = parent?.role === 'parent' && (
+        parent.childIds?.includes(studentId) ||
+        (parent as any).students?.includes(studentId)
+    );
+    if (!parent || !student || (!isAdmin && !isTeacher && !isParentOfStudent)) {
         if (parent && parent.role === 'parent') {
             router.push('/dashboard/family');
         } else if (parent) {

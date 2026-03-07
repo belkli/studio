@@ -599,3 +599,12 @@ html.a11y-high-contrast.a11y-monochrome.a11y-invert-colors body {
   width: 1.05rem;
   height: 1.05rem;
 }
+
+/* RTL dashboard: right sidebar spacer reorder
+ * When the sidebar <aside data-side="right"> precedes a <main dir="rtl"> sibling,
+ * use CSS order to visually place the spacer after the content in the flex row.
+ * This keeps the DOM order intact (required for peer: CSS selectors) while
+ * fixing the layout so the spacer doesn't create dead space on the left. */
+[data-side="right"].peer:has(~ [dir="rtl"]) {
+  order: 1;
+}

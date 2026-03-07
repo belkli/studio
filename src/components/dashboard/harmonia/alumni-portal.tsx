@@ -336,7 +336,7 @@ export function AlumniPortal() {
                               <Music className='h-3.5 w-3.5 shrink-0' />
                               <span>{item.primaryInstrument}</span>
                             </p>
-                            {item.currentOccupation && (
+                            {item.currentOccupation && !bio && (
                               <p className='text-sm text-muted-foreground'>{item.currentOccupation}</p>
                             )}
                             {item.availableForMasterClasses && (

@@ -22,6 +22,9 @@ type ConservatoriumDoc = {
 
 function getNumericConservatoriumId(value: string | null): number | null {
   if (!value) return null;
+  // Handle slug format like "israel-conservatory-of-music-tel-aviv-icm__cons-82"
+  const suffixed = value.match(/__cons-(\d+)$/);
+  if (suffixed) return Number(suffixed[1]);
   const direct = value.match(/^(?:cons-)?(\d+)$/);
   if (direct) return Number(direct[1]);
   return null;
@@ -29,7 +32,7 @@ function getNumericConservatoriumId(value: string | null): number | null {
 
 async function loadConservatoriumDocById(id: number | null): Promise<ConservatoriumDoc | null> {
   if (!id) return null;
-  const filePath = path.join(process.cwd(), 'docs', 'Conservatoriums', 'conservatoriums.json');
+  const filePath = path.join(process.cwd(), 'docs', 'data', 'conservatoriums.json');
   const raw = await readFile(filePath, 'utf8');
   const all = JSON.parse(raw) as ConservatoriumDoc[];
   return all.find((item) => item.id === id) || null;
@@ -77,7 +80,9 @@ export default async function ConservatoriumPublicProfileRoute({
   params: Promise<PageParams>;
 }) {
   const { slug } = await params;
-  const conservatoriumId = extractConservatoriumIdFromSlug(slug);
+  // The slug URL param may itself BE the conservatoriumId (e.g. `israel-conservatory-of-music-tel-aviv-icm__cons-82`).
+  // Pass it directly — the component will match it against conservatorium.id.
+  const conservatoriumId = slug;
 
   return <ConservatoriumPublicProfilePage conservatoriumId={conservatoriumId} slug={slug} />;
 }

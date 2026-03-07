@@ -28,33 +28,39 @@ export default function PublicAlumniPage() {
 
           <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
             {publicAlumni.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublicAlumni')}</p>}
-            {publicAlumni.map((item) => (
-              <Card key={item.id}>
-                <CardHeader>
-                  <CardTitle className='text-lg'>{item.displayName}</CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-2 text-sm'>
-                  <p className='text-muted-foreground'>{item.graduationYear} · {item.primaryInstrument}</p>
-                  {item.currentOccupation && <p>{item.currentOccupation}</p>}
-                </CardContent>
-              </Card>
-            ))}
+            {publicAlumni.map((item) => {
+              const localeBio = item.bio?.[locale as keyof typeof item.bio] || item.bio?.en || item.currentOccupation;
+              return (
+                <Card key={item.id}>
+                  <CardHeader>
+                    <CardTitle className='text-lg'>{item.displayName}</CardTitle>
+                  </CardHeader>
+                  <CardContent className='space-y-2 text-sm'>
+                    <p className='text-muted-foreground'>{item.graduationYear} · {item.primaryInstrument}</p>
+                    {localeBio && <p>{localeBio}</p>}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <section className='space-y-3'>
             <h2 className='text-2xl font-semibold'>{t('publicMasterClassesTitle')}</h2>
             <div className='space-y-3'>
               {publishedMasterClasses.length === 0 && <p className='text-sm text-muted-foreground'>{t('noPublishedMasterClasses')}</p>}
-              {publishedMasterClasses.map((item) => (
-                <Card key={item.id}>
-                  <CardContent className='flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between'>
-                    <div>
-                      <p className='font-medium'>{item.title.en}</p>
-                      <p className='text-sm text-muted-foreground'>{item.instructor.displayName} · {item.date} {item.startTime}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {publishedMasterClasses.map((item) => {
+                const title = item.title?.[locale as keyof typeof item.title] || item.title?.en || item.title?.he;
+                return (
+                  <Card key={item.id}>
+                    <CardContent className='flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between'>
+                      <div>
+                        <p className='font-medium'>{title}</p>
+                        <p className='text-sm text-muted-foreground'>{item.instructor.displayName} · {item.date} {item.startTime}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </section>
         </section>

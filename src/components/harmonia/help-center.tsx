@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, BookOpen } from 'lucide-react';
-import { helpArticles, helpCategories } from '@/lib/help-articles';
+import { helpArticles, helpCategoryKeys } from '@/lib/help-articles';
 import { Link } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -25,17 +25,19 @@ export function HelpCenter() {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredArticles = searchTerm
-        ? helpArticles.filter(
-            article =>
-              article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              article.content.toLowerCase().includes(searchTerm.toLowerCase())
-          )
+        ? helpArticles.filter(article => {
+            const title = t(`articles.${article.id}.title` as any);
+            const content = t(`articles.${article.id}.content` as any);
+            const q = searchTerm.toLowerCase();
+            return title.toLowerCase().includes(q) || content.toLowerCase().includes(q);
+          })
         : helpArticles;
 
-    const categoryLabel = (cat: string) => {
-      const key = ('category_' + cat.replace(/[^a-zA-Z]/g, '')) as Parameters<typeof t>[0];
-      try { return t(key); } catch { return cat; }
-    };
+    const categoryGroups = helpCategoryKeys.map(key => ({
+        key,
+        label: t(`category_${key}` as any),
+        articles: helpArticles.filter(a => a.categoryKey === key),
+    }));
 
     return (
         <div className="space-y-8" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -62,8 +64,8 @@ export function HelpCenter() {
                            {filteredArticles.map(article => (
                                 <Link key={article.id} href={"/help/" + article.id} passHref>
                                     <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer h-full">
-                                        <h3 className="font-semibold">{article.title}</h3>
-                                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(article.content).substring(0, 120)}</p>
+                                        <h3 className="font-semibold">{t(`articles.${article.id}.title` as any)}</h3>
+                                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(t(`articles.${article.id}.content` as any)).substring(0, 120)}</p>
                                     </div>
                                 </Link>
                            ))}
@@ -73,17 +75,17 @@ export function HelpCenter() {
                      )}
                  </div>
              ) : (
-                helpCategories.map(category => (
-                    <div key={category}>
-                        <h2 className="text-2xl font-semibold mb-4">{categoryLabel(category)}</h2>
+                categoryGroups.map(({ key, label, articles }) => (
+                    <div key={key}>
+                        <h2 className="text-2xl font-semibold mb-4">{label}</h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {helpArticles.filter(a => a.category === category).map(article => (
+                            {articles.map(article => (
                                 <Link key={article.id} href={"/help/" + article.id} passHref>
                                      <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer flex items-start gap-3 h-full">
                                          <BookOpen className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
                                         <div>
-                                            <h3 className="font-semibold">{article.title}</h3>
-                                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(article.content).substring(0, 120)}</p>
+                                            <h3 className="font-semibold">{t(`articles.${article.id}.title` as any)}</h3>
+                                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(t(`articles.${article.id}.content` as any)).substring(0, 120)}</p>
                                         </div>
                                     </div>
                                 </Link>

@@ -230,7 +230,33 @@
     "category_PaymentsBilling": "Payments & Billing",
     "category_FormsApprovals": "Forms & Approvals",
     "category_ForTeachers": "For Teachers",
-    "category_ForAdmins": "For Admins"
+    "category_ForAdmins": "For Admins",
+    "articles": {
+      "booking-first-lesson": {
+        "title": "How to Book a Lesson",
+        "content": "## Booking Your First Lesson\n\n1. Navigate to the **Schedule** page from the sidebar.\n2. Click on the \"Book a new lesson\" button.\n3. Select the student (if you are a parent), instrument, teacher, and lesson duration.\n4. Use the calendar to pick a date.\n5. Available time slots for your selected teacher will appear. Choose one that works for you.\n6. Confirm the booking. A credit will be deducted from your package."
+      },
+      "cancellation-policy": {
+        "title": "Understanding the Cancellation Policy",
+        "content": "## Cancellation Policy\n\n- **On-Time Cancellation:** If you cancel a lesson more than 24 hours in advance, you will automatically receive a makeup credit.\n- **Late Cancellation:** If you cancel less than 24 hours before the lesson, the credit for that lesson will be forfeited.\n- **Teacher Cancellation:** If your teacher cancels a lesson, you will always receive a makeup credit.\n\nYou can use makeup credits to book a new lesson at your convenience via the **Makeups** page."
+      },
+      "updating-payment": {
+        "title": "How to Update Your Payment Method",
+        "content": "## Updating Your Payment Method\n\n1. Go to the **Billing** page from the sidebar.\n2. In the \"Subscription Management\" section, click on \"Manage Payment Method\".\n3. You will be prompted to enter your new credit card details in a secure form.\n4. Once saved, all future recurring payments will use the new card."
+      },
+      "submitting-recital-form": {
+        "title": "Submitting a Recital Form",
+        "content": "## Submitting a Recital Form\n\n1. From the dashboard, navigate to **Forms & Docs**.\n2. Click on \"New Form\" and select \"Recital Form\".\n3. Fill out all the required details about your repertoire. You can search for compositions in our library.\n4. Once you are done, click \"Submit for Teacher Approval\".\n5. Your teacher will review the form. Once they approve it, it will be sent to the conservatory administration for final approval. You can track the status on the \"Forms & Docs\" page."
+      },
+      "teacher-availability": {
+        "title": "Setting Your Availability",
+        "content": "## Setting Your Weekly Availability\n\n1. Navigate to the **My Availability** page from your sidebar.\n2. You will see a weekly grid. Click on any empty time slot to mark it as \"available\". Click again to mark it as \"unavailable\".\n3. Your changes are not saved automatically. When you are finished, click the \"Save Changes\" button.\n4. Your updated availability will be immediately visible to students seeking to book lessons."
+      },
+      "admin-approving-users": {
+        "title": "Approving New Registrations",
+        "content": "## Approving New Users\n\n1. From your Admin Dashboard, go to the **User Management** page.\n2. Click on the \"Pending Approval\" tab.\n3. You will see a list of all users who have registered but are awaiting approval.\n4. You can review their details and click the **Approve** (green check) or **Reject** (red X) button for each user.\n5. Once approved, the user will receive an email notification and will be able to log in to the system."
+      }
+    }
   },
   "HelpAssistant": {
     "title": "Harmonia AI Assistant",

@@ -16,7 +16,8 @@ export default async function DashboardLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const sidebarSide = locale === 'he' || locale === 'ar' ? 'right' : 'left';
+  const isRtl = locale === 'he' || locale === 'ar';
+  const sidebarSide = isRtl ? 'right' : 'left';
   const tAccessibility = await getTranslations({ locale, namespace: 'AccessibilityPage' });
 
   return (
@@ -26,7 +27,7 @@ export default async function DashboardLayout({
       </Sidebar>
       <SidebarInset
         className="min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain"
-        dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}
+        dir={isRtl ? 'rtl' : 'ltr'}
       >
         <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6 lg:p-8">
           <div id="dashboard-content" className="flex-1">{children}</div>

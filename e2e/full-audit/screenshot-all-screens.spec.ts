@@ -15,6 +15,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as http from 'http';
 import { test, expect, type Page } from '@playwright/test';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -44,46 +45,75 @@ async function navAndShot(
   url: string,
   filename: string,
 ) {
-  // Listen for bootstrap API response before navigating
-  const bootstrapDone = page.waitForResponse(
-    resp => resp.url().includes('/api/bootstrap') && resp.status() === 200,
-    { timeout: 15_000 },
-  ).catch(() => null);
+  // Inner helper: navigate once and wait for content
+  async function loadOnce() {
+    // Listen for bootstrap API response before navigating
+    const bootstrapDone = page.waitForResponse(
+      resp => resp.url().includes('/api/bootstrap') && resp.status() === 200,
+      { timeout: 15_000 },
+    ).catch(() => null);
 
-  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
 
-  // Wait for bootstrap data to arrive
-  await Promise.race([bootstrapDone, page.waitForTimeout(8_000)]);
+    // Wait for bootstrap data to arrive (usually 1-3s; cap at 6s)
+    await Promise.race([bootstrapDone, page.waitForTimeout(6_000)]);
 
-  // Wait for skeleton loaders to disappear — poll with retries
-  for (let i = 0; i < 20; i++) {
-    await page.waitForTimeout(300);
-    // Also kill any driver.js walkthrough overlay that fires after bootstrap
-    await page.evaluate(() => {
-      document.querySelectorAll('.driver-overlay, .driver-popover, [class*="driver-"]').forEach(el => el.remove());
-    }).catch(() => {});
-    const pulseCount = await page.evaluate(
-      () => document.querySelectorAll('.animate-pulse').length
-    ).catch(() => 0);
-    if (pulseCount === 0) break;
+    // Wait for skeleton loaders to disappear — poll with retries
+    for (let i = 0; i < 25; i++) {
+      await page.waitForTimeout(300);
+      // Also kill any driver.js walkthrough overlay that fires after bootstrap
+      await page.evaluate(() => {
+        document.querySelectorAll('.driver-overlay, .driver-popover, [class*="driver-"]').forEach(el => el.remove());
+      }).catch(() => {});
+      const loadingCount = await page.evaluate(
+        () => document.querySelectorAll('.animate-pulse, .animate-spin').length
+      ).catch(() => 0);
+      if (loadingCount === 0) break;
+    }
+
+    // After skeleton gone, also wait for meaningful content (catches pages that return null while loading)
+    // and wait for Turbopack compilation overlay to clear
+    await page.waitForFunction(
+      () => {
+        // Turbopack "Compiling..." indicator must be gone
+        const compiling = Array.from(document.querySelectorAll('*')).some(
+          el => el.textContent?.trim() === 'Compiling ...' && (el as HTMLElement).offsetParent !== null
+        );
+        if (compiling) return false;
+        // "Rendering..." indicator must also be gone
+        const rendering = Array.from(document.querySelectorAll('*')).some(
+          el => el.textContent?.trim()?.startsWith('Rendering') && (el as HTMLElement).offsetParent !== null
+        );
+        if (rendering) return false;
+        return (document.body?.innerText?.length ?? 0) > 100;
+      },
+      { timeout: 15_000 },
+    ).catch(() => {});
   }
 
-  // After skeleton gone, also wait for meaningful content (catches pages that return null while loading)
-  // and wait for Turbopack compilation overlay to clear
-  await page.waitForFunction(
-    () => {
-      // Turbopack "Compiling..." indicator must be gone
-      const compiling = Array.from(document.querySelectorAll('*')).some(
-        el => el.textContent?.trim() === 'Compiling ...' && (el as HTMLElement).offsetParent !== null
-      );
-      if (compiling) return false;
-      return (document.body?.innerText?.length ?? 0) > 100;
-    },
-    { timeout: 10_000 },
-  ).catch(() => {});
+  // First attempt
+  await loadOnce();
+
+  // Check if page is still blank (sidebar-only) or 404 — if so, retry once
+  const contentLength = await page.evaluate(() => {
+    // Detect Next.js 404
+    const is404 = document.title?.includes('404') || document.body?.innerText?.includes('This page could not be found');
+    if (is404) return 0;
+    // Exclude sidebar text from count
+    const sidebar = document.querySelector('aside, [data-sidebar]');
+    const sidebarText = (sidebar as HTMLElement | null)?.innerText ?? '';
+    const bodyText = document.body?.innerText ?? '';
+    return bodyText.length - sidebarText.length;
+  }).catch(() => 0);
+
+  if (contentLength < 150) {
+    // Page is essentially blank (only sidebar rendered) — wait and retry navigation
+    await page.waitForTimeout(2000);
+    await loadOnce();
+  }
 
   // Final settle for CSS transitions (sidebar margin animation = 200ms) + lazy images
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(1500);
 
   await page.screenshot({ path: shot(filename), fullPage: true });
 }
@@ -130,31 +160,69 @@ const MOCK_STUDENT_ID = 'student-user-1';
 const MOCK_FORM_ID    = 'form-101';
 
 // ─── Mock login helper ────────────────────────────────────────────────────────
+
 /**
- * In dev mode (no Firebase), the login form calls the mock `login(email)` function.
- * We simulate this by navigating to the login page and submitting the form.
- * The dev-bypass auth in proxy.ts also injects site_admin on all dashboard routes
- * automatically, but for persona-specific tests we use this login flow.
+ * Bootstrap user cache — fetched once from server and reused across tests.
+ * This avoids the Playwright page.goto('/he/') round-trip in devLogin.
+ */
+let _bootstrapUsers: Array<Record<string, unknown>> | null = null;
+
+async function fetchBootstrapUsers(): Promise<Array<Record<string, unknown>>> {
+  if (_bootstrapUsers) return _bootstrapUsers;
+  return new Promise((resolve) => {
+    http.get('http://localhost:9002/api/bootstrap', (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const payload = JSON.parse(data);
+          _bootstrapUsers = payload?.users ?? [];
+        } catch {
+          _bootstrapUsers = [];
+        }
+        resolve(_bootstrapUsers!);
+      });
+    }).on('error', () => {
+      _bootstrapUsers = [];
+      resolve(_bootstrapUsers);
+    });
+  });
+}
+
+/**
+ * Inject a persona user into localStorage BEFORE the page loads using addInitScript.
+ * This is 100% reliable: addInitScript runs before any page JavaScript, so useAuth
+ * reads the correct user from localStorage on its very first render.
+ *
+ * After calling devLogin(page, email), simply call navAndShot(page, url, name) —
+ * the user will already be in localStorage when the page mounts.
  */
 async function devLogin(page: Page, email: string) {
-  await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 20_000 });
-  await page.waitForTimeout(1_000);
+  const users = await fetchBootstrapUsers();
+  const found = users.find(
+    (u) => typeof u.email === 'string' && u.email.toLowerCase() === email.toLowerCase()
+  );
 
-  // Fill email
-  await page.locator('input[type="email"]').first().fill(email);
-  // Fill password (anything non-empty works in dev mode)
-  await page.locator('input[type="password"]').first().fill('demo1234');
+  if (!found) {
+    console.warn(`[devLogin] User not found in bootstrap for email: ${email}`);
+    return;
+  }
 
-  // Submit
-  await page.locator('button[type="submit"]').first().click();
+  const userJson = JSON.stringify({ ...found, hasSeenWalkthrough: true });
+  const userId = String(found.id ?? 'unknown');
 
-  // Wait for redirect away from login (either to dashboard or home)
-  await Promise.race([
-    page.waitForURL(/\/dashboard/, { timeout: 8_000 }),
-    page.waitForURL(/\/(he|en|ar|ru)\/dashboard/, { timeout: 8_000 }),
-    page.waitForURL(/\/$/, { timeout: 8_000 }),
-    page.waitForTimeout(3_000),
-  ]).catch(() => {/* login might stay on page in mock mode */});
+  // addInitScript ensures localStorage is set before any React code runs on the NEXT page load.
+  // It persists for all subsequent navigations until page is closed.
+  await page.addInitScript(
+    ({ key, value, walkthroughKey }: { key: string; value: string; walkthroughKey: string }) => {
+      try {
+        localStorage.setItem(key, value);
+        localStorage.setItem(walkthroughKey, 'true');
+        localStorage.setItem('harmonia-walkthrough-seen', 'true');
+      } catch { /* storage may be unavailable before full page init; safe to ignore */ }
+    },
+    { key: 'harmonia-user', value: userJson, walkthroughKey: `walkthrough-seen-${userId}` }
+  );
 }
 
 // ─── Setup ────────────────────────────────────────────────────────────────────
@@ -166,38 +234,48 @@ test.beforeAll(() => {
 
 /**
  * Before each test:
- * 1. Inject the dev-bypass user into localStorage so useAuth() resolves immediately
- * 2. Mark walkthrough as seen so the tutorial overlay doesn't block screenshots
+ * 1. Use addInitScript to inject the dev-bypass admin user into localStorage
+ *    BEFORE any page JS runs. This ensures useAuth() resolves immediately.
+ * 2. Mark walkthrough as seen so the tutorial overlay doesn't block screenshots.
+ *
+ * Note: tests that call devLogin(page, email) will override this with a persona user.
+ * addInitScript calls stack — the last one wins for that key (last write wins in localStorage).
  */
 test.beforeEach(async ({ page }) => {
-  await page.goto('/he/', { waitUntil: 'domcontentloaded', timeout: 15_000 });
-  await page.evaluate(() => {
-    const devUser = {
-      id: 'dev-user',
-      name: 'Dev Admin',
-      email: 'dev@harmonia.local',
-      role: 'site_admin',
-      conservatoriumId: 'dev-conservatorium',
-      conservatoriumName: 'Dev Conservatorium',
-      avatarUrl: 'https://i.pravatar.cc/150?u=dev',
-      idNumber: '000000000',
-      phone: '000-0000000',
-      approved: true,
-      notifications: [],
-      achievements: [],
-      hasSeenWalkthrough: true,
-      createdAt: '2024-03-03T12:00:00.000Z',
-    };
-    localStorage.setItem('harmonia-user', JSON.stringify(devUser));
-    // Mark walkthrough seen — two keys checked by WalkthroughManager
-    localStorage.setItem('harmonia-walkthrough-seen', 'true');
-    localStorage.setItem('walkthrough-seen-dev-user', 'true');
-    document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
+  const devUser = JSON.stringify({
+    id: 'dev-user',
+    name: 'Dev Admin',
+    email: 'dev@harmonia.local',
+    role: 'site_admin',
+    conservatoriumId: 'dev-conservatorium',
+    conservatoriumName: 'Dev Conservatorium',
+    avatarUrl: 'https://i.pravatar.cc/150?u=dev',
+    idNumber: '000000000',
+    phone: '000-0000000',
+    approved: true,
+    notifications: [],
+    achievements: [],
+    hasSeenWalkthrough: true,
+    createdAt: '2024-03-03T12:00:00.000Z',
   });
+
+  // Force Hebrew locale cookie at the context level (persists for all navigations)
+  await page.context().addCookies([
+    { name: 'NEXT_LOCALE', value: 'he', domain: 'localhost', path: '/' },
+    { name: 'harmonia-user', value: '1', domain: 'localhost', path: '/' },
+  ]);
+
+  await page.addInitScript(({ userJson }: { userJson: string }) => {
+    try {
+      localStorage.setItem('harmonia-user', userJson);
+      localStorage.setItem('harmonia-walkthrough-seen', 'true');
+      localStorage.setItem('walkthrough-seen-dev-user', 'true');
+    } catch { /* ignore */ }
+  }, { userJson: devUser });
 });
 
 // Global timeout for individual tests (nav + inject + skeleton wait)
-test.setTimeout(60_000);
+test.setTimeout(90_000);
 
 // ══════════════════════════════════════════════════════════════════════════════
 // 1. PUBLIC PAGES
@@ -250,22 +328,44 @@ test.describe('01 — Public Pages', () => {
     await page.setViewportSize(DESKTOP);
     await navAndShot(page, '/about', '06-about-he');
     // Conservatoriums load async from bootstrap — wait for cards to appear
+    // The about page renders Card elements with class "group overflow-hidden"
     await page.waitForFunction(
-      () => document.querySelectorAll('[role="region"] .group, [data-slot="card"].group').length > 0,
-      { timeout: 10_000 },
+      () => {
+        // Look for the count text "מציג X קונסרבטוריונים" which appears when data loads
+        const countText = document.body?.innerText ?? '';
+        if (countText.includes('קונסרבטוריונ') && !countText.includes('0 קונסרבטוריונ')) return true;
+        // Also look for actual card buttons (about page renders button inside card)
+        return document.querySelectorAll('button.w-full.text-start').length > 0;
+      },
+      { timeout: 12_000 },
     ).catch(() => {});
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(800);
     await page.screenshot({ path: shot('06-about-he'), fullPage: true });
   });
 
   test('07-about-en — About (English)', async ({ page }) => {
+    test.setTimeout(180_000);
     await page.setViewportSize(DESKTOP);
-    await navAndShot(page, '/en/about', '07-about-en');
+    // Extra long goto timeout — this route is slow to cold-compile
+    const bootstrapDone = page.waitForResponse(
+      resp => resp.url().includes('/api/bootstrap') && resp.status() === 200,
+      { timeout: 20_000 },
+    ).catch(() => null);
+    await page.goto('/en/about', { waitUntil: 'domcontentloaded', timeout: 120_000 });
+    await Promise.race([bootstrapDone, page.waitForTimeout(10_000)]);
+    await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
     await page.waitForFunction(
-      () => document.querySelectorAll('[role="region"] .group, [data-slot="card"].group').length > 0,
-      { timeout: 10_000 },
+      () => {
+        const countText = document.body?.innerText ?? '';
+        if (countText.includes('conservatori') && !countText.includes('0 conservatori')) return true;
+        return document.querySelectorAll('button.w-full.text-start').length > 0;
+      },
+      { timeout: 20_000 },
     ).catch(() => {});
-    await page.waitForTimeout(500);
+    await page.evaluate(() => {
+      document.querySelectorAll('.driver-overlay, .driver-popover, [class*="driver-"]').forEach(el => el.remove());
+    }).catch(() => {});
+    await page.waitForTimeout(800);
     await page.screenshot({ path: shot('07-about-en'), fullPage: true });
   });
 
@@ -376,6 +476,19 @@ test.describe('03 — Schedule', () => {
   test('33-book-lesson-step1 — Book lesson wizard — step 1', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await navAndShot(page, '/dashboard/schedule/book', '33-book-lesson-step1');
+    // Extra wait for the dynamically imported BookLessonWizard to render
+    await page.waitForFunction(
+      () => {
+        // Wizard renders tabs with role="tablist" when loaded
+        if (document.querySelector('[role="tablist"]')) return true;
+        // Or a form element
+        if (document.querySelector('select, [role="combobox"]')) return true;
+        return false;
+      },
+      { timeout: 10_000 }
+    ).catch(() => {});
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: shot('33-book-lesson-step1'), fullPage: true });
     await expect(page).not.toHaveURL(/login/);
   });
 
@@ -452,17 +565,21 @@ test.describe('05 — Billing', () => {
 
   test('52-parent-billing — Parent billing panel', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    // Must be logged in as parent to see billing panel
+    await devLogin(page, 'parent@example.com');
     await navAndShot(page, '/dashboard/parent/billing', '52-parent-billing');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('53-parent-billing-mobile — Parent billing (390px)', async ({ page }) => {
     await page.setViewportSize(MOBILE);
+    await devLogin(page, 'parent@example.com');
     await navAndShot(page, '/dashboard/parent/billing', '53-parent-billing-mobile');
   });
 
   test('54-parent-settings — Parent settings', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'parent@example.com');
     await navAndShot(page, '/dashboard/parent/settings', '54-parent-settings');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -481,12 +598,14 @@ test.describe('05 — Billing', () => {
 test.describe('06 — Teacher Portal', () => {
   test('60-teacher-dashboard — Teacher home dashboard', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher', '60-teacher-dashboard');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('61-teacher-student-profile — Student profile via teacher view', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(
       page,
       `/dashboard/teacher/student/${MOCK_STUDENT_ID}`,
@@ -497,36 +616,42 @@ test.describe('06 — Teacher Portal', () => {
 
   test('62-teacher-profile — Teacher profile settings', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/profile', '62-teacher-profile');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('63-teacher-performance-profile — Performance profile editor', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/performance-profile', '63-teacher-performance-profile');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('64-teacher-availability — Availability grid', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/availability', '64-teacher-availability');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('65-teacher-payroll — Teacher payroll view', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/payroll', '65-teacher-payroll');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('66-teacher-reports — Teacher reports dashboard', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/reports', '66-teacher-reports');
     await expect(page).not.toHaveURL(/login/);
   });
 
   test('67-teacher-exams — Teacher exam tracker', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher/exams', '67-teacher-exams');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -543,8 +668,9 @@ test.describe('07 — Student Portal', () => {
     await expect(page).not.toHaveURL(/login/);
   });
 
-  test('71-student-profile — Student detail profile', async ({ page }) => {
+  test('71-student-profile — Student detail profile (parent view)', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'parent@example.com');
     await navAndShot(page, `/dashboard/student/${MOCK_STUDENT_ID}`, '71-student-profile');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -617,7 +743,25 @@ test.describe('09 — Library & Forms', () => {
 
   test('92-form-detail — Form submission detail (form-101)', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
-    await navAndShot(page, `/dashboard/forms/${MOCK_FORM_ID}`, '92-form-detail');
+    // This page imports heavy PDF libs — give extra time for Turbopack compilation
+    test.setTimeout(180_000);
+    // Navigate directly, skipping the retry logic which can compound timeouts
+    const bootstrapDone = page.waitForResponse(
+      resp => resp.url().includes('/api/bootstrap') && resp.status() === 200,
+      { timeout: 15_000 },
+    ).catch(() => null);
+    await page.goto(`/dashboard/forms/${MOCK_FORM_ID}`, { waitUntil: 'domcontentloaded', timeout: 90_000 });
+    await Promise.race([bootstrapDone, page.waitForTimeout(8_000)]);
+    for (let i = 0; i < 30; i++) {
+      await page.waitForTimeout(300);
+      await page.evaluate(() => {
+        document.querySelectorAll('.driver-overlay, .driver-popover, [class*="driver-"]').forEach(el => el.remove());
+      }).catch(() => {});
+      const loadingCount = await page.evaluate(() => document.querySelectorAll('.animate-pulse, .animate-spin').length).catch(() => 0);
+      if (loadingCount === 0) break;
+    }
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: shot('92-form-detail'), fullPage: true });
     await expect(page).not.toHaveURL(/login/);
   });
 
@@ -725,6 +869,7 @@ test.describe('12 — Makeups & Reschedule', () => {
 
   test('122-ai-reschedule — AI reschedule page', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'student@example.com');
     await navAndShot(page, '/dashboard/ai-reschedule', '122-ai-reschedule');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -792,6 +937,8 @@ test.describe('14 — Settings', () => {
 
   test('143-settings-instruments — Instruments settings', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    // Instruments settings requires conservatorium_admin role (not site_admin)
+    await devLogin(page, 'admin@example.com');
     await navAndShot(page, '/dashboard/settings/instruments', '143-settings-instruments');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -980,6 +1127,8 @@ test.describe('17 — Family, AI & Misc', () => {
 
   test('181-ai-page — General AI assistant page', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    // AI agents page requires admin with a real conservatorium
+    await devLogin(page, 'admin@example.com');
     await navAndShot(page, '/dashboard/ai', '181-ai-page');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -996,8 +1145,9 @@ test.describe('17 — Family, AI & Misc', () => {
     await expect(page).not.toHaveURL(/login/);
   });
 
-  test('184-profile — User profile page', async ({ page }) => {
+  test('184-profile — User profile page (student view)', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
+    await devLogin(page, 'student@example.com');
     await navAndShot(page, '/dashboard/profile', '184-profile');
     await expect(page).not.toHaveURL(/login/);
   });
@@ -1011,7 +1161,8 @@ test.describe('18 — Persona Views via Mock Login', () => {
   test('185-student-view — Dashboard as student (student@example.com)', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await devLogin(page, 'student@example.com');
-    await navAndShot(page, '/dashboard', '185-student-view');
+    // Student redirects to /dashboard/profile
+    await navAndShot(page, '/dashboard/profile', '185-student-view');
   });
 
   test('186-teacher-view — Dashboard as teacher (teacher@example.com)', async ({ page }) => {
@@ -1023,7 +1174,8 @@ test.describe('18 — Persona Views via Mock Login', () => {
   test('187-parent-view — Dashboard as parent (parent@example.com)', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await devLogin(page, 'parent@example.com');
-    await navAndShot(page, '/dashboard', '187-parent-view');
+    // Parent redirects to /dashboard/family
+    await navAndShot(page, '/dashboard/family', '187-parent-view');
   });
 
   test('188-admin-view — Dashboard as admin (admin@example.com)', async ({ page }) => {
@@ -1088,6 +1240,7 @@ test.describe('20 — Mobile Key Pages', () => {
 
   test('201-teacher-dashboard-mobile — Teacher dashboard at 390px', async ({ page }) => {
     await page.setViewportSize(MOBILE);
+    await devLogin(page, 'teacher@example.com');
     await navAndShot(page, '/dashboard/teacher', '201-teacher-dashboard-mobile');
     await expect(page).not.toHaveURL(/login/);
   });

@@ -137,7 +137,12 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
 
   const selectedCons = useMemo(() => {
     if (!conservatoriumId) return null;
-    return localizedConservatoriums.find((item) => item.id === conservatoriumId) || null;
+    // Try exact id match first (handles full slug-style ids like `israel-conservatory-of-music-tel-aviv-icm__cons-82`)
+    const exact = localizedConservatoriums.find((item) => item.id === conservatoriumId);
+    if (exact) return exact;
+    // Fall back: the conservatoriumId may be just the `__` suffix (e.g. `cons-15`)
+    // extracted from a slug like `hod-hasharon__cons-15`
+    return localizedConservatoriums.find((item) => item.id === conservatoriumId || item.id.endsWith(`__${conservatoriumId}`)) || null;
   }, [localizedConservatoriums, conservatoriumId]);
 
   useEffect(() => {
