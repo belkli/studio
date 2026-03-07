@@ -460,6 +460,7 @@ export function attachPostgresWriteThrough(adapter: DatabaseAdapter, connectionS
     },
   }) as unknown as typeof adapter.scholarships;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter.rentals = withWriteThrough(adapter.rentals as unknown as Repo<any>, {
     upsert: async (rental) => {
       if (!isUuid(rental.id) || !isUuid(rental.conservatoriumId) || !isUuid(rental.studentId)) return;

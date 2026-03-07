@@ -4,7 +4,6 @@ import type {
   Branch,
   Conservatorium,
   ConservatoriumInstrument,
-  Composition,
   DonationCause,
   DonationRecord,
   EventProduction,
@@ -1155,6 +1154,7 @@ function mapPayments(rows: RawInvoice[], idMap: Map<string, string>): Invoice[] 
         })();
 
     const lineItems = Array.isArray(parsedItems)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? parsedItems.map((item: any) => ({
           description: String(item?.description || ''),
           total: Number(item?.total || 0),

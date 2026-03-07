@@ -2,9 +2,9 @@
 import { useMemo } from 'react';
 import { useAuth } from './use-auth';
 import { Users, UserX, CalendarClock, CreditCard, TrendingUp } from "lucide-react";
-import { format, subDays, startOfDay, endOfDay, isWithinInterval, isAfter, subMinutes, isFuture, addDays, getDay, isSameDay, setHours } from 'date-fns';
+import { format, subDays, isAfter, isFuture, addDays, getDay, isSameDay, setHours } from 'date-fns';
 import { useDateLocale } from './use-date-locale';
-import type { EmptySlot, DayOfWeek, User } from '@/lib/types';
+import type { EmptySlot, DayOfWeek } from '@/lib/types';
 
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
@@ -17,6 +17,7 @@ export interface AdminAlert {
     description: string;
     actionLink: string;
     actionLabel: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any;
 }
 
@@ -27,19 +28,20 @@ export function useAdminAlerts(): AdminAlert[] {
     const { users, lessons, practiceLogs, invoices } = useAuth();
     const dateLocale = useDateLocale();
 
-    // Helper to get demand pattern
-    const getDemandLevel = (lessons: any[], date: Date) => {
-        const dayName = format(date, 'EEEE', { locale: dateLocale }).toUpperCase();
-        const sameDayLessons = lessons.filter(l => format(new Date(l.startTime), 'EEEE', { locale: dateLocale }).toUpperCase() === dayName);
-        const count = sameDayLessons.length;
-        if (count >= 8) return 'CRITICAL';
-        if (count >= 5) return 'HIGH';
-        if (count >= 3) return 'MODERATE';
-        return 'LOW';
-    };
-
     const alerts = useMemo(() => {
         const allAlerts: AdminAlert[] = [];
+
+        // Helper to get demand pattern
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const getDemandLevel = (lessons: any[], date: Date) => {
+            const dayName = format(date, 'EEEE', { locale: dateLocale }).toUpperCase();
+            const sameDayLessons = lessons.filter(l => format(new Date(l.startTime), 'EEEE', { locale: dateLocale }).toUpperCase() === dayName);
+            const count = sameDayLessons.length;
+            if (count >= 8) return 'CRITICAL';
+            if (count >= 5) return 'HIGH';
+            if (count >= 3) return 'MODERATE';
+            return 'LOW';
+        };
         const teachers = users.filter(u => u.role === 'teacher');
         const students = users.filter(u => u.role === 'student' && u.approved);
 

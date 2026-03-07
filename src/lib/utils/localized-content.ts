@@ -7,6 +7,7 @@ import { ConservatoriumProfileTranslation, UserTranslations } from '@/lib/types'
  */
 export function getLocalizedField(
     sourceText: string | null | undefined,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     translations: Record<string, any> | undefined,
     locale: string,
     fieldKey: string
@@ -26,6 +27,7 @@ export function getLocalizedField(
 export function getLocalizedConservatorium(
     cons: Conservatorium,
     locale: string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Conservatorium & { [key: string]: any } {
     if (locale === 'he' || !cons.translations) {
         return cons;
@@ -66,6 +68,7 @@ export function getLocalizedConservatorium(
 export function getLocalizedUserProfile(
     user: User,
     locale: string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): User & { [key: string]: any } {
     if (locale === 'he' || !user.translations) {
         return user;

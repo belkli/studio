@@ -5,14 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Bot, User, BrainCircuit, Check, X, Loader2 } from 'lucide-react';
+import { Send, Bot, BrainCircuit, Check, X, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { processNlpRescheduleRequest } from '@/app/actions';
 import type { RescheduleResponse } from '@/ai/flows/reschedule-flow';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { format, add, set } from 'date-fns';
-import { useDateLocale } from '@/hooks/use-date-locale';
+import { add, set } from 'date-fns';
 
 interface Message {
   sender: 'user' | 'bot';

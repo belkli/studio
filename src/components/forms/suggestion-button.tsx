@@ -6,18 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { getCompositionSuggestions } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
-import type { Composition } from '@/lib/types';
-
 import { useLocale, useTranslations } from 'next-intl';
 
 type SuggestionButtonProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   append: (value: any, options?: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getValues: () => any;
 };
 
 
-export function SuggestionButton({ fields, append, getValues }: SuggestionButtonProps) {
+export function SuggestionButton({ fields: _fields, append, getValues }: SuggestionButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const locale = useLocale();
@@ -29,6 +30,7 @@ export function SuggestionButton({ fields, append, getValues }: SuggestionButton
       const currentValues = getValues();
       const existingCompositions = currentValues.repertoire
         ? currentValues.repertoire
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((item: any) => item.title)
           .filter(Boolean)
         : [];

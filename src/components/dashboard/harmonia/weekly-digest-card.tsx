@@ -1,6 +1,6 @@
 'use client';
 
-import type { User, LessonSlot, PracticeLog, AssignedRepertoire, LessonNote } from '@/lib/types';
+import type { User, AssignedRepertoire } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 import { useMemo } from 'react';
 import { format, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';

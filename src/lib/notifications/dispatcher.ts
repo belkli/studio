@@ -14,7 +14,7 @@
  * - SENDGRID_FROM_EMAIL
  */
 
-import type { Channel, NotificationType, NotificationPreferences, UserRole } from '@/lib/types';
+import type { Channel, NotificationType, NotificationPreferences } from '@/lib/types';
 
 // ── Types ────────────────────────────────────────────────────
 export interface NotificationPayload {
@@ -137,8 +137,8 @@ export async function dispatchNotification(
 
                 case 'SMS':
                     if (userPhone) {
-                        const phone = normalizeIsraeliPhone(userPhone);
-                        // await sendSMS(phone, body);
+                        const _phone = normalizeIsraeliPhone(userPhone);
+                        // await sendSMS(_phone, body);
                         result.delivered.push('SMS');
                     } else {
                         result.failed.push({ channel: 'SMS', error: 'No phone number' });
@@ -147,8 +147,8 @@ export async function dispatchNotification(
 
                 case 'WHATSAPP':
                     if (userPhone) {
-                        const phone = normalizeIsraeliPhone(userPhone);
-                        // await sendWhatsApp(phone, body);
+                        const _phone = normalizeIsraeliPhone(userPhone);
+                        // await sendWhatsApp(_phone, body);
                         result.delivered.push('WHATSAPP');
                     } else {
                         result.failed.push({ channel: 'WHATSAPP', error: 'No phone number' });

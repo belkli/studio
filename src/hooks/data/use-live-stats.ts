@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/use-auth';
 import { useMemo } from 'react';
-import type { FormStatus, FormSubmission, User } from '@/lib/types';
+import type { FormStatus } from '@/lib/types';
 import { isThisWeek, isToday } from 'date-fns';
 
 export function useLiveStats() {

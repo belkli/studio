@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { LessonSlot, User, DayOfWeek } from '@/lib/types';
 import { format, getDay, isFuture } from 'date-fns';
@@ -27,7 +27,6 @@ export function SubstituteAssignmentPanel() {
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
         const teachers = users.filter(u => u.role === 'teacher');
 
@@ -72,7 +71,7 @@ export function SubstituteAssignmentPanel() {
 
         return affected.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
-    }, [lessons, users]);
+    }, [lessons, users, conservatoriumInstruments]);
 
     const handleAssignSubstitute = (lessonId: string, newTeacherId: string) => {
         const lesson = lessonsNeedingSub.find(l => l.id === lessonId);

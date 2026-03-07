@@ -51,6 +51,7 @@ export function RoomManagementDialog({
   const [blockReason, setBlockReason] = useState('');
 
   const form = useForm<RoomFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(roomSchema) as any,
     defaultValues: {
       name: '',

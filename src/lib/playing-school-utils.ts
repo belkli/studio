@@ -1,4 +1,4 @@
-import type { User, PlayingSchoolInfo, AccountType } from './types';
+import type { User } from './types';
 import { ACHIEVEMENT_DEFINITIONS } from './types';
 
 /**

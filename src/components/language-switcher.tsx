@@ -81,6 +81,7 @@ export function LanguageSwitcher() {
         localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
         // Persist to user profile (fire-and-forget — best effort)
         updateUserLanguagePreference({ locale: newLocale }).catch(() => {});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router.replace(normalizedPathname as any, { locale: newLocale as any });
     };
 

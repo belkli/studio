@@ -60,6 +60,7 @@ function scopeAndCategorizeInvoices(
         scopedInvoices = scopedInvoices.slice(0, filters.limit);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const unpaidInvoices = scopedInvoices.filter(i => i.status === 'SENT' || i.status === 'PENDING' as any);
     const overdueInvoices = scopedInvoices.filter(i => i.status === 'OVERDUE');
     const totalOutstanding = [...unpaidInvoices, ...overdueInvoices].reduce(

@@ -20,6 +20,7 @@ import { Checkbox } from '../ui/checkbox';
 import { schools, genres } from '@/lib/taxonomies';
 import { useLocale, useTranslations } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
     composerId: z.string().optional(),
@@ -33,6 +34,7 @@ const getCompositionSchema = (t: any) => z.object({
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getRecitalFormSchema = (t: any) => z.object({
     studentId: z.string(),
     studentName: z.string(),
@@ -111,6 +113,7 @@ const getHebrewAcademicYear = () => {
     return `תשפ"${hebrewYearInChars} (${gregorianYear}-${gregorianYear + 1})`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('RecitalForm');
     const { control, setValue, watch, getValues } = useFormContext();
@@ -125,7 +128,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     const selectedComposer = currentRepertoireItem?.composer;
     const selectedInstrument = watch('instrumentDetails.instrument');
 
-    // eslint-disable-next-line react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
         try {
@@ -138,7 +141,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
         }
     }, 300), [selectedInstrument]);
 
-    // eslint-disable-next-line react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
         try {
@@ -294,6 +297,7 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
     const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(getRecitalFormSchema(t)) as any,
         defaultValues: initialData ? {
             studentId: initialData.studentId,
@@ -385,6 +389,7 @@ export function RecitalForm({ user: _user, student, onSubmit, isEditing = false,
 
     return (
         <FormProvider {...form}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="mt-8 space-y-8">
                 <Card>
                     <CardHeader>

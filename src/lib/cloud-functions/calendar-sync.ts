@@ -4,7 +4,7 @@
  * the teacher's personal Google Calendar.
  */
 
-import type { LessonSlot, GoogleCalendarIntegration } from '@/lib/types';
+import type { LessonSlot } from '@/lib/types';
 
 /**
  * syncTeacherCalendars — Scheduled Function (every 15 minutes)

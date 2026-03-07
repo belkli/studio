@@ -8,7 +8,7 @@
 
 import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { PracticeLog, LessonNote, AssignedRepertoire, LessonSlot } from '@/lib/types';
+import type { LessonNote, AssignedRepertoire } from '@/lib/types';
 
 export interface PreLessonSummary {
     studentName: string;
@@ -68,6 +68,7 @@ export function usePreLessonSummary(
             .map(l => (l.studentNote || l.notes)!);
 
         const moods = practiceAfterLastLesson.map(l => l.mood).filter(Boolean);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const moodScore = (moods as any[]).reduce((s, m) => s + (m === 'GREAT' ? 3 : m === 'OKAY' ? 2 : 1), 0);
         const avgMood = moods.length ? (moodScore / moods.length >= 2.5 ? 'GREAT' : moodScore / moods.length >= 1.5 ? 'OKAY' : 'HARD') : 'N/A';
 

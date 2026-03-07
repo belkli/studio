@@ -42,8 +42,11 @@ export async function getDb(): Promise<DatabaseAdapter> {
       throw new Error(`Unknown DB_BACKEND: ${backend}`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adapterName = (dbInstance as any)?.constructor?.name || 'UnknownAdapter';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const source = (dbInstance as any)?.source || 'primary';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fallbackReason = (dbInstance as any)?.fallbackReason || '';
   console.info(
     `[db] resolved backend=${backend} adapter=${adapterName} source=${source}${fallbackReason ? ` reason=${fallbackReason}` : ''}`

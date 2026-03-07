@@ -4,7 +4,7 @@
  * Israeli payroll systems (Hilan, Merav Digital).
  */
 
-import type { PayrollExportRow, PayrollSummary, LessonSlot, User, TeacherCompensation } from '@/lib/types';
+import type { PayrollExportRow, LessonSlot, User, TeacherCompensation } from '@/lib/types';
 
 /**
  * generatePayrollExport — Callable Cloud Function (admin only)

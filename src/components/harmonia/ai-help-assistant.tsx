@@ -55,8 +55,10 @@ export function AiHelpAssistant() {
   }, [t]);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).openHelpAssistant = () => setIsOpen(true);
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).openHelpAssistant;
     };
   }, []);
@@ -123,7 +125,7 @@ export function AiHelpAssistant() {
     };
   }, [isDesktop, pathname]);
 
-  const clampFabPosition = (x: number, y: number, minimized = fabMinimized) => {
+  const clampFabPosition = useCallback((x: number, y: number, minimized = fabMinimized) => {
     const size = minimized ? 40 : 56;
     const maxX = Math.max(8, window.innerWidth - size - 8);
     const maxY = Math.max(8, window.innerHeight - size - 8);
@@ -131,7 +133,7 @@ export function AiHelpAssistant() {
       x: Math.max(8, Math.min(x, maxX)),
       y: Math.max(8, Math.min(y, maxY)),
     };
-  };
+  }, [fabMinimized]);
 
   useEffect(() => {
     try {
@@ -295,7 +297,7 @@ export function AiHelpAssistant() {
 
       const botMessage: Message = { sender: 'bot', text: response.answer, response };
       setMessages((prev) => [...prev, botMessage]);
-    } catch (_error) {
+    } catch {
       setMessages((prev) => [...prev, { sender: 'bot', text: t('errorMessage') }]);
     } finally {
       setIsLoading(false);

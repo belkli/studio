@@ -36,7 +36,7 @@ const MANDATORY_CLOSURE_HOLIDAYS = [
 ];
 
 // Holidays where closure is conservatorium-specific
-const OPTIONAL_CLOSURE_HOLIDAYS = [
+const _OPTIONAL_CLOSURE_HOLIDAYS = [
     'Tu BiShvat',
     'Purim',
     'Lag BaOmer',
@@ -48,7 +48,7 @@ const OPTIONAL_CLOSURE_HOLIDAYS = [
  */
 export function mapHebcalToClosureDate(
     hebcalEntry: { title: string; date: string; hebrew: string; category: string },
-    conservatoriumId: string
+    _conservatoriumId: string
 ): ClosureDate {
     const isMandatory = MANDATORY_CLOSURE_HOLIDAYS.some(h =>
         hebcalEntry.title.includes(h)

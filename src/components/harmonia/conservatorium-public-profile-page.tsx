@@ -146,7 +146,6 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
   }, [localizedConservatoriums, conservatoriumId]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedProfile(null);
   }, [selectedCons?.id]);
 
@@ -271,6 +270,7 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
     }
 
     return Array.from(unique.values());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCons, localizedTeachers, platformInstruments, locale]);
 
   const selectedTeacherGroups = useMemo(() => {
@@ -386,6 +386,7 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
 
               <Card className="overflow-hidden">
                 {selectedCons.photoUrls?.[0] && (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={selectedCons.photoUrls[0]} alt={selectedCons.name} className="h-44 w-full object-cover" />
                 )}
                 {!selectedCons.photoUrls?.[0] && <div className="h-44 w-full bg-muted" />}

@@ -1,23 +1,19 @@
 'use client';
 
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { User, Composition, FormSubmission } from '@/lib/types';
 import { PlusCircle, Send, Trash2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { SaveStatusBar, type SaveState } from './save-status-bar';
 import { searchComposers, searchCompositions } from '@/app/actions';
 import { Combobox } from '../ui/combobox';
 import { debounce } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { SuggestionButton } from './suggestion-button';
 import { examLevels, examTypes, genres } from '@/lib/taxonomies';
 import { Checkbox } from '../ui/checkbox';
 
@@ -25,6 +21,7 @@ import { Checkbox } from '../ui/checkbox';
 import { useLocale, useTranslations } from 'next-intl';
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
     composer: z.string().min(1, t('validation.requiredComposer')),
@@ -38,6 +35,7 @@ const getCompositionSchema = (t: any) => z.object({
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFormSchema = (t: any) => z.object({
     studentId: z.string(),
     studentName: z.string(),
@@ -68,6 +66,7 @@ interface ExamRegistrationFormProps {
     onCancel?: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('ExamRegistrationForm');
     const { control, setValue, watch, getValues } = useFormContext();
@@ -82,7 +81,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
     const selectedComposer = currentRepertoireItem?.composer;
     const selectedInstrument = watch('instrument');
 
-    // eslint-disable-next-line react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
         try {
@@ -95,7 +94,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
         }
     }, 300), [selectedInstrument]);
 
-    // eslint-disable-next-line react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
         try {
@@ -253,6 +252,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
     });
 
     const handleFormSubmit = (data: FormData) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const totalDurationSeconds = data.repertoire.reduce((total: number, item: any) => {
             if (!item?.duration) return total;
             const [minutes, seconds] = item.duration.split(':').map(Number);
@@ -267,6 +267,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
             formType: nt('types.exam_registration'),
             totalDuration: totalDurationFormatted,
             academicYear: getHebrewAcademicYear(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
 
         onSubmit(submissionData);
@@ -274,6 +275,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
 
     return (
         <FormProvider {...form}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className="space-y-8 mt-8" key={student.id}>
 
                 <Card>

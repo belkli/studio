@@ -5,9 +5,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Calendar } from '@/components/ui/calendar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,7 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
     const form = useForm<RescheduleFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(rescheduleSchema) as any,
         defaultValues: {
             date: new Date(),

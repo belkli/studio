@@ -9,6 +9,7 @@ import { instruments } from "@/lib/taxonomies";
 import { useTranslations, useLocale } from 'next-intl';
 import { userHasInstrument } from '@/lib/instrument-matching';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
@@ -27,7 +28,6 @@ export function AcademicReports() {
         repertoireAdvancement,
         engagementByTeacher,
         avgMinutesByInstrument,
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -107,7 +107,7 @@ export function AcademicReports() {
             engagementByTeacher: teacherEngagementData,
             avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [practiceLogs, students, teachers, assignedRepertoire, t]);
+    }, [practiceLogs, students, teachers, assignedRepertoire, t, conservatoriumInstruments]);
 
 
     return (
@@ -155,6 +155,7 @@ export function AcademicReports() {
                                 <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
                                     contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr', borderRadius: 'var(--radius)' }}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     formatter={(value: any) => [`${Number(value).toFixed(0)}%`, t('tooltipEngagement')]}
                                 />
                                 <Bar dataKey={t('tooltipEngagement')} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
@@ -175,6 +176,7 @@ export function AcademicReports() {
                                 <RechartsTooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
                                     contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr', borderRadius: 'var(--radius)' }}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     formatter={(value: any) => [`${Number(value).toFixed(0)}`, t('tooltipAvgMinutes')]}
                                 />
                                 <Bar dataKey={t('avgMinutesProp')} fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />

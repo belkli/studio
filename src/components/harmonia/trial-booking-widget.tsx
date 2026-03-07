@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,16 +9,15 @@ import { useTranslations, useLocale } from 'next-intl';
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { add, set, format, getDay, isBefore } from 'date-fns';
+import { set, format, getDay, isBefore } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, Contact, Music, Calendar, HeartHandshake, ShieldCheck, Loader2 } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
@@ -57,6 +56,7 @@ export function TrialBookingWidget() {
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const form = useForm<TrialFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(getTrialSchema(t)) as any,
         defaultValues: { date: new Date() },
     });
@@ -175,7 +175,7 @@ export function TrialBookingWidget() {
         }
     };
 
-    const onSubmit = (data: TrialFormData) => {
+    const onSubmit = (_data: TrialFormData) => {
         clearDraft();
         setIsSubmitted(true);
         // This is a mock submission

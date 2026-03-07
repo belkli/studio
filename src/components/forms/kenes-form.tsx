@@ -5,7 +5,7 @@ import { useForm, useFieldArray, FormProvider, useFormContext } from 'react-hook
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import type { User, Composition, FormSubmission } from '@/lib/types';
@@ -25,6 +25,7 @@ import { SuggestionButton } from './suggestion-button';
 import { useLocale, useTranslations } from 'next-intl';
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCompositionSchema = (t: any) => z.object({
     id: z.string().optional(),
     composer: z.string().min(1, t('validation.requiredComposer')),
@@ -38,6 +39,7 @@ const getCompositionSchema = (t: any) => z.object({
 const MIN_REPERTOIRE_ITEMS = 1;
 const MAX_REPERTOIRE_ITEMS = 10;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFormSchema = (t: any) => z.object({
     academicYear: z.string().min(1, t('validation.requiredAcademicYear')),
     conservatoriumName: z.string().min(1, t('validation.requiredConservatorium')),
@@ -102,9 +104,10 @@ const getDurationBracket = (totalSeconds: number): 10 | 15 | 20 | 25 | 30 => {
 };
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove: (index: number) => void, fields: any[] }) => {
     const t = useTranslations('KenesForm');
-    const { control, setValue, watch, getValues } = useFormContext();
+    const { control, setValue, watch } = useFormContext();
     const [composerOptions, setComposerOptions] = useState<ComposerOption[]>([]);
     const [compositionOptions, setCompositionOptions] = useState<Composition[]>([]);
     const [isLoadingComposers, setIsLoadingComposers] = useState(false);
@@ -115,6 +118,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
     const selectedComposerId = currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(currentRepertoireItem?.composer))?.id || '';
     const selectedComposer = currentRepertoireItem?.composer;
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedComposerSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingComposers(true);
         try {
@@ -127,6 +131,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
         }
     }, 300), []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedCompositionSearch = useCallback(debounce(async (query: string) => {
         setIsLoadingCompositions(true);
         try {
@@ -275,6 +280,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
     const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(getFormSchema(t)) as any,
         defaultValues: initialData || {
             academicYear: `תשפ"${String.fromCharCode(1488 + (new Date().getFullYear() % 100) % 10 + 4)}`,
@@ -318,6 +324,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
     const numParticipants = form.watch('numParticipants');
     const repertoire = form.watch('repertoire');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const totalDurationSeconds = useMemo(() => (repertoire || []).reduce((total: number, item: any) => {
         if (!item?.duration) return total;
         const [minutes, seconds] = item.duration.split(':').map(Number);
@@ -342,17 +349,12 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
             durationMinutes: totalDurationSeconds / 60,
             calculatedPrice: price,
         }
-    }, [user.conservatoriumId, numParticipants, totalDurationSeconds]);
-
-    const ensembleSizeLabels = {
-        'Small': 'קטנות',
-        'Medium': 'בינוניות',
-        'Large': 'גדולות',
-    };
+    }, [user.conservatoriumId, numParticipants, totalDurationSeconds, conservatoriums]);
 
 
     return (
         <FormProvider {...form}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8 mt-8">
                 {!isEditing && <SaveStatusBar
                     isDirty={isDirty}
@@ -420,6 +422,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                             </Button>
                             <SuggestionButton
                                 fields={fields}
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 append={append as any}
                                 getValues={form.getValues}
                             />

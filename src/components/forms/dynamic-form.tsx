@@ -19,6 +19,7 @@ import type { FormTemplate, FormFieldDefinition, FormFieldOption } from '@/lib/t
 
 interface DynamicFormProps {
   template: FormTemplate;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (data: Record<string, any>) => void;
 }
 
@@ -38,6 +39,7 @@ function getFieldOptions(options: FormFieldDefinition['options']): FormFieldOpti
   return options;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function evaluateShowIf(field: FormFieldDefinition, values: Record<string, any>): boolean {
   if (!field.showIf) return true;
   const targetValue = values[field.showIf.fieldId];
@@ -58,8 +60,10 @@ function evaluateShowIf(field: FormFieldDefinition, values: Record<string, any>)
 }
 
 const generateSchema = (fields: FormTemplate['fields']) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const shape: Record<string, z.ZodType<any, any>> = {};
   fields.forEach((field) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let fieldSchema: z.ZodType<any, any>;
     switch (field.type) {
       case 'number':
@@ -113,6 +117,7 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
       else if (field.type === 'multiselect' || field.type === 'checkbox_group') acc[field.id] = [];
       else acc[field.id] = '';
       return acc;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }, {} as Record<string, any>),
   });
 

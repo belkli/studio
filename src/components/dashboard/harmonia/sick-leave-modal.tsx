@@ -136,10 +136,12 @@ export function SickLeaveModal({ open, onOpenChange }: SickLeaveModalProps) {
     const toInclusive = new Date(to.getTime() + 86399999);
 
     return lessons
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .filter((lesson: any) => {
         const lessonDate = new Date(lesson.startTime);
         return lesson.teacherId === user.id && lessonDate >= from && lessonDate <= toInclusive;
       })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .sort((a: any, b: any) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   }, [from, to, user, lessons]);
 
@@ -214,6 +216,7 @@ export function SickLeaveModal({ open, onOpenChange }: SickLeaveModalProps) {
                   <ScrollArea className="h-[260px] rounded-lg border bg-muted/20 p-3">
                     {lessonsToCancel.length > 0 ? (
                       <div className="space-y-2">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {lessonsToCancel.map((lesson: any) => (
                           <div key={lesson.id} className="rounded-md border bg-card p-2.5">
                             <div className="flex items-start justify-between gap-2">

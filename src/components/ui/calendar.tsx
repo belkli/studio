@@ -54,11 +54,13 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Chevron: (({ orientation, ...rest }: any) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        Chevron: (({ orientation, ..._rest }: any) =>
           orientation === "left" ? (
             <ChevronLeft className="h-4 w-4" />
           ) : (
             <ChevronRight className="h-4 w-4" />
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           )) as any,
       }}
       {...props}

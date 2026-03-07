@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { School, Users, DollarSign, Plus, ExternalLink, CheckCircle, Clock, XCircle, Share2, BarChart3, UserPlus, Mail } from 'lucide-react';
+import { School, Users, DollarSign, Plus, ExternalLink, CheckCircle, Clock, BarChart3, UserPlus, Mail } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useToast } from '@/hooks/use-toast';
 import type { SchoolPartnership, PartnershipStatus, SubsidyModel } from '@/lib/types';
@@ -215,7 +215,7 @@ function InviteCoordinatorDialog({ partnershipId, schoolName, isRtl }: { partner
             const result = await inviteSchoolCoordinator({ partnershipId, email });
             toast({ title: 'Invitation Sent', description: result.message });
             setOpen(false);
-        } catch (err) {
+        } catch {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to send invitation.' });
         } finally {
             setIsSending(false);

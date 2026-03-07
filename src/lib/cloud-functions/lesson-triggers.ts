@@ -4,7 +4,6 @@
  * when a lesson is cancelled or completed.
  */
 
-import type { LessonSlot, MakeupCredit, ConservatoriumLiveStats, AchievementType } from '@/lib/types';
 
 /**
  * onLessonCancelled — Firestore Trigger (onDocumentUpdated)

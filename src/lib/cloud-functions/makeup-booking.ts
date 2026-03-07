@@ -5,8 +5,7 @@
  * that creates the lesson slot.
  */
 
-import type { MakeupCredit, LessonSlot } from '@/lib/types';
-import { MakeupBookingRequestSchema, type MakeupBookingRequest } from '@/lib/validation/booking';
+import { type MakeupBookingRequest } from '@/lib/validation/booking';
 
 /**
  * bookMakeupLesson — Callable Cloud Function

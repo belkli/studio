@@ -5,22 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon, FileText, CheckCircle2 } from 'lucide-react';
+import { Edit, BookOpen, Clock, Music, UserCircle, Flame, Target, Star, Pencil, Trophy, CalendarCheck2, Calendar as CalendarIcon, CheckCircle2 } from 'lucide-react';
 import { Link } from "@/i18n/routing";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { AssignedRepertoire, RepertoireStatus, User, AchievementType, Achievement, LessonNote } from "@/lib/types";
+import type { RepertoireStatus, User, AchievementType, Achievement } from "@/lib/types";
 import { format, formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from 'next-intl';
-
-const statusTranslations: Record<RepertoireStatus, string> = {
-    LEARNING: 'למידה',
-    POLISHING: 'ליטוש',
-    PERFORMANCE_READY: 'מוכן להופעה',
-    COMPLETED: 'הושלם'
-};
 
 const AchievementIcon = ({ type }: { type: AchievementType }) => {
     switch (type) {
@@ -44,7 +36,7 @@ import { School, Building, MapPin } from 'lucide-react';
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
     const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons, conservatoriums } = useAuth();
-    const [activeTab, setActiveTab] = useState('overview');
+    const [_activeTab, _setActiveTab] = useState('overview');
     const dateLocale = useDateLocale();
     const locale = useLocale();
     const t = useTranslations("StudentDashboard");
@@ -60,7 +52,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
     }, [lessonNotes, student.id]);
 
 
-    const { totalMinutesThisWeek, weeklyGoal, streak } = useMemo(() => {
+    const { totalMinutesThisWeek, weeklyGoal } = useMemo(() => {
         const weeklyGoal = student.weeklyPracticeGoal || 120;
 
         const today = new Date();

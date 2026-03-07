@@ -7,7 +7,6 @@
  * - getClaimsFromRequest(): Reads claims injected by middleware headers
  * - withAuth(): Higher-order function wrapping Server Actions with auth + Zod validation
  */
-import { z } from 'zod';
 import { headers } from 'next/headers';
 import { getAdminAuth } from '@/lib/firebase-admin';
 import type { UserRole } from '@/lib/types';

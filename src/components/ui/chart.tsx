@@ -128,6 +128,7 @@ const ChartTooltipContent = React.forwardRef<
       color,
       nameKey,
       labelKey,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } = props as any
     const { config } = useChart()
 
@@ -136,6 +137,7 @@ const ChartTooltipContent = React.forwardRef<
         return null
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const [item] = payload as any[]
       const key = `${labelKey || item.dataKey || item.name || "value"}`
       const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -171,6 +173,7 @@ const ChartTooltipContent = React.forwardRef<
       return null
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nestLabel = (payload as any[]).length === 1 && indicator !== "dot"
 
     return (
@@ -183,6 +186,7 @@ const ChartTooltipContent = React.forwardRef<
       >
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {(payload as any[]).map((item: any, index: number) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -259,6 +263,7 @@ const ChartLegend = RechartsPrimitive.Legend
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Pick<any, "payload" | "verticalAlign"> & {
     hideIcon?: boolean
     nameKey?: string
@@ -283,6 +288,7 @@ const ChartLegendContent = React.forwardRef<
           className
         )}
       >
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {(payload as any[]).map((item: any) => {
           const key = `${nameKey || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)

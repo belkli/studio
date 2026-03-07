@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useAuth } from './use-auth';
-import type { User } from '@/lib/types';
 
 /**
  * Hook to manage and filter 'Playing School' enrollments for a parent or family.

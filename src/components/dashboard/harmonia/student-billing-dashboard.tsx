@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getPlayingSchoolPaymentUrl } from "@/app/actions";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Receipt, CreditCard, CalendarClock, Package, FileText, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion, School, Loader2 } from "lucide-react";
+import { CalendarClock, Package, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion, School, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -38,6 +38,7 @@ export function StudentBillingDashboard() {
         if (!user) return [];
         if (user.role === 'student') return [user];
         if (user.childIds && user.childIds.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return users.filter((u: any) => user.childIds!.includes(u.id));
         }
         return [];
@@ -74,7 +75,7 @@ export function StudentBillingDashboard() {
             creditsRemaining,
             nextBillingDate,
         };
-    }, [packages, user, lessons, users, activeStudent]);
+    }, [packages, lessons, activeStudent]);
 
 
     const expiringPackageInfo = useMemo(() => {
@@ -103,7 +104,7 @@ export function StudentBillingDashboard() {
         try {
             const { url } = await getPlayingSchoolPaymentUrl(invoiceId);
             window.location.href = url;
-        } catch (err) {
+        } catch {
             toast({ variant: 'destructive', title: 'Payment Error', description: 'Could not generate payment link. Please try again later.' });
         } finally {
             setIsProcessingPayment(null);

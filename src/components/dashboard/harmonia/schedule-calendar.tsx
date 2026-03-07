@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import type { LessonSlot, User } from '@/lib/types';
+import type { LessonSlot } from '@/lib/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,15 +15,12 @@ import { LessonDetailDialog } from './lesson-detail-dialog';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval, isSameDay } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { EmptyState } from '@/components/ui/empty-state';
-import { Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
-import { Link } from '@/i18n/routing';
 
 interface ScheduleCalendarProps {
     lessons: LessonSlot[];
 }
 
-const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
+const _days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`); // 08:00 to 20:00
 
 const typeColorMap = {

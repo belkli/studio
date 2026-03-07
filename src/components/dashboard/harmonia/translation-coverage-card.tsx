@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { TranslationMeta } from '@/lib/types';
-import { Languages, AlertTriangle, CheckCircle2, History } from 'lucide-react';
+import { Languages, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 

@@ -36,7 +36,6 @@ export function StudentPracticePanel() {
     const streak = user?.gamification?.currentStreak || 0;
     const points = user?.gamification?.points || 0;
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -57,8 +56,8 @@ export function StudentPracticePanel() {
             }
         });
         return last7Days;
-        // eslint-disable-next-line react-hooks/preserve-manual-memoization
-    }, [myLogs]);
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
+    }, [myLogs, dateLocale]);
 
     const handleLogPractice = () => {
         if (!user || !repertoireId) return;
@@ -197,6 +196,7 @@ export function StudentPracticePanel() {
                                 <Tooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
                                     contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     formatter={(value: any) => [`${value} ${t('chartMinAbbrev')}`, t('chartTooltipTime')]}
                                 />
                                 <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />

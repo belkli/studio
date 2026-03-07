@@ -259,6 +259,7 @@ export function AvailableSlotsMarketplace() {
     const map = new Map<string, number>();
     uniqueConservatoriums.forEach(c => {
       const lat = c.location?.coordinates?.lat;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lon = c.location?.coordinates?.lng ?? (c.location?.coordinates as any)?.lon;
       if (lat != null && lon != null) {
         map.set(c.id, haversineDistance(userLocation.lat, userLocation.lon, lat, lon));
@@ -316,6 +317,7 @@ export function AvailableSlotsMarketplace() {
 
   // Reset visible count whenever filters change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisibleCount(PAGE_SIZE);
   }, [filteredSlots]);
 

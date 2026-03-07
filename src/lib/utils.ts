@@ -31,6 +31,7 @@ export function isValidIsraeliID(id: string): boolean {
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number

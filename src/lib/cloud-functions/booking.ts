@@ -8,8 +8,7 @@
  * (2nd Gen / Cloud Run) when Firebase is configured.
  */
 
-import type { LessonSlot, RoomLock, Package } from '@/lib/types';
-import { BookingRequestSchema, type BookingRequest } from '@/lib/validation/booking';
+import { type BookingRequest } from '@/lib/validation/booking';
 
 /**
  * bookLessonSlot — Callable Cloud Function

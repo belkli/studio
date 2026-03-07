@@ -109,7 +109,7 @@ export function useWalkthrough() {
             clearTimeout(timer);
             try {
                 driverObj.destroy();
-            } catch (e) {
+            } catch {
                 // Ignore errors if already destroyed
             }
         };

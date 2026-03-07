@@ -2,10 +2,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, CheckCircle2, XCircle, Loader2, Sparkles, Music, Users, GraduationCap, Coins } from "lucide-react";
+import { Star, CheckCircle2, Loader2, Sparkles, Music, Users, GraduationCap, Coins } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { acceptExcellenceTrackOffer, declineExcellenceTrackOffer } from "@/app/actions";
@@ -18,7 +18,7 @@ interface ExcellenceTrackOfferModalProps {
     studentName: string;
 }
 
-export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentName }: ExcellenceTrackOfferModalProps) {
+export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentName: _studentName }: ExcellenceTrackOfferModalProps) {
     const t = useTranslations('ExcellenceTrack');
     const [isAccepting, setIsAccepting] = useState(false);
     const [isDeclining, setIsDeclining] = useState(false);
@@ -31,7 +31,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
             const result = await acceptExcellenceTrackOffer({ studentId });
             toast({ title: t('successTitle'), description: result.message });
             onClose();
-        } catch (err) {
+        } catch {
             toast({ variant: 'destructive', title: 'Error', description: 'Action failed. Please try again.' });
         } finally {
             setIsAccepting(false);
@@ -44,7 +44,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
             const result = await declineExcellenceTrackOffer({ studentId, reason: declineReason });
             toast({ title: t('declineTitle'), description: result.message });
             onClose();
-        } catch (err) {
+        } catch {
             toast({ variant: 'destructive', title: 'Error', description: 'Action failed. Please try again.' });
         } finally {
             setIsDeclining(false);
@@ -90,6 +90,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
                                                 {num === 2 && <Users className="h-5 w-5 text-indigo-600" />}
                                                 {num === 3 && <GraduationCap className="h-5 w-5 text-indigo-600" />}
                                             </div>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             <p className="text-sm font-semibold text-slate-700 pt-2">{t(`benefit${num}` as any)}</p>
                                         </div>
                                     ))}

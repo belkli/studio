@@ -3,6 +3,7 @@ import type { FormStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useTranslations } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getStatusConfig = (t: any): Record<FormStatus, { className: string; label: string }> => ({
     'DRAFT': { className: "bg-gray-100 text-gray-700 hover:bg-gray-100/80 dark:bg-gray-800 dark:text-gray-300", label: t('draft') },
     'PENDING_TEACHER': { className: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200", label: t('pendingTeacher') },

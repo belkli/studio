@@ -26,7 +26,9 @@ export function HelpCenter() {
 
     const filteredArticles = searchTerm
         ? helpArticles.filter(article => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const title = t(`articles.${article.id}.title` as any);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const content = t(`articles.${article.id}.content` as any);
             const q = searchTerm.toLowerCase();
             return title.toLowerCase().includes(q) || content.toLowerCase().includes(q);
@@ -35,6 +37,7 @@ export function HelpCenter() {
 
     const categoryGroups = helpCategoryKeys.map(key => ({
         key,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         label: t(`category_${key}` as any),
         articles: helpArticles.filter(a => a.categoryKey === key),
     }));
@@ -64,7 +67,9 @@ export function HelpCenter() {
                            {filteredArticles.map(article => (
                                 <Link key={article.id} href={"/help/" + article.id} passHref>
                                     <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer h-full">
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         <h3 className="font-semibold">{t(`articles.${article.id}.title` as any)}</h3>
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(t(`articles.${article.id}.content` as any)).substring(0, 120)}</p>
                                     </div>
                                 </Link>
@@ -84,7 +89,9 @@ export function HelpCenter() {
                                      <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer flex items-start gap-3 h-full">
                                          <BookOpen className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
                                         <div>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             <h3 className="font-semibold">{t(`articles.${article.id}.title` as any)}</h3>
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{stripMarkdown(t(`articles.${article.id}.content` as any)).substring(0, 120)}</p>
                                         </div>
                                     </div>

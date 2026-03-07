@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
@@ -14,8 +14,6 @@ const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().pad
 export function RoomOccupancyHeatmap() {
     const t = useTranslations('Reports');
     const { lessons, rooms } = useAuth();
-    const locale = useLocale();
-
     const dateLocale = useDateLocale();
     const totalRooms = Math.max(1, rooms.length);
 

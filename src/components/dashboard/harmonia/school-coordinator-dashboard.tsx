@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Calendar, Users, MessageSquare, School, AlertCircle, CheckCircle } from 'lucide-react';
+import { Calendar, MessageSquare, School, AlertCircle, CheckCircle } from 'lucide-react';
 
 
 export function SchoolCoordinatorDashboard() {
@@ -149,6 +149,7 @@ export function SchoolCoordinatorDashboard() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-sm text-muted-foreground">
+                                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                 {t(s.instrumentStatusKey as any)}
                                             </TableCell>
                                         </TableRow>

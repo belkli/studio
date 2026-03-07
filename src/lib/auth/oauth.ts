@@ -79,6 +79,7 @@ async function signInWithProvider(
         providerUserId: firebaseUser.uid,
       },
     };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (auth && error?.code === 'auth/account-exists-with-different-credential') {
       const conflictEmail = error.customData?.email as string | undefined;

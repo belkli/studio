@@ -6,11 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 import { Users, Calendar, DollarSign, Activity } from "lucide-react";
-import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { useTranslations, useLocale } from 'next-intl';
 import type { User, PracticeLog, FormSubmission } from "@/lib/types";
 
 export function TeacherReportsDashboard() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { user: teacher, users, lessons, practiceLogs, formSubmissions }: { user: User | null, users: User[], lessons: any[], practiceLogs: PracticeLog[], formSubmissions: FormSubmission[] } = useAuth();
     const t = useTranslations('TeacherReports');
     const locale = useLocale();
@@ -28,11 +29,13 @@ export function TeacherReportsDashboard() {
         const start = startOfMonth(now);
         const end = endOfMonth(now);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const lessonsThisMonth = lessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && l.status === 'COMPLETED';
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const cancellationsThisMonth = lessons.filter((l: any) => {
             const lessonDate = new Date(l.startTime);
             return l.teacherId === teacher.id && isWithinInterval(lessonDate, { start, end }) && (l.status.startsWith('CANCELLED'));
@@ -133,6 +136,7 @@ export function TeacherReportsDashboard() {
                             <Tooltip
                                 cursor={{ fill: 'hsl(var(--muted))' }}
                                 contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr' }}
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 formatter={(value: any) => [`${Number(value)} ${t('minutesSuffix')}`, t('totalPracticeTimeTooltip')]}
                             />
                             <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20} />

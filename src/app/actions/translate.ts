@@ -15,8 +15,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // ── Supported target locales ──────────────────────────────────────────────────
-export const TARGET_LOCALES = ['en', 'ar', 'ru'] as const;
-type TargetLocale = typeof TARGET_LOCALES[number];
+type TargetLocale = 'en' | 'ar' | 'ru';
 
 const LOCALE_NAMES: Record<TargetLocale, string> = {
     en: 'English',

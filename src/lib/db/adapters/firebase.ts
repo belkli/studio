@@ -103,7 +103,9 @@ import type { Firestore } from 'firebase-admin/firestore';
 function normalizeDoc<T>(data: Record<string, unknown>, id: string): T {
   const result: Record<string, unknown> = { ...data, id };
   for (const [key, value] of Object.entries(result)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (value && typeof value === 'object' && typeof (value as any).toDate === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       result[key] = (value as any).toDate().toISOString();
     }
   }
@@ -210,6 +212,7 @@ function createSubCollectionRepository<T extends DbEntity>(
     },
 
     async create(data: Partial<T>): Promise<T> {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cid = (data as any).conservatoriumId;
       if (!cid) {
         throw new Error(`Cannot create ${subCollectionName} without conservatoriumId`);
@@ -225,6 +228,7 @@ function createSubCollectionRepository<T extends DbEntity>(
       // Find the document first to get its conservatoriumId
       const existing = await this.findById(id);
       if (!existing) throw new Error(`${subCollectionName} not found: ${id}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cid = (existing as any).conservatoriumId;
       const ref = subCol(cid).doc(id);
       const cleaned = stripUndefined(data as Record<string, unknown>);
@@ -237,6 +241,7 @@ function createSubCollectionRepository<T extends DbEntity>(
     async delete(id: string): Promise<void> {
       const existing = await this.findById(id);
       if (!existing) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cid = (existing as any).conservatoriumId;
       await subCol(cid).doc(id).delete();
     },

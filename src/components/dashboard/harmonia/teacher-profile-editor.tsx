@@ -84,7 +84,9 @@ export function TeacherProfileEditor() {
       availableForNewStudents: data.availableForNewStudents ?? true,
       education,
       performanceCredits,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       specialties: (data.specialties || []) as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       teachingLanguages: (data.teachingLanguages || []) as any,
       translations: {
         ...(user.translations || {}),

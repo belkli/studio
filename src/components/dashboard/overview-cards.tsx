@@ -1,4 +1,4 @@
-import { BadgeCheck, Clock, File, FileCheck, FileX } from "lucide-react"
+import { Clock, File, FileCheck, FileX } from "lucide-react"
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 

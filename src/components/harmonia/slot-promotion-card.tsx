@@ -1,7 +1,6 @@
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, Music, Share2, Star, Zap } from "lucide-react";
 import { useRouter } from '@/i18n/routing';
 import { format, isToday, isTomorrow } from "date-fns";
@@ -71,8 +70,10 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
         }));
 
         if (user) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             router.push('/dashboard/schedule/book?tab=deals' as any);
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             router.push(`/register?teacher=${slot.teacher.id}&conservatorium=${slot.teacher.conservatoriumId}` as any);
         }
     };

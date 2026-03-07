@@ -1,84 +1,18 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import { useLocale, useTranslations } from "next-intl";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, PlusCircle, Calendar, CheckCircle, XCircle, Clock, Music } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle, XCircle, Music } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { User, PracticeLog, Package, LessonSlot, SlotStatus, EventProduction } from "@/lib/types";
+import type { User, PracticeLog, Package, LessonSlot } from "@/lib/types";
 import { format } from "date-fns";
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useToast } from "@/hooks/use-toast";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
 import { SickLeaveModal } from "./sick-leave-modal";
 import { WeeklyCalendar } from "./weekly-calendar";
-
-function TodaysLessonCard({ lesson, student, onAttendance }: { lesson: LessonSlot; student: User | undefined; onAttendance: (lessonId: string, status: SlotStatus) => void }) {
-    const isPast = new Date(lesson.startTime) < new Date();
-    const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
-    const isCompleted = lesson.status === 'COMPLETED';
-
-    const t = useTranslations("Dashboard.Teacher");
-    const locale = useLocale();
-
-    const attendanceButtons = (
-        <>
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'COMPLETED')}>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t('markAttendance')}</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'NO_SHOW_STUDENT')}>
-                            <XCircle className="h-4 w-4 text-red-500" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t('markNoShow')}</p></TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => onAttendance(lesson.id, 'CANCELLED_STUDENT_NOTICED')}>
-                            <Clock className="h-4 w-4 text-orange-500" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>{t('markAbsence')}</p></TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-        </>
-    );
-
-    return (
-        <div className="flex items-center gap-4 p-3 rounded-lg border">
-            <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</span>
-            <Avatar>
-                <AvatarImage src={student?.avatarUrl} />
-                <AvatarFallback>{student?.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-                <p className="font-semibold">{student?.name}</p>
-                <p className="text-sm text-muted-foreground">
-                    {lesson.instrument}, {t('room', { number: lesson.roomId || '?' })}
-                </p>
-            </div>
-            <div className="flex gap-2">
-                {!isPast && !isCancelled && !isCompleted && attendanceButtons}
-                {isCancelled && <Badge variant="destructive">{lesson.status === 'NO_SHOW_STUDENT' ? t('noShow') : t('cancelled')}</Badge>}
-                {isCompleted && <Badge>{t('completed')}</Badge>}
-                {isPast && !isCompleted && !isCancelled && <Badge variant="secondary">{t('waitingForMark')}</Badge>}
-            </div>
-        </div>
-    );
-}
-
 
 function StudentRosterCard({ student, practiceLogs, packages, lessons, id }: { student: User, practiceLogs: PracticeLog[], packages: Package[], lessons: LessonSlot[], id?: string }) {
 
@@ -162,13 +96,14 @@ function StudentRosterCard({ student, practiceLogs, packages, lessons, id }: { s
 }
 
 export function TeacherDashboard() {
-    const { user, users, lessons, formSubmissions, practiceLogs, packages, events, updateLessonStatus } = useAuth();
-    const locale = useLocale();
-    const { toast } = useToast();
+    const { user, users, lessons, formSubmissions, practiceLogs, packages, events } = useAuth();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
     const t = useTranslations("Dashboard.Teacher");
 
-    const assignedStudents = user ? users.filter(u => user.students?.includes(u.id)) : [];
+    const assignedStudents = useMemo(
+        () => (user ? users.filter(u => user.students?.includes(u.id)) : []),
+        [user, users]
+    );
 
     const pendingApprovals = useMemo(() => {
         if (!user) return [];
@@ -187,14 +122,6 @@ export function TeacherDashboard() {
     if (!user) return null;
 
     const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
-
-    const handleAttendance = (lessonId: string, status: SlotStatus) => {
-        updateLessonStatus(lessonId, status);
-        toast({
-            title: t('attendanceMarked'),
-            description: t('lessonUpdated')
-        });
-    };
 
     return (
         <div className="space-y-8 p-8">
@@ -249,7 +176,6 @@ export function TeacherDashboard() {
                             <div className="space-y-4">
                                 {pendingApprovals.length > 0 ? (
                                     pendingApprovals.slice(0, 3).map((form) => {
-                                        const student = users.find(u => u.id === form.studentId);
                                         return (
                                             <div key={form.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                                                 <div className="grid gap-1">

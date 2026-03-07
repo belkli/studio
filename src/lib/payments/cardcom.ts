@@ -12,7 +12,7 @@
  * - CARDCOM_WEBHOOK_SECRET
  */
 
-import type { Invoice, InstallmentOption } from '@/lib/types';
+import type { InstallmentOption } from '@/lib/types';
 
 // ── Configuration ────────────────────────────────────────────
 const IS_SANDBOX = process.env.CARDCOM_SANDBOX === 'true';
@@ -145,7 +145,7 @@ export async function createCardcomPaymentPage(
  * The idempotency key format: `charge-{conservatoriumId}-{invoiceId}-{YYYY-MM}`
  */
 export async function chargeStoredCard(
-    request: CardcomRecurringChargeRequest
+    _request: CardcomRecurringChargeRequest
 ): Promise<{ success: boolean; transactionId?: string; error?: string }> {
     if (!CARDCOM_CONFIG.terminalNumber) {
         console.warn('[Cardcom] No terminal number configured — mock charge');
@@ -174,7 +174,7 @@ export async function chargeStoredCard(
 export async function handleCardcomWebhook(
     payload: CardcomWebhookPayload
 ): Promise<{ success: boolean; error?: string }> {
-    const { lowProfileCode, responseCode, transactionId, cardToken } = payload;
+    const { lowProfileCode: _lowProfileCode, responseCode, transactionId: _transactionId, cardToken: _cardToken } = payload;
 
     if (responseCode !== '0') {
         // Payment failed — update invoice status, notify admin

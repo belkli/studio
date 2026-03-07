@@ -48,6 +48,7 @@ import ruSettings from '../messages/ru/settings.json';
 import ruStudent from '../messages/ru/student.json';
 
 // Helper function to deeply merge two objects.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepMerge(base: any, override: any): any {
     const result = { ...base };
     for (const key in override) {
@@ -83,6 +84,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     let locale = resolvedLocale;
 
     // Validate that the incoming `locale` parameter is valid
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!locale || !routing.locales.includes(locale as any)) {
         locale = routing.defaultLocale;
     }

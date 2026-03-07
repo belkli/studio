@@ -798,6 +798,7 @@ function mapPayments(rows: RawInvoice[]): Invoice[] {
         })();
 
     const lineItems = Array.isArray(parsedItems)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? parsedItems.map((item: any) => ({
           description: String(item?.description || ''),
           total: Number(item?.total || 0),

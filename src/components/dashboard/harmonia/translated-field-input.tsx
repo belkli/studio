@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Edit2, Globe, Check, Sparkles, User, History } from 'lucide-react';
+import { Edit2, Check, Sparkles, User, History } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -31,7 +31,7 @@ export function TranslatedFieldInput({
     label,
     value,
     translations,
-    fieldKey,
+    _fieldKey,
     onSourceChange,
     onTranslationChange,
     isTextArea = false,
@@ -151,6 +151,7 @@ export function TranslatedFieldInput({
                                         <Textarea
                                             value={editingValue}
                                             onChange={(e) => setEditingValue(e.target.value)}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             dir={lang.dir as any}
                                             className="min-h-[80px] text-sm"
                                             autoFocus
@@ -159,6 +160,7 @@ export function TranslatedFieldInput({
                                         <Input
                                             value={editingValue}
                                             onChange={(e) => setEditingValue(e.target.value)}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             dir={lang.dir as any}
                                             className="h-8 text-sm"
                                             autoFocus
@@ -180,6 +182,7 @@ export function TranslatedFieldInput({
                                         "p-2 rounded border bg-muted/30 text-xs min-h-[40px] whitespace-pre-wrap cursor-pointer hover:bg-muted/50 transition-colors",
                                         !currentText && "italic text-muted-foreground flex items-center justify-center"
                                     )}
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     dir={lang.dir as any}
                                     onClick={() => handleEdit(lang.id)}
                                 >

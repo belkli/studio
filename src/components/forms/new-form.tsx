@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 // Update schema to accept custom form IDs
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFormTypeSchema = (t: any) => z.object({
   formType: z.string().min(1, t('validation.required')),
   studentId: z.string().optional(),
@@ -34,7 +35,7 @@ export function NewForm() {
   const locale = useLocale();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
   const { toast } = useToast();
-  const { user, users, formSubmissions, updateForm, formTemplates } = useAuth();
+  const { user, users, updateForm, formTemplates } = useAuth();
   const router = useRouter();
 
   const [studentList, setStudentList] = useState<User[]>([]);
@@ -43,7 +44,7 @@ export function NewForm() {
     resolver: zodResolver(getFormTypeSchema(t)),
   });
 
-  const onFormSubmit = useCallback((data: any, template?: any) => {
+  const onFormSubmit = useCallback((data: any, template?: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     let formTitle = '';
     let submissionData: Partial<FormSubmission> = {};
 
@@ -77,6 +78,7 @@ export function NewForm() {
           studentIdForSubmission = user!.id;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const totalDurationSeconds = (data.repertoire || []).reduce((total: number, item: any) => {
         if (!item?.duration) return total;
         const [minutes, seconds] = item.duration.split(':').map(Number);
@@ -102,6 +104,7 @@ export function NewForm() {
       studentName: users.find(u => u.id === finalStudentId)?.name ?? '',
       submissionDate: new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'he-IL'),
       ...submissionData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     updateForm(newSubmission);
@@ -111,6 +114,7 @@ export function NewForm() {
       description: t('successDesc'),
     });
     router.push('/dashboard/forms');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, router, user, users, updateForm, formTypeForm]);
 
   useEffect(() => {
@@ -123,7 +127,6 @@ export function NewForm() {
   }, [user, formTypeForm]);
 
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedFormType = formTypeForm.watch('formType');
   const selectedStudentId = formTypeForm.watch('studentId');
 
@@ -146,6 +149,7 @@ export function NewForm() {
       label: t.title,
     }));
     return [...standardForms, ...customForms];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formTemplates, user?.role]);
 
   useEffect(() => {
