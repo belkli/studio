@@ -65,6 +65,14 @@ vi.mock('framer-motion', () => ({
     AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
+// Mock next/image — jsdom can't render optimised images
+vi.mock('next/image', () => ({
+    default: ({ src, alt, fill, ...props }: any) => {
+        // eslint-disable-next-line @next/next/no-img-element
+        return React.createElement('img', { src, alt, ...props });
+    },
+}));
+
 // Mock lucide-react — pass through all real icons to avoid "no export" errors
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal<typeof import('lucide-react')>();
