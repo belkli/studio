@@ -332,18 +332,11 @@ const SidebarInset = React.forwardRef<
       data-sidebar="inset"
       className={cn(
         "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-background transition-[margin] duration-200 ease-linear",
-        // Default sidebar variant margins (LTR: sidebar spacer is on the same side as fixed sidebar overlay)
         "md:peer-data-[side=left]:[margin-inline-start:var(--sidebar-width)]",
         "md:peer-data-[side=right]:[margin-inline-end:var(--sidebar-width)]",
-        // RTL + right sidebar: in LTR flex the <aside> spacer sits on the LEFT (x=0-256),
-        // SidebarInset starts at x=256. Fixed sidebar is at right:0 (x=1024-1280).
-        // Content area x=256–1024 has no overlap — no extra margin needed.
-        // The margin-inline-end (=margin-left in RTL on <main dir=rtl>) would double-offset, so zero it out.
-        "rtl:md:peer-data-[side=right]:[margin-inline-end:0px]",
         // Collapsed state for icon collapsible sidebar
         "md:peer-data-[state=collapsed]:peer-data-[collapsible=icon]:peer-data-[side=left]:[margin-inline-start:var(--sidebar-width-icon)]",
         "md:peer-data-[state=collapsed]:peer-data-[collapsible=icon]:peer-data-[side=right]:[margin-inline-end:var(--sidebar-width-icon)]",
-        "rtl:md:peer-data-[state=collapsed]:peer-data-[collapsible=icon]:peer-data-[side=right]:[margin-inline-end:0px]",
         // Collapsed state for offcanvas collapsible sidebar
         "md:peer-data-[state=collapsed]:peer-data-[collapsible=offcanvas]:[margin-inline:0]",
         // Inset variant styles
