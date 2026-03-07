@@ -241,10 +241,10 @@ describe('AuthProvider smoke coverage', () => {
 
             result.current.addMessage('thread-1', 'admin-user-1', 'Ping');
             result.current.markWalkthroughAsSeen('student-user-1');
-            result.current.logout();
+            await result.current.logout();
         });
 
-        expect(result.current.user).toBeNull();
+        await waitFor(() => expect(result.current.user).toBeNull());
     });
 
     it('does not override DB payments with empty mock invoices on authoritative bootstrap', async () => {
