@@ -31,7 +31,7 @@ export function TranslatedFieldInput({
     label,
     value,
     translations,
-    _fieldKey,
+    fieldKey: _fieldKey,
     onSourceChange,
     onTranslationChange,
     isTextArea = false,
