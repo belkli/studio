@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { add, set, format, getDay, isBefore, isSameDay, isAfter, setHours, addDays } from 'date-fns';
+import { add, set, format, getDay, isBefore, isSameDay, isTomorrow as isTomorrowFn, isAfter, setHours, addDays } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import type { DayOfWeek, EmptySlot } from '@/lib/types';
 import { Loader2, Zap, Clock, MapPin, Music, Calendar as CalendarIcon, CreditCard, PackageOpen, ChevronLeft, ChevronRight, Star } from 'lucide-react';
@@ -206,10 +206,10 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
     const student = users.find(u => u.id === studentId);
     const studentInstruments = student?.instruments?.map(i => i.instrument) || [];
 
-    // Generate empty slots (next 4 days — today + 3)
+    // Generate empty slots (next 5 days — today + 4)
     const emptySlots = useMemo(() => {
         const teachers = users.filter((u) => u.role === 'teacher' && u.availability);
-        const searchDates = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3)];
+        const searchDates = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4)];
         const slots: EmptySlot[] = [];
 
         teachers.forEach((teacher) => {
@@ -351,7 +351,13 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
                 {filteredSlots.map(slot => {
                     const conservatorium = conservatoriums.find(c => c.id === slot.teacher.conservatoriumId);
                     const city = conservatorium?.location?.city || slot.teacher.conservatoriumName || '';
-                    const isToday = isSameDay(slot.startTime, today);
+                    const isSlotToday = isSameDay(slot.startTime, today);
+                    const isSlotTomorrow = isTomorrowFn(slot.startTime);
+                    const bannerLabel = isSlotToday
+                        ? t('today')
+                        : isSlotTomorrow
+                        ? t('tomorrow')
+                        : format(slot.startTime, 'EEE d/M', { locale: dateLocale });
 
                     return (
                         <button
@@ -362,11 +368,11 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
                             {/* Urgency banner */}
                             <div className={cn(
                                 "flex items-center justify-between px-3 py-1.5 text-xs font-semibold",
-                                isToday ? "bg-amber-500 text-white" : "bg-blue-600 text-white"
+                                isSlotToday ? "bg-amber-500 text-white" : "bg-blue-600 text-white"
                             )}>
                                 <div className="flex items-center gap-1">
                                     <Zap className="h-3 w-3" />
-                                    <span>{isToday ? t('today') : t('tomorrow')}</span>
+                                    <span>{bannerLabel}</span>
                                 </div>
                                 <span className="font-bold">{format(slot.startTime, 'HH:mm')}</span>
                             </div>
@@ -456,13 +462,20 @@ export function BookLessonWizard() {
     const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
 
     const [teacherScope, setTeacherScope] = useState<'own' | 'all'>('own');
+    const [premiumOnly, setPremiumOnly] = useState(false);
 
     const filteredTeachers = useMemo(() => {
-        if (teacherScope === 'all') return teachers;
-        const ownId = user?.conservatoriumId;
-        const own = teachers.filter(t2 => t2.conservatoriumId === ownId);
-        return own.length > 0 ? own : teachers;
-    }, [teachers, teacherScope, user]);
+        let list = teachers;
+        if (teacherScope !== 'all') {
+            const ownId = user?.conservatoriumId;
+            const own = teachers.filter(t2 => t2.conservatoriumId === ownId);
+            list = own.length > 0 ? own : teachers;
+        }
+        if (premiumOnly) {
+            list = list.filter(t2 => t2.isPremiumTeacher);
+        }
+        return list;
+    }, [teachers, teacherScope, premiumOnly, user]);
 
     const form = useForm<BookingFormData>({
         resolver: zodResolver(getBookingSchema(t)) as any,
@@ -677,6 +690,19 @@ export function BookLessonWizard() {
                                                         <ToggleGroupItem value="own" className="text-xs">{t('myConservatorium')}</ToggleGroupItem>
                                                         <ToggleGroupItem value="all" className="text-xs">{t('allTeachers')}</ToggleGroupItem>
                                                     </ToggleGroup>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPremiumOnly(v => !v)}
+                                                        className={cn(
+                                                            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium border transition-colors",
+                                                            premiumOnly
+                                                                ? "bg-yellow-50 border-yellow-300 text-yellow-700"
+                                                                : "bg-transparent border-slate-200 text-slate-500 hover:border-slate-300"
+                                                        )}
+                                                    >
+                                                        <Star className={cn("h-3 w-3", premiumOnly ? "fill-yellow-500 text-yellow-500" : "text-slate-400")} />
+                                                        Premium
+                                                    </button>
                                                 </div>
                                                 <Combobox
                                                     options={filteredTeachers.map(t2 => ({ value: t2.id, label: t2.isPremiumTeacher ? `⭐ ${t2.name!}` : t2.name! }))}

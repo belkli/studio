@@ -1,6 +1,8 @@
 ﻿
 import type { User as AuthUser } from 'firebase/auth';
 
+export type I18nText = { he?: string; en?: string; ar?: string; ru?: string };
+
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
 
 export type AccountType = 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
@@ -331,7 +333,9 @@ export type TeacherDirectoryProfile = {
 export type ConservatoriumLocation = {
   city: string;
   cityEn?: string;
+  cityI18n?: I18nText;
   address?: string;
+  addressI18n?: I18nText;
   postalCode?: string;
   googlePlaceId?: string;
   coordinates?: { lat: number; lng: number };
@@ -526,12 +530,21 @@ export type Conservatorium = {
   id: string;
   name: string;
   nameEn?: string;
+  nameI18n?: I18nText;
   tier: 'A' | 'B' | 'C';
   stampUrl?: string;
   newFeaturesEnabled?: boolean;
   aiAgentsConfig?: Record<string, boolean>;
   pricingConfig?: PricingConfig;
   cancellationPolicy?: CancellationPolicy;
+  // --- i18n fields from enriched CSV data ---
+  managerNameI18n?: I18nText;
+  organizationI18n?: I18nText;
+  website?: string;
+  logoUrl?: string;
+  imageUrl?: string;
+  mapsUrl?: string;
+  mobile?: string;
   // --- Public profile fields (admin-editable, displayed on About/Contact pages) ---
   about?: string;
   email?: string;

@@ -81,25 +81,21 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
         <div
             dir={isRtl ? 'rtl' : 'ltr'}
             onClick={handleBookNow}
-            className="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all duration-200 overflow-hidden cursor-pointer"
+            className="group relative flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all duration-200 overflow-hidden cursor-pointer"
         >
-            {/* ── Urgency banner ── */}
-            <div className={cn(
-                "flex items-center justify-between px-4 py-2.5",
-                isSlotToday
-                    ? "bg-amber-500"
-                    : "bg-indigo-500"
-            )}>
-                <div className="flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5 text-white" />
-                    <span className="text-white text-sm font-bold tracking-wide uppercase">
-                        {urgencyLabel}
-                    </span>
-                </div>
-                <div className="flex items-center gap-1 bg-black/20 rounded-full px-2.5 py-0.5">
-                    <Clock className="h-3 w-3 text-white" />
-                    <span className="text-white text-sm font-bold tabular-nums">{timeLabel}</span>
-                </div>
+            {/* ── Urgency badges (top-end corner) ── */}
+            <div className="absolute top-3 end-3 z-10 flex items-center gap-1.5">
+                <span className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold text-white shadow-sm",
+                    isSlotToday ? "bg-amber-500" : "bg-indigo-500"
+                )}>
+                    <Zap className="h-3 w-3" />
+                    {urgencyLabel}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-800 dark:bg-slate-700 px-2 py-1 text-xs font-bold text-white tabular-nums shadow-sm">
+                    <Clock className="h-3 w-3" />
+                    {timeLabel}
+                </span>
             </div>
 
             {/* ── Teacher info ── */}

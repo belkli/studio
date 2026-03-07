@@ -174,7 +174,8 @@ function buildConservatoriumDedupKey(cons: Conservatorium) {
   const normalizedSite = normalizeName(cons.officialSite || '');
   const normalizedPhone = normalizeName(cons.tel || '');
 
-  if (normalizedSite) return `site:${normalizedSite}`;
+  // Require site + city to match — a shared municipal website alone is not enough
+  if (normalizedSite && normalizedCity) return `site-city:${normalizedSite}-${normalizedCity}`;
   if (normalizedPhone && normalizedCity) return `phone-city:${normalizedPhone}-${normalizedCity}`;
   return `name-city:${normalizedName}-${normalizedCity}`;
 }

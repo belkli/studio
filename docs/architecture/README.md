@@ -1,41 +1,38 @@
-# Harmonia — Architecture Documentation
+# Harmonia -- Architecture Documentation
 
-> **System Status:** Functional prototype with full UI, mock-data backend, and typed service-layer stubs. Firebase Auth integration is **active** via session cookies (`__session`) and the Edge Proxy (`src/proxy.ts`). Real Firestore persistence and third-party integrations (Cardcom, Twilio) are **not yet active** — the app runs against in-memory mock data and a `MemoryDatabaseAdapter` by default. Postgres, Supabase, and PocketBase adapters are fully implemented alternatives. All typed stubs, schemas, and specs are in place and ready for production wiring.
->
-> **Verified Stack:** Next.js 16 · React 19 · TypeScript 5 · Firebase SDK 12 · shadcn/ui (Radix) · Tailwind CSS v4 · next-intl 4 · Genkit 1.29 · Zod 4 · date-fns 4 · React Hook Form 7 · Recharts 3 · jsPDF 4 · react-signature-canvas · driver.js (walkthrough)
+> **Last updated:** 2026-03-07
+> **Stack:** Next.js 16 | React 19 | TypeScript 5 | Firebase 12 | shadcn/ui | Tailwind CSS v4 | next-intl 4 | Genkit 1.29 | Zod 4
 
 ---
 
 ## What Is Harmonia?
 
-Harmonia is a multi-tenant SaaS platform that digitises the full operational lifecycle of Israeli music conservatoriums — replacing phone calls, paper forms, Excel payroll sheets, and WhatsApp cancellations with a self-service, automated, and AI-assisted platform. It serves six primary user roles: **conservatorium administrators**, **delegated admins**, **teachers**, **students**, **parents**, and **school coordinators** (Playing School programme).
-
-Its key differentiators over existing tools (My Music Staff, TeacherZone, Jackrabbit) are:
-- **Native Hebrew/Arabic RTL** with full four-language support (`he`, `ar`, `en`, `ru`), `localePrefix: 'as-needed'` (Hebrew served at root `/`)
-- **Israeli payment & legal compliance** — Cardcom/Pelecard/HYP/Tranzila/Stripe gateway abstraction, 17% VAT, Ministry of Education form submission, IS 5568 accessibility, PDPPA privacy law
-- **AI agents** powered by Genkit 1.29 + `@genkit-ai/google-genai` for teacher matching, schedule optimisation, progress report drafting, event poster generation, and lead nurturing
-- **Zero-paperwork** Ministry of Education form workflows with `react-signature-canvas` digital signatures
-- **Playing School (בית ספר מנגן)** programme — a separate module for school-partnership group lessons
-- **Musicians for Hire** marketplace allowing conservatorium teachers to accept event bookings
+Harmonia is a multi-tenant SaaS platform that digitises the full operational lifecycle of Israeli music conservatoriums. It replaces phone calls, paper forms, Excel payroll sheets, and WhatsApp cancellations with a self-service, automated, and AI-assisted platform. It serves **7 primary user roles** and supports **4 languages** (Hebrew, English, Arabic, Russian) with native RTL.
 
 ---
 
 ## Table of Contents
 
-| # | Document | Description |
-|---|----------|-------------|
-| — | **This file** | Executive summary and index |
-| 01 | [Product Context](./01-product-context.md) | Business goals, user roles, primary use cases |
-| 02 | [Architecture](./02-architecture.md) | System containers, architectural patterns, module map |
-| 03 | [Frontend](./03-frontend.md) | Tech stack, UI structure, state management |
-| 04 | [Backend](./04-backend.md) | API design, Cloud Functions stubs, domain logic |
-| 05 | [Data Persistence](./05-data-persistency.md) | Firestore schema, entity relationships, multi-backend strategy |
-| 06 | [Security](./06-security.md) | Authentication, authorisation, PDPPA compliance, performance targets |
-| 07 | [Infrastructure](./07-infrastructure.md) | Environments, hosting, CI/CD, external services |
+| # | Document | Status | Description |
+|---|----------|--------|-------------|
+| -- | **This file** | -- | Executive summary and index |
+| 01 | [Product Context](./01-product-context.md) | ✅ | Business goals, user roles, primary use cases, premium tier |
+| 02 | [Architecture](./02-architecture.md) | ✅ | System containers, patterns, module map, dev mode |
+| 03 | [Frontend](./03-frontend.md) | ✅ | Tech stack, routing, state management, i18n, a11y |
+| 04 | [Backend](./04-backend.md) | ✅ | Server Actions, Cloud Functions, AI flows, payments |
+| 05 | [Data Persistence](./05-data-persistency.md) | ✅ | Multi-backend strategy, Firestore schema, entity models |
+| 06 | [Security](./06-security.md) | ✅ | Auth, RBAC, PDPPA compliance, threat model |
+| 07 | [Infrastructure](./07-infrastructure.md) | ✅ | Hosting, CI/CD, environments, external services |
+
+### Status Legend
+
+- ✅ Implemented and active
+- 🚧 Partially implemented (code exists, not fully wired)
+- 📋 Planned / spec only
 
 ---
 
-## Critical Architecture Snapshot
+## Architecture Snapshot
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -45,51 +42,46 @@ Its key differentiators over existing tools (My Music Staff, TeacherZone, Jackra
 │  │          NEXT.JS 16 APP  (Firebase App Hosting)              │    │
 │  │  Public Site · Authenticated Dashboard · Admin Portal        │    │
 │  │  Server Actions (mutations) · Server Components (SSR)        │    │
+│  │  Edge Proxy (src/proxy.ts) — session validation + headers    │    │
 │  └──────────────────────────────────────────────────────────────┘    │
 │                              │                                       │
 │                              ▼                                       │
 │  ┌──────────────────────────────────────────────────────────────┐    │
 │  │         DATABASE ADAPTER  (src/lib/db/)                      │    │
-│  │  mock (default) · firebase · postgres · supabase · pocketbase│    │
-│  │  ⚠️  firebase adapter is currently a MemoryDatabaseAdapter stub│   │
+│  │  mock (default) · firebase ✅ · postgres ✅ · supabase ✅     │    │
 │  └──────────────────────────────────────────────────────────────┘    │
 │                              │                                       │
 │              ┌───────────────┼──────────────────────────┐           │
 │              ▼               ▼                          ▼           │
 │  ┌──────────────┐  ┌──────────────────┐  ┌─────────────────────┐   │
-│  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │  EXTERNAL SERVICES  │   │
-│  │  Genkit 1.29 │  │  Cardcom (stub)  │  │  Twilio (stub)      │   │
-│  │  8 AI flows  │  │  +4 alternatives │  │  SendGrid (stub)    │   │
-│  │  ACTIVE ✅   │  │  ⚠️ stubs only   │  │  Google Calendar    │   │
-│  └──────────────┘  └──────────────────┘  │  (stub)             │   │
-│                                          │  Hebcal (stub)      │   │
-│                                          └─────────────────────┘   │
+│  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │  CLOUD FUNCTIONS    │   │
+│  │  8 flows ✅  │  │  Cardcom 🚧     │  │  6 functions ✅     │   │
+│  │  Gemini API  │  │  +4 alternatives │  │  Auth + Booking     │   │
+│  └──────────────┘  └──────────────────┘  └─────────────────────┘   │
 └──────────────────────────────────────────────────────────────────────┘
-
-LEGEND:  ✅ Implemented  ⚠️ Stub/spec only  ❌ Not started
 ```
 
 ---
 
-## Module Implementation Status
+## Module Status
 
-| Module | Domain | Priority | Status |
-|--------|--------|----------|--------|
-| 01 | Identity, Family & Role Management | P0 | ✅ UI + mock data |
-| 02 | Student Registration & Enrollment | P0 | ✅ UI + mock data |
-| 03 | Teacher Management & Availability | P0 | ✅ UI + mock data |
-| 04 | Smart Scheduling & Booking Engine | P0 | ✅ UI + mock; ✅ CF booking functions in `functions/src/booking/` |
-| 05 | Payment, Packages & Billing | P0 | ✅ UI + mock; ⚠️ Cardcom stub |
-| 06 | Cancellation, Makeup & Sick Leave | P0 | ✅ UI + mock; ✅ CF makeup booking in `functions/src/booking/` |
-| 07 | Communication & Notifications | P1 | ⚠️ Dispatcher stub; no real sends |
-| 08 | Forms, Approvals & Ministry Submissions | P1 | ✅ UI + mock; signature UI present |
-| 09 | Learning Management System (LMS) | P2 | ✅ UI + mock data |
-| 10 | AI Agents & Automation | P2 | ✅ 8 Genkit flows active |
-| 11 | Reporting, Analytics & Admin Dashboard | P2 | ✅ UI + mock aggregations |
-| 12 | Smart Slot Filling | P2 | ✅ `target-empty-slots-flow.ts` |
-| 13 | Musicians for Hire Marketplace | P2 | ✅ UI + mock data |
-| 14 | Additional Features (Rentals, Open Day, Alumni) | P2 | ✅ UI + mock data |
-| 15 | Internationalization (i18n / L10n) | P0 | ✅ Fully wired, 4 locales |
-| 16 | Guidance & AI Help Assistant | P2 | ✅ `help-assistant-flow.ts` |
-| 17 | Scholarships & Donation Management | P3 | ✅ UI + mock data |
-| PS | Playing School Programme | P1 | ✅ UI + mock data |
+| Module | Domain | Status |
+|--------|--------|--------|
+| 01 | Identity, Family & Role Management | ✅ UI + mock + Firestore adapter |
+| 02 | Student Registration & Enrollment | ✅ UI + mock + Firestore adapter |
+| 03 | Teacher Management & Availability | ✅ UI + mock + Firestore adapter |
+| 04 | Smart Scheduling & Booking Engine | ✅ UI + CF booking functions |
+| 05 | Payment, Packages & Billing | ✅ UI + 🚧 Cardcom integration |
+| 06 | Cancellation, Makeup & Sick Leave | ✅ UI + CF makeup booking |
+| 07 | Communication & Notifications | 🚧 Dispatcher code ready, no credentials |
+| 08 | Forms, Approvals & Ministry Submissions | ✅ UI + Zod validation |
+| 09 | Learning Management System (LMS) | ✅ UI + mock data |
+| 10 | AI Agents & Automation | ✅ 8 Genkit flows active |
+| 11 | Reporting, Analytics & Admin Dashboard | ✅ UI + mock aggregations |
+| 12 | Smart Slot Filling | ✅ Genkit flow active |
+| 13 | Musicians for Hire Marketplace | ✅ UI + mock data |
+| 14 | Additional Features (Rentals, Open Day, Alumni) | ✅ UI + mock data |
+| 15 | Internationalization (i18n / L10n) | ✅ 4 locales, split files |
+| 16 | Guidance & AI Help Assistant | ✅ Genkit flow active |
+| 17 | Scholarships & Donation Management | ✅ UI + mock data |
+| PS | Playing School Programme | ✅ UI + mock data |

@@ -1,4 +1,4 @@
-# 02 — Architecture
+# 02 -- Architecture
 
 ## 1. System Container Diagram
 
@@ -12,63 +12,45 @@
 │  │  ┌─────────────────┐  ┌─────────────────────┐  ┌──────────────────┐   │  │
 │  │  │   Public Site   │  │  Authenticated App  │  │   Admin Portal   │   │  │
 │  │  │  / (root = he)  │  │  /[locale]/dashboard│  │  /dashboard/admin│   │  │
-│  │  │  /register      │  │  /schedule          │  │  /admin/branches │   │  │
-│  │  │  /try           │  │  /forms             │  │  /admin/payroll  │   │  │
+│  │  │  /register      │  │  /schedule          │  │  /admin/payroll  │   │  │
 │  │  │  /about         │  │  /practice          │  │  /admin/rentals  │   │  │
-│  │  │  /enroll        │  │  /family            │  │  /admin/open-day │   │  │
+│  │  │  /available-now │  │  /family            │  │  /admin/open-day │   │  │
 │  │  │  /musicians     │  │  /teacher/...       │  │  /admin/...      │   │  │
-│  │  │  /playing-school│  │  /school/...        │  │                  │   │  │
 │  │  └─────────────────┘  └─────────────────────┘  └──────────────────┘   │  │
 │  │                                                                        │  │
-│  │  Server Components (SSR / auth-validated)                              │  │
-│  │  Client Components (dashboards, booking calendar)                      │  │
-│  │  Server Actions in src/app/actions.ts (all data mutations)             │  │
-│  │  ✅  Auth guard: proxy.ts (Edge Proxy) + Server Actions (withAuth)     │  │
+│  │  Edge Proxy (src/proxy.ts) — session validation + auth headers         │  │
+│  │  Server Actions (src/app/actions.ts) — all mutations via withAuth+Zod  │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
-│                              ▼                                               │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
 │  │         DATABASE ADAPTER LAYER  (src/lib/db/)                          │  │
 │  │                                                                        │  │
-│  │  DB_BACKEND env var selects adapter at startup (singleton)             │  │
-│  │  'mock'      → MemoryDatabaseAdapter (default — no env var needed)     │  │
-│  │  'firebase'  → FirebaseAdapter   ⚠️ IS A MemoryDatabaseAdapter STUB   │  │
-│  │  'postgres'  → PostgresAdapter   ✅ Full read-write implementation     │  │
-│  │  'supabase'  → SupabaseAdapter   ✅ Full implementation                │  │
-│  │  'pocketbase'→ PocketBaseAdapter ✅ Full implementation                │  │
-│  │                                                                        │  │
-│  │  Auto-detection: if DATABASE_URL env set → postgres; else → mock      │  │
+│  │  'mock'      -> MemoryDatabaseAdapter (default -- in-memory seed)      │  │
+│  │  'firebase'  -> FirebaseAdapter  ✅ Full Firestore (fallback: memory)  │  │
+│  │  'postgres'  -> PostgresAdapter  ✅ Full read-write (1749 lines)       │  │
+│  │  'supabase'  -> SupabaseAdapter  ✅ Full implementation                │  │
+│  │  'pocketbase'-> PocketBaseAdapter ✅ Full implementation               │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │         CLOUD FUNCTIONS  (functions/src/)                             │  │
-│  │         ✅ PARTIALLY IMPLEMENTED — Auth & Booking active              │  │
+│  │         CLOUD FUNCTIONS  (functions/src/)   ✅ 6 DEPLOYED              │  │
 │  │                                                                        │  │
-│  │  auth/on-user-approved.ts     Set Custom Claims on approval      ✅   │  │
-│  │  auth/on-user-created.ts      New user lifecycle handling        ✅   │  │
+│  │  auth/on-user-approved.ts     Custom Claims on approval          ✅   │  │
+│  │  auth/on-user-created.ts      New user lifecycle                 ✅   │  │
 │  │  auth/on-user-deleted.ts      User deletion cleanup              ✅   │  │
 │  │  users/on-user-parent-sync.ts Parent-child link sync             ✅   │  │
 │  │  booking/book-lesson-slot.ts  Atomic booking transaction         ✅   │  │
 │  │  booking/book-makeup-lesson.ts Makeup credit redemption          ✅   │  │
-│  │  Lesson triggers, billing, calendar sync              ⚠️ Phase 2     │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                              │                                               │
 │              ┌───────────────┼───────────────────────────────┐              │
 │              ▼               ▼                               ▼              │
-│  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────────────────┐ │
-│  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │     EXTERNAL SERVICES          │ │
-│  │  Genkit 1.29 │  │  Cardcom  ⚠️stub │  │  Twilio SMS/WhatsApp ⚠️stub   │ │
-│  │  ✅ 8 flows  │  │  Pelecard ⚠️stub │  │  SendGrid Email      ⚠️stub   │ │
-│  │  match-teacher│  │  HYP      ⚠️stub │  │  Google Calendar     ⚠️spec  │ │
-│  │  draft-report │  │  Tranzila ⚠️stub │  │  Hebcal API          ⚠️spec  │ │
-│  │  help-asst   │  │  Stripe   ⚠️stub │  │                                │ │
-│  │  suggest-comp│  │  Via PAYMENT_    │  │                                │ │
-│  │  nurture-lead│  │  GATEWAY_PROVIDER│  │                                │ │
-│  │  event-poster│  │  env var         │  │                                │ │
-│  │  target-slots│  │                  │  │                                │ │
-│  └──────────────┘  └──────────────────┘  └────────────────────────────────┘ │
+│  ┌──────────────┐  ┌──────────────────┐  ┌──────────────────────────────┐  │
+│  │  GENKIT AI   │  │  PAYMENT GATEWAY │  │     EXTERNAL SERVICES        │  │
+│  │  8 flows ✅  │  │  Cardcom  🚧    │  │  Twilio SMS/WhatsApp 🚧     │  │
+│  │  Gemini API  │  │  +4 alternatives │  │  SendGrid Email      🚧     │  │
+│  └──────────────┘  └──────────────────┘  └──────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────────────────────┘
-LEGEND: ✅ Implemented & active  ⚠️ Stub/spec only  ❌ Not started
 ```
 
 ---
@@ -77,155 +59,97 @@ LEGEND: ✅ Implemented & active  ⚠️ Stub/spec only  ❌ Not started
 
 ### 2.1 Multi-Tenancy
 
-Every entity is scoped to a `conservatoriumId`. Currently enforced at:
+Every entity is scoped to a `conservatoriumId`. Enforced at:
 1. **Data model level:** every type includes `conservatoriumId`
-2. **Server Actions:** `src/app/actions.ts` uses the `withAuth()` wrapper and Zod schemas
+2. **Server Actions:** `withAuth()` + Zod schemas
+3. **RBAC:** `requireRole()` checks `conservatoriumId` match; global admins bypass
+4. **Firestore Security Rules:** tenant isolation via Custom Claims
 
-> ✅ **Proxy auth guard active (dev bypass):** `src/proxy.ts` (Next.js 16 Edge Proxy) replaces the old `middleware.ts` (deleted). In production, it validates Firebase session cookies and injects user claims as request headers. In development (`NODE_ENV !== 'production'` with no `FIREBASE_SERVICE_ACCOUNT_KEY`), a dev bypass injects synthetic `site_admin` claims automatically. Firestore Security Rules are ⚠️ **not yet deployed**.
+### 2.2 Edge Proxy (`src/proxy.ts`)
 
-### 2.2 Server Actions as the Mutation Boundary
+The Next.js 16 Edge Proxy replaces the traditional `middleware.ts`:
+- **API routes (`/api/*`):** pass through directly -- no auth, no intl
+- **Public routes:** apply next-intl middleware for locale routing only
+- **Dashboard routes:** validate `__session` Firebase cookie (JWT decode), inject `x-user-*` headers, chain with intl middleware
+- **Dev bypass:** when `NODE_ENV !== 'production'` and `FIREBASE_SERVICE_ACCOUNT_KEY` absent, inject synthetic `site_admin` claims
 
-All data writes flow through **Next.js Server Actions** (`src/app/actions.ts`, 1283 lines) and are validated using Zod schemas via the `withAuth()` HOC wrapper.
+### 2.3 Server Actions as Mutation Boundary
 
-> ✅ **`verifyAuth()` implements layered auth:** In production, `verifyAuth()` validates the Firebase `__session` cookie via `admin.auth().verifySessionCookie()`. If the Admin SDK is not configured (local dev without `FIREBASE_SERVICE_ACCOUNT_KEY`), it falls back to reading claims from middleware-injected `x-user-*` headers. If neither is available and `NODE_ENV !== 'production'`, it returns a synthetic `site_admin` session for local development. In production, this fallback is unreachable.
+All data writes flow through Server Actions in `src/app/actions.ts` plus domain modules in `src/app/actions/`. Every action is wrapped with `withAuth()` which calls `verifyAuth()` + Zod validation.
 
-### 2.3 Repository / Database Abstraction Layer
+### 2.4 Database Abstraction Layer
 
-✅ **Fully implemented.** `src/lib/db/index.ts` resolves the `DB_BACKEND` env var and returns the matching adapter as a singleton. The `DatabaseAdapter` interface in `src/lib/db/types.ts` defines 17 typed repositories.
-
-Key distinction from the SDD plan: the **`firebase` backend is currently a `MemoryDatabaseAdapter` stub** (8 lines, no Firestore SDK calls). Postgres, Supabase, and PocketBase adapters are real implementations.
+`src/lib/db/index.ts` resolves `DB_BACKEND` env var and returns a singleton adapter. The `DatabaseAdapter` interface defines **26 typed repositories**.
 
 ```typescript
-// src/lib/db/adapters/firebase.ts (actual)
-export class FirebaseAdapter extends MemoryDatabaseAdapter {
-  constructor() { super(buildDefaultSeed()); } // No Firestore — just in-memory seed
+// src/lib/db/index.ts -- auto-detection logic
+function resolveBackend(): string {
+  const explicit = process.env.DB_BACKEND?.trim().toLowerCase();
+  if (explicit) return explicit;
+  if (process.env.DATABASE_URL) return 'postgres';
+  return 'mock';
 }
 ```
 
-**Dev mode data flow:** `buildDefaultMemorySeed()` (in `src/lib/db/default-memory-seed.ts`) seeds the in-memory adapter with all mock data including a synthetic `devUser` (`id: 'dev-user'`, `role: 'site_admin'`) that matches the dev bypass session. The `/api/bootstrap` route serves all seed data to the client. `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` enables client-side fallback when the bootstrap route fails.
+The **FirebaseAdapter** (`src/lib/db/adapters/firebase.ts`, 503 lines) is a full Firestore implementation with:
+- Root-level repositories for `users` and `conservatoriums`
+- Sub-collection repositories for per-conservatorium data (lessons, rooms, forms, etc.)
+- Graceful fallback to `MemoryDatabaseAdapter` when `FIREBASE_SERVICE_ACCOUNT_KEY` is absent
 
-### 2.4 Monolithic Context — Current Reality
+### 2.5 Monolithic Context (Current Gap)
 
-> ⚠️ **Critical gap:** `src/hooks/use-auth.tsx` is a **2,364-line monolithic React Context** holding the entire application state (35+ state arrays, 170+ mutation functions). This is the architecture the SDD documents identified as needing replacement, and it has **not been replaced yet**.
-
-Domain-specific hooks (`src/hooks/data/`) do exist and are partially built:
-
-| Hook | File | Status |
-|------|------|--------|
-| `useMyLessons` | `hooks/data/use-my-lessons.ts` | ✅ Exists — wraps `useAuth()` context |
-| `useMyInvoices` | `hooks/data/use-my-invoices.ts` | ✅ Exists — wraps `useAuth()` context |
-| `useLiveStats` | `hooks/data/use-live-stats.ts` | ✅ Exists — wraps `useAuth()` context |
-| `useMakeupCredits` | `hooks/data/use-makeup-credits.ts` | ✅ Exists |
-| `usePracticeLogs` | `hooks/data/use-practice-logs.ts` | ✅ Exists |
-| `usePreLessonSummary` | `hooks/data/use-pre-lesson-summary.ts` | ✅ Exists |
-| React Query (`@tanstack/react-query`) | — | ❌ **Not installed** |
-| Firestore `onSnapshot` listeners | — | ❌ **Not implemented** |
-
-All domain hooks read from the monolithic `useAuth()` context — they do not yet query a database directly.
-
-### 2.5 Real-Time vs. Cache-First Data
-
-> ⚠️ **Gap vs. plan:** The planned React Query + Firestore `onSnapshot` architecture is not yet implemented. All data is served from the in-memory mock context synchronously. There is no stale-while-revalidate, no cache, and no real-time listener.
-
-### 2.6 Dynamic Imports for Role Dashboards
-
-> ⚠️ **Gap vs. plan:** Role-specific dashboard components are **not dynamically imported**. `AdminCommandCenter` is imported statically in `dashboard/admin/page.tsx`. The `dynamic()` pattern from the SDD plan is not in use.
+`src/hooks/use-auth.tsx` is a 2,364-line monolithic React Context holding 35+ state arrays and 170+ mutation functions. Domain hooks in `src/hooks/data/` wrap `useAuth()` but do not query a database directly. React Query is not yet installed.
 
 ---
 
-## 3. AI Flows — Verified Implementation
+## 3. AI Flows (Genkit 1.29)
 
-✅ All 8 Genkit flows in `src/ai/flows/` are implemented and wired to server actions:
+All 8 Genkit flows in `src/ai/flows/` are implemented and called from Server Actions:
 
-| Flow File | Purpose | Wired In |
-|-----------|---------|---------|
-| `match-teacher-flow.ts` | Two-pass teacher matching (hard filter + LLM score) | `actions.ts` → `matchTeacherAction` |
-| `draft-progress-report-flow.ts` | AI progress report draft from practice logs | `actions.ts` → `draftProgressReportAction` |
-| `help-assistant-flow.ts` | RAG-based help chat over `help-articles.ts` | `actions.ts` → `askHelpAssistantAction` |
-| `suggest-compositions.ts` | Composition suggestions for form builder | `actions.ts` → `suggestCompositionsAction` |
-| `reschedule-flow.ts` | NLP rescheduling request handler | `actions.ts` → `handleRescheduleRequestAction` |
-| `generate-event-poster.ts` | AI event poster content generation | `actions.ts` → `generateEventPosterAction` |
-| `target-empty-slots-flow.ts` | Smart slot filling advisor | `actions.ts` → `getTargetedSlotsAction` |
-| `nurture-lead-flow.ts` | Playing School lead nurturing | `actions.ts` → `nurtureLead` |
-
----
-
-## 4. Navigation Architecture
-
-✅ **Fully implemented** per SDD-NAV-01. The sidebar (`src/components/dashboard/sidebar-nav.tsx`, 556 lines) uses `SidebarGroup` / `SidebarGroupContent` components with role-scoped collapsible groups:
-
-| Persona | Groups | Implementation |
-|---------|--------|---------------|
-| `conservatorium_admin` / `site_admin` | Overview · People · Schedule & Lessons · Programs & Events · Finance · Intelligence · Communication | ✅ |
-| `delegated_admin` | Same as admin, filtered by `delegatedAdminPermissions` | ✅ |
-| `teacher` | My Workspace · My Profile · Finance · Communication | ✅ |
-| `student` | My Learning · Practice · Communication · Account | ✅ |
-| `parent` | Family Hub · Finance · Communication · Account | ✅ |
-| `ministry_director` | Ministry Dashboard only | ✅ |
-| `school_coordinator` | School Dashboard | ✅ |
-
-Both `newFeaturesEnabled` (new grouped nav) and legacy flat-list rendering are supported via a feature flag on the conservatorium.
-
----
-
-## 5. Locale Routing
-
-✅ **Implemented.** `src/i18n/routing.ts` uses `localePrefix: 'as-needed'` — Hebrew (`he`) is the default and served at root `/`; other locales are prefixed (`/en/`, `/ar/`, `/ru/`). Locale detection reads a split-directory structure per locale (`src/messages/{locale}/*.json`) and deep-merges them via static imports in `src/i18n/request.ts`. Legacy flat `{locale}.json` files have been **deleted** — only the split files are authoritative.
-
----
-
-## 6. Key Design Principles (Verified)
-
-| Principle | Status |
-|-----------|--------|
-| Mobile-First, RTL-Always | ✅ `dir` applied in layout.tsx based on locale |
-| Server Actions as mutation boundary | ✅ All writes via `src/app/actions.ts` with Zod |
-| Database Abstraction Layer | ✅ `src/lib/db/` with 5 adapter implementations |
-| AI as Invisible Staff | ✅ 8 Genkit flows active |
-| Composable Modules | ✅ `newFeaturesEnabled` flag gates new nav/UX |
-| Server-Side Role Authority (Firebase Custom Claims) | ✅ Dev bypass via proxy.ts; ⚠️ Production requires Firebase Custom Claims deployment |
-| No trust in client-provided data (Zod) | ✅ Server actions use Zod; ⚠️ `FormSubmissionSchema = z.any()` still unresolved |
-
----
-
-## 7. Development Mode Architecture
-
-When running locally without Firebase credentials, Harmonia uses a full dev bypass stack:
-
-```
-Browser → Next.js App
-    │
-    ├── proxy.ts (Edge Proxy — replaces deleted middleware.ts)
-    │     isDevBypass = NODE_ENV !== 'production' && !FIREBASE_SERVICE_ACCOUNT_KEY
-    │     Production: validates __session JWT cookie, extracts claims, injects x-user-* headers
-    │     Dev bypass: injects synthetic headers: x-user-id=dev-user, x-user-role=site_admin
-    │     API routes (/api/*): pass through directly — no intl middleware, no auth check
-    │
-    ├── /api/bootstrap (API Route)
-    │     → getDb() → MemoryDatabaseAdapter (seeded from buildDefaultMemorySeed())
-    │     → returns 85 conservatoriums + all mock data as JSON
-    │     → NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1 enables client fallback
-    │
-    ├── Server Actions (src/app/actions.ts)
-    │     → verifyAuth() chain:
-    │       1. Try Admin SDK verifySessionCookie() (production path)
-    │       2. Fallback: read x-user-* headers from proxy (local dev with proxy running)
-    │       3. Fallback: synthetic site_admin session (dev mode, no Firebase at all)
-    │     → withAuth() wraps each action with verifyAuth() + Zod schema validation
-    │
-    └── Client (use-auth.tsx)
-          → loadBootstrapData() fetches /api/bootstrap
-          → applyMockBootstrapFallback() if NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1
-```
-
-### Key Dev Mode Files
-
-| File | Purpose |
+| Flow | Purpose |
 |------|---------|
-| `src/proxy.ts` | Next.js 16 Edge Proxy: validates `__session` cookie in production, injects synthetic `site_admin` claims in dev bypass |
-| `src/lib/auth-utils.ts` | `verifyAuth()`: Admin SDK `verifySessionCookie()` → header fallback → dev synthetic session. `withAuth()`: wraps Server Actions with auth + Zod. `requireRole()`: RBAC enforcement with tenant isolation. |
-| `src/lib/firebase-admin.ts` | `getAdminAuth()`: initialises Firebase Admin SDK from `FIREBASE_SERVICE_ACCOUNT_KEY`; returns null when env var absent |
-| `src/lib/db/default-memory-seed.ts` | `buildDefaultMemorySeed()`: seeds MemoryAdapter with all 85 conservatoriums + mock data |
-| `src/lib/data.ts` | Source of mock data: `mockUsers`, `conservatoriums`, `devUser`, `directoryTeacherUsers` (68 teachers) |
-| `src/lib/data.json` | 5,217 composition entries (fixed: invalid JSON with embedded Hebrew chars was corrected) |
-| `.env.local` | `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` |
+| `match-teacher-flow.ts` | Two-pass teacher matching (hard filter + LLM score) |
+| `draft-progress-report-flow.ts` | AI progress report from practice logs |
+| `help-assistant-flow.ts` | RAG-based help chat over curated articles |
+| `suggest-compositions.ts` | Composition suggestions for form builder |
+| `reschedule-flow.ts` | NLP rescheduling request handler |
+| `generate-event-poster.ts` | AI event poster content generation |
+| `target-empty-slots-flow.ts` | Smart slot filling advisor |
+| `nurture-lead-flow.ts` | Playing School lead nurturing |
+
+---
+
+## 4. Locale Routing
+
+`src/i18n/routing.ts` uses `localePrefix: 'as-needed'`:
+- **Hebrew (`he`):** default locale, served at root `/`
+- **English, Arabic, Russian:** prefixed (`/en/`, `/ar/`, `/ru/`)
+
+Messages loaded from split files in `src/messages/{locale}/*.json` via static imports and deep-merged at runtime in `src/i18n/request.ts`. English is the fallback.
+
+---
+
+## 5. Development Mode
+
+When running locally without Firebase credentials:
+
+```
+Browser -> Next.js App
+    |
+    +-- proxy.ts (Edge Proxy)
+    |     Dev bypass: injects x-user-id=dev-user, x-user-role=site_admin
+    |     API routes: pass through directly
+    |
+    +-- /api/bootstrap (API Route)
+    |     -> MemoryDatabaseAdapter (seeded from buildDefaultMemorySeed())
+    |     -> returns 85 conservatoriums + all mock data as JSON
+    |
+    +-- Server Actions
+    |     -> verifyAuth() chain:
+    |       1. Try Admin SDK verifySessionCookie() (production)
+    |       2. Read x-user-* headers from proxy (dev with proxy)
+    |       3. Synthetic site_admin session (dev, no Firebase)
+    |
+    +-- Client (use-auth.tsx)
+          -> loadBootstrapData() fetches /api/bootstrap
+```

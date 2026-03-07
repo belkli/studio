@@ -1,358 +1,188 @@
-# 05 — Data Persistence
+# 05 -- Data Persistence
 
-## 1. Database Layer — Current Reality
+## 1. Multi-Backend Strategy
 
-> ⚠️ **The app runs on in-memory mock data by default.** The `DB_BACKEND` env var defaults to `mock` (if unset and no `DATABASE_URL` present), which loads all data from `src/lib/data.ts` into a `MemoryDatabaseAdapter`. No data is persisted between server restarts.
-
-**Firebase Firestore** is the intended production cloud database, but the `FirebaseAdapter` (`src/lib/db/adapters/firebase.ts`) is currently an 8-line stub that simply extends `MemoryDatabaseAdapter` — it makes no Firestore SDK calls.
-
-**PostgreSQL** (via Docker) is the most complete real alternative: the `PostgresAdapter` (`src/lib/db/adapters/postgres.ts`, 1749 lines) has a full read-write implementation including schema migrations and seed scripts. When `DATABASE_URL` is set, the app automatically uses Postgres.
-
-A **multi-backend abstraction layer** (`src/lib/db/`) allows the backend to be switched via the `DB_BACKEND` environment variable.
-
-### Mock Seed Data Sources
-
-The `MemoryDatabaseAdapter` (and the `buildDefaultMemorySeed()` function in `src/lib/db/default-memory-seed.ts`) populates the in-memory store from these sources:
-
-| Source File | Data |
-|-------------|------|
-| `docs/data/constadmin.json` | 85 Israeli conservatorium records with real names, cities, and contacts |
-| `docs/data/conservatoriums.json` | 68 directory teachers (18 from cons-15 Hod HaSharon + 50 from cons-66 Kiryat Ono) |
-| `src/lib/data.ts` | `mockUsers` (students, parents, teachers, admins), `devUser` (synthetic dev site_admin), `directoryTeacherUsers` |
-| `src/lib/data.json` | 5,217 music compositions (composer, title, instrument, grade) |
-
-The `/api/bootstrap` route serves all seed data to the client as JSON. When `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` is set, the client falls back to built-in mock data if the bootstrap endpoint fails.
-
-### PostgreSQL Seed Alignment
-
-The `scripts/db/seed.sql` file contains SQL inserts aligned with the mock data:
-- All 68 directory teachers as UUID-based records with `teacher_profiles`
-- 9 students, 5 parents, 10 lesson slots
-- Uses Postgres-native column names: `scheduled_at` (not `start_time`), lowercase `lesson_status` enum
-
----
-
-## 2. Intended Firestore Schema (Production Target)
-
-> This describes the planned Firestore document hierarchy when the `FirebaseAdapter` is fully implemented. Current data lives in the `MemoryDatabaseAdapter` in-memory seed. The `DatabaseAdapter` interface in `src/lib/db/types.ts` defines 17 typed repositories that map to these collections.
-
-```
-ROOT COLLECTIONS:
-├── /users/{userId}
-│     Global user profiles (cross-conservatorium identity)
-│
-├── /conservatoriums/{cid}
-│   ├── /settings/{settingType}          # Config: cancellationPolicy, payroll, pricing
-│   ├── /stats/live                      # O(1) aggregated dashboard document
-│   │
-│   ├── /teachers/{teacherId}            # Teacher profiles (extends user)
-│   ├── /teacherAvailability/{availId}   # Weekly availability templates
-│   ├── /teacherExceptions/{exId}        # Sick leave, holidays, ad-hoc overrides
-│   │
-│   ├── /lessonSlots/{slotId}            # All lesson slots (recurring, makeup, trial, adhoc)
-│   │   └── /notes/{noteId}             # Per-lesson teacher notes (sub-collection)
-│   ├── /roomLocks/{lockKey}             # Short-TTL optimistic booking locks
-│   ├── /rooms/{roomId}                  # Room catalog with instrument equipment
-│   │
-│   ├── /packages/{packageId}            # Student lesson packages
-│   ├── /makeupCredits/{creditId}        # Explicit makeup credit ledger
-│   ├── /invoices/{invoiceId}            # All invoices
-│   ├── /payrollPeriods/{periodId}       # Monthly payroll summaries
-│   │
-│   ├── /practiceLogs/{logId}            # Student practice sessions
-│   ├── /assignedRepertoire/{repId}      # Teacher-assigned pieces
-│   ├── /examPrepTrackers/{trackerId}    # Ministry exam preparation tracking
-│   │
-│   ├── /formSubmissions/{formId}        # Forms & approvals
-│   ├── /formTemplates/{templateId}      # Reusable form templates
-│   │
-│   ├── /notifications/{notifId}         # In-app notification feed
-│   ├── /notificationAuditLog/{logId}    # SMS/Email delivery audit trail
-│   ├── /messageThreads/{threadId}       # Direct messages (teacher ↔ student/parent)
-│   │
-│   ├── /instruments/{instrumentId}      # Instrument inventory catalog
-│   ├── /instrumentCheckouts/{checkId}   # Active and historical checkouts
-│   ├── /closureDates/{dateKey}          # Holiday and closure calendar
-│   ├── /waitlistEntries/{entryId}       # Teacher waitlist
-│   │
-│   ├── /events/{eventId}               # Recital / concert productions
-│   ├── /scholarshipApplications/{appId} # Financial aid applications
-│   ├── /donationRecords/{donationId}    # Donation fund ledger
-│   ├── /aiJobs/{jobId}                  # Async AI job queue + audit log
-│   └── /complianceLogs/{logId}          # PDPPA compliance + mutation audit trail
-│
-├── /parentOf/{parentId_studentId}       # Denormalised parent-child links (for Security Rules)
-├── /ageUpgradeInvitations/{inviteId}    # Pending 13th-birthday account invitations
-├── /consentRecords/{recordId}           # PDPPA consent tracking
-└── /signatureAuditRecords/{auditId}     # Digital signature audit trail
-```
-
----
-
-## 3. Core Entity Models (Verified from `src/lib/types.ts`)
-
-> All types below have been verified against the actual 1964-line `src/lib/types.ts`. Differences from the original SDD are noted.
-
-### 3.1 User
 ```typescript
-// Verified — role values are LOWERCASE strings in code
-interface User {
-  id: string;
-  name: string;                          // single full-name field (not firstName/lastName split)
-  email: string;
-  role: UserRole;                        // 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'school_coordinator'
-  conservatoriumId: string;
-  conservatoriumName: string;            // denormalised for display
-  approved: boolean;
-  dateOfBirth?: string;                  // ISO Date (alias: birthDate)
-  parentId?: string;
-  childIds?: string[];
-  preferredLanguage?: string;            // not directly in User — via NotificationPreferences.language
-  oauthProviders?: UserOAuthProvider[];
-  registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
-  accountType?: 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
-  // + teacher-specific, student-specific, playing school fields embedded on User
+// src/lib/db/index.ts
+function resolveBackend(): string {
+  const explicit = process.env.DB_BACKEND?.trim().toLowerCase();
+  if (explicit) return explicit;
+  if (process.env.DATABASE_URL) return 'postgres';
+  return 'mock';
 }
 ```
 
-> ⚠️ **Difference from SDD plan:** `User.name` is a single string field, not `firstName` + `lastName`. There is no `firstName`/`lastName` split in the type. Also `User.conservatoriumName` is denormalised (embedded string) which avoids a join but must be kept in sync.
+| Backend | `DB_BACKEND` | Implementation | Use Case |
+|---------|-------------|----------------|----------|
+| `mock` | `mock` (default) | `MemoryDatabaseAdapter` -- in-memory seed | Local dev, demos |
+| `firebase` | `firebase` | ✅ `FirebaseAdapter` -- full Firestore (503 lines) | Production |
+| `postgres` | `postgres` | ✅ `PostgresAdapter` -- full read-write (1749 lines) | Dev with Docker |
+| `supabase` | `supabase` | ✅ `SupabaseAdapter` | Low-cost cloud |
+| `pocketbase` | `pocketbase` | ✅ `PocketBaseAdapter` | Single-site lightweight |
 
-### 3.2 LessonSlot
+### FirebaseAdapter Architecture
+
+`src/lib/db/adapters/firebase.ts` implements all 26 `DatabaseAdapter` repositories using Firestore:
+
+- **Root collections:** `users`, `conservatoriums`, `consentRecords` (top-level, cross-tenant)
+- **Sub-collections:** everything else nested under `/conservatoriums/{cid}/`
+- **Generic factories:** `createRootRepository<T>()` and `createSubCollectionRepository<T>()`
+- **Graceful fallback:** when `FIREBASE_SERVICE_ACCOUNT_KEY` is absent, falls back to `MemoryDatabaseAdapter` with a console warning
+
+### DatabaseAdapter Interface
+
+The `DatabaseAdapter` interface (`src/lib/db/types.ts`) defines 26 typed repositories:
+
+```
+users, conservatoriums, conservatoriumInstruments, lessonPackages,
+lessons, branches, rooms, events, forms, approvals, scholarships,
+rentals, payments, payrolls, announcements, alumni, masterClasses,
+repertoire, donationCauses, donations, makeupCredits, practiceLogs,
+notifications, roomLocks, teacherExceptions, consentRecords,
+complianceLogs
+```
+
+---
+
+## 2. Mock Seed Data
+
+The `MemoryDatabaseAdapter` is populated by `buildDefaultMemorySeed()` from:
+
+| Source | Data |
+|--------|------|
+| `docs/data/constadmin.json` | 85 conservatorium records with real names, cities |
+| `docs/data/conservatoriums.json` | 68 directory teachers (18 cons-15 + 50 cons-66) |
+| `src/lib/data.ts` | mockUsers, devUser, directoryTeacherUsers |
+| `src/lib/data.json` | 5,217 music compositions |
+
+The `/api/bootstrap` route serves all seed data to the client. `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` enables client fallback.
+
+---
+
+## 3. Firestore Schema
+
+```
+ROOT COLLECTIONS:
++-- /users/{userId}                    Global user profiles
++-- /consentRecords/{recordId}         PDPPA consent (immutable)
++-- /parentOf/{parentId_studentId}     Parent-child links (Security Rules)
+
+PER-CONSERVATORIUM (/conservatoriums/{cid}/):
++-- lessonSlots/{slotId}               All lesson slots
++-- rooms/{roomId}                     Room catalog
++-- branches/{branchId}                Physical branches
++-- events/{eventId}                   Recitals, concerts
++-- formSubmissions/{formId}           Forms & approvals
++-- packages/{packageId}               Student packages
++-- lessonPackages/{lpId}              Admin-configured catalog
++-- conservatoriumInstruments/{iId}    Instrument catalog
++-- invoices/{invoiceId}               Billing
++-- payrollPeriods/{periodId}          Monthly payroll
++-- makeupCredits/{creditId}           Credit ledger
++-- practiceLogs/{logId}               Practice sessions
++-- assignedRepertoire/{repId}         Teacher-assigned pieces
++-- scholarshipApplications/{appId}    Financial aid
++-- donationCauses/{causeId}           Donation funds
++-- donationRecords/{donationId}       Donation ledger
++-- notifications/{notifId}            In-app notifications
++-- announcements/{annId}              Conservatorium announcements
++-- alumni/{alumniId}                  Alumni profiles
++-- masterclasses/{mcId}               Masterclass events
++-- roomLocks/{lockKey}                Short-TTL booking locks
++-- teacherExceptions/{exId}           Sick leave, holidays
++-- complianceLogs/{logId}             Audit trail
++-- instrumentCheckouts/{checkId}      Rentals
+```
+
+---
+
+## 4. Core Entity Models
+
+### User
 ```typescript
-// Verified — matches SDD plan closely
+interface User {
+  id: string;
+  name: string;                       // single full-name field
+  email: string;
+  role: UserRole;                     // 10 values (lowercase)
+  conservatoriumId: string;
+  conservatoriumName: string;         // denormalised
+  approved: boolean;
+  dateOfBirth?: string;
+  parentId?: string;
+  childIds?: string[];
+  accountType?: 'FULL' | 'PLAYING_SCHOOL' | 'TRIAL';
+  isPremiumTeacher?: boolean;         // admin-gated
+  // + teacher-specific, student-specific fields
+}
+```
+
+### LessonSlot
+```typescript
 interface LessonSlot {
   id: string;
   conservatoriumId: string;
   teacherId: string;
   studentId: string;
   instrument: string;
-  startTime: string;                     // ISO Timestamp (string, not Timestamp object)
+  startTime: string;                  // ISO Timestamp
   durationMinutes: 30 | 45 | 60;
-  recurrenceId?: string;
   type: 'RECURRING' | 'MAKEUP' | 'TRIAL' | 'ADHOC' | 'GROUP';
   bookingSource: 'STUDENT_SELF' | 'PARENT' | 'TEACHER' | 'ADMIN' | 'AUTO_MAKEUP';
+  status: SlotStatus;
   roomId?: string;
-  branchId?: string;                     // Additional field vs SDD plan
+  branchId?: string;
   isVirtual: boolean;
-  meetingLink?: string;
   packageId?: string;
   isCreditConsumed: boolean;
-  makeupCreditId?: string;               // Additional field — links to MakeupCredit
-  status: SlotStatus;
-  attendanceMarkedAt?: string;
-  teacherNote?: string;
-  cancelledAt?: string;
-  cancelledBy?: string;
-  cancellationReason?: string;
-  rescheduledFrom?: string;              // Additional field — original time before reschedule
-  rescheduledAt?: string;
-  googleCalendarEventId?: string;        // Additional field — for calendar sync
-  effectiveRate?: number;                // Additional field — NIS rate at time of lesson
-  createdAt: string;
-  updatedAt: string;
+  makeupCreditId?: string;
 }
 ```
 
-### 3.3 Package
+### MakeupCredit
 ```typescript
-// Verified — simpler than SDD plan
-interface Package {
-  id: string;
-  studentId?: string;
-  type: 'TRIAL' | 'PACK_5' | 'PACK_10' | 'MONTHLY' | 'YEARLY' | 'ADHOC_SINGLE';
-  title: string;
-  description: string;
-  totalCredits?: number;
-  usedCredits?: number;
-  price: number;
-  paymentStatus?: 'PAID' | 'PENDING' | 'FAILED';
-  validFrom?: string;
-  validUntil?: string;
-  // Note: no conservatoriumId, no installments field on Package itself
-}
-```
-
-> ⚠️ **Gap vs. SDD plan:** `Package` lacks `conservatoriumId` and `installments`. The `LessonPackage` type (separate from `Package`) is the admin-configured catalog entry with full multi-locale names and per-conservatorium configuration.
-
-### 3.4 Invoice
-```typescript
-// Verified — simpler than SDD plan
-interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  conservatoriumId: string;
-  payerId: string;
-  lineItems: { description: string; total: number }[];
-  total: number;
-  status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
-  dueDate: string;
-  paidAt?: string;
-}
-```
-
-> ⚠️ **Gap vs. SDD plan:** Missing `subtotal`, `discounts`, `vatAmount`, `paidAmount`, `paymentMethod`, `installments`, `pdfUrl` fields. VAT not modelled in type.
-
-### 3.5 MakeupCredit — Verified (matches SDD plan)
-See `04-backend.md` §4.2 for the full verified type.
-
-### 3.6 Room — Verified (matches SDD-FIX-10)
-```typescript
-interface Room {
+interface MakeupCredit {
   id: string;
   conservatoriumId: string;
-  branchId: string;
-  name: string;
-  capacity: number;
-  instrumentEquipment: { instrumentId: string; quantity: number; notes?: string }[];
-  blocks: RoomBlock[];
-  isActive: boolean;
-  description?: string;
-  photoUrl?: string;
-  equipment?: string[];                  // Legacy free-text field kept for backward compat
-}
-```
-
-### 3.7 FormSubmission — Verified (hybrid model)
-```typescript
-// Actual FormSubmission is a HYBRID — fields for all form types merged flat
-interface FormSubmission {
-  id: string;
-  formType: string;
-  conservatoriumId?: string;
   studentId: string;
-  studentName: string;
-  status: FormStatus;
-  submissionDate: string;
-  repertoire: Composition[];
-  totalDuration: string;
-  workflowSteps?: WorkflowStepDefinition[];  // from formTemplateId reference
-  currentStep?: number;
-  approvalHistory?: ...;
-  // + 30+ flat optional fields covering all form types
+  issuedBySlotId: string;
+  issuedReason: 'TEACHER_CANCELLATION' | 'CONSERVATORIUM_CANCELLATION' | 'STUDENT_NOTICED_CANCEL';
+  issuedAt: string;
+  expiresAt: string;
+  status: 'AVAILABLE' | 'REDEEMED' | 'EXPIRED';
+  redeemedBySlotId?: string;
+  amount: number;
 }
 ```
 
-> ⚠️ **Difference from SDD plan:** `FormSubmission` uses a flat optional-field design rather than the `formData: Record<string, unknown>` design in the SDD. All form type-specific fields (exam level, event name, conductor, etc.) are flat optional fields on the base type.
-
-### 3.8 Additional Verified Types (Not in Original SDD)
-
-The following types exist in `types.ts` and represent features beyond the original 17-module SDD:
-
-| Type | Module |
-|------|--------|
-| `PlayingSchoolInfo`, `PlayingSchoolInvoice`, `SchoolPartnership`, `PlayingSchoolEnrollment`, `SchoolGroupLesson` | SDD-PS (Playing School) |
-| `InstrumentInventory`, `InstrumentRental`, `InstrumentCheckout` | Rentals |
-| `AlumniProfile`, `Masterclass`, `MasterClassRegistration` | Alumni + Masterclasses |
-| `OpenDayEvent`, `OpenDayAppointment` | Open Day |
-| `PerformanceBooking`, `PerformanceProfile` | Musicians for Hire |
-| `ExamPrepTracker`, `GroupLessonSlot`, `Ensemble` | Exam prep + ensembles |
-| `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog` | PDPPA compliance |
-| `ConservatoriumLiveStats`, `RoomLock`, `TeacherException` | Production operational types |
-| `MinistryDirector`, `MinistryFormTemplate`, `MinistryInboxItem` | Ministry Director portal |
-| `AIJob`, `ConservatoriumInstrument`, `LessonPackage` | AI queue + admin catalog |
-
 ---
 
-## 4. Key Design Decisions
+## 5. PostgreSQL Alignment
 
-### 4.1 Explicit MakeupCredit Collection
+`scripts/db/seed.sql` contains SQL inserts aligned with mock data:
+- All 68 directory teachers with UUID-based records and `teacher_profiles`
+- 9 students, 5 parents, 10 lesson slots
+- Uses `scheduled_at` (not `start_time`), lowercase `lesson_status` enum
 
-Makeup credits are **not** implicit in `Package.usedCredits`. Each credit is a first-class document with a full lifecycle (`AVAILABLE → REDEEMED | EXPIRED`). This enables:
-- Transparent audit trail per credit
-- Expiry notifications at day 25
-- Admin view of all pending credits across all students
-
-### 4.2 Stats Document for O(1) Dashboard
-
-The admin dashboard must **never** trigger collection scans. A `/conservatoriums/{cid}/stats/live` document is maintained by Cloud Functions and contains pre-aggregated counts:
-
-```typescript
-{
-  activeStudents: number;
-  lessonsThisWeek: number;
-  revenueThisMonth: number;
-  pendingApprovals: number;
-  openMakeupCredits: number;
-  aiAlerts: number;
-  updatedAt: Timestamp;
-}
+PostgreSQL tooling:
 ```
-
-### 4.3 RoomLocks as Coordination Primitives
-
-`roomLocks` documents are not business entities — they are short-lived coordination mechanisms (TTL = lesson duration + 15 min). They prevent double-booking in concurrent booking scenarios without requiring pessimistic locking on the entire room schedule.
-
-### 4.4 Sub-Collection for Lesson Notes
-
-Lesson notes live in `/lessonSlots/{slotId}/notes/{noteId}` rather than inline on the slot document. This keeps the hot `lessonSlots` collection lean; notes are only loaded when a teacher opens a specific lesson.
-
-### 4.5 Global User Identity
-
-`/users/{userId}` is a root collection, not nested under a conservatorium. A teacher who works at two conservatoriums has one Firebase Auth identity; their role within each conservatorium is in the per-conservatorium `/teachers/{id}` document.
-
----
-
-## 5. Firestore Index Requirements
-
-The following composite indexes are required (must be deployed before production):
-
-| Collection | Fields | Query Purpose |
-|------------|--------|---------------|
-| `lessonSlots` | `conservatoriumId`, `teacherId`, `startTime` ASC | Teacher schedule view |
-| `lessonSlots` | `conservatoriumId`, `studentId`, `startTime` ASC | Student schedule view |
-| `lessonSlots` | `conservatoriumId`, `startTime` ASC, `status` | Admin master schedule |
-| `lessonSlots` | `conservatoriumId`, `roomId`, `startTime` ASC | Room availability check |
-| `invoices` | `conservatoriumId`, `payerId`, `status`, `dueDate` DESC | Family billing view |
-| `invoices` | `conservatoriumId`, `status`, `dueDate` ASC | Admin overdue report |
-| `makeupCredits` | `conservatoriumId`, `studentId`, `status` | Student credit wallet |
-| `makeupCredits` | `conservatoriumId`, `status`, `expiresAt` ASC | Credit expiry job |
-| `formSubmissions` | `conservatoriumId`, `status`, `currentStep` | Admin approvals queue |
-| `practiceLogs` | `studentId`, `date` DESC | Practice history |
-
----
-
-## 6. Firebase Storage Structure
-
-```
-/conservatoriums/{cid}/
-├── invoices/{invoiceId}.pdf            # Generated invoice PDFs
-├── formSubmissions/{formId}.pdf        # Approved form exports (Ministry-ready)
-├── sheetMusic/{compositionId}/
-│   ├── original.pdf
-│   └── optimised.pdf                  # Compressed by Cloud Function pipeline
-├── practiceVideos/{studentId}/{logId}  # Student practice video uploads
-├── teacherPhotos/{teacherId}.jpg
-└── signatures/{auditRecordId}.png      # Digital signature captures
+npm run db:start     # docker compose up -d
+npm run db:migrate   # run schema.sql
+npm run db:seed      # run seed.sql
+npm run db:reset     # drop and recreate
+npm run db:studio    # drizzle-kit studio
 ```
 
 ---
 
-## 7. Multi-Backend Strategy (Verified from `src/lib/db/index.ts`)
+## 6. Key Design Decisions
 
-```typescript
-// src/lib/db/index.ts (actual auto-detection logic)
-function resolveBackend(): string {
-  const explicit = process.env.DB_BACKEND?.trim().toLowerCase();
-  if (explicit) return explicit;
-  if (process.env.DATABASE_URL) return 'postgres';  // auto-detect Postgres
-  return 'mock';  // default — in-memory seed data
-}
-```
+1. **Explicit MakeupCredit collection:** Each credit is a first-class document with full lifecycle (`AVAILABLE -> REDEEMED | EXPIRED`), enabling audit trail and expiry notifications.
 
-| Backend | `DB_BACKEND` value | Implementation | Recommended For |
-|---------|-------------------|----------------|----------------|
-| `mock` | `mock` (default) | `MemoryDatabaseAdapter` — in-memory seed from `data.ts` | Local dev, demos |
-| `firebase` | `firebase` | ⚠️ **`MemoryDatabaseAdapter` stub** — no Firestore calls | Production (not yet) |
-| `postgres` | `postgres` (or auto-detected) | ✅ `PostgresAdapter` — 1749 lines, full read-write | Local dev with Docker |
-| `supabase` | `supabase` | ✅ `SupabaseAdapter` — full implementation | Low-cost cloud |
-| `pocketbase` | `pocketbase` | ✅ `PocketBaseAdapter` — full implementation | Single-site lightweight |
+2. **Stats document for O(1) dashboard:** `ConservatoriumLiveStats` maintained by Cloud Functions with pre-aggregated counts.
 
-**PostgreSQL tooling:**
-```json
-"db:start":  "docker compose up -d"
-"db:migrate":"node scripts/db/run-sql-file.mjs scripts/db/schema.sql"
-"db:seed":   "node scripts/db/run-sql-file.mjs scripts/db/seed.sql ..."
-"db:reset":  "node scripts/db/reset.mjs"
-"db:studio": "npx drizzle-kit studio"
-```
+3. **RoomLocks as coordination primitives:** Short-TTL documents preventing double-booking without pessimistic locking.
 
+4. **Global User identity:** `/users/{userId}` is root-level. A teacher at two conservatoriums has one Firebase Auth identity.
+
+5. **Sub-collection notes:** Lesson notes in `/lessonSlots/{slotId}/notes/{noteId}` to keep the hot collection lean.
