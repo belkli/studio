@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { User } from '@/lib/types';
 import { useTranslations } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createPracticeLogSchema = (t: any) => z.object({
   studentId: z.string().optional(),
   date: z.string().min(1, t('errorDateRequired')),

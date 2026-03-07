@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -14,7 +15,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // ── Supported target locales ──────────────────────────────────────────────────
-const TARGET_LOCALES = ['en', 'ar', 'ru'] as const;
+export const TARGET_LOCALES = ['en', 'ar', 'ru'] as const;
 type TargetLocale = typeof TARGET_LOCALES[number];
 
 const LOCALE_NAMES: Record<TargetLocale, string> = {
@@ -255,5 +256,39 @@ Hebrew role/title: ${role ?? ''}
         };
     } catch (err: any) {
         return { success: false, error: err.message };
+    }
+}
+
+export async function translateCompositionData(
+    titleHe: string,
+    composerHe: string,
+    locales: TargetLocale[] = ['en', 'ar', 'ru']
+): Promise<{
+    success: boolean;
+    translations?: { title: { en?: string; ar?: string; ru?: string }; composer: { en?: string; ar?: string; ru?: string } };
+    error?: string;
+}> {
+    const prompt = `Translate the following Hebrew classical music composition title and composer name into ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
+
+Return ONLY valid JSON with no markdown or code fences:
+{"title":{"en":"...","ar":"...","ru":"..."},"composer":{"en":"...","ar":"...","ru":"..."}}
+
+Hebrew title: ${titleHe}
+Hebrew composer: ${composerHe}`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        let text = result.response.text().trim();
+        text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+        const raw = JSON.parse(text);
+        const titleT: { en?: string; ar?: string; ru?: string } = {};
+        const composerT: { en?: string; ar?: string; ru?: string } = {};
+        for (const locale of locales) {
+            if (raw.title?.[locale]) titleT[locale as 'en' | 'ar' | 'ru'] = raw.title[locale];
+            if (raw.composer?.[locale]) composerT[locale as 'en' | 'ar' | 'ru'] = raw.composer[locale];
+        }
+        return { success: true, translations: { title: titleT, composer: composerT } };
+    } catch (err: unknown) {
+        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
 }

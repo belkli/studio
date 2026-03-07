@@ -1,4 +1,5 @@
 ﻿'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -25,7 +26,6 @@ export function AcademicReports() {
         repertoireAdvancement,
         engagementByTeacher,
         avgMinutesByInstrument,
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         const today = new Date();
         const oneWeekAgo = new Date();
@@ -105,7 +105,7 @@ export function AcademicReports() {
             engagementByTeacher: teacherEngagementData,
             avgMinutesByInstrument: instrumentAvgMinutes,
         };
-    }, [practiceLogs, students, teachers, assignedRepertoire]);
+    }, [practiceLogs, students, teachers, assignedRepertoire, conservatoriumInstruments]);
 
 
     return (

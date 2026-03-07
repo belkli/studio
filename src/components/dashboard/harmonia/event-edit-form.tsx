@@ -19,6 +19,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Loader2, Sparkles, Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 const schema = z.object({
   title: z.object({ he: z.string().min(1), en: z.string().min(1) }),
@@ -60,6 +61,7 @@ export function EventEditForm({ event }: { event: EventProduction }) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const form = useForm<FormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(schema) as any,
     defaultValues: {
       title: event.title || { he: event.name, en: event.name },
@@ -240,7 +242,7 @@ export function EventEditForm({ event }: { event: EventProduction }) {
 
               <TabsContent value="poster" className="space-y-4">
                 {form.watch('posterUrl') && (
-                  <img src={form.watch('posterUrl') || ''} alt="Poster" className="rounded-lg max-h-64 object-contain" />
+                  <Image src={form.watch('posterUrl') || ''} alt="Poster" width={400} height={256} className="rounded-lg max-h-64 object-contain" />
                 )}
                 <Button type="button" onClick={handleGeneratePoster} disabled={isGenerating}>
                   {isGenerating ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Sparkles className="me-2 h-4 w-4" />}

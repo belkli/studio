@@ -26,16 +26,16 @@ import { Icons } from '@/components/icons';
 import {
   // Existing icons
   LayoutDashboard, Settings, BadgeCheck, Bell, LogOut, Clock,
-  Building, DollarSign, LineChart, MessagesSquare, BarChart3,
+  Building, MessagesSquare,
   BrainCircuit, Megaphone, UserPlus, Download, Coins, UserCog,
-  Banknote, ListChecks, Presentation, GanttChartSquare, Music,
+  Banknote, ListChecks, GanttChartSquare, Music,
   ShieldQuestion, CalendarPlus, HandCoins, GraduationCap,
   FileText, PencilRuler, MessageCircleQuestion, ChevronDown,
-  Book, User, Bot, Users, Gift,
+  Book, User, Bot, Gift,
   // NEW icons â€" SDD-NAV-01 Â§3 Icon Rationalisation
   Music2, HeartHandshake, Dumbbell, CalendarSearch, CalendarDays,
   CalendarRange, CalendarCheck, TrendingUp, CreditCard,
-  UsersRound, ChartNoAxesCombined, Theater, Landmark, School,
+  UsersRound, ChartNoAxesCombined, Theater, Landmark, School, BookOpen,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -272,6 +272,7 @@ const harmoniaNavGroups: NavGroup[] = [
     roles: ['ministry_director'],
     items: [
       { href: '/dashboard/ministry', labelKey: 'ministry', icon: Landmark },
+      { href: '/dashboard/ministry/repertoire', labelKey: 'ministryRepertoire', icon: BookOpen },
     ],
   },
 
@@ -313,7 +314,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
 type LinkItem = {
   href: string;
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   roles: string[];
   id?: string;
 };
@@ -351,13 +352,14 @@ const SidebarNavInner = memo(function SidebarNavInner({
     setCollapsedGroups(prev => ({ ...prev, [key]: !prev[key] }));
 
   const handleHelpClick = () => {
-    if (typeof (window as any).openHelpAssistant === 'function') {
-      (window as any).openHelpAssistant();
+    const w = window as Window & { openHelpAssistant?: () => void };
+    if (typeof w.openHelpAssistant === 'function') {
+      w.openHelpAssistant();
     }
   };
 
   const userRole = user.role;
-  const hasSeenNewFeatures = (user as any).hasSeenNewFeatures ?? true;
+  const hasSeenNewFeatures = (user as unknown as { hasSeenNewFeatures?: boolean }).hasSeenNewFeatures ?? true;
   const unreadCount = user.notifications?.filter(n => !n.read).length || 0;
 
   const handleNotificationsOpen = () => {

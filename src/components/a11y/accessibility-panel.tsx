@@ -68,7 +68,6 @@ export function AccessibilityPanel() {
       if (localStorage.getItem(MINIMIZED_KEY) === '1') setMinimized(true);
     } catch { /* ignore */ }
     minimizedInitialized.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
@@ -116,6 +115,7 @@ export function AccessibilityPanel() {
       // Ignore invalid saved position.
     }
     setPosition({ x: 16, y: Math.max(16, window.innerHeight - 84) });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minimized]);
 
   useEffect(() => {
@@ -137,6 +137,7 @@ export function AccessibilityPanel() {
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minimized]);
 
   useEffect(() => {

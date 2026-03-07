@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -6,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useLocale, useTranslations } from 'next-intl';
 import { z } from 'zod';
 
-import type { Alumnus, Masterclass } from '@/lib/types';
+import type { Masterclass } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -270,7 +271,7 @@ export function AlumniPortal() {
         </Card>
       )}
 
-      <Tabs defaultValue='directory' className='w-full'>
+      <Tabs defaultValue='directory' dir={dir} className='w-full'>
         <TabsList className='grid w-full grid-cols-4'>
           {tabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>

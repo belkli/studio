@@ -5,7 +5,6 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { QrCode, MessageCircle, Copy, Check, ExternalLink, TrendingUp, Handshake } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useAdminGuard } from '@/hooks/use-admin-guard';

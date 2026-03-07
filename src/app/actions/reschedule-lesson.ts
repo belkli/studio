@@ -12,7 +12,7 @@
  */
 'use server';
 
-import type { LessonSlot, CancellationPolicy } from '@/lib/types';
+import type { LessonSlot } from '@/lib/types';
 
 export interface RescheduleLessonInput {
     lessonSlotId: string;
@@ -31,7 +31,7 @@ interface RescheduleLessonResult {
 }
 
 // Default policy (should come from conservatorium settings in production)
-const DEFAULT_NOTICE_HOURS = 24;
+const _DEFAULT_NOTICE_HOURS = 24;
 
 /**
  * Reschedules a lesson with policy enforcement.
@@ -50,7 +50,7 @@ const DEFAULT_NOTICE_HOURS = 24;
  */
 export async function rescheduleLesson(input: RescheduleLessonInput): Promise<RescheduleLessonResult> {
     try {
-        const { lessonSlotId, newStartTime, newRoomId, reason, requestedBy, conservatoriumId } = input;
+        const { lessonSlotId, newStartTime, newRoomId, reason: _reason, requestedBy, conservatoriumId } = input;
 
         if (!lessonSlotId || !newStartTime || !requestedBy || !conservatoriumId) {
             return { success: false, isLateReschedule: false, error: 'Missing required fields' };

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, XCircle, FileSignature, AlertCircle, Clock, BookOpen, Mic, Award, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 type MinistryForm = {

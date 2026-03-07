@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useTranslations } from 'next-intl';
-import type { FormSubmission, FormStatus } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import type { FormStatus } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';

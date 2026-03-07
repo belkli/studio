@@ -90,6 +90,7 @@ export function EventDetails() {
             return isRtl ? row.map(rtl) : row;
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (doc as any).autoTable({
             startY: 45,
             head: head,

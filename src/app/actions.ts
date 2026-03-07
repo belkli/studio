@@ -1,4 +1,5 @@
 // SEC-H05/QA-M01: @ts-nocheck removed — TypeScript must remain active in this security-critical file.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 /**
  * @fileoverview Server Actions for the Harmonia application.
@@ -7,7 +8,7 @@
  * and their inputs are validated using Zod schemas, providing a secure and robust API layer.
  */
 
-import type { Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, EventProduction, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, StudentMasterClassAllowance, User } from '@/lib/types';
+import type { Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, StudentMasterClassAllowance } from '@/lib/types';
 import { getDb } from '@/lib/db';
 import { withAuth, requireRole, verifyAuth } from '@/lib/auth-utils';
 import { z } from 'zod';

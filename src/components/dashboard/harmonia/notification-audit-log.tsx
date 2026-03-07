@@ -1,7 +1,7 @@
-
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { AuditLogEntry, Channel } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

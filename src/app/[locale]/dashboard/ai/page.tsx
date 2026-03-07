@@ -1,7 +1,7 @@
 'use client';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Bot, BrainCircuit, HeartHandshake, MessageSquare, Presentation, Bell, Search, FilePlus } from "lucide-react";
+import { HeartHandshake, MessageSquare, Presentation, Bell, Search, FilePlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from 'next-intl';

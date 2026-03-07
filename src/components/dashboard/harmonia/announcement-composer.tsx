@@ -7,7 +7,7 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +16,7 @@ import { Send } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations, useLocale } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getAnnouncementSchema = (t: any) => z.object({
   title: z.string().min(5, t('errors.titleMin')),
   body: z.string().min(10, t('errors.bodyMin')),
@@ -43,6 +44,7 @@ export function AnnouncementComposer() {
   ];
 
   const form = useForm<AnnouncementFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(announcementSchema) as any,
     defaultValues: {
       title: "",
@@ -53,6 +55,7 @@ export function AnnouncementComposer() {
   });
 
   const onSubmit = (data: AnnouncementFormData) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addAnnouncement(data as any);
     toast({
       title: t('successToast'),

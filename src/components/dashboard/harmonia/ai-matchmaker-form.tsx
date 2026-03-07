@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Bot, UserPlus, Sparkles, Music, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Bot, Sparkles, Music, Star, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -26,7 +26,7 @@ export function AiMatchmakerForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [answers, setAnswers] = useState<Record<string, string>>({});
-    const { toast } = useToast();
+    const { toast: _toast } = useToast();
 
     const handleNext = () => {
         if (currentStep === STEPS.length - 2) {

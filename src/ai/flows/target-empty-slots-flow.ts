@@ -9,7 +9,6 @@
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import type { EmptySlot } from '@/lib/types';
 
 const EligibleRecipientSchema = z.object({
   id: z.string(),

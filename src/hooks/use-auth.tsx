@@ -8,10 +8,10 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
-import { add, differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
+import { differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
 import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertUserAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
@@ -94,6 +94,7 @@ interface AuthContextType {
   cancelLesson: (lessonId: string, withNotice: boolean) => void;
   rescheduleLesson: (lessonId: string, newStartTime: string) => void;
   getMakeupCreditBalance: (studentIds: string[]) => number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getMakeupCreditsDetail: (studentIds: string[]) => any[];
   addPracticeLog: (logData: Partial<PracticeLog>) => void;
   updateRepertoireStatus: (repertoireId: string, status: RepertoireStatus) => void;
@@ -145,6 +146,9 @@ interface AuthContextType {
   addConservatoriumInstrument: (instrumentData: Partial<ConservatoriumInstrument>) => void;
   updateConservatoriumInstrument: (instrumentId: string, instrumentData: Partial<ConservatoriumInstrument>) => void;
   deleteConservatoriumInstrument: (instrumentId: string) => void;
+  addComposition: (data: Partial<Composition>) => void;
+  updateComposition: (compositionId: string, data: Partial<Composition>) => void;
+  deleteComposition: (compositionId: string) => void;
   addLessonPackage: (packageData: Partial<LessonPackage>) => void;
   updateLessonPackage: (packageId: string, packageData: Partial<LessonPackage>) => void;
   deleteLessonPackage: (packageId: string) => void;
@@ -291,7 +295,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bootstrapResolved, setBootstrapResolved] = useState(false);
-  const [bootstrapUsedMockFallback, setBootstrapUsedMockFallback] = useState(false);
+  const [, setBootstrapUsedMockFallback] = useState(false);
 
   const applyMockBootstrapFallback = () => {
     setBootstrapUsedMockFallback(true);
@@ -538,7 +542,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           localStorage.removeItem('harmonia-user');
           clearAuthCookie();
         }
-      } catch (e) {
+      } catch {
         localStorage.removeItem('harmonia-user');
         clearAuthCookie();
       }
@@ -2191,6 +2195,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMockPayrolls(prev => prev.map(p => p.id === payrollId ? { ...p, status } : p));
   };
 
+  const addComposition = (data: Partial<Composition>) => {
+    const newComposition: Composition = {
+      id: `comp-user-${Date.now()}`,
+      composer: data.composerNames?.he || data.composer || '',
+      composerNames: data.composerNames,
+      title: data.titles?.he || data.title || '',
+      titles: data.titles,
+      duration: data.duration || '00:00',
+      genre: data.genre || '',
+      instrument: data.instrument,
+      approved: data.approved ?? false,
+      source: 'user_submitted',
+    };
+    setMockRepertoire(prev => [newComposition, ...prev]);
+  };
+
+  const updateComposition = (compositionId: string, data: Partial<Composition>) => {
+    setMockRepertoire(prev => prev.map(c => c.id === compositionId ? {
+      ...c,
+      ...data,
+      composer: data.composerNames?.he || data.composer || c.composer,
+      title: data.titles?.he || data.title || c.title,
+    } : c));
+  };
+
+  const deleteComposition = (compositionId: string) => {
+    setMockRepertoire(prev => prev.filter(c => c.id !== compositionId));
+  };
+
   const contextValue = useMemo(() => ({
     user,
     users,
@@ -2336,9 +2369,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateUserPaymentMethod,
     assignRepertoire,
     updatePayrollStatus,
+    addComposition,
+    updateComposition,
+    deleteComposition,
     updateEvent,
     updateEventStatus,
     bookEventTickets
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     user, users, mockFormSubmissions, mockLessons, mockPackages, mockInvoices,
     mockPracticeLogs, mockAssignedRepertoire, mockLessonNotes, mockMessageThreads,

@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getConditionConfig = (t: any): Record<InstrumentCondition, { label: string; className: string }> => ({
   EXCELLENT: { label: t('conditionExcellent'), className: 'bg-green-100 text-green-800' },
   GOOD: { label: t('conditionGood'), className: 'bg-blue-100 text-blue-800' },

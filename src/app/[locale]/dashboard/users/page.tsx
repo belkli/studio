@@ -31,6 +31,7 @@ const ALL_ADMIN_SECTIONS: AdminSection[] = ['users', 'registrations', 'approvals
 const DAY_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;
 const DURATION_VALUES = [30, 45, 60] as const;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const roleTranslations = (t: any): Record<UserRole, string> => ({
     admin: t('roles.conservatorium_admin'),
     superadmin: t('roles.site_admin'),
@@ -44,6 +45,7 @@ const roleTranslations = (t: any): Record<UserRole, string> => ({
     delegated_admin: t('roles.delegated_admin')
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getEditUserSchema = (t: any) => z.object({
     name: z.string().min(2, t('validation.nameMin')),
     email: z.string().email(t('validation.emailInvalid')),
@@ -132,7 +134,6 @@ export default function UsersPage() {
         }
     }, [currentUser, users]);
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredApprovedUsers = useMemo(() => {
         if (!approvedUsers) return [];
         return approvedUsers.filter(user => {
@@ -143,7 +144,7 @@ export default function UsersPage() {
             const gradeMatch = gradeFilter === 'all' || user.grade === gradeFilter;
             return searchMatch && instrumentMatch && teacherMatch && gradeMatch;
         });
-    }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter, newFeaturesEnabled]);
+    }, [approvedUsers, searchTerm, instrumentFilter, teacherFilter, gradeFilter, newFeaturesEnabled, conservatoriumInstruments]);
 
     const showFilters = currentUser?.role === 'conservatorium_admin' && approvedUsers.some(u => u.role === 'student') && newFeaturesEnabled;
 
@@ -238,7 +239,7 @@ export default function UsersPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={dir}>
             <div>
                 <h1 className="text-2xl font-bold text-start">{t('title')}</h1>
                 <p className="text-muted-foreground text-start">{t('manageUsers')}</p>
@@ -318,7 +319,7 @@ export default function UsersPage() {
                     <DialogHeader>
                         <DialogTitle>{t('editUser', { name: editingUser?.name || '' })}</DialogTitle>
                     </DialogHeader>
-                    {editingUser && <EditUserForm user={editingUser} allUsers={users} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} t={t} />}
+                    {editingUser && <EditUserForm user={editingUser} allUsers={users} conservatoriumInstruments={conservatoriumInstruments} onSubmit={handleUpdateUser} onCancel={() => setEditingUser(null)} currentUser={currentUser} t={t} />}
                 </DialogContent>
             </Dialog>
 
@@ -419,7 +420,8 @@ const PendingUsersTable = ({ users, onApprove, onReject }: { users: User[], onAp
 };
 
 
-const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { user: User, allUsers: User[], onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const EditUserForm = ({ user, allUsers, conservatoriumInstruments, onSubmit, onCancel, currentUser, t }: { user: User, allUsers: User[], conservatoriumInstruments: import('@/lib/types').ConservatoriumInstrument[], onSubmit: (data: EditUserFormData) => void, onCancel: () => void, currentUser: User, t: any }) => {
     const editSchema = useMemo(() => getEditUserSchema(t), [t]);
     const locale = useLocale();
     const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr';
@@ -428,15 +430,21 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
     const [premiumTeacher, setPremiumTeacher] = useState(user.isPremiumTeacher || false);
     const teacherUsers = useMemo(() => allUsers.filter(u => u.role === 'teacher' && u.conservatoriumId === user.conservatoriumId && u.approved), [allUsers, user.conservatoriumId]);
     const instrumentPool = useMemo(() => {
+        const fromSettings = conservatoriumInstruments
+            .filter(i => i.conservatoriumId === user.conservatoriumId && i.isActive)
+            .map(i => i.names.he)
+            .sort();
+        if (fromSettings.length > 0) return fromSettings;
+        // fallback: collect from existing enrolled users if no instruments configured yet
         const values = new Set<string>();
         allUsers.filter(u => u.conservatoriumId === user.conservatoriumId).forEach(u => {
             u.instruments?.forEach(inst => values.add(inst.instrument));
         });
         return Array.from(values).sort();
-    }, [allUsers, user.conservatoriumId]);
+    }, [conservatoriumInstruments, allUsers, user.conservatoriumId]);
     const eligibleStudents = useMemo(() => allUsers.filter(u => u.role === 'student' && u.conservatoriumId === user.conservatoriumId && (!u.parentId || u.parentId === user.id)), [allUsers, user.conservatoriumId, user.id]);
 
-    const form = useForm<EditUserFormValues, any, EditUserFormData>({
+    const form = useForm<EditUserFormValues, any, EditUserFormData>({ // eslint-disable-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(editSchema),
         defaultValues: {
             name: user.name || '',
@@ -467,6 +475,7 @@ const EditUserForm = ({ user, allUsers, onSubmit, onCancel, currentUser, t }: { 
         <FormProvider {...form}>
             <form onSubmit={form.handleSubmit((data) => {
                 // Merge premium toggle (not in zod schema) into submitted data
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onSubmit({ ...data, isPremiumTeacher: premiumTeacher } as any);
             })} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                 <div className="grid grid-cols-2 gap-4">

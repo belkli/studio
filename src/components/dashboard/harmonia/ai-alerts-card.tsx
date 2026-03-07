@@ -2,8 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bell, ArrowLeft, TrendingUp } from "lucide-react";
-import { Link } from '@/i18n/routing';
+import { Bell, ArrowLeft } from "lucide-react";
 import { useAdminAlerts, type AdminAlert } from '@/hooks/use-admin-alerts';
 import { cn } from "@/lib/utils";
 import { useState } from "react";

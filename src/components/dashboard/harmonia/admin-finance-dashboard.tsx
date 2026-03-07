@@ -33,7 +33,7 @@ export function AdminFinancialDashboard() {
     const collectionRate = invoices.length > 0 ? (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100 : 0;
 
     const teachers = users.filter(u => u.role === 'teacher');
-    const teacherRevenue = useMemo(() => {
+    const _teacherRevenue = useMemo(() => {
         return teachers.map(teacher => ({
             name: teacher.name,
             // eslint-disable-next-line react-hooks/purity
@@ -99,6 +99,7 @@ export function AdminFinancialDashboard() {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis fontSize={12} tickFormatter={(value) => `₪${(value / 1000)}k`} tickLine={false} axisLine={false} />
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <Tooltip formatter={(value: any) => [`₪${Number(value).toLocaleString()}`, t('revenueLabel')]} cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)' }} />
                                 <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
@@ -117,6 +118,7 @@ export function AdminFinancialDashboard() {
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)' }} />
                             </PieChart>
                         </ResponsiveContainer>

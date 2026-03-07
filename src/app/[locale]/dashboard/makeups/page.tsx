@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Coins, PlusCircle, History } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
@@ -16,6 +16,8 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 export default function MakeupsPage() {
     const { user, getMakeupCreditBalance, getMakeupCreditsDetail } = useAuth();
     const t = useTranslations('Dashboard.makeups');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
 
     const userAndChildrenIds = useMemo(() => {
@@ -35,7 +37,7 @@ export default function MakeupsPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
                 <h1 className="text-2xl font-bold">{t('title')}</h1>
                 <p className="text-muted-foreground">{t('subtitle')}</p>

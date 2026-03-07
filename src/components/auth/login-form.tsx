@@ -88,6 +88,7 @@ export function LoginForm() {
         }
 
         login(result.profile.email);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router.push(callbackUrl as any);
         return;
       }
@@ -157,6 +158,7 @@ export function LoginForm() {
           title: t('toasts.loginSuccess'),
           description: t('toasts.loginSuccessDesc', { name: credential.user.displayName?.split(' ')[0] || email.split('@')[0] }),
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router.push(callbackUrl as any);
       } catch (error: unknown) {
         const code = (error as { code?: string })?.code;
@@ -191,6 +193,7 @@ export function LoginForm() {
             title: t('toasts.loginSuccess'),
             description: t('toasts.loginSuccessDesc', { name: user.name.split(' ')[0] }),
           });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           router.push(callbackUrl as any);
         } else if (status === 'pending') {
           toast({

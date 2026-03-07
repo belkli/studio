@@ -208,6 +208,28 @@
     "fullScreenViewer": "Full Screen Viewer",
     "fullScreenSupport": "Supports page swipe, pinch-to-zoom"
   },
+  "RepertoirePage": {
+    "title": "Digital Sheet Music Library",
+    "description": "Browse the sheet music for pieces your teacher assigned to you and practice at your own pace."
+  },
+  "AssignRepertoireDialog": {
+    "title": "Assign New Piece",
+    "description": "Search the library and assign a piece to this student or an instrument group.",
+    "scopeLabel": "Assignment Scope",
+    "scopePlaceholder": "Select scope",
+    "scopeSingle": "This student only",
+    "scopeGroup": "All teacher's students on the same instrument",
+    "searchLabel": "Search Piece",
+    "searchPlaceholder": "Type to search composer or piece...",
+    "searchBoxPlaceholder": "Search...",
+    "notFound": "No pieces found.",
+    "cancel": "Cancel",
+    "submit": "Assign Piece",
+    "validationRequired": "Please select a piece.",
+    "successTitle": "Piece Assigned Successfully",
+    "successSingle": "\"{title}\" was added to the student's repertoire.",
+    "successGroup": "\"{title}\" was added to {count} students' repertoire."
+  },
   "ExamTracker": {
     "title": "Exam Tracker",
     "subtitle": "Track Ministry of Education exams for your students",

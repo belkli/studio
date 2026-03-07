@@ -2,10 +2,9 @@
 import { useTranslations } from 'next-intl';
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
-import { Icons } from "@/components/icons";
+import Image from 'next/image';
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +31,7 @@ function ConservatoriumInfo({ cons: originalCons }: { cons: Conservatorium }) {
             {/* Mini hero */}
             <div className="relative h-28 overflow-hidden bg-gradient-to-br from-primary/20 via-violet-500/10 to-indigo-600/10">
                 {cons.photoUrls?.[0] ? (
-                    <img src={cons.photoUrls[0]} alt={cons.name} className="w-full h-full object-cover opacity-50" />
+                    <Image src={cons.photoUrls[0]} alt={cons.name} fill className="object-cover opacity-50" />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <Music2 className="h-16 w-16 text-primary opacity-10" />
@@ -137,7 +136,7 @@ function ConservatoriumSearchPicker({
     onSelect
 }: {
     selected: Conservatorium | null;
-    onSelect: (c: Conservatorium) => void;
+    onSelect: (c: Conservatorium | null) => void;
 }) {
     const t = useTranslations('ContactPage');
     const locale = useLocale();
@@ -168,7 +167,7 @@ function ConservatoriumSearchPicker({
                     <>
                         <Building2 className="h-4 w-4 text-primary flex-shrink-0" />
                         <span className="text-sm flex-1 truncate">{selected.name}</span>
-                        <button onClick={e => { e.stopPropagation(); onSelect(null as any); setQuery(''); }} className="text-muted-foreground hover:text-foreground">
+                        <button onClick={e => { e.stopPropagation(); onSelect(null); setQuery(''); }} className="text-muted-foreground hover:text-foreground">
                             <X className="h-3.5 w-3.5" />
                         </button>
                     </>
@@ -223,8 +222,6 @@ function ConservatoriumSearchPicker({
 }
 
 export default function ContactPage() {
-    const tNav = useTranslations('Navigation');
-    const tHome = useTranslations('HomePage');
     const t = useTranslations('ContactPage');
     const locale = useLocale();
     const { toast } = useToast();

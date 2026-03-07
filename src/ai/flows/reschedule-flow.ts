@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { isBefore, parseISO, format, addDays } from 'date-fns';
+import { isBefore, parseISO } from 'date-fns';
 
 const LessonSchema = z.object({
   id: z.string(),
@@ -18,7 +18,7 @@ const LessonSchema = z.object({
   teacherId: z.string(),
 });
 
-const AvailabilitySlotSchema = z.object({
+const _AvailabilitySlotSchema = z.object({
   startTime: z.string(),
   endTime: z.string(),
 });

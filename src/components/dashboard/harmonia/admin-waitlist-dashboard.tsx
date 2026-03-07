@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { WaitlistEntry, WaitlistStatus } from '@/lib/types';
+import type { WaitlistStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from '@/components/ui/empty-state';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 
 

@@ -12,7 +12,6 @@ export default function PricingSettingsPage() {
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
     const t = useTranslations('SettingsPage');
-    const tP = useTranslations('PricingSettings');
     const BackIcon = isRtl ? ChevronRight : ChevronLeft;
 
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin') || !newFeaturesEnabled) {

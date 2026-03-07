@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 
 export default function PlayingSchoolPaymentReturnPage() {
-    const params = useParams();
+    useParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const t = useTranslations('PlayingSchool.wizard');

@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldAlert, Clock, Info, CheckCircle2, Phone, Mail, LogOut, Home } from 'lucide-react';
+import { Clock, Info, CheckCircle2, Phone, Mail, LogOut, Home } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 

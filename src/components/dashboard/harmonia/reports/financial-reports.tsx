@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { Progress } from "@/components/ui/progress";
@@ -7,16 +8,14 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function FinancialReports() {
     const t = useTranslations('Reports');
-    const tInvoices = useTranslations('Invoices');
-    const { invoices, users, packages, lessons } = useAuth();
+    const { invoices, users, lessons } = useAuth();
     const dateLocale = useDateLocale();
-    const locale = useLocale();
 
     const {
         revenueData,
@@ -71,8 +70,7 @@ export function FinancialReports() {
         const teachers = users.filter(u => u.role === 'teacher');
         const teacherRevenueData = teachers.map(teacher => ({
             name: teacher.name,
-            // eslint-disable-next-line react-hooks/purity
-            revenue: Math.floor(Math.random() * (20000 - 5000 + 1) + 5000), // Mocked for simplicity
+            revenue: 5000 + (teacher.name.split('').reduce((acc: number, ch: string) => acc + ch.charCodeAt(0), 0) % 15001), // Deterministic mock
         })).sort((a, b) => b.revenue - a.revenue);
 
         return {
@@ -82,7 +80,7 @@ export function FinancialReports() {
             teacherRevenue: teacherRevenueData,
         }
 
-    }, [invoices, users, locale, t]);
+    }, [invoices, users, t, dateLocale]);
 
     const creditsIssuedThisMonth = useMemo(() => {
         const thisMonth = new Date().getMonth();

@@ -8,10 +8,10 @@
  */
 'use server';
 
-import type { SickLeaveRequest, SickLeaveResult, LessonSlot, MakeupCredit, TeacherException } from '@/lib/types';
+import type { TeacherException } from '@/lib/types';
 
-const MAX_SICK_LEAVES_BEFORE_FLAG = 3;
-const SICK_LEAVE_WINDOW_DAYS = 30;
+const _MAX_SICK_LEAVES_BEFORE_FLAG = 3;
+const _SICK_LEAVE_WINDOW_DAYS = 30;
 
 export interface SubmitSickLeaveInput {
     teacherId: string;
@@ -48,7 +48,7 @@ interface SubmitSickLeaveResult {
  */
 export async function submitSickLeave(input: SubmitSickLeaveInput): Promise<SubmitSickLeaveResult> {
     try {
-        const { teacherId, conservatoriumId, fromDate, toDate, note } = input;
+        const { teacherId, conservatoriumId: _conservatoriumId, fromDate, toDate, note } = input;
 
         // Validate dates
         if (new Date(fromDate) > new Date(toDate)) {
@@ -67,7 +67,7 @@ export async function submitSickLeave(input: SubmitSickLeaveInput): Promise<Subm
         const now = new Date().toISOString();
 
         // Create the teacher exception record
-        const exception: TeacherException = {
+        const _exception: TeacherException = {
             id: exceptionId,
             teacherId,
             dateFrom: `${fromDate}T00:00:00.000Z`,

@@ -75,17 +75,17 @@ export async function POST(request: NextRequest) {
   }
 
   const {
-    lowProfileCode,
+    lowProfileCode: _lowProfileCode,
     ResponseCode,
     InternalDealNumber,
     ReturnValue,
     CardSuffix,
     CardType,
     NumOfPayments,
-    FirstPaymentTotal,
+    FirstPaymentTotal: _FirstPaymentTotal,
     PeriodicalPaymentTotal,
-    Token: cardToken,
-    TokenExpiry: cardTokenExpiry,
+    Token: _cardToken,
+    TokenExpiry: _cardTokenExpiry,
     ApprovalNumber,
   } = payload;
 
@@ -115,10 +115,11 @@ export async function POST(request: NextRequest) {
         await db.payments.update(invoiceId, {
           status: 'OVERDUE',
           updatedAt: new Date().toISOString(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any);
       }
     } catch (err) {
-      console.error('[Cardcom Webhook] Failed to update invoice on failure:', err);
+      console.error('[Cardcom Webhook] Error processing failed payment:', err);
     }
 
     // Return 200 to Cardcom so it doesn't retry
@@ -152,6 +153,7 @@ export async function POST(request: NextRequest) {
         nextPaymentDate: undefined,
       } : undefined,
       updatedAt: now,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     console.log(

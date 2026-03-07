@@ -18,24 +18,25 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ArrowLeft, ArrowRight, User as UserIcon, Contact, Music, Calendar, HeartHandshake, Package as PackageIcon, ShieldCheck, Loader2, CalendarClock, UserPlus, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck, Loader2, UserPlus, Sparkles } from "lucide-react";
 import { Combobox } from "../ui/combobox";
 import { Stepper } from "@/components/ui/stepper";
 import { isValidIsraeliID } from "@/lib/utils";
 import { instruments, schools } from "@/lib/taxonomies";
-import type { StudentGoal, DayOfWeek, TimeRange, User, Package, LessonSlot, LessonPackage, ConservatoriumInstrument } from "@/lib/types";
-import { collectInstrumentTokensFromConservatoriumInstrument, normalizeInstrumentToken, userHasInstrument } from '@/lib/instrument-matching';
+import type { DayOfWeek, TimeRange, User, LessonPackage, ConservatoriumInstrument } from "@/lib/types";
+import { userHasInstrument } from '@/lib/instrument-matching';
 import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 import type { OAuthProfile } from '@/lib/auth/oauth';
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getParentSchema = (t: any) => z.object({
   parentFirstName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   parentLastName: z.string().min(2, t('validation.tooShort', { min: 2 })),
@@ -44,6 +45,7 @@ const getParentSchema = (t: any) => z.object({
   parentPhone: z.string().min(9, t('validation.invalidPhone')),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getStudentSchema = (t: any) => z.object({
   childFirstName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   childLastName: z.string().min(2, t('validation.tooShort', { min: 2 })),
@@ -52,6 +54,7 @@ const getStudentSchema = (t: any) => z.object({
   childGrade: z.string().optional(),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSelfSchema = (t: any) => z.object({
   firstName: z.string().min(2, t('validation.tooShort', { min: 2 })),
   lastName: z.string().min(2, t('validation.tooShort', { min: 2 })),
@@ -63,6 +66,7 @@ const getSelfSchema = (t: any) => z.object({
   grade: z.string().optional(),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getFormSchema = (t: any) => z.object({
   registrationType: z.enum(["parent", "self", "playing_school"], { message: t('validation.selectType') }),
   parentDetails: getParentSchema(t).optional(),
@@ -101,6 +105,7 @@ const getFormSchema = (t: any) => z.object({
 type FormData = z.infer<ReturnType<typeof getFormSchema>>;
 
 // These will be localized inside the component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getGoalOptions = (t: any) => [
   { id: 'EXAMS', label: t('musical.goals_options.EXAMS') },
   { id: 'PERFORMANCE', label: t('musical.goals_options.PERFORMANCE') },
@@ -109,6 +114,7 @@ const getGoalOptions = (t: any) => [
   { id: 'OTHER', label: t('musical.goals_options.OTHER') },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getDayOptions = (t: any) => [
   { id: 'SUN', label: t('schedule.days_options.SUN') },
   { id: 'MON', label: t('schedule.days_options.MON') },
@@ -118,6 +124,7 @@ const getDayOptions = (t: any) => [
   { id: 'FRI', label: t('schedule.days_options.FRI') }
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getTimeOptions = (t: any) => [
   { id: 'MORNING', label: t('schedule.times_options.MORNING') },
   { id: 'AFTERNOON', label: t('schedule.times_options.AFTERNOON') },
@@ -296,7 +303,8 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
     if (!isSiteAdmin && user?.conservatoriumId) {
       form.setValue('conservatorium', user.conservatoriumId, { shouldValidate: true });
     }
-  }, [form, isSiteAdmin, user?.conservatoriumId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSiteAdmin, user?.conservatoriumId]);
 
   const adminConservatoriumOptions = authConservatoriums.map((item) => ({ value: item.id, label: item.name }));
   const instrumentLabel = (item: { names: { he: string; en: string; ar?: string; ru?: string } }) => {
@@ -681,7 +689,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   const isOauthRegistration = Boolean(oauthPrefill);
   const { toast } = useToast();
   const router = useRouter();
-  const { user, users, addUser, addLesson, addToWaitlist, lessonPackages, conservatoriumInstruments, conservatoriums: authConservatoriums } = useAuth();
+  const { users, addUser, addLesson, addToWaitlist, lessonPackages, conservatoriumInstruments, conservatoriums: authConservatoriums } = useAuth();
   const conservatoriumOptions = useMemo(() => authConservatoriums.map((item) => ({ value: item.id, label: item.name })), [authConservatoriums]);
 
   const formSchema = useMemo(() => getFormSchema(t), [t]);
@@ -703,7 +711,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   }, [playingSchoolToken, router]);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema) as any,
+    resolver: zodResolver(formSchema) as any, // eslint-disable-line @typescript-eslint/no-explicit-any
     defaultValues: {
       registrationType: 'parent',
       goals: [],
@@ -866,7 +874,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     if (selectedConservatoriumId && item.conservatoriumId !== selectedConservatoriumId) return false;
     if (!selectedInstrument) return true;
     return userHasInstrument((item.instruments || []).map((instrument) => instrument.instrument), selectedInstrument, conservatoriumInstruments, item.conservatoriumId);
-  }), [users, selectedConservatoriumId, selectedInstrument]);
+  }), [users, selectedConservatoriumId, selectedInstrument, conservatoriumInstruments]);
 
   const filteredInstrumentOptions = useMemo(() => {
     const filtered = conservatoriumInstruments
@@ -883,7 +891,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       if (item.durationMinutes !== selectedDuration) return false;
       return packageSupportsSelectedInstrument(item, selectedInstrument, conservatoriumInstruments);
     });
-  }, [lessonPackages, selectedConservatoriumId, selectedDuration, selectedInstrument]);
+  }, [lessonPackages, selectedConservatoriumId, selectedDuration, selectedInstrument, conservatoriumInstruments]);
 
   const clearDraft = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -989,11 +997,12 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     if (!isAdminFlow && currentStepId === 'matching' && !teacherMatches) {
       triggerTeacherMatching();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStepId, teacherMatches, isAdminFlow]);
 
 
   const processStep = async () => {
-    let fieldsToValidate: any[] = [];
+    let fieldsToValidate: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
     switch (currentStepId) {
       case 'role': fieldsToValidate = ['registrationType', 'conservatorium']; break;
       case 'details':
@@ -1020,6 +1029,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
 
   const handleWaitlistSubmit = () => {
     const data = form.getValues();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let newUser: any;
 
 
@@ -1034,6 +1044,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
         conservatoriumName: data.conservatorium,
         grade: data.selfDetails?.grade,
         packageId: data.packageId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
     } else if (data.registrationType === 'parent' && data.studentDetails && data.parentDetails) {
@@ -1068,6 +1079,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       newUser.registrationSource = newUser.registrationSource || 'email';
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createdUser = addUser(newUser as any, isAdminFlow);
     if (oauthPrefill) {
       createdUser.oauthProviders = (createdUser.oauthProviders || []).map((item) => ({ ...item, userId: createdUser.id }));
@@ -1095,6 +1107,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   };
 
   const onSubmit = (data: FormData) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let newUser: any;
 
 
@@ -1108,6 +1121,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
         phone: data.selfDetails.phone,
         conservatoriumName: data.conservatorium,
         grade: data.selfDetails?.grade,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
     } else if (data.registrationType === 'parent' && data.studentDetails && data.parentDetails) {
@@ -1119,6 +1133,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
         conservatoriumName: data.conservatorium,
         grade: data.studentDetails?.childGrade,
         parentId: 'parent-user-id',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
     } else {
@@ -1142,6 +1157,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       newUser.registrationSource = newUser.registrationSource || 'email';
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createdUser = addUser(newUser as any, isAdminFlow);
     if (oauthPrefill) {
       createdUser.oauthProviders = (createdUser.oauthProviders || []).map((item) => ({ ...item, userId: createdUser.id }));
@@ -1442,7 +1458,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <FormField name="lessonDuration" render={({ field }) => (<FormItem> <FormLabel>{t('musical.duration')}</FormLabel> <Select onValueChange={(v: any) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.durationPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">{t('musical.minutes', { min: 30 })}</SelectItem> <SelectItem value="45">{t('musical.minutes', { min: 45 })}</SelectItem> <SelectItem value="60">{t('musical.minutes', { min: 60 })}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="lessonDuration" render={({ field }) => (<FormItem> <FormLabel>{t('musical.duration')}</FormLabel> <Select onValueChange={(v: string) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.durationPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">{t('musical.minutes', { min: 30 })}</SelectItem> <SelectItem value="45">{t('musical.minutes', { min: 45 })}</SelectItem> <SelectItem value="60">{t('musical.minutes', { min: 60 })}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
                   </div>
                 )}
 

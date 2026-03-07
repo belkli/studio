@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { ExamPrepTracker } from '@/lib/types';
@@ -10,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { GraduationCap, Award, Calendar, ChevronDown, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { GraduationCap, Award, Calendar, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';

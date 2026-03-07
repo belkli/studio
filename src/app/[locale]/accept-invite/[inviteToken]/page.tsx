@@ -3,10 +3,9 @@
 
 import { useState } from 'react';
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, UserPlus, ShieldCheck, Mail, ArrowRight, LayoutDashboard, Settings, Users } from "lucide-react";
+import { CheckCircle2, UserPlus, ShieldCheck, ArrowRight, LayoutDashboard, Settings, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useParams, useRouter } from 'next/navigation';
 

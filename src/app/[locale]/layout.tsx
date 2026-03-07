@@ -64,12 +64,14 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
   const messages = await getMessages();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const skipToMainLabel = (messages as any)?.Common?.shared?.skipToMain || 'Skip to main content';
 
   return (

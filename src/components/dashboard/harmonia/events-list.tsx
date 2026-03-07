@@ -3,13 +3,11 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
-import { Calendar, Clock, MapPin, Ticket, ArrowLeft, AlertTriangle, Users } from 'lucide-react';
+import { Calendar, Ticket, ArrowLeft, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations } from 'next-intl';
 
 export function EventsList() {
-    const t = useTranslations('Events');
     const dateLocale = useDateLocale();
     const { events: allEvents, user } = useAuth();
     const events = allEvents.filter(e => e.conservatoriumId === user?.conservatoriumId);

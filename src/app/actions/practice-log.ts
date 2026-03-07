@@ -6,7 +6,7 @@
  */
 'use server';
 
-import type { PracticeLog, Achievement, AchievementType } from '@/lib/types';
+import type { PracticeLog, AchievementType } from '@/lib/types';
 import { PracticeLogSchema } from '@/lib/validation/practice-log';
 
 export interface LogPracticeInput {

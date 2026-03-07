@@ -3,19 +3,18 @@
 import { useAuth } from '@/hooks/use-auth';
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
-import { notFound } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, BookOpen, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle, Flame, Clock, Medal, Video } from 'lucide-react';
+import { ArrowLeft, Music, Pencil, Activity, Target, FileSignature, Loader2, FileText, Download, PlusCircle, Flame, Clock, Medal } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { User, PracticeLog, AssignedRepertoire, RepertoireStatus, LessonNote, ProgressReport } from '@/lib/types';
+import type { RepertoireStatus } from '@/lib/types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { draftProgressReport } from '@/app/actions';
 import { AssignRepertoireDialog } from '@/components/dashboard/harmonia/assign-repertoire-dialog';
@@ -40,7 +39,6 @@ export default function TeacherStudentProfilePage() {
         addLessonNote,
         updateUserPracticeGoal,
         addProgressReport,
-        assignRepertoire,
     } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
@@ -82,7 +80,6 @@ export default function TeacherStudentProfilePage() {
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }, [progressReports, student]);
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const weeklyPracticeData = useMemo(() => {
         const today = new Date();
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -103,7 +100,7 @@ export default function TeacherStudentProfilePage() {
             }
         });
         return last7Days;
-    }, [studentLogs]);
+    }, [studentLogs, locale]);
 
     const { streak, totalMinutesThisMonth, piecesLearned } = useMemo(() => {
         const today = new Date();
@@ -342,6 +339,7 @@ export default function TeacherStudentProfilePage() {
                                     <Tooltip
                                         cursor={{ fill: 'hsl(var(--muted))' }}
                                         contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))' }}
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         formatter={(value: any) => [t('minutesShort', { value }), t('practiceTime')]}
                                     />
                                     <Bar dataKey="minutes" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />

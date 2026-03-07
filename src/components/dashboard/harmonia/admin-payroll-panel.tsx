@@ -32,7 +32,7 @@ type PayrollReport = {
 
 const HEBREW_EXPORT_HEADERS = ['שם עובד', 'ת.ז.', 'שעות בפועל', 'שעות נוספות', 'היעדרויות', 'הערות'];
 
-const toMonthValue = (date: Date) => format(date, 'yyyy-MM');
+const _toMonthValue = (date: Date) => format(date, 'yyyy-MM');
 
 const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
 

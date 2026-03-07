@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,7 +10,6 @@ import { CreditCard, FileText, CheckCircle2, AlertCircle, History, ExternalLink,
 import { useTranslations } from 'next-intl';
 
 export function ParentPaymentPanel() {
-    const { user } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('ParentPayment');
 

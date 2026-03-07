@@ -1,5 +1,5 @@
 
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, Channel, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, InstrumentCondition, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, InstrumentInventory, PerformanceBooking, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental, EventProduction } from './types';
 import constAdminData from '../../docs/data/constadmin.json';
 import rawCompositions from './data.json';
 import rawConservatoriums from '../../docs/data/conservatoriums.json';
@@ -21,7 +21,9 @@ const UNSPLASH_CONSERVATORIUM_PHOTOS = [
 ];
 
 // Build a lookup map from scraped data by numeric id
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const scrapedById: Record<number, any> = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (rawConservatoriums as any[]).forEach((c: any) => { scrapedById[c.id] = c; });
 
 // Build a lookup map from enriched CSV i18n data by numeric id
@@ -44,10 +46,12 @@ const conservatoriumIdOverride: Record<number, string> = {
 // Generate Conservatoriums from the JSON file, enriched with scraped profile data
 export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => {
     const isHodHasharon = admin.location === 'הוד השרון';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scraped: any = scrapedById[admin.id] || {};
     const enriched = enrichedById[String(admin.id)];
 
     // Map scraped departments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const departments = scraped.departments?.map((d: any) => ({
         name: d.name,
         headTeacher: d.head,
@@ -56,6 +60,7 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
     }));
 
     // Map scraped teachers
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const teachers = scraped.teachers?.map((t: any, i: number) => ({
         id: `teacher-dir-${admin.id}-${i}`,
         name: t.name,
@@ -64,6 +69,7 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
     }));
 
     // Map scraped branches
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const branchesInfo = scraped.branches?.map((b: any) => ({
         name: b.name,
         address: b.address,
@@ -169,6 +175,7 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
             bio: scraped.pedagogical_coordinator.bio,
             photoUrl: scraped.pedagogical_coordinator.photo_url,
         } : undefined,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         leadingTeam: scraped.leading_team ? scraped.leading_team.map((m: any) => ({
             name: m.name,
             role: m.role,
@@ -259,13 +266,11 @@ const slugifyComposer = (value: string) => {
     return normalized || 'unknown-composer';
 };
 
-const hasHebrewChars = (value: string) => /[\u0590-\u05ff]/.test(value);
-
 const localizeSeedTitle = (titleRaw: string) => ({
     he: titleRaw,
-    en: hasHebrewChars(titleRaw) ? `${titleRaw} (EN)` : titleRaw,
-    ru: hasHebrewChars(titleRaw) ? `${titleRaw} (RU)` : titleRaw,
-    ar: hasHebrewChars(titleRaw) ? `${titleRaw} (AR)` : titleRaw,
+    en: titleRaw,
+    ru: titleRaw,
+    ar: titleRaw,
 });
 
 const resolveComposerData = (composerRaw: string) => {
@@ -298,6 +303,7 @@ const resolveComposerData = (composerRaw: string) => {
 };
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const compositions: Composition[] = (rawCompositions as any[]).map((item: any, index: number) => {
     const composerRaw = item['\u05de\u05dc\u05d7\u05d9\u05df'] || 'Unknown Composer';
     const titleRaw = item['\u05d9\u05e6\u05d9\u05e8\u05d4'] || 'Untitled';
@@ -1083,8 +1089,10 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
 ];
 
 export const mockWaitlist: WaitlistEntry[] = [];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockPracticeVideos: any[] = [];
 export const mockPayrolls: PayrollSummary[] = [];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockMakeupCredits: any[] = [];
 export const mockRepertoire: Composition[] = compositions;
 

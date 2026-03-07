@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { Link } from '@/i18n/routing';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
 import type { Conservatorium, ConservatoriumInstrument, User } from '@/lib/types';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
@@ -231,7 +232,7 @@ function ConservatoriumCard({
       <button type="button" onClick={onOpen} className="w-full text-start">
         <div className="relative h-36 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
           {heroPhoto ? (
-            <img src={heroPhoto} alt={cons.name} className="h-full w-full object-cover opacity-80 transition duration-300 group-hover:scale-105" />
+            <Image src={heroPhoto} alt={cons.name} fill className="object-cover opacity-80 transition duration-300 group-hover:scale-105" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <Music2 className="h-12 w-12 text-primary/35" />
@@ -584,6 +585,7 @@ export default function AboutPage() {
     }
 
     return Array.from(unique.values());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCons, localizedTeachers, platformInstruments, locale]);
 
   const selectedTeacherGroups = useMemo(() => {

@@ -46,6 +46,7 @@ function getDemandLevel(date: Date): SlotDemandLevel {
 }
 
 // ─── Booking schema ───────────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getBookingSchema = (t: any) => z.object({
     studentId: z.string().min(1, t('studentRequired')),
     instrument: z.string().min(1, t('instrumentRequired')),
@@ -194,7 +195,6 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
     const { users, lessons, conservatoriums, conservatoriumInstruments } = useAuth();
-    const locale = useLocale();
 
     const [selectedSlot, setSelectedSlot] = useState<EmptySlot | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -295,8 +295,10 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
         if (!pendingSlotId || emptySlots.length === 0) return;
         const match = emptySlots.find(s => s.id === pendingSlotId);
         if (match) {
-            setSelectedSlot(match);
-            setDialogOpen(true);
+            setTimeout(() => {
+                setSelectedSlot(match);
+                setDialogOpen(true);
+            }, 0);
             sessionStorage.removeItem('pending_slot');
         }
     }, [pendingSlotId, emptySlots]);
@@ -434,7 +436,7 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
 
 // ─── Main wizard ──────────────────────────────────────────────────────────────
 export function BookLessonWizard() {
-    const { user, users, lessons, addLesson, packages, conservatoriumInstruments } = useAuth();
+    const { user, users, lessons, addLesson, packages } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
     const locale = useLocale();
@@ -478,6 +480,7 @@ export function BookLessonWizard() {
     }, [teachers, teacherScope, premiumOnly, user]);
 
     const form = useForm<BookingFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(getBookingSchema(t)) as any,
         defaultValues: {
             studentId: user?.role === 'student' ? user.id : '',
@@ -486,6 +489,7 @@ export function BookLessonWizard() {
         },
     });
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const selectedStudentId = form.watch('studentId');
     const selectedTeacherId = form.watch('teacherId');
     const selectedDate = form.watch('date');
@@ -605,7 +609,7 @@ export function BookLessonWizard() {
     }, [user, users]);
 
     const handleBookDeal = useCallback((slot: EmptySlot, paymentMode: 'package' | 'promotional') => {
-        const [hoursStr] = format(slot.startTime, 'HH:mm').split(':');
+        const [_hoursStr] = format(slot.startTime, 'HH:mm').split(':');
         const studentId = user?.role === 'student' ? user.id : (childrenOptions[0]?.value || '');
 
         addLesson({

@@ -1,16 +1,18 @@
 'use client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Target, Medal, Clock, Flame } from "lucide-react";
+import { Target, Clock, Flame } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuth } from "@/hooks/use-auth";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useMemo } from "react";
 
 
 export default function ProgressPage() {
     const { user, practiceLogs } = useAuth();
     const t = useTranslations("ProgressPage");
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const userLogs = useMemo(() => {
         if (!user) return [];
@@ -85,7 +87,7 @@ export default function ProgressPage() {
     if (!user) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
                 <h1 className="text-2xl font-bold">{t('titleExtended')}</h1>
                 <p className="text-muted-foreground">{t('subtitleExtended')}</p>

@@ -90,23 +90,24 @@ export function MessagingInterface() {
 
   const selectedThread = useMemo(() => threads.find((thread) => thread.id === selectedThreadId), [threads, selectedThreadId]);
 
-  const roleLabels: Record<string, string> = {
-    site_admin: t('roles.site_admin'),
-    conservatorium_admin: t('roles.conservatorium_admin'),
-    delegated_admin: t('roles.delegated_admin'),
-    teacher: t('roles.teacher'),
-    parent: t('roles.parent'),
-    student: t('roles.student'),
-  };
-
   const recipientOptions = useMemo(
-    () => getMessageableUsers
-      .map((candidate) => ({
-        value: candidate.id,
-        label: `${candidate.name} ? ${roleLabels[candidate.role] || candidate.role}`,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label, locale)),
-    [getMessageableUsers, locale, roleLabels]
+    () => {
+      const roleLabels: Record<string, string> = {
+        site_admin: t('roles.site_admin'),
+        conservatorium_admin: t('roles.conservatorium_admin'),
+        delegated_admin: t('roles.delegated_admin'),
+        teacher: t('roles.teacher'),
+        parent: t('roles.parent'),
+        student: t('roles.student'),
+      };
+      return getMessageableUsers
+        .map((candidate) => ({
+          value: candidate.id,
+          label: `${candidate.name} ? ${roleLabels[candidate.role] || candidate.role}`,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label, locale));
+    },
+    [getMessageableUsers, locale, t]
   );
 
   if (!user) return null;

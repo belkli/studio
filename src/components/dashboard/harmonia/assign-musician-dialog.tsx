@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
-import type { PerformanceBooking, User } from '@/lib/types';
+import type { PerformanceBooking } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useTranslations } from 'next-intl';
 

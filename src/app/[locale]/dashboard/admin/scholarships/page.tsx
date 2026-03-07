@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { HandCoins, Users, Banknote, Search, CheckCircle2, XCircle, Clock, Hourglass, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
-import type { ScholarshipApplication, ApplicationStatus, DonationCauseCategory } from '@/lib/types';
+import type { ApplicationStatus, DonationCauseCategory } from '@/lib/types';
 import { useAdminGuard } from '@/hooks/use-admin-guard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -46,6 +46,7 @@ export default function AdminScholarshipsPage() {
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   const causeForm = useForm<CauseFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(causeSchema) as any,
     defaultValues: {
       nameHe: '',
@@ -255,7 +256,8 @@ export default function AdminScholarshipsPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <Form {...causeForm}>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={causeForm.handleSubmit(submitCause as any)}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={causeForm.handleSubmit(submitCause as any)}> {/* eslint-disable-line @typescript-eslint/no-explicit-any */}
+              {/* eslint-disable @typescript-eslint/no-explicit-any */}
               <FormField control={causeForm.control as any} name="nameHe" render={({ field }) => (
                 <FormItem><FormLabel>{t('causeNameHe')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
@@ -287,6 +289,7 @@ export default function AdminScholarshipsPage() {
               <FormField control={causeForm.control as any} name="targetAmountILS" render={({ field }) => (
                 <FormItem><FormLabel>{t('causeTargetAmount')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
+              {/* eslint-enable @typescript-eslint/no-explicit-any */}
               <div className="md:col-span-2 flex justify-end">
                 <Button type="submit">{t('addCause')}</Button>
               </div>

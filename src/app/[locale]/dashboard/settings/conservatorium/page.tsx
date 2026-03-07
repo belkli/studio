@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from '@/i18n/routing';
-import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
 const LOCALE_LABELS: Record<string, string> = { he: 'עברית', en: 'English', ar: 'العربية', ru: 'Русский' };
@@ -17,7 +16,6 @@ const LOCALE_LABELS: Record<string, string> = { he: 'עברית', en: 'English',
 export default function ConservatoriumSettingsPage() {
     const { toast } = useToast();
     const { user, conservatoriums, updateConservatorium } = useAuth();
-    const router = useRouter();
     const locale = useLocale();
     const t = useTranslations('ConservatoriumSettings');
     const isRtl = locale === 'he' || locale === 'ar';

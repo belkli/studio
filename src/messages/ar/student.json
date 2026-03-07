@@ -208,6 +208,28 @@
     },
     "untitled": "بدون عنوان"
   },
+  "RepertoirePage": {
+    "title": "مكتبة نوتات موسيقية رقمية",
+    "description": "تصفح نوتات القطع الموسيقية التي خصصها لك معلمك ومارس بالوتيرة التي تناسبك."
+  },
+  "AssignRepertoireDialog": {
+    "title": "تخصيص قطعة جديدة",
+    "description": "ابحث في المكتبة وخصص قطعة لهذا الطالب أو لمجموعة أداة موسيقية.",
+    "scopeLabel": "نطاق التخصيص",
+    "scopePlaceholder": "اختر النطاق",
+    "scopeSingle": "هذا الطالب فقط",
+    "scopeGroup": "جميع طلاب المعلم على نفس الآلة",
+    "searchLabel": "بحث عن قطعة",
+    "searchPlaceholder": "اكتب للبحث عن مؤلف أو قطعة...",
+    "searchBoxPlaceholder": "بحث...",
+    "notFound": "لم يتم العثور على قطع.",
+    "cancel": "إلغاء",
+    "submit": "تخصيص القطعة",
+    "validationRequired": "يجب اختيار قطعة.",
+    "successTitle": "تم تخصيص القطعة بنجاح",
+    "successSingle": "تمت إضافة \"{title}\" إلى ريبرتوار الطالب.",
+    "successGroup": "تمت إضافة \"{title}\" إلى ريبرتوار {count} طلاب."
+  },
   "ExamTracker": {
     "bagrut": "عرض نضج 5 وحدات",
     "cancelCreation": "إلغاء الإنشاء",

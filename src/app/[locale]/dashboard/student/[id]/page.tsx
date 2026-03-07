@@ -40,6 +40,7 @@ export default function StudentProfileForParentPage() {
     const isTeacher = parent?.role === 'teacher';
     const isParentOfStudent = parent?.role === 'parent' && (
         parent.childIds?.includes(studentId) ||
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (parent as any).students?.includes(studentId)
     );
     if (!parent || !student || (!isAdmin && !isTeacher && !isParentOfStudent)) {

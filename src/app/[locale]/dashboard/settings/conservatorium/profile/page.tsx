@@ -4,16 +4,15 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Building2, Contact, MapPin, Users, Share2, Save, Image as ImageIcon, Sparkles, Plus, Trash2, ExternalLink } from 'lucide-react';
-import { SocialMediaLinks, ConservatoriumDepartment, Conservatorium, TranslationMeta, ConservatoriumTranslations, ConservatoriumStaffMember, ConservatoriumPolicyContact, OpeningHours } from '@/lib/types';
+import { SocialMediaLinks, Conservatorium, ConservatoriumStaffMember, ConservatoriumPolicyContact, OpeningHours } from '@/lib/types';
 import { translateConservatoriumProfile } from '@/app/actions/translate';
 import { TranslatedFieldInput } from '@/components/dashboard/harmonia/translated-field-input';
 import { computeConservatoriumSourceHash } from '@/lib/utils/translation-hash';
@@ -119,7 +118,7 @@ export default function ConservatoriumProfileEditor() {
                 title: tUi('toasts.profileSavedTitle'),
                 description: tUi('toasts.profileSavedDesc'),
             });
-        } catch (error) {
+        } catch {
             toast({
                 variant: 'destructive',
                 title: tUi('toasts.errorSavingTitle'),
@@ -156,6 +155,7 @@ export default function ConservatoriumProfileEditor() {
     const handleTranslationChange = (field: string, locale: string, value: string) => {
         setFormData(prev => {
             const currentTranslations = prev.translations || {};
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const localeData = (currentTranslations as any)[locale] || {};
 
             // Deep update for nested fields like manager.role
@@ -271,9 +271,12 @@ export default function ConservatoriumProfileEditor() {
             // Clean up translations for this indices
             const updatedTranslations = { ...prev.translations };
             ['en', 'ar', 'ru'].forEach(loc => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 if ((updatedTranslations as any)[loc]?.leadingTeam) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const locTeam = [...(updatedTranslations as any)[loc].leadingTeam];
                     locTeam.splice(index, 1);
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (updatedTranslations as any)[loc] = { ...(updatedTranslations as any)[loc], leadingTeam: locTeam };
                 }
             });

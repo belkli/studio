@@ -5,14 +5,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Save } from "lucide-react";
 import { useTranslations, useLocale } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getPolicySchema = (t: any) => z.object({
     studentNoticeHoursRequired: z.coerce.number().min(0, t('errors.positiveHours')),
     studentCancellationCredit: z.enum(['FULL', 'NONE']),
@@ -35,6 +36,7 @@ export function CancellationPolicySettings() {
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
     const form = useForm<PolicyFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(policySchema) as any,
         defaultValues: currentConservatorium?.cancellationPolicy || {
             studentNoticeHoursRequired: 24,
@@ -51,6 +53,7 @@ export function CancellationPolicySettings() {
             ...data,
             noShowCredit: 'NONE', // This is non-configurable for now
         };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateConservatorium({ ...currentConservatorium, cancellationPolicy: updatedPolicy as any });
         toast({ title: t('successToast') });
         form.reset(data); // Reset dirty state

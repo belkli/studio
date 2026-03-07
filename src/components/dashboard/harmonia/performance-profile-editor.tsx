@@ -1,4 +1,5 @@
 ﻿'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuth } from "@/hooks/use-auth";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

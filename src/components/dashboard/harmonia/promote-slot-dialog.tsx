@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
-import type { EmptySlot, User } from '@/lib/types';
+import type { EmptySlot } from '@/lib/types';
 import { getTargetedSlotSuggestions } from '@/app/actions';
 import type { TargetSlotsOutput } from '@/ai/flows/target-empty-slots-flow';
 import { Loader2, Send } from 'lucide-react';
@@ -67,7 +67,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuggestions([]);
     }
-  }, [open, slot, users, conservatoriumInstruments]);
+  }, [open, slot, users, conservatoriumInstruments, locale]);
 
   const handleSendPromotions = () => {
     toast({

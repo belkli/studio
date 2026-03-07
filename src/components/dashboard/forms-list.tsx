@@ -24,6 +24,7 @@ export function FormsList({
         if (user.role === 'conservatorium_admin' || user.role === 'delegated_admin') {
             forms = forms.filter((f) => f.conservatoriumId === user.conservatoriumId);
         } else if (user.role === 'teacher') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             forms = forms.filter((f) => f.teacherId === user.id || (f.formData as any)?.assignedToTeacherId === user.id);
         } else if (user.role === 'student') {
             forms = forms.filter((f) => f.submittedBy === user.id || f.studentId === user.id);

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mic, Loader2, Music, Target, Gauge, Star } from "lucide-react";
+import { Mic, Loader2, Target, Gauge, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 

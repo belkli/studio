@@ -11,7 +11,6 @@ import { PublicFooter } from '@/components/layout/public-footer';
 export default function TryPage() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
-    const tTrial = useTranslations('TrialBooking');
     const tAccessibility = useTranslations('AccessibilityPage');
 
     return (

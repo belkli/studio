@@ -1,7 +1,7 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { LessonNote } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Save, AlertTriangle, Music, Mic, FileText, CheckCircle2 } from 'lucide-react';
+import { Save, AlertTriangle, Mic, FileText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, studentId: string }) {

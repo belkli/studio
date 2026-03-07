@@ -35,7 +35,6 @@ export default function MinistryDashboard() {
     return allForms.filter(form => ministryViewableStatuses.includes(form.status));
   }, [allForms]);
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredForms = useMemo(() => {
     return formsForMinistry.filter(form => {
       const student = users.find(u => u.id === form.studentId);
@@ -57,7 +56,7 @@ export default function MinistryDashboard() {
 
       return searchMatch && typeMatch && conservatoriumMatch && gradeMatch && statusMatch && instrumentMatch;
     });
-  }, [formsForMinistry, users, searchTerm, filters]);
+  }, [formsForMinistry, users, searchTerm, filters, conservatoriumInstruments]);
 
   const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));

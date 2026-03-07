@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FilePlus, Megaphone, UserPlus, FileCheck, Banknote, Coins } from "lucide-react";
+import { Megaphone, UserPlus, FileCheck, Banknote, Coins } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { KeyMetricsBar } from "./key-metrics-bar";
 import { TodaySnapshotCard } from "./today-snapshot-card";

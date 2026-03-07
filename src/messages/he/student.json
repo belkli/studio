@@ -208,6 +208,28 @@
     },
     "untitled": "ללא כותרת"
   },
+  "RepertoirePage": {
+    "title": "ספריית תווים דיגיטלית",
+    "description": "עיין בתווים של היצירות אותן המורה שייך אליך ובצע תרגול מותאם אישית."
+  },
+  "AssignRepertoireDialog": {
+    "title": "הקצאת יצירה חדשה",
+    "description": "חפש יצירה מהספרייה והקצה אותה לתלמיד/ה או לקבוצת כלי.",
+    "scopeLabel": "היקף הקצאה",
+    "scopePlaceholder": "בחר היקף",
+    "scopeSingle": "תלמיד/ה זה/ו בלבד",
+    "scopeGroup": "כל תלמידי המורה באותו כלי",
+    "searchLabel": "חפש יצירה",
+    "searchPlaceholder": "הקלד/י לחיפוש מלחין או יצירה...",
+    "searchBoxPlaceholder": "חיפוש...",
+    "notFound": "לא נמצאו יצירות.",
+    "cancel": "ביטול",
+    "submit": "הקצה יצירה",
+    "validationRequired": "חובה לבחור יצירה.",
+    "successTitle": "יצירה הוקצתה בהצלחה",
+    "successSingle": "\"{title}\" נוספה לרפרטואר של התלמיד/ה.",
+    "successGroup": "\"{title}\" נוספה לרפרטואר של {count} תלמידים."
+  },
   "ExamTracker": {
     "bagrut": "רסיטל בגרות 5 יחידות",
     "cancelCreation": "בטל יצירה",

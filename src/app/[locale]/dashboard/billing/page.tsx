@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 const AdminFinancialDashboard = dynamic(
     () => import("@/components/dashboard/harmonia/admin-finance-dashboard").then(mod => ({ default: mod.AdminFinancialDashboard })),
@@ -18,10 +18,12 @@ const StudentBillingDashboard = dynamic(
 export default function BillingPage() {
     const { user, isLoading } = useAuth();
     const t = useTranslations('BillingPage');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     if (isLoading || !user) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
                 <div>
                     <Skeleton className="h-8 w-48" />
                     <Skeleton className="h-5 w-64 mt-2" />
@@ -40,7 +42,7 @@ export default function BillingPage() {
     const isAdmin = user.role === 'conservatorium_admin' || user.role === 'site_admin';
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
                 <h1 className="text-2xl font-bold">
                     {isAdmin ? t('adminTitle') : t('studentTitle')}

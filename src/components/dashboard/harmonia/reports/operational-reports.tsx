@@ -1,11 +1,12 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useMemo } from 'react';
 import { getDay, format, startOfWeek } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { RoomOccupancyHeatmap } from "./room-occupancy-heatmap";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -15,7 +16,6 @@ export function OperationalReports() {
     const { lessons, users } = useAuth();
     const teachersList = users.filter(u => u.role === 'teacher');
     const dateLocale = useDateLocale();
-    const locale = useLocale();
 
     const {
         cancellationData,
@@ -23,7 +23,6 @@ export function OperationalReports() {
         capacityData,
         trialConversionRate,
         makeupUtilizationRate
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     } = useMemo(() => {
         // Cancellation breakdown
         const cancellationData = [
@@ -74,7 +73,7 @@ export function OperationalReports() {
             makeupUtilizationRate: makeupUtilization
         }
 
-    }, [lessons, teachersList, locale, t]);
+    }, [lessons, teachersList, t, dateLocale]);
 
     return (
         <div className="space-y-6 mt-6">

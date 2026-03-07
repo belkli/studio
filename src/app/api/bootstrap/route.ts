@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 type BootstrapBackend = 'postgres' | 'supabase' | 'mock';
 

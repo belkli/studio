@@ -1,15 +1,15 @@
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, CheckCheck } from 'lucide-react';
 import type { Notification } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useMemo, useState } from 'react';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -41,6 +41,8 @@ export default function NotificationsPage() {
     const { user, updateUser } = useAuth();
     const [currentTab, setCurrentTab] = useState('all');
     const t = useTranslations('AdminPages.notifications');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const handleMarkAllRead = () => {
         if (!user || !user.notifications) return;
@@ -67,7 +69,7 @@ export default function NotificationsPage() {
     if (!user) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('title')}</h1>

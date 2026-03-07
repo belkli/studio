@@ -2,8 +2,8 @@
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
-import { useState, useMemo, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
+import { useState, useMemo } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Video, MessageSquare, Clock } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import type { PracticeVideo, User } from '@/lib/types';
+import type { User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface MultimediaFeedbackCardProps {

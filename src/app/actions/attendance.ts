@@ -9,7 +9,7 @@
  */
 'use server';
 
-import type { LessonSlot, SlotStatus, ConservatoriumLiveStats } from '@/lib/types';
+import type { LessonSlot, SlotStatus } from '@/lib/types';
 
 export type AttendanceAction = 'MARK_PRESENT' | 'MARK_NO_SHOW_STUDENT' | 'MARK_ABSENT_NOTICED' | 'MARK_VIRTUAL';
 

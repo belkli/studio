@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Mail, PartyPopper } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getEmailSchema = (t: any) => z.object({
   email: z.string().email(t('errorEmail')),
 });

@@ -7,14 +7,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { InputGroup, InputGroupText } from '@/components/ui/input-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { EventProduction } from '@/lib/types';
 import { useTranslations, useLocale } from 'next-intl';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getEventSchema = (t: any) => z.object({
     name: z.string().min(5, t('errors.nameShort')),
     type: z.enum(['RECITAL', 'CONCERT', 'EXAM_PERFORMANCE', 'OPEN_DAY']),
@@ -38,6 +38,7 @@ export function EventForm() {
     const eventSchema = getEventSchema(t);
 
     const form = useForm<EventFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(eventSchema) as any,
         defaultValues: {
             isPublic: false,

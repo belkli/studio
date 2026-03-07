@@ -2,15 +2,13 @@
 
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { LessonSlot, User, Room } from '@/lib/types';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { LessonSlot } from '@/lib/types';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, SlidersHorizontal, User as UserIcon, DoorOpen, Music, Building2 } from 'lucide-react';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`);
@@ -46,7 +44,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 };
 
 export function MasterScheduleCalendar() {
-    const { user, users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
+    const { users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
     const dateLocale = useDateLocale();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
@@ -65,20 +63,18 @@ export function MasterScheduleCalendar() {
         return Array.from(new Set(fromDb));
     }, [conservatoriumInstruments]);
 
-    const weekInterval = {
+    const weekInterval = useMemo(() => ({
         start: startOfWeek(currentDate, { weekStartsOn: 0 }),
         end: endOfWeek(currentDate, { weekStartsOn: 0 }),
-    };
+    }), [currentDate]);
 
     const daysOfWeek = eachDayOfInterval(weekInterval);
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredRooms = useMemo(() => {
         if (filters.branchId === 'all') return rooms;
         return rooms.filter(r => r.branchId === filters.branchId);
-    }, [filters.branchId]);
+    }, [filters.branchId, rooms]);
 
-    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const filteredLessons = useMemo(() => {
         return lessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
@@ -92,7 +88,6 @@ export function MasterScheduleCalendar() {
 
             return true;
         });
-        // eslint-disable-next-line react-hooks/preserve-manual-memoization
     }, [lessons, weekInterval, filters]);
 
     const getLessonsForSlot = (day: Date, time: string) => {

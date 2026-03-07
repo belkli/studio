@@ -5,15 +5,17 @@ import { EventsList } from "@/components/dashboard/harmonia/events-list";
 import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function EventsPage() {
     const { user } = useAuth();
     const t = useTranslations('DashboardPages');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('events.title')}</h1>

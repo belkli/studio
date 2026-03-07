@@ -9,7 +9,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import type { PracticeLog, LessonNote, AssignedRepertoire } from '@/lib/types';
 import { getDb } from '@/lib/db';
 
 const PracticeLogSchema = z.object({

@@ -1,23 +1,21 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Calendar, User, BookOpen, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { ChevronLeft, Calendar, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { format } from 'date-fns';
 
 export default function PlayingSchoolAttendancePage() {
-    const params = useParams();
     const router = useRouter();
     const t = useTranslations('PlayingSchool.attendance');
     const dateLocale = useDateLocale();
-    const { users, user } = useAuth();
+    useAuth();
 
     // Mock attendance data for demonstration
     const attendanceLog = [
