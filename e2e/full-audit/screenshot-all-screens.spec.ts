@@ -69,13 +69,21 @@ async function navAndShot(
   }
 
   // After skeleton gone, also wait for meaningful content (catches pages that return null while loading)
+  // and wait for Turbopack compilation overlay to clear
   await page.waitForFunction(
-    () => (document.body?.innerText?.length ?? 0) > 50,
-    { timeout: 8_000 },
+    () => {
+      // Turbopack "Compiling..." indicator must be gone
+      const compiling = Array.from(document.querySelectorAll('*')).some(
+        el => el.textContent?.trim() === 'Compiling ...' && (el as HTMLElement).offsetParent !== null
+      );
+      if (compiling) return false;
+      return (document.body?.innerText?.length ?? 0) > 100;
+    },
+    { timeout: 10_000 },
   ).catch(() => {});
 
-  // Final settle for animations/lazy images
-  await page.waitForTimeout(500);
+  // Final settle for CSS transitions (sidebar margin animation = 200ms) + lazy images
+  await page.waitForTimeout(1200);
 
   await page.screenshot({ path: shot(filename), fullPage: true });
 }

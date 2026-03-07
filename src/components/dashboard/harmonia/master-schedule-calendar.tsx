@@ -136,8 +136,8 @@ export function MasterScheduleCalendar() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="p-0">
-                <div className="grid grid-cols-[auto_repeat(7,1fr)] min-w-[900px] overflow-x-auto">
+            <CardContent className="p-0 overflow-x-auto">
+                <div className="grid grid-cols-[auto_repeat(7,1fr)] min-w-[900px]">
                     <div className="p-2 border-b border-s"></div>
                     {daysOfWeek.map((day) => (
                         <div key={day.toISOString()} className="text-center font-semibold p-2 border-b border-s text-sm">

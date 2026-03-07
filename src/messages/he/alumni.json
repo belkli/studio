@@ -2,6 +2,9 @@
   "AlumniPage": {
     "title": "בוגרים",
     "subtitle": "התחבר עם בוגרי הקונסרבטוריון, עקוב אחר הישגים ונהל מאסטרקלאסים.",
+    "publicAlumniTitle": "בוגרי הקונסרבטוריון שלנו",
+    "publicAlumniSubtitle": "הכירו את בוגרי הקונסרבטוריון — מוזיקאים שהפכו לחלק מהעולם המוזיקלי.",
+    "publicMasterClassesTitle": "מאסטרקלאסים פתוחים",
     "directoryTab": "ספריית בוגרים",
     "profileTab": "הפרופיל שלי",
     "masterClassesTab": "מאסטרקלאסים",

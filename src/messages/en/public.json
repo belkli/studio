@@ -225,7 +225,12 @@
     "subtitle": "How can we help you today?",
     "searchPlaceholder": "Search articles...",
     "resultsTitle": "Search results for \"{query}\"",
-    "noResults": "No matching articles were found."
+    "noResults": "No matching articles were found.",
+    "category_SchedulingLessons": "Scheduling & Lessons",
+    "category_PaymentsBilling": "Payments & Billing",
+    "category_FormsApprovals": "Forms & Approvals",
+    "category_ForTeachers": "For Teachers",
+    "category_ForAdmins": "For Admins"
   },
   "HelpAssistant": {
     "title": "Harmonia AI Assistant",

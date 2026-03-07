@@ -225,7 +225,12 @@
     "resultsTitle": "תוצאות חיפוש עבור \"{query}\"",
     "searchPlaceholder": "חפש מאמרים...",
     "subtitle": "איך נוכל לעזור לך היום?",
-    "title": "מרכז העזרה של הרמוניה"
+    "title": "מרכז העזרה של הרמוניה",
+    "category_SchedulingLessons": "לוח זמנים ושיעורים",
+    "category_PaymentsBilling": "תשלומים וחיובים",
+    "category_FormsApprovals": "טפסים ואישורים",
+    "category_ForTeachers": "למורים",
+    "category_ForAdmins": "למנהלים"
   },
   "HelpAssistant": {
     "description": "שאל אותי כל דבר על המערכת, ואעשה כמיטב יכולתי לעזור.",

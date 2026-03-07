@@ -225,7 +225,12 @@
     "resultsTitle": "نتائج البحث عن \"{query}\"",
     "searchPlaceholder": "ابحث في المقالات...",
     "subtitle": "كيف يمكننا مساعدتك اليوم؟",
-    "title": "مركز مساعدة هارمونيا"
+    "title": "مركز مساعدة هارمونيا",
+    "category_SchedulingLessons": "الجدول الزمني والدروس",
+    "category_PaymentsBilling": "المدفوعات والفواتير",
+    "category_FormsApprovals": "النماذج والموافقات",
+    "category_ForTeachers": "للمعلمين",
+    "category_ForAdmins": "للمسؤولين"
   },
   "HelpAssistant": {
     "description": "اسألني أي شيء عن النظام، وسأبذل قصارى جهدي للمساعدة.",

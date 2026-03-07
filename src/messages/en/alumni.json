@@ -2,6 +2,9 @@
   "AlumniPage": {
     "title": "Alumni",
     "subtitle": "Connect with conservatorium alumni, track achievements, and manage masterclasses.",
+    "publicAlumniTitle": "Our Alumni",
+    "publicAlumniSubtitle": "Meet the graduates of our conservatorium — musicians who have gone on to enrich the world of music.",
+    "publicMasterClassesTitle": "Open Masterclasses",
     "directoryTab": "Directory",
     "profileTab": "My Profile",
     "masterClassesTab": "Masterclasses",

@@ -34,7 +34,7 @@ export default function PublicAlumniPage() {
                   <CardTitle className='text-lg'>{item.displayName}</CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-2 text-sm'>
-                  <p className='text-muted-foreground'>{item.graduationYear} ? {item.primaryInstrument}</p>
+                  <p className='text-muted-foreground'>{item.graduationYear} · {item.primaryInstrument}</p>
                   {item.currentOccupation && <p>{item.currentOccupation}</p>}
                 </CardContent>
               </Card>
@@ -50,7 +50,7 @@ export default function PublicAlumniPage() {
                   <CardContent className='flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between'>
                     <div>
                       <p className='font-medium'>{item.title.en}</p>
-                      <p className='text-sm text-muted-foreground'>{item.instructor.displayName} ? {item.date} {item.startTime}</p>
+                      <p className='text-sm text-muted-foreground'>{item.instructor.displayName} · {item.date} {item.startTime}</p>
                     </div>
                   </CardContent>
                 </Card>

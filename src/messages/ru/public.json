@@ -225,7 +225,12 @@
     "resultsTitle": "Результаты поиска по запросу \"{query}\"",
     "searchPlaceholder": "Поиск по статьям...",
     "subtitle": "Чем мы можем помочь вам сегодня?",
-    "title": "Центр помощи Harmonia"
+    "title": "Центр помощи Harmonia",
+    "category_SchedulingLessons": "Расписание и уроки",
+    "category_PaymentsBilling": "Платежи и выставление счетов",
+    "category_FormsApprovals": "Формы и утверждения",
+    "category_ForTeachers": "Для учителей",
+    "category_ForAdmins": "Для администраторов"
   },
   "HelpAssistant": {
     "description": "Спросите меня что-нибудь о системе, и я сделаю все возможное, чтобы помочь.",

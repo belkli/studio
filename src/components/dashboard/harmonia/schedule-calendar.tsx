@@ -156,8 +156,8 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
                         </Button>
                     </div>
                 </CardHeader>
-                <CardContent className="p-0 border rounded-xl overflow-hidden bg-card shadow-sm">
-                    <div className="grid grid-cols-[60px_repeat(6,1fr)] min-w-[800px] overflow-x-auto">
+                <CardContent className="p-0 border rounded-xl overflow-x-auto bg-card shadow-sm">
+                    <div className="grid grid-cols-[60px_repeat(6,1fr)] min-w-[800px]">
                         <div className="p-2 border-b border-s bg-muted/30"></div>
                         {daysOfWeek.slice(0, 6).map((day: Date) => (
                             <div key={day.toISOString()} className="text-center p-3 border-b border-s bg-muted/30">

@@ -2,6 +2,9 @@
   "AlumniPage": {
     "title": "الخريجون",
     "subtitle": "تواصل مع خريجي الكونسرفتوار وتتبع الإنجازات وأدر الدروس الرئيسية.",
+    "publicAlumniTitle": "خريجونا",
+    "publicAlumniSubtitle": "تعرف على خريجي الكونسرفتوار — موسيقيون أثروا عالم الموسيقى.",
+    "publicMasterClassesTitle": "الدروس الرئيسية المفتوحة",
     "directoryTab": "الدليل",
     "profileTab": "ملفي الشخصي",
     "masterClassesTab": "الدروس الرئيسية",
