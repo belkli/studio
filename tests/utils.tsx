@@ -4,48 +4,30 @@ import { NextIntlClientProvider } from 'next-intl';
 import { AuthContext } from '@/hooks/use-auth';
 import { User } from '@/lib/types';
 import * as initialMockData from '@/lib/data';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// Basic messages for testing
-const defaultMessages = {
-    Navigation: {
-        about: 'אודות',
-        contact: 'צור קשר',
-        musicians: 'מוזיקאים',
-        availableNow: 'זמין עכשיו',
-        lessons: 'שיעורים',
-        donate: 'תרומה',
-        openDay: 'יום פתוח',
-        login: 'כניסה',
-        register: 'הרשמה',
-        dashboard: 'לוח בקרה'
-    },
-    Common: {
-        name: 'שם',
-        save: 'שמור',
-        cancel: 'ביטול',
-        noData: 'אין נתונים להצגה',
-        edit: 'ערוך',
-        delete: 'מחק',
-        actions: 'פעולות'
-    },
-    AboutPage: {
-        title: 'מדריך הקונסרבטוריונים',
-        search: 'חיפוש קונסרבטוריון...',
-        filterByCity: 'סינון לפי עיר',
-        useLocation: 'השתמש במיקום שלי',
-        allDepartments: 'כל המחלקות'
-    },
-    ContactPage: {
-        title: 'צור קשר',
-        selectConservatorium: 'בחר קונסרבטוריון ליצירת קשר',
-        send: 'שלח הודעה'
-    },
-    HomePage: {
-        title: 'הַרמוֹנְיָה',
-        copyright: 'All rights reserved.',
-        privacyPolicy: 'Privacy Policy'
+// Load real Hebrew messages from src/messages/he/ split files and merge them
+function loadMessages(locale: string): Record<string, unknown> {
+    const dir = path.resolve(__dirname, `../src/messages/${locale}`);
+    const merged: Record<string, unknown> = {};
+    if (fs.existsSync(dir)) {
+        for (const file of fs.readdirSync(dir)) {
+            if (file.endsWith('.json')) {
+                try {
+                    const contents = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf-8'));
+                    // Merge all keys (including namespaced keys inside each file)
+                    Object.assign(merged, contents);
+                } catch {
+                    // skip malformed files
+                }
+            }
+        }
     }
-};
+    return merged;
+}
+
+const heMessages = loadMessages('he');
 
 interface RenderOptions {
     locale?: string;
@@ -58,7 +40,7 @@ export function renderWithProviders(
     ui: React.ReactElement,
     {
         locale = 'he',
-        messages = defaultMessages,
+        messages = heMessages,
         user = null,
         authContextValue = {}
     }: RenderOptions = {}
@@ -67,6 +49,7 @@ export function renderWithProviders(
         user,
         users: initialMockData.mockUsers,
         conservatoriums: initialMockData.conservatoriums,
+        conservatoriumInstruments: initialMockData.mockConservatoriumInstruments ?? [],
         mockFormSubmissions: [],
         mockLessons: [],
         mockPackages: [],

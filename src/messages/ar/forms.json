@@ -329,8 +329,7 @@
     "studentName": "اسم الطالب",
     "submit": "إرسال",
     "teacherName": "اسم المدرس",
-    "validation": {
-      "invalidDuration": "يجب أن تكون المدة بصيغة MM:SS.",
+    "teacherDetails": "تفاصيل المعلم",
       "maxRepertoire": "يمكن إضافة حتى خمس قطع.",
       "minRepertoire": "يجب إضافة قطعة واحدة على الأقل.",
       "requiredAcademicYear": "يجب اختيار السنة الدراسية.",
@@ -530,6 +529,7 @@
     "bookPageTitle": "حجز درس جديد",
     "bookPageSubtitle": "اختر آلة موسيقية ومعلمًا وموعدًا متاحًا لجدولة درس جديد من حزمتك.",
     "additionalPracticeNotePlaceholder": "مثال: يرجى الانتباه لديناميكيات الإيقاع في الإيقاعات 15-20.",
+    "additionalPracticeNote": "ملاحظة تدريب إضافية",
     "addVoiceFeedback": "إضافة تغذية راجعة صوتية",
     "allStatuses": "جميع الحالات",
     "allTeachers": "جميع المعلمين",

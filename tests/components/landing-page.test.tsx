@@ -48,47 +48,7 @@ vi.mock('next-intl', async () => {
     };
 });
 
-// ── lucide-react — extend the setup.tsx stubs with icons used in landing ────
-vi.mock('lucide-react', () => ({
-    Search: (props: any) => <span data-testid="icon-search" {...props} />,
-    MapPin: (props: any) => <span data-testid="icon-map-pin" {...props} />,
-    Phone: (props: any) => <span data-testid="icon-phone" {...props} />,
-    Mail: (props: any) => <span data-testid="icon-mail" {...props} />,
-    Globe: (props: any) => <span data-testid="icon-globe" {...props} />,
-    Clock: (props: any) => <span data-testid="icon-clock" {...props} />,
-    Facebook: (props: any) => <span data-testid="icon-facebook" {...props} />,
-    Instagram: (props: any) => <span data-testid="icon-instagram" {...props} />,
-    Youtube: (props: any) => <span data-testid="icon-youtube" {...props} />,
-    Save: (props: any) => <span data-testid="icon-save" {...props} />,
-    Plus: (props: any) => <span data-testid="icon-plus" {...props} />,
-    Edit: (props: any) => <span data-testid="icon-edit" {...props} />,
-    Trash: (props: any) => <span data-testid="icon-trash" {...props} />,
-    X: (props: any) => <span data-testid="icon-x" {...props} />,
-    ChevronDown: (props: any) => <span data-testid="icon-chevron-down" {...props} />,
-    ChevronRight: (props: any) => <span data-testid="icon-chevron-right" {...props} />,
-    ChevronLeft: (props: any) => <span data-testid="icon-chevron-left" {...props} />,
-    Languages: (props: any) => <span data-testid="icon-languages" {...props} />,
-    Globe2: (props: any) => <span data-testid="icon-globe2" {...props} />,
-    GraduationCap: (props: any) => <span data-testid="icon-graduation-cap" {...props} />,
-    Music: (props: any) => <span data-testid="icon-music" {...props} />,
-    Music2: (props: any) => <span data-testid="icon-music2" {...props} />,
-    ExternalLink: (props: any) => <span data-testid="icon-external-link" {...props} />,
-    LogOut: (props: any) => <span data-testid="icon-logout" {...props} />,
-    User: (props: any) => <span data-testid="icon-user" {...props} />,
-    Users: (props: any) => <span data-testid="icon-users" {...props} />,
-    Settings: (props: any) => <span data-testid="icon-settings" {...props} />,
-    MessageCircle: (props: any) => <span data-testid="icon-message-circle" {...props} />,
-    LocateFixed: (props: any) => <span data-testid="icon-locate-fixed" {...props} />,
-    Building2: (props: any) => <span data-testid="icon-building2" {...props} />,
-    Star: (props: any) => <span data-testid="icon-star" {...props} />,
-    BookOpen: (props: any) => <span data-testid="icon-book-open" {...props} />,
-    Navigation2: (props: any) => <span data-testid="icon-navigation2" {...props} />,
-    ClipboardList: (props: any) => <span data-testid="icon-clipboard-list" {...props} />,
-    CalendarDays: (props: any) => <span data-testid="icon-calendar-days" {...props} />,
-    CalendarClock: (props: any) => <span data-testid="icon-calendar-clock" {...props} />,
-    UserRound: (props: any) => <span data-testid="icon-user-round" {...props} />,
-    HeartHandshake: (props: any) => <span data-testid="icon-heart-handshake" {...props} />,
-}));
+// lucide-react is mocked globally in tests/setup.tsx via importOriginal
 
 // ── Import the component under test ──────────────────────────────────────────
 import { PublicLandingPage } from '@/components/harmonia/public-landing-page';

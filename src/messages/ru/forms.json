@@ -329,8 +329,7 @@
     "studentName": "Имя ученика",
     "submit": "Отправить",
     "teacherName": "Имя преподавателя",
-    "validation": {
-      "invalidDuration": "Продолжительность должна быть в формате ММ:СС.",
+    "teacherDetails": "Детали преподавателя",
       "maxRepertoire": "Можно добавить до пяти произведений.",
       "minRepertoire": "Добавьте хотя бы одно произведение.",
       "requiredAcademicYear": "Укажите учебный год.",
@@ -530,6 +529,7 @@
     "bookPageTitle": "Записаться на новый урок",
     "bookPageSubtitle": "Выберите инструмент, учителя и свободное время для записи нового урока из вашего пакета.",
     "additionalPracticeNotePlaceholder": "е.г., Пожалуйста оплатить аттентион для дйнамикс в меасурес 15-20.",
+    "additionalPracticeNote": "Дополнительная заметка по практике",
     "addVoiceFeedback": "Добавить Голос Феедбакк",
     "allStatuses": "Все статусы",
     "allTeachers": "Все учителя",

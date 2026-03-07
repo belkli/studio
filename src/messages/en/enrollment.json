@@ -651,6 +651,7 @@
     "allDistances": "All distances",
     "distance10": "Up to 10 km",
     "distance25": "Up to 25 km",
+    "distance50": "Up to 50 km",
     "clearAll": "Clear all",
     "resultsCount": "{count} available lessons found",
     "today": "Today",

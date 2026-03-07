@@ -52,6 +52,7 @@ describe('PublicNavbar', () => {
 
     it('renders the language switcher', () => {
         renderWithProviders(<PublicNavbar />);
-        expect(screen.getByTestId('language-switcher')).toBeInTheDocument();
+        const switchers = screen.getAllByTestId('language-switcher');
+        expect(switchers.length).toBeGreaterThan(0);
     });
 });

@@ -27,11 +27,7 @@ describe('auth-utils', () => {
 
     afterEach(() => {
         // Restore NODE_ENV after each test
-        Object.defineProperty(process.env, 'NODE_ENV', {
-            value: originalNodeEnv,
-            writable: true,
-            configurable: true,
-        });
+        vi.unstubAllEnvs();
         vi.resetModules();
     });
 
@@ -94,6 +90,26 @@ describe('auth-utils', () => {
     });
 
     describe('getClaimsFromRequest', () => {
+        beforeEach(() => {
+            vi.resetModules();
+            // Re-establish the next/headers mock with dev headers
+            vi.doMock('next/headers', () => ({
+                headers: vi.fn(async () => ({
+                    get: (key: string) => {
+                        const map: Record<string, string> = {
+                            'x-user-id': 'dev-user',
+                            'x-user-role': 'site_admin',
+                            'x-user-conservatorium-id': 'dev-conservatorium',
+                            'x-user-approved': 'true',
+                            'x-user-email': 'dev@harmonia.local',
+                        };
+                        return map[key] ?? null;
+                    },
+                })),
+                cookies: vi.fn(async () => ({ get: vi.fn(() => undefined) })),
+            }));
+        });
+
         it('returns claims parsed from injected request headers', async () => {
             const { getClaimsFromRequest } = await import('@/lib/auth-utils');
             const claims = await getClaimsFromRequest();
