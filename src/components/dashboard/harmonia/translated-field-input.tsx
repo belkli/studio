@@ -102,8 +102,8 @@ export function TranslatedFieldInput({
                 )}
             </div>
 
-            {/* Translations Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            {/* Translations Grid — always LTR layout so EN/AR/RU order is consistent */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2" dir="ltr">
                 {locales.map((lang) => {
                     const isOverridden = overriddenLocales.includes(lang.id);
                     const currentText = translations[lang.id as keyof typeof translations];

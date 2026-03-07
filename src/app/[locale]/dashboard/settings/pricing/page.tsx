@@ -1,34 +1,34 @@
 'use client';
+
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from '@/i18n/routing';
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PricingSettings } from "@/components/dashboard/harmonia/pricing-settings";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function PricingSettingsPage() {
     const { user, newFeaturesEnabled } = useAuth();
-    const t = useTranslations('PricingPage');
-    const commonT = useTranslations('Common');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+    const t = useTranslations('SettingsPage');
+    const tP = useTranslations('PricingSettings');
+    const BackIcon = isRtl ? ChevronRight : ChevronLeft;
 
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin') || !newFeaturesEnabled) {
-        return <p>{commonT('noData')}</p>;
+        return null;
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" asChild>
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
+            <div className="space-y-1">
+                <Button variant="ghost" size="sm" className="gap-1 -ms-2 h-7 text-muted-foreground" asChild>
                     <Link href="/dashboard/settings">
-                        <ArrowLeft className="h-4 w-4" />
+                        <BackIcon className="h-4 w-4" />
+                        {t('title')}
                     </Link>
                 </Button>
-                <div>
-                    <h1 className="text-2xl font-bold">{t('title')}</h1>
-                    <p className="text-muted-foreground">{t('subtitle')}</p>
-                </div>
             </div>
-
             <PricingSettings />
         </div>
     );

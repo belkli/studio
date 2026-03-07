@@ -2012,6 +2012,7 @@ export type LessonPackage = {
   durationMinutes: 30 | 45 | 60;
   priceILS: number;
   isActive: boolean;
+  isPremium?: boolean;          // if true, only bookable with premium-flagged teachers
   // Legacy free-text instrument labels (kept for backward compatibility)
   instruments?: string[];
   // Normalized IDs from lesson_package_instruments

@@ -99,11 +99,40 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
         name: admin.manager_name,
     };
 
+    // Pre-built translations for cons-15 (Hod HaSharon) so the profile editor shows AR/RU without requiring a live AI call
+    const hodHasharonTranslations = isHodHasharon ? {
+        en: {
+            name: 'Hod HaSharon Music Conservatory',
+            about: scraped.about ? 'The Hod HaSharon Music Conservatory offers a broad range of musical education programs for children and adults, providing high-quality instrumental and vocal training in a supportive and inspiring environment.' : undefined,
+            openingHours: scraped.opening_hours || undefined,
+            manager: scraped.manager ? { role: 'Director', bio: 'Director and artistic leader of the conservatory.' } : undefined,
+        },
+        ar: {
+            name: 'كونسرفتوار هود هشارون للموسيقى',
+            about: scraped.about ? 'يقدم كونسرفتوار هود هشارون للموسيقى مجموعة واسعة من برامج التعليم الموسيقي للأطفال والبالغين، مع توفير تدريب متميز على العزف والغناء في بيئة داعمة وملهمة.' : undefined,
+            openingHours: scraped.opening_hours || undefined,
+            manager: scraped.manager ? { role: 'مدير', bio: 'مدير وقائد فني للكونسرفتوار.' } : undefined,
+        },
+        ru: {
+            name: 'Музыкальная консерватория Ход ха-Шарон',
+            about: scraped.about ? 'Музыкальная консерватория Ход ха-Шарон предлагает широкий спектр программ музыкального образования для детей и взрослых, обеспечивая высококачественное инструментальное и вокальное обучение в поддерживающей и вдохновляющей среде.' : undefined,
+            openingHours: scraped.opening_hours || undefined,
+            manager: scraped.manager ? { role: 'Директор', bio: 'Директор и художественный руководитель консерватории.' } : undefined,
+        },
+    } : undefined;
+
     return {
         id: conservatoriumIdOverride[admin.id] ?? `cons-${admin.id}`,
         name: scraped.name || (admin.organization ? `${admin.location} (${admin.organization})` : admin.location),
         nameEn: scraped.name_en || enriched?.cityEn,
         nameI18n: enriched ? { he: enriched.cityHe, en: enriched.cityEn, ar: enriched.cityAr, ru: enriched.cityRu } : undefined,
+        translations: hodHasharonTranslations,
+        translationMeta: hodHasharonTranslations ? {
+            lastTranslatedAt: '2025-01-01T00:00:00.000Z',
+            sourceHash: '',
+            translatedBy: 'AI' as const,
+            aiModel: 'mock-seed',
+        } : undefined,
         tier: tierCycle[index % 3],
         stampUrl: `https://picsum.photos/seed/stamp${admin.id}/200/200`,
         newFeaturesEnabled: isHodHasharon,

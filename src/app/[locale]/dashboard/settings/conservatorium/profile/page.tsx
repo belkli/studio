@@ -358,7 +358,7 @@ export default function ConservatoriumProfileEditor() {
                 </div>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-6 [&_label]:text-start">
+            <form onSubmit={handleSave} className="space-y-6">
                 <Tabs defaultValue="basic" className="w-full">
                     <TabsList dir={isRtl ? "rtl" : "ltr"} className="flex h-auto mb-6 bg-muted/50 p-1 overflow-x-auto">
                         <TabsTrigger value="basic" className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {tUi('tabs.basic')}</TabsTrigger>
@@ -1028,7 +1028,7 @@ export default function ConservatoriumProfileEditor() {
                     </TabsContent>
                 </Tabs>
 
-                <div className="sticky bottom-0 z-20 border rounded-lg bg-background/95 backdrop-blur-sm p-3 flex items-center justify-end gap-2">
+                <div className="sticky bottom-0 z-20 border rounded-lg bg-background/95 backdrop-blur-sm p-3 flex items-center justify-end gap-2" dir="ltr">
                     <Button type="button" variant="outline" onClick={() => setFormData(currentCons)}>
                         {tUi('footer.resetChanges')}
                     </Button>

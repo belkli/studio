@@ -179,6 +179,36 @@ Output JSON:`;
     }
 }
 
+export async function translateInstrumentName(
+    nameHe: string,
+    locales: TargetLocale[] = ['en', 'ar', 'ru']
+): Promise<{
+    success: boolean;
+    translations?: { en?: string; ar?: string; ru?: string };
+    error?: string;
+}> {
+    const prompt = `Translate the following Hebrew musical instrument name into ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
+
+Return ONLY valid JSON with no markdown or code fences:
+{"en":"...","ar":"...","ru":"..."}
+
+Hebrew instrument name: ${nameHe}`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        let text = result.response.text().trim();
+        text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+        const raw = JSON.parse(text);
+        const translations: { en?: string; ar?: string; ru?: string } = {};
+        for (const locale of locales) {
+            if (raw[locale]) translations[locale as 'en' | 'ar' | 'ru'] = raw[locale];
+        }
+        return { success: true, translations };
+    } catch (err: any) {
+        return { success: false, error: err.message };
+    }
+}
+
 export async function translateUserBio(
     bio: string, p0?: string[], translations?: UserTranslations | undefined, overrides?: { [locale: string]: string[]; } | undefined, role?: string, locales: TargetLocale[] = ['en', 'ar', 'ru']): Promise<{
         success: boolean;
