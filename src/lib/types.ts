@@ -372,6 +372,8 @@ export type SocialMediaLinks = {
 
 export type ConservatoriumProfileTranslation = {
   name?: string;
+  city?: string;
+  address?: string;
   about?: string;
   openingHours?: string;
   programs?: string[];

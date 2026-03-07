@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
@@ -295,18 +295,47 @@ export default function AboutPage() {
   const [selectedProfile, setSelectedProfile] = useState<PublicProfile | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
+  const [locationDenied, setLocationDenied] = useState(false);
+
+  const applyLocation = useCallback((pos: GeolocationPosition) => {
+    setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+    setCity('');
+    setLocating(false);
+    setLocationDenied(false);
+  }, []);
 
   const handleLocate = useCallback(() => {
     if (!navigator.geolocation) return;
     setLocating(true);
+    setLocationDenied(false);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+      applyLocation,
+      (err) => {
         setLocating(false);
+        // Only show denied if user explicitly blocked (code 1 = PERMISSION_DENIED)
+        if (err.code === 1) setLocationDenied(true);
       },
-      () => setLocating(false)
+      { timeout: 10000 }
     );
-  }, []);
+  }, [applyLocation]);
+
+  // Silently apply location on mount if permission was already granted — no prompt, no denied state
+  useEffect(() => {
+    if (!navigator.geolocation || !navigator.permissions) return;
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      if (result.state === 'granted') {
+        navigator.geolocation.getCurrentPosition(applyLocation, () => {/* silent fail */});
+      }
+      // Listen for permission changes (e.g. user grants in browser settings while on page)
+      result.onchange = () => {
+        if (result.state === 'granted') {
+          setLocationDenied(false);
+          navigator.geolocation.getCurrentPosition(applyLocation, () => {});
+        }
+        if (result.state === 'denied') setLocationDenied(true);
+      };
+    }).catch(() => {/* permissions API not available in this browser */});
+  }, [applyLocation]);
 
   const localizedConservatoriums = useMemo(() => {
     const uniqueById = new Map<string, Conservatorium>();
@@ -334,6 +363,20 @@ export default function AboutPage() {
 
     return Array.from(byLocalizedIdentity.values());
   }, [conservatoriums, locale]);
+
+  // Sorted unique city list from conservatoriums that have coordinates
+  const cities = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { name: string; coords: { lat: number; lng: number } }[] = [];
+    for (const cons of localizedConservatoriums) {
+      const cityName = cons.location?.city;
+      if (cityName && !seen.has(cityName) && cons.location?.coordinates) {
+        seen.add(cityName);
+        result.push({ name: cityName, coords: cons.location.coordinates });
+      }
+    }
+    return result.sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  }, [localizedConservatoriums]);
 
   const localizedTeachers = useMemo(() => {
     const unique = new Map<string, User>();
@@ -582,23 +625,28 @@ export default function AboutPage() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Input
+              <select
                 value={city}
-                onChange={(event) => {
-                  setCity(event.target.value);
-                  if (event.target.value) setUserLocation(null);
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  setUserLocation(null);
+                  setLocationDenied(false);
                 }}
-                placeholder={t('citySortPlaceholder')}
-                className="w-[180px] md:w-[200px]"
-              />
+                className="h-10 w-[180px] rounded-md border bg-background px-3 text-sm md:w-[200px]"
+              >
+                <option value="">{t('citySortPlaceholder')}</option>
+                {cities.map((c) => (
+                  <option key={c.name} value={c.name}>{c.name}</option>
+                ))}
+              </select>
               <Button
                 type="button"
-                variant={userLocation ? 'default' : 'outline'}
+                variant={userLocation ? 'default' : locationDenied ? 'destructive' : 'outline'}
                 size="icon"
                 onClick={handleLocate}
                 disabled={locating}
-                title={locating ? t('locating') : t('locateMe')}
-                aria-label={locating ? t('locating') : t('locateMe')}
+                title={locating ? t('locating') : locationDenied ? t('locationDenied') : t('locateMe')}
+                aria-label={locating ? t('locating') : locationDenied ? t('locationDenied') : t('locateMe')}
               >
                 {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
               </Button>

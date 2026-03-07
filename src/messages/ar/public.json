@@ -19,6 +19,7 @@
     "departments": "الأقسام ومجالات الدراسة",
     "foundCount": "تم العثور على {found} من أصل {total}",
     "locateMe": "الموقع الحالي",
+    "locationDenied": "تم رفض الوصول إلى الموقع",
     "locating": "جاري تحديد الموقع...",
     "management": "الإدارة",
     "moreTeachers": "معلمون إضافيون",
