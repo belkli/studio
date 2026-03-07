@@ -24,7 +24,7 @@ interface StudentMakeupBalance {
 const MAKEUP_EXPIRY_DAYS = 60;
 const EXPIRING_SOON_DAYS = 7;
 
-function MakeupTable({ balancesToShow, isRtl, t }: { balancesToShow: StudentMakeupBalance[]; isRtl: boolean; t: (key: string, params?: Record<string, unknown>) => string }) {
+function MakeupTable({ balancesToShow, isRtl, t }: { balancesToShow: StudentMakeupBalance[]; isRtl: boolean; t: ReturnType<typeof useTranslations> }) {
     return (
         <Table dir={isRtl ? 'rtl' : 'ltr'}>
             <TableHeader>

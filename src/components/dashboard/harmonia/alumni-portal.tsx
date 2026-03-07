@@ -30,6 +30,8 @@ const profileSchema = z.object({
   currentOccupation: z.string().optional(),
   bioHe: z.string().optional(),
   bioEn: z.string().optional(),
+  bioAr: z.string().optional(),
+  bioRu: z.string().optional(),
   profilePhotoUrl: z.string().url().optional().or(z.literal('')),
   isPublic: z.boolean(),
   availableForMasterClasses: z.boolean(),
@@ -40,8 +42,12 @@ type ProfileValues = z.infer<typeof profileSchema>;
 const masterClassSchema = z.object({
   titleHe: z.string().min(2),
   titleEn: z.string().min(2),
+  titleAr: z.string().optional(),
+  titleRu: z.string().optional(),
   descriptionHe: z.string().min(2),
   descriptionEn: z.string().min(2),
+  descriptionAr: z.string().optional(),
+  descriptionRu: z.string().optional(),
   instrument: z.string().min(2),
   date: z.string().min(1),
   startTime: z.string().min(1),
@@ -127,6 +133,8 @@ export function AlumniPortal() {
       currentOccupation: ownProfile?.currentOccupation || '',
       bioHe: ownProfile?.bio?.he || '',
       bioEn: ownProfile?.bio?.en || '',
+      bioAr: ownProfile?.bio?.ar || '',
+      bioRu: ownProfile?.bio?.ru || '',
       profilePhotoUrl: ownProfile?.profilePhotoUrl || '',
       isPublic: ownProfile?.isPublic || false,
       availableForMasterClasses: ownProfile?.availableForMasterClasses || false,
@@ -138,8 +146,12 @@ export function AlumniPortal() {
     defaultValues: {
       titleHe: '',
       titleEn: '',
+      titleAr: '',
+      titleRu: '',
       descriptionHe: '',
       descriptionEn: '',
+      descriptionAr: '',
+      descriptionRu: '',
       instrument: user?.instruments?.[0]?.instrument || '',
       date: '',
       startTime: '18:00',
@@ -160,19 +172,33 @@ export function AlumniPortal() {
       graduationYear: values.graduationYear,
       primaryInstrument: values.primaryInstrument,
       currentOccupation: values.currentOccupation,
-      bio: { he: values.bioHe, en: values.bioEn },
+      bio: {
+        he: values.bioHe || undefined,
+        en: values.bioEn || undefined,
+        ar: values.bioAr || undefined,
+        ru: values.bioRu || undefined,
+      },
       profilePhotoUrl: values.profilePhotoUrl || undefined,
       isPublic: values.isPublic,
       availableForMasterClasses: values.availableForMasterClasses,
     });
-
     toast({ title: commonT('success'), description: t('profileSaved') });
   };
 
   const submitMasterClass = (values: MasterClassValues) => {
     createMasterClass({
-      title: { he: values.titleHe, en: values.titleEn },
-      description: { he: values.descriptionHe, en: values.descriptionEn },
+      title: {
+        he: values.titleHe,
+        en: values.titleEn,
+        ar: values.titleAr || undefined,
+        ru: values.titleRu || undefined,
+      },
+      description: {
+        he: values.descriptionHe,
+        en: values.descriptionEn,
+        ar: values.descriptionAr || undefined,
+        ru: values.descriptionRu || undefined,
+      },
       instrument: values.instrument,
       date: values.date,
       startTime: values.startTime,
@@ -182,7 +208,6 @@ export function AlumniPortal() {
       includedInPackage: values.includedInPackage,
       priceILS: values.includedInPackage ? undefined : values.priceILS,
     });
-
     toast({ title: commonT('success'), description: t('masterClassCreated') });
     masterClassForm.reset();
   };
@@ -200,8 +225,6 @@ export function AlumniPortal() {
     { value: 'review', label: t('reviewTab') },
   ];
 
-  const orderedTabs = tabs;
-
   const getInitials = (name: string) => {
     const parts = name.trim().split(/\s+/);
     return parts.length >= 2
@@ -215,8 +238,10 @@ export function AlumniPortal() {
   const isRegistered = (mc: Masterclass) =>
     user ? mc.registrations.some((r) => r.studentId === user.id) : false;
 
+  const dir = isRtl ? 'rtl' : 'ltr';
+
   return (
-    <div className='space-y-6' dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className='space-y-6' dir={dir}>
       {/* Admin: pending approvals surfaced at the top */}
       {isAdmin && reviewQueue.length > 0 && (
         <Card className='border-amber-200 bg-amber-50/50'>
@@ -247,11 +272,12 @@ export function AlumniPortal() {
 
       <Tabs defaultValue='directory' className='w-full'>
         <TabsList className='grid w-full grid-cols-4'>
-          {orderedTabs.map((tab) => (
+          {tabs.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
           ))}
         </TabsList>
 
+        {/* ── Directory ──────────────────────────────────────────────── */}
         <TabsContent value='directory' className='space-y-4'>
           <Card>
             <CardHeader>
@@ -262,7 +288,7 @@ export function AlumniPortal() {
               <div className='grid gap-3 md:grid-cols-2'>
                 <Select value={yearFilter} onValueChange={setYearFilter}>
                   <SelectTrigger><SelectValue placeholder={t('filterYear')} /></SelectTrigger>
-                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
+                  <SelectContent dir={dir}>
                     <SelectItem value='all'>{t('allYears')}</SelectItem>
                     {Array.from(new Set(alumni.map((item) => String(item.graduationYear)))).sort().map((year) => (
                       <SelectItem key={year} value={year}>{year}</SelectItem>
@@ -271,7 +297,7 @@ export function AlumniPortal() {
                 </Select>
                 <Select value={instrumentFilter} onValueChange={setInstrumentFilter}>
                   <SelectTrigger><SelectValue placeholder={t('filterInstrument')} /></SelectTrigger>
-                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
+                  <SelectContent dir={dir}>
                     <SelectItem value='all'>{t('allInstruments')}</SelectItem>
                     {Array.from(new Set(alumni.map((item) => item.primaryInstrument))).sort().map((name) => (
                       <SelectItem key={name} value={name}>{name}</SelectItem>
@@ -330,6 +356,7 @@ export function AlumniPortal() {
           </Card>
         </TabsContent>
 
+        {/* ── Profile ────────────────────────────────────────────────── */}
         <TabsContent value='profile' className='space-y-4'>
           <Card>
             <CardHeader>
@@ -338,34 +365,81 @@ export function AlumniPortal() {
             </CardHeader>
             <CardContent>
               <Form {...profileForm}>
-                <form onSubmit={profileForm.handleSubmit(saveProfile as any)} className='space-y-4'>
+                <form onSubmit={profileForm.handleSubmit(saveProfile as any)} className='space-y-4' dir={dir}>
                   <div className='grid gap-3 md:grid-cols-2'>
                     <FormField control={profileForm.control as any} name='displayName' render={({ field }) => (
-                      <FormItem><FormLabel>{t('displayName')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>{t('displayName')}</FormLabel>
+                        <FormControl><Input dir={dir} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                     <FormField control={profileForm.control as any} name='graduationYear' render={({ field }) => (
-                      <FormItem><FormLabel>{t('graduationYear')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>{t('graduationYear')}</FormLabel>
+                        <FormControl><Input type='number' dir='ltr' className='text-start' {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                   </div>
 
                   <div className='grid gap-3 md:grid-cols-2'>
                     <FormField control={profileForm.control as any} name='primaryInstrument' render={({ field }) => (
-                      <FormItem><FormLabel>{t('primaryInstrument')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>{t('primaryInstrument')}</FormLabel>
+                        <FormControl><Input dir={dir} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                     <FormField control={profileForm.control as any} name='currentOccupation' render={({ field }) => (
-                      <FormItem><FormLabel>{t('currentOccupation')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem>
+                        <FormLabel>{t('currentOccupation')}</FormLabel>
+                        <FormControl><Input dir={dir} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )} />
                   </div>
 
-                  <FormField control={profileForm.control as any} name='bioHe' render={({ field }) => (
-                    <FormItem><FormLabel>{t('bioHe')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={profileForm.control as any} name='bioEn' render={({ field }) => (
-                    <FormItem><FormLabel>{t('bioEn')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
+                  {/* Bio fields — each has a fixed dir matching the language */}
+                  <div className='grid gap-3 md:grid-cols-2'>
+                    <FormField control={profileForm.control as any} name='bioHe' render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('bioHe')}</FormLabel>
+                        <FormControl><Textarea dir='rtl' {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control as any} name='bioEn' render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('bioEn')}</FormLabel>
+                        <FormControl><Textarea dir='ltr' className='text-start' {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+                  <div className='grid gap-3 md:grid-cols-2'>
+                    <FormField control={profileForm.control as any} name='bioAr' render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('bioAr')}</FormLabel>
+                        <FormControl><Textarea dir='rtl' {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control as any} name='bioRu' render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('bioRu')}</FormLabel>
+                        <FormControl><Textarea dir='ltr' className='text-start' {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
 
                   <FormField control={profileForm.control as any} name='profilePhotoUrl' render={({ field }) => (
-                    <FormItem><FormLabel>{t('profilePhotoUrl')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem>
+                      <FormLabel>{t('profilePhotoUrl')}</FormLabel>
+                      <FormControl><Input dir='ltr' className='text-start' {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )} />
 
                   <div className='grid gap-3 md:grid-cols-2'>
@@ -383,13 +457,16 @@ export function AlumniPortal() {
                     )} />
                   </div>
 
-                  <Button type='submit'>{commonT('save')}</Button>
+                  <div className='flex justify-end'>
+                    <Button type='submit'>{commonT('save')}</Button>
+                  </div>
                 </form>
               </Form>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* ── Masterclasses ──────────────────────────────────────────── */}
         <TabsContent value='masterClasses' className='space-y-4'>
           {canCreateMasterClass && (
             <Card>
@@ -399,41 +476,118 @@ export function AlumniPortal() {
               </CardHeader>
               <CardContent>
                 <Form {...masterClassForm}>
-                  <form onSubmit={masterClassForm.handleSubmit(submitMasterClass as any)} className='space-y-4'>
+                  <form onSubmit={masterClassForm.handleSubmit(submitMasterClass as any)} className='space-y-4' dir={dir}>
+                    {/* Titles */}
                     <div className='grid gap-3 md:grid-cols-2'>
                       <FormField control={masterClassForm.control as any} name='titleHe' render={({ field }) => (
-                        <FormItem><FormLabel>{t('titleHe')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('titleHe')}</FormLabel>
+                          <FormControl><Input dir='rtl' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='titleEn' render={({ field }) => (
-                        <FormItem><FormLabel>{t('titleEn')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('titleEn')}</FormLabel>
+                          <FormControl><Input dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                     </div>
-                    <FormField control={masterClassForm.control as any} name='descriptionHe' render={({ field }) => (
-                      <FormItem><FormLabel>{t('descriptionHe')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={masterClassForm.control as any} name='descriptionEn' render={({ field }) => (
-                      <FormItem><FormLabel>{t('descriptionEn')}</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
+                    <div className='grid gap-3 md:grid-cols-2'>
+                      <FormField control={masterClassForm.control as any} name='titleAr' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('titleAr')}</FormLabel>
+                          <FormControl><Input dir='rtl' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='titleRu' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('titleRu')}</FormLabel>
+                          <FormControl><Input dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                    {/* Descriptions */}
+                    <div className='grid gap-3 md:grid-cols-2'>
+                      <FormField control={masterClassForm.control as any} name='descriptionHe' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('descriptionHe')}</FormLabel>
+                          <FormControl><Textarea dir='rtl' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='descriptionEn' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('descriptionEn')}</FormLabel>
+                          <FormControl><Textarea dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                    <div className='grid gap-3 md:grid-cols-2'>
+                      <FormField control={masterClassForm.control as any} name='descriptionAr' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('descriptionAr')}</FormLabel>
+                          <FormControl><Textarea dir='rtl' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={masterClassForm.control as any} name='descriptionRu' render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('descriptionRu')}</FormLabel>
+                          <FormControl><Textarea dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                    {/* Logistics */}
                     <div className='grid gap-3 md:grid-cols-3'>
                       <FormField control={masterClassForm.control as any} name='instrument' render={({ field }) => (
-                        <FormItem><FormLabel>{t('instrument')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('instrument')}</FormLabel>
+                          <FormControl><Input dir={dir} {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='date' render={({ field }) => (
-                        <FormItem><FormLabel>{t('date')}</FormLabel><FormControl><Input type='date' {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('date')}</FormLabel>
+                          <FormControl><Input type='date' dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='startTime' render={({ field }) => (
-                        <FormItem><FormLabel>{t('startTime')}</FormLabel><FormControl><Input type='time' {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('startTime')}</FormLabel>
+                          <FormControl><Input type='time' dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                     </div>
                     <div className='grid gap-3 md:grid-cols-3'>
                       <FormField control={masterClassForm.control as any} name='durationMinutes' render={({ field }) => (
-                        <FormItem><FormLabel>{t('duration')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('duration')}</FormLabel>
+                          <FormControl><Input type='number' dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='maxParticipants' render={({ field }) => (
-                        <FormItem><FormLabel>{t('maxParticipants')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('maxParticipants')}</FormLabel>
+                          <FormControl><Input type='number' dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='location' render={({ field }) => (
-                        <FormItem><FormLabel>{t('location')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('location')}</FormLabel>
+                          <FormControl><Input dir={dir} {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                     </div>
                     <div className='grid gap-3 md:grid-cols-2'>
@@ -444,10 +598,16 @@ export function AlumniPortal() {
                         </FormItem>
                       )} />
                       <FormField control={masterClassForm.control as any} name='priceILS' render={({ field }) => (
-                        <FormItem><FormLabel>{t('priceILS')}</FormLabel><FormControl><Input type='number' {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem>
+                          <FormLabel>{t('priceILS')}</FormLabel>
+                          <FormControl><Input type='number' dir='ltr' className='text-start' {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )} />
                     </div>
-                    <Button type='submit'>{t('submitMasterClass')}</Button>
+                    <div className='flex justify-end'>
+                      <Button type='submit'>{t('submitMasterClass')}</Button>
+                    </div>
                   </form>
                 </Form>
               </CardContent>
@@ -495,7 +655,6 @@ export function AlumniPortal() {
                               toast({ variant: 'destructive', title: t('registrationFailed') });
                               return;
                             }
-
                             if ((result.chargedILS || 0) > 0) {
                               toast({ title: t('chargedTitle'), description: t('chargedDesc', { amount: result.chargedILS || 0 }) });
                             } else {
@@ -514,6 +673,7 @@ export function AlumniPortal() {
           </Card>
         </TabsContent>
 
+        {/* ── Review / Admin ─────────────────────────────────────────── */}
         <TabsContent value='review' className='space-y-4'>
           {isAdmin && (
             <Card>
@@ -524,7 +684,7 @@ export function AlumniPortal() {
               <CardContent className='grid gap-3 md:grid-cols-[1fr_180px_auto]'>
                 <Select value={graduateStudentId} onValueChange={setGraduateStudentId}>
                   <SelectTrigger><SelectValue placeholder={t('selectStudent')} /></SelectTrigger>
-                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
+                  <SelectContent dir={dir}>
                     {gradCandidates.map((item) => (
                       <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                     ))}
@@ -532,7 +692,7 @@ export function AlumniPortal() {
                 </Select>
                 <div className='space-y-1'>
                   <Label htmlFor='grad-year'>{t('graduationYear')}</Label>
-                  <Input id='grad-year' type='number' value={graduateYear} onChange={(e) => setGraduateYear(e.target.value)} />
+                  <Input id='grad-year' type='number' dir='ltr' className='text-start' value={graduateYear} onChange={(e) => setGraduateYear(e.target.value)} />
                 </div>
                 <div className='flex items-end'>
                   <Button type='button' onClick={onGraduate}>{t('markGraduated')}</Button>
@@ -553,10 +713,10 @@ export function AlumniPortal() {
                   <div>
                     <p className='font-medium text-start'>{localizedTitle(item.title)}</p>
                     <p className='text-sm text-muted-foreground'>
-                    <span>{item.instructor.displayName}</span>
-                    <span aria-hidden='true' className='mx-1'>&middot;</span>
-                    <span>{item.instrument}</span>
-                  </p>
+                      <span>{item.instructor.displayName}</span>
+                      <span aria-hidden='true' className='mx-1'>&middot;</span>
+                      <span>{item.instrument}</span>
+                    </p>
                   </div>
                   {isAdmin && (
                     <Button type='button' size='sm' onClick={() => publishMasterClass(item.id)}>{t('publishButton')}</Button>
@@ -570,4 +730,3 @@ export function AlumniPortal() {
     </div>
   );
 }
-

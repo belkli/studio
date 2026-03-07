@@ -1,8 +1,8 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useTranslations } from 'next-intl';
-import type { FormSubmission, FormStatus } from '@/lib/types';
+import { useTranslations, useLocale } from 'next-intl';
+import type { FormStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,6 +12,7 @@ import { Search } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { Combobox } from '@/components/ui/combobox';
 
 const ministryViewableStatuses: FormStatus[] = ['APPROVED', 'REVISION_REQUIRED', 'FINAL_APPROVED'];
 
@@ -19,6 +20,8 @@ export default function MinistryDashboard() {
   const { user, users, conservatoriums, conservatoriumInstruments, formSubmissions: allForms } = useAuth();
   const t = useTranslations('Ministry');
   const tc = useTranslations('Common.shared');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     formType: 'all',
@@ -45,7 +48,12 @@ export default function MinistryDashboard() {
       const conservatoriumMatch = filters.conservatorium === 'all' || form.conservatoriumName === filters.conservatorium;
       const gradeMatch = filters.grade === 'all' || form.grade === filters.grade;
       const statusMatch = filters.status === 'all' || form.status === filters.status;
-      const instrumentMatch = userHasInstrument((student?.instruments || []).map((i) => i.instrument), filters.instrument, conservatoriumInstruments, student?.conservatoriumId);
+      const instrumentMatch = userHasInstrument(
+        (student?.instruments || []).map((i) => i.instrument),
+        filters.instrument === 'all' ? undefined : filters.instrument,
+        conservatoriumInstruments,
+        student?.conservatoriumId,
+      );
 
       return searchMatch && typeMatch && conservatoriumMatch && gradeMatch && statusMatch && instrumentMatch;
     });
@@ -55,7 +63,7 @@ export default function MinistryDashboard() {
     setFilters(prev => ({ ...prev, [filterName]: value }));
   };
 
-  if (user?.role !== 'ministry_director') {
+  if (user?.role !== 'ministry_director' && user?.role !== 'site_admin') {
     return (
       <div className="text-center p-8">
         <h1 className="text-2xl font-bold text-destructive">{t('noPermission')}</h1>
@@ -100,7 +108,7 @@ export default function MinistryDashboard() {
               />
             </div>
 
-            <Select dir="rtl" value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
+            <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.status} onValueChange={(v) => handleFilterChange('status', v)}>
               <SelectTrigger><SelectValue placeholder={t('filterByStatus')} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t('allStatuses')}</SelectItem>
@@ -108,7 +116,7 @@ export default function MinistryDashboard() {
               </SelectContent>
             </Select>
 
-            <Select dir="rtl" value={filters.formType} onValueChange={(v) => handleFilterChange('formType', v)}>
+            <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.formType} onValueChange={(v) => handleFilterChange('formType', v)}>
               <SelectTrigger><SelectValue placeholder={t('filterByFormType')} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t('allFormTypes')}</SelectItem>
@@ -116,15 +124,19 @@ export default function MinistryDashboard() {
               </SelectContent>
             </Select>
 
-            <Select dir="rtl" value={filters.conservatorium} onValueChange={(v) => handleFilterChange('conservatorium', v)}>
-              <SelectTrigger><SelectValue placeholder={t('filterByConservatorium')} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('allConservatories')}</SelectItem>
-                {conservatoriums.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={[
+                { value: 'all', label: t('allConservatories') },
+                ...conservatoriums.map(c => ({ value: c.name, label: c.name })),
+              ]}
+              selectedValue={filters.conservatorium}
+              onSelectedValueChange={(v) => handleFilterChange('conservatorium', v || 'all')}
+              placeholder={t('filterByConservatorium')}
+              searchPlaceholder={t('searchPlaceholder')}
+              notFoundMessage={t('noFormsFound')}
+            />
 
-            <Select dir="rtl" value={filters.grade} onValueChange={(v) => handleFilterChange('grade', v)}>
+            <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.grade} onValueChange={(v) => handleFilterChange('grade', v)}>
               <SelectTrigger><SelectValue placeholder={t('filterByGrade')} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t('allGrades')}</SelectItem>
@@ -132,13 +144,17 @@ export default function MinistryDashboard() {
               </SelectContent>
             </Select>
 
-            <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}>
-              <SelectTrigger><SelectValue placeholder={t('filterByInstrument')} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('allInstruments')}</SelectItem>
-                {instrumentOptions.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={[
+                { value: 'all', label: t('allInstruments') },
+                ...instrumentOptions.map(i => ({ value: i, label: i })),
+              ]}
+              selectedValue={filters.instrument}
+              onSelectedValueChange={(v) => handleFilterChange('instrument', v || 'all')}
+              placeholder={t('filterByInstrument')}
+              searchPlaceholder={t('searchPlaceholder')}
+              notFoundMessage={t('noFormsFound')}
+            />
           </div>
         </CardContent>
       </Card>

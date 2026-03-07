@@ -474,7 +474,9 @@
       "calendarTitle": "Календарь Заголовок",
       "planned": "Запланировано",
       "reportUnavailability": "Отчет Унаваилабилитй",
-      "messagesWip": "Сообщения стереть"
+      "messagesWip": "Сообщения стереть",
+      "instrumentPending": "Инструмент ожидается",
+      "instrumentReceived": "Инструмент получен"
     },
     "tabs": {
       "overview": "Обзор",
@@ -575,7 +577,8 @@
       "academicYear": "Учебный год {year}",
       "whatsapp": "Ватсап",
       "openLink": "Открыть ссылку"
-    }
+    },
+    "coordinatorPageTitle": "Координатор музыкальной школы"
   },
   "OpenDay": {
     "allBranches": "Все филиалы и консерваториес",

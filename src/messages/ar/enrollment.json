@@ -474,7 +474,9 @@
       "calendarTitle": "التقويم",
       "planned": "مخطط",
       "reportUnavailability": "الإبلاغ عن عدم التوفر",
-      "messagesWip": "الرسائل - قريبًا"
+      "messagesWip": "الرسائل - قريبًا",
+      "instrumentPending": "الآلة معلقة",
+      "instrumentReceived": "تم استلام الآلة"
     },
     "tabs": {
       "overview": "نظرة عامة",
@@ -575,7 +577,8 @@
       "academicYear": "العام الدراسي {year}",
       "whatsapp": "واتساب",
       "openLink": "فتح الرابط"
-    }
+    },
+    "coordinatorPageTitle": "منسق المدرسة الموسيقية"
   },
   "OpenDay": {
     "allBranches": "جميع الفروع والكونسرفتوار",

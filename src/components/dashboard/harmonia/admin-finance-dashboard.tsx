@@ -30,7 +30,7 @@ export function AdminFinancialDashboard() {
     ];
 
     const outstandingInvoices = invoices.filter(inv => inv.status === 'SENT' || inv.status === 'OVERDUE');
-    const collectionRate = (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100;
+    const collectionRate = invoices.length > 0 ? (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100 : 0;
 
     const teachers = users.filter(u => u.role === 'teacher');
     const teacherRevenue = useMemo(() => {

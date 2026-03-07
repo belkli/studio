@@ -474,7 +474,9 @@
       "calendarTitle": "Calendar Title",
       "planned": "Planned",
       "reportUnavailability": "Report Unavailability",
-      "messagesWip": "Messages Wip"
+      "messagesWip": "Messages Wip",
+      "instrumentPending": "Instrument Pending",
+      "instrumentReceived": "Instrument Received"
     },
     "tabs": {
       "overview": "Overview",
@@ -575,7 +577,8 @@
       "academicYear": "Academic year {year}",
       "whatsapp": "WhatsApp",
       "openLink": "Open link"
-    }
+    },
+    "coordinatorPageTitle": "Playing School Coordinator"
   },
   "OpenDay": {
     "heroTitle": "Conservatory Open Day",

@@ -470,6 +470,8 @@
       "alertInstrument": "התראת כלי נגינה",
       "alertPayment": "התראת תשלום",
       "alertPositive": "התראה חיובית",
+      "instrumentPending": "ממתין לכלי",
+      "instrumentReceived": "כלי התקבל",
       "studentsDesc": "סקירת תלמידים",
       "calendarTitle": "לוח שנה",
       "planned": "מתוכנן",
@@ -575,7 +577,8 @@
       "academicYear": "שנת לימודים {year}",
       "whatsapp": "ווטסאפ",
       "openLink": "פתח קישור"
-    }
+    },
+    "coordinatorPageTitle": "ניהול תוכניות בית ספר מנגן"
   },
   "OpenDay": {
     "allBranches": "כל הסניפים והקונסרבטוריונים",
