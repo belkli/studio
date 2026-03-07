@@ -1017,7 +1017,7 @@ function mapMasterClasses(rows: RawMasterClass[], idMap: Map<string, string>): M
       id: row.id,
       conservatoriumId: idMap.get(row.conservatorium_id) || row.conservatorium_id,
       title: {
-        he: (title.he as string) || (title.en as string) || '???? ???',
+        he: (title.he as string) || (title.en as string) || 'מאסטרקלאס',
         en: (title.en as string) || (title.he as string) || 'Master Class',
         ru: (title.ru as string) || undefined,
         ar: (title.ar as string) || undefined,

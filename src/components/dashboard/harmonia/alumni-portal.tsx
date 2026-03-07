@@ -200,7 +200,7 @@ export function AlumniPortal() {
     { value: 'review', label: t('reviewTab') },
   ];
 
-  const orderedTabs = isRtl ? [...tabs].reverse() : tabs;
+  const orderedTabs = tabs;
 
   const getInitials = (name: string) => {
     const parts = name.trim().split(/\s+/);
@@ -262,7 +262,7 @@ export function AlumniPortal() {
               <div className='grid gap-3 md:grid-cols-2'>
                 <Select value={yearFilter} onValueChange={setYearFilter}>
                   <SelectTrigger><SelectValue placeholder={t('filterYear')} /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
                     <SelectItem value='all'>{t('allYears')}</SelectItem>
                     {Array.from(new Set(alumni.map((item) => String(item.graduationYear)))).sort().map((year) => (
                       <SelectItem key={year} value={year}>{year}</SelectItem>
@@ -271,7 +271,7 @@ export function AlumniPortal() {
                 </Select>
                 <Select value={instrumentFilter} onValueChange={setInstrumentFilter}>
                   <SelectTrigger><SelectValue placeholder={t('filterInstrument')} /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
                     <SelectItem value='all'>{t('allInstruments')}</SelectItem>
                     {Array.from(new Set(alumni.map((item) => item.primaryInstrument))).sort().map((name) => (
                       <SelectItem key={name} value={name}>{name}</SelectItem>
@@ -524,7 +524,7 @@ export function AlumniPortal() {
               <CardContent className='grid gap-3 md:grid-cols-[1fr_180px_auto]'>
                 <Select value={graduateStudentId} onValueChange={setGraduateStudentId}>
                   <SelectTrigger><SelectValue placeholder={t('selectStudent')} /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent dir={isRtl ? 'rtl' : 'ltr'}>
                     {gradCandidates.map((item) => (
                       <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
                     ))}

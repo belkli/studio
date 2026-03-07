@@ -245,7 +245,7 @@ describe('MemoryDatabaseAdapter', () => {
                 conservatoriumId: 'cons-1',
                 name: 'Spring Recital',
                 type: 'CONCERT',
-                status: 'UPCOMING',
+                status: 'PLANNING',
                 eventDate: new Date().toISOString(),
             });
             expect(created.id).toBeTruthy();
@@ -257,7 +257,7 @@ describe('MemoryDatabaseAdapter', () => {
                 conservatoriumId: 'cons-1',
                 name: 'Old Event Name',
                 type: 'RECITAL',
-                status: 'UPCOMING',
+                status: 'PLANNING',
                 eventDate: new Date().toISOString(),
             });
             await db.events.update(created.id, { name: 'Updated Event Name' });
@@ -270,7 +270,7 @@ describe('MemoryDatabaseAdapter', () => {
                 conservatoriumId: 'cons-1',
                 name: 'Temporary Event',
                 type: 'CONCERT',
-                status: 'UPCOMING',
+                status: 'PLANNING',
                 eventDate: new Date().toISOString(),
             });
             await db.events.delete(created.id);
@@ -290,12 +290,12 @@ describe('MemoryDatabaseAdapter', () => {
         it('creates a form submission', async () => {
             const created = await db.forms.create({
                 conservatoriumId: 'cons-1',
-                type: 'ENROLLMENT',
-                status: 'PENDING',
+                formType: 'ENROLLMENT',
+                status: 'PENDING_ADMIN',
                 submittedBy: 'parent-user-1',
             });
             expect(created.id).toBeTruthy();
-            expect(created.status).toBe('PENDING');
+            expect(created.status).toBe('PENDING_ADMIN');
         });
     });
 
@@ -303,27 +303,27 @@ describe('MemoryDatabaseAdapter', () => {
         it('findPending returns only pending forms', async () => {
             await db.forms.create({
                 conservatoriumId: 'cons-1',
-                type: 'ENROLLMENT',
-                status: 'PENDING',
+                formType: 'ENROLLMENT',
+                status: 'PENDING_ADMIN',
                 submittedBy: 'parent-user-1',
             });
             await db.forms.create({
                 conservatoriumId: 'cons-1',
-                type: 'ENROLLMENT',
+                formType: 'ENROLLMENT',
                 status: 'APPROVED',
                 submittedBy: 'parent-user-2',
             });
             const pending = await db.approvals.findPending('cons-1');
             expect(pending.every((f) =>
-                ['PENDING', 'PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED'].includes(f.status)
+                ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED'].includes(f.status)
             )).toBe(true);
         });
 
         it('findPending returns all pending forms when no conservatoriumId is given', async () => {
             await db.forms.create({
                 conservatoriumId: 'cons-A',
-                type: 'ENROLLMENT',
-                status: 'PENDING',
+                formType: 'ENROLLMENT',
+                status: 'PENDING_ADMIN',
                 submittedBy: 'user-1',
             });
             const pending = await db.approvals.findPending();

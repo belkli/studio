@@ -895,6 +895,8 @@ export const mockAlumni: Alumnus[] = [
     bio: {
       he: 'תרגלו כל יום כדי לפתח כישורים מוסיקליים.',
       en: 'Classical track graduate performing across Israel and Europe.',
+      ar: 'خريج مسار كلاسيكي يؤدي عروضاً في إسرائيل وأوروبا.',
+      ru: 'Выпускник классического отделения, выступающий в Израиле и Европе.',
     },
     profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni1',
     isPublic: true,
@@ -913,8 +915,10 @@ export const mockAlumni: Alumnus[] = [
     primaryInstrument: 'Violin',
     currentOccupation: 'Orchestra violinist',
     bio: {
-      he: '????? ??????? ????? ?????? ???.',
+      he: 'כינורנית תזמורת ומרצת מאסטרקלאסים אורחת.',
       en: 'Orchestra violinist and guest master class instructor.',
+      ar: 'عازفة كمان في الأوركسترا ومدرّسة دروس رئيسية ضيفة.',
+      ru: 'Оркестровый скрипач и приглашённый преподаватель мастер-классов.',
     },
     profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni2',
     isPublic: true,
@@ -930,8 +934,10 @@ export const mockAlumni: Alumnus[] = [
     primaryInstrument: 'Voice',
     currentOccupation: 'Opera soloist',
     bio: {
-      he: '??? ????? ???? ?????? ??????.',
+      he: 'סולן אופרה פעיל בישראל ובחו״ל.',
       en: 'Active opera soloist in Israel and abroad.',
+      ar: 'مغنّي سولو أوبرا نشط في إسرائيل والخارج.',
+      ru: 'Активный оперный солист в Израиле и за рубежом.',
     },
     profilePhotoUrl: 'https://i.pravatar.cc/150?u=alumni3',
     isPublic: false,
@@ -944,8 +950,8 @@ export const mockMasterclasses: Masterclass[] = [
   {
     id: 'mc-1',
     conservatoriumId: 'cons-15',
-    title: { he: '??????? ??????? ??????', en: 'Advanced Piano Techniques' },
-    description: { he: '???? ??? ????????? ???????', en: 'Master class for advanced pianists' },
+    title: { he: 'טכניקות פסנתר מתקדמות', en: 'Advanced Piano Techniques', ar: 'تقنيات البيانو المتقدمة', ru: 'Продвинутые техники фортепиано' },
+    description: { he: 'מאסטרקלאס לפסנתרנים מתקדמים', en: 'Master class for advanced pianists', ar: 'درس رئيسي لعازفي البيانو المتقدمين', ru: 'Мастер-класс для продвинутых пианистов' },
     instructor: {
       userId: 'teacher-user-1',
       displayName: 'Miriam Cohen',
@@ -967,8 +973,8 @@ export const mockMasterclasses: Masterclass[] = [
   {
     id: 'mc-2',
     conservatoriumId: 'cons-15',
-    title: { he: '???? ????????? ???????', en: 'Orchestra Audition Prep' },
-    description: { he: '???? ??????? ?????????', en: 'Practical tools for audition success' },
+    title: { he: 'הכנה לאודישן תזמורתי', en: 'Orchestra Audition Prep', ar: 'التحضير لأوديشن الأوركسترا', ru: 'Подготовка к прослушиванию в оркестр' },
+    description: { he: 'כלים מעשיים להצלחה באודישן', en: 'Practical tools for audition success', ar: 'أدوات عملية للنجاح في الأوديشن', ru: 'Практические инструменты для успеха на прослушивании' },
     instructor: {
       userId: 'alumni-user-2',
       displayName: 'Maya Levi',

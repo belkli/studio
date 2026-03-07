@@ -746,8 +746,10 @@ export function BookLessonWizard() {
                                                             locale={dateLocale}
                                                             className="rounded-md border"
                                                             components={isRtl ? {
-                                                                IconLeft: () => <ChevronRight className="h-4 w-4" />,
-                                                                IconRight: () => <ChevronLeft className="h-4 w-4" />,
+                                                                Chevron: ({ orientation, ...props }) =>
+                                                                    orientation === 'left'
+                                                                        ? <ChevronRight {...props} className="h-4 w-4" />
+                                                                        : <ChevronLeft {...props} className="h-4 w-4" />,
                                                             } : undefined}
                                                         />
                                                     </FormControl>
