@@ -662,7 +662,8 @@
     "useMyLocation": "השתמש במיקום שלי",
     "locating": "מאתר...",
     "locationError": "לא ניתן לאתר מיקום. יש לאפשר גישה למיקום בדפדפן.",
-    "premiumOnly": "מורים פרימיום בלבד"
+    "premiumOnly": "מורים פרימיום בלבד",
+    "allSlotsShown": "הוצגו כל {count} השיעורים הזמינים"
   },
   "ExcellenceTrack": {
     "acceptBtn": "אישור ההזמנה",

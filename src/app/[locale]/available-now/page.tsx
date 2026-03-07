@@ -35,7 +35,7 @@ export default function AvailableNowPage() {
         </section>
 
         <section className="w-full py-10 md:py-12">
-          <div className="mx-auto max-w-5xl px-4">
+          <div className="mx-auto max-w-6xl px-4">
             <AvailableSlotsMarketplace />
           </div>
         </section>

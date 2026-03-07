@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/hooks/use-auth';
 import type { DayOfWeek, EmptySlot } from '@/lib/types';
@@ -114,6 +114,9 @@ export function AvailableSlotsMarketplace() {
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const PAGE_SIZE = 12;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const uniqueConservatoriums = useMemo(
     () => Array.from(new Map(conservatoriums.map((item) => [item.id, item])).values()),
@@ -311,6 +314,31 @@ export function AvailableSlotsMarketplace() {
     return result;
   }, [emptySlots, filters, conservatoriumInstruments, teacherSearch, premiumOnly, userLocation, consDistanceMap]);
 
+  // Reset visible count whenever filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filteredSlots]);
+
+  // Keep a ref to latest values so the scroll handler never has a stale closure
+  const visibleCountRef = useRef(visibleCount);
+  const totalCountRef = useRef(filteredSlots.length);
+  useEffect(() => { visibleCountRef.current = visibleCount; }, [visibleCount]);
+  useEffect(() => { totalCountRef.current = filteredSlots.length; }, [filteredSlots.length]);
+
+  // Load more when user scrolls near the bottom of the page
+  useEffect(() => {
+    function onScroll() {
+      if (visibleCountRef.current >= totalCountRef.current) return;
+      const scrolledTo = window.scrollY + window.innerHeight;
+      const threshold = document.documentElement.scrollHeight - 300;
+      if (scrolledTo >= threshold) {
+        setVisibleCount(c => Math.min(c + PAGE_SIZE, totalCountRef.current));
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleFilterChange = useCallback((filterName: keyof typeof filters, value: string) => {
     setFilters((prev) => ({ ...prev, [filterName]: value }));
   }, []);
@@ -495,11 +523,27 @@ export function AvailableSlotsMarketplace() {
       )}
 
       {filteredSlots.length > 0 ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredSlots.map((slot) => (
-            <SlotPromotionCard key={slot.id} slot={slot} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredSlots.slice(0, visibleCount).map((slot) => (
+              <SlotPromotionCard key={slot.id} slot={slot} />
+            ))}
+          </div>
+
+          {/* Sentinel — triggers next batch load */}
+          {visibleCount < filteredSlots.length && (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          )}
+
+          {/* End-of-results message */}
+          {visibleCount >= filteredSlots.length && filteredSlots.length > PAGE_SIZE && (
+            <p className="text-center text-sm text-muted-foreground py-6">
+              {t('allSlotsShown', { count: String(filteredSlots.length) })}
+            </p>
+          )}
+        </>
       ) : (
         <div className="py-20 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">

@@ -662,7 +662,8 @@
     "useMyLocation": "Use my location",
     "locating": "Locating...",
     "locationError": "Location access denied. Please enable location in your browser.",
-    "premiumOnly": "Premium teachers only"
+    "premiumOnly": "Premium teachers only",
+    "allSlotsShown": "All {count} available slots shown"
   },
   "ExcellenceTrack": {
     "successTitle": "Enrollment confirmed",

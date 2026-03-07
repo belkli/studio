@@ -662,7 +662,8 @@
     "useMyLocation": "استخدم موقعي",
     "locating": "جارٍ التحديد...",
     "locationError": "تم رفض الوصول إلى الموقع. يرجى تفعيل الموقع في المتصفح.",
-    "premiumOnly": "معلمون مميزون فقط"
+    "premiumOnly": "معلمون مميزون فقط",
+    "allSlotsShown": "تم عرض جميع {count} الفتحات المتاحة"
   },
   "ExcellenceTrack": {
     "acceptBtn": "قبول الدعوة",
