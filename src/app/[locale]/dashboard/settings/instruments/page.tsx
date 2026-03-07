@@ -5,9 +5,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, Link } from '@/i18n/routing';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,

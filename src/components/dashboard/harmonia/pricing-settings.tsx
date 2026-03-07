@@ -7,14 +7,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save } from "lucide-react";
+import { Save, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-const getPricingSchema = (t: any) => z.object({
+const getPricingSchema = (t: (key: string) => string) => z.object({
     baseRatePerLesson: z.object({
         '30': z.coerce.number().min(0, t('validation.positive')),
         '45': z.coerce.number().min(0, t('validation.positive')),
@@ -28,6 +28,7 @@ const getPricingSchema = (t: any) => z.object({
     }),
     adHocPremium: z.coerce.number().min(0, t('validation.positive')),
     trialPrice: z.coerce.number().min(0, t('validation.positive')),
+    premiumSurcharge: z.coerce.number().min(0).max(100, t('validation.percent')).optional().default(0),
 });
 
 type PricingFormData = {
@@ -35,6 +36,7 @@ type PricingFormData = {
     discounts: { pack5: number; pack10: number; yearly: number; sibling: number;[key: string]: number };
     adHocPremium: number;
     trialPrice: number;
+    premiumSurcharge?: number;
 };
 
 export function PricingSettings() {
@@ -47,12 +49,14 @@ export function PricingSettings() {
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
     const form = useForm<PricingFormData>({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(pricingSchema) as any,
         defaultValues: currentConservatorium?.pricingConfig || {
             baseRatePerLesson: { '30': 0, '45': 0, '60': 0 },
             discounts: { pack5: 0, pack10: 0, yearly: 0, sibling: 0 },
             adHocPremium: 0,
             trialPrice: 0,
+            premiumSurcharge: 0,
         },
     });
 
@@ -102,6 +106,19 @@ export function PricingSettings() {
                             <CardContent className="grid md:grid-cols-3 gap-4">
                                 <FormField control={form.control} name="trialPrice" render={({ field }) => (<FormItem> <FormLabel>{t('special.trial')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
                                 <FormField control={form.control} name="adHocPremium" render={({ field }) => (<FormItem> <FormLabel>{t('special.adHoc')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-yellow-200 dark:border-yellow-800">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                                    {t('premium.title')}
+                                </CardTitle>
+                                <CardDescription>{t('premium.description')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid md:grid-cols-3 gap-4">
+                                <FormField control={form.control} name="premiumSurcharge" render={({ field }) => (<FormItem> <FormLabel>{t('premium.surcharge')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
                             </CardContent>
                         </Card>
                     </div>

@@ -1,6 +1,4 @@
 ﻿
-import type { User as AuthUser } from 'firebase/auth';
-
 export type I18nText = { he?: string; en?: string; ar?: string; ru?: string };
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
@@ -293,6 +291,7 @@ export type PricingConfig = {
   };
   adHocPremium: number; // as a percentage, e.g. 15 for 15%
   trialPrice: number;
+  premiumSurcharge?: number; // % surcharge added on top of base rate when booking a premium-flagged teacher
 };
 
 export type CancellationPolicy = {
@@ -688,7 +687,7 @@ export type FormSubmission = {
   signedBy?: string;
   signedAt?: string;
 
-  formData?: Record<string, any>;
+  formData?: Record<string, unknown>;
   formTemplateId?: string;
 
   // Ministry approval fields (SDD-P5)
@@ -1865,7 +1864,7 @@ export type AIJob = {
   status: AIJobStatus;
   requestedAt: string;                  // ISO Timestamp
   completedAt?: string;                 // ISO Timestamp
-  result?: any;
+  result?: unknown;
   error?: string;
 };
 

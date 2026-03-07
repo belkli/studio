@@ -290,6 +290,11 @@
       "trial": "Trial Lesson Price",
       "adHoc": "Ad-Hoc Lesson Premium"
     },
+    "premium": {
+      "title": "Premium Teacher Pricing",
+      "description": "Additional surcharge applied when a student books a lesson with a premium-flagged teacher (⭐). Set teachers as premium in their user profile.",
+      "surcharge": "Premium Surcharge"
+    },
     "save": "Save Changes",
     "comparison": {
       "title": "Branch Rate Comparison",
