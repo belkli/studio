@@ -27,8 +27,7 @@ export function getLocalizedField(
 export function getLocalizedConservatorium(
     cons: Conservatorium,
     locale: string
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Conservatorium & { [key: string]: any } {
+): Conservatorium & { [key: string]: any } { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (locale === 'he' || !cons.translations) {
         return cons;
     }
@@ -68,8 +67,7 @@ export function getLocalizedConservatorium(
 export function getLocalizedUserProfile(
     user: User,
     locale: string
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-): User & { [key: string]: any } {
+): User & { [key: string]: any } { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (locale === 'he' || !user.translations) {
         return user;
     }
