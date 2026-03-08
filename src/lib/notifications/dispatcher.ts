@@ -15,6 +15,7 @@
  */
 
 import type { Channel, NotificationType, NotificationPreferences } from '@/lib/types';
+import { getDb } from '@/lib/db';
 
 // ── Types ────────────────────────────────────────────────────
 export interface NotificationPayload {
@@ -61,6 +62,40 @@ function isQuietHours(preferences: NotificationPreferences | undefined): boolean
         return currentTime >= startTime || currentTime < endTime;
     }
     return currentTime >= startTime && currentTime < endTime;
+}
+
+/**
+ * Returns an ISO string for the next 6:00 AM Israel time (Asia/Jerusalem).
+ * If it is already past 6 AM today in Israel, returns 6 AM tomorrow.
+ */
+function getNextIsraelMorning(): string {
+    const now = new Date();
+    // Get current hour in Israel
+    const israelHour = parseInt(
+        new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Asia/Jerusalem',
+            hour: '2-digit',
+            hour12: false,
+        }).format(now),
+        10,
+    );
+
+    // Calculate the offset: Israel is UTC+2 (winter) or UTC+3 (summer).
+    // We derive it from the current time difference.
+    const israelDateParts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Jerusalem',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(now); // "YYYY-MM-DD"
+
+    // Build a Date for 06:00 Israel today
+    const target = new Date(`${israelDateParts}T06:00:00+02:00`);
+    // If we're already past 6 AM Israel time, schedule for tomorrow
+    if (israelHour >= 6) {
+        target.setDate(target.getDate() + 1);
+    }
+    return target.toISOString();
 }
 
 /**
@@ -117,7 +152,29 @@ export async function dispatchNotification(
     // Check quiet hours (URGENT messages bypass quiet hours)
     if (isQuietHours(userPreferences) && payload.priority !== 'URGENT') {
         result.skippedQuietHours = true;
-        // In production: queue the notification for delivery after quiet hours
+
+        // Queue the notification for delivery after quiet hours (next 6:00 AM Israel time)
+        try {
+            const db = await getDb();
+            const scheduledFor = getNextIsraelMorning();
+            // TODO: Add `scheduledFor` field to the Notification type so queued
+            // notifications can be picked up by a cron job / Cloud Function at the
+            // scheduled time and re-dispatched.
+            await db.notifications.create({
+                userId: payload.userId,
+                title: payload.title,
+                message: payload.body,
+                link: payload.link ?? '',
+                read: false,
+                timestamp: scheduledFor,
+            });
+            console.warn(
+                `[Dispatcher] Notification for user ${payload.userId} queued for ${scheduledFor} (quiet hours)`
+            );
+        } catch (err) {
+            console.error('[Dispatcher] Failed to queue notification during quiet hours:', err);
+        }
+
         return result;
     }
 

@@ -8,6 +8,7 @@
 
 import type { PracticeLog, AchievementType } from '@/lib/types';
 import { PracticeLogSchema } from '@/lib/validation/practice-log';
+import { getDb } from '@/lib/db';
 
 export interface LogPracticeInput {
     studentId: string;
@@ -40,7 +41,7 @@ function calculatePoints(durationMinutes: number): number {
 
 /**
  * Logs a practice session and checks for achievement triggers.
- * 
+ *
  * In production with Firestore:
  * 1. Validate input with Zod schema
  * 2. Create PracticeLog document
@@ -80,12 +81,13 @@ export async function logPracticeSession(input: LogPracticeInput): Promise<LogPr
             createdAt: now,
         };
 
-        // In production with Firestore:
-        // 1. Write practice log to conservatoriums/{cid}/practiceLogs/{logId}
-        // 2. Query recent logs to calculate streak
-        // 3. Query total hours to check milestone achievements
-        // 4. Award any triggered achievements
-        // 5. Update student's total points
+        const db = await getDb();
+        await db.practiceLogs.create(practiceLog);
+
+        // TODO: db.practiceLogs.findByConservatorium() to compute streak when
+        //       a query-by-student method is added to the interface.
+        // TODO: db.achievements.create() — no achievements repository in
+        //       DatabaseAdapter yet; add when interface is extended.
 
         const achievementsEarned: AchievementType[] = [];
 

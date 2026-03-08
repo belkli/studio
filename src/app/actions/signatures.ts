@@ -127,14 +127,23 @@ export async function submitSignatureAction(
     return { ok: false, error: 'DB_ERROR' };
   }
 
-  // Log the audit record. In production, this writes to /signatureAuditRecords/{auditId}
-  // via the Admin SDK (bypasses Security Rules).
-  console.info('[submitSignatureAction] Audit record created:', auditId, {
-    formSubmissionId: auditRecord.formSubmissionId,
-    signerId: auditRecord.signerId,
-    signedAt: auditRecord.signedAt,
-    signatureHash: auditRecord.signatureHash,
-  });
+  // Log the audit record to complianceLogs (append-only).
+  // ComplianceLog.action doesn't have a SIGNATURE variant yet; CONSENT_GIVEN
+  // is the closest semantic match for a signed enrollment agreement.
+  // TODO: add 'SIGNATURE_CREATED' to ComplianceLog.action when the type is extended.
+  try {
+    await db.complianceLogs.create({
+      id: auditId,
+      action: 'CONSENT_GIVEN',
+      subjectId: auditRecord.formSubmissionId,
+      reason: `Signature by ${auditRecord.signerRole} ${auditRecord.signerId} — hash ${auditRecord.signatureHash}`,
+      performedAt: auditRecord.signedAt,
+      performedBy: auditRecord.signerId,
+    });
+  } catch (err) {
+    // Non-fatal: form is already updated; log and continue.
+    console.error('[submitSignatureAction] Failed to write compliance log:', err);
+  }
 
   return { ok: true, signatureUrl };
 }

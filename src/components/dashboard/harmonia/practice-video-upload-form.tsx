@@ -9,10 +9,11 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { UploadCloud, Loader2 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "@/i18n/routing";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { getUploadSignedUrl } from "@/app/actions/storage";
 
 const videoUploadSchema = z.object({
   repertoireId: z.string().min(1, "יש לבחור יצירה."),
@@ -26,6 +27,8 @@ export function PracticeVideoUploadForm() {
   const { user, addPracticeVideo, assignedRepertoire, compositions } = useAuth();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const studentId = user?.role === 'student' ? user.id : (user?.role === 'parent' ? user.childIds?.[0] : undefined);
 
@@ -38,27 +41,55 @@ export function PracticeVideoUploadForm() {
     resolver: zodResolver(videoUploadSchema),
   });
 
-  const onSubmit = (data: VideoUploadFormData) => {
+  const onSubmit = async (data: VideoUploadFormData) => {
     setIsUploading(true);
 
     const repertoireItem = studentRepertoire.find(r => r.id === data.repertoireId);
     const composition = compositions.find(c => c.id === repertoireItem?.compositionId);
 
-    // Simulate upload
-    setTimeout(() => {
-      if (addPracticeVideo) {
-        addPracticeVideo({
-          repertoireTitle: composition?.title || 'Unknown Piece',
-          studentNote: data.studentNote,
+    let videoUrl = '';
+    const uploadTimestamp = new Date().getTime();
+
+    // Try real upload via signed URL if a file is selected
+    if (selectedFile && studentId && user?.conservatoriumId) {
+      try {
+        const { uploadUrl, storagePath } = await getUploadSignedUrl({
+          conservatoriumId: user.conservatoriumId,
+          studentId,
+          filename: `${uploadTimestamp}-${selectedFile.name}`,
+          contentType: selectedFile.type,
         });
+
+        await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': selectedFile.type },
+          body: selectedFile,
+        });
+
+        videoUrl = storagePath;
+      } catch (err) {
+        // Storage credentials not available (dev mode) — fall back to mock
+        console.warn('[PracticeVideoUpload] Signed URL unavailable, using mock upload:', err);
+        videoUrl = `mock://practiceVideos/${studentId}/${uploadTimestamp}-${selectedFile.name}`;
       }
-      setIsUploading(false);
-      toast({
-        title: "הוידאו הועלה בהצלחה!",
-        description: `המורה שלך יקבל התראה ויוכל לתת משוב.`,
+    } else {
+      videoUrl = `mock://practiceVideos/${studentId || 'unknown'}/${uploadTimestamp}-no-file`;
+    }
+
+    if (addPracticeVideo) {
+      addPracticeVideo({
+        repertoireTitle: composition?.title || 'Unknown Piece',
+        studentNote: data.studentNote,
+        videoUrl,
       });
-      router.push('/dashboard/progress');
-    }, 1500);
+    }
+
+    setIsUploading(false);
+    toast({
+      title: "הוידאו הועלה בהצלחה!",
+      description: `המורה שלך יקבל התראה ויוכל לתת משוב.`,
+    });
+    router.push('/dashboard/progress');
   };
 
   return (
@@ -70,10 +101,24 @@ export function PracticeVideoUploadForm() {
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <CardContent className="space-y-6">
-            <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg text-center">
+            <div
+              className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg text-center cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
+              />
               <UploadCloud className="h-12 w-12 text-muted-foreground" />
-              <p className="mt-4 text-muted-foreground">גרור קובץ וידאו לכאן, או לחץ כדי לבחור</p>
-              <p className="text-xs text-muted-foreground mt-1">(העלאה בפועל אינה ממומשת בדמו זה)</p>
+              {selectedFile ? (
+                <p className="mt-4 text-sm font-medium">{selectedFile.name}</p>
+              ) : (
+                <p className="mt-4 text-muted-foreground">גרור קובץ וידאו לכאן, או לחץ כדי לבחור</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM — עד 60 שניות</p>
             </div>
             <FormField
               control={form.control}

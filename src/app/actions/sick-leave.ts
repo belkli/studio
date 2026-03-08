@@ -2,13 +2,14 @@
  * @fileoverview Server action for teacher sick leave.
  * SDD-P2 (Teacher) specifies: teacher reports sick → batch cancel
  * affected slots → issue makeup credits → notify admin + parents.
- * 
+ *
  * SDD-P6 (QA) flags a rate-limit check: if a teacher has >3 sick leaves
  * in 30 days, an admin review flag should be raised.
  */
 'use server';
 
 import type { TeacherException } from '@/lib/types';
+import { getDb } from '@/lib/db';
 
 const _MAX_SICK_LEAVES_BEFORE_FLAG = 3;
 const _SICK_LEAVE_WINDOW_DAYS = 30;
@@ -32,23 +33,19 @@ interface SubmitSickLeaveResult {
 
 /**
  * Submits a sick leave request for a teacher.
- * 
- * Business logic (to be implemented with Firestore transactions):
- * 1. Create TeacherException document
- * 2. Query all SCHEDULED slots for this teacher in the date range
- * 3. Batch cancel each slot (status → CANCELLED_TEACHER)
- * 4. For each cancelled slot, issue a MakeupCredit to the student
- * 5. Notify admin about the sick leave
- * 6. Notify each affected student/parent about the cancellation
- * 7. Check rate limit — raise admin flag if >3 in 30 days
- * 
- * SDD-P6 race condition mitigation:
- * - All credit issuance happens inside a Firestore transaction
- * - Slot status change and credit creation are atomic
+ *
+ * Wired DB calls:
+ * - db.teacherExceptions.create()  — persists the exception record
+ * - db.lessons.findByConservatorium() + db.lessons.update() — cancels affected slots
+ *
+ * TODO: db.makeupCredits.create() per cancelled slot — no batch/transaction API yet.
+ * TODO: db.notifications.create() for admin + parent notifications.
+ * TODO: Rate-limit check (sick leave count in window) requires a date-range query
+ *       method on teacherExceptions — add when interface is extended.
  */
 export async function submitSickLeave(input: SubmitSickLeaveInput): Promise<SubmitSickLeaveResult> {
     try {
-        const { teacherId, conservatoriumId: _conservatoriumId, fromDate, toDate, note } = input;
+        const { teacherId, conservatoriumId, fromDate, toDate, note } = input;
 
         // Validate dates
         if (new Date(fromDate) > new Date(toDate)) {
@@ -62,12 +59,10 @@ export async function submitSickLeave(input: SubmitSickLeaveInput): Promise<Subm
             };
         }
 
-        // Generate exception ID
         const exceptionId = `exception-${Date.now()}`;
         const now = new Date().toISOString();
 
-        // Create the teacher exception record
-        const _exception: TeacherException = {
+        const exception: TeacherException = {
             id: exceptionId,
             teacherId,
             dateFrom: `${fromDate}T00:00:00.000Z`,
@@ -77,32 +72,50 @@ export async function submitSickLeave(input: SubmitSickLeaveInput): Promise<Subm
             createdAt: now,
         };
 
-        // In production with Firestore:
-        // 1. Write exception to conservatoriums/{cid}/teacherExceptions/{exceptionId}
-        // 2. Query lessonSlots where teacherId == input.teacherId 
-        //    AND startTime >= fromDate AND startTime <= toDate+1day
-        //    AND status == 'SCHEDULED'
-        // 3. For each affected slot, within a batch write:
-        //    a. Update slot status to 'CANCELLED_TEACHER'
-        //    b. Create MakeupCredit for that student
-        //    c. Send notification to student/parent via dispatcher
-        // 4. Check recent sick leaves (last 30 days) — flag if > 3
-        // 5. Notify admin via dispatcher
+        const db = await getDb();
 
-        // Simulated result (with mock data, actual slot cancellation
-        // would be done in the AuthProvider context)
-        const affectedSlotsCount = 0; // Will be computed from Firestore query
-        const makeupCreditsIssued = 0;
+        // 1. Persist the exception record
+        // Cast via unknown: conservatoriumId is not in TeacherException type but is
+        // needed by the adapter's findByConservatorium() to scope the document.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await db.teacherExceptions.create({ ...exception, conservatoriumId } as any);
 
-        // Rate limit check (simulated)
-        const adminFlagRaised = false;
+        // 2. Cancel affected scheduled lessons in the date range
+        const allSlots = await db.lessons.findByConservatorium(conservatoriumId);
+        const rangeStart = new Date(`${fromDate}T00:00:00.000Z`).getTime();
+        const rangeEnd = new Date(`${toDate}T23:59:59.999Z`).getTime();
+
+        const affectedSlots = allSlots.filter(slot => {
+            const slotStart = new Date(slot.startTime).getTime();
+            return (
+                slot.teacherId === teacherId &&
+                slot.status === 'SCHEDULED' &&
+                slotStart >= rangeStart &&
+                slotStart <= rangeEnd
+            );
+        });
+
+        await Promise.all(
+            affectedSlots.map(slot =>
+                db.lessons.update(slot.id, {
+                    status: 'CANCELLED_TEACHER',
+                    cancelledAt: now,
+                    cancelledBy: teacherId,
+                    cancellationReason: note ?? 'Teacher sick leave',
+                })
+            )
+        );
+
+        // TODO: db.makeupCredits.create() for each affected slot when batch
+        //       transaction support is available in the adapter.
+        // TODO: adminFlagRaised — needs date-range query on teacherExceptions.
 
         return {
             success: true,
-            affectedSlotsCount,
-            makeupCreditsIssued,
+            affectedSlotsCount: affectedSlots.length,
+            makeupCreditsIssued: 0,
             exceptionId,
-            adminFlagRaised,
+            adminFlagRaised: false,
         };
     } catch (error) {
         return {

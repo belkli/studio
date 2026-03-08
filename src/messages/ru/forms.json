@@ -546,6 +546,7 @@
     "closeAction": "Закрыть",
     "rateLesson": "Как прошёл урок?",
     "ratingThanks": "Спасибо за отзыв!",
+    "submitRating": "Отправить",
     "creditBalance": "Баланс кредитов: {remaining} из {total}",
     "dateLabel": "Дата",
     "duration": "{min} минут",

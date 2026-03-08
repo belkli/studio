@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ImageOff, AlertTriangle } from 'lucide-react';
 import { useMemo, useEffect } from 'react';
+import { saveConsentRecord } from '@/app/actions/consent';
 
 const schema = z.object({
   studentId: z.string().min(1, 'חובה לבחור תלמיד/ה.'),
@@ -132,7 +133,17 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                   <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <span>
                     תלמיד/ה זה/זו לא אישר/ה פרסום תמונות לצרכים מסחריים. בעת תיעוד האירוע יש להימנע מפרסום תמונות מזהות ברשתות חברתיות ובחומרי פרסום.
-                    ניתן <button type="button" className="underline font-medium" onClick={() => {/* TODO: request-consent flow */}}>לבקש הסכמה</button> מההורה/תלמיד/ה.
+                    ניתן <button type="button" className="underline font-medium" onClick={() => {
+                        const student = students.find(s => s.id === selectedStudentId);
+                        if (!student) return;
+                        saveConsentRecord({
+                          userId: student.id,
+                          conservatoriumId: student.conservatoriumId ?? '',
+                          consentDataProcessing: false,
+                          consentTerms: false,
+                          consentVideoRecording: true,
+                        });
+                      }}>לבקש הסכמה</button> מההורה/תלמיד/ה.
                   </span>
                 </div>
               )}

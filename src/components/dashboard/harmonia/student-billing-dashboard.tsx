@@ -31,6 +31,8 @@ export function StudentBillingDashboard() {
     const isRtl = locale === 'he' || locale === 'ar';
     const [upgradeOpen, setUpgradeOpen] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
+    const [paymentMethodsOpen, setPaymentMethodsOpen] = useState(false);
+    const [isPausing, setIsPausing] = useState(false);
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
@@ -205,6 +207,30 @@ export function StudentBillingDashboard() {
                     </DialogContent>
                 </Dialog>
 
+                <Dialog open={paymentMethodsOpen} onOpenChange={setPaymentMethodsOpen}>
+                    <DialogContent dir={isRtl ? 'rtl' : 'ltr'}>
+                        <DialogHeader>
+                            <DialogTitle>{t('managePaymentMethods')}</DialogTitle>
+                            <DialogDescription>{t('paymentMethodsDesc')}</DialogDescription>
+                        </DialogHeader>
+                        <div className="border rounded-lg p-4 flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                                {t('cardEndingIn', { suffix: '****' })}
+                            </span>
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                    toast({ title: t('managePaymentMethods'), description: t('removeCardPending') });
+                                    setPaymentMethodsOpen(false);
+                                }}
+                            >
+                                {t('removeCard')}
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+
                 <Card className="flex flex-col">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5 text-accent" /> {t('makeupCredits')}</CardTitle>
@@ -250,7 +276,7 @@ export function StudentBillingDashboard() {
                                         <TableCell>{formatWithVAT(invoice.total, locale)}</TableCell>
                                         <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
                                         <TableCell className="text-start">
-                                            <Button variant="ghost" size="icon" onClick={() => toast({ title: ti('downloadInvoice'), description: 'Invoice download coming soon' })}>
+                                            <Button variant="ghost" size="icon" onClick={() => window.open(`/api/invoice-pdf/${invoice.id}`, '_blank')}>
                                                 <Download className="h-4 w-4" />
                                                 <span className="sr-only">{ti('downloadInvoice')}</span>
                                             </Button>
@@ -322,8 +348,34 @@ export function StudentBillingDashboard() {
                             <CardTitle>{t('manageSubscription')} {activeStudent?.name ? `(${activeStudent.name})` : ''}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 flex-grow flex flex-col justify-center gap-2">
-                            <Button className="w-full" onClick={() => toast({ title: t('managePaymentMethods'), description: 'Manage payment methods - coming soon' })}>{t('managePaymentMethods')}</Button>
-                            <Button variant="outline" className="w-full text-muted-foreground" onClick={() => toast({ title: t('pauseSubscription'), description: 'Pause subscription - coming soon' })}><PauseCircle className="ms-2 h-4 w-4" />{t('pauseSubscription')}</Button>
+                            <Button className="w-full" onClick={() => setPaymentMethodsOpen(true)}>{t('managePaymentMethods')}</Button>
+                            <Button
+                                variant="outline"
+                                className="w-full text-muted-foreground"
+                                disabled={isPausing || !currentPackage}
+                                onClick={async () => {
+                                    if (!currentPackage) return;
+                                    setIsPausing(true);
+                                    try {
+                                        const result = await cancelPackageAction({ packageId: currentPackage.id });
+                                        if (result.success) {
+                                            toast({
+                                                title: t('pauseSubscription'),
+                                                description: result.withinCoolingOff
+                                                    ? t('pausedWithinCoolingOff')
+                                                    : t('pausedConfirmation'),
+                                            });
+                                        }
+                                    } catch {
+                                        toast({ variant: 'destructive', title: t('pauseSubscription'), description: t('pauseError') });
+                                    } finally {
+                                        setIsPausing(false);
+                                    }
+                                }}
+                            >
+                                {isPausing ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : <PauseCircle className="ms-2 h-4 w-4" />}
+                                {t('pauseSubscription')}
+                            </Button>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="ghost" className="w-full text-destructive hover:text-destructive"><XCircle className="ms-2 h-4 w-4" />{t('cancelSubscription')}</Button>

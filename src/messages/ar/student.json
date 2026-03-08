@@ -89,7 +89,15 @@
     "monthlyLabel": "اشتراك شهري",
     "lessons": "دروس",
     "packageSelected": "تم اختيار الباقة — إعادة التوجيه إلى الدفع...",
-    "select": "اختر"
+    "select": "اختر",
+    "paymentMethodsDesc": "وسائل الدفع المحفوظة لديك.",
+    "cardEndingIn": "بطاقة تنتهي بـ {suffix}",
+    "removeCard": "إزالة البطاقة",
+    "removeCardPending": "إزالة البطاقة تتطلب تكامل مع Cardcom — قريبًا.",
+    "pausedWithinCoolingOff": "تم إيقاف الاشتراك خلال فترة التجربة (14 يومًا). يحق لك استرداد كامل.",
+    "pausedConfirmation": "تم إيقاف الاشتراك. سيصبح التغيير ساريًا خلال 3 أيام عمل.",
+    "pauseError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    "cancel": "إلغاء"
   },
   "StudentPractice": {
     "attachVideo": "إرفاق فيديو",

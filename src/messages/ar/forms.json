@@ -546,6 +546,7 @@
     "closeAction": "إغلاق",
     "rateLesson": "كيف كان الدرس؟",
     "ratingThanks": "شكراً على ملاحظاتك!",
+    "submitRating": "إرسال",
     "creditBalance": "رصيد الدروس: {remaining} من {total}",
     "dateLabel": "التاريخ",
     "duration": "{min} دقيقة",

@@ -1,5 +1,6 @@
 'use server';
 import { withAuth } from '@/lib/auth-utils';
+import { getDb } from '@/lib/db';
 import { z } from 'zod';
 
 const ExtendMakeupSchema = z.object({
@@ -10,8 +11,8 @@ const ExtendMakeupSchema = z.object({
 export const extendMakeupWindowAction = withAuth(
   ExtendMakeupSchema,
   async (data) => {
-    // In production: await db.updateMakeupCreditExpiry(data.creditId, data.newExpiresAt);
-    console.log('[extendMakeupWindowAction] creditId:', data.creditId, 'newExpiresAt:', data.newExpiresAt);
+    const db = await getDb();
+    await db.makeupCredits.update(data.creditId, { expiresAt: data.newExpiresAt });
     return { success: true };
   }
 );

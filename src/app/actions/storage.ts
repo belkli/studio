@@ -226,3 +226,40 @@ export async function getSignedSignatureUrl(input: {
 
   return { url, expiresIn: SIGNED_URL_TTL_MS };
 }
+
+// ---------------------------------------------------------------------------
+// Upload Actions
+// ---------------------------------------------------------------------------
+
+/**
+ * Get a signed upload URL for a student's practice video.
+ * The student (or their parent) can upload to their own path only.
+ * Returns a signed URL for PUT upload + the resulting storage path.
+ */
+export async function getUploadSignedUrl(input: {
+  conservatoriumId: string;
+  studentId: string;
+  filename: string;
+  contentType: string;
+}): Promise<{ uploadUrl: string; storagePath: string }> {
+  await authorizeStudentContentAccess(
+    input.conservatoriumId,
+    input.studentId,
+    ['conservatorium_admin', 'delegated_admin', 'teacher'],
+  );
+
+  const storage = getAdminStorage();
+  if (!storage) throw new Error('Storage not configured');
+
+  const storagePath = `conservatoriums/${input.conservatoriumId}/practiceVideos/${input.studentId}/${input.filename}`;
+  const bucket = storage.bucket();
+  const file = bucket.file(storagePath);
+
+  const [url] = await file.getSignedUrl({
+    action: 'write',
+    expires: Date.now() + SIGNED_URL_TTL_MS,
+    contentType: input.contentType,
+  });
+
+  return { uploadUrl: url, storagePath };
+}

@@ -12,7 +12,7 @@
  */
 
 import { z } from 'zod';
-import { requireRole, withAuth } from '@/lib/auth-utils';
+import { requireRole, withAuth, verifyAuth } from '@/lib/auth-utils';
 import { getAdminFirestore } from '@/lib/firebase-admin';
 import { getDb } from '@/lib/db';
 import type { ConsentType } from '@/lib/types';
@@ -160,6 +160,21 @@ export const saveConsentRecord = withAuth(
         })
       )
     );
+
+    // PDPPA compliance audit — non-fatal; log failure must not block registration
+    try {
+      const actor = await verifyAuth();
+      await db.complianceLogs.create({
+        id: `cl-${Date.now()}`,
+        action: 'CONSENT_GIVEN',
+        subjectId: targetUserId,
+        performedBy: actor.uid,
+        reason: `Consent recorded for types: ${consentTypes.join(', ')}${data.isMinorConsent ? ' (parental consent on behalf of minor)' : ''}`,
+        performedAt: timestamp,
+      });
+    } catch (logErr) {
+      console.error('[saveConsentRecord] ComplianceLog write failed (non-fatal):', logErr);
+    }
 
     return { success: true, recordIds: records.map((r) => r.id) };
   }

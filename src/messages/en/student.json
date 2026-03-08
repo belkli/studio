@@ -89,7 +89,15 @@
     "monthlyLabel": "Monthly Subscription",
     "lessons": "lessons",
     "packageSelected": "Package selected — redirecting to payment...",
-    "select": "Select"
+    "select": "Select",
+    "paymentMethodsDesc": "Your saved payment methods.",
+    "cardEndingIn": "Card ending in {suffix}",
+    "removeCard": "Remove Card",
+    "removeCardPending": "Card removal requires Cardcom integration — coming soon.",
+    "pausedWithinCoolingOff": "Subscription paused within the 14-day trial period. You are eligible for a full refund.",
+    "pausedConfirmation": "Subscription paused. The change will take effect within 3 business days.",
+    "pauseError": "An error occurred. Please try again.",
+    "cancel": "Cancel"
   },
   "StudentPractice": {
     "durationMustBePositive": "Duration must be greater than zero.",

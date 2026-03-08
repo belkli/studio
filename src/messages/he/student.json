@@ -89,7 +89,15 @@
     "monthlyLabel": "מנוי חודשי",
     "lessons": "שיעורים",
     "packageSelected": "חבילה נבחרה — מעבר לתשלום...",
-    "select": "בחר"
+    "select": "בחר",
+    "paymentMethodsDesc": "אמצעי התשלום השמורים שלך.",
+    "cardEndingIn": "כרטיס המסתיים ב-{suffix}",
+    "removeCard": "הסר כרטיס",
+    "removeCardPending": "הסרת כרטיס דורשת אינטגרציה עם Cardcom — בקרוב.",
+    "pausedWithinCoolingOff": "המנוי הושהה בתוך תקופת ההתנסות (14 ימים). זכאי/ת להחזר מלא.",
+    "pausedConfirmation": "המנוי הושהה. השינוי ייכנס לתוקף תוך 3 ימי עסקים.",
+    "pauseError": "אירעה שגיאה. אנא נסה שוב.",
+    "cancel": "ביטול"
   },
   "StudentPractice": {
     "attachVideo": "צירוף וידאו",

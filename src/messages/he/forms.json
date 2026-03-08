@@ -546,6 +546,7 @@
     "closeAction": "סגור",
     "rateLesson": "איך היה השיעור?",
     "ratingThanks": "תודה על המשוב!",
+    "submitRating": "שלח",
     "creditBalance": "יתרת קרדיטים: {remaining} מתוך {total}",
     "dateLabel": "תאריך",
     "duration": "{min} דקות",
