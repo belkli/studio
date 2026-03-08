@@ -9,3 +9,6 @@ export type { LessonsDomainContextType } from './lessons-domain';
 
 export { RepertoireDomainContext, useRepertoireDomain } from './repertoire-domain';
 export type { RepertoireDomainContextType } from './repertoire-domain';
+
+export { CommsDomainContext, useCommsDomain } from './comms-domain';
+export type { CommsDomainContextType } from './comms-domain';

@@ -12,12 +12,13 @@ import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
 import { LessonsDomainProvider, useLessonsDomain } from '@/hooks/domains/lessons-domain';
 import { RepertoireDomainProvider, useRepertoireDomain } from '@/hooks/domains/repertoire-domain';
+import { CommsDomainProvider, useCommsDomain } from '@/hooks/domains/comms-domain';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { differenceInCalendarDays, startOfDay, addHours } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertConservatoriumAction } from '@/app/actions';
+import { saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, createEventAction, updateEventAction, upsertConservatoriumAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 /**
@@ -204,9 +205,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           getConservatoriumInstruments={() => conservatoriumInstrumentsRef.current}
         >
           <RepertoireDomainProvider>
-            <AuthProviderInner roomsRef={roomsRef} userRef={userRef} conservatoriumInstrumentsRef={conservatoriumInstrumentsRef}>
-              {children}
-            </AuthProviderInner>
+            <CommsDomainProvider>
+              <AuthProviderInner roomsRef={roomsRef} userRef={userRef} conservatoriumInstrumentsRef={conservatoriumInstrumentsRef}>
+                {children}
+              </AuthProviderInner>
+            </CommsDomainProvider>
           </RepertoireDomainProvider>
         </LessonsDomainProvider>
       </AuthDomainProvider>
@@ -292,6 +295,24 @@ function AuthProviderInner({
     deleteComposition,
   } = useRepertoireDomain();
 
+  const {
+    mockMessageThreads,
+    setMockMessageThreads,
+    mockAnnouncements,
+    setMockAnnouncements,
+    mockFormSubmissions,
+    setMockFormSubmissions,
+    mockFormTemplates,
+    setMockFormTemplates,
+    mockAuditLog,
+    setMockAuditLog,
+    addMessage,
+    createMessageThread,
+    addAnnouncement,
+    updateForm,
+    addFormTemplate,
+  } = useCommsDomain();
+
   // Keep users-domain in sync with the current session user so that updateUser,
   // markWalkthroughAsSeen etc. can update localStorage / auth cookie correctly.
   useEffect(() => {
@@ -299,13 +320,8 @@ function AuthProviderInner({
   }, [user, setUser, registerAuthSetters]);
 
   // State for all mock data sets (users moved to outer AuthProvider)
-  const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);
   const [mockPackages, setMockPackages] = useState<Package[]>([]);
   const [mockInvoices, setMockInvoices] = useState<Invoice[]>([]);
-  const [mockMessageThreads, setMockMessageThreads] = useState<MessageThread[]>([]);
-  const [mockAnnouncements, setMockAnnouncements] = useState<Announcement[]>([]);
-  const [mockFormTemplates, setMockFormTemplates] = useState<FormTemplate[]>([]);
-  const [mockAuditLog, setMockAuditLog] = useState<AuditLogEntry[]>([]);
   const [mockPlayingSchoolInvoices, setMockPlayingSchoolInvoices] = useState<PlayingSchoolInvoice[]>([]);
 
   useEffect(() => {
@@ -662,103 +678,6 @@ function AuthProviderInner({
   // --- Data Manipulation Functions ---
   // These functions simulate backend operations by directly manipulating the state.
 
-  const updateForm = (updatedForm: FormSubmission) => {
-    setMockFormSubmissions(prevForms => {
-      const formIndex = prevForms.findIndex(f => f.id === updatedForm.id);
-      if (formIndex > -1) {
-        return prevForms.map((form, index) => index === formIndex ? updatedForm : form);
-      } else {
-        return [...prevForms, updatedForm];
-      }
-    });
-
-    void upsertFormSubmissionAction(updatedForm)
-      .then((saved) => {
-        setMockFormSubmissions(prevForms => {
-          const formIndex = prevForms.findIndex(f => f.id === saved.id);
-          if (formIndex > -1) {
-            return prevForms.map((form, index) => index === formIndex ? saved : form);
-          }
-          return [...prevForms, saved];
-        });
-      })
-      .catch((error) => {
-        console.warn('Failed to persist form submission', error);
-      });
-  };
-
-  const addMessage = (threadId: string, senderId: string, body: string) => {
-    setMockMessageThreads(prev => prev.map(thread => {
-      if (thread.id === threadId) {
-        const newMessage = { senderId, body, sentAt: new Date().toISOString() };
-        return { ...thread, messages: [...thread.messages, newMessage] };
-      }
-      return thread;
-    }));
-  };
-
-  const createMessageThread = (participants: string[], initialMessage?: { senderId: string; body: string }) => {
-    const normalizedParticipants = Array.from(new Set(participants));
-    const existing = mockMessageThreads.find((thread) =>
-      thread.participants.length === normalizedParticipants.length &&
-      normalizedParticipants.every((participantId) => thread.participants.includes(participantId))
-    );
-
-    if (existing) {
-      if (initialMessage?.body?.trim()) {
-        addMessage(existing.id, initialMessage.senderId, initialMessage.body);
-      }
-      return existing.id;
-    }
-
-    const newThreadId = 'thread-' + Date.now();
-    const now = new Date().toISOString();
-    const messages = initialMessage?.body?.trim()
-      ? [{ senderId: initialMessage.senderId, body: initialMessage.body, sentAt: now }]
-      : [];
-
-    setMockMessageThreads((prev) => [
-      ...prev,
-      {
-        id: newThreadId,
-        participants: normalizedParticipants,
-        messages,
-      },
-    ]);
-
-    return newThreadId;
-  };
-  const addAnnouncement = (announcementData: Partial<Announcement>) => {
-    const newAnnouncement: Announcement = {
-      id: `ann-${Date.now()}` ,
-      conservatoriumId: user?.conservatoriumId || 'cons-15',
-      sentAt: new Date().toISOString(),
-      ...announcementData
-    } as Announcement;
-    setMockAnnouncements(prev => [newAnnouncement, ...prev]);
-
-    const newAuditLogEntry: AuditLogEntry = {
-      id: `log-${Date.now()}` ,
-      notificationId: newAnnouncement.id,
-      userId: 'system',
-      channel: 'IN_APP',
-      status: 'DELIVERED',
-      sentAt: new Date().toISOString(),
-      title: newAnnouncement.title,
-      body: newAnnouncement.body,
-    };
-    setMockAuditLog(prev => [newAuditLogEntry, ...prev]);
-
-    if (newAnnouncement.title && newAnnouncement.body) {
-      void createAnnouncement(newAnnouncement)
-        .then((serverAnnouncement) => {
-          setMockAnnouncements((prev) => prev.map((item) => (item.id === newAnnouncement.id ? serverAnnouncement : item)));
-        })
-        .catch((error) => {
-          console.warn('Failed to persist announcement', error);
-        });
-    }
-  };
   const addToWaitlist = (waitlistEntry: Partial<WaitlistEntry>) => {
     const newEntry: WaitlistEntry = {
       id: `wl-${Date.now()}`,
@@ -817,15 +736,6 @@ function AuthProviderInner({
     ));
   };
 
-  const addFormTemplate = (templateData: Partial<FormTemplate>) => {
-    const newTemplate: FormTemplate = {
-      id: `template-${Date.now()}`,
-      conservatoriumId: user?.conservatoriumId || 'cons-15',
-      createdAt: new Date().toISOString(),
-      ...templateData
-    } as FormTemplate;
-    setMockFormTemplates(prev => [...prev, newTemplate]);
-  };
   const updateConservatorium = (updatedConservatorium: Conservatorium) => {
     setConservatoriums(prev => prev.map(c => c.id === updatedConservatorium.id ? updatedConservatorium : c));
 
