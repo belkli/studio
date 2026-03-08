@@ -4,6 +4,7 @@ import type { User } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { upsertUserAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
+import { useUsersDomain } from './users-domain';
 
 export interface AuthDomainContextType {
   user: User | null;
@@ -30,13 +31,10 @@ export const useAuthDomain = () => {
 
 export function AuthDomainProvider({
   children,
-  users,
-  setUsers,
 }: {
   children: React.ReactNode;
-  users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }) {
+  const { users, setUsers } = useUsersDomain();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [bootstrapResolved, setBootstrapResolved] = useState(false);

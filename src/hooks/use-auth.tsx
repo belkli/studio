@@ -9,13 +9,14 @@
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
+import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { differenceInCalendarDays, startOfDay, addDays, addHours } from 'date-fns';
 import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertUserAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
+import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 /**
@@ -190,24 +191,21 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  * It initializes and manages all application state, simulating a full backend.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [users, setUsers] = useState<User[]>([]);
   return (
-    <AuthDomainProvider users={users} setUsers={setUsers}>
-      <AuthProviderInner users={users} setUsers={setUsers}>
-        {children}
-      </AuthProviderInner>
-    </AuthDomainProvider>
+    <UsersDomainProvider>
+      <AuthDomainProvider>
+        <AuthProviderInner>
+          {children}
+        </AuthProviderInner>
+      </AuthDomainProvider>
+    </UsersDomainProvider>
   );
 };
 
 function AuthProviderInner({
   children,
-  users,
-  setUsers,
 }: {
   children: React.ReactNode;
-  users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }) {
   const {
     user,
@@ -222,6 +220,23 @@ function AuthProviderInner({
     setBootstrapResolved,
     setBootstrapUsedMockFallback,
   } = useAuthDomain();
+
+  const {
+    users,
+    setUsers,
+    addUser,
+    updateUser,
+    markWalkthroughAsSeen,
+    updateNotificationPreferences,
+    updateUserPaymentMethod,
+    registerAuthSetters,
+  } = useUsersDomain();
+
+  // Keep users-domain in sync with the current session user so that updateUser,
+  // markWalkthroughAsSeen etc. can update localStorage / auth cookie correctly.
+  useEffect(() => {
+    registerAuthSetters(user, setUser);
+  }, [user, setUser, registerAuthSetters]);
 
   // State for all mock data sets (users moved to outer AuthProvider)
   const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);
@@ -613,57 +628,6 @@ function AuthProviderInner({
       .catch((error) => {
         console.warn('Failed to persist form submission', error);
       });
-  };
-
-  const updateUserPaymentMethod = (paymentData: { last4: string, expiryMonth: number, expiryYear: number }) => {
-    if (!user) return;
-    const newPaymentMethod: PaymentMethod = {
-      id: `pm-${Date.now()}`,
-      type: 'CreditCard',
-      last4: paymentData.last4,
-      expiryMonth: paymentData.expiryMonth,
-      expiryYear: paymentData.expiryYear,
-      isPrimary: true,
-    };
-
-    // In a real app, you'd only update the primary or add a new one. Here we replace all.
-    const updatedUser: User = {
-      ...user,
-      paymentMethods: [newPaymentMethod],
-    };
-    updateUser(updatedUser);
-  };
-
-
-  const updateUser = (updatedUser: User) => {
-    const updatedUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u);
-    setUsers(updatedUsers);
-    if (user?.id === updatedUser.id) {
-      setUser(updatedUser);
-      localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
-      setAuthCookie();
-    }
-
-    void upsertUserAction(updatedUser)
-      .then((saved) => {
-        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
-
-        setUser(prevCurrent => {
-          if (prevCurrent?.id !== saved.id) return prevCurrent;
-          localStorage.setItem('harmonia-user', JSON.stringify(saved));
-          setAuthCookie();
-          return saved;
-        });
-      })
-      .catch((error) => {
-        console.warn('Failed to persist user', error);
-      });
-  };
-
-  const updateNotificationPreferences = (preferences: NotificationPreferences) => {
-    if (!user) return;
-    const updatedUser = { ...user, notificationPreferences: preferences };
-    updateUser(updatedUser);
   };
 
   const addLesson = (lessonData: Partial<LessonSlot>) => {
@@ -1967,43 +1931,6 @@ function AuthProviderInner({
       return optimisticResult;
     }
   };
-  const markWalkthroughAsSeen = (userId: string) => {
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, hasSeenWalkthrough: true } : u));
-    if (user?.id === userId) {
-      const updatedUser = { ...user, hasSeenWalkthrough: true };
-      setUser(updatedUser);
-      localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
-      setAuthCookie();
-    }
-  };
-
-  const addUser = (userData: Partial<User>, isAdminFlow = false): User => {
-    const isConservatoriumAdmin = userData.role === 'conservatorium_admin' || userData.role === 'delegated_admin';
-    const newUser: User = {
-      id: `user-${Date.now()}`,
-      approved: isAdminFlow,
-      avatarUrl: userData.avatarUrl || ('https://i.pravatar.cc/150?u=' + Date.now()),
-      achievements: [],
-      registrationSource: userData.registrationSource || (isAdminFlow ? 'admin_created' : 'email'),
-      ...(isConservatoriumAdmin ? {
-        isDelegatedAdmin: userData.isDelegatedAdmin ?? true,
-        isPrimaryConservatoriumAdmin: userData.isPrimaryConservatoriumAdmin ?? false,
-      } : {}),
-      ...userData,
-    } as User;
-    setUsers(prev => [...prev, newUser]);
-
-    void upsertUserAction(newUser)
-      .then((saved) => {
-        setUsers(prev => prev.map(item => item.id === newUser.id ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to persist new user', error);
-      });
-
-    return newUser;
-  };
-
   const addBranch = (branchData: Partial<Branch>) => {
     const newBranch: Branch = {
       id: branchData.id || `branch-${Date.now()}`,
