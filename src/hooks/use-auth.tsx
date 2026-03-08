@@ -8,6 +8,7 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
@@ -188,6 +189,39 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  * It initializes and manages all application state, simulating a full backend.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [users, setUsers] = useState<User[]>([]);
+  return (
+    <AuthDomainProvider users={users} setUsers={setUsers}>
+      <AuthProviderInner users={users} setUsers={setUsers}>
+        {children}
+      </AuthProviderInner>
+    </AuthDomainProvider>
+  );
+};
+
+function AuthProviderInner({
+  children,
+  users,
+  setUsers,
+}: {
+  children: React.ReactNode;
+  users: User[];
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+}) {
+  const {
+    user,
+    isLoading,
+    bootstrapResolved,
+    login,
+    logout,
+    approveUser,
+    rejectUser,
+    setUser,
+    setIsLoading,
+    setBootstrapResolved,
+    setBootstrapUsedMockFallback,
+  } = useAuthDomain();
+
   const setAuthCookie = () => {
     document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
   };
@@ -196,10 +230,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     document.cookie = 'harmonia-user=; path=/; max-age=0; samesite=lax';
   };
 
-  // State for the currently logged-in user
-  const [user, setUser] = useState<User | null>(null);
-  // State for all mock data sets
-  const [users, setUsers] = useState<User[]>([]);
+  // State for all mock data sets (users moved to outer AuthProvider)
   const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);
   const [mockLessons, setMockLessons] = useState<LessonSlot[]>([]);
   const [mockPackages, setMockPackages] = useState<Package[]>([]);
@@ -302,10 +333,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>([]);
   const [conservatoriumInstruments, setConservatoriumInstruments] = useState<ConservatoriumInstrument[]>([]);
   const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [bootstrapResolved, setBootstrapResolved] = useState(false);
-  const [, setBootstrapUsedMockFallback] = useState(false);
-
   const applyMockBootstrapFallback = () => {
     setBootstrapUsedMockFallback(true);
     setUsers([]);
@@ -567,90 +594,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (bootstrapResolved) setIsLoading(false);
   }, [bootstrapResolved]);
 
-  const login = (email: string): { user: User | null; status: 'approved' | 'pending' | 'not_found' } => {
-    const normalizedEmail = email.toLowerCase();
-    const userPool = users;
-    const foundUser = userPool.find((u) => typeof u?.email === 'string' && u.email.toLowerCase() === normalizedEmail);
-
-    if (foundUser) {
-      if (foundUser.approved !== false) {
-        localStorage.setItem('harmonia-user', JSON.stringify(foundUser));
-        setAuthCookie();
-        setUser(foundUser);
-        router?.push?.('/dashboard');
-        return { user: foundUser, status: 'approved' };
-      }
-
-      router?.push?.('/pending-approval');
-      return { user: foundUser, status: 'pending' };
-    }
-
-    return { user: null, status: 'not_found' };
-  };
-
-  /**
-   * Logs the user out by clearing state, localStorage, and session cookie.
-   */
-  const logout = async () => {
-    // Sign out from Firebase client SDK if available
-    try {
-      const { getClientAuth } = await import('@/lib/firebase-client');
-      const auth = getClientAuth();
-      if (auth) {
-        const { signOut } = await import('firebase/auth');
-        await signOut(auth);
-      }
-    } catch {
-      // Firebase may not be configured — continue with cleanup
-    }
-
-    // Clear server-side session cookie
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch {
-      // Network error — clear local state anyway
-    }
-
-    localStorage.removeItem('harmonia-user');
-    clearAuthCookie();
-    setUser(null);
-    router?.push?.('/');
-  };
-
   // --- Data Manipulation Functions ---
   // These functions simulate backend operations by directly manipulating the state.
-
-  const approveUser = (userId: string) => {
-    const target = users.find(u => u.id === userId);
-    if (!target) return;
-    const approvedUser = { ...target, approved: true, rejectionReason: undefined };
-
-    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? approvedUser : u));
-
-    void upsertUserAction(approvedUser)
-      .then((saved) => {
-        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to approve user in DB', error);
-      });
-  };
-
-  const rejectUser = (userId: string, reason: string) => {
-    const target = users.find(u => u.id === userId);
-    if (!target) return;
-    const rejectedUser = { ...target, approved: false, rejectionReason: reason };
-
-    setUsers(prevUsers => prevUsers.map(u => u.id === userId ? rejectedUser : u));
-
-    void upsertUserAction(rejectedUser)
-      .then((saved) => {
-        setUsers(prev => prev.map(item => item.id === saved.id ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to reject user in DB', error);
-      });
-  };
 
   const updateForm = (updatedForm: FormSubmission) => {
     setMockFormSubmissions(prevForms => {
