@@ -18,3 +18,6 @@ export type { InstrumentsDomainContextType } from './instruments-domain';
 
 export { EventsDomainContext, useEventsDomain } from './events-domain';
 export type { EventsDomainContextType } from './events-domain';
+
+export { AdminDomainContext, useAdminDomain } from './admin-domain';
+export type { AdminDomainContextType } from './admin-domain';
