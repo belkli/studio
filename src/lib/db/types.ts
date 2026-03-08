@@ -1,4 +1,5 @@
 ﻿import type {
+  Achievement,
   Alumnus,
   Announcement,
   Branch,
@@ -24,6 +25,7 @@
   ScholarshipApplication,
   TeacherException,
   User,
+  WaitlistEntry,
 } from '@/lib/types';
 
 export type DbEntity = {
@@ -93,6 +95,17 @@ export interface TeacherExceptionRepository extends ScopedRepository<TeacherExce
 export interface ConsentRecordRepository extends ScopedRepository<ConsentRecord> {}
 export interface ComplianceLogRepository extends ScopedRepository<ComplianceLog> {}
 
+export interface WaitlistEntryRepository {
+  findByConservatorium(conservatoriumId: string): Promise<WaitlistEntry[]>;
+  findById(entryId: string): Promise<WaitlistEntry | null>;
+  update(entryId: string, data: Partial<WaitlistEntry>): Promise<void>;
+}
+
+export interface AchievementRepository {
+  create(data: Omit<Achievement, 'id'>): Promise<Achievement>;
+  findByStudentId(studentId: string): Promise<Achievement[]>;
+}
+
 export interface DatabaseAdapter {
   users: UserRepository;
   conservatoriums: ConservatoriumRepository;
@@ -123,6 +136,8 @@ export interface DatabaseAdapter {
   teacherExceptions: TeacherExceptionRepository; // /conservatoriums/{cid}/teacherExceptions — teacher creates own
   consentRecords: ConsentRecordRepository;      // /consentRecords/{id} — TOP-LEVEL, immutable after creation
   complianceLogs: ComplianceLogRepository;      // /conservatoriums/{cid}/complianceLogs — write:false (append-only Cloud Functions)
+  waitlist: WaitlistEntryRepository;              // /conservatoriums/{cid}/waitlist
+  achievements: AchievementRepository;            // /conservatoriums/{cid}/achievements
 }
 
 

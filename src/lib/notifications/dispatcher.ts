@@ -157,9 +157,6 @@ export async function dispatchNotification(
         try {
             const db = await getDb();
             const scheduledFor = getNextIsraelMorning();
-            // TODO: Add `scheduledFor` field to the Notification type so queued
-            // notifications can be picked up by a cron job / Cloud Function at the
-            // scheduled time and re-dispatched.
             await db.notifications.create({
                 userId: payload.userId,
                 title: payload.title,
@@ -167,6 +164,7 @@ export async function dispatchNotification(
                 link: payload.link ?? '',
                 read: false,
                 timestamp: scheduledFor,
+                scheduledFor,
             });
             console.warn(
                 `[Dispatcher] Notification for user ${payload.userId} queued for ${scheduledFor} (quiet hours)`

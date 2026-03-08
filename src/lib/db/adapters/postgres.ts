@@ -1688,6 +1688,8 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
     teacherExceptions: [],
     consentRecords: [],
     complianceLogs: [],
+    waitlist: [],
+    achievements: [],
   };
 }
 

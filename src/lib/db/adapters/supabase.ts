@@ -946,6 +946,8 @@ async function loadSeedFromSupabase(url: string, serviceKey: string): Promise<Me
     teacherExceptions: [],
     consentRecords: [],
     complianceLogs: [],
+    waitlist: [],
+    achievements: [],
   };
 }
 

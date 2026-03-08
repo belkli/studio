@@ -45,6 +45,7 @@ export type Notification = {
   timestamp: string;
   link: string;
   read: boolean;
+  scheduledFor?: string;          // ISO timestamp for quiet-hours deferred delivery
 };
 
 export type AlumniProfile = {
@@ -192,6 +193,9 @@ export type Achievement = {
   sharedAt?: string;             // if student chose to share
   points: number;                // for leaderboard / level calculation
   certificateUrl?: string;
+  studentId?: string;            // link to the student who earned this
+  conservatoriumId?: string;
+  metadata?: Record<string, unknown>;
 };
 
 // From SDD-13
@@ -1889,7 +1893,7 @@ export type AIJob = {
 // SDD-P7: Compliance Log
 export type ComplianceLog = {
   id: string;
-  action: 'PII_DELETED' | 'CONSENT_GIVEN' | 'CONSENT_REVOKED' | 'DATA_EXPORTED' | 'BREACH_REPORTED';
+  action: 'PII_DELETED' | 'CONSENT_GIVEN' | 'CONSENT_REVOKED' | 'DATA_EXPORTED' | 'BREACH_REPORTED' | 'SIGNATURE_CREATED';
   subjectId: string;
   reason: string;
   performedAt: string;                  // ISO Timestamp
