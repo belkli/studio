@@ -1,11 +1,17 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { Button } from "@/components/ui/button";
-import { EventsList } from "@/components/dashboard/harmonia/events-list";
 import { useAuth } from "@/hooks/use-auth";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { PlusCircle } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const EventsList = dynamic(
+    () => import('@/components/dashboard/harmonia/events-list').then(m => ({ default: m.EventsList })),
+    { loading: () => <Skeleton className="h-64 w-full rounded-md bg-muted" /> }
+);
 
 export default function EventsPage() {
     const { user } = useAuth();

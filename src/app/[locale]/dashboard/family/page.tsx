@@ -1,10 +1,27 @@
-import { FamilyHub } from "@/components/dashboard/harmonia/family-hub";
-import { getTranslations } from "next-intl/server";
+'use client';
 
-export default async function FamilyPage({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
+import dynamic from 'next/dynamic';
+import { useLocale, useTranslations } from 'next-intl';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function FamilyHubSkeleton() {
+    return (
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+            <Skeleton className="h-[450px] w-full" />
+            <Skeleton className="h-[450px] w-full" />
+        </div>
+    );
+}
+
+const FamilyHub = dynamic(
+    () => import('@/components/dashboard/harmonia/family-hub').then(m => ({ default: m.FamilyHub })),
+    { loading: () => <FamilyHubSkeleton /> }
+);
+
+export default function FamilyPage() {
+    const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const t = await getTranslations('DashboardPages');
+    const t = useTranslations('DashboardPages');
 
     return (
         <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>

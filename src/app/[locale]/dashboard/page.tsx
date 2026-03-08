@@ -1,8 +1,8 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
 import { RecentForms } from '@/components/dashboard/recent-forms';
-import { WhatsNewFeed } from '@/components/dashboard/harmonia/whats-new-feed';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { PlusCircle } from 'lucide-react';
@@ -10,6 +10,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Link, useRouter } from '@/i18n/routing';
 import { useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+
+const WhatsNewFeed = dynamic(
+  () => import('@/components/dashboard/harmonia/whats-new-feed').then(m => ({ default: m.WhatsNewFeed })),
+  { loading: () => <Skeleton className="h-48 w-full rounded-md bg-muted" /> }
+);
 
 export default function DashboardPage() {
   const t = useTranslations('Dashboard.welcome');
