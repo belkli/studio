@@ -15,3 +15,6 @@ export type { CommsDomainContextType } from './comms-domain';
 
 export { InstrumentsDomainContext, useInstrumentsDomain } from './instruments-domain';
 export type { InstrumentsDomainContextType } from './instruments-domain';
+
+export { EventsDomainContext, useEventsDomain } from './events-domain';
+export type { EventsDomainContextType } from './events-domain';
