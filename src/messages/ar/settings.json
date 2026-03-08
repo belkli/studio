@@ -346,6 +346,8 @@
     "notificationLanguageLabel": "لغة الإشعارات",
     "notificationTypeHeader": "نوع الإشعار",
     "paymentDue": "المدفوعات والفوترة",
+    "paymentConfirmed": "تأكيد الدفع",
+    "newStudentEnrolled": "تسجيل طالب جديد",
     "preferencesUpdatedDesc": "تم حفظ تفضيلات الإشعارات الخاصة بك.",
     "preferencesUpdatedTitle": "تم تحديث التفضيلات",
     "psCoordinatorAnnouncements": "إعلانات المنسق",

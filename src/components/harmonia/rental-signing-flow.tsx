@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import { sendRentalOtpAction, verifyRentalOtpAction } from '@/app/actions/rental-otp';
 import { useLocale, useTranslations } from 'next-intl';
 import SignatureCanvas from 'react-signature-canvas';
 
@@ -28,6 +29,8 @@ export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental;
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [confirmOnly, setConfirmOnly] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -37,18 +40,34 @@ export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental;
   const student = useMemo(() => users.find((entry) => entry.id === rental.studentId), [users, rental.studentId]);
   const instrument = useMemo(() => instrumentInventory.find((entry) => entry.id === rental.instrumentId), [instrumentInventory, rental.instrumentId]);
 
-  const sendOtp = () => {
-    setOtpSent(true);
+  const sendOtp = async () => {
+    setIsSendingOtp(true);
     setOtpError(null);
+    try {
+      await sendRentalOtpAction({ rentalToken: token });
+      setOtpSent(true);
+    } catch {
+      setOtpError(t('otpSendFailed'));
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
-  const verifyOtp = () => {
-    if (otpCode.trim() !== '123456') {
-      setOtpError(t('otpInvalid'));
-      return;
-    }
+  const verifyOtp = async () => {
+    setIsVerifyingOtp(true);
     setOtpError(null);
-    setStep(2);
+    try {
+      const result = await verifyRentalOtpAction({ rentalToken: token, code: otpCode.trim() });
+      if (result.success) {
+        setStep(2);
+      } else {
+        setOtpError(t(result.error === 'OTP_EXPIRED' ? 'otpExpired' : 'otpInvalid'));
+      }
+    } catch {
+      setOtpError(t('otpInvalid'));
+    } finally {
+      setIsVerifyingOtp(false);
+    }
   };
 
   const submitSignature = () => {
@@ -93,12 +112,16 @@ export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental;
                 {t('otpStepDesc', { phone: parent?.phone || t('unknown') })}
               </p>
               <div className="flex flex-wrap items-end gap-2">
-                <Button type="button" onClick={sendOtp}>{otpSent ? t('otpResend') : t('otpSend')}</Button>
+                <Button type="button" onClick={sendOtp} disabled={isSendingOtp}>
+                  {isSendingOtp ? '...' : (otpSent ? t('otpResend') : t('otpSend'))}
+                </Button>
                 <div className="min-w-[220px] flex-1 space-y-2">
                   <Label htmlFor="otp">{t('otpLabel')}</Label>
-                  <Input id="otp" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder="123456" inputMode="numeric" />
+                  <Input id="otp" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder="______" inputMode="numeric" />
                 </div>
-                <Button type="button" variant="outline" onClick={verifyOtp} disabled={!otpSent}>{t('otpVerify')}</Button>
+                <Button type="button" variant="outline" onClick={verifyOtp} disabled={!otpSent || isVerifyingOtp}>
+                  {isVerifyingOtp ? '...' : t('otpVerify')}
+                </Button>
               </div>
               {otpError && <p className="text-sm text-destructive text-start">{otpError}</p>}
             </div>

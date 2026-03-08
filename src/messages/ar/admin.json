@@ -809,6 +809,12 @@
       "description": "تتبع رسوم الدراسة والمدفوعات المفتوحة والدفع الآمن عبر Cardcom."
     }
   },
+  "PaymentNotifications": {
+    "paymentConfirmedTitle": "تم استلام الدفعة",
+    "paymentConfirmedMessage": "تم استلام دفعة بقيمة {amount} {currency} لـ {package}.",
+    "newStudentEnrolledTitle": "طالب جديد مسجل",
+    "newStudentEnrolledMessage": "{name} أتم الدفع وتم تسجيله بنجاح."
+  },
   "MinistryRepertoire": {
     "title": "إدارة الريبرتوار والمقطوعات",
     "description": "{count} مقطوعة في المكتبة. أضف أو عدّل أو احذف مقطوعات مع الترجمة التلقائية.",

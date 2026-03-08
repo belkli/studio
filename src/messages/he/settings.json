@@ -346,6 +346,8 @@
     "notificationLanguageLabel": "שפת התראות",
     "notificationTypeHeader": "סוג התראה",
     "paymentDue": "תשלומים וחיובים",
+    "paymentConfirmed": "אישור תשלום",
+    "newStudentEnrolled": "תלמיד/ה חדש/ה נרשם/ה",
     "preferencesUpdatedDesc": "העדפות ההתראות שלך נשמרו.",
     "preferencesUpdatedTitle": "העדפות עודכנו",
     "psCoordinatorAnnouncements": "הכרזות רכז/ת",

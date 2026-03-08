@@ -8,7 +8,7 @@
  */
 'use client';
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { differenceInCalendarDays, startOfDay, addDays, addHours } from 'date-fns';
@@ -176,6 +176,9 @@ interface AuthContextType {
   updateEvent: (event: EventProduction) => void;
   updateEventStatus: (eventId: string, status: EventProductionStatus) => void;
   bookEventTickets: (eventId: string, selections: Record<string, number>, attendee: { name: string; email: string; phone: string }, userId?: string) => { success: boolean; soldOut?: boolean; bookingRef?: string; totalAmount: number };
+  mockTeacherRatings: TeacherRating[];
+  submitTeacherRating: (teacherId: string, rating: 1|2|3|4|5, comment?: string) => void;
+  getTeacherRating: (teacherId: string) => { avg: number; count: number; userRating?: number };
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -293,6 +296,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>([]);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>([]);
   const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>([]);
+  const [mockTeacherRatings, setMockTeacherRatings] = useState<TeacherRating[]>([]);
   const [mockRepertoire, setMockRepertoire] = useState<Composition[]>([]);
   const [mockRooms, setMockRooms] = useState<Room[]>([]);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>([]);
@@ -853,6 +857,56 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       expiresAt: addDays(new Date(l.createdAt), 60).toISOString(),
       status: 'AVAILABLE'
     }))
+  };
+
+  const submitTeacherRating = (teacherId: string, rating: 1|2|3|4|5, comment?: string) => {
+    if (!user) return;
+    const conservatoriumId = user.conservatoriumId ?? '';
+
+    // Check eligibility: must have a completed lesson with this teacher
+    const hasCompletedLesson = mockLessons.some(
+      l => l.teacherId === teacherId &&
+      l.studentId === user.id &&
+      l.status === 'COMPLETED'
+    );
+    if (!hasCompletedLesson) return;
+
+    // Check uniqueness: one rating per user per teacher
+    const alreadyRated = mockTeacherRatings.some(
+      r => r.teacherId === teacherId && r.reviewerUserId === user.id
+    );
+    if (alreadyRated) return;
+
+    const newRating: TeacherRating = {
+      id: `rating-${teacherId}-${user.id}`,
+      teacherId,
+      reviewerUserId: user.id,
+      conservatoriumId,
+      rating,
+      comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMockTeacherRatings(prev => {
+      const updated = [...prev, newRating];
+      // Recompute avg on the teacher user record
+      const teacherRatings = updated.filter(r => r.teacherId === teacherId);
+      const avg = teacherRatings.reduce((s, r) => s + r.rating, 0) / teacherRatings.length;
+      setUsers(prevUsers => prevUsers.map(u =>
+        u.id === teacherId
+          ? { ...u, teacherRatingAvg: Math.round(avg * 10) / 10, teacherRatingCount: teacherRatings.length }
+          : u
+      ));
+      return updated;
+    });
+  };
+
+  const getTeacherRating = (teacherId: string) => {
+    return {
+      avg: mockTeacherRatings.filter(r => r.teacherId === teacherId).reduce((s, r, _, a) => s + r.rating / a.length, 0) || 0,
+      count: mockTeacherRatings.filter(r => r.teacherId === teacherId).length,
+      userRating: user ? mockTeacherRatings.find(r => r.teacherId === teacherId && r.reviewerUserId === user.id)?.rating : undefined,
+    };
   };
 
   const awardAchievement = (studentId: string, type: AchievementType) => {
@@ -2429,7 +2483,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     deleteComposition,
     updateEvent,
     updateEventStatus,
-    bookEventTickets
+    bookEventTickets,
+    mockTeacherRatings,
+    submitTeacherRating,
+    getTeacherRating,
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     user, users, mockFormSubmissions, mockLessons, mockPackages, mockInvoices,
@@ -2439,7 +2496,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     mockPerformanceBookings, mockScholarshipApplications, mockDonationCauses, mockDonations, mockOpenDayEvents,
     mockOpenDayAppointments, mockPracticeVideos, mockAlumni, mockMasterclasses, mockMasterClassAllowances,
     mockMakeupCredits, mockRepertoire, conservatoriums, conservatoriumInstruments, lessonPackages, mockBranches,
-    mockWaitlist, mockPayrolls, newFeaturesEnabled, isLoading, mockRooms
+    mockWaitlist, mockPayrolls, newFeaturesEnabled, isLoading, mockRooms, mockTeacherRatings
   ]);
 
   return (

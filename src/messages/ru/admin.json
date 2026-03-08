@@ -809,6 +809,12 @@
       "description": "Отслеживайте плату за обучение, открытые платежи и безопасно оплачивайте через Cardcom."
     }
   },
+  "PaymentNotifications": {
+    "paymentConfirmedTitle": "Платёж получен",
+    "paymentConfirmedMessage": "Получен платёж на сумму {amount} {currency} за {package}.",
+    "newStudentEnrolledTitle": "Новый студент зачислен",
+    "newStudentEnrolledMessage": "{name} завершил оплату и успешно зачислен."
+  },
   "MinistryRepertoire": {
     "title": "Управление репертуаром и произведениями",
     "description": "{count} произведений в библиотеке. Добавляйте, редактируйте или удаляйте с автопереводом.",

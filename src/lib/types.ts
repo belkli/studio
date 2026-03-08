@@ -122,6 +122,8 @@ export type NotificationType =
   | 'lessonCancellation'
   | 'makeupCredits'
   | 'paymentDue'
+  | 'paymentConfirmed'
+  | 'newStudentEnrolled'
   | 'formStatusChanges'
   | 'teacherMessages'
   | 'systemAnnouncements'
@@ -1399,6 +1401,16 @@ export type EmptySlot = {
   basePrice: number;
   promotionalPrice: number;
   discount: number;
+};
+
+export type TeacherRating = {
+  id: string;
+  teacherId: string;
+  reviewerUserId: string;
+  conservatoriumId: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  comment?: string;
+  createdAt: string;
 };
 
 // ============================================================

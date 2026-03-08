@@ -346,6 +346,8 @@
     "notificationLanguageLabel": "Язык уведомлений",
     "notificationTypeHeader": "Тип уведомления",
     "paymentDue": "Платежи и Оплата",
+    "paymentConfirmed": "Подтверждение платежа",
+    "newStudentEnrolled": "Новый студент зачислен",
     "preferencesUpdatedDesc": "Ваши настройки уведомлений сохранены.",
     "preferencesUpdatedTitle": "Предпочтения Обновлено",
     "psCoordinatorAnnouncements": "Координатор Анноункеменц",

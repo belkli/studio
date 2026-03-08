@@ -13,6 +13,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from 'next-intl';
+import { RateTeacherDialog } from '@/components/dashboard/rate-teacher-dialog';
 
 const AchievementIcon = ({ type }: { type: AchievementType }) => {
     switch (type) {
@@ -35,11 +36,13 @@ const AchievementIcon = ({ type }: { type: AchievementType }) => {
 import { School, Building, MapPin } from 'lucide-react';
 
 export function StudentProfilePageContent({ student, isParentView = false }: { student: User, isParentView?: boolean }) {
-    const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons, conservatoriums } = useAuth();
+    const { practiceLogs, packages, assignedRepertoire, compositions, lessonNotes, lessons, conservatoriums, users } = useAuth();
     const [_activeTab, _setActiveTab] = useState('overview');
+    const [rateTarget, setRateTarget] = useState<string | null>(null);
     const dateLocale = useDateLocale();
     const locale = useLocale();
     const t = useTranslations("StudentDashboard");
+    const tRating = useTranslations("TeacherRating");
 
     const userLogs = useMemo(() => practiceLogs.filter(log => log.studentId === student.id), [practiceLogs, student.id]);
     const userRepertoire = useMemo(() => assignedRepertoire.filter(rep => rep.studentId === student.id), [assignedRepertoire, student.id]);
@@ -100,6 +103,14 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
             .filter(l => l.studentId === student.id && new Date(l.startTime) >= now && l.status === 'SCHEDULED')
             .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
             .slice(0, 3); // show next 3
+    }, [lessons, student]);
+
+    const completedLessons = useMemo(() => {
+        if (!student) return [];
+        return lessons
+            .filter(l => l.studentId === student.id && l.status === 'COMPLETED')
+            .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+            .slice(0, 5);
     }, [lessons, student]);
 
     const getStatusColor = (status: RepertoireStatus) => {
@@ -391,6 +402,46 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                     )}
                 </CardContent>
             </Card>
+
+            {completedLessons.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><CheckCircle2 className="text-emerald-500" /> {t('completedLessons', { defaultMessage: 'Completed Lessons' })}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {completedLessons.map(lesson => {
+                            const teacher = users.find(u => u.id === lesson.teacherId);
+                            return (
+                                <div key={lesson.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50">
+                                    <div className="flex items-start gap-3 text-sm">
+                                        <div className="flex-shrink-0 flex flex-col items-center justify-center bg-muted w-12 h-12 rounded-md">
+                                            <span className="text-xs font-bold uppercase text-emerald-600">{format(new Date(lesson.startTime), 'MMM', { locale: dateLocale })}</span>
+                                            <span className="text-lg font-bold">{format(new Date(lesson.startTime), 'dd')}</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold">{lesson.instrument}</p>
+                                            <p className="text-xs text-muted-foreground">{teacher?.name ?? lesson.teacherId}</p>
+                                        </div>
+                                    </div>
+                                    {!isParentView && lesson.teacherId && (
+                                        <Button variant="outline" size="sm" onClick={() => setRateTarget(lesson.teacherId)}>
+                                            <Star className="h-3.5 w-3.5 me-1" />
+                                            {tRating('rateTeacher')}
+                                        </Button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </CardContent>
+                </Card>
+            )}
+
+            <RateTeacherDialog
+                teacherId={rateTarget ?? ''}
+                teacherName={users.find(u => u.id === rateTarget)?.name ?? ''}
+                open={!!rateTarget}
+                onOpenChange={(open) => !open && setRateTarget(null)}
+            />
         </>
     )
 }

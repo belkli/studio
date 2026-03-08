@@ -809,6 +809,12 @@
       "description": "מעקב אחר שכר לימוד, תשלומים פתוחים ואפשרות לסליקה מאובטחת באמצעות Cardcom."
     }
   },
+  "PaymentNotifications": {
+    "paymentConfirmedTitle": "התשלום התקבל",
+    "paymentConfirmedMessage": "התשלום בסך {amount} {currency} התקבל עבור {package}.",
+    "newStudentEnrolledTitle": "תלמיד/ה חדש/ה נרשם/ה",
+    "newStudentEnrolledMessage": "{name} השלים/ה תשלום ונרשם/ה בהצלחה."
+  },
   "MinistryRepertoire": {
     "title": "ניהול רפרטואר ויצירות",
     "description": "יש {count} יצירות בספרייה. נהל, הוסף ומחק יצירות עם תרגום אוטומטי לכל השפות.",

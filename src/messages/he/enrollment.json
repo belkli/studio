@@ -739,5 +739,16 @@
     "successTitle": "ההרשמה אושרה",
     "tuitionDescription": "שכר לימוד חודשי למסלול.",
     "tuitionTitle": "שכר לימוד"
+  },
+  "TeacherRating": {
+    "title": "דרג/י את {teacher}",
+    "desc": "שתף/י את חוות דעתך על המורה",
+    "selectRating": "בחר/י ציון",
+    "commentPlaceholder": "הוסף/י תגובה (רשות)...",
+    "submit": "שלח/י דירוג",
+    "cancel": "ביטול",
+    "thankYou": "תודה על הדירוג!",
+    "alreadyRated": "כבר דירגת מורה זה/ה.",
+    "rateTeacher": "דרג/י מורה"
   }
 }

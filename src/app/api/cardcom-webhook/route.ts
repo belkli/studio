@@ -162,21 +162,72 @@ export async function POST(request: NextRequest) {
       `Approval: ${ApprovalNumber || 'N/A'}, Installments: ${installmentCount}`
     );
 
-    // TODO: When notification dispatcher is wired with Twilio credentials,
-    // send payment confirmation to payer:
-    // await dispatchNotification({
-    //   userId: invoice.payerId,
-    //   type: 'PAYMENT_CONFIRMATION',
-    //   title: 'Payment Received',
-    //   titleHe: 'התשלום התקבל',
-    //   body: `Payment of ${invoice.total} ILS received for invoice ${invoice.invoiceNumber}.`,
-    //   bodyHe: `התשלום בסך ${invoice.total} ש"ח התקבל עבור חשבונית ${invoice.invoiceNumber}.`,
-    //   priority: 'NORMAL',
-    // });
+    // Post-payment notifications (in-app + email)
+    try {
+      const { buildPaymentNotifications, sendPaymentConfirmationEmail } = await import('@/lib/notifications/payment-notifications');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const inv = invoice as any;
+      const notifications = buildPaymentNotifications({
+        invoiceId,
+        payerId: invoice.payerId ?? '',
+        payerName: inv.payerName ?? 'Student',
+        payerEmail: inv.payerEmail,
+        teacherId: inv.teacherId,
+        teacherName: inv.teacherName,
+        conservatoriumId: invoice.conservatoriumId ?? '',
+        amount: invoice.total ?? 0,
+        currency: 'ILS',
+        invoiceNumber: invoice.invoiceNumber,
+        packageTitle: inv.packageTitle,
+        transactionId,
+      });
+      // Notifications are built — in production, persist to DB here
+      // For now, log them for observability
+      if (notifications.length > 0) {
+        console.log(`[Cardcom Webhook] ${notifications.length} notifications queued for payment ${invoiceId}`);
+      }
+      if (inv.payerEmail) {
+        await sendPaymentConfirmationEmail({
+          invoiceId,
+          payerId: invoice.payerId ?? '',
+          payerName: inv.payerName ?? 'Student',
+          payerEmail: inv.payerEmail,
+          amount: invoice.total ?? 0,
+          currency: 'ILS',
+          conservatoriumId: invoice.conservatoriumId ?? '',
+          invoiceNumber: invoice.invoiceNumber,
+          packageTitle: inv.packageTitle,
+          transactionId,
+        });
+      }
+    } catch (notifError) {
+      console.error('[Cardcom Webhook] Notification dispatch failed:', notifError);
+    }
 
-    // TODO: Generate invoice PDF and update pdfUrl
-    // const pdfUrl = await generateInvoicePdf(invoice);
-    // await db.payments.update(invoiceId, { pdfUrl } as any);
+    // Generate invoice PDF URL and persist it
+    try {
+      const { generateInvoicePdf } = await import('@/lib/pdf/generate-invoice-pdf');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const inv2 = invoice as any;
+      const pdfUrl = await generateInvoicePdf({
+        invoiceId,
+        invoiceNumber: invoice.invoiceNumber,
+        payerName: inv2.payerName ?? 'Student',
+        payerEmail: inv2.payerEmail,
+        amount: invoice.total ?? 0,
+        currency: 'ILS',
+        conservatoriumId: invoice.conservatoriumId ?? '',
+        packageTitle: inv2.packageTitle,
+        transactionId,
+        paidAt: now,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await db.payments.update(invoiceId, { pdfUrl } as any);
+      console.log(`[Cardcom Webhook] Invoice PDF URL generated: ${pdfUrl}`);
+    } catch (pdfError) {
+      console.error('[Cardcom Webhook] PDF generation failed:', pdfError);
+      // Non-fatal: payment is already marked as PAID
+    }
 
   } catch (err) {
     console.error('[Cardcom Webhook] Error processing payment:', err);

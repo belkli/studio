@@ -349,6 +349,8 @@
     "lessonCancellation": "Lesson Cancellations",
     "makeupCredits": "Makeup Lesson Credits",
     "paymentDue": "Payments and Billing",
+    "paymentConfirmed": "Payment Confirmation",
+    "newStudentEnrolled": "New Student Enrolled",
     "formStatusChanges": "Form Status Changes",
     "teacherMessages": "Teacher Messages",
     "systemAnnouncements": "System Announcements",

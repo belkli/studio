@@ -739,5 +739,16 @@
     "successTitle": "تم تأكيد التسجيل",
     "tuitionDescription": "الرسوم الشهرية للمسار.",
     "tuitionTitle": "الرسوم الدراسية"
+  },
+  "TeacherRating": {
+    "title": "قيّم {teacher}",
+    "desc": "شارك تجربتك مع هذا المعلم",
+    "selectRating": "اختر تقييماً",
+    "commentPlaceholder": "أضف تعليقاً (اختياري)...",
+    "submit": "إرسال التقييم",
+    "cancel": "إلغاء",
+    "thankYou": "شكراً على تقييمك!",
+    "alreadyRated": "لقد قيّمت هذا المعلم مسبقاً.",
+    "rateTeacher": "قيّم المعلم"
   }
 }

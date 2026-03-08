@@ -199,6 +199,8 @@ describe('AuthProvider smoke coverage', () => {
                     lessonCancellation: ['IN_APP'],
                     makeupCredits: ['IN_APP'],
                     paymentDue: ['IN_APP'],
+                    paymentConfirmed: ['IN_APP'],
+                    newStudentEnrolled: ['IN_APP'],
                     formStatusChanges: ['IN_APP'],
                     teacherMessages: ['IN_APP'],
                     systemAnnouncements: ['IN_APP'],

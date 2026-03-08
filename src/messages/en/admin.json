@@ -809,6 +809,12 @@
       "description": "Track tuition fees, open payments, and securely pay via Cardcom."
     }
   },
+  "PaymentNotifications": {
+    "paymentConfirmedTitle": "Payment received",
+    "paymentConfirmedMessage": "Payment of {amount} {currency} received for {package}.",
+    "newStudentEnrolledTitle": "New student enrolled",
+    "newStudentEnrolledMessage": "{name} has completed payment and is now enrolled."
+  },
   "MinistryRepertoire": {
     "title": "Repertoire & Compositions Management",
     "description": "{count} compositions in the library. Add, edit or remove works with auto-translation.",

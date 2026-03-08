@@ -739,5 +739,16 @@
     "notInterestedReason": "Not interested at this time",
     "acceptBtn": "Accept invitation",
     "declineBtn": "Decline"
+  },
+  "TeacherRating": {
+    "title": "Rate {teacher}",
+    "desc": "Share your experience with this teacher",
+    "selectRating": "Select a rating",
+    "commentPlaceholder": "Add a comment (optional)...",
+    "submit": "Submit rating",
+    "cancel": "Cancel",
+    "thankYou": "Thank you for your rating!",
+    "alreadyRated": "You have already rated this teacher.",
+    "rateTeacher": "Rate teacher"
   }
 }
