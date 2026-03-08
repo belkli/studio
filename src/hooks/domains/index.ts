@@ -12,3 +12,6 @@ export type { RepertoireDomainContextType } from './repertoire-domain';
 
 export { CommsDomainContext, useCommsDomain } from './comms-domain';
 export type { CommsDomainContextType } from './comms-domain';
+
+export { InstrumentsDomainContext, useInstrumentsDomain } from './instruments-domain';
+export type { InstrumentsDomainContextType } from './instruments-domain';

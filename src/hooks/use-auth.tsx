@@ -13,10 +13,11 @@ import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domai
 import { LessonsDomainProvider, useLessonsDomain } from '@/hooks/domains/lessons-domain';
 import { RepertoireDomainProvider, useRepertoireDomain } from '@/hooks/domains/repertoire-domain';
 import { CommsDomainProvider, useCommsDomain } from '@/hooks/domains/comms-domain';
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
+import { InstrumentsDomainProvider, useInstrumentsDomain } from '@/hooks/domains/instruments-domain';
+import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
-import { differenceInCalendarDays, startOfDay, addHours } from 'date-fns';
+import { addHours } from 'date-fns';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, createEventAction, updateEventAction, upsertConservatoriumAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
@@ -206,9 +207,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         >
           <RepertoireDomainProvider>
             <CommsDomainProvider>
-              <AuthProviderInner roomsRef={roomsRef} userRef={userRef} conservatoriumInstrumentsRef={conservatoriumInstrumentsRef}>
-                {children}
-              </AuthProviderInner>
+              <InstrumentsDomainProvider>
+                <AuthProviderInner roomsRef={roomsRef} userRef={userRef} conservatoriumInstrumentsRef={conservatoriumInstrumentsRef}>
+                  {children}
+                </AuthProviderInner>
+              </InstrumentsDomainProvider>
             </CommsDomainProvider>
           </RepertoireDomainProvider>
         </LessonsDomainProvider>
@@ -313,6 +316,26 @@ function AuthProviderInner({
     addFormTemplate,
   } = useCommsDomain();
 
+  const {
+    mockInstrumentInventory,
+    setMockInstrumentInventory,
+    mockInstrumentRentals,
+    setMockInstrumentRentals,
+    mockPracticeVideos,
+    setMockPracticeVideos,
+    addInstrument,
+    updateInstrument,
+    deleteInstrument,
+    assignInstrumentToStudent,
+    initiateInstrumentRental,
+    getRentalByToken,
+    confirmRentalSignature,
+    returnInstrument,
+    markInstrumentRentalReturned,
+    addPracticeVideo,
+    addVideoFeedback,
+  } = useInstrumentsDomain();
+
   // Keep users-domain in sync with the current session user so that updateUser,
   // markWalkthroughAsSeen etc. can update localStorage / auth cookie correctly.
   useEffect(() => {
@@ -342,56 +365,7 @@ function AuthProviderInner({
     }
   }, [user, users]);
   const [mockEvents, setMockEvents] = useState<EventProduction[]>([]);
-  const [mockInstrumentInventory, setMockInstrumentInventory] = useState<InstrumentInventory[]>([]);
-  const [mockInstrumentRentals, setMockInstrumentRentals] = useState<InstrumentRental[]>([]);
 
-  useEffect(() => {
-    const now = new Date();
-    const dueRentals = mockInstrumentRentals.filter((rental) => {
-      if (rental.rentalModel !== 'rent_to_own') return false;
-      if (rental.status !== 'active') return false;
-      if (!rental.monthsUntilPurchaseEligible) return false;
-      if (rental.purchaseEligibleNotifiedAt) return false;
-
-      const start = startOfDay(new Date(rental.startDate));
-      const elapsedDays = differenceInCalendarDays(now, start);
-      const minimumDays = rental.monthsUntilPurchaseEligible * 30;
-      return elapsedDays >= minimumDays;
-    });
-
-    if (dueRentals.length === 0) return;
-
-    const nowIso = now.toISOString();
-    const dueIds = new Set(dueRentals.map((item) => item.id));
-    const notificationsByParent = new Map<string, Notification[]>();
-
-    for (const rental of dueRentals) {
-      const instrument = mockInstrumentInventory.find((inst) => inst.id === rental.instrumentId);
-      const notification: Notification = {
-        id: 'notif-rent-to-own-' + rental.id + '-' + Date.now(),
-        title: 'Purchase option is now available',
-        message: 'You can now purchase ' + (instrument?.name || instrument?.type || 'your rented instrument') + '.',
-        timestamp: nowIso,
-        link: '/dashboard/admin/rentals',
-        read: false,
-      };
-
-      const existing = notificationsByParent.get(rental.parentId) || [];
-      notificationsByParent.set(rental.parentId, [notification, ...existing]);
-    }
-
-    setMockInstrumentRentals((prev) =>
-      prev.map((rental) => (dueIds.has(rental.id) ? { ...rental, purchaseEligibleNotifiedAt: nowIso } : rental))
-    );
-
-    setUsers((prevUsers) =>
-      prevUsers.map((entry) => {
-        const parentNotifications = notificationsByParent.get(entry.id);
-        if (!parentNotifications || parentNotifications.length === 0) return entry;
-        return { ...entry, notifications: [...parentNotifications, ...(entry.notifications || [])] };
-      })
-    );
-  }, [mockInstrumentInventory, mockInstrumentRentals]);
   const [mockPerformanceBookings, setMockPerformanceBookings] = useState<PerformanceBooking[]>([]);
   const [mockScholarshipApplications, setMockScholarshipApplications] = useState<ScholarshipApplication[]>([]);
   const [mockDonationCauses, setMockDonationCauses] = useState<DonationCause[]>([]);
@@ -399,7 +373,6 @@ function AuthProviderInner({
   const [mockOpenDayEvents, setMockOpenDayEvents] = useState<OpenDayEvent[]>([]);
   const [mockOpenDayAppointments, setMockOpenDayAppointments] = useState<OpenDayAppointment[]>([]);
   const [mockBranches, setMockBranches] = useState<Branch[]>([]);
-  const [mockPracticeVideos, setMockPracticeVideos] = useState<PracticeVideo[]>([]);
   const [mockAlumni, setMockAlumni] = useState<Alumnus[]>([]);
   const [mockMasterclasses, setMockMasterclasses] = useState<Masterclass[]>([]);
   const [mockMasterClassAllowances, setMockMasterClassAllowances] = useState<StudentMasterClassAllowance[]>([]);
@@ -944,205 +917,6 @@ function AuthProviderInner({
     toast({ title: 'Performance removed from program' });
   };
 
-  const assignInstrumentToStudent = (instrumentId: string, studentId: string, checkoutDetails?: { expectedReturnDate: string; parentSignatureUrl: string; depositAmount?: number }) => {
-    setMockInstrumentInventory(prev => prev.map(inst =>
-      inst.id === instrumentId
-        ? {
-          ...inst,
-          currentRenterId: studentId,
-          rentalStartDate: new Date().toISOString(),
-          currentCheckout: checkoutDetails ? {
-            studentId,
-            checkedOutAt: new Date().toISOString(),
-            expectedReturnDate: checkoutDetails.expectedReturnDate,
-            parentSignatureUrl: checkoutDetails.parentSignatureUrl,
-            depositAmount: checkoutDetails.depositAmount
-          } : undefined
-        }
-        : inst
-    ));
-    toast({ title: 'Instrument assigned successfully' });
-  };
-
-  const initiateInstrumentRental = (payload: { instrumentId: string; studentId: string; parentId: string; rentalModel: RentalModel; startDate: string; expectedReturnDate?: string; depositAmountILS?: number; monthlyFeeILS?: number; purchasePriceILS?: number; monthsUntilPurchaseEligible?: number; }) => {
-    const token = 'rent-sign-' + Date.now();
-    const rentalId = 'rental-' + Date.now();
-    const now = new Date().toISOString();
-
-    const newRental: InstrumentRental = {
-      id: rentalId,
-      conservatoriumId: user?.conservatoriumId || 'cons-15',
-      instrumentId: payload.instrumentId,
-      studentId: payload.studentId,
-      parentId: payload.parentId,
-      rentalModel: payload.rentalModel,
-      depositAmountILS: payload.depositAmountILS,
-      monthlyFeeILS: payload.monthlyFeeILS,
-      purchasePriceILS: payload.purchasePriceILS,
-      monthsUntilPurchaseEligible: payload.monthsUntilPurchaseEligible,
-      startDate: payload.startDate,
-      expectedReturnDate: payload.expectedReturnDate,
-      status: 'pending_signature',
-      signingToken: token,
-      condition: 'good',
-      notes: 'Awaiting parent signature',
-    };
-
-    setMockInstrumentRentals(prev => [newRental, ...prev]);
-
-    const parent = users.find(u => u.id === payload.parentId);
-    if (parent) {
-      const parentNotification: Notification = {
-        id: 'notif-rental-' + Date.now(),
-        title: 'Instrument rental request awaiting your signature',
-        message: 'Please sign the rental agreement: /rental-sign/' + token,
-        timestamp: now,
-        link: '/rental-sign/' + token,
-        read: false,
-      };
-      setUsers(prevUsers => prevUsers.map(u => u.id === parent.id
-        ? { ...u, notifications: [parentNotification, ...(u.notifications || [])] }
-        : u));
-    }
-
-    toast({ title: 'Signature request sent to parent (app + SMS/WhatsApp link)' });
-    return { rentalId, signingToken: token, signingLink: '/rental-sign/' + token };
-  };
-
-  const getRentalByToken = (token: string) => {
-    return mockInstrumentRentals.find(r => r.signingToken === token);
-  };
-
-  const confirmRentalSignature = (token: string, signatureUrl: string) => {
-    const rental = mockInstrumentRentals.find(r => r.signingToken === token);
-    if (!rental || rental.status !== 'pending_signature') {
-      return { success: false };
-    }
-
-    const signedAt = new Date().toISOString();
-    setMockInstrumentRentals(prev => prev.map(item => item.signingToken === token
-      ? { ...item, parentSignedAt: signedAt, parentSignatureUrl: signatureUrl, status: 'active' }
-      : item));
-
-    setMockInstrumentInventory(prev => prev.map(inst => {
-      if (inst.id !== rental.instrumentId) return inst;
-      return {
-        ...inst,
-        currentRenterId: rental.studentId,
-        rentalStartDate: rental.startDate,
-        currentCheckout: {
-          studentId: rental.studentId,
-          checkedOutAt: signedAt,
-          expectedReturnDate: rental.expectedReturnDate || rental.startDate,
-          parentSignatureUrl: signatureUrl,
-          depositAmount: rental.depositAmountILS,
-        }
-      };
-    }));
-
-    const student = users.find(u => u.id === rental.studentId);
-    const parent = users.find(u => u.id === rental.parentId);
-    const instrument = mockInstrumentInventory.find(inst => inst.id === rental.instrumentId);
-    const adminNotification: Notification = {
-      id: 'notif-admin-rental-' + Date.now(),
-      title: 'Rental agreement signed',
-      message: (parent?.name || 'Parent') + ' has signed rental for ' + (instrument?.name || instrument?.type || student?.name || rental.studentId),
-      timestamp: signedAt,
-      link: '/dashboard/admin/rentals',
-      read: false,
-    };
-    setUsers(prevUsers => prevUsers.map(u => (u.role === 'conservatorium_admin' || u.role === 'site_admin') && u.conservatoriumId === rental.conservatoriumId
-      ? { ...u, notifications: [adminNotification, ...(u.notifications || [])] }
-      : u));
-
-    return { success: true, rentalId: rental.id };
-  };
-
-  const returnInstrument = (instrumentId: string) => {
-    setMockInstrumentInventory(prev => prev.map(inst =>
-      inst.id === instrumentId
-        ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
-        : inst
-    ));
-    toast({ title: 'Instrument returned to inventory' });
-  };
-
-  const markInstrumentRentalReturned = (rentalId: string, condition: RentalCondition, customRefundAmountILS?: number) => {
-    const rental = mockInstrumentRentals.find(item => item.id === rentalId);
-    if (!rental) return { success: false, refundAmountILS: 0 };
-
-    const deposit = rental.depositAmountILS || 0;
-    const refundMap: Record<RentalCondition, number> = {
-      excellent: deposit,
-      good: deposit,
-      fair: Math.round(deposit * 0.7),
-      damaged: 0,
-    };
-
-    const refundAmountILS = customRefundAmountILS ?? refundMap[condition];
-    const now = new Date().toISOString();
-
-    setMockInstrumentRentals(prev => prev.map(item => item.id === rentalId
-      ? { ...item, status: 'returned', condition, actualReturnDate: now, refundAmountILS }
-      : item));
-
-    setMockInstrumentInventory(prev => prev.map(inst => inst.id === rental.instrumentId
-      ? { ...inst, currentRenterId: undefined, rentalStartDate: undefined, currentCheckout: undefined }
-      : inst));
-
-    toast({ title: 'Refund calculated: ILS ' + refundAmountILS });
-    return { success: true, refundAmountILS };
-  };
-
-  const addInstrument = (instrumentData: Partial<InstrumentInventory>) => {
-    const newInstrument: InstrumentInventory = {
-      id: `inst-${Date.now()}`,
-      conservatoriumId: user?.conservatoriumId || 'cons-1',
-      condition: 'GOOD',
-      ...instrumentData,
-    } as InstrumentInventory;
-    setMockInstrumentInventory(prev => [...prev, newInstrument]);
-    toast({ title: 'Instrument added to inventory' });
-  };
-
-  const updateInstrument = (instrumentId: string, instrumentData: Partial<InstrumentInventory>) => {
-    setMockInstrumentInventory(prev => prev.map(inst =>
-      inst.id === instrumentId ? { ...inst, ...instrumentData } : inst
-    ));
-    toast({ title: 'Instrument details updated' });
-  };
-
-  const deleteInstrument = (instrumentId: string) => {
-    setMockInstrumentInventory(prev => prev.filter(inst => inst.id !== instrumentId));
-    toast({ title: 'Room details updated' });
-  };
-  const addPracticeVideo = (videoData: Partial<PracticeVideo>) => {
-    if (!user) return;
-    const studentId = user.role === 'student' ? user.id : user.childIds?.[0];
-    const student = users.find(u => u.id === studentId);
-    const teacherName = student?.instruments?.[0]?.teacherName;
-    const teacherId = teacherName ? users.find(t => t.name === teacherName)?.id : undefined;
-    if (!studentId || !teacherId) return;
-
-    const newVideo: PracticeVideo = {
-      id: `pv-${Date.now()}`,
-      studentId: studentId,
-      teacherId: teacherId,
-      createdAt: new Date().toISOString(),
-      videoUrl: 'https://placehold.co/600x400.mp4',
-      ...videoData
-    } as PracticeVideo;
-    setMockPracticeVideos(prev => [...prev, newVideo]);
-  };
-  const addVideoFeedback = (videoId: string, comment: string) => {
-    if (!user) return;
-    const newFeedback = {
-      teacherId: user.id,
-      comment: comment,
-      createdAt: new Date().toISOString(),
-    };
-    setMockPracticeVideos(prev => prev.map(v => v.id === videoId ? { ...v, feedback: [...(v.feedback || []), newFeedback] } : v));
-  };
   const assignMusiciansToPerformance = (bookingId: string, musicianIds: string[]) => {
     setMockPerformanceBookings(prev =>
       prev.map(booking => {
