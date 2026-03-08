@@ -270,9 +270,9 @@ function ConservatoriumCard({
             )}
           </div>
 
-          <div className="flex items-center justify-end border-t pt-2 text-xs text-primary">
+          <div className="flex items-center justify-end border-t pt-2 text-xs text-primary rtl:justify-start">
             <span className="flex items-center gap-1">
-              <ChevronRight className="h-3.5 w-3.5" />
+              <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" />
               <span>{viewLabel}</span>
             </span>
           </div>
