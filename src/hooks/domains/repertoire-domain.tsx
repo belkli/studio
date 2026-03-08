@@ -125,7 +125,6 @@ export function RepertoireDomainProvider({
       updateUser({ ...student, achievements: [...(student.achievements || []), newAchievement] });
       toast({ title: newAchievement.title, description: newAchievement.description });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, updateUser, toast]);
 
   // ---------------------------------------------------------------------------
@@ -176,7 +175,6 @@ export function RepertoireDomainProvider({
     const updatedLogs = [...mockPracticeLogs, newLog];
     setMockPracticeLogs(updatedLogs);
     checkAndAwardPracticeStreak(logData.studentId, updatedLogs);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, mockPracticeLogs, checkAndAwardPracticeStreak]);
 
   // ---------------------------------------------------------------------------
@@ -201,7 +199,6 @@ export function RepertoireDomainProvider({
         return rep;
       })
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [awardAchievement]);
 
   // ---------------------------------------------------------------------------
@@ -226,7 +223,6 @@ export function RepertoireDomainProvider({
     if (student) {
       updateUser({ ...student, weeklyPracticeGoal: practiceGoal });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, updateUser]);
 
   // ---------------------------------------------------------------------------
@@ -285,7 +281,6 @@ export function RepertoireDomainProvider({
       ));
       return updated;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, mockLessons, mockTeacherRatings, setUsers]);
 
   // ---------------------------------------------------------------------------
@@ -297,7 +292,6 @@ export function RepertoireDomainProvider({
       count: mockTeacherRatings.filter(r => r.teacherId === teacherId).length,
       userRating: user ? mockTeacherRatings.find(r => r.teacherId === teacherId && r.reviewerUserId === user.id)?.rating : undefined,
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockTeacherRatings, user]);
 
   // ---------------------------------------------------------------------------

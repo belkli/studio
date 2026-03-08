@@ -147,7 +147,6 @@ export function InstrumentsDomainProvider({
         : inst
     ));
     toast({ title: 'Instrument assigned successfully' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -196,7 +195,6 @@ export function InstrumentsDomainProvider({
 
     toast({ title: 'Signature request sent to parent (app + SMS/WhatsApp link)' });
     return { rentalId, signingToken: token, signingLink: '/rental-sign/' + token };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, users, setUsers, toast]);
 
   // ---------------------------------------------------------------------------
@@ -252,7 +250,6 @@ export function InstrumentsDomainProvider({
       : u));
 
     return { success: true, rentalId: rental.id };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockInstrumentRentals, mockInstrumentInventory, users, setUsers]);
 
   // ---------------------------------------------------------------------------
@@ -265,7 +262,6 @@ export function InstrumentsDomainProvider({
         : inst
     ));
     toast({ title: 'Instrument returned to inventory' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -296,7 +292,6 @@ export function InstrumentsDomainProvider({
 
     toast({ title: 'Refund calculated: ILS ' + refundAmountILS });
     return { success: true, refundAmountILS };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockInstrumentRentals, toast]);
 
   // ---------------------------------------------------------------------------
@@ -311,7 +306,6 @@ export function InstrumentsDomainProvider({
     } as InstrumentInventory;
     setMockInstrumentInventory(prev => [...prev, newInstrument]);
     toast({ title: 'Instrument added to inventory' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, toast]);
 
   // ---------------------------------------------------------------------------
@@ -322,7 +316,6 @@ export function InstrumentsDomainProvider({
       inst.id === instrumentId ? { ...inst, ...instrumentData } : inst
     ));
     toast({ title: 'Instrument details updated' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -330,8 +323,7 @@ export function InstrumentsDomainProvider({
   // ---------------------------------------------------------------------------
   const deleteInstrument = useCallback((instrumentId: string) => {
     setMockInstrumentInventory(prev => prev.filter(inst => inst.id !== instrumentId));
-    toast({ title: 'Room details updated' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    toast({ title: 'Instrument removed from inventory' });
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -354,7 +346,6 @@ export function InstrumentsDomainProvider({
       ...videoData
     } as PracticeVideo;
     setMockPracticeVideos(prev => [...prev, newVideo]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, users]);
 
   // ---------------------------------------------------------------------------
@@ -368,7 +359,6 @@ export function InstrumentsDomainProvider({
       createdAt: new Date().toISOString(),
     };
     setMockPracticeVideos(prev => prev.map(v => v.id === videoId ? { ...v, feedback: [...(v.feedback || []), newFeedback] } : v));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------

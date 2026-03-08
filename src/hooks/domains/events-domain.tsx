@@ -141,7 +141,6 @@ export function EventsDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist event', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -259,7 +258,6 @@ export function EventsDomainProvider({
     }
 
     return { success: true, bookingRef, totalAmount };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -302,7 +300,6 @@ export function EventsDomainProvider({
         });
     }
     toast({ title: student.name + ' added to program!' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, mockAssignedRepertoire, mockRepertoire, toast]);
 
   // ---------------------------------------------------------------------------
@@ -327,7 +324,6 @@ export function EventsDomainProvider({
         });
     }
     toast({ title: 'Performance removed from program' });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -350,7 +346,6 @@ export function EventsDomainProvider({
         return booking;
       })
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);
 
   // ---------------------------------------------------------------------------
@@ -376,7 +371,6 @@ export function EventsDomainProvider({
       ...bookingData
     } as PerformanceBooking;
     setMockPerformanceBookings(prev => [...prev, newBooking]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -421,7 +415,6 @@ export function EventsDomainProvider({
         console.warn('Failed to persist master class', error);
       });
     return created;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -503,7 +496,6 @@ export function EventsDomainProvider({
       console.warn('Failed to persist master class registration', error);
       return optimisticResult;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockMasterclasses, mockMasterClassAllowances, users]);
 
   // ---------------------------------------------------------------------------
@@ -549,7 +541,6 @@ export function EventsDomainProvider({
       };
       return [profile, ...prev];
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, setUsers]);
 
   // ---------------------------------------------------------------------------
@@ -596,7 +587,6 @@ export function EventsDomainProvider({
         console.warn('Failed to persist alumni profile', error);
       });
     return created;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockAlumni, users, user]);
 
   // ---------------------------------------------------------------------------

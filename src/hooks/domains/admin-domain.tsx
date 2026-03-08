@@ -192,6 +192,7 @@ export function AdminDomainProvider({
         status: 'PENDING',
         academicYear: '2023-2024'
       }));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMockPlayingSchoolInvoices(initialPsInvoices);
     }
   }, [user, users]);
@@ -230,7 +231,6 @@ export function AdminDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist branch', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -278,7 +278,6 @@ export function AdminDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist conservatorium instrument', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -347,7 +346,6 @@ export function AdminDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist lesson package', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -416,7 +414,6 @@ export function AdminDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist room', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, mockBranches, toast]);
 
   // ---------------------------------------------------------------------------
@@ -445,7 +442,6 @@ export function AdminDomainProvider({
         });
       return prev;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -459,7 +455,6 @@ export function AdminDomainProvider({
       .catch((error) => {
         console.warn('Failed to delete room', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
   // ---------------------------------------------------------------------------
@@ -473,7 +468,6 @@ export function AdminDomainProvider({
       ...waitlistEntry
     } as WaitlistEntry;
     setMockWaitlist(prev => [...prev, newEntry]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -602,7 +596,6 @@ export function AdminDomainProvider({
         // Keep optimistic entry in memory even if persistence fails.
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, user]);
 
   // ---------------------------------------------------------------------------
@@ -697,7 +690,6 @@ export function AdminDomainProvider({
     })();
 
     return newCause;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, mockDonationCauses]);
 
   // ---------------------------------------------------------------------------
@@ -745,7 +737,6 @@ export function AdminDomainProvider({
     })();
 
     return newDonation;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------

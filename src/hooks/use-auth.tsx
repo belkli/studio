@@ -1,12 +1,4 @@
-﻿
-/**
- * @fileoverview This is the central authentication and state management provider for the Harmonia application.
- * It uses React Context to provide user authentication status, user data, and all mock data
- * for the application's features. It also contains the functions to manipulate this mock data,
- * simulating a backend API. In a production application, these functions would make API calls
- * to a real backend service like Firebase.
- */
-'use client';
+﻿'use client';
 import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
@@ -16,9 +8,8 @@ import { CommsDomainProvider, useCommsDomain } from '@/hooks/domains/comms-domai
 import { InstrumentsDomainProvider, useInstrumentsDomain } from '@/hooks/domains/instruments-domain';
 import { EventsDomainProvider, useEventsDomain } from '@/hooks/domains/events-domain';
 import { AdminDomainProvider, useAdminDomain } from '@/hooks/domains/admin-domain';
-import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
+import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-// (All domain-specific actions are now imported within their respective domain files)
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 /**
@@ -190,7 +181,8 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * The main provider component that wraps the application.
- * It initializes and manages all application state, simulating a full backend.
+ * It nests all 8 domain providers and exposes a unified AuthContext
+ * for legacy consumers that have not yet been migrated to domain hooks.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const roomsRef = useRef<Room[]>([]);
@@ -645,6 +637,7 @@ function AuthProviderInner({
     return () => {
       active = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const newFeaturesEnabled = useMemo(() => {
@@ -678,15 +671,12 @@ function AuthProviderInner({
         clearAuthCookie();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /**
-   * Simulates user login.
-   * @param email The email to log in with.
-   * @returns An object with the user and their approval status.
-   */
   useEffect(() => {
     if (bootstrapResolved) setIsLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bootstrapResolved]);
 
   const contextValue = useMemo(() => ({
@@ -878,10 +868,6 @@ export const useAuth = () => {
   }
   return context;
 };
-
-
-
-
 
 
 

@@ -64,7 +64,6 @@ export function AuthDomainProvider({
 
       return { user: null, status: 'not_found' };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [users, router],
   );
 
@@ -146,7 +145,6 @@ export function AuthDomainProvider({
       setBootstrapResolved,
       setBootstrapUsedMockFallback,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, isLoading, bootstrapResolved, login, logout, approveUser, rejectUser],
   );
 

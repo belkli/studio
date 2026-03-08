@@ -128,7 +128,6 @@ export function CommsDomainProvider({
     });
 
     return existingId!;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -164,7 +163,6 @@ export function CommsDomainProvider({
           console.warn('Failed to persist announcement', error);
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------
@@ -206,7 +204,6 @@ export function CommsDomainProvider({
       ...templateData
     } as FormTemplate;
     setMockFormTemplates(prev => [...prev, newTemplate]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // ---------------------------------------------------------------------------

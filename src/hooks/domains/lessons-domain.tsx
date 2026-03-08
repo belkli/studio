@@ -144,7 +144,6 @@ export function LessonsDomainProvider({
       .catch((error) => {
         console.warn('Failed to persist lesson', error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRooms, getUser, getConservatoriumInstruments, toast]);
 
   // -------------------------------------------------------------------------
