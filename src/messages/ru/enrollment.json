@@ -708,6 +708,17 @@
     "premiumOnly": "Только премиум-учителя",
     "allSlotsShown": "Показаны все {count} доступных слота"
   },
+  "Cancellation": {
+    "insufficientNotice": "Невозможно перенести: дано {hoursGiven}ч уведомления, требуется {hoursRequired}ч.",
+    "makeupNotEntitled": "Поздняя отмена — урок замены не предоставляется.",
+    "cancelAnywayBtn": "Отменить урок (без замены)",
+    "bypassNoticeCheck": "Игнорировать политику уведомления (только администратор)",
+    "bypassApplied": "Применено игнорирование политики администратора",
+    "makeupCreditIssued": "Выдан кредит на урок замены.",
+    "makeupCreditNotIssued": "Кредит на замену не выдан из-за короткого уведомления.",
+    "lateCancelConfirmTitle": "Поздняя отмена",
+    "lateCancelConfirmDesc": "Этот урок через {hoursGiven}ч. Отмена сейчас не предоставит урок замены. Продолжить?"
+  },
   "ExcellenceTrack": {
     "acceptBtn": "Принять приглашение",
     "benefits": "Преимущества программы",

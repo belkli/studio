@@ -708,6 +708,17 @@
     "premiumOnly": "Premium teachers only",
     "allSlotsShown": "All {count} available slots shown"
   },
+  "Cancellation": {
+    "insufficientNotice": "Cannot reschedule: {hoursGiven}h notice given, {hoursRequired}h required.",
+    "makeupNotEntitled": "Late cancellation — no makeup lesson entitled.",
+    "cancelAnywayBtn": "Cancel lesson (no makeup)",
+    "bypassNoticeCheck": "Override notice policy (admin only)",
+    "bypassApplied": "Admin policy override applied",
+    "makeupCreditIssued": "Makeup credit issued.",
+    "makeupCreditNotIssued": "No makeup credit issued due to short notice.",
+    "lateCancelConfirmTitle": "Late cancellation",
+    "lateCancelConfirmDesc": "This lesson is in {hoursGiven}h. Cancelling now will not grant a makeup credit. Continue?"
+  },
   "ExcellenceTrack": {
     "successTitle": "Enrollment confirmed",
     "declineTitle": "Offer declined",

@@ -708,6 +708,17 @@
     "premiumOnly": "מורים פרימיום בלבד",
     "allSlotsShown": "הוצגו כל {count} השיעורים הזמינים"
   },
+  "Cancellation": {
+    "insufficientNotice": "לא ניתן לשנות מועד: ניתנה התראה של {hoursGiven} שעות בלבד, נדרשות לפחות {hoursRequired} שעות.",
+    "makeupNotEntitled": "ביטול בהתראה קצרה — לא מזכה בשיעור השלמה.",
+    "cancelAnywayBtn": "בטל שיעור ללא השלמה",
+    "bypassNoticeCheck": "עקוף מדיניות התראה (מנהל בלבד)",
+    "bypassApplied": "נעשה שימוש בעקיפת מדיניות מנהל",
+    "makeupCreditIssued": "הונפק זיכוי שיעור השלמה.",
+    "makeupCreditNotIssued": "לא הונפק זיכוי שיעור השלמה עקב התראה קצרה.",
+    "lateCancelConfirmTitle": "ביטול בהתראה קצרה",
+    "lateCancelConfirmDesc": "שיעור זה מתוכנן בעוד {hoursGiven} שעות בלבד. ביטול כעת לא יזכה בשיעור השלמה. להמשיך?"
+  },
   "ExcellenceTrack": {
     "acceptBtn": "אישור ההזמנה",
     "benefits": "יתרונות המסלול",

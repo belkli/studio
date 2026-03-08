@@ -708,6 +708,17 @@
     "premiumOnly": "معلمون مميزون فقط",
     "allSlotsShown": "تم عرض جميع {count} الفتحات المتاحة"
   },
+  "Cancellation": {
+    "insufficientNotice": "لا يمكن إعادة الجدولة: تم إعطاء {hoursGiven} ساعة إشعار، مطلوب {hoursRequired} ساعة.",
+    "makeupNotEntitled": "إلغاء متأخر — لا يحق الحصول على درس تعويضي.",
+    "cancelAnywayBtn": "إلغاء الدرس (بدون تعويض)",
+    "bypassNoticeCheck": "تجاوز سياسة الإشعار (للمشرف فقط)",
+    "bypassApplied": "تم تطبيق تجاوز سياسة المشرف",
+    "makeupCreditIssued": "تم إصدار رصيد درس تعويضي.",
+    "makeupCreditNotIssued": "لم يتم إصدار رصيد تعويضي بسبب الإشعار القصير.",
+    "lateCancelConfirmTitle": "إلغاء متأخر",
+    "lateCancelConfirmDesc": "هذا الدرس بعد {hoursGiven} ساعة. الإلغاء الآن لن يمنح درساً تعويضياً. هل تريد المتابعة؟"
+  },
   "ExcellenceTrack": {
     "acceptBtn": "قبول الدعوة",
     "benefits": "مزايا البرنامج",
