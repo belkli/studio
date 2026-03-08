@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { StarRating } from '@/components/ui/star-rating';
 import {
   Search,
   MapPin,
@@ -951,10 +952,9 @@ export default function AboutPage() {
                             <p className="line-clamp-1 text-[11px] text-muted-foreground">{profile.instruments.join(', ')}</p>
                           )}
                           {typeof profile.teacherRatingAvg === 'number' && (profile.teacherRatingCount || 0) > 0 && (
-                            <p className="mt-1 flex items-center gap-1 text-[11px] text-amber-600">
-                              <Star className="h-3.5 w-3.5 fill-current" />
-                              <span>{profile.teacherRatingAvg.toFixed(1)} ({profile.teacherRatingCount})</span>
-                            </p>
+                            <div className="mt-1">
+                              <StarRating value={profile.teacherRatingAvg} size="sm" showCount count={profile.teacherRatingCount} />
+                            </div>
                           )}
                         </button>
                       ))}
@@ -992,10 +992,7 @@ export default function AboutPage() {
                     <p className="text-sm text-muted-foreground">{selectedProfile.instruments.join(', ')}</p>
                   )}
                   {typeof selectedProfile.teacherRatingAvg === 'number' && (selectedProfile.teacherRatingCount || 0) > 0 && (
-                    <p className="flex items-center gap-1 text-sm text-amber-600">
-                      <Star className="h-4 w-4 fill-current" />
-                      <span>{selectedProfile.teacherRatingAvg.toFixed(1)} ({selectedProfile.teacherRatingCount})</span>
-                    </p>
+                    <StarRating value={selectedProfile.teacherRatingAvg} size="md" showCount count={selectedProfile.teacherRatingCount} />
                   )}
                 </div>
               </div>
