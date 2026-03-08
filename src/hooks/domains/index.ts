@@ -6,3 +6,6 @@ export type { UsersDomainContextType } from './users-domain';
 
 export { LessonsDomainContext, useLessonsDomain } from './lessons-domain';
 export type { LessonsDomainContextType } from './lessons-domain';
+
+export { RepertoireDomainContext, useRepertoireDomain } from './repertoire-domain';
+export type { RepertoireDomainContextType } from './repertoire-domain';
