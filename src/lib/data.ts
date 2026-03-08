@@ -62,6 +62,71 @@ const websiteOverride: Record<number, string> = {
     18: 'https://www.zamarin.org.il/html5/?_id=14760&did=4688&G=14760',
 };
 
+// Per-conservatorium pricing addenda derived from real PDF tariff documents (tsh"pe 2024-25).
+// Text is stored in customRegistrationTerms and displayed to parents/students during enrollment.
+const customTermsOverride: Record<number, { he: string; en: string; ar: string; ru: string }> = {
+    2:  { // אשדוד / אקדמא (NGO)
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש (4 שיעורים), 60 דקות – ₪560 לחודש. ביטול שיעור: יש להודיע 24 שעות מראש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month (4 lessons), 60-min – ₪560/month. Cancellation: 24 hours notice required.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً، 60 دقيقة – ₪560 شهرياً. إلغاء: يتطلب إشعاراً قبل 24 ساعة.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес, 60 мин – ₪560/мес. Отмена: уведомление за 24 часа.',
+    },
+    7:  { // באר שבע
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪480 לחודש, 60 דקות – ₪550 לחודש. ניתן לשלם ב-10 תשלומים שווים. תלמידים המבצעים כלי "מועדף" (אובאה, טובה, ויולה, קונטרבס, פגוט) מקבלים הנחה של 20%.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪480/month, 60-min – ₪550/month. Payment in 10 equal installments. Students playing "preferred" instruments (oboe, tuba, viola, double bass, bassoon) receive 20% discount.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪480 شهرياً، 60 دقيقة – ₪550 شهرياً. الدفع في 10 أقساط متساوية.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪480/мес, 60 мин – ₪550/мес. Оплата в 10 равных взносах.',
+    },
+    9:  { // בית שמש
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש, 60 דקות – ₪560 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month, 60-min – ₪560/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً، 60 دقيقة – ₪560 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес, 60 мин – ₪560/мес.',
+    },
+    10: { // ברנר
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש, 60 דקות – ₪560 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month, 60-min – ₪560/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً، 60 دقيقة – ₪560 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес, 60 мин – ₪560/мес.',
+    },
+    11: { // בת ים
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес.',
+    },
+    13: { // דימונה
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪470 לחודש. מלגות זמינות לפי קריטריוני זכאות.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪470/month. Scholarships available based on eligibility criteria.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪470 شهرياً. منح دراسية متاحة وفق معايير الأهلية.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪470/мес. Стипендии доступны по критериям.',
+    },
+    14: { // גליל עליון
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес.',
+    },
+    16: { // ערבה
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪460 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪460/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪460 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪460/мес.',
+    },
+    17: { // הרצליה
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש, 60 דקות – ₪560 לחודש. ניתן לשלם ב-10 תשלומים.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month, 60-min – ₪560/month. Payment in 10 installments.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً، 60 دقيقة – ₪560 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 мин – ₪490/мес, 60 мин – ₪560/мес.',
+    },
+    18: { // זכרון יעקב
+        he: 'שכר לימוד לשנת הלימודים תשפ"ה: שיעור יחיד 45 דקות – ₪490 לחודש.',
+        en: 'Tuition 2024-25: 45-min lesson – ₪490/month.',
+        ar: 'رسوم الدراسة 2024-25: درس 45 دقيقة – ₪490 شهرياً.',
+        ru: 'Стоимость обучения 2024-25: урок 45 مин – ₪490/мес.',
+    },
+};
+
 // Generate Conservatoriums from the JSON file, enriched with scraped profile data
 export const conservatoriums: Conservatorium[] = constAdminData.map((admin, index) => {
     const isHodHasharon = admin.location === 'הוד השרון';
@@ -221,6 +286,7 @@ export const conservatoriums: Conservatorium[] = constAdminData.map((admin, inde
             whatsapp: scraped.social_media.whatsapp,
         } : undefined,
         photoUrls: scraped.photos?.length > 0 ? scraped.photos : [UNSPLASH_CONSERVATORIUM_PHOTOS[admin.id % 10]],
+        customRegistrationTerms: customTermsOverride[admin.id] || undefined,
     };
 });
 
@@ -1183,6 +1249,18 @@ export const mockConservatoriumInstruments: ConservatoriumInstrument[] = [
 ];
 
 export const mockLessonPackages: LessonPackage[] = [
+  // ── 30-minute plans ──
+  {
+    id: 'pkg-monthly-30',
+    conservatoriumId: 'cons-15',
+    names: { he: 'חבילה חודשית 30 דקות', en: 'Monthly Plan (30 min)', ru: 'Ежемесячный план (30 мин)', ar: 'خطة شهرية (30 دقيقة)' },
+    type: 'monthly',
+    lessonCount: 4,
+    durationMinutes: 30,
+    priceILS: 320,
+    isActive: true,
+  },
+  // ── 45-minute plans ──
   {
     id: 'pkg-monthly-45',
     conservatoriumId: 'cons-15',
@@ -1190,9 +1268,52 @@ export const mockLessonPackages: LessonPackage[] = [
     type: 'monthly',
     lessonCount: 4,
     durationMinutes: 45,
-    priceILS: 500,
+    priceILS: 490,
     isActive: true,
   },
+  {
+    id: 'pkg-annual-45',
+    conservatoriumId: 'cons-15',
+    names: { he: 'חבילה שנתית 45 דקות', en: 'Annual Plan (45 min)', ru: 'Годовой план (45 мин)', ar: 'خطة سنوية (45 دقيقة)' },
+    type: 'annual',
+    lessonCount: 40,
+    durationMinutes: 45,
+    priceILS: 4450, // ~490 × 10 months × 0.91 (~9% annual discount)
+    isActive: true,
+  },
+  // ── 60-minute plans ──
+  {
+    id: 'pkg-monthly-60',
+    conservatoriumId: 'cons-15',
+    names: { he: 'חבילה חודשית 60 דקות', en: 'Monthly Plan (60 min)', ru: 'Ежемесячный план (60 мин)', ar: 'خطة شهرية (60 دقيقة)' },
+    type: 'monthly',
+    lessonCount: 4,
+    durationMinutes: 60,
+    priceILS: 560,
+    isActive: true,
+  },
+  {
+    id: 'pkg-annual-60',
+    conservatoriumId: 'cons-15',
+    names: { he: 'חבילה שנתית 60 דקות', en: 'Annual Plan (60 min)', ru: 'Годовой план (60 мин)', ar: 'خطة سنوية (60 دقيقة)' },
+    type: 'annual',
+    lessonCount: 40,
+    durationMinutes: 60,
+    priceILS: 5100, // ~560 × 10 months × 0.91 (~9% annual discount)
+    isActive: true,
+  },
+  // ── Trial lesson ──
+  {
+    id: 'pkg-trial-45',
+    conservatoriumId: 'cons-15',
+    names: { he: 'שיעור ניסיון', en: 'Trial Lesson', ru: 'Пробный урок', ar: 'درس تجريبي' },
+    type: 'single',
+    lessonCount: 1,
+    durationMinutes: 45,
+    priceILS: 100,
+    isActive: true,
+  },
+  // ── Legacy semester pack (kept for backwards-compat) ──
   {
     id: 'pkg-semester-45',
     conservatoriumId: 'cons-15',
@@ -1200,17 +1321,7 @@ export const mockLessonPackages: LessonPackage[] = [
     type: 'semester',
     lessonCount: 16,
     durationMinutes: 45,
-    priceILS: 1800,
-    isActive: true,
-  },
-  {
-    id: 'pkg-single-45',
-    conservatoriumId: 'cons-15',
-    names: { he: 'שיעור בודד', en: 'Single Lesson', ru: 'Разовый урок', ar: 'درس واحد' },
-    type: 'single',
-    lessonCount: 1,
-    durationMinutes: 45,
-    priceILS: 150,
+    priceILS: 1780, // ~490 × 4 months × 0.91
     isActive: true,
   },
 ];

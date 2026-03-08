@@ -2673,3 +2673,12 @@ UPDATE conservatoriums SET website = 'https://clore.galil-elion.org.il/' WHERE i
 UPDATE conservatoriums SET website = 'https://arava.smarticket.co.il/' WHERE id = 'a1000000-0000-0000-0000-000000000016';
 UPDATE conservatoriums SET website = 'https://teo.org.il/conservatory/' WHERE id = 'a1000000-0000-0000-0000-000000000017';
 UPDATE conservatoriums SET website = 'https://www.zamarin.org.il/html5/?_id=14760&did=4688&G=14760' WHERE id = 'a1000000-0000-0000-0000-000000000018';
+
+-- ============================================================
+-- Standardize lesson package prices to real market rates (2024-25)
+-- Source: docs/legal/standardized-price-model.md
+-- ============================================================
+UPDATE lesson_packages SET price_amount = 320 WHERE duration_minutes = 30 AND package_type ILIKE '%monthly%';
+UPDATE lesson_packages SET price_amount = 490 WHERE duration_minutes = 45 AND package_type ILIKE '%monthly%';
+UPDATE lesson_packages SET price_amount = 560 WHERE duration_minutes = 60 AND package_type ILIKE '%monthly%';
+UPDATE lesson_packages SET price_amount = 100 WHERE package_type ILIKE '%trial%';
