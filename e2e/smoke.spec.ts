@@ -109,3 +109,33 @@ test.describe('Smoke: public pages load', { tag: '@smoke' }, () => {
     });
   }
 });
+
+/**
+ * New conservatoriums added in the latest seed update.
+ * Routes use the /about/[slug] page which accepts `cons-{id}` as a valid slug.
+ * Each route exercises the public profile rendering path for that conservatorium.
+ */
+const CONSERVATORIUM_ROUTES = [
+  '/about/cons-2',   // אשדוד
+  '/about/cons-7',   // באר שבע
+  '/about/cons-9',   // בית שמש
+  '/about/cons-10',  // ברנר
+  '/about/cons-11',  // בת ים
+  '/about/cons-13',  // דימונה
+  '/about/cons-14',  // גליל עליון
+  '/about/cons-16',  // ערבה
+  '/about/cons-17',  // הרצליה
+  '/about/cons-18',  // זכרון יעקב
+] as const;
+
+test.describe('Smoke: new conservatorium public profile pages load', { tag: '@smoke' }, () => {
+  for (const route of CONSERVATORIUM_ROUTES) {
+    test(`${route} loads`, async ({ page }) => {
+      await page.goto(route);
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page).not.toHaveTitle(/error/i);
+      const body = await page.locator('body').textContent();
+      expect(body!.length).toBeGreaterThan(50);
+    });
+  }
+});
