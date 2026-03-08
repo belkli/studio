@@ -7,16 +7,16 @@
  * to a real backend service like Firebase.
  */
 'use client';
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
+import { LessonsDomainProvider, useLessonsDomain } from '@/hooks/domains/lessons-domain';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
 import { differenceInCalendarDays, startOfDay, addDays, addHours } from 'date-fns';
-import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
+import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertConservatoriumAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 /**
@@ -191,12 +191,21 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  * It initializes and manages all application state, simulating a full backend.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const roomsRef = useRef<Room[]>([]);
+  const userRef = useRef<User | null>(null);
+  const conservatoriumInstrumentsRef = useRef<ConservatoriumInstrument[]>([]);
   return (
     <UsersDomainProvider>
       <AuthDomainProvider>
-        <AuthProviderInner>
-          {children}
-        </AuthProviderInner>
+        <LessonsDomainProvider
+          getRooms={() => roomsRef.current}
+          getUser={() => userRef.current}
+          getConservatoriumInstruments={() => conservatoriumInstrumentsRef.current}
+        >
+          <AuthProviderInner roomsRef={roomsRef} userRef={userRef} conservatoriumInstrumentsRef={conservatoriumInstrumentsRef}>
+            {children}
+          </AuthProviderInner>
+        </LessonsDomainProvider>
       </AuthDomainProvider>
     </UsersDomainProvider>
   );
@@ -204,8 +213,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 function AuthProviderInner({
   children,
+  roomsRef,
+  userRef,
+  conservatoriumInstrumentsRef,
 }: {
   children: React.ReactNode;
+  roomsRef: React.RefObject<Room[]>;
+  userRef: React.RefObject<User | null>;
+  conservatoriumInstrumentsRef: React.RefObject<ConservatoriumInstrument[]>;
 }) {
   const {
     user,
@@ -232,6 +247,21 @@ function AuthProviderInner({
     registerAuthSetters,
   } = useUsersDomain();
 
+  const {
+    mockLessons,
+    setMockLessons,
+    mockMakeupCredits,
+    setMockMakeupCredits,
+    addLesson,
+    cancelLesson,
+    rescheduleLesson,
+    getMakeupCreditBalance,
+    getMakeupCreditsDetail,
+    updateLessonStatus,
+    assignSubstitute,
+    reportSickLeave,
+  } = useLessonsDomain();
+
   // Keep users-domain in sync with the current session user so that updateUser,
   // markWalkthroughAsSeen etc. can update localStorage / auth cookie correctly.
   useEffect(() => {
@@ -240,7 +270,6 @@ function AuthProviderInner({
 
   // State for all mock data sets (users moved to outer AuthProvider)
   const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);
-  const [mockLessons, setMockLessons] = useState<LessonSlot[]>([]);
   const [mockPackages, setMockPackages] = useState<Package[]>([]);
   const [mockInvoices, setMockInvoices] = useState<Invoice[]>([]);
   const [mockPracticeLogs, setMockPracticeLogs] = useState<PracticeLog[]>([]);
@@ -334,13 +363,17 @@ function AuthProviderInner({
   const [mockMasterClassAllowances, setMockMasterClassAllowances] = useState<StudentMasterClassAllowance[]>([]);
   const [mockWaitlist, setMockWaitlist] = useState<WaitlistEntry[]>([]);
   const [mockPayrolls, setMockPayrolls] = useState<PayrollSummary[]>([]);
-  const [mockMakeupCredits, setMockMakeupCredits] = useState<MakeupCredit[]>([]);
   const [mockTeacherRatings, setMockTeacherRatings] = useState<TeacherRating[]>([]);
   const [mockRepertoire, setMockRepertoire] = useState<Composition[]>([]);
   const [mockRooms, setMockRooms] = useState<Room[]>([]);
   const [conservatoriums, setConservatoriums] = useState<Conservatorium[]>([]);
   const [conservatoriumInstruments, setConservatoriumInstruments] = useState<ConservatoriumInstrument[]>([]);
   const [lessonPackages, setLessonPackages] = useState<LessonPackage[]>([]);
+
+  // Keep refs in sync so LessonsDomainProvider getter callbacks always return the latest values
+  useEffect(() => { roomsRef.current = mockRooms; }, [mockRooms, roomsRef]);
+  useEffect(() => { userRef.current = user; }, [user, userRef]);
+  useEffect(() => { conservatoriumInstrumentsRef.current = conservatoriumInstruments; }, [conservatoriumInstruments, conservatoriumInstrumentsRef]);
   const applyMockBootstrapFallback = () => {
     setBootstrapUsedMockFallback(true);
     setUsers([]);
@@ -630,137 +663,6 @@ function AuthProviderInner({
       });
   };
 
-  const addLesson = (lessonData: Partial<LessonSlot>) => {
-    const newLesson: LessonSlot = {
-      id: `lesson-${Date.now()}`,
-      conservatoriumId: user?.conservatoriumId || 'cons-15',
-      status: 'SCHEDULED',
-      isCreditConsumed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      ...lessonData
-    } as LessonSlot;
-
-    if (!newLesson.startTime) {
-      const now = new Date();
-      now.setMinutes(0, 0, 0);
-      newLesson.startTime = now.toISOString();
-    }
-    if (!newLesson.durationMinutes || Number.isNaN(newLesson.durationMinutes)) {
-      newLesson.durationMinutes = 45;
-    }
-    if (!newLesson.instrument) {
-      newLesson.instrument = 'general_music';
-    }
-
-    const conservatoriumRoomPool = mockRooms.filter((room) => room.conservatoriumId === newLesson.conservatoriumId);
-
-    if (!newLesson.isVirtual && !newLesson.roomId && conservatoriumRoomPool.length > 0) {
-      const allocation = allocateRoomWithConflictResolution({
-        lesson: {
-          instrument: newLesson.instrument,
-          startTime: newLesson.startTime,
-          durationMinutes: newLesson.durationMinutes,
-          conservatoriumId: newLesson.conservatoriumId,
-        },
-        rooms: conservatoriumRoomPool,
-        existingLessons: mockLessons.filter((lesson) => lesson.conservatoriumId === newLesson.conservatoriumId),
-        conservatoriumInstruments: conservatoriumInstruments.filter((item) => item.conservatoriumId === newLesson.conservatoriumId),
-      });
-
-      if (allocation.action === 'no_room_available') {
-        toast({
-          title: 'No available room',
-          description: 'No available room for ' + newLesson.instrument + ' at ' + new Date(newLesson.startTime).toLocaleString(),
-        });
-        return;
-      }
-
-      newLesson.roomId = allocation.roomId;
-
-      if (allocation.action === 'reallocate_existing') {
-        setMockLessons((prev) => {
-          const shifted = prev.map((lesson) => lesson.id === allocation.reallocatedLessonId
-            ? { ...lesson, roomId: allocation.reallocatedRoomId, updatedAt: new Date().toISOString() }
-            : lesson);
-          return [...shifted, newLesson];
-        });
-
-        void upsertLessonAction(newLesson)
-          .catch((error) => {
-            console.warn('Failed to persist lesson', error);
-          });
-
-        toast({ title: 'Room reallocated automatically for better fit' });
-        return;
-      }
-    }
-
-    setMockLessons(prev => [...prev, newLesson]);
-
-    void upsertLessonAction(newLesson)
-      .then((saved) => {
-        setMockLessons(prev => prev.map(item => item.id === newLesson.id ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to persist lesson', error);
-      });
-  };
-
-  const cancelLesson = (lessonId: string, withNotice: boolean) => {
-    const nextStatus = withNotice ? 'CANCELLED_STUDENT_NOTICED' : 'CANCELLED_STUDENT_NO_NOTICE';
-    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status: nextStatus } : l));
-
-    const snapshot = mockLessons.find((item) => item.id === lessonId);
-    if (!snapshot) return;
-
-    void upsertLessonAction({ ...snapshot, status: nextStatus } as LessonSlot)
-      .then((saved) => {
-        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to persist lesson cancel', error);
-      });
-  };
-
-  const rescheduleLesson = (lessonId: string, newStartTime: string) => {
-    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, startTime: newStartTime } : l));
-
-    const snapshot = mockLessons.find((item) => item.id === lessonId);
-    if (!snapshot) return;
-
-    void upsertLessonAction({ ...snapshot, startTime: newStartTime } as LessonSlot)
-      .then((saved) => {
-        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to persist lesson reschedule', error);
-      });
-  };
-
-  const getMakeupCreditBalance = (studentIds: string[]) => {
-    if (!studentIds.length) return 0;
-    const granted = mockLessons.filter(l =>
-      studentIds.includes(l.studentId) &&
-      (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
-    ).length;
-    const used = mockLessons.filter(l => studentIds.includes(l.studentId) && l.type === 'MAKEUP').length;
-    return granted - used;
-  };
-  const getMakeupCreditsDetail = (studentIds: string[]) => {
-    if (!studentIds.length) return [];
-    return mockLessons.filter(l =>
-      studentIds.includes(l.studentId) &&
-      (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
-    ).map(l => ({
-      id: l.id,
-      reason: l.status,
-      grantedAt: l.createdAt,
-      expiresAt: addDays(new Date(l.createdAt), 60).toISOString(),
-      status: 'AVAILABLE'
-    }))
-  };
-
   const submitTeacherRating = (teacherId: string, rating: 1|2|3|4|5, comment?: string) => {
     if (!user) return;
     const conservatoriumId = user.conservatoriumId ?? '';
@@ -1003,46 +905,6 @@ function AuthProviderInner({
           console.warn('Failed to persist announcement', error);
         });
     }
-  };
-  const assignSubstitute = (lessonId: string, newTeacherId: string) => {
-    setMockLessons(prev => prev.map(lesson =>
-      lesson.id === lessonId
-        ? { ...lesson, teacherId: newTeacherId, status: 'SCHEDULED' as SlotStatus }
-        : lesson
-    ));
-  };
-
-  const reportSickLeave = (teacherId: string, from: Date, to: Date): LessonSlot[] => {
-    let cancelledLessons: LessonSlot[] = [];
-    setMockLessons(prev => prev.map(lesson => {
-      const lessonDate = new Date(lesson.startTime);
-      if (
-        lesson.teacherId === teacherId &&
-        lesson.status === 'SCHEDULED' &&
-        lessonDate >= from &&
-        lessonDate <= to
-      ) {
-        const updatedLesson = { ...lesson, status: 'CANCELLED_TEACHER' as SlotStatus };
-        cancelledLessons.push(updatedLesson);
-        return updatedLesson;
-      }
-      return lesson;
-    }));
-    return cancelledLessons;
-  };
-  const updateLessonStatus = (lessonId: string, status: SlotStatus) => {
-    setMockLessons(prev => prev.map(l => l.id === lessonId ? { ...l, status, attendanceMarkedAt: new Date().toISOString() } : l));
-
-    const snapshot = mockLessons.find((item) => item.id === lessonId);
-    if (!snapshot) return;
-
-    void upsertLessonAction({ ...snapshot, status, attendanceMarkedAt: new Date().toISOString() } as LessonSlot)
-      .then((saved) => {
-        setMockLessons(prev => prev.map(item => item.id === lessonId ? saved : item));
-      })
-      .catch((error) => {
-        console.warn('Failed to persist lesson status', error);
-      });
   };
   const addToWaitlist = (waitlistEntry: Partial<WaitlistEntry>) => {
     const newEntry: WaitlistEntry = {
