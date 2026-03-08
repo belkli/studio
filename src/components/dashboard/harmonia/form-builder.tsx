@@ -194,7 +194,7 @@ export function FormBuilder() {
                 <div key={field.id} className="space-y-3 rounded-lg border bg-muted/30 p-4">
                   <div className="flex items-start justify-between">
                     <h4 className="pt-2 font-semibold">{t('fieldItemLabel', { index: index + 1 })}</h4>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} aria-label={t('removeField')}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <FormField control={form.control} name={`fields.${index}.id`} render={({ field: f }) => (<FormItem><FormLabel>{t('fieldId')}</FormLabel><FormControl><Input {...f} /></FormControl><FormMessage /></FormItem>)} />
@@ -239,7 +239,7 @@ export function FormBuilder() {
                     <FormField control={form.control} name={`workflow.${index}.roleName`} render={({ field: f }) => (<FormItem><FormLabel>{t('stepNameLabel')}</FormLabel><FormControl><Input {...f} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name={`workflow.${index}.requiredRole`} render={({ field: f }) => (<FormItem><FormLabel>{t('approverRoleLabel')}</FormLabel><Select onValueChange={f.onChange} value={f.value} dir={dir}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent>{roleOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
                   </div>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeWorkflowStep(index)} disabled={workflowSteps.length <= 1}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => removeWorkflowStep(index)} disabled={workflowSteps.length <= 1} aria-label={t('removeStep')}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                 </div>
               ))}
               <Button type="button" variant="outline" onClick={() => appendWorkflowStep({ roleName: '', requiredRole: 'conservatorium_admin' })}>

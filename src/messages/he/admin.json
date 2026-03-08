@@ -159,7 +159,8 @@
     "typeConservatoriumClosure": "סגירת קונסרבטוריון",
     "typeExamPeriod": "תקופת בחינות",
     "typeNationalHoliday": "חג לאומי",
-    "typeOther": "אחר"
+    "typeOther": "אחר",
+    "deleteHoliday": "מחק חג"
   },
   "AdminMakeupDashboard": {
     "colActions": "פעולות",
@@ -591,7 +592,9 @@
       "myStudents": "התלמידים שלי ({count})",
       "myStudentsDesc": "סקירה מהירה של כל התלמידים שלך",
       "Calendar": {
-        "today": "היום"
+        "today": "היום",
+        "prevWeek": "שבוע קודם",
+        "nextWeek": "שבוע הבא"
       }
     },
     "header": {

@@ -471,7 +471,7 @@ export function InstrumentRentalDashboard() {
                           </Button>
                           <DropdownMenu dir={isRtl ? 'rtl' : 'ltr'}>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={t('actions')}><MoreVertical className="h-4 w-4" /></Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => { setEditingInst(inst); setIsFormOpen(true); }}><Edit className="me-2 h-4 w-4" /> {t('editBtn')}</DropdownMenuItem>

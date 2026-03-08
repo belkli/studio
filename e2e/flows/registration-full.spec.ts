@@ -35,12 +35,21 @@ async function clearEnrollmentDraft(page: Page) {
 
 test.describe('Full Registration Flow — happy path', { tag: '@qa-registration' }, () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate first so localStorage is available, then clear draft state
+    // Navigate first so localStorage is available, then clear draft state.
+    // We intercept the /api/bootstrap response to ensure conservatorium data
+    // is loaded before interacting with the combobox on step 1.
+    const bootstrapDone = page.waitForResponse(
+      (resp) => resp.url().includes('/api/bootstrap') && resp.status() === 200,
+      { timeout: 20_000 },
+    ).catch(() => null); // don't fail if bootstrap isn't called (e.g. cached)
+
     await page.goto('/en/register');
     await page.waitForLoadState('domcontentloaded');
     await clearEnrollmentDraft(page);
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
+    // Wait for bootstrap data so the conservatorium combobox is populated
+    await Promise.race([bootstrapDone, page.waitForTimeout(8_000)]);
   });
 
   // -------------------------------------------------------------------------

@@ -253,7 +253,9 @@
     "previewDesc": "תצוגה מקדימה חיה של תצורת השדה הנוכחית.",
     "loadRecitalTemplate": "טען תבנית רסיטל",
     "recitalTemplateTitle": "טופס רסיטל",
-    "recitalTemplateDesc": "תבנית רסיטל בנויה מראש עם שדות מתקדמים."
+    "recitalTemplateDesc": "תבנית רסיטל בנויה מראש עם שדות מתקדמים.",
+    "removeField": "הסר שדה",
+    "removeStep": "הסר שלב"
   },
   "ExamRegistrationForm": {
     "addComposition": "הוספת יצירה",

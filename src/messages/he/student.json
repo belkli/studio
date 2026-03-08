@@ -189,6 +189,7 @@
   },
   "SheetMusicViewer": {
     "fullscreen": "מסך מלא",
+    "closeFullscreen": "סגור מסך מלא",
     "fullScreenSupport": "תומך בהחלקת עמוד, גדולה/קטנה בצביטה",
     "fullScreenViewer": "מציג מסך מלא",
     "myFolder": "התיקייה שלי",

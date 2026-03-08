@@ -243,7 +243,7 @@ export function RoomManagementDialog({
                         placeholder={t('equipmentNotes')}
                       />
 
-                      <Button type="button" variant="ghost" size="icon" onClick={() => equipmentArray.remove(index)}>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => equipmentArray.remove(index)} aria-label={t('actionDelete')}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -296,7 +296,7 @@ export function RoomManagementDialog({
                       <TableCell className="text-end">
                         <DropdownMenu dir={isRtl ? 'rtl' : 'ltr'}>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="icon" aria-label={t('actionEdit')}><MoreHorizontal className="h-4 w-4" /></Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => { setEditingRoom(room); setIsFormOpen(true); }}>

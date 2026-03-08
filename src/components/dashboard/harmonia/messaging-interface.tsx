@@ -249,8 +249,8 @@ export function MessagingInterface() {
                       }
                     }}
                   />
-                  <Button size="icon" onClick={handleSendMessage}><Send className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="ghost" disabled><Paperclip className="h-4 w-4" /></Button>
+                  <Button size="icon" onClick={handleSendMessage} aria-label={t('send')}><Send className="h-4 w-4" /></Button>
+                  <Button size="icon" variant="ghost" disabled aria-label={t('attachFile')}><Paperclip className="h-4 w-4" /></Button>
                 </div>
               </>
             ) : (

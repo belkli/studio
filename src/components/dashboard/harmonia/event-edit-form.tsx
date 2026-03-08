@@ -229,7 +229,7 @@ export function EventEditForm({ event }: { event: EventProduction }) {
                         <FormField control={form.control} name={`ticketPrices.${index}.availableCount`} render={({ field }) => (
                           <FormItem><FormLabel>{t('tierAvailable')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <Button type="button" variant="ghost" size="icon" onClick={() => ticketPrices.remove(index)}><Trash2 className="h-4 w-4" /></Button>
+                        <Button type="button" variant="ghost" size="icon" onClick={() => ticketPrices.remove(index)} aria-label={t('removeTier')}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     ))}
                     <Button type="button" variant="outline" size="sm" onClick={() => ticketPrices.append({ id: `tier-${Date.now()}`, name: { he: '', en: '' }, priceILS: 0, availableCount: 0, description: '' })}>

@@ -138,6 +138,7 @@ export function TranslatedFieldInput({
                                             size="icon"
                                             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                                             onClick={() => handleEdit(lang.id)}
+                                            aria-label={t('edit')}
                                         >
                                             <Edit2 className="w-3 h-3" />
                                         </Button>

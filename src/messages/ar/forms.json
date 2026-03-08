@@ -253,7 +253,9 @@
     "previewDesc": "معاينة مباشرة لتكوين الحقل الحالي.",
     "loadRecitalTemplate": "تحميل قالب الحفل",
     "recitalTemplateTitle": "نموذج الحيثية",
-    "recitalTemplateDesc": "قالب الحفل الذي تم إنشاؤه مسبقًا مع الحقول المتقدمة."
+    "recitalTemplateDesc": "قالب الحفل الذي تم إنشاؤه مسبقًا مع الحقول المتقدمة.",
+    "removeField": "إزالة الحقل",
+    "removeStep": "إزالة الخطوة"
   },
   "ExamRegistrationForm": {
     "addComposition": "إضافة قطعة",

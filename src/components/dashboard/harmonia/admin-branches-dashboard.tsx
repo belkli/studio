@@ -94,7 +94,7 @@ export function AdminBranchesDashboard() {
                                     <TableCell className="text-start">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" aria-label={tCommon('shared.openMenu')}><MoreHorizontal className="h-4 w-4" /></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuItem onClick={() => handleEditClick(branch)}>

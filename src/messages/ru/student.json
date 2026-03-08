@@ -189,6 +189,7 @@
   },
   "SheetMusicViewer": {
     "fullscreen": "Полный экран",
+    "closeFullscreen": "Закрыть полный экран",
     "fullScreenSupport": "Поддержка свайпа страниц, масштабирование щипком",
     "fullScreenViewer": "Полноэкранный просмотрщик",
     "myFolder": "Моя папка",

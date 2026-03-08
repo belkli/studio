@@ -91,7 +91,7 @@ export function SheetMusicViewer() {
                                 <CardTitle>{activePiece.compositionDetails?.title || t('untitled')}</CardTitle>
                                 <CardDescription>{activePiece.compositionDetails?.composer}</CardDescription>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(true)} title={t('fullscreen')}>
+                            <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(true)} title={t('fullscreen')} aria-label={t('fullscreen')}>
                                 <Maximize2 className="h-5 w-5" />
                             </Button>
                         </CardHeader>
@@ -128,7 +128,7 @@ export function SheetMusicViewer() {
                 <DialogContent className="max-w-[100vw] w-screen max-h-[100vh] h-screen p-0 m-0 border-none sm:rounded-none flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                     <div className="bg-black text-white p-3 flex justify-between items-center shrink-0">
                         <span className="font-medium me-4">{activePiece?.compositionDetails?.title} - {activePiece?.compositionDetails?.composer}</span>
-                        <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(false)} className="text-white hover:bg-white/20">
+                        <Button variant="ghost" size="icon" onClick={() => setIsFullscreen(false)} className="text-white hover:bg-white/20" aria-label={t('closeFullscreen')}>
                             <X className="h-5 w-5" />
                         </Button>
                     </div>

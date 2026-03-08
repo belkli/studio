@@ -55,7 +55,8 @@
       "ai": "منظمة العفو الدولية",
       "cancel": "إلغاء",
       "override": "تجاوز",
-      "noTranslationYet": "لا توجد ترجمة بعد"
+      "noTranslationYet": "لا توجد ترجمة بعد",
+      "edit": "تعديل الترجمة"
     },
     "saveStatusBar": {
       "saving": "جارٍ الحفظ...",
@@ -207,6 +208,7 @@
     "selectRecipient": "حدد المستلم",
     "messagePlaceholder": "اكتب رسالتك...",
     "send": "يرسل",
+    "attachFile": "إرفاق ملف",
     "createGroup": "إنشاء مجموعة",
     "groupName": "اسم المجموعة",
     "addMembers": "إضافة أعضاء",
@@ -649,6 +651,7 @@
     "videoTitlePlaceholder": "مثال: كونشيرتو بيتهوفن",
     "videoUrlLabel": "الرابط",
     "addLinkBtn": "إضافة رابط",
+    "removeLinkBtn": "إزالة الرابط",
     "saveBtn": "حفظ ملف الأداء"
   },
   "RoomManagementDialog": {
@@ -1015,6 +1018,7 @@
     "tierPrice": "السعر (شيكل)",
     "tierAvailable": "المقاعد المتوفرة",
     "addTier": "أضف الطبقة",
+    "removeTier": "إزالة المستوى",
     "generatePoster": "إنشاء ملصق AI",
     "posterHint": "قم بإنشاء ملصق خلفية ونص متراكب بشكل منفصل.",
     "uploadPoster": "عنوان URL للملصق",

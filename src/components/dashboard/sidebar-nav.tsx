@@ -482,7 +482,7 @@ const SidebarNavInner = memo(function SidebarNavInner({
                   <SidebarMenu>
                     {group.items.map(item => (
                       <SidebarMenuItem key={item.href} id={item.id}>
-                        <Link href={item.href}>
+                        <Link href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
                           <SidebarMenuButton isActive={isActive(item.href)}>
                             <item.icon className="h-4 w-4" aria-hidden="true" />
                             <span>{t(item.labelKey)}</span>

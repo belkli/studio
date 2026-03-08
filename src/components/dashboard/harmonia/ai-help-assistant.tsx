@@ -184,6 +184,7 @@ export function AiHelpAssistant() {
                 className="absolute end-1.5 top-1/2 h-7 w-7 -translate-y-1/2"
                 onClick={() => handleSendMessage()}
                 disabled={isLoading || !input.trim()}
+                aria-label={t('sendMessage')}
               >
                 <Send className="h-4 w-4" />
               </Button>

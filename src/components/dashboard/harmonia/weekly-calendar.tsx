@@ -48,11 +48,11 @@ export const WeeklyCalendar = ({ lessons, students }: { lessons: LessonSlot[], s
                 <div className="flex items-center gap-4">
                     <Button onClick={returnToToday} variant="outline">{t('today')}</Button>
                     <div className="flex items-center gap-2">
-                        <Button onClick={prevWeek} variant="ghost" size="icon">
+                        <Button onClick={prevWeek} variant="ghost" size="icon" aria-label={t('prevWeek')}>
                             {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <span className="text-lg font-semibold w-48 text-center">{weekDisplay}</span>
-                        <Button onClick={nextWeek} variant="ghost" size="icon">
+                        <Button onClick={nextWeek} variant="ghost" size="icon" aria-label={t('nextWeek')}>
                             {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
                     </div>

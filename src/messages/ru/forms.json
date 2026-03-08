@@ -253,7 +253,9 @@
     "previewDesc": "Предварительный просмотр текущей конфигурации поля в реальном времени.",
     "loadRecitalTemplate": "Загрузить шаблон концерта",
     "recitalTemplateTitle": "Форма концерта",
-    "recitalTemplateDesc": "Готовый шаблон выступления с расширенными полями."
+    "recitalTemplateDesc": "Готовый шаблон выступления с расширенными полями.",
+    "removeField": "Удалить поле",
+    "removeStep": "Удалить шаг"
   },
   "ExamRegistrationForm": {
     "addComposition": "Добавить произведение",

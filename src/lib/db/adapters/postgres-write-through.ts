@@ -1,5 +1,23 @@
 import { spawnSync } from 'node:child_process';
 import type { DatabaseAdapter } from '@/lib/db/types';
+import type { RentalRecord } from '@/lib/db/types';
+
+/** Known fields on a rental record used by the write-through upsert. */
+type KnownRentalFields = RentalRecord & {
+  studentId?: string;
+  parentId?: string;
+  instrumentName?: string;
+  rentalModel?: string;
+  depositAmountILS?: number | null;
+  monthlyFeeILS?: number | null;
+  purchasePriceILS?: number | null;
+  startDate?: string;
+  expectedReturnDate?: string | null;
+  actualReturnDate?: string | null;
+  status?: string;
+  condition?: string;
+  notes?: string | null;
+};
 import type {
   Branch,
   Conservatorium,
@@ -460,8 +478,7 @@ export function attachPostgresWriteThrough(adapter: DatabaseAdapter, connectionS
     },
   }) as unknown as typeof adapter.scholarships;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter.rentals = withWriteThrough(adapter.rentals as unknown as Repo<any>, {
+  adapter.rentals = withWriteThrough(adapter.rentals as unknown as Repo<KnownRentalFields>, {
     upsert: async (rental) => {
       if (!isUuid(rental.id) || !isUuid(rental.conservatoriumId) || !isUuid(rental.studentId)) return;
       const parentId = rental.parentId && isUuid(rental.parentId) ? rental.parentId : null;

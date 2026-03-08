@@ -55,7 +55,8 @@
       "ai": "איי",
       "cancel": "ביטול",
       "override": "דריסה",
-      "noTranslationYet": "אין תרגום עדיין"
+      "noTranslationYet": "אין תרגום עדיין",
+      "edit": "ערוך תרגום"
     },
     "saveStatusBar": {
       "saving": "שומר...",
@@ -208,6 +209,7 @@
     "messagePlaceholder": "הקלד את הודעתך...",
     "send": "לִשְׁלוֹחַ",
     "createGroup": "צור קבוצה",
+    "attachFile": "צרף קובץ",
     "groupName": "שם הקבוצה",
     "addMembers": "הוסף חברים",
     "create": "יצירה",
@@ -649,6 +651,7 @@
     "videoTitlePlaceholder": "לדוגמה: קונצ'רטו של בטהובן",
     "videoUrlLabel": "כתובת URL",
     "addLinkBtn": "הוסף קישור",
+    "removeLinkBtn": "הסר קישור",
     "saveBtn": "שמור פרופיל הופעות"
   },
   "RoomManagementDialog": {
@@ -1015,6 +1018,7 @@
     "tierPrice": "מחיר (ILS)",
     "tierAvailable": "מושבים זמינים",
     "addTier": "הוסף שכבה",
+    "removeTier": "הסר שכבה",
     "generatePoster": "צור פוסטר בינה מלאכותית",
     "posterHint": "צור פוסטר רקע וטקסט שכבת-על בנפרד.",
     "uploadPoster": "כתובת האתר של הפוסטר",

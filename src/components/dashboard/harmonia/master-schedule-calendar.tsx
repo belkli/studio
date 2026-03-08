@@ -10,6 +10,7 @@ import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval } from 'date
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useTranslations } from 'next-intl';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`);
 
@@ -45,6 +46,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 
 export function MasterScheduleCalendar() {
     const { users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
+    const t = useTranslations('AdminPages.schedule');
     const dateLocale = useDateLocale();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
@@ -118,9 +120,9 @@ export function MasterScheduleCalendar() {
             <CardHeader>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')}><ArrowRight className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} aria-label={t('prevWeek')}><ArrowRight className="h-4 w-4" /></Button>
                         <span className="font-semibold text-lg">{format(weekInterval.start, 'd בMMM')} - {format(weekInterval.end, 'd בMMM yyyy', { locale: dateLocale })}</span>
-                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')}><ArrowLeft className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} aria-label={t('nextWeek')}><ArrowLeft className="h-4 w-4" /></Button>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />

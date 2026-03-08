@@ -15,6 +15,7 @@ import { LessonDetailDialog } from './lesson-detail-dialog';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval, isSameDay } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ScheduleCalendarProps {
     lessons: LessonSlot[];
@@ -74,6 +75,7 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
 }
 
 export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
+    const t = useTranslations('AdminPages.schedule');
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedLesson, setSelectedLesson] = useState<LessonSlot | null>(null);
     const [lessonToCancel, setLessonToCancel] = useState<LessonSlot | null>(null);
@@ -133,7 +135,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
                 <CardHeader className="px-0 pb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} className="h-8 w-8">
+                            <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} className="h-8 w-8" aria-label={t('prevWeek')}>
                                 <ArrowRight className="h-4 w-4" />
                             </Button>
                             <div className="flex flex-col items-center min-w-[140px]">
@@ -144,7 +146,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
                                     {format(weekInterval.end, 'yyyy')}
                                 </span>
                             </div>
-                            <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} className="h-8 w-8">
+                            <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} className="h-8 w-8" aria-label={t('nextWeek')}>
                                 <ArrowLeft className="h-4 w-4" />
                             </Button>
                         </div>

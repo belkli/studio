@@ -144,7 +144,7 @@ export function AdminCalendarPanel() {
                                     </TableCell>
                                     <TableCell className="text-start">{c.affectsAllTeachers ? t('relevanceAll') : t('relevanceSome')}</TableCell>
                                     <TableCell className="text-end">
-                                        <Button variant="ghost" size="icon" onClick={() => c.id && handleDelete(c.id)}>
+                                        <Button variant="ghost" size="icon" onClick={() => c.id && handleDelete(c.id)} aria-label={t('deleteHoliday')}>
                                             <Trash2 className="h-4 w-4 text-destructive" />
                                         </Button>
                                     </TableCell>

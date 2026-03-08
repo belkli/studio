@@ -55,7 +55,8 @@
       "ai": "Ai",
       "cancel": "Cancel",
       "override": "Override",
-      "noTranslationYet": "No Translation Yet"
+      "noTranslationYet": "No Translation Yet",
+      "edit": "Edit translation"
     },
     "saveStatusBar": {
       "saving": "Saving",
@@ -207,6 +208,7 @@
     "selectRecipient": "Select recipient",
     "messagePlaceholder": "Type your message...",
     "send": "Send",
+    "attachFile": "Attach file",
     "createGroup": "Create Group",
     "groupName": "Group name",
     "addMembers": "Add members",
@@ -649,6 +651,7 @@
     "videoTitlePlaceholder": "Video Title Placeholder",
     "videoUrlLabel": "Video Url Label",
     "addLinkBtn": "Add Link Btn",
+    "removeLinkBtn": "Remove link",
     "saveBtn": "Save Btn"
   },
   "RoomManagementDialog": {
@@ -1015,6 +1018,7 @@
     "tierPrice": "Price (ILS)",
     "tierAvailable": "Available Seats",
     "addTier": "Add Tier",
+    "removeTier": "Remove tier",
     "generatePoster": "Generate AI Poster",
     "posterHint": "Generate a background poster and overlay text separately.",
     "uploadPoster": "Poster URL",

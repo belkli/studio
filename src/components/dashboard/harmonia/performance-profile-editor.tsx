@@ -164,7 +164,7 @@ export function PerformanceProfileEditor() {
                                         <div key={field.id} className="flex items-end gap-2 p-3 border rounded-lg">
                                             <FormField control={form.control} name={`videoLinks.${index}.title` as never} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>{t('videoTitleLabel')}</FormLabel> <FormControl><Input placeholder={t('videoTitlePlaceholder')} {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                                             <FormField control={form.control} name={`videoLinks.${index}.url` as never} render={({ field }) => (<FormItem className="flex-1"> <FormLabel>{t('videoUrlLabel')}</FormLabel> <InputGroup><InputGroupText><Video className="h-4 w-4" /></InputGroupText><FormControl><Input dir="ltr" placeholder="https://youtube.com/watch?v=..." {...field} className="rounded-s-none" /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
-                                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /><span className="sr-only">{t('removeLinkBtn')}</span></Button>
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" onClick={() => append({ title: '', url: '' } as never)}><PlusCircle className="me-2 h-4 w-4" />{t('addLinkBtn')}</Button>

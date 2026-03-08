@@ -159,7 +159,8 @@
     "colActions": "Actions",
     "noHolidays": "No holidays or closures have been defined.",
     "relevanceAll": "Entire Conservatorium",
-    "relevanceSome": "Specific Teachers"
+    "relevanceSome": "Specific Teachers",
+    "deleteHoliday": "Delete holiday"
   },
   "AdminMakeupDashboard": {
     "colStudent": "Student",
@@ -591,7 +592,9 @@
       "myStudents": "My Students",
       "myStudentsDesc": "My Students Desc",
       "Calendar": {
-        "today": "Today"
+        "today": "Today",
+        "prevWeek": "Previous week",
+        "nextWeek": "Next week"
       }
     },
     "header": {

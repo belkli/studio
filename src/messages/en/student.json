@@ -199,6 +199,7 @@
     },
     "untitled": "Untitled",
     "fullscreen": "Full Screen",
+    "closeFullscreen": "Close full screen",
     "sheetMusic": "{title} - Sheet Music",
     "pdfSimulator": "(Simulator displays PDF. Actually, a Viewer component supported by Mobile/Desktop will be displayed)",
     "noPdfAttached": "No sheet music file attached to this piece.",

@@ -189,6 +189,7 @@
   },
   "SheetMusicViewer": {
     "fullscreen": "ملء الشاشة",
+    "closeFullscreen": "إغلاق ملء الشاشة",
     "fullScreenSupport": "يدعم التمرير بالإصبع والتكبير بالقرص",
     "fullScreenViewer": "عارض ملء الشاشة",
     "myFolder": "مجلدي",

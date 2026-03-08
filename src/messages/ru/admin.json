@@ -159,7 +159,8 @@
     "typeConservatoriumClosure": "Закрытие консерватории",
     "typeExamPeriod": "Экзаменационный период",
     "typeNationalHoliday": "Государственный праздник",
-    "typeOther": "Другое"
+    "typeOther": "Другое",
+    "deleteHoliday": "Удалить праздник"
   },
   "AdminMakeupDashboard": {
     "colActions": "Действия",
@@ -591,7 +592,9 @@
       "myStudents": "Мои студенты ({count})",
       "myStudentsDesc": "Краткий обзор всех ваших студентов",
       "Calendar": {
-        "today": "Сегодня"
+        "today": "Сегодня",
+        "prevWeek": "Предыдущая неделя",
+        "nextWeek": "Следующая неделя"
       }
     },
     "header": {

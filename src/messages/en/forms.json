@@ -253,7 +253,9 @@
     "previewDesc": "Live preview of current field configuration.",
     "loadRecitalTemplate": "Load recital template",
     "recitalTemplateTitle": "Recital Form",
-    "recitalTemplateDesc": "Prebuilt recital template with advanced fields."
+    "recitalTemplateDesc": "Prebuilt recital template with advanced fields.",
+    "removeField": "Remove field",
+    "removeStep": "Remove step"
   },
   "ExamRegistrationForm": {
     "validation": {

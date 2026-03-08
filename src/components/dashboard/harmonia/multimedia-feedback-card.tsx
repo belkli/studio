@@ -84,6 +84,7 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                       />
                       <Button size="icon" onClick={() => handleSendFeedback(video.id)} disabled={!newFeedback[video.id]}>
                         <Send className="h-4 w-4" />
+                        <span className="sr-only">Send feedback</span>
                       </Button>
                     </div>
                   </div>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -85,11 +84,26 @@ Output JSON:`;
         // Strip fences if present
         text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
 
-        const raw = JSON.parse(text) as Record<string, any>;
+        type RawLocaleTranslation = {
+            name?: string;
+            about?: string;
+            openingHours?: string;
+            managerRole?: string;
+            managerBio?: string;
+            pedagogicalCoordinatorRole?: string;
+            pedagogicalCoordinatorBio?: string;
+            leadingTeam?: Array<{ role?: string; bio?: string }>;
+            departments?: string[];
+            programs?: string[];
+            ensembles?: string[];
+            branchNames?: string[];
+            branchAddresses?: string[];
+        };
+        const raw = JSON.parse(text) as Record<string, RawLocaleTranslation>;
 
         // Map raw AI output back to ConservatoriumProfileTranslation shape
         const mapLocale = (locale: TargetLocale): ConservatoriumProfileTranslation => {
-            const r = raw[locale] ?? {};
+            const r: RawLocaleTranslation = raw[locale] ?? {};
             const output: ConservatoriumProfileTranslation = {};
 
             if (r.name) output.name = r.name;
@@ -106,7 +120,7 @@ Output JSON:`;
                 };
             }
             if (r.leadingTeam?.length) {
-                output.leadingTeam = r.leadingTeam.map((m: any) => ({
+                output.leadingTeam = r.leadingTeam.map((m) => ({
                     role: m.role ?? undefined,
                     bio: m.bio ?? undefined,
                 }));
@@ -173,9 +187,9 @@ Output JSON:`;
 
         return { success: true, translations, meta };
 
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error('[translateConservatoriumProfile]', err);
-        return { success: false, error: err.message ?? 'Translation failed' };
+        return { success: false, error: err instanceof Error ? err.message : 'Translation failed' };
     }
 }
 
@@ -204,8 +218,8 @@ Hebrew instrument name: ${nameHe}`;
             if (raw[locale]) translations[locale as 'en' | 'ar' | 'ru'] = raw[locale];
         }
         return { success: true, translations };
-    } catch (err: any) {
-        return { success: false, error: err.message };
+    } catch (err: unknown) {
+        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
 }
 
@@ -253,8 +267,8 @@ Hebrew role/title: ${role ?? ''}
                 aiModel: 'gemini-1.5-flash',
             }
         };
-    } catch (err: any) {
-        return { success: false, error: err.message };
+    } catch (err: unknown) {
+        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
 }
 

@@ -1,5 +1,4 @@
 // SEC-H05/QA-M01: @ts-nocheck removed — TypeScript must remain active in this security-critical file.
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 /**
  * @fileoverview Server Actions for the Harmonia application.
@@ -8,7 +7,7 @@
  * and their inputs are validated using Zod schemas, providing a secure and robust API layer.
  */
 
-import type { Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, StudentMasterClassAllowance } from '@/lib/types';
+import type { Alumnus, Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, DonationCause, DonationRecord, EventProduction, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, ScholarshipApplication, StudentMasterClassAllowance, User } from '@/lib/types';
 import { getDb } from '@/lib/db';
 import { withAuth, requireRole, verifyAuth } from '@/lib/auth-utils';
 import { z } from 'zod';
@@ -763,9 +762,9 @@ export const saveAlumnus = withAuth(
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], alumnus.conservatoriumId);
     const db = await getDb();
     if (alumnus.id) {
-      return await db.alumni.update(alumnus.id, alumnus as any);
+      return await db.alumni.update(alumnus.id, alumnus as Partial<Alumnus>);
     }
-    return await db.alumni.create(alumnus as any);
+    return await db.alumni.create(alumnus as Partial<Alumnus>);
   }
 );
 
@@ -789,7 +788,7 @@ export const createAnnouncement = withAuth(
   async (payload: z.infer<typeof AnnouncementSchema>): Promise<Announcement> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.announcements.create(payload as any);
+    return await db.announcements.create(payload as Partial<Announcement>);
   }
 );
 
@@ -798,7 +797,7 @@ export const createMasterClassAction = withAuth(
   async (payload: z.infer<typeof MasterClassSchema>): Promise<Masterclass> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.masterClasses.create(payload as any);
+    return await db.masterClasses.create(payload as Partial<Masterclass>);
   }
 );
 
@@ -807,7 +806,7 @@ export const publishMasterClassAction = withAuth(
   async (masterClassId: string): Promise<Masterclass> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
-    return await db.masterClasses.update(masterClassId, { status: 'published' } as any);
+    return await db.masterClasses.update(masterClassId, { status: 'published' } as Partial<Masterclass>);
   }
 );
 
@@ -840,7 +839,7 @@ export const registerToMasterClassAction = withAuth(
 
     const updatedMasterClass = await db.masterClasses.update(payload.masterClassId, {
       registrations: [...target.registrations, registration],
-    } as any);
+    } as Partial<Masterclass>);
 
     const updatedAllowances: StudentMasterClassAllowance[] =
       isPartOfPackage && allowance
@@ -869,7 +868,7 @@ export const createScholarshipApplicationAction = withAuth(
   async (payload: z.infer<typeof ScholarshipApplicationSchema>) => {
     await requireRole(['student', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.scholarships.create(payload as any);
+    return await db.scholarships.create(payload as Partial<ScholarshipApplication>);
   }
 );
 
@@ -887,7 +886,7 @@ export const updateScholarshipStatusAction = withAuth(
       status,
       approvedAt: status === 'APPROVED' ? now : existing.approvedAt,
       rejectedAt: status === 'REJECTED' ? now : existing.rejectedAt,
-    } as any);
+    } as Partial<ScholarshipApplication>);
     return { success: true as const, scholarship: updated };
   }
 );
@@ -904,7 +903,7 @@ export const markScholarshipPaidAction = withAuth(
     const updated = await db.scholarships.update(applicationId, {
       paymentStatus: 'PAID',
       paidAt: new Date().toISOString(),
-    } as any);
+    } as Partial<ScholarshipApplication>);
     return { success: true as const, scholarship: updated };
   }
 );
@@ -914,7 +913,7 @@ export const createDonationCauseAction = withAuth(
   async (payload: z.infer<typeof DonationCauseSchema>) => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.donationCauses.create(payload as any);
+    return await db.donationCauses.create(payload as Partial<DonationCause>);
   }
 );
 
@@ -922,12 +921,12 @@ export const recordDonationAction = withAuth(
   DonationRecordSchema,
   async (payload: z.infer<typeof DonationRecordSchema>) => {
     const db = await getDb();
-    const donation = await db.donations.create(payload as any);
+    const donation = await db.donations.create(payload as Partial<DonationRecord>);
     const cause = await db.donationCauses.findById(payload.causeId);
     if (cause) {
       await db.donationCauses.update(cause.id, {
         raisedAmountILS: (cause.raisedAmountILS || 0) + payload.amountILS,
-      } as any);
+      } as Partial<DonationCause>);
     }
     return donation;
   }
@@ -941,7 +940,7 @@ export const createBranchAction = withAuth(
   async (payload: z.infer<typeof BranchSchema>): Promise<Branch> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.branches.create(payload as any);
+    return await db.branches.create(payload as Partial<Branch>);
   }
 );
 
@@ -952,9 +951,9 @@ export const updateBranchAction = withAuth(
     const db = await getDb();
     const existing = await db.branches.findById(payload.id);
     if (existing) {
-      return await db.branches.update(payload.id, payload as any);
+      return await db.branches.update(payload.id, payload as Partial<Branch>);
     }
-    return await db.branches.create(payload as any);
+    return await db.branches.create(payload as Partial<Branch>);
   }
 );
 
@@ -963,7 +962,7 @@ export const createConservatoriumInstrumentAction = withAuth(
   async (payload: z.infer<typeof ConservatoriumInstrumentSchema>): Promise<ConservatoriumInstrument> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.conservatoriumInstruments.create(payload as any);
+    return await db.conservatoriumInstruments.create(payload as Partial<ConservatoriumInstrument>);
   }
 );
 
@@ -974,9 +973,9 @@ export const updateConservatoriumInstrumentAction = withAuth(
     const db = await getDb();
     const existing = await db.conservatoriumInstruments.findById(payload.id);
     if (existing) {
-      return await db.conservatoriumInstruments.update(payload.id, payload as any);
+      return await db.conservatoriumInstruments.update(payload.id, payload as Partial<ConservatoriumInstrument>);
     }
-    return await db.conservatoriumInstruments.create(payload as any);
+    return await db.conservatoriumInstruments.create(payload as Partial<ConservatoriumInstrument>);
   }
 );
 
@@ -995,7 +994,7 @@ export const createLessonPackageAction = withAuth(
   async (payload: z.infer<typeof LessonPackageSchema>): Promise<LessonPackage> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.lessonPackages.create(payload as any);
+    return await db.lessonPackages.create(payload as Partial<LessonPackage>);
   }
 );
 
@@ -1006,9 +1005,9 @@ export const updateLessonPackageAction = withAuth(
     const db = await getDb();
     const existing = await db.lessonPackages.findById(payload.id);
     if (existing) {
-      return await db.lessonPackages.update(payload.id, payload as any);
+      return await db.lessonPackages.update(payload.id, payload as Partial<LessonPackage>);
     }
-    return await db.lessonPackages.create(payload as any);
+    return await db.lessonPackages.create(payload as Partial<LessonPackage>);
   }
 );
 
@@ -1027,7 +1026,7 @@ export const createRoomAction = withAuth(
   async (payload: z.infer<typeof RoomSchema>): Promise<Room> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.rooms.create(payload as any);
+    return await db.rooms.create(payload as Partial<Room>);
   }
 );
 
@@ -1038,9 +1037,9 @@ export const updateRoomAction = withAuth(
     const db = await getDb();
     const existing = await db.rooms.findById(payload.id);
     if (existing) {
-      return await db.rooms.update(payload.id, payload as any);
+      return await db.rooms.update(payload.id, payload as Partial<Room>);
     }
-    return await db.rooms.create(payload as any);
+    return await db.rooms.create(payload as Partial<Room>);
   }
 );
 
@@ -1061,13 +1060,13 @@ export const upsertFormSubmissionAction = withAuth(
     await requireRole(['student', 'teacher', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
-      return await db.forms.create(payload as any);
+      return await db.forms.create(payload as Partial<FormSubmission>);
     }
     const existing = await db.forms.findById(payload.id);
     if (existing) {
-      return await db.forms.update(payload.id, payload as any);
+      return await db.forms.update(payload.id, payload as Partial<FormSubmission>);
     }
-    return await db.forms.create(payload as any);
+    return await db.forms.create(payload as Partial<FormSubmission>);
   }
 );
 
@@ -1076,7 +1075,7 @@ export const createEventAction = withAuth(
   async (payload) => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
-    return await db.events.create(payload as any);
+    return await db.events.create(payload as Partial<EventProduction>);
   }
 );
 
@@ -1086,13 +1085,13 @@ export const updateEventAction = withAuth(
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
-      return await db.events.create(payload as any);
+      return await db.events.create(payload as Partial<EventProduction>);
     }
     const existing = await db.events.findById(payload.id);
     if (existing) {
-      return await db.events.update(payload.id, payload as any);
+      return await db.events.update(payload.id, payload as Partial<EventProduction>);
     }
-    return await db.events.create(payload as any);
+    return await db.events.create(payload as Partial<EventProduction>);
   }
 );
 
@@ -1103,13 +1102,13 @@ export const upsertUserAction = withAuth(
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
-      return await db.users.create(payload as any);
+      return await db.users.create(payload as Partial<User>);
     }
     const existing = await db.users.findById(payload.id);
     if (existing) {
-      return await db.users.update(payload.id, payload as any);
+      return await db.users.update(payload.id, payload as Partial<User>);
     }
-    return await db.users.create(payload as any);
+    return await db.users.create(payload as Partial<User>);
   }
 );
 
@@ -1119,13 +1118,13 @@ export const upsertLessonAction = withAuth(
     await requireRole(['teacher', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
     const db = await getDb();
     if (!payload?.id) {
-      return await db.lessons.create(payload as any);
+      return await db.lessons.create(payload as Partial<LessonSlot>);
     }
     const existing = await db.lessons.findById(payload.id);
     if (existing) {
-      return await db.lessons.update(payload.id, payload as any);
+      return await db.lessons.update(payload.id, payload as Partial<LessonSlot>);
     }
-    return await db.lessons.create(payload as any);
+    return await db.lessons.create(payload as Partial<LessonSlot>);
   }
 );
 
@@ -1135,13 +1134,13 @@ export const upsertConservatoriumAction = withAuth(
     await requireRole(['site_admin', 'superadmin']);
     const db = await getDb();
     if (!payload?.id) {
-      return await db.conservatoriums.create(payload as any);
+      return await db.conservatoriums.create(payload as Partial<Conservatorium>);
     }
     const existing = await db.conservatoriums.findById(payload.id);
     if (existing) {
-      return await db.conservatoriums.update(payload.id, payload as any);
+      return await db.conservatoriums.update(payload.id, payload as Partial<Conservatorium>);
     }
-    return await db.conservatoriums.create(payload as any);
+    return await db.conservatoriums.create(payload as Partial<Conservatorium>);
   }
 );
 
@@ -1357,7 +1356,7 @@ export const updateUserLanguagePreference = withAuth(
     // Skip DB update for synthetic dev session (no real user record)
     if (claims.uid === 'dev-user') return { success: true };
     const db = await getDb();
-    await db.users.update(claims.uid, { preferredLanguage: input.locale } as any);
+    await db.users.update(claims.uid, { preferredLanguage: input.locale } as Partial<User>);
     return { success: true };
   }
 );

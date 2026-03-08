@@ -159,7 +159,8 @@
     "typeConservatoriumClosure": "إغلاق الكونسرفتوار",
     "typeExamPeriod": "فترة الامتحانات",
     "typeNationalHoliday": "عطلة وطنية",
-    "typeOther": "أخرى"
+    "typeOther": "أخرى",
+    "deleteHoliday": "حذف العطلة"
   },
   "AdminMakeupDashboard": {
     "colActions": "إجراءات",
@@ -591,7 +592,9 @@
       "myStudents": "طُلابي ({count})",
       "myStudentsDesc": "نظرة سريعة على جميع طلابك",
       "Calendar": {
-        "today": "اليوم"
+        "today": "اليوم",
+        "prevWeek": "الأسبوع السابق",
+        "nextWeek": "الأسبوع التالي"
       }
     },
     "header": {

@@ -267,6 +267,7 @@
     "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
     "errorMessage": "I'm sorry, an error occurred. Please try again later.",
     "openAssistant": "Open AI Assistant",
+    "sendMessage": "Send message",
     "goToHelpCenter": "Go to full help center",
     "quickQuestions": {
       "default": {

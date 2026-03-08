@@ -55,7 +55,8 @@
       "ai": "Ай",
       "cancel": "Отмена",
       "override": "Переопределить",
-      "noTranslationYet": "Перевода пока нет"
+      "noTranslationYet": "Перевода пока нет",
+      "edit": "Редактировать перевод"
     },
     "saveStatusBar": {
       "saving": "Сохранение...",
@@ -207,6 +208,7 @@
     "selectRecipient": "Выберите получателя",
     "messagePlaceholder": "Введите сообщение...",
     "send": "Отправить",
+    "attachFile": "Прикрепить файл",
     "createGroup": "Создать группу",
     "groupName": "Название группы",
     "addMembers": "Добавить участников",
@@ -649,6 +651,7 @@
     "videoTitlePlaceholder": "Например: Концерт Бетховена",
     "videoUrlLabel": "URL-адрес",
     "addLinkBtn": "Добавить ссылку",
+    "removeLinkBtn": "Удалить ссылку",
     "saveBtn": "Сохранить профиль выступлений"
   },
   "RoomManagementDialog": {
@@ -1015,6 +1018,7 @@
     "tierPrice": "Цена (ILS)",
     "tierAvailable": "Доступные места",
     "addTier": "Добавить уровень",
+    "removeTier": "Удалить уровень",
     "generatePoster": "Создать плакат с искусственным интеллектом",
     "posterHint": "Создайте фоновый плакат и наложите текст отдельно.",
     "uploadPoster": "URL-адрес постера",

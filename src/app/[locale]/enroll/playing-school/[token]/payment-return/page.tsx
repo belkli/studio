@@ -75,7 +75,7 @@ export default function PlayingSchoolPaymentReturnPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="text-sm text-right bg-muted/50 rounded-lg p-4">
+                    <div className="text-sm text-end bg-muted/50 rounded-lg p-4">
                         <p className="font-bold mb-2">{t('pickupNote')}</p>
                         <p>{t('pickupNoteFull')}</p>
                     </div>
