@@ -305,21 +305,19 @@
     "matchFoundTitle": "Great match found",
     "matchFoundDesc": "Based on your answers, this is your strongest teacher match.",
     "topMatchLabel": "Top match",
-    "ronitName": "Ronit Levi",
-    "ronitTitle": "Piano teacher, recital and exam preparation",
-    "ronitTag1": "Patient guidance",
-    "ronitTag2": "Structured progress",
-    "ronitTag3": "Performance-focused",
-    "whyRonitLabel": "Why Ronit?",
-    "whyRonitDesc": "Her teaching approach matches your goals and preferred learning style.",
     "bookTrialBtn": "Book a trial lesson",
     "runnerUpLabel": "Strong alternative",
-    "danName": "Dan Cohen",
-    "danTitle": "Piano teacher, jazz and improvisation",
     "viewProfileBtn": "View profile",
     "prevBtn": "Back",
     "findTeacherBtn": "Find my teacher",
-    "nextBtn": "Next"
+    "nextBtn": "Next",
+    "matchScore": "{score}% match",
+    "nextSlot": "Next available: {day} at {time}",
+    "noMatchesTitle": "No matches found",
+    "noMatchesDesc": "Try adjusting your preferences or contact the conservatorium office directly.",
+    "contactOffice": "Contact office",
+    "premiumBadge": "Premium teacher",
+    "matchReasonLabel": "Why this teacher?"
   },
   "Waitlist": {
     "title": "Active Waitlist",
@@ -347,7 +345,16 @@
       "ACCEPTED": "Accepted",
       "DECLINED": "Declined",
       "EXPIRED": "Expired"
-    }
+    },
+    "offerExpiresIn": "Expires in {time}",
+    "revokeOffer": "Revoke Offer",
+    "offerRevoked": "Offer revoked",
+    "offerBannerTitle": "You have been offered a slot!",
+    "offerBannerDesc": "{instrument} lesson with {teacher} — {time}. Offer expires in {expiry}.",
+    "acceptOffer": "Accept Offer",
+    "declineOffer": "Decline Offer",
+    "offerAccepted": "Offer accepted! The lesson has been added to your schedule.",
+    "offerDeclined": "Offer declined."
   },
   "PlayingSchool": {
     "wizard": {

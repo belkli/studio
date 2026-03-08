@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Bot, Sparkles, Music, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Bot, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale, useTranslations } from 'next-intl';
+import { findTeacherMatches } from '@/app/actions/matchmaker';
+import { MatchResultCard } from './match-result-card';
+import type { TeacherMatchResult } from '@/lib/types';
 
 export function AiMatchmakerForm() {
     const t = useTranslations('AiMatchmaker');
@@ -26,16 +28,29 @@ export function AiMatchmakerForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [answers, setAnswers] = useState<Record<string, string>>({});
+    const [matchResults, setMatchResults] = useState<TeacherMatchResult[]>([]);
     const { toast: _toast } = useToast();
 
     const handleNext = () => {
         if (currentStep === STEPS.length - 2) {
-            // Simulate AI Analysis
+            // Call AI matchmaker
             setIsAnalyzing(true);
-            setTimeout(() => {
+            findTeacherMatches({
+                goal: answers.goal,
+                style: answers.style,
+                personality: answers.personality,
+                notes: answers.notes,
+                locale,
+            }).then(results => {
+                setMatchResults(results);
                 setIsAnalyzing(false);
                 setCurrentStep(prev => prev + 1);
-            }, 2000);
+            }).catch(() => {
+                setMatchResults([]);
+                setIsAnalyzing(false);
+                setCurrentStep(prev => prev + 1);
+            });
+            return; // Don't advance step synchronously
         } else {
             setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
         }
@@ -155,52 +170,24 @@ export function AiMatchmakerForm() {
                             <p className="text-muted-foreground">{t('matchFoundDesc')}</p>
                         </div>
 
-                        <div className="grid gap-4">
-                            {/* Top Match */}
-                            <div className="border-2 border-green-500 rounded-xl p-6 bg-green-50/50 relative overflow-hidden">
-                                <div className="absolute top-0 end-0 bg-green-500 text-white px-4 py-1 rounded-bl-lg text-sm font-bold flex items-center gap-1">
-                                    <Star className="w-4 h-4 fill-white" /> {t('topMatchLabel')}
-                                </div>
-                                <div className="flex gap-4 items-start mt-2">
-                                    <div className="w-16 h-16 rounded-full bg-green-200 border-2 border-green-500 flex items-center justify-center flex-shrink-0">
-                                        <Music className="w-8 h-8 text-green-700" />
-                                    </div>
-                                    <div className="space-y-2 flex-1">
-                                        <h4 className="text-xl font-bold text-gray-900">{t('ronitName')}</h4>
-                                        <p className="text-sm text-gray-600">{t('ronitTitle')}</p>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            <Badge variant="secondary" className="bg-white border-green-200 text-green-800">{t('ronitTag1')}</Badge>
-                                            <Badge variant="secondary" className="bg-white border-green-200 text-green-800">{t('ronitTag2')}</Badge>
-                                            <Badge variant="secondary" className="bg-white border-green-200 text-green-800">{t('ronitTag3')}</Badge>
-                                        </div>
-                                        <p className="text-sm text-gray-700 mt-3 pt-3 border-t border-green-200">
-                                            <span className="font-semibold text-green-800">{t('whyRonitLabel')}</span> {t('whyRonitDesc')}
-                                        </p>
-                                    </div>
-                                </div>
-                                <Button className="w-full mt-6 bg-green-600 hover:bg-green-700">
-                                    {t('bookTrialBtn')}
-                                    {isRtl ? <ArrowLeft className="w-4 h-4 ms-2" /> : <ArrowRight className="w-4 h-4 ms-2" />}
-                                </Button>
+                        {matchResults.length > 0 ? (
+                            <div className="grid gap-4">
+                                {matchResults.map((result, idx) => (
+                                    <MatchResultCard
+                                        key={result.teacherId}
+                                        result={result}
+                                        rank={idx + 1}
+                                        locale={locale}
+                                        isRtl={isRtl}
+                                    />
+                                ))}
                             </div>
-
-                            {/* Runner Up */}
-                            <div className="border rounded-xl p-6 bg-card relative opacity-90">
-                                <div className="absolute top-0 end-0 bg-gray-200 text-gray-700 px-3 py-1 rounded-bl-lg text-xs font-semibold">
-                                    {t('runnerUpLabel')}
-                                </div>
-                                <div className="flex gap-4 items-center">
-                                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                        <Music className="w-6 h-6 text-gray-400" />
-                                    </div>
-                                    <div className="space-y-1 flex-1">
-                                        <h4 className="text-lg font-bold">{t('danName')}</h4>
-                                        <p className="text-sm text-gray-500">{t('danTitle')}</p>
-                                    </div>
-                                    <Button variant="outline" size="sm">{t('viewProfileBtn')}</Button>
-                                </div>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                                <p className="font-medium">{t('noMatchesTitle')}</p>
+                                <p className="text-sm mt-1">{t('noMatchesDesc')}</p>
                             </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </CardContent>

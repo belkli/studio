@@ -2,6 +2,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { StudentProfilePageContent } from "@/components/dashboard/harmonia/student-profile-content";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WaitlistOfferBanner } from "@/components/dashboard/waitlist-offer-banner";
 
 export default function StudentProfilePage() {
     const { user, isLoading } = useAuth();
@@ -24,6 +25,7 @@ export default function StudentProfilePage() {
 
     return (
         <div className="space-y-6">
+            <WaitlistOfferBanner />
             <StudentProfilePageContent student={user} />
         </div>
     )

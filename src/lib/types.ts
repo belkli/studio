@@ -1085,6 +1085,11 @@ export type WaitlistEntry = {
   joinedAt: string; // ISO Timestamp
   notifiedAt?: string; // ISO Timestamp
   status: WaitlistStatus;
+  offeredSlotId?: string;
+  offeredSlotTime?: string;
+  offerExpiresAt?: string;
+  offerAcceptedAt?: string;
+  offerDeclinedAt?: string;
 };
 
 export type AuditLogEntry = {
@@ -2019,4 +2024,22 @@ export type LessonPackage = {
   conservatoriumInstrumentIds?: string[];
   instrumentCatalogIds?: string[];
   notes?: string;
+};
+
+export type TeacherMatchResult = {
+  teacherId: string;
+  teacherName: string;
+  conservatoriumId: string;
+  conservatoriumName: string;
+  score: number;
+  matchReason: string;
+  instruments: string[];
+  specialties: TeacherSpecialty[];
+  avatarUrl?: string;
+  isPremiumTeacher?: boolean;
+  nextAvailableSlot?: {
+    day: DayOfWeek;
+    time: string;
+  };
+  tags: string[];
 };

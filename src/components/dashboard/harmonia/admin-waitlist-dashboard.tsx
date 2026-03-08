@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import type { WaitlistStatus } from '@/lib/types';
+import type { WaitlistEntry, WaitlistStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { Send, Trash2, ListChecks } from 'lucide-react';
+import { Send, Trash2, ListChecks, Undo } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
     AlertDialog,
@@ -38,8 +38,14 @@ export function AdminWaitlistDashboard() {
     const tCommon = useTranslations('Common');
     const dateLocale = useDateLocale();
 
-    const { user, waitlist: waitlistEntries, updateWaitlistStatus, users } = useAuth();
+    const { user, waitlist: waitlistEntries, updateWaitlistStatus, offerSlotToWaitlisted, expireWaitlistOffers, revokeWaitlistOffer, users } = useAuth();
     const { toast } = useToast();
+
+    useEffect(() => {
+        expireWaitlistOffers();
+        const interval = setInterval(expireWaitlistOffers, 60000);
+        return () => clearInterval(interval);
+    }, [expireWaitlistOffers]);
 
     const visibleWaitlist = useMemo(() => {
         if (!user) return [];
@@ -55,8 +61,11 @@ export function AdminWaitlistDashboard() {
             .sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
     }, [user, waitlistEntries, users, t]);
 
-    const handleOffer = (entryId: string, studentName: string) => {
-        updateWaitlistStatus(entryId, 'OFFERED');
+    const handleOffer = (entry: WaitlistEntry & { studentName: string }, studentName: string) => {
+        const day = entry.preferredDays?.[0] ?? 'SUN';
+        const time = entry.preferredTimes?.[0];
+        const slotLabel = time ? `${day} ${time}` : day;
+        offerSlotToWaitlisted(entry.id, `slot-${entry.id}-offer`, slotLabel);
         toast({
             title: t('offerSent'),
             description: t('offerSentDesc', { name: studentName }),
@@ -119,17 +128,35 @@ export function AdminWaitlistDashboard() {
                                         <Badge className={statusClasses[entry.status]}>
                                             {t(`statuses.${entry.status}`)}
                                         </Badge>
+                                        {entry.status === 'OFFERED' && (
+                                            <>
+                                                {entry.offeredSlotTime && (
+                                                    <div className="text-xs text-muted-foreground mt-1">{entry.offeredSlotTime}</div>
+                                                )}
+                                                {entry.offerExpiresAt && (
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {t('offerExpiresIn', { time: formatDistanceToNow(new Date(entry.offerExpiresAt)) })}
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
                                     </TableCell>
                                     <TableCell className="text-start space-x-2 space-x-reverse">
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             disabled={entry.status === 'OFFERED'}
-                                            onClick={() => handleOffer(entry.id, entry.studentName)}
+                                            onClick={() => handleOffer(entry, entry.studentName)}
                                         >
                                             <Send className="ms-2 h-3 w-3" />
                                             {t('sendOffer')}
                                         </Button>
+                                        {entry.status === 'OFFERED' && (
+                                            <Button variant="ghost" size="sm" onClick={() => { revokeWaitlistOffer(entry.id); toast({ title: t('offerRevoked') }); }}>
+                                                <Undo className="ms-2 h-3 w-3" />
+                                                {t('revokeOffer')}
+                                            </Button>
+                                        )}
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">

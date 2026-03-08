@@ -7,11 +7,11 @@
  * to a real backend service like Firebase.
  */
 'use client';
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, Achievement, AchievementType, EventProduction, EventProductionStatus, PerformanceSlot, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PaymentMethod, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, TicketTier, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { useToast } from './use-toast';
-import { differenceInCalendarDays, startOfDay, addDays } from 'date-fns';
+import { differenceInCalendarDays, startOfDay, addDays, addHours } from 'date-fns';
 import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertUserAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
@@ -109,6 +109,11 @@ interface AuthContextType {
   updateLessonStatus: (lessonId: string, status: SlotStatus) => void;
   addToWaitlist: (waitlistEntry: Partial<WaitlistEntry>) => void;
   updateWaitlistStatus: (entryId: string, status: WaitlistStatus) => void;
+  offerSlotToWaitlisted: (entryId: string, slotId: string, slotTimeLabel: string) => void;
+  acceptWaitlistOffer: (entryId: string) => void;
+  declineWaitlistOffer: (entryId: string) => void;
+  expireWaitlistOffers: () => void;
+  revokeWaitlistOffer: (entryId: string) => void;
   addFormTemplate: (templateData: Partial<FormTemplate>) => void;
   updateConservatorium: (updatedConservatorium: Conservatorium) => void;
   addEvent: (eventData: Partial<EventProduction>) => void;
@@ -1094,6 +1099,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const updateWaitlistStatus = (entryId: string, status: WaitlistStatus) => {
     setMockWaitlist(prev => prev.map(e => e.id === entryId ? { ...e, status } : e));
+  };
+
+  const offerSlotToWaitlisted = (entryId: string, slotId: string, slotTimeLabel: string) => {
+    const expiresAt = addHours(new Date(), 48).toISOString();
+    setMockWaitlist(prev => prev.map(e =>
+      e.id === entryId
+        ? { ...e, status: 'OFFERED' as WaitlistStatus, offeredSlotId: slotId, offeredSlotTime: slotTimeLabel, offerExpiresAt: expiresAt, notifiedAt: new Date().toISOString() }
+        : e
+    ));
+  };
+
+  const acceptWaitlistOffer = (entryId: string) => {
+    const entry = mockWaitlist.find(e => e.id === entryId);
+    if (!entry || entry.status !== 'OFFERED') return;
+    if (entry.offerExpiresAt && new Date(entry.offerExpiresAt) < new Date()) return;
+    setMockWaitlist(prev => prev.map(e =>
+      e.id === entryId
+        ? { ...e, status: 'ACCEPTED' as WaitlistStatus, offerAcceptedAt: new Date().toISOString() }
+        : e
+    ));
+  };
+
+  const declineWaitlistOffer = (entryId: string) => {
+    setMockWaitlist(prev => prev.map(e =>
+      e.id === entryId
+        ? { ...e, status: 'DECLINED' as WaitlistStatus, offerDeclinedAt: new Date().toISOString() }
+        : e
+    ));
+  };
+
+  const expireWaitlistOffers = useCallback(() => {
+    const now = new Date();
+    setMockWaitlist(prev => prev.map(e =>
+      e.status === 'OFFERED' && e.offerExpiresAt && new Date(e.offerExpiresAt) < now
+        ? { ...e, status: 'EXPIRED' as WaitlistStatus }
+        : e
+    ));
+  }, []);
+
+  const revokeWaitlistOffer = (entryId: string) => {
+    setMockWaitlist(prev => prev.map(e =>
+      e.id === entryId && e.status === 'OFFERED'
+        ? { ...e, status: 'WAITING' as WaitlistStatus, offeredSlotId: undefined, offeredSlotTime: undefined, offerExpiresAt: undefined }
+        : e
+    ));
   };
 
   const addFormTemplate = (templateData: Partial<FormTemplate>) => {
@@ -2320,6 +2370,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateLessonStatus,
     addToWaitlist,
     updateWaitlistStatus,
+    offerSlotToWaitlisted,
+    acceptWaitlistOffer,
+    declineWaitlistOffer,
+    expireWaitlistOffers,
+    revokeWaitlistOffer,
     addFormTemplate,
     updateConservatorium,
     addEvent,

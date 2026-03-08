@@ -283,8 +283,6 @@
     "analyzingDesc": "אנחנו משווים את התשובות שלך לפרופילי ההוראה כדי למצוא את ההתאמה הטובה ביותר.",
     "analyzingTitle": "מנתחים את ההעדפות שלך",
     "bookTrialBtn": "קביעת שיעור ניסיון",
-    "danName": "דן כהן",
-    "danTitle": "מורה לפסנתר, ג׳אז ואימפרוביזציה",
     "description": "ענה/י על כמה שאלות קצרות ונציע לך את המורה המתאים ביותר.",
     "findTeacherBtn": "מצאו לי מורה",
     "matchFoundDesc": "על בסיס התשובות שלך, זו ההתאמה החזקה ביותר.",
@@ -305,11 +303,6 @@
     "qStyleA2": "גמיש ומותאם אישית",
     "qStyleA3": "מאתגר ושאפתני",
     "qStyleTitle": "איזה סגנון הוראה מתאים לך?",
-    "ronitName": "רונית לוי",
-    "ronitTag1": "ליווי סבלני",
-    "ronitTag2": "התקדמות מובנית",
-    "ronitTag3": "מיקוד בביצוע",
-    "ronitTitle": "מורה לפסנתר, הכנה לרסיטלים ובחינות",
     "runnerUpLabel": "אפשרות חזקה נוספת",
     "stepGoal": "מטרה",
     "stepPersonality": "אופי המורה",
@@ -318,8 +311,13 @@
     "title": "התאמת מורה חכמה",
     "topMatchLabel": "ההתאמה המובילה",
     "viewProfileBtn": "לצפייה בפרופיל",
-    "whyRonitDesc": "שיטת ההוראה שלה תואמת את המטרות והעדפות הלמידה שלך.",
-    "whyRonitLabel": "למה רונית?"
+    "matchScore": "{score}% התאמה",
+    "nextSlot": "זמין: {day} ב-{time}",
+    "noMatchesTitle": "לא נמצאו התאמות",
+    "noMatchesDesc": "נסה לשנות את ההעדפות או פנה ישירות למשרד הקונסרבטוריון.",
+    "contactOffice": "פנייה למשרד",
+    "premiumBadge": "מורה פרמיום",
+    "matchReasonLabel": "למה המורה הזה?"
   },
   "Waitlist": {
     "actions": "פעולות",
@@ -347,7 +345,16 @@
     },
     "student": "תלמיד/ה",
     "title": "רשימת ממתינים פעילה",
-    "unknown": "לא ידוע"
+    "unknown": "לא ידוע",
+    "offerExpiresIn": "תפוגה בעוד {time}",
+    "revokeOffer": "בטל הצעה",
+    "offerRevoked": "ההצעה בוטלה",
+    "offerBannerTitle": "הוצע לך מקום!",
+    "offerBannerDesc": "שיעור {instrument} עם {teacher} — {time}. ההצעה פגה בעוד {expiry}.",
+    "acceptOffer": "אשר הצעה",
+    "declineOffer": "דחה הצעה",
+    "offerAccepted": "ההצעה אושרה! השיעור נוסף למערכת.",
+    "offerDeclined": "ההצעה נדחתה."
   },
   "PlayingSchool": {
     "wizard": {

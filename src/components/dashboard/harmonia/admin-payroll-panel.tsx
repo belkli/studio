@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { vatBreakdown, VAT_RATE } from '@/lib/vat';
 
 type TeacherMonthlyRow = {
   teacherId: string;
@@ -21,6 +22,7 @@ type TeacherMonthlyRow = {
   absentCount: number;
   makeupCount: number;
   notes: string;
+  ratePerHour?: number;  // ILS per hour
 };
 
 type PayrollReport = {
@@ -30,7 +32,11 @@ type PayrollReport = {
   byTeacher: TeacherMonthlyRow[];
 };
 
-const HEBREW_EXPORT_HEADERS = ['שם עובד', 'ת.ז.', 'שעות בפועל', 'שעות נוספות', 'היעדרויות', 'הערות'];
+const HEBREW_EXPORT_HEADERS = [
+  'שם מורה', 'ת.ז.', 'מספר שיעורים', 'שעות בפועל', 'תעריף לשעה',
+  'סכום לפני מע"מ', 'שיעור מע"מ', 'מע"מ', 'סה"כ כולל מע"מ',
+  'שעות נוספות', 'היעדרויות', 'הערות',
+];
 
 const _toMonthValue = (date: Date) => format(date, 'yyyy-MM');
 
@@ -38,14 +44,26 @@ const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '"
 
 function downloadPayrollCsv(rows: TeacherMonthlyRow[], filename: string) {
   const bom = '\uFEFF';
-  const csvRows = rows.map((row) => [
-    row.teacherName,
-    row.nationalId,
-    (row.totalMinutes / 60).toFixed(2),
-    (row.overtimeMinutes / 60).toFixed(2),
-    String(row.absentCount),
-    row.notes,
-  ]);
+  const csvRows = rows.map((row) => {
+    const totalHours = row.totalMinutes / 60;
+    const rate = row.ratePerHour ?? 0;
+    const subtotal = Math.round(totalHours * rate);
+    const { vat, total } = vatBreakdown(subtotal);
+    return [
+      row.teacherName,
+      row.nationalId,
+      String(row.lessonsCount),
+      totalHours.toFixed(2),
+      rate > 0 ? String(rate) : '',
+      rate > 0 ? String(subtotal) : '',
+      rate > 0 ? `${Math.round(VAT_RATE * 100)}%` : '',
+      rate > 0 ? String(vat) : '',
+      rate > 0 ? String(total) : '',
+      (row.overtimeMinutes / 60).toFixed(2),
+      String(row.absentCount),
+      row.notes,
+    ];
+  });
 
   const csv =
     bom +

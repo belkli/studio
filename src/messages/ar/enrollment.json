@@ -283,8 +283,6 @@
     "analyzingDesc": "نقارن إجاباتك بملفات المعلّمين للعثور على أفضل تطابق.",
     "analyzingTitle": "نحلّل تفضيلاتك",
     "bookTrialBtn": "احجز درسًا تجريبيًا",
-    "danName": "دان كوهين",
-    "danTitle": "مدرّس بيانو، جاز وارتجال",
     "description": "أجب عن بعض الأسئلة القصيرة وسنقترح لك المعلّم الأنسب.",
     "findTeacherBtn": "اعثر على معلّمي",
     "matchFoundDesc": "بناءً على إجاباتك، هذا هو المعلّم الأنسب لك.",
@@ -305,11 +303,6 @@
     "qStyleA2": "مرن ومتكيف",
     "qStyleA3": "تحدّي وطموح",
     "qStyleTitle": "ما أسلوب التدريس المناسب لك؟",
-    "ronitName": "رونيت ليفي",
-    "ronitTag1": "إرشاد صبور",
-    "ronitTag2": "تقدم منهجي",
-    "ronitTag3": "تركيز على الأداء",
-    "ronitTitle": "مدرّسة بيانو، تحضير للحفلات والامتحانات",
     "runnerUpLabel": "بديل قوي",
     "stepGoal": "الهدف",
     "stepPersonality": "شخصية المعلّم",
@@ -318,8 +311,13 @@
     "title": "مطابقة المعلّم بالذكاء الاصطناعي",
     "topMatchLabel": "أفضل مطابقة",
     "viewProfileBtn": "عرض الملف الشخصي",
-    "whyRonitDesc": "أسلوبها في التدريس يتوافق مع أهدافك وطريقة تعلمك.",
-    "whyRonitLabel": "لماذا رونيت؟"
+    "matchScore": "تطابق {score}%",
+    "nextSlot": "متاح التالي: {day} في {time}",
+    "noMatchesTitle": "لم يتم العثور على تطابقات",
+    "noMatchesDesc": "حاول تعديل تفضيلاتك أو تواصل مع مكتب الكونسرفتوار مباشرة.",
+    "contactOffice": "الاتصال بالمكتب",
+    "premiumBadge": "معلم متميز",
+    "matchReasonLabel": "لماذا هذا المعلم؟"
   },
   "Waitlist": {
     "actions": "الإجراءات",
@@ -347,7 +345,16 @@
     },
     "student": "الطالب",
     "title": "قائمة الانتظار النشطة",
-    "unknown": "غير معروف"
+    "unknown": "غير معروف",
+    "offerExpiresIn": "تنتهي خلال {time}",
+    "revokeOffer": "سحب العرض",
+    "offerRevoked": "تم سحب العرض",
+    "offerBannerTitle": "تم عرض مقعد لك!",
+    "offerBannerDesc": "درس {instrument} مع {teacher} — {time}. ينتهي العرض خلال {expiry}.",
+    "acceptOffer": "قبول العرض",
+    "declineOffer": "رفض العرض",
+    "offerAccepted": "تم قبول العرض! تمت إضافة الدرس إلى جدولك.",
+    "offerDeclined": "تم رفض العرض."
   },
   "PlayingSchool": {
     "wizard": {
