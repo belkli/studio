@@ -7,7 +7,7 @@
  * to a real backend service like Firebase.
  */
 'use client';
-import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
 import { LessonsDomainProvider, useLessonsDomain } from '@/hooks/domains/lessons-domain';
@@ -285,7 +285,6 @@ function AuthProviderInner({
     mockProgressReports,
     setMockProgressReports,
     mockTeacherRatings,
-    setMockTeacherRatings,
     assignRepertoire,
     updateRepertoireStatus,
     addLessonNote,
@@ -866,7 +865,7 @@ function AuthProviderInner({
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 /**
  * Custom hook to access the AuthContext.
