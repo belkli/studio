@@ -51,8 +51,8 @@ The `MemoryDatabaseAdapter` is populated by `buildDefaultMemorySeed()` from:
 | Source | Data |
 |--------|------|
 | `docs/data/constadmin.json` | 85 conservatorium records with real names, cities |
-| `docs/data/conservatoriums.json` | 68 directory teachers (18 cons-15 + 50 cons-66) |
-| `src/lib/data.ts` | mockUsers, devUser, directoryTeacherUsers |
+| `docs/data/conservatoriums.json` | 71 directory teachers (18 cons-15 + 50 cons-66 + 3 cons-84) |
+| `src/lib/data.ts` | mockUsers, devUser, directoryTeacherUsers (348 total: 71 original + 277 added in 2026-03 sprint across cons-2, -7, -9, -10, -11, -13, -14, -16, -17, -18) |
 | `src/lib/data.json` | 5,217 music compositions |
 
 The `/api/bootstrap` route serves all seed data to the client. `NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1` enables client fallback.
@@ -160,7 +160,7 @@ interface MakeupCredit {
 ## 5. PostgreSQL Alignment
 
 `scripts/db/seed.sql` contains SQL inserts aligned with mock data:
-- All 68 directory teachers with UUID-based records and `teacher_profiles`
+- All 348 directory teachers with UUID-based records and `teacher_profiles` (71 original + 277 added in 2026-03 sprint; UUIDs c1000000-...-000001 through ...-000484; includes 12 conservatorium website UPDATE statements)
 - 9 students, 5 parents, 10 lesson slots
 - Uses `scheduled_at` (not `start_time`), lowercase `lesson_status` enum
 
