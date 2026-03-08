@@ -47,4 +47,37 @@ describe('buildPaymentNotifications', () => {
     const ids2 = n2.map(n => n.id);
     expect(ids1).not.toEqual(ids2);
   });
+
+  it('falls back to "your subscription" when packageTitle is absent', () => {
+    const { packageTitle: _, ...dataWithoutPackageTitle } = mockData;
+    const notifications = buildPaymentNotifications(dataWithoutPackageTitle);
+    const payerNotif = notifications.find(n => n.userId === 'student-1');
+    expect(payerNotif?.message).toContain('your subscription');
+  });
+
+  it('includes packageTitle in payer message when provided', () => {
+    const notifications = buildPaymentNotifications(mockData);
+    const payerNotif = notifications.find(n => n.userId === 'student-1');
+    expect(payerNotif?.message).toContain('Monthly Package');
+  });
+
+  it('notification read flag is false by default', () => {
+    const notifications = buildPaymentNotifications(mockData);
+    for (const notif of notifications) {
+      expect(notif.read).toBe(false);
+    }
+  });
+
+  it('notification has a valid ISO timestamp', () => {
+    const notifications = buildPaymentNotifications(mockData);
+    for (const notif of notifications) {
+      expect(new Date(notif.timestamp).toISOString()).toBe(notif.timestamp);
+    }
+  });
+
+  it('teacher notification link points to /dashboard/teacher', () => {
+    const notifications = buildPaymentNotifications(mockData);
+    const teacherNotif = notifications.find(n => n.userId === 'teacher-1');
+    expect(teacherNotif?.link).toBe('/dashboard/teacher');
+  });
 });
