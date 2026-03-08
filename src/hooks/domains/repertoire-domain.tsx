@@ -43,6 +43,7 @@ export interface RepertoireDomainContextType {
   setMockProgressReports: React.Dispatch<React.SetStateAction<ProgressReport[]>>;
 
   mockTeacherRatings: TeacherRating[];
+  teacherRatings: TeacherRating[];
   setMockTeacherRatings: React.Dispatch<React.SetStateAction<TeacherRating[]>>;
 
   assignRepertoire: (studentIds: string | string[], compositionId: string) => void;
@@ -80,8 +81,11 @@ export function RepertoireDomainProvider({
 }: {
   children: React.ReactNode;
 }) {
+  // needs users list to resolve student/teacher by id and setUsers for achievement side-effects
   const { users, updateUser, setUsers } = useUsersDomain();
+  // needs current session user for rating authorship in submitTeacherRating
   const { user } = useAuthDomain();
+  // needs lesson history to gate completed-lesson eligibility in submitTeacherRating
   const { mockLessons } = useLessonsDomain();
   const { toast } = useToast();
 
@@ -375,6 +379,7 @@ export function RepertoireDomainProvider({
       progressReports: mockProgressReports,
       setMockProgressReports,
       mockTeacherRatings,
+      teacherRatings: mockTeacherRatings,
       setMockTeacherRatings,
       assignRepertoire,
       updateRepertoireStatus,
