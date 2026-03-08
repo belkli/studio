@@ -23,6 +23,8 @@ Harmonia is a multi-tenant SaaS platform that digitises the full operational lif
 | 05 | [Data Persistence](./05-data-persistency.md) | ✅ | Multi-backend strategy, Firestore schema, entity models |
 | 06 | [Security](./06-security.md) | ✅ | Auth, RBAC, PDPPA compliance, threat model |
 | 07 | [Infrastructure](./07-infrastructure.md) | ✅ | Hosting, CI/CD, environments, external services |
+| 08 | [Execution Status](./08-execution-status.md) | ✅ | Phase completion status, remaining blockers |
+| 09 | [BYOD Integrations](./09-byod-integrations.md) | 📋 | Per-tenant secrets (Secret Manager), payment BYOD, cost model |
 
 ### Status Legend
 
