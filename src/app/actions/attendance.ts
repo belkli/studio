@@ -78,6 +78,36 @@ export async function markAttendance(input: MarkAttendanceInput): Promise<MarkAt
         const db = await getDb();
         await db.lessons.update(slotId, updatedSlot);
 
+        // Notify relevant party for cancellations and no-shows (non-fatal)
+        try {
+            const lesson = await db.lessons.findById(slotId);
+            if (lesson && (newStatus === 'CANCELLED_STUDENT_NOTICED' || newStatus === 'NO_SHOW_STUDENT' || newStatus === 'NO_SHOW_TEACHER')) {
+                const notifyUserId = newStatus === 'NO_SHOW_TEACHER' ? lesson.studentId : lesson.teacherId;
+                const title = newStatus === 'NO_SHOW_TEACHER'
+                    ? 'Teacher no-show recorded'
+                    : newStatus === 'NO_SHOW_STUDENT'
+                        ? 'Student no-show recorded'
+                        : 'Lesson cancelled by student';
+                const message = newStatus === 'NO_SHOW_TEACHER'
+                    ? 'Your teacher did not attend the scheduled lesson. A makeup credit may be issued.'
+                    : newStatus === 'NO_SHOW_STUDENT'
+                        ? 'The student did not attend the scheduled lesson.'
+                        : 'The student cancelled the lesson with advance notice.';
+
+                await db.notifications.create({
+                    userId: notifyUserId,
+                    conservatoriumId,
+                    title,
+                    message,
+                    link: '/dashboard/schedule',
+                    read: false,
+                    timestamp: now,
+                });
+            }
+        } catch (notifErr) {
+            console.error('[markAttendance] Notification failed (non-fatal):', notifErr);
+        }
+
         return {
             success: true,
             updatedSlot,

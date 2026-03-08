@@ -128,13 +128,10 @@ export async function submitSignatureAction(
   }
 
   // Log the audit record to complianceLogs (append-only).
-  // ComplianceLog.action doesn't have a SIGNATURE variant yet; CONSENT_GIVEN
-  // is the closest semantic match for a signed enrollment agreement.
-  // TODO: add 'SIGNATURE_CREATED' to ComplianceLog.action when the type is extended.
   try {
     await db.complianceLogs.create({
       id: auditId,
-      action: 'CONSENT_GIVEN',
+      action: 'SIGNATURE_CREATED',
       subjectId: auditRecord.formSubmissionId,
       reason: `Signature by ${auditRecord.signerRole} ${auditRecord.signerId} — hash ${auditRecord.signatureHash}`,
       performedAt: auditRecord.signedAt,

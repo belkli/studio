@@ -34,6 +34,7 @@
 import { getAdminFirestore } from '@/lib/firebase-admin';
 import { buildDefaultSeed, MemoryDatabaseAdapter } from './shared';
 import type {
+  Achievement,
   Alumnus,
   Announcement,
   Branch,
@@ -58,8 +59,10 @@ import type {
   ScholarshipApplication,
   TeacherException,
   User,
+  WaitlistEntry,
 } from '@/lib/types';
 import type {
+  AchievementRepository,
   AlumniRepository,
   AnnouncementRepository,
   ApprovalRepository,
@@ -92,6 +95,7 @@ import type {
   DonationCauseRepository,
   DonationRepository,
   UserRepository,
+  WaitlistEntryRepository,
 } from '@/lib/db/types';
 import type { Firestore } from 'firebase-admin/firestore';
 
@@ -391,6 +395,8 @@ export class FirebaseAdapter implements DatabaseAdapter {
   teacherExceptions: TeacherExceptionRepository;
   consentRecords: ConsentRecordRepository;
   complianceLogs: ComplianceLogRepository;
+  waitlist: WaitlistEntryRepository;
+  achievements: AchievementRepository;
 
   /** Indicates whether this adapter is backed by real Firestore or a memory fallback. */
   readonly source: 'firestore' | 'memory-fallback';
@@ -435,6 +441,8 @@ export class FirebaseAdapter implements DatabaseAdapter {
       this.teacherExceptions = fallback.teacherExceptions;
       this.consentRecords = fallback.consentRecords;
       this.complianceLogs = fallback.complianceLogs;
+      this.waitlist = fallback.waitlist;
+      this.achievements = fallback.achievements;
       this.source = 'memory-fallback';
       this.fallbackReason = 'FIREBASE_SERVICE_ACCOUNT_KEY not set';
       return;
@@ -496,6 +504,34 @@ export class FirebaseAdapter implements DatabaseAdapter {
       },
       async markRead(id: string): Promise<void> {
         await notifBase.update(id, { read: true } as Partial<Notification>);
+      },
+    };
+
+    // Waitlist: Firestore sub-collection per conservatorium
+    const waitlistBase = createSubCollectionRepository<WaitlistEntry>(db, 'waitlist');
+    this.waitlist = {
+      async findByConservatorium(conservatoriumId: string): Promise<WaitlistEntry[]> {
+        return waitlistBase.findByConservatorium(conservatoriumId);
+      },
+      async findById(entryId: string): Promise<WaitlistEntry | null> {
+        return waitlistBase.findById(entryId);
+      },
+      async update(entryId: string, data: Partial<WaitlistEntry>): Promise<void> {
+        await waitlistBase.update(entryId, data);
+      },
+    };
+
+    // Achievements: Firestore sub-collection per conservatorium
+    const achievementBase = createSubCollectionRepository<Achievement>(db, 'achievements');
+    this.achievements = {
+      async create(data: Omit<Achievement, 'id'>): Promise<Achievement> {
+        return achievementBase.create(data as Partial<Achievement>);
+      },
+      async findByStudentId(studentId: string): Promise<Achievement[]> {
+        const snap = await db.collectionGroup('achievements')
+          .where('studentId', '==', studentId)
+          .get();
+        return snap.docs.map((d) => normalizeDoc<Achievement>(d.data(), d.id));
       },
     };
 

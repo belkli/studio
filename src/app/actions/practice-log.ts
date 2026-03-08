@@ -84,18 +84,55 @@ export async function logPracticeSession(input: LogPracticeInput): Promise<LogPr
         const db = await getDb();
         await db.practiceLogs.create(practiceLog);
 
-        // TODO: db.practiceLogs.findByConservatorium() to compute streak when
-        //       a query-by-student method is added to the interface.
-        // TODO: db.achievements.create() — no achievements repository in
-        //       DatabaseAdapter yet; add when interface is extended.
+        // Compute streak from existing logs
+        const allLogs = await db.practiceLogs.list();
+        const studentLogs = allLogs
+            .filter(l => l.studentId === input.studentId)
+            .map(l => l.date)
+            .sort();
+        const uniqueDates = [...new Set(studentLogs)];
+        let streakDays = 1;
+        for (let i = uniqueDates.length - 2; i >= 0; i--) {
+            const curr = new Date(uniqueDates[i + 1]);
+            const prev = new Date(uniqueDates[i]);
+            const diffMs = curr.getTime() - prev.getTime();
+            if (diffMs <= 86400000) {
+                streakDays++;
+            } else {
+                break;
+            }
+        }
 
         const achievementsEarned: AchievementType[] = [];
+
+        // Award streak achievements when hitting a 7-day milestone
+        if (streakDays > 0 && streakDays % 7 === 0) {
+            try {
+                const achievementType: AchievementType = streakDays >= 30
+                    ? 'PRACTICE_STREAK_30'
+                    : 'PRACTICE_STREAK_7';
+                await db.achievements.create({
+                    type: achievementType,
+                    title: `${streakDays}-Day Practice Streak`,
+                    titleHe: `רצף תרגול של ${streakDays} ימים`,
+                    description: `Practiced for ${streakDays} consecutive days!`,
+                    icon: '🔥',
+                    achievedAt: now,
+                    points: streakDays >= 30 ? 50 : 20,
+                    studentId: input.studentId,
+                    conservatoriumId: input.conservatoriumId,
+                });
+                achievementsEarned.push(achievementType);
+            } catch (achErr) {
+                console.error('[logPracticeSession] Achievement creation failed (non-fatal):', achErr);
+            }
+        }
 
         return {
             success: true,
             practiceLog,
             achievementsEarned,
-            streakDays: 0,  // Would be computed from existing logs
+            streakDays,
             pointsAwarded: points,
         };
     } catch (error) {

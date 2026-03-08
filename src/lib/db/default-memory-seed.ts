@@ -92,6 +92,8 @@ export function buildDefaultMemorySeed(): MemorySeed {
     teacherExceptions: [],
     consentRecords: [],
     complianceLogs: [],
+    waitlist: clone(mockWaitlist || []),
+    achievements: [],
   };
 }
 

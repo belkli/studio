@@ -24,8 +24,11 @@ import type {
   ScholarshipApplication,
   TeacherException,
   User,
+  WaitlistEntry,
+  Achievement,
 } from '@/lib/types';
 import type {
+  AchievementRepository,
   AlumniRepository,
   AnnouncementRepository,
   ApprovalRepository,
@@ -57,6 +60,7 @@ import type {
   ScopedRepository,
   TeacherExceptionRepository,
   UserRepository,
+  WaitlistEntryRepository,
 } from '@/lib/db/types';
 
 type Entity = { id: string; conservatoriumId?: string | null };
@@ -88,6 +92,8 @@ export type MemorySeed = {
   teacherExceptions: TeacherException[];
   consentRecords: ConsentRecord[];
   complianceLogs: ComplianceLog[];
+  waitlist: WaitlistEntry[];
+  achievements: Achievement[];
 };
 
 function clone<T>(value: T): T {
@@ -264,6 +270,8 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
   teacherExceptions: TeacherExceptionRepository;
   consentRecords: ConsentRecordRepository;
   complianceLogs: ComplianceLogRepository;
+  waitlist: WaitlistEntryRepository;
+  achievements: AchievementRepository;
 
   constructor(seed: MemorySeed) {
     this.users = createUserRepository(seed.users);
@@ -312,6 +320,36 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
       },
       async markRead(id: string): Promise<void> {
         await notifBase.update(id, { read: true } as Partial<Notification>);
+      },
+    };
+
+    // WaitlistEntryRepository (simple array-based)
+    const waitlistState = clone(seed.waitlist);
+    this.waitlist = {
+      async findByConservatorium(conservatoriumId: string): Promise<WaitlistEntry[]> {
+        return clone(waitlistState.filter(e => e.conservatoriumId === conservatoriumId));
+      },
+      async findById(entryId: string): Promise<WaitlistEntry | null> {
+        const found = waitlistState.find(e => e.id === entryId);
+        return found ? clone(found) : null;
+      },
+      async update(entryId: string, data: Partial<WaitlistEntry>): Promise<void> {
+        const index = waitlistState.findIndex(e => e.id === entryId);
+        if (index < 0) throw new Error(`Waitlist entry not found: ${entryId}`);
+        waitlistState[index] = { ...waitlistState[index], ...clone(data) };
+      },
+    };
+
+    // AchievementRepository (start empty)
+    const achievementsState: Achievement[] = clone(seed.achievements);
+    this.achievements = {
+      async create(data: Omit<Achievement, 'id'>): Promise<Achievement> {
+        const record = { ...data, id: createId('ach') } as Achievement;
+        achievementsState.push(clone(record));
+        return clone(record);
+      },
+      async findByStudentId(studentId: string): Promise<Achievement[]> {
+        return clone(achievementsState.filter(a => a.studentId === studentId));
       },
     };
   }
