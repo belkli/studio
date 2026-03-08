@@ -135,12 +135,18 @@ Active in `next.config.ts`:
 
 | Requirement | Status |
 |-------------|--------|
-| Consent collection (`ConsentRecord` type) | 🚧 Type exists, UI in `consent-checkboxes.tsx` |
-| Digital signatures (`SignatureAuditRecord`) | 🚧 `signature-capture.tsx` component exists |
-| Data access log (`ComplianceLog`) | 🚧 Type exists |
-| Right to erasure | 📋 Planned |
-| Data retention | 📋 `RetentionPolicy` type defined |
+| Consent collection (`ConsentRecord` type) | ✅ Type + UI (`consent-checkboxes.tsx`) + `saveConsentRecord` Server Action persisting to DB |
+| Digital signatures (`SignatureAuditRecord`) | ✅ `signature-capture.tsx` + SHA-256 hash + `src/app/actions/signatures.ts` |
+| Data access log (`ComplianceLog`) | ✅ Type + `src/app/actions/consent.ts` writes audit entries |
+| Cookie banner (GDPR/PDPPA) | ✅ `src/components/consent/cookie-banner.tsx` — localStorage `harmonia_cookie_consent` |
+| DSAR (Data Subject Access Requests) | ✅ Export, delete, and consent withdrawal in `/dashboard/settings` (all roles) |
+| Parental consent differentiation | ✅ Separate checkbox path when `accountType === 'PLAYING_SCHOOL'` or student under 13 |
+| Enrollment contract step | ✅ Signature capture in enrollment wizard; `SignatureAuditRecord` stored |
+| 14-day cooling-off period | ✅ `cancelPackageAction()` in `src/app/actions/billing.ts` |
+| Right to erasure (full) | 📋 Deletion request UI ✅; backend purge job not yet scheduled |
+| Data retention enforcement | 📋 `RetentionPolicy` type defined; automated purge cron not yet deployed |
 | Data residency (europe-west1) | ✅ Cloud Functions configured |
+| Sub-processors disclosure | ✅ Privacy page updated with sub-processors table |
 
 ### 7.3 Under-13 Protection
 

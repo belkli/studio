@@ -52,8 +52,18 @@ src/
 |   +-- harmonia/                     # Public-facing components
 |   +-- forms/, enrollment/, payments/, auth/, layout/
 +-- hooks/
-|   +-- use-auth.tsx                  # Monolithic context (2364 lines)
-|   +-- data/                         # Domain hooks (wrap useAuth)
+|   +-- use-auth.tsx                  # Auth + bootstrap context (881 lines, decomposed from 2534)
+|   +-- domains/                      # Domain context files (Phase 3 decomposition)
+|   |   +-- auth-domain.tsx           # user, login, logout, session
+|   |   +-- users-domain.tsx          # user management, approvals
+|   |   +-- lessons-domain.tsx        # lesson slots, scheduling, makeup credits
+|   |   +-- repertoire-domain.tsx     # assigned repertoire, compositions
+|   |   +-- comms-domain.tsx          # messaging, announcements, notifications
+|   |   +-- instruments-domain.tsx    # instrument inventory and rentals
+|   |   +-- events-domain.tsx         # events, performances, open days
+|   |   +-- admin-domain.tsx          # conservatorium config, branches, rooms, packages
+|   |   +-- index.ts                  # re-exports all domain contexts
+|   +-- data/                         # React Query hooks
 +-- i18n/
 |   +-- routing.ts                    # locales: [he,en,ar,ru], as-needed
 |   +-- request.ts                    # Deep-merges split message files
@@ -145,13 +155,32 @@ All spacing uses CSS Logical Properties: `ms-`/`me-`, `ps-`/`pe-`, `text-start`/
 
 ## 6. State Management
 
-### Current: Monolithic Context
+### Phase 3 Complete: Domain Context Decomposition
 
-`src/hooks/use-auth.tsx` holds 35+ `useState` arrays, 170+ mutation functions, and all mock data. Domain hooks in `src/hooks/data/` wrap `useAuth()` for filtering.
+`src/hooks/use-auth.tsx` was decomposed from 2,534 lines to 881 lines. The 8 domain context files in `src/hooks/domains/` each own a distinct slice of state:
 
-### Target: Domain Hooks + React Query
+| File | Responsibility |
+|------|---------------|
+| `auth-domain.tsx` | user identity, login, logout, session |
+| `users-domain.tsx` | user management, approvals, role changes |
+| `lessons-domain.tsx` | lesson slots, scheduling, makeup credits |
+| `repertoire-domain.tsx` | assigned repertoire, compositions |
+| `comms-domain.tsx` | messaging, announcements, notifications |
+| `instruments-domain.tsx` | instrument inventory and rentals |
+| `events-domain.tsx` | events, performances, open days |
+| `admin-domain.tsx` | conservatorium config, branches, rooms, packages |
 
-Planned migration to `@tanstack/react-query` with Firestore listeners for real-time data. Not yet implemented.
+`src/hooks/domains/index.ts` re-exports all 8 contexts for a single import point.
+
+### React Query: Installed and Wired
+
+`@tanstack/react-query` is installed. `QueryProvider` wraps the app. Domain hooks in `src/hooks/data/` use `useQuery`/`useMutation` directly against the database adapter layer:
+
+- `useMyLessons` — student/teacher lesson feed
+- `useMyInvoices` — billing history
+- `useLiveStats` — admin dashboard metrics
+- `useMakeupCredits` — makeup credit balance
+- `usePracticeLogs` — student practice history
 
 ---
 
