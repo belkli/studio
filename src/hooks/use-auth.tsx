@@ -16,6 +16,7 @@ import { differenceInCalendarDays, startOfDay, addDays, addHours } from 'date-fn
 import { allocateRoomWithConflictResolution } from '@/lib/room-allocation';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { createAnnouncement, saveAlumnus, createMasterClassAction, publishMasterClassAction, registerToMasterClassAction, createScholarshipApplicationAction, updateScholarshipStatusAction, markScholarshipPaidAction, createDonationCauseAction, recordDonationAction, createBranchAction, updateBranchAction, createConservatoriumInstrumentAction, updateConservatoriumInstrumentAction, deleteConservatoriumInstrumentAction, createLessonPackageAction, updateLessonPackageAction, deleteLessonPackageAction, createRoomAction, updateRoomAction, deleteRoomAction, upsertFormSubmissionAction, createEventAction, updateEventAction, upsertUserAction, upsertLessonAction, upsertConservatoriumAction } from '@/app/actions';
+import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 /**
  * Defines the shape of the authentication context, including all state and action dispatchers.
@@ -221,14 +222,6 @@ function AuthProviderInner({
     setBootstrapResolved,
     setBootstrapUsedMockFallback,
   } = useAuthDomain();
-
-  const setAuthCookie = () => {
-    document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
-  };
-
-  const clearAuthCookie = () => {
-    document.cookie = 'harmonia-user=; path=/; max-age=0; samesite=lax';
-  };
 
   // State for all mock data sets (users moved to outer AuthProvider)
   const [mockFormSubmissions, setMockFormSubmissions] = useState<FormSubmission[]>([]);

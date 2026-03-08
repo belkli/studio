@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useCallback, useMemo } from 'react
 import type { User } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { upsertUserAction } from '@/app/actions';
+import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
 export interface AuthDomainContextType {
   user: User | null;
@@ -42,14 +43,6 @@ export function AuthDomainProvider({
   const [, setBootstrapUsedMockFallback] = useState(false);
 
   const router = useRouter();
-
-  const setAuthCookie = () => {
-    document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
-  };
-
-  const clearAuthCookie = () => {
-    document.cookie = 'harmonia-user=; path=/; max-age=0; samesite=lax';
-  };
 
   const login = useCallback(
     (email: string): { user: User | null; status: 'approved' | 'pending' | 'not_found' } => {
