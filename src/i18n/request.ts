@@ -9,6 +9,7 @@ import heBilling from '../messages/he/billing.json';
 import heCommon from '../messages/he/common.json';
 import heEnrollment from '../messages/he/enrollment.json';
 import heForms from '../messages/he/forms.json';
+import heLegal from '../messages/he/legal.json';
 import heOpenDay from '../messages/he/OpenDay.json';
 import hePublic from '../messages/he/public.json';
 import heSettings from '../messages/he/settings.json';
@@ -20,6 +21,7 @@ import enBilling from '../messages/en/billing.json';
 import enCommon from '../messages/en/common.json';
 import enEnrollment from '../messages/en/enrollment.json';
 import enForms from '../messages/en/forms.json';
+import enLegal from '../messages/en/legal.json';
 import enOpenDay from '../messages/en/OpenDay.json';
 import enPublic from '../messages/en/public.json';
 import enSettings from '../messages/en/settings.json';
@@ -31,6 +33,7 @@ import arBilling from '../messages/ar/billing.json';
 import arCommon from '../messages/ar/common.json';
 import arEnrollment from '../messages/ar/enrollment.json';
 import arForms from '../messages/ar/forms.json';
+import arLegal from '../messages/ar/legal.json';
 import arOpenDay from '../messages/ar/OpenDay.json';
 import arPublic from '../messages/ar/public.json';
 import arSettings from '../messages/ar/settings.json';
@@ -42,6 +45,7 @@ import ruBilling from '../messages/ru/billing.json';
 import ruCommon from '../messages/ru/common.json';
 import ruEnrollment from '../messages/ru/enrollment.json';
 import ruForms from '../messages/ru/forms.json';
+import ruLegal from '../messages/ru/legal.json';
 import ruOpenDay from '../messages/ru/OpenDay.json';
 import ruPublic from '../messages/ru/public.json';
 import ruSettings from '../messages/ru/settings.json';
@@ -68,10 +72,10 @@ function deepMerge(base: any, override: any): any {
 }
 
 const allMessages: Record<string, object[]> = {
-    he: [heAdmin, heAlumni, heBilling, heCommon, heEnrollment, heForms, heOpenDay, hePublic, heSettings, heStudent],
-    en: [enAdmin, enAlumni, enBilling, enCommon, enEnrollment, enForms, enOpenDay, enPublic, enSettings, enStudent],
-    ar: [arAdmin, arAlumni, arBilling, arCommon, arEnrollment, arForms, arOpenDay, arPublic, arSettings, arStudent],
-    ru: [ruAdmin, ruAlumni, ruBilling, ruCommon, ruEnrollment, ruForms, ruOpenDay, ruPublic, ruSettings, ruStudent],
+    he: [heAdmin, heAlumni, heBilling, heCommon, heEnrollment, heForms, heLegal, heOpenDay, hePublic, heSettings, heStudent],
+    en: [enAdmin, enAlumni, enBilling, enCommon, enEnrollment, enForms, enLegal, enOpenDay, enPublic, enSettings, enStudent],
+    ar: [arAdmin, arAlumni, arBilling, arCommon, arEnrollment, arForms, arLegal, arOpenDay, arPublic, arSettings, arStudent],
+    ru: [ruAdmin, ruAlumni, ruBilling, ruCommon, ruEnrollment, ruForms, ruLegal, ruOpenDay, ruPublic, ruSettings, ruStudent],
 };
 
 function mergeMessages(locale: string): object {

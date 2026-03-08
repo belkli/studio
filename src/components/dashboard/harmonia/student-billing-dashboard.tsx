@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { getPlayingSchoolPaymentUrl } from "@/app/actions";
+import { cancelPackageAction } from "@/app/actions/billing";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { CalendarClock, Package, Download, PauseCircle, XCircle, Coins, AlertTriangle, ShieldQuestion, School, Loader2 } from "lucide-react";
@@ -17,6 +18,7 @@ import { Notice, NoticeTitle, NoticeDescription } from "@/components/ui/notice";
 import { useDateLocale } from "@/hooks/use-date-locale";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { formatWithVAT } from "@/lib/vat";
 
 
 export function StudentBillingDashboard() {
@@ -28,6 +30,7 @@ export function StudentBillingDashboard() {
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
     const [upgradeOpen, setUpgradeOpen] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const userAndChildrenIds = useMemo(() => {
         if (!user) return [];
@@ -169,7 +172,7 @@ export function StudentBillingDashboard() {
                             <span className="text-muted-foreground flex items-center gap-1"><CalendarClock className="h-4 w-4" />
                                 {currentPackage?.nextBillingDate ? t('nextBilling') : (currentPackage?.validUntil ? t('packageExpiry') : t('status'))}</span>
                             <span className="font-semibold">
-                                {currentPackage?.nextBillingDate ? `${format(new Date(currentPackage.nextBillingDate), 'P', { locale: dateLocale })} (${currentPackage.price} ₪)`
+                                {currentPackage?.nextBillingDate ? `${format(new Date(currentPackage.nextBillingDate), 'P', { locale: dateLocale })} (${formatWithVAT(currentPackage.price, locale)})`
                                     : (currentPackage?.validUntil ? format(new Date(currentPackage.validUntil), 'P', { locale: dateLocale }) : t('active'))}
                             </span>
                         </div>
@@ -244,7 +247,7 @@ export function StudentBillingDashboard() {
                                         <TableCell className="font-mono">{invoice.invoiceNumber}</TableCell>
                                         <TableCell>{format(new Date(invoice.dueDate), 'P', { locale: dateLocale })}</TableCell>
                                         <TableCell>{invoice.lineItems[0].description}</TableCell>
-                                        <TableCell>{invoice.total} ₪</TableCell>
+                                        <TableCell>{formatWithVAT(invoice.total, locale)}</TableCell>
                                         <TableCell><Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : (invoice.status === 'OVERDUE' ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
                                         <TableCell className="text-start">
                                             <Button variant="ghost" size="icon" onClick={() => toast({ title: ti('downloadInvoice'), description: 'Invoice download coming soon' })}>
@@ -288,7 +291,7 @@ export function StudentBillingDashboard() {
                                                 <p className="font-medium">{invoice.description}</p>
                                                 <p className="text-[10px] text-indigo-600 font-bold uppercase">{tps('subsidyNotice')}</p>
                                             </TableCell>
-                                            <TableCell>{invoice.amount} ₪</TableCell>
+                                            <TableCell>{formatWithVAT(invoice.amount, locale)}</TableCell>
                                             <TableCell>
                                                 <Badge variant={invoice.status === 'PAID' ? 'default' : 'secondary'} className={invoice.status === 'PAID' ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
                                                     {ti(`statuses.${invoice.status}`)}
@@ -334,7 +337,28 @@ export function StudentBillingDashboard() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>{t('cancel') || 'Cancel'}</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => toast({ variant: 'destructive', title: t('cancelSubscription'), description: `Subscription cancellation for ${activeStudent?.name || 'this student'} - coming soon` })}>
+                                <AlertDialogAction
+                                    disabled={isCancelling}
+                                    onClick={async () => {
+                                        if (!currentPackage) return;
+                                        setIsCancelling(true);
+                                        try {
+                                            const result = await cancelPackageAction({ packageId: currentPackage.id });
+                                            if (result.success) {
+                                                toast({
+                                                    title: t('cancelSubscription'),
+                                                    description: result.withinCoolingOff
+                                                        ? 'הביטול התבצע בתוך תקופת ההתנסות (14 ימים). זכאי/ת להחזר מלא.'
+                                                        : 'הביטול יכנס לתוקף תוך 3 ימי עסקים.',
+                                                });
+                                            }
+                                        } catch {
+                                            toast({ variant: 'destructive', title: t('cancelSubscription'), description: 'אירעה שגיאה. אנא נסה שוב.' });
+                                        } finally {
+                                            setIsCancelling(false);
+                                        }
+                                    }}
+                                >
                                             {t('cancelSubscription')}
                                         </AlertDialogAction>
                                     </AlertDialogFooter>

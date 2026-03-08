@@ -522,8 +522,10 @@
   "Consent": {
     "groupLabel": "Required consents",
     "dataProcessingLabel": "I agree to the collection and processing of my personal data for music education services, in accordance with the Privacy Protection Law 5741-1981.",
+    "dataProcessingLabelMinor": "I agree, as a parent/legal guardian, to the processing of my child's personal data for music education services, in accordance with the Privacy Protection Law 5741-1981.",
     "termsLabel": "I agree to the Terms of Service and Privacy Policy.",
     "marketingLabel": "I agree to receive updates about events and activities from the conservatorium.",
+    "videoRecordingLabel": "I agree to the storage of my child's practice recordings for teacher feedback purposes only.",
     "required": "Required",
     "customTermsTitle": "Additional conservatorium terms"
   },

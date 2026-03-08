@@ -34,6 +34,7 @@ import { Checkbox } from "../ui/checkbox";
 import { TeacherMatchCard } from "./teacher-match-card";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 import type { OAuthProfile } from '@/lib/auth/oauth';
+import { SignatureCapture } from "@/components/forms/signature-capture";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -674,6 +675,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     { id: 'matching', title: t('steps.matching') },
     { id: 'booking', title: t('steps.booking') },
     { id: 'package', title: t('steps.package') },
+    { id: 'contract', title: t('steps.contract') },
     { id: 'summary', title: t('steps.summary') },
   ];
 
@@ -686,6 +688,8 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   const [teacherMatches, setTeacherMatches] = useState<MatchTeacherOutput | null>(null);
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const [oauthPrefill, setOauthPrefill] = useState<OAuthProfile | null>(null);
+  const [contractAgreed, setContractAgreed] = useState(false);
+  const [contractSigned, setContractSigned] = useState(false);
   const isOauthRegistration = Boolean(oauthPrefill);
   const { toast } = useToast();
   const router = useRouter();
@@ -1013,6 +1017,12 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       case 'schedule': fieldsToValidate = ['availableDays', 'availableTimes', 'isVirtualOk']; break;
       case 'matching': fieldsToValidate = ['teacherId']; break;
       case 'package': fieldsToValidate = ['packageId']; break;
+      case 'contract':
+        if (!contractAgreed) {
+          toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('contract.agreeRequired') });
+          return;
+        }
+        break;
       case 'booking': fieldsToValidate = ['firstLessonDate', 'firstLessonTime']; break;
       default: break;
     }
@@ -1640,6 +1650,55 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                 )}
 
                 {currentStepId === 'book' && <BookFirstLessonStep />}
+
+                {currentStepId === 'contract' && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold">{t('contract.title')}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{t('contract.subtitle')}</p>
+                    </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">{t('contract.termsTitle')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="max-h-96 overflow-y-auto rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground leading-relaxed">
+                          <p>{t('contract.termsBody')}</p>
+                        </div>
+                        <p className="text-sm mt-4 font-medium">{t('contract.readNote')}</p>
+                        <div className="flex items-start gap-3 mt-3">
+                          <Checkbox
+                            id="contract-agree"
+                            checked={contractAgreed}
+                            onCheckedChange={(checked) => setContractAgreed(Boolean(checked))}
+                            aria-required="true"
+                          />
+                          <label
+                            htmlFor="contract-agree"
+                            className="text-sm font-normal leading-relaxed cursor-pointer select-none"
+                          >
+                            {t('contract.agreeCheckbox')}
+                            <span className="text-destructive ms-1" aria-hidden="true">*</span>
+                          </label>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    {contractAgreed && !contractSigned && (
+                      <SignatureCapture
+                        onConfirm={() => {
+                          setContractSigned(true);
+                          toast({ title: t('contract.title'), description: '✓' });
+                        }}
+                      />
+                    )}
+                    {contractSigned && (
+                      <p className="text-sm text-green-600 font-medium flex items-center gap-2">
+                        <ShieldCheck className="h-4 w-4" />
+                        {t('contract.agreeCheckbox')}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {currentStepId === 'summary' && (
                   <div className="space-y-6">

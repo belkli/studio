@@ -10,6 +10,7 @@ import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
 import { AccessibilityPanel } from '@/components/a11y/accessibility-panel';
+import { CookieBanner } from '@/components/consent/cookie-banner';
 import { Rubik } from 'next/font/google';
 
 const rubik = Rubik({
@@ -86,6 +87,7 @@ export default async function RootLayout({
                 <AccessibilityPanel />
                 <Toaster />
                 <AiHelpAssistant />
+                <CookieBanner />
               </QueryProvider>
             </AuthProvider>
           </main>

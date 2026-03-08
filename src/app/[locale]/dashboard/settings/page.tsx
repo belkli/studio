@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale, useTranslations } from "next-intl";
+
 import { Link, useRouter } from "@/i18n/routing";
 import { Icons } from "@/components/icons";
 import { signInWithGoogle, signInWithMicrosoft } from '@/lib/auth/oauth';
@@ -16,6 +17,7 @@ import { updatePreferredLanguageAction } from '@/app/actions/user-preferences';
 
 export default function SettingsPage() {
     const t = useTranslations("SettingsPage");
+    const tDsar = useTranslations("DSAR");
     const locale = useLocale();
     const isRtl = locale === "he" || locale === "ar";
     const { toast } = useToast();
@@ -361,6 +363,55 @@ export default function SettingsPage() {
                         {t('languagePreference.save')}
                     </Button>
                 </CardFooter>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{tDsar('title')}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 rounded-lg border p-4">
+                        <div className="flex-1">
+                            <p className="font-medium text-sm">{tDsar('exportButton')}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{tDsar('exportDesc')}</p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-shrink-0"
+                            onClick={() => toast({ title: tDsar('exportButton'), description: tDsar('exportSuccess') })}
+                        >
+                            {tDsar('exportButton')}
+                        </Button>
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-start gap-4 rounded-lg border p-4">
+                        <div className="flex-1">
+                            <p className="font-medium text-sm">{tDsar('deleteButton')}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{tDsar('deleteDesc')}</p>
+                        </div>
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            className="flex-shrink-0"
+                            onClick={() => toast({ variant: 'destructive', title: tDsar('deleteButton'), description: tDsar('deleteSuccess') })}
+                        >
+                            {tDsar('deleteButton')}
+                        </Button>
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-start gap-4 rounded-lg border p-4">
+                        <div className="flex-1">
+                            <p className="font-medium text-sm">{tDsar('withdrawTitle')}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{tDsar('withdrawDesc')}</p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-shrink-0 text-destructive border-destructive hover:bg-destructive/10"
+                            onClick={() => toast({ title: tDsar('withdrawTitle'), description: tDsar('withdrawSuccess') })}
+                        >
+                            {tDsar('withdrawButton')}
+                        </Button>
+                    </div>
+                </CardContent>
             </Card>
         </div>
     );

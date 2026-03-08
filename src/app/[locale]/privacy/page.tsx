@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { getConservatoriumStatementContacts, type StatementContactSource } from '@/lib/legal-contacts';
@@ -118,6 +119,58 @@ export default async function PrivacyPage() {
           <section className="space-y-2">
             <h2 className="text-xl font-semibold">{t('retentionTitle')}</h2>
             <p className="text-sm text-muted-foreground">{t('retentionBody')}</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold">{t('retentionScheduleTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('retentionScheduleBody')}</p>
+            <ul className="list-disc space-y-1 ps-6 text-sm text-muted-foreground">
+              {(t.raw('retentionScheduleItems') as string[]).map((item: string) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold">{t('subProcessorsTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('subProcessorsBody')}</p>
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40">
+                  <tr>
+                    <th className="px-3 py-2 text-start font-medium">{t('subProcessorsTableHeaders.processor')}</th>
+                    <th className="px-3 py-2 text-start font-medium">{t('subProcessorsTableHeaders.service')}</th>
+                    <th className="px-3 py-2 text-start font-medium">{t('subProcessorsTableHeaders.dataAccessed')}</th>
+                    <th className="px-3 py-2 text-start font-medium">{t('subProcessorsTableHeaders.location')}</th>
+                    <th className="px-3 py-2 text-start font-medium">{t('subProcessorsTableHeaders.dpaStatus')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(t.raw('subProcessors') as Array<{ processor: string; service: string; dataAccessed: string; location: string; dpaStatus: string }>).map((row) => (
+                    <tr key={row.processor} className="border-t">
+                      <td className="px-3 py-2 font-medium">{row.processor}</td>
+                      <td className="px-3 py-2">{row.service}</td>
+                      <td className="px-3 py-2">{row.dataAccessed}</td>
+                      <td className="px-3 py-2">{row.location}</td>
+                      <td className="px-3 py-2">{row.dpaStatus}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-xl font-semibold">{t('dsarTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('dsarBody')}</p>
+            <ul className="list-disc space-y-1 ps-6 text-sm text-muted-foreground">
+              <li>
+                {t('dsarSettingsLink')} — <Link href="/dashboard/settings" className="underline text-primary">/dashboard/settings</Link>
+              </li>
+              <li>
+                {t('contactTitle')}: <a href={`mailto:${t('dsarEmail')}`} className="underline text-primary">{t('dsarEmail')}</a>
+              </li>
+            </ul>
           </section>
 
           <section className="space-y-2">

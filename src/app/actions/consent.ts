@@ -12,8 +12,10 @@
  */
 
 import { z } from 'zod';
-import { requireRole } from '@/lib/auth-utils';
+import { requireRole, withAuth } from '@/lib/auth-utils';
 import { getAdminFirestore } from '@/lib/firebase-admin';
+import { getDb } from '@/lib/db';
+import type { ConsentType } from '@/lib/types';
 
 // ── Input schema ───────────────────────────────────────────────────────────
 
@@ -113,3 +115,50 @@ export async function recordConsentAction(
     return { success: false, error: 'Failed to record consent' };
   }
 }
+
+// ── B1.3: saveConsentRecord (DB-adapter based, supports parental consent) ──
+
+const SaveConsentSchema = z.object({
+  userId: z.string(),
+  conservatoriumId: z.string(),
+  consentDataProcessing: z.boolean(),
+  consentTerms: z.boolean(),
+  consentMarketing: z.boolean().optional(),
+  consentVideoRecording: z.boolean().optional(),
+  isMinorConsent: z.boolean().optional(),
+  minorUserId: z.string().optional(),
+});
+
+export const saveConsentRecord = withAuth(
+  SaveConsentSchema,
+  async (data) => {
+    const db = await getDb();
+
+    const consentTypes: ConsentType[] = [
+      ...(data.consentDataProcessing ? ['DATA_PROCESSING' as ConsentType] : []),
+      ...(data.consentTerms ? ['TERMS' as ConsentType] : []),
+      ...(data.consentMarketing ? ['MARKETING' as ConsentType] : []),
+      ...(data.consentVideoRecording ? ['VIDEO_RECORDING' as ConsentType] : []),
+    ];
+
+    const timestamp = new Date().toISOString();
+    const targetUserId = data.minorUserId || data.userId;
+
+    // Create one ConsentRecord per consent type (schema requires single consentType per record)
+    const records = await Promise.all(
+      consentTypes.map((consentType) =>
+        db.consentRecords.create({
+          id: crypto.randomUUID(),
+          userId: targetUserId,
+          consentType,
+          givenAt: timestamp,
+          givenByUserId: data.userId,
+          ipAddress: '',
+          consentVersion: '1.0',
+        })
+      )
+    );
+
+    return { success: true, recordIds: records.map((r) => r.id) };
+  }
+);

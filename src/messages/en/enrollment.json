@@ -177,7 +177,17 @@
       "matching": "Teacher Match",
       "package": "Package",
       "booking": "Lesson Booking",
+      "contract": "Registration Agreement",
       "summary": "Summary & Confirmation"
+    },
+    "contract": {
+      "title": "Registration Agreement",
+      "subtitle": "Please read the terms of service and provide a digital signature before completing registration.",
+      "termsTitle": "Harmonia Terms of Service",
+      "termsBody": "The Harmonia platform provides music education management services. Registration is subject to the full Terms of Service and Privacy Policy available at /privacy. Practice recordings are private and used for teacher feedback only. Delivered lessons are non-refundable. Package cancellation is subject to the conservatorium's cancellation policy and the Israeli Consumer Protection Law.",
+      "readNote": "After reading the terms in full, confirm your understanding and sign digitally:",
+      "agreeCheckbox": "I have read and agree to Harmonia's Terms of Service",
+      "agreeRequired": "You must accept the Terms of Service before continuing registration."
     },
     "paymentPlan": {
       "title": "Estimated Payment Plan",

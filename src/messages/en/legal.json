@@ -1,0 +1,21 @@
+{
+  "CookieBanner": {
+    "title": "We use cookies",
+    "description": "This site uses essential cookies for operation. Analytics cookies are only activated after your consent.",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "DSAR": {
+    "title": "Privacy & Data",
+    "exportButton": "Export My Data",
+    "exportDesc": "Download a copy of all your personal data in JSON format",
+    "deleteButton": "Request Data Deletion",
+    "deleteDesc": "Submit a request to delete all your personal data. The request will be sent for approval by the conservatorium administrator.",
+    "withdrawTitle": "Withdraw Consent",
+    "withdrawButton": "Withdraw Data Processing Consent",
+    "withdrawDesc": "Withdrawing consent to data processing may limit your ability to use the platform.",
+    "exportSuccess": "Your data will be sent to your email address within 30 days.",
+    "deleteSuccess": "Your deletion request has been received and will be processed within 30 days.",
+    "withdrawSuccess": "Consent withdrawn. Access to some parts of the platform may be restricted."
+  }
+}

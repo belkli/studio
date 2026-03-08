@@ -951,7 +951,35 @@
       "defaults": "Conservatorium default details"
     },
     "legalNote": "This statement is provided for transparency and does not replace legal advice tailored to your organization.",
-    "lastUpdated": "Last updated: March 3, 2026"
+    "lastUpdated": "Last updated: March 3, 2026",
+    "subProcessorsTitle": "Sub-processors",
+    "subProcessorsBody": "Harmonia uses the following third-party service providers to process personal data:",
+    "subProcessorsTableHeaders": {
+      "processor": "Processor",
+      "service": "Service",
+      "dataAccessed": "Data Accessed",
+      "location": "Location",
+      "dpaStatus": "DPA Status"
+    },
+    "subProcessors": [
+      { "processor": "Google Cloud Platform (Firebase)", "service": "Authentication, database, storage, Cloud Functions", "dataAccessed": "All user data", "location": "europe-west1 (Belgium)", "dpaStatus": "Google Standard DPA" },
+      { "processor": "Cardcom", "service": "Payment processing", "dataAccessed": "Cardholder name, payment tokens, invoice amounts", "location": "Israel", "dpaStatus": "Pending" },
+      { "processor": "Twilio", "service": "SMS and WhatsApp notifications", "dataAccessed": "Phone numbers, message content", "location": "US (with EU endpoints available)", "dpaStatus": "Pending" },
+      { "processor": "SendGrid (Twilio)", "service": "Email delivery", "dataAccessed": "Email addresses, email content", "location": "US (with EU endpoints available)", "dpaStatus": "Pending" },
+      { "processor": "Google AI (Gemini)", "service": "AI-assisted progress reports, teacher matching", "dataAccessed": "Student names, lesson history, teacher profiles", "location": "US/EU", "dpaStatus": "Pending — review data usage policies" }
+    ],
+    "retentionScheduleTitle": "Data Retention Schedule",
+    "retentionScheduleBody": "Harmonia retains data according to the following periods:",
+    "retentionScheduleItems": [
+      "Financial records: 7 years (per Israeli Income Tax Ordinance)",
+      "Student records: 7 years after the student reaches age 18 (per Privacy Protection Law)",
+      "Practice recordings: 1 year from upload date (configurable per conservatorium)",
+      "Audit logs: 7 years (regulatory compliance requirements)"
+    ],
+    "dsarTitle": "Exercising Your Rights",
+    "dsarBody": "To request data access, correction, deletion, or to withdraw consent, you may:",
+    "dsarEmail": "privacy@harmonia.co.il",
+    "dsarSettingsLink": "Use the data tools in your account settings"
   },
   "Events": {
     "editEventDetails": "Edit Event Details",

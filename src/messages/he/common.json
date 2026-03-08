@@ -951,7 +951,35 @@
       "defaults": "פרטי ברירת המחדל של הקונסרבטוריום"
     },
     "legalNote": "הצהרה זו ניתנת לצורך שקיפות ואינה מחליפה ייעוץ משפטי המותאם לארגון שלך.",
-    "lastUpdated": "עודכן לאחרונה: 3 במרץ 2026"
+    "lastUpdated": "עודכן לאחרונה: 3 במרץ 2026",
+    "subProcessorsTitle": "ספקי משנה (Sub-processors)",
+    "subProcessorsBody": "הרמוניה משתמשת בספקי שירות חיצוניים הבאים לעיבוד נתונים אישיים:",
+    "subProcessorsTableHeaders": {
+      "processor": "ספק",
+      "service": "שירות",
+      "dataAccessed": "נתונים שמועברים",
+      "location": "מיקום",
+      "dpaStatus": "הסכם עיבוד נתונים"
+    },
+    "subProcessors": [
+      { "processor": "Google Cloud Platform (Firebase)", "service": "אימות, מסד נתונים, אחסון, פונקציות ענן", "dataAccessed": "כל נתוני המשתמשים", "location": "europe-west1 (בלגיה)", "dpaStatus": "DPA סטנדרטי של Google" },
+      { "processor": "Cardcom", "service": "עיבוד תשלומים", "dataAccessed": "שם בעל הכרטיס, טוקן תשלום, סכומי חשבונית", "location": "ישראל", "dpaStatus": "בתהליך" },
+      { "processor": "Twilio", "service": "הודעות SMS ו-WhatsApp", "dataAccessed": "מספרי טלפון, תוכן הודעות", "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)", "dpaStatus": "בתהליך" },
+      { "processor": "SendGrid (Twilio)", "service": "שליחת אימייל", "dataAccessed": "כתובות אימייל, תוכן הודעות", "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)", "dpaStatus": "בתהליך" },
+      { "processor": "Google AI (Gemini)", "service": "דוחות התקדמות מבוססי בינה מלאכותית, התאמת מורים", "dataAccessed": "שמות תלמידים, היסטוריית שיעורים, פרופילי מורים", "location": "ארה״ב/איחוד האירופי", "dpaStatus": "בתהליך — כולל בדיקת מדיניות שימוש בנתונים" }
+    ],
+    "retentionScheduleTitle": "לוח שמירת נתונים",
+    "retentionScheduleBody": "הרמוניה שומרת נתונים בהתאם לתקופות הבאות:",
+    "retentionScheduleItems": [
+      "רשומות כספיות: 7 שנים (בהתאם לפקודת מס הכנסה הישראלית)",
+      "רשומות תלמידים: 7 שנים לאחר הגיע התלמיד לגיל 18 (בהתאם לחוק הגנת הפרטיות)",
+      "הקלטות תרגול: שנה אחת מיום ההעלאה (ניתן להגדרה לפי קונסרבטוריון)",
+      "יומני ביקורת: 7 שנים (דרישות ציות רגולטורי)"
+    ],
+    "dsarTitle": "מימוש זכויותיך",
+    "dsarBody": "לבקשות גישה לנתונים, תיקון, מחיקה או ביטול הסכמה, ניתן:",
+    "dsarEmail": "privacy@harmonia.co.il",
+    "dsarSettingsLink": "להשתמש בכלי הנתונים בהגדרות החשבון שלך"
   },
   "Events": {
     "editEventDetails": "ערוך את פרטי האירוע",
