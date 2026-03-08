@@ -566,6 +566,18 @@ export default function AboutPage() {
       });
     }
 
+    if (selectedCons.pedagogicalCoordinator?.name) {
+      profiles.push({
+        id: `pedagogical-${selectedCons.id}`,
+        name: selectedCons.pedagogicalCoordinator.name,
+        role: selectedCons.pedagogicalCoordinator.role,
+        bio: selectedCons.pedagogicalCoordinator.bio,
+        photoUrl: resolveAvatarUrl(selectedCons.pedagogicalCoordinator.photoUrl),
+        instruments: [],
+        source: 'staff',
+      });
+    }
+
     for (const member of selectedCons.leadingTeam || []) {
       profiles.push({
         id: `team-${selectedCons.id}-${member.name}`,

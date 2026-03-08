@@ -7,9 +7,10 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
+import { RegistrationAgreement } from '@/components/enrollment/registration-agreement';
 
 const LOCALE_LABELS: Record<string, string> = { he: 'עברית', en: 'English', ar: 'العربية', ru: 'Русский' };
 
@@ -31,6 +32,7 @@ export default function ConservatoriumSettingsPage() {
             ru: existing?.ru ?? '',
         };
     });
+    const [standardTermsOpen, setStandardTermsOpen] = useState(false);
 
     if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
         return <p>אין לך הרשאה לגשת לעמוד זה.</p>;
@@ -107,6 +109,22 @@ export default function ConservatoriumSettingsPage() {
                     <CardDescription>{t('customTermsDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <div className="rounded-md border">
+                        <button
+                            type="button"
+                            className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted/40 transition-colors"
+                            onClick={() => setStandardTermsOpen((v) => !v)}
+                            aria-expanded={standardTermsOpen}
+                        >
+                            <span>{t('standardTermsTitle')}</span>
+                            {standardTermsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </button>
+                        {standardTermsOpen && (
+                            <div className="border-t">
+                                <RegistrationAgreement mode="admin-preview" />
+                            </div>
+                        )}
+                    </div>
                     {(['he', 'en', 'ar', 'ru'] as const).map((lang) => (
                         <div key={lang} className="space-y-1">
                             <Label htmlFor={`custom-terms-${lang}`}>{LOCALE_LABELS[lang]}</Label>

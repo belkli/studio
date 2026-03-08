@@ -125,6 +125,7 @@ const SaveConsentSchema = z.object({
   consentTerms: z.boolean(),
   consentMarketing: z.boolean().optional(),
   consentVideoRecording: z.boolean().optional(),
+  consentPhotos: z.boolean().optional(),
   isMinorConsent: z.boolean().optional(),
   minorUserId: z.string().optional(),
 });
@@ -139,6 +140,7 @@ export const saveConsentRecord = withAuth(
       ...(data.consentTerms ? ['TERMS' as ConsentType] : []),
       ...(data.consentMarketing ? ['MARKETING' as ConsentType] : []),
       ...(data.consentVideoRecording ? ['VIDEO_RECORDING' as ConsentType] : []),
+      ...(data.consentPhotos ? ['PHOTOS' as ConsentType] : []),
     ];
 
     const timestamp = new Date().toISOString();
@@ -154,11 +156,32 @@ export const saveConsentRecord = withAuth(
           givenAt: timestamp,
           givenByUserId: data.userId,
           ipAddress: '',
-          consentVersion: '1.0',
+          consentVersion: '2.0',
         })
       )
     );
 
     return { success: true, recordIds: records.map((r) => r.id) };
+  }
+);
+
+// ── B1.4: getConsentStatus (per-user consent map) ──────────────────────────
+
+const GetConsentStatusSchema = z.object({ userId: z.string() });
+
+export const getConsentStatus = withAuth(
+  GetConsentStatusSchema,
+  async (data) => {
+    const db = await getDb();
+    const all = await db.consentRecords.list();
+    const records = all.filter((r) => r.userId === data.userId);
+    // Build map: only count non-revoked records
+    const status: Record<string, boolean> = {};
+    for (const r of records) {
+      if (!r.revokedAt) {
+        status[r.consentType] = true;
+      }
+    }
+    return { success: true, status };
   }
 );

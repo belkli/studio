@@ -7,13 +7,15 @@ import { notFound } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Calendar, Clock, Edit, MapPin, Printer, UserPlus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit, ImageOff, MapPin, Printer, UserPlus, Trash2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { EventProductionStatus } from '@/lib/types';
 import { AssignPerformerDialog } from './assign-performer-dialog';
+import { usePhotoConsent } from '@/hooks/use-photo-consent';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
@@ -43,6 +45,13 @@ export function EventDetails() {
 
     const event = useMemo(() => events.find(e => e.id === eventId), [events, eventId]);
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
+
+    // Fetch photo consent for all performers in this event
+    const performerStudentIds = useMemo(
+        () => (event?.program ?? []).map(p => p.studentId).filter(Boolean),
+        [event]
+    );
+    const { consentMap: photoConsentMap } = usePhotoConsent(performerStudentIds);
 
     const handlePrintProgram = () => {
         if (!event) return;
@@ -195,6 +204,9 @@ export function EventDetails() {
                                         <TableHead className="text-start">{t('colComposition')}</TableHead>
                                         <TableHead className="text-start">{t('colComposer')}</TableHead>
                                         <TableHead className="text-start">{t('colDuration')}</TableHead>
+                                        <TableHead className="w-8" title="הסכמת צילום">
+                                            <ImageOff className="h-3.5 w-3.5 text-muted-foreground" />
+                                        </TableHead>
                                         <TableHead className="text-end">{t('colActions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -206,6 +218,22 @@ export function EventDetails() {
                                             <TableCell>{item.compositionTitle}</TableCell>
                                             <TableCell>{item.composer}</TableCell>
                                             <TableCell className="font-mono">{item.duration}</TableCell>
+                                            <TableCell>
+                                                {photoConsentMap[item.studentId] === false && (
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span className="inline-flex">
+                                                                    <ImageOff className="h-3.5 w-3.5 text-amber-500" aria-label="ללא הסכמת צילום" />
+                                                                </span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent side="left" className="max-w-56 text-xs">
+                                                                ללא הסכמת פרסום תמונות/וידאו לצרכים מסחריים. יש לוודא שהתלמיד/ה אינו/ה מזוהה בפרסומים.
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                )}
+                                            </TableCell>
                                             <TableCell className="text-end">
                                                 <Button variant="ghost" size="icon" onClick={() => removePerformanceFromEvent(event.id, item.id)}>
                                                     <Trash2 className="h-4 w-4 text-destructive" />

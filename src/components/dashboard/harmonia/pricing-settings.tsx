@@ -29,6 +29,7 @@ const getPricingSchema = (t: (key: string) => string) => z.object({
     adHocPremium: z.coerce.number().min(0, t('validation.positive')),
     trialPrice: z.coerce.number().min(0, t('validation.positive')),
     premiumSurcharge: z.coerce.number().min(0).max(100, t('validation.percent')).optional().default(0),
+    vatRate: z.coerce.number().min(0).max(0.30, t('validation.vatRange')).optional().default(0.18),
 });
 
 type PricingFormData = {
@@ -37,6 +38,7 @@ type PricingFormData = {
     adHocPremium: number;
     trialPrice: number;
     premiumSurcharge?: number;
+    vatRate?: number;
 };
 
 export function PricingSettings() {
@@ -57,6 +59,7 @@ export function PricingSettings() {
             adHocPremium: 0,
             trialPrice: 0,
             premiumSurcharge: 0,
+            vatRate: 0.18,
         },
     });
 
@@ -119,6 +122,40 @@ export function PricingSettings() {
                             </CardHeader>
                             <CardContent className="grid md:grid-cols-3 gap-4">
                                 <FormField control={form.control} name="premiumSurcharge" render={({ field }) => (<FormItem> <FormLabel>{t('premium.surcharge')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('vat.title')}</CardTitle>
+                                <CardDescription>{t('vat.description')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid md:grid-cols-3 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="vatRate"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('vat.rate')}</FormLabel>
+                                            <InputGroup>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        step="0.1"
+                                                        min="0"
+                                                        max="30"
+                                                        {...field}
+                                                        value={field.value !== undefined ? Math.round((field.value as number) * 1000) / 10 : ''}
+                                                        onChange={(e) => field.onChange(parseFloat(e.target.value) / 100)}
+                                                        className="rounded-s-none"
+                                                    />
+                                                </FormControl>
+                                                <InputGroupText>%</InputGroupText>
+                                            </InputGroup>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </CardContent>
                         </Card>
                     </div>

@@ -292,6 +292,7 @@ export type PricingConfig = {
   adHocPremium: number; // as a percentage, e.g. 15 for 15%
   trialPrice: number;
   premiumSurcharge?: number; // % surcharge added on top of base rate when booking a premium-flagged teacher
+  vatRate?: number; // e.g. 0.18 for 18% — overrides global VAT_RATE when set
 };
 
 export type CancellationPolicy = {
@@ -1752,7 +1753,7 @@ export type EnrollmentStatisticsReport = {
 };
 
 // SDD-P7: PDPPA Consent Tracking
-export type ConsentType = 'DATA_PROCESSING' | 'MARKETING' | 'VIDEO_RECORDING' | 'SCHOLARSHIP_DATA';
+export type ConsentType = 'DATA_PROCESSING' | 'TERMS' | 'MARKETING' | 'VIDEO_RECORDING' | 'SCHOLARSHIP_DATA' | 'PHOTOS';
 
 export type ConsentRecord = {
   id: string;

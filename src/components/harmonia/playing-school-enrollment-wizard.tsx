@@ -11,10 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CheckCircle, ChevronLeft, ChevronRight, Loader2, School } from 'lucide-react';
+import { CheckCircle, ChevronLeft, ChevronRight, Loader2, School, ShieldCheck } from 'lucide-react';
+import { SignatureCapture } from '@/components/forms/signature-capture';
+import { RegistrationAgreement } from '@/components/enrollment/registration-agreement';
 import { cn } from '@/lib/utils';
 
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6;
 type PaymentMethod = 'SCHOOL_FEES' | 'CARDCOM' | 'PELECARD' | 'HYP' | 'TRANZILA' | 'STRIPE';
 type AppLocale = 'he' | 'en' | 'ar' | 'ru';
 
@@ -54,6 +56,7 @@ function StepIndicator({ current }: { current: Step }) {
     { id: 3, label: t('wizard.step3') },
     { id: 4, label: t('wizard.step4') },
     { id: 5, label: t('wizard.step5') },
+    { id: 6, label: t('wizard.step6') },
   ];
 
   return (
@@ -105,6 +108,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
   const [parentId, setParentId] = useState('');
   const [instrument, setInstrument] = useState('');
   const [consent, setConsent] = useState(false);
+  const [contractSigned, setContractSigned] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('SCHOOL_FEES');
 
   useEffect(() => {
@@ -187,7 +191,10 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
   ];
   const paymentItems = paymentCatalog.filter((item) => configuredMethods.includes(item.value));
 
-  const next = () => setStep((s) => (s < 5 ? ((s + 1) as Step) : s));
+  const next = () => {
+    if (step === 5 && !contractSigned) return;
+    setStep((s) => (s < 6 ? ((s + 1) as Step) : s));
+  };
   const prev = () => setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
 
   const handleSubmit = async () => {
@@ -484,6 +491,36 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
           )}
 
           {step === 5 && (
+            <>
+              <CardHeader>
+                <CardTitle>{t('wizard.step5')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <RegistrationAgreement customAddendum={undefined} />
+                {!contractSigned && (
+                  <SignatureCapture onConfirm={() => setContractSigned(true)} />
+                )}
+                {contractSigned && (
+                  <p className="text-sm text-green-600 font-medium flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4" />
+                    {t('wizard.consentLabel')}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" onClick={prev} className="flex-1">
+                    <PrevIcon className={cn(isRtl ? 'me-2' : 'ms-2', 'h-4 w-4')} />
+                    {t('wizard.prev')}
+                  </Button>
+                  <Button type="button" className="flex-1" onClick={next} disabled={!contractSigned}>
+                    {t('wizard.next')}
+                    <NextIcon className={cn(isRtl ? 'me-2' : 'ms-2', 'h-4 w-4')} />
+                  </Button>
+                </div>
+              </CardContent>
+            </>
+          )}
+
+          {step === 6 && (
             <>
               <CardHeader>
                 <CardTitle>{t('wizard.paymentTitle')}</CardTitle>

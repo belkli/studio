@@ -35,6 +35,7 @@ import { TeacherMatchCard } from "./teacher-match-card";
 import { Calendar as UICalendar } from "@/components/ui/calendar";
 import type { OAuthProfile } from '@/lib/auth/oauth';
 import { SignatureCapture } from "@/components/forms/signature-capture";
+import { RegistrationAgreement } from './registration-agreement';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,6 +155,11 @@ const packageSupportsSelectedInstrument = (
     if ((pkg.instrumentCatalogIds || []).some((id) => catalogIds.has(id))) return true;
   }
 
+  const hasAnyRestriction =
+    (pkg.conservatoriumInstrumentIds || []).length > 0 ||
+    (pkg.instrumentCatalogIds || []).length > 0 ||
+    (pkg.instruments || []).length > 0;
+  if (!hasAnyRestriction) return true; // no restriction = supports all instruments
   return (pkg.instruments || []).some((name) => String(name).trim().toLowerCase() === normalizedLabel);
 };
 
@@ -165,6 +171,21 @@ const DetailItem = ({ label, value }: { label: string; value: React.ReactNode })
     <span className="font-medium text-start">{value || '-'}</span>
   </div>
 );
+
+function ConsentRow({ id, checked, onChange, label, badge, required }: {
+  id: string; checked: boolean; onChange: (v: boolean) => void;
+  label: string; badge: string; required?: boolean;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(Boolean(v))} aria-required={required} />
+      <label htmlFor={id} className="text-sm leading-relaxed cursor-pointer select-none">
+        {label}
+        <span className={cn('ms-1 text-xs', required ? 'text-destructive' : 'text-muted-foreground')}>{badge}</span>
+      </label>
+    </div>
+  );
+}
 
 const BookFirstLessonStep = () => {
   const t = useTranslations('EnrollmentWizard');
@@ -683,13 +704,31 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   const dayOptions = getDayOptions(t);
   const timeOptions = getTimeOptions(t);
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    const hasDirectLink = (teacherIdFromQuery || searchParams.get('teacher') || conservatoriumIdFromQuery || searchParams.get('conservatorium') || '').trim();
+    if (isAdminFlow || hasDirectLink) return 0;
+    try {
+      const key = `${ENROLLMENT_DRAFT_STORAGE_PREFIX}:${locale}:public`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return 0;
+      const draft = JSON.parse(raw);
+      if (typeof draft?.step === 'number' && draft.step >= 0 && draft.step < 9) return draft.step;
+    } catch { /* ignore */ }
+    return 0;
+  });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [teacherMatches, setTeacherMatches] = useState<MatchTeacherOutput | null>(null);
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const [oauthPrefill, setOauthPrefill] = useState<OAuthProfile | null>(null);
-  const [contractAgreed, setContractAgreed] = useState(false);
+  const [consentDataProcessing, setConsentDataProcessing] = useState(false);
+  const [consentTerms, setConsentTerms] = useState(false);
+  const [consentMarketing, setConsentMarketing] = useState(false);
+  const [consentVideoRecording, setConsentVideoRecording] = useState(false);
+  const [consentPhotos, setConsentPhotos] = useState(false);
   const [contractSigned, setContractSigned] = useState(false);
+  const contractReadyToSign = consentDataProcessing && consentTerms;
+  const contractComplete = contractReadyToSign && contractSigned;
   const isOauthRegistration = Boolean(oauthPrefill);
   const { toast } = useToast();
   const router = useRouter();
@@ -880,6 +919,14 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     return userHasInstrument((item.instruments || []).map((instrument) => instrument.instrument), selectedInstrument, conservatoriumInstruments, item.conservatoriumId);
   }), [users, selectedConservatoriumId, selectedInstrument, conservatoriumInstruments]);
 
+  const selectedConservatorium = useMemo(
+    () => authConservatoriums.find(c => c.id === selectedConservatoriumId),
+    [authConservatoriums, selectedConservatoriumId]
+  );
+  const customAddendum = selectedConservatorium?.customRegistrationTerms?.[locale as 'he' | 'en' | 'ar' | 'ru'];
+  const vatRatePercent = Math.round((selectedConservatorium?.pricingConfig?.vatRate ?? 0.18) * 100);
+  const maxMakeupsPerYear = selectedConservatorium?.cancellationPolicy?.maxMakeupsPerTerm ?? 3;
+
   const filteredInstrumentOptions = useMemo(() => {
     const filtered = conservatoriumInstruments
       .filter((item) => item.isActive && item.availableForRegistration && item.conservatoriumId === selectedConservatoriumId)
@@ -992,6 +1039,16 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     } catch (error) {
       console.error(error);
       toast({ variant: 'destructive', title: t('matching.errorTitle'), description: t('matching.errorDesc') });
+      // Fallback: show available teachers directly so user can still proceed
+      if (availableTeachers.length > 0) {
+        setTeacherMatches({
+          matches: availableTeachers.slice(0, 3).map((teacher) => ({
+            teacherId: teacher.id,
+            score: 100,
+            matchReasons: [t('matching.errorDesc')],
+          })),
+        });
+      }
     } finally {
       setIsMatchingLoading(false);
     }
@@ -1018,7 +1075,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       case 'matching': fieldsToValidate = ['teacherId']; break;
       case 'package': fieldsToValidate = ['packageId']; break;
       case 'contract':
-        if (!contractAgreed) {
+        if (!contractComplete) {
           toast({ variant: 'destructive', title: t('toasts.errorTitle'), description: t('contract.agreeRequired') });
           return;
         }
@@ -1031,7 +1088,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
     if (!isValid) return;
 
     if (step < steps.length - 1) {
-      setStep(s => s + 1);
+      setStep((s: number) => s + 1);
     } else {
       onSubmit(form.getValues());
     }
@@ -1657,33 +1714,47 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                       <h3 className="text-lg font-semibold">{t('contract.title')}</h3>
                       <p className="text-sm text-muted-foreground mt-1">{t('contract.subtitle')}</p>
                     </div>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-base">{t('contract.termsTitle')}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="max-h-96 overflow-y-auto rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground leading-relaxed">
-                          <p>{t('contract.termsBody')}</p>
-                        </div>
-                        <p className="text-sm mt-4 font-medium">{t('contract.readNote')}</p>
-                        <div className="flex items-start gap-3 mt-3">
-                          <Checkbox
-                            id="contract-agree"
-                            checked={contractAgreed}
-                            onCheckedChange={(checked) => setContractAgreed(Boolean(checked))}
-                            aria-required="true"
-                          />
-                          <label
-                            htmlFor="contract-agree"
-                            className="text-sm font-normal leading-relaxed cursor-pointer select-none"
-                          >
-                            {t('contract.agreeCheckbox')}
-                            <span className="text-destructive ms-1" aria-hidden="true">*</span>
-                          </label>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {contractAgreed && !contractSigned && (
+
+                    <RegistrationAgreement customAddendum={customAddendum} vatRate={vatRatePercent} maxMakeups={maxMakeupsPerYear} />
+
+                    <div className="space-y-3 rounded-md border p-4">
+                      <p className="text-sm font-medium">{t('contract.readNote')}</p>
+
+                      <ConsentRow
+                        id="c1" checked={consentDataProcessing}
+                        onChange={setConsentDataProcessing}
+                        label={t('contract.consent1Label')}
+                        badge={t('contract.consent1Required')}
+                        required
+                      />
+                      <ConsentRow
+                        id="c2" checked={consentTerms}
+                        onChange={setConsentTerms}
+                        label={t('contract.consent2Label')}
+                        badge={t('contract.consent2Required')}
+                        required
+                      />
+                      <ConsentRow
+                        id="c3" checked={consentMarketing}
+                        onChange={setConsentMarketing}
+                        label={t('contract.consent3Label')}
+                        badge={t('contract.consent3Optional')}
+                      />
+                      <ConsentRow
+                        id="c4" checked={consentVideoRecording}
+                        onChange={setConsentVideoRecording}
+                        label={t('contract.consent4Label')}
+                        badge={t('contract.consent4Optional')}
+                      />
+                      <ConsentRow
+                        id="c5" checked={consentPhotos}
+                        onChange={setConsentPhotos}
+                        label={t('contract.consent5Label')}
+                        badge={t('contract.consent5Optional')}
+                      />
+                    </div>
+
+                    {contractReadyToSign && !contractSigned && (
                       <SignatureCapture
                         onConfirm={() => {
                           setContractSigned(true);
@@ -1735,7 +1806,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
       </CardContent>
       <CardFooter>
         <div className="w-full flex justify-between">
-          <Button type="button" variant="outline" onClick={() => setStep(s => s - 1)} disabled={step === 0}>
+          <Button type="button" variant="outline" onClick={() => setStep((s: number) => s - 1)} disabled={step === 0}>
             <ArrowRight className="h-4 w-4 me-2" />
             {t('common.back')}
           </Button>

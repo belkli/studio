@@ -268,7 +268,8 @@
     "success": "Pricing settings updated successfully!",
     "validation": {
       "positive": "Price must be positive",
-      "percent": "Discount must be between 0-100"
+      "percent": "Discount must be between 0-100",
+      "vatRange": "VAT rate must be between 0 and 30%"
     },
     "baseRates": {
       "title": "Base Lesson Rates",
@@ -294,6 +295,11 @@
       "title": "Premium Teacher Pricing",
       "description": "Additional surcharge applied when a student books a lesson with a premium-flagged teacher (⭐). Set teachers as premium in their user profile.",
       "surcharge": "Premium Surcharge"
+    },
+    "vat": {
+      "title": "VAT Rate",
+      "description": "Statutory VAT rate applied to tuition fees. Default: 18% (January 2025). Change only on accountant's advice.",
+      "rate": "VAT Rate"
     },
     "save": "Save Changes",
     "comparison": {
@@ -423,6 +429,8 @@
     "customTermsDescription": "Add custom terms that will be displayed on the registration form alongside the standard terms.",
     "customTermsPlaceholder": "Enter custom terms for this language...",
     "saveCustomTerms": "Save terms",
-    "customTermsSaved": "Terms saved successfully"
+    "customTermsSaved": "Terms saved successfully",
+    "standardTermsTitle": "Standard Harmonia Terms (for reference)",
+    "standardTermsLabel": "Standard terms — shown to all users"
   }
 }

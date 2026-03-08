@@ -6,7 +6,7 @@ import { Link } from '@/i18n/routing';
 import { useAuth } from '@/hooks/use-auth';
 import type { Conservatorium, ConservatoriumInstrument, User } from '@/lib/types';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
-import { buildConservatoriumSlug } from '@/lib/utils/conservatorium-slug';
+import { buildConservatoriumSlug, extractConservatoriumIdFromSlug } from '@/lib/utils/conservatorium-slug';
 import { PublicNavbar } from '@/components/layout/public-navbar';
 import { PublicFooter } from '@/components/layout/public-footer';
 import { Button } from '@/components/ui/button';
@@ -137,12 +137,16 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
 
   const selectedCons = useMemo(() => {
     if (!conservatoriumId) return null;
-    // Try exact id match first (handles full slug-style ids like `israel-conservatory-of-music-tel-aviv-icm__cons-82`)
+    // Try exact id match first (handles direct id strings like `cons-15`)
     const exact = localizedConservatoriums.find((item) => item.id === conservatoriumId);
     if (exact) return exact;
-    // Fall back: the conservatoriumId may be just the `__` suffix (e.g. `cons-15`)
-    // extracted from a slug like `hod-hasharon__cons-15`
-    return localizedConservatoriums.find((item) => item.id === conservatoriumId || item.id.endsWith(`__${conservatoriumId}`)) || null;
+    // Extract the embedded conservatoriumId from a full slug like `hod-hasharon-municipal-conservatory-aluma__cons-15`
+    const extractedId = extractConservatoriumIdFromSlug(conservatoriumId);
+    if (extractedId) {
+      const byExtracted = localizedConservatoriums.find((item) => item.id === extractedId);
+      if (byExtracted) return byExtracted;
+    }
+    return null;
   }, [localizedConservatoriums, conservatoriumId]);
 
   useEffect(() => {
@@ -248,6 +252,18 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
         photoUrl: resolveAvatarUrl(selectedCons.manager.photoUrl),
         instruments: [],
         source: 'manager',
+      });
+    }
+
+    if (selectedCons.pedagogicalCoordinator?.name) {
+      profiles.push({
+        id: 'pedagogical-' + selectedCons.id,
+        name: selectedCons.pedagogicalCoordinator.name,
+        role: getRoleLabel(selectedCons.pedagogicalCoordinator.role, locale),
+        bio: looksCorruptedText(selectedCons.pedagogicalCoordinator.bio) ? undefined : selectedCons.pedagogicalCoordinator.bio,
+        photoUrl: resolveAvatarUrl(selectedCons.pedagogicalCoordinator.photoUrl),
+        instruments: [],
+        source: 'staff',
       });
     }
 
