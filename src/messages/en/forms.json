@@ -162,9 +162,9 @@
       "required": "This field is required"
     },
     "types": {
-      "recital": "רסיטל בגרות",
-      "kenes": "כנס / אירוע",
-      "exam_registration": "הרשמה לבחינה"
+      "recital": "Matriculation Recital",
+      "kenes": "Conference / Event",
+      "exam_registration": "Exam Registration"
     }
   },
   "ApprovalsPage": {

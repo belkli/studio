@@ -159,9 +159,9 @@
     "successTitle": "تم إنشاء نموذج {type}",
     "title": "نموذج / طلب جديد",
     "types": {
-      "exam_registration": "הרשמה לבחינה",
-      "kenes": "כנס / אירוע",
-      "recital": "רסיטל בגרות"
+      "exam_registration": "التسجيل في الامتحان",
+      "kenes": "مؤتمر / فعالية",
+      "recital": "حفل التخرج"
     },
     "validation": {
       "required": "هذا الحقل مطلوب"

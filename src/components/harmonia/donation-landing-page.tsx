@@ -22,7 +22,7 @@ const StudentStoryCard = ({ imageId, name, age, instrument, story, donateLabel }
     return (
         <Card className="story-card overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
             <div className="relative h-56 w-full overflow-hidden">
-                {image && <Image src={image.imageUrl} alt={image.description} fill style={{ objectFit: 'cover' }} className="group-hover:scale-105 transition-transform duration-500" data-ai-hint={image.imageHint} />}
+                {image && <Image src={image.imageUrl} alt={image.description} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} className="group-hover:scale-105 transition-transform duration-500" data-ai-hint={image.imageHint} />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-3 start-4 end-4">
                     <span className="inline-block bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">{instrument}</span>
@@ -112,7 +112,7 @@ export function DonationLandingPage() {
             {/* Hero */}
             <section className="relative min-h-[80vh] flex items-end justify-center overflow-hidden text-white">
                 <Image
-                    src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=2200&auto=format&fit=crop"
+                    src="/images/donation-hero.jpg"
                     alt="Child playing violin passionately"
                     fill
                     style={{ objectFit: 'cover' }}

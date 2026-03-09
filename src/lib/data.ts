@@ -10,16 +10,16 @@ const compositionTranslations = _compositionTranslations as Record<string, { tit
 const tierCycle: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
 const UNSPLASH_CONSERVATORIUM_PHOTOS = [
-    'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1507838153414-b4b713384a76?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1513883049090-d0b7439799bf?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?q=80&w=600&auto=format&fit=crop',
+    '/images/cons-bg-0.jpg',
+    '/images/cons-bg-1.jpg',
+    '/images/cons-bg-2.jpg',
+    '/images/cons-bg-3.jpg',
+    '/images/cons-bg-4.jpg',
+    '/images/cons-bg-5.jpg',
+    '/images/cons-bg-6.jpg',
+    '/images/cons-bg-7.jpg',
+    '/images/cons-bg-8.jpg',
+    '/images/cons-bg-9.jpg',
 ];
 
 // Build a lookup map from scraped data by numeric id
@@ -453,7 +453,7 @@ export const mockRooms: Room[] = [
         blocks: [],
         isActive: true,
         description: 'Dedicated room for piano lessons.',
-        photoUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=2070&auto=format&fit=crop'
+        photoUrl: '/images/user-profile-default.jpg'
     },
     {
         id: 'room-2',

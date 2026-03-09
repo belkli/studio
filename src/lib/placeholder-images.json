@@ -3,121 +3,121 @@
     {
       "id": "conservatorium-logo",
       "description": "A placeholder logo for a music conservatorium.",
-      "imageUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXNpYyUyMGxvZ298ZW58MHx8fHwxNzcxMTA0NDY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/conservatorium-logo.jpg",
       "imageHint": "music logo"
     },
     {
       "id": "donate-hero",
       "description": "A wide shot of a student musician performing passionately in a concert.",
-      "imageUrl": "https://images.unsplash.com/photo-1665118439071-8bc2c89f73af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzdHVkZW50JTIwbXVzaWNpYW4lMjBjb25jZXJ0fGVufDB8fHx8MTc3MTU2NTc2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/donate-hero.jpg",
       "imageHint": "student musician concert"
     },
     {
       "id": "student-story-1",
       "description": "Close-up of a young child playing the violin.",
-      "imageUrl": "https://images.unsplash.com/photo-1642940141270-ab08508c9c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaGlsZCUyMHZpb2xpbnxlbnwwfHx8fDE3NzE1NjU3NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/student-story-1.jpg",
       "imageHint": "child violin"
     },
     {
       "id": "student-story-2",
       "description": "A teenager thoughtfully playing the piano.",
-      "imageUrl": "https://images.unsplash.com/photo-1678756320244-d678a2abc9ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0ZWVuYWdlciUyMHBpYW5vfGVufDB8fHx8MTc3MTU2NTc2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/student-story-2.jpg",
       "imageHint": "teenager piano"
     },
     {
       "id": "student-story-3",
       "description": "A young girl concentrating while playing the flute.",
-      "imageUrl": "https://images.unsplash.com/photo-1640286724511-2eab6a68ccc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnaXJsJTIwZmx1dGV8ZW58MHx8fHwxNzcxNTY1NzYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/student-story-3.jpg",
       "imageHint": "girl flute"
     },
     {
       "id": "musicians-hero",
       "description": "A string quartet playing elegantly at an event.",
-      "imageUrl": "https://images.unsplash.com/photo-1665118439071-8bc2c89f73af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "imageUrl": "/images/musicians-hero.jpg",
       "imageHint": "string quartet event"
     },
     {
       "id": "musicians-hero-vibrant",
       "description": "A dramatic wide-shot of an elegant string quartet performing at a candlelit event, warm golden lighting.",
-      "imageUrl": "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?q=80&w=2200&auto=format&fit=crop",
+      "imageUrl": "/images/musicians-hero.jpg",
       "imageHint": "string quartet candlelit"
     },
     {
       "id": "musician-miriam",
       "description": "A professional portrait of a female pianist.",
-      "imageUrl": "https://images.unsplash.com/photo-1594125528292-941130194364?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMGZlbWFsZSUyMHBpYW5pc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/musician-miriam.jpg",
       "imageHint": "female pianist"
     },
     {
       "id": "musician-david",
       "description": "A professional portrait of a male saxophonist.",
-      "imageUrl": "https://images.unsplash.com/photo-1524230659267-39921e87516d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYWxlJTIwc2F4b3Bob25pc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/musician-david.jpg",
       "imageHint": "male saxophonist"
     },
     {
       "id": "musician-galit",
       "description": "A professional portrait of a female guitarist.",
-      "imageUrl": "https://images.unsplash.com/photo-1510901509923-a169b2b5167f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBndWl0YXJpc3R8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/musician-galit.jpg",
       "imageHint": "female guitarist"
     },
     {
       "id": "event-wedding",
       "description": "A violinist playing at a beautiful outdoor wedding ceremony with flowers.",
-      "imageUrl": "https://images.unsplash.com/photo-1529543544282-ea669407fca3?q=80&w=800&auto=format&fit=crop",
+      "imageUrl": "/images/event-wedding.jpg",
       "imageHint": "violinist wedding ceremony"
     },
     {
       "id": "event-corporate",
       "description": "A jazz pianist performing at an elegant corporate gala event.",
-      "imageUrl": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop",
+      "imageUrl": "/images/event-corporate.jpg",
       "imageHint": "jazz piano corporate event"
     },
     {
       "id": "event-private",
       "description": "A string duo serenading guests at an intimate private garden party.",
-      "imageUrl": "https://images.unsplash.com/photo-1507838153414-b4b713384a76?q=80&w=800&auto=format&fit=crop",
+      "imageUrl": "/images/event-private.jpg",
       "imageHint": "string duo garden party"
     },
     {
       "id": "open-day-hero",
       "description": "A welcoming shot of a music classroom with various instruments, bright and inviting.",
-      "imageUrl": "https://images.unsplash.com/photo-1642940141270-ab08508c9c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "imageUrl": "/images/open-day-hero.jpg",
       "imageHint": "music classroom"
     },
     {
       "id": "open-day-try-instrument",
       "description": "A child's hands touching piano keys for the first time, guided by a teacher.",
-      "imageUrl": "https://images.unsplash.com/photo-1598528734255-24b5a4524e93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlsZCUyMHBpYW5vJTIwbGVzc29ufGVufDB8fHx8MTc3MTc4NzQ2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/open-day-try-instrument.jpg",
       "imageHint": "child piano lesson"
     },
     {
       "id": "open-day-meet-teacher",
       "description": "A friendly teacher smiling in a music room environment.",
-      "imageUrl": "https://images.unsplash.com/photo-1579269483394-463332808a95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtdXNpYyUyMHRlYWNoZXJ8ZW58MHx8fHwxNzcxNzE4MDIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/open-day-meet-teacher.jpg",
       "imageHint": "music teacher"
     },
     {
       "id": "available-now-hero",
       "description": "Dynamic shot of a musician playing an instrument, with a sense of urgency and opportunity.",
-      "imageUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxndWl0YXJpc3QlMjBvbiUyMHN0YWdlfGVufDB8fHx8MTc3MTg2Mzk2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/available-now-hero.jpg",
       "imageHint": "musician stage"
     },
     {
       "id": "open-day-hero-vibrant",
       "description": "Children excitedly exploring musical instruments at an open day event, colorful and joyful.",
-      "imageUrl": "https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?q=80&w=2200&auto=format&fit=crop",
+      "imageUrl": "/images/open-day-hero-vibrant.jpg",
       "imageHint": "children music open day"
     },
     {
       "id": "open-day-instruments",
       "description": "A colorful array of musical instruments laid out for children to try.",
-      "imageUrl": "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?q=80&w=1200&auto=format&fit=crop",
+      "imageUrl": "/images/open-day-instruments.jpg",
       "imageHint": "musical instruments display"
     },
     {
       "id": "open-day-teacher-child",
       "description": "A warm moment of a teacher showing a child how to play guitar.",
-      "imageUrl": "https://images.unsplash.com/photo-1513883049090-d0b7439799bf?q=80&w=1200&auto=format&fit=crop",
+      "imageUrl": "/images/open-day-teacher-child.jpg",
       "imageHint": "teacher child guitar lesson"
     }
   ]

@@ -200,7 +200,7 @@ export function OpenDayLandingPage() {
       {/* Hero */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden text-white">
         <Image
-          src="https://images.unsplash.com/photo-1548438294-1ad5d5f4f063?q=80&w=2200&auto=format&fit=crop"
+          src="/images/open-day-hero-vibrant.jpg"
           alt="Children discovering music at an open day"
           fill
           style={{ objectFit: 'cover' }}

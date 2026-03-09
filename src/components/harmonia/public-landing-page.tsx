@@ -18,8 +18,7 @@ import { Search, ClipboardList, Music, Music2, CalendarDays, CalendarClock, User
 import { collectInstrumentTokensFromConservatoriumInstrument, collectInstrumentTokensFromTeacherInstrument, tokenSetsIntersect } from '@/lib/instrument-matching';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-const LANDING_HERO_IMAGE =
-  'https://images.unsplash.com/photo-1460036521480-ff49c08c2781?q=80&w=2200&auto=format&fit=crop';
+const LANDING_HERO_IMAGE = '/images/landing-hero.jpg';
 
 export function PublicLandingPage() {
   const t = useTranslations('Landing');

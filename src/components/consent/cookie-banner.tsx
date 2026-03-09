@@ -1,23 +1,25 @@
 'use client';
-import { useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 const COOKIE_KEY = 'harmonia_cookie_consent';
 
-function hasCookieConsent(): boolean {
-  if (typeof window === 'undefined') return true;
-  return !!localStorage.getItem(COOKIE_KEY);
+function subscribe(cb: () => void) {
+  window.addEventListener('storage', cb);
+  return () => window.removeEventListener('storage', cb);
 }
+function getSnapshot() { return localStorage.getItem(COOKIE_KEY); }
+function getServerSnapshot() { return 'accepted'; } // always hidden on SSR
 
 export function CookieBanner() {
   const t = useTranslations('CookieBanner');
-  const [show, setShow] = useState(() => !hasCookieConsent());
+  const consent = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const accept = () => { localStorage.setItem(COOKIE_KEY, 'accepted'); setShow(false); };
-  const reject = () => { localStorage.setItem(COOKIE_KEY, 'rejected'); setShow(false); };
+  const accept = () => { localStorage.setItem(COOKIE_KEY, 'accepted'); };
+  const reject = () => { localStorage.setItem(COOKIE_KEY, 'rejected'); };
 
-  if (!show) return null;
+  if (consent) return null;
 
   return (
     <div

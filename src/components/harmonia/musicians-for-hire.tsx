@@ -79,7 +79,7 @@ export function MusiciansForHire() {
             <section className="relative w-full min-h-[88vh] flex items-center justify-center text-center text-white overflow-hidden">
                 {/* Background image */}
                 <Image
-                    src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?q=80&w=2200&auto=format&fit=crop"
+                    src="/images/musicians-hero.jpg"
                     alt="String quartet performing at an elegant event"
                     fill
                     style={{ objectFit: 'cover' }}

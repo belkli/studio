@@ -12,7 +12,7 @@ const ContentSecurityPolicy = [
   `script-src 'self' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ''} https://apis.google.com https://secure.cardcom.solutions`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
-  `img-src 'self' data: blob: https://placehold.co https://images.unsplash.com https://i.pravatar.cc https://picsum.photos https://fastly.picsum.photos https://api.qrserver.com https://www.icm.org.il https://raananamusic.com https://www.raananamusic.com https://raananmusic.com https://www.raananmusic.com https://alumahod.com https://teo.org.il https://i.ytimg.com`,
+  `img-src 'self' data: blob: https://placehold.co https://i.pravatar.cc https://picsum.photos https://fastly.picsum.photos https://api.qrserver.com https://www.icm.org.il https://raananamusic.com https://www.raananamusic.com https://raananmusic.com https://www.raananmusic.com https://alumahod.com https://teo.org.il https://i.ytimg.com`,
   `connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com`,
   `frame-src 'self' https://secure.cardcom.solutions`,
   `frame-ancestors 'self'`,
@@ -56,12 +56,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
