@@ -330,6 +330,7 @@
     "recommendedTeachersTooltip": "מורים אלו נבחרו על פי זמינות, דירוג ופרופיל מלא.",
     "teacherFallback": "מורה מנוסה ברשת הרמוניה.",
     "upcomingEventsTitle": "אירועים קרובים",
+    "eventsFallback": "אין אירועים מתוכננים כרגע. בדקו שוב בקרוב.",
     "openDaysTitle": "ימים פתוחים קרובים",
     "openDaysFallback": "לוח ימים פתוחים יפורסם בקרוב.",
     "openDaysCta": "צפו בימים פתוחים",

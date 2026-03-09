@@ -1359,7 +1359,7 @@ export const mockEvents: EventProduction[] = [
         name: 'קונצרט אביב 2024',
         type: 'RECITAL',
         venue: 'אולם קונצרטים קטן',
-        eventDate: '2024-03-18T12:00:00.000Z'.split('T')[0],
+        eventDate: '2026-06-15',
         startTime: '18:30',
         status: 'OPEN_REGISTRATION',
         program: [
@@ -1485,7 +1485,7 @@ export const mockOpenDayEvents: OpenDayEvent[] = [
         id: 'open-day-1',
         conservatoriumId: 'cons-15',
         name: 'יום פתוח אביב 2024',
-        date: '2024-03-17T12:00:00.000Z'.split('T')[0],
+        date: '2026-05-10',
         startTime: '10:00',
         endTime: '14:00',
         appointmentDuration: 20,
@@ -1502,9 +1502,9 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
         childName: 'אורי',
         childAge: 8,
         instrumentInterest: 'פסנתר',
-        appointmentTime: '2024-03-17T10:00:00.000Z',
+        appointmentTime: '2026-05-10T10:00:00.000Z',
         status: 'SCHEDULED',
-        registeredAt: '2024-03-03T12:00:00.000Z',
+        registeredAt: '2026-04-20T12:00:00.000Z',
     }
 ];
 

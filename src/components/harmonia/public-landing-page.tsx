@@ -459,7 +459,7 @@ export function PublicLandingPage() {
               ))}
               {upcomingEvents.length === 0 && (
                 <Card className="md:col-span-3">
-                  <CardContent className="p-6 text-center text-muted-foreground">{t('openDaysFallback')}</CardContent>
+                  <CardContent className="p-6 text-center text-muted-foreground">{t('eventsFallback')}</CardContent>
                 </Card>
               )}
             </div>

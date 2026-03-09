@@ -330,6 +330,7 @@
     "recommendedTeachersTooltip": "These teachers were selected based on availability, rating and profile completeness.",
     "teacherFallback": "Experienced teacher in the Harmonia network.",
     "upcomingEventsTitle": "Upcoming events",
+    "eventsFallback": "No events scheduled at the moment. Check back soon.",
     "openDaysTitle": "Upcoming open days",
     "openDaysFallback": "Open day schedule will be published soon.",
     "openDaysCta": "View Open Days",
