@@ -2,22 +2,24 @@
  * @fileoverview Next.js Edge Proxy for Harmonia (Next.js 16 — replaces middleware.ts).
  *
  * Responsibilities:
- * 1. Validate Firebase session cookies on protected routes (/dashboard/*)
+ * 1. Validate session cookies on protected routes (/dashboard/*)
  * 2. Inject user claims (role, conservatoriumId, userId) as request headers
  *    for Server Components and Server Actions
  * 3. Chain with next-intl middleware for locale routing
  * 4. Allow public routes without authentication
  * 5. Validate HMAC on Cardcom webhook requests
  *
- * Session cookie name: __session (Firebase hosting convention)
+ * Session cookie name: __session
  *
  * NOTE: Edge Proxy cannot use firebase-admin (Node.js-only).
- * We verify the session cookie by decoding the JWT payload.
+ * We verify the session cookie by decoding the JWT payload via the provider's
+ * extractClaimsFromCookie method (lightweight, no crypto verification).
  * Full cryptographic verification happens server-side in auth-utils.ts.
  */
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { routing } from '@/i18n/routing';
+import { getServerAuthProvider } from '@/lib/auth/provider';
 
 // ── Route classification ──────────────────────────────────────
 
@@ -97,59 +99,7 @@ function isValidCardcomHmac(request: NextRequest): boolean {
   return true;
 }
 
-// ── Session cookie verification ───────────────────────────────
-
-interface SessionClaims {
-  uid: string;
-  role: string;
-  conservatoriumId: string;
-  approved: boolean;
-  email: string;
-}
-
-/**
- * Verify the Firebase session cookie.
- *
- * In Edge Proxy, we cannot use firebase-admin directly.
- * Strategy: decode the JWT claims from the __session cookie.
- * Full cryptographic verification happens in the /api/auth/verify
- * endpoint and in Server Actions via auth-utils.ts.
- *
- * The proxy performs a lightweight claims extraction to inject
- * headers for Server Components. This is defense-in-depth — the
- * actual authorization check happens in Server Actions via verifyAuth().
- */
-async function verifySessionCookie(sessionCookie: string): Promise<SessionClaims | null> {
-  try {
-    // Decode JWT payload (middle segment) without verification.
-    // Full cryptographic verification happens server-side in auth-utils.ts.
-    const parts = sessionCookie.split('.');
-    if (parts.length !== 3) return null;
-
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64url').toString('utf-8')
-    );
-
-    // Check expiration
-    if (payload.exp && payload.exp * 1000 < Date.now()) {
-      return null;
-    }
-
-    // Extract custom claims
-    const uid = payload.sub || payload.user_id;
-    if (!uid) return null;
-
-    return {
-      uid,
-      role: payload.role || '',
-      conservatoriumId: payload.conservatoriumId || '',
-      approved: payload.approved === true,
-      email: payload.email || '',
-    };
-  } catch {
-    return null;
-  }
-}
+// ── Session claims type (re-used from provider) ───────────────
 
 // ── next-intl middleware ───────────────────────────────────────
 
@@ -187,10 +137,13 @@ export default async function proxy(request: NextRequest) {
   if (isDashboardPath(pathname)) {
     const sessionCookie = request.cookies.get('__session')?.value;
 
-    // In development without Firebase credentials, bypass auth entirely
-    const isDevBypass = process.env.NODE_ENV !== 'production' && !process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    // In development without auth provider credentials, bypass auth entirely
+    const isDevBypass =
+      process.env.NODE_ENV !== 'production' &&
+      !process.env.FIREBASE_SERVICE_ACCOUNT_KEY &&
+      !process.env.SUPABASE_SERVICE_KEY;
 
-    let claims: SessionClaims | null = null;
+    let claims: { uid: string; role: string; conservatoriumId: string; approved: boolean; email: string } | null = null;
 
     if (!isDevBypass) {
       if (!sessionCookie) {
@@ -201,7 +154,8 @@ export default async function proxy(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
-      claims = await verifySessionCookie(sessionCookie);
+      const provider = await getServerAuthProvider();
+      claims = await provider.extractClaimsFromCookie(sessionCookie);
 
       if (!claims) {
         // Invalid or expired session — clear cookie and redirect
