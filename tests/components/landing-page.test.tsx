@@ -174,9 +174,9 @@ describe('PublicLandingPage', () => {
         expect(screen.getByText('donateCta')).toBeTruthy();
     });
 
-    it('shows openDaysFallback text (no open-day events seeded)', () => {
+    it('shows eventsFallback text when no upcoming events are seeded', () => {
         render(<PublicLandingPage />);
-        expect(screen.getByText('openDaysFallback')).toBeTruthy();
+        expect(screen.getByText('eventsFallback')).toBeTruthy();
     });
 });
 
