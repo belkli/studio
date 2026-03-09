@@ -2,6 +2,21 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// SEC: Bootstrap endpoint is only permitted in mock/dev mode.
+// In production with a real DB backend it would expose all seed data
+// to unauthenticated callers. Block it unless the mock fallback flag
+// is explicitly set or the configured backend is 'mock'.
+function isBootstrapAllowed(): boolean {
+  if (process.env.NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK === '1') return true;
+  const backend = (process.env.DB_BACKEND || '').trim().toLowerCase();
+  if (backend === 'mock') return true;
+  // If no backend env is set and no real DB is configured, default to mock — allow.
+  const hasRealDb =
+    Boolean(process.env.DATABASE_URL) ||
+    (Boolean(process.env.SUPABASE_URL) && Boolean(process.env.SUPABASE_SERVICE_KEY));
+  return !hasRealDb;
+}
+
 type BootstrapBackend = 'postgres' | 'supabase' | 'mock';
 
 type BootstrapMeta = {
@@ -47,6 +62,11 @@ async function loadMockExtras() {
 }
 
 export async function GET() {
+  if (!isBootstrapAllowed()) {
+    console.warn('[api/bootstrap] Blocked: real DB backend configured — bootstrap endpoint disabled in production.');
+    return NextResponse.json({ error: 'bootstrap_disabled' }, { status: 403 });
+  }
+
   try {
     const db = await getDb();
 

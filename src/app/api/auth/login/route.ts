@@ -7,13 +7,42 @@
  * Exchanges a Firebase ID token for a server-side session cookie.
  * Called by the login form after successful client-side authentication.
  */
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createSessionCookie } from '@/lib/auth-utils';
+import { createRateLimiter } from '@/lib/rate-limit';
 
 const SESSION_COOKIE_NAME = '__session';
 const SESSION_MAX_AGE = 14 * 24 * 60 * 60; // 14 days in seconds
 
-export async function POST(request: Request) {
+// 10 login attempts per 15 minutes per IP
+const loginLimiter = createRateLimiter({ limit: 10, windowMs: 15 * 60_000 });
+
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    request.headers.get('x-real-ip') ??
+    'unknown'
+  );
+}
+
+export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rateCheck = loginLimiter.check(ip);
+
+  if (!rateCheck.ok) {
+    return NextResponse.json(
+      { error: 'Too many login attempts. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.ceil((rateCheck.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit': '10',
+          'X-RateLimit-Remaining': '0',
+        },
+      }
+    );
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();

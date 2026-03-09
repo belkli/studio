@@ -44,3 +44,18 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.log.worktrees/
 .worktrees/
+
+# IDE
+.idea/
+
+# Claude Code
+.claude/
+
+# Playwright
+.playwright-mcp/
+playwright-report/
+test-results/
+
+# Temp / generated data files
+docs/data/csv_parsed_temp.json
+docs/data/new/
