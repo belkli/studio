@@ -70,7 +70,7 @@ export function AuthDomainProvider({
   const logout = useCallback(async () => {
     // Sign out from the auth provider if available
     try {
-      const { getClientAuthProvider } = await import('@/lib/auth/provider');
+      const { getClientAuthProvider } = await import('@/lib/auth/client-provider');
       const authProvider = await getClientAuthProvider();
       await authProvider.signOut();
     } catch {

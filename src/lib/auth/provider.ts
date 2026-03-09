@@ -67,49 +67,10 @@ export interface IClientAuthProvider {
   signOut(): Promise<void>;
 }
 
-// ── Factory ────────────────────────────────────────────────────────────────
-
-let _serverProvider: IServerAuthProvider | null = null;
-
-/**
- * Get the configured server-side auth provider.
- * Reads AUTH_PROVIDER env var: 'firebase' (default) | 'supabase'
- * Lazy-initialised and cached.
- */
-export async function getServerAuthProvider(): Promise<IServerAuthProvider> {
-  if (_serverProvider) return _serverProvider;
-
-  const which = (process.env.AUTH_PROVIDER || 'firebase').trim().toLowerCase();
-
-  if (which === 'supabase') {
-    const { SupabaseServerAuthProvider } = await import('./supabase-provider');
-    _serverProvider = new SupabaseServerAuthProvider();
-  } else {
-    const { FirebaseServerAuthProvider } = await import('./firebase-provider');
-    _serverProvider = new FirebaseServerAuthProvider();
-  }
-
-  console.info(`[auth] server provider = ${which}`);
-  return _serverProvider;
-}
-
-/**
- * Get the configured client-side auth provider (browser only).
- * Call only from 'use client' components.
- */
-export async function getClientAuthProvider(): Promise<IClientAuthProvider> {
-  const which = (process.env.AUTH_PROVIDER || 'firebase').trim().toLowerCase();
-
-  if (which === 'supabase') {
-    const { SupabaseClientAuthProvider } = await import('./supabase-provider');
-    return new SupabaseClientAuthProvider();
-  } else {
-    const { FirebaseClientAuthProvider } = await import('./firebase-provider');
-    return new FirebaseClientAuthProvider();
-  }
-}
-
-/** Reset cached provider — only for tests. */
-export function _resetProviderCache() {
-  _serverProvider = null;
-}
+// ── Factory functions ─────────────────────────────────────────────────────
+//
+// IMPORTANT: Do NOT add factory functions here.
+// - Server factory: import from '@/lib/auth/server-provider' (server-only)
+// - Client factory: import from '@/lib/auth/client-provider' (browser-safe)
+//
+// This file is types-only so it is safe to import from any context.

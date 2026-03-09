@@ -12,7 +12,7 @@ import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
 import { useTranslations, useLocale } from "next-intl"
 import type { OAuthProfile } from '@/lib/auth/oauth';
-import { getClientAuthProvider } from '@/lib/auth/provider';
+import { getClientAuthProvider } from '@/lib/auth/client-provider';
 import { createSessionAction } from '@/app/actions/auth';
 
 export function LoginForm() {

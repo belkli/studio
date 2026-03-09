@@ -7,7 +7,7 @@
  */
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getServerAuthProvider } from '@/lib/auth/provider';
+import { getServerAuthProvider } from '@/lib/auth/server-provider';
 
 const SESSION_COOKIE_NAME = '__session';
 

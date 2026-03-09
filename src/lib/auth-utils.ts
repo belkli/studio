@@ -8,7 +8,7 @@
  * - withAuth(): Higher-order function wrapping Server Actions with auth + Zod validation
  */
 import { headers } from 'next/headers';
-import { getServerAuthProvider } from '@/lib/auth/provider';
+import { getServerAuthProvider } from '@/lib/auth/server-provider';
 import type { SessionClaims } from '@/lib/auth/provider';
 import type { UserRole } from '@/lib/types';
 

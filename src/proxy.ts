@@ -19,7 +19,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { routing } from '@/i18n/routing';
-import { getServerAuthProvider } from '@/lib/auth/provider';
+import { getServerAuthProvider } from '@/lib/auth/server-provider';
 
 // ── Route classification ──────────────────────────────────────
 

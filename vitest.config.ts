@@ -36,6 +36,8 @@ export default defineConfig({
         alias: {
             '@': path.resolve(__dirname, './src'),
             '@/tests': path.resolve(__dirname, './tests'),
+            // next.js server-only is a no-op in tests
+            'server-only': path.resolve(__dirname, './tests/__mocks__/server-only.ts'),
         },
     },
 });
