@@ -78,13 +78,17 @@ export function LoginForm() {
       if (existing) {
         linkOAuthToExistingUser(result.profile);
 
-        // Create session cookie if auth provider is configured
+        // Create session cookie if Firebase auth provider is configured
+        // (Supabase OAuth uses redirect — this code is unreachable for Supabase)
         try {
-          const { getClientAuth } = await import('@/lib/firebase-client');
-          const auth = getClientAuth();
-          if (auth && auth.currentUser) {
-            const idToken = await auth.currentUser.getIdToken();
-            await createSessionAction(idToken);
+          const authProviderType = (process.env.AUTH_PROVIDER || 'firebase').toLowerCase();
+          if (authProviderType === 'firebase') {
+            const { getClientAuth } = await import('@/lib/firebase-client');
+            const auth = getClientAuth();
+            if (auth && auth.currentUser) {
+              const idToken = await auth.currentUser.getIdToken();
+              await createSessionAction(idToken);
+            }
           }
         } catch {
           // Provider may not be configured — continue with mock login

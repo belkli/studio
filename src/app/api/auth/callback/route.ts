@@ -24,7 +24,10 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') || '/dashboard';
+  // SECURITY: Only allow relative paths starting with '/' (no protocol-relative or absolute URLs)
+  // to prevent open redirect attacks via the 'next' parameter.
+  const rawNext = searchParams.get('next') || '/dashboard';
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/dashboard';
 
   if (!code) {
     return NextResponse.redirect(new URL('/login?error=oauth_failed', request.url));
