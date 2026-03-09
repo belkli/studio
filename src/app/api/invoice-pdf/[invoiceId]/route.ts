@@ -73,6 +73,10 @@ export async function GET(
 </html>`;
 
   return new NextResponse(html, {
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Robots-Tag': 'noindex',
+    },
   });
 }

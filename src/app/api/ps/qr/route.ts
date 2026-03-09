@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         return new NextResponse(buffer, {
             headers: {
                 'Content-Type': 'image/png',
-                'Cache-Control': 'public, max-age=86400, immutable',
+                'Cache-Control': 'public, max-age=86400',
                 'X-Content-Type-Options': 'nosniff',
             },
         });

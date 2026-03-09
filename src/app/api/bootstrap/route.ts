@@ -146,7 +146,10 @@ export async function GET() {
       `[api/bootstrap] backend=${meta.backend} source=${meta.source}${meta.fallbackReason ? ` reason=${meta.fallbackReason}` : ''} users=${users.length} conservatoriums=${conservatoriums.length} lessons=${lessons.length}`
     );
 
-    return NextResponse.json(responseBody, { status: 200 });
+    return NextResponse.json(responseBody, {
+      status: 200,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('[api/bootstrap] failed', error);
     return NextResponse.json({ error: 'bootstrap_failed' }, { status: 500 });

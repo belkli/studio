@@ -59,7 +59,9 @@ export async function POST(request: NextRequest) {
   try {
     const sessionCookie = await createSessionCookie(idToken);
 
-    const response = NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true }, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
     response.cookies.set(SESSION_COOKIE_NAME, sessionCookie, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

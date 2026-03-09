@@ -242,5 +242,7 @@ export async function POST(request: NextRequest) {
 
 // Cardcom may ping to verify the endpoint is alive
 export async function GET() {
-  return NextResponse.json({ status: 'ok', handler: 'cardcom-webhook' });
+  return NextResponse.json({ status: 'ok', handler: 'cardcom-webhook' }, {
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }

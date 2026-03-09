@@ -45,6 +45,21 @@ const nextConfig: NextConfig = {
   ],
   async headers() {
     return [
+      // Static assets — long-lived immutable cache (Next.js hashes filenames)
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // Public images — long-lived (we control filenames, no hash, but content won't change)
+      {
+        source: '/images/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // Security headers on all routes (HTML pages, API routes)
       {
         source: '/(.*)',
         headers: securityHeaders,
