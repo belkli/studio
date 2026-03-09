@@ -2,23 +2,19 @@
  * @fileoverview Server-side authentication and authorization utilities.
  *
  * Provides:
- * - verifyAuth(): Validates Firebase session cookie via Admin SDK
+ * - verifyAuth(): Validates session cookie via the configured auth provider
  * - requireRole(): Enforces role-based access control on Server Actions
  * - getClaimsFromRequest(): Reads claims injected by middleware headers
  * - withAuth(): Higher-order function wrapping Server Actions with auth + Zod validation
  */
 import { headers } from 'next/headers';
-import { getAdminAuth } from '@/lib/firebase-admin';
+import { getServerAuthProvider } from '@/lib/auth/provider';
+import type { SessionClaims } from '@/lib/auth/provider';
 import type { UserRole } from '@/lib/types';
 
-// ── Types ─────────────────────────────────────────────────────
-
-export interface HarmoniaClaims {
-  uid: string;
-  email: string;
+// Re-export SessionClaims under the existing HarmoniaClaims name with narrower role type
+export interface HarmoniaClaims extends Omit<SessionClaims, 'role'> {
   role: UserRole;
-  conservatoriumId: string;
-  approved: boolean;
 }
 
 // ── Claims from middleware headers ────────────────────────────
@@ -55,70 +51,41 @@ const SESSION_COOKIE_NAME = '__session';
 const SESSION_EXPIRY_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 /**
- * Verify the Firebase session cookie using the Admin SDK.
+ * Verify the session cookie using the configured auth provider.
  *
- * This is the authoritative server-side verification. The middleware
+ * This is the authoritative server-side verification. The proxy
  * performs a lightweight JWT decode for header injection, but Server
  * Actions must call this function for cryptographic verification.
  *
- * When FIREBASE_SERVICE_ACCOUNT_KEY is not set (local dev), falls back
+ * When no auth provider credentials are set (local dev), falls back
  * to reading claims from middleware headers.
  */
 export async function verifyAuth(): Promise<HarmoniaClaims> {
-  // Try Admin SDK verification first
-  const adminAuth = getAdminAuth();
+  const provider = await getServerAuthProvider();
 
-  if (adminAuth) {
-    try {
-      const { cookies } = await import('next/headers');
-      const cookieStore = await cookies();
-      const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  // Try provider session cookie verification first
+  try {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
-      if (!sessionCookie) {
-        throw new Error('UNAUTHENTICATED');
-      }
-
-      const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
-
-      return {
-        uid: decodedClaims.uid,
-        email: decodedClaims.email || '',
-        role: (decodedClaims.role as UserRole) || 'student',
-        conservatoriumId: (decodedClaims.conservatoriumId as string) || '',
-        approved: decodedClaims.approved === true,
-      };
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (message === 'UNAUTHENTICATED') throw new Error('UNAUTHENTICATED');
-      console.error('[auth-utils] Session cookie verification failed:', message);
-      throw new Error('UNAUTHENTICATED');
+    if (sessionCookie) {
+      const sc = await provider.verifySessionCookie(sessionCookie);
+      return { ...sc, role: sc.role as UserRole };
     }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message === 'UNAUTHENTICATED') throw new Error('UNAUTHENTICATED');
+    // Fall through to header/dev fallbacks below
   }
 
-  // Fallback: read from middleware-injected headers (local dev without Admin SDK)
+  // Fallback: read from middleware-injected headers (local dev without provider credentials)
   const claims = await getClaimsFromRequest();
-  if (claims) {
-    return claims;
-  }
+  if (claims) return claims;
 
-  // No Admin SDK and no middleware headers — dev mode automatic fallback.
-  //
-  // SECURITY NOTE (QA-MED-05): This fallback grants site_admin privileges,
-  // which is intentionally permissive for local development only. Safe in
-  // production because:
-  //   1. Firebase App Hosting sets NODE_ENV='production' at build time —
-  //      cannot be overridden by request headers or cookies.
-  //   2. In production, FIREBASE_SERVICE_ACCOUNT_KEY is always set (via
-  //      Secret Manager), so the Admin SDK branch above handles all auth.
-  //   3. This code path is unreachable when the Admin SDK is configured.
-  //
-  // Exists solely so `npm run dev` works without Firebase credentials.
+  // Dev-only bypass
   if (process.env.NODE_ENV !== 'production') {
-    console.warn(
-      '\n[auth-utils] *** DEV-ONLY FALLBACK ACTIVE ***\n' +
-      '  No Admin SDK configured — using synthetic dev session (site_admin).\n' +
-      '  Set FIREBASE_SERVICE_ACCOUNT_KEY to use real authentication.\n'
-    );
+    console.warn('\n[auth-utils] *** DEV-ONLY FALLBACK ACTIVE ***\n  No auth provider configured.\n');
     return {
       uid: 'dev-user',
       email: 'dev@harmonia.local',
@@ -213,34 +180,22 @@ export function withAuth<Schema extends { parse(data: unknown): unknown; _input:
 // ── Session cookie creation (for login API route) ─────────────
 
 /**
- * Create a Firebase session cookie from a Firebase ID token.
+ * Create a session cookie from a token (ID token or access token).
  * Called by the /api/auth/login route after client-side authentication.
  *
- * @param idToken - The Firebase ID token from the client
+ * @param token - The token from the client (Firebase ID token or Supabase access token)
  * @returns The session cookie string
  */
-export async function createSessionCookie(idToken: string): Promise<string> {
-  const adminAuth = getAdminAuth();
-  if (!adminAuth) {
-    throw new Error('Firebase Admin SDK is not configured');
-  }
-
-  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
-    expiresIn: SESSION_EXPIRY_MS,
-  });
-
-  return sessionCookie;
+export async function createSessionCookie(token: string): Promise<string> {
+  const provider = await getServerAuthProvider();
+  return provider.createSessionCookie(token, SESSION_EXPIRY_MS / 1000);
 }
 
 /**
- * Revoke the current session by revoking the user's refresh tokens.
+ * Revoke the current session by revoking the user's sessions.
  * Called by the /api/auth/logout route.
  */
 export async function revokeSession(uid: string): Promise<void> {
-  const adminAuth = getAdminAuth();
-  if (!adminAuth) {
-    throw new Error('Firebase Admin SDK is not configured');
-  }
-
-  await adminAuth.revokeRefreshTokens(uid);
+  const provider = await getServerAuthProvider();
+  await provider.revokeUserSessions(uid);
 }
