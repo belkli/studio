@@ -390,7 +390,7 @@ export function PublicLandingPage() {
                       </AvatarFallback>
                     </Avatar>
                     <p className="mt-3 font-semibold">{teacher.name}</p>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{teacher.localizedRole || teacher.role || t('teacherFallback')}</p>
+                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{teacher.localizedRole || t('teacherFallback')}</p>
                     {typeof teacher.teacherRatingAvg === 'number' && (teacher.teacherRatingCount || 0) > 0 && (
                       <p className="mt-2 flex items-center justify-center gap-1 text-sm text-amber-600">
                         <Star className="h-4 w-4 fill-current" />
