@@ -3,11 +3,11 @@
  *
  * POST /api/auth/logout
  *
- * Revokes Firebase refresh tokens and deletes the session cookie.
+ * Revokes user sessions via the configured auth provider and deletes the session cookie.
  */
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getAdminAuth } from '@/lib/firebase-admin';
+import { getServerAuthProvider } from '@/lib/auth/provider';
 
 const SESSION_COOKIE_NAME = '__session';
 
@@ -15,16 +15,15 @@ export async function POST() {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
-  // Attempt to revoke the user's refresh tokens
   if (sessionCookie) {
-    const adminAuth = getAdminAuth();
-    if (adminAuth) {
-      try {
-        const decoded = await adminAuth.verifySessionCookie(sessionCookie);
-        await adminAuth.revokeRefreshTokens(decoded.uid);
-      } catch {
-        // Session may already be expired or invalid — proceed with cleanup
+    try {
+      const provider = await getServerAuthProvider();
+      const claims = await provider.extractClaimsFromCookie(sessionCookie);
+      if (claims?.uid) {
+        await provider.revokeUserSessions(claims.uid);
       }
+    } catch {
+      // Session may already be expired — proceed with cleanup
     }
   }
 

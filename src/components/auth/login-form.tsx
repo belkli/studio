@@ -11,9 +11,8 @@ import { useToast } from "@/hooks/use-toast"
 import { Icons } from "@/components/icons"
 import { useAuth } from "@/hooks/use-auth"
 import { useTranslations, useLocale } from "next-intl"
-import { signInWithGoogle, signInWithMicrosoft, type OAuthProfile } from '@/lib/auth/oauth';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { getClientAuth } from '@/lib/firebase-client';
+import type { OAuthProfile } from '@/lib/auth/oauth';
+import { getClientAuthProvider } from '@/lib/auth/provider';
 import { createSessionAction } from '@/app/actions/auth';
 
 export function LoginForm() {
@@ -63,9 +62,8 @@ export function LoginForm() {
   const handleOAuthSignIn = async (provider: 'google' | 'microsoft') => {
     setLoading(true);
     try {
-      const result = provider === 'google'
-        ? await signInWithGoogle({ fallbackEmail: email || undefined })
-        : await signInWithMicrosoft({ fallbackEmail: email || undefined });
+      const authProvider = await getClientAuthProvider();
+      const result = await authProvider.signInWithOAuth(provider, email || undefined);
 
       if (result.type === 'conflict') {
         toast({
@@ -80,11 +78,16 @@ export function LoginForm() {
       if (existing) {
         linkOAuthToExistingUser(result.profile);
 
-        // Create session cookie if Firebase is configured
-        const auth = getClientAuth();
-        if (auth && auth.currentUser) {
-          const idToken = await auth.currentUser.getIdToken();
-          await createSessionAction(idToken);
+        // Create session cookie if auth provider is configured
+        try {
+          const { getClientAuth } = await import('@/lib/firebase-client');
+          const auth = getClientAuth();
+          if (auth && auth.currentUser) {
+            const idToken = await auth.currentUser.getIdToken();
+            await createSessionAction(idToken);
+          }
+        } catch {
+          // Provider may not be configured — continue with mock login
         }
 
         login(result.profile.email);
@@ -135,82 +138,83 @@ export function LoginForm() {
     }
     setLoading(true)
 
-    const auth = getClientAuth();
+    try {
+      const authProvider = await getClientAuthProvider();
+      const token = await authProvider.signInWithEmailPassword(email, password);
 
-    if (auth) {
-      // ── Production path: real Firebase Auth ──
-      try {
-        const credential = await signInWithEmailAndPassword(auth, email, password);
-        const idToken = await credential.user.getIdToken();
-
-        const result = await createSessionAction(idToken);
-        if (!result.ok) {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.loginFailed'),
-            description: result.error,
-          });
-          setLoading(false);
-          return;
-        }
-
+      const result = await createSessionAction(token);
+      if (!result.ok) {
         toast({
-          title: t('toasts.loginSuccess'),
-          description: t('toasts.loginSuccessDesc', { name: credential.user.displayName?.split(' ')[0] || email.split('@')[0] }),
+          variant: 'destructive',
+          title: t('toasts.loginFailed'),
+          description: result.error,
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        router.push(callbackUrl as any);
-      } catch (error: unknown) {
-        const code = (error as { code?: string })?.code;
-        if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.loginFailed'),
-            description: t('toasts.loginFailedDesc'),
-          });
-        } else if (code === 'auth/too-many-requests') {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.loginFailed'),
-            description: 'Too many attempts. Please try again later.',
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.loginFailed'),
-            description: t('toasts.loginFailedDesc'),
-          });
-        }
         setLoading(false);
+        return;
       }
-    } else {
-      // ── Dev fallback: mock login when Firebase is not configured ──
-      setTimeout(() => {
-        const { user, status } = login(email);
 
-        if (status === 'approved' && user) {
-          toast({
-            title: t('toasts.loginSuccess'),
-            description: t('toasts.loginSuccessDesc', { name: user.name.split(' ')[0] }),
-          });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          router.push(callbackUrl as any);
-        } else if (status === 'pending') {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.pendingAccount'),
-            description: t('toasts.pendingAccountDesc'),
-          });
-          setLoading(false);
-        } else {
-          toast({
-            variant: 'destructive',
-            title: t('toasts.loginFailed'),
-            description: t('toasts.loginFailedDesc'),
-          });
-          setLoading(false);
-        }
-      }, 500);
+      toast({
+        title: t('toasts.loginSuccess'),
+        description: t('toasts.loginSuccessDesc', { name: email.split('@')[0] }),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      router.push(callbackUrl as any);
+    } catch (error: unknown) {
+      const code = (error as { code?: string })?.code;
+      const message = error instanceof Error ? error.message : '';
+
+      // Check if auth provider is not configured — fall back to mock login
+      if (message.includes('not configured')) {
+        // ── Dev fallback: mock login when auth provider is not configured ──
+        setTimeout(() => {
+          const { user, status } = login(email);
+
+          if (status === 'approved' && user) {
+            toast({
+              title: t('toasts.loginSuccess'),
+              description: t('toasts.loginSuccessDesc', { name: user.name.split(' ')[0] }),
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            router.push(callbackUrl as any);
+          } else if (status === 'pending') {
+            toast({
+              variant: 'destructive',
+              title: t('toasts.pendingAccount'),
+              description: t('toasts.pendingAccountDesc'),
+            });
+            setLoading(false);
+          } else {
+            toast({
+              variant: 'destructive',
+              title: t('toasts.loginFailed'),
+              description: t('toasts.loginFailedDesc'),
+            });
+            setLoading(false);
+          }
+        }, 500);
+        return;
+      }
+
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        toast({
+          variant: 'destructive',
+          title: t('toasts.loginFailed'),
+          description: t('toasts.loginFailedDesc'),
+        });
+      } else if (code === 'auth/too-many-requests') {
+        toast({
+          variant: 'destructive',
+          title: t('toasts.loginFailed'),
+          description: 'Too many attempts. Please try again later.',
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: t('toasts.loginFailed'),
+          description: t('toasts.loginFailedDesc'),
+        });
+      }
+      setLoading(false);
     }
   }
 

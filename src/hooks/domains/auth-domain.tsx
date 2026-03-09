@@ -68,16 +68,13 @@ export function AuthDomainProvider({
   );
 
   const logout = useCallback(async () => {
-    // Sign out from Firebase client SDK if available
+    // Sign out from the auth provider if available
     try {
-      const { getClientAuth } = await import('@/lib/firebase-client');
-      const auth = getClientAuth();
-      if (auth) {
-        const { signOut } = await import('firebase/auth');
-        await signOut(auth);
-      }
+      const { getClientAuthProvider } = await import('@/lib/auth/provider');
+      const authProvider = await getClientAuthProvider();
+      await authProvider.signOut();
     } catch {
-      // Firebase may not be configured — continue with cleanup
+      // Provider may not be configured — continue with cleanup
     }
 
     // Clear server-side session cookie
