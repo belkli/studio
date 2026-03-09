@@ -1324,7 +1324,7 @@ export type DonationCause = {
   id: string;
   conservatoriumId: string;
   names: { he: string; en: string; ru?: string; ar?: string };
-  descriptions: { he: string; en: string };
+  descriptions: { he: string; en: string; ru?: string; ar?: string };
   category: DonationCauseCategory;
   priority: number;
   isActive: boolean;
