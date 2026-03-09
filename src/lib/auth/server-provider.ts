@@ -26,7 +26,7 @@ export async function getServerAuthProvider(): Promise<IServerAuthProvider> {
     const { SupabaseServerAuthProvider } = await import('./supabase-provider');
     _serverProvider = new SupabaseServerAuthProvider();
   } else {
-    const { FirebaseServerAuthProvider } = await import('./firebase-provider');
+    const { FirebaseServerAuthProvider } = await import('./firebase-server-provider');
     _serverProvider = new FirebaseServerAuthProvider();
   }
 
