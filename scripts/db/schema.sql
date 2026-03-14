@@ -633,3 +633,792 @@ BEFORE INSERT OR UPDATE ON teacher_ratings
 FOR EACH ROW
 EXECUTE FUNCTION enforce_role_integrity();
 
+-- ============================================================
+-- ROW LEVEL SECURITY
+-- Applied automatically when schema.sql is run.
+-- Helper functions must exist before policies are created.
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- A. HELPER FUNCTIONS
+-- Used by all RLS policies below. Safe to re-run (idempotent).
+-- ------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION harmonia_role() RETURNS TEXT LANGUAGE SQL STABLE AS $$
+  SELECT COALESCE(auth.jwt()->'app_metadata'->>'role', auth.jwt()->>'role');
+$$;
+
+CREATE OR REPLACE FUNCTION harmonia_conservatorium_id() RETURNS TEXT LANGUAGE SQL STABLE AS $$
+  SELECT COALESCE(auth.jwt()->'app_metadata'->>'conservatoriumId', auth.jwt()->>'conservatoriumId');
+$$;
+
+CREATE OR REPLACE FUNCTION is_site_admin() RETURNS BOOLEAN LANGUAGE SQL STABLE AS $$
+  SELECT harmonia_role() IN ('SITE_ADMIN', 'site_admin', 'superadmin');
+$$;
+
+CREATE OR REPLACE FUNCTION is_conservatorium_admin() RETURNS BOOLEAN LANGUAGE SQL STABLE AS $$
+  SELECT harmonia_role() IN (
+    'CONSERVATORIUM_ADMIN', 'conservatorium_admin',
+    'DELEGATED_ADMIN', 'delegated_admin',
+    'SITE_ADMIN', 'site_admin', 'superadmin'
+  );
+$$;
+
+-- ------------------------------------------------------------
+-- B. ENABLE RLS ON ALL TABLES
+-- ALTER TABLE ... ENABLE ROW LEVEL SECURITY is idempotent.
+-- FORCE ROW LEVEL SECURITY ensures the table owner is also
+-- subject to policies (critical for security).
+-- instrument_catalog is a public read-only reference table
+-- and is intentionally excluded from RLS.
+-- ------------------------------------------------------------
+
+ALTER TABLE conservatoriums ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conservatoriums FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE student_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE student_profiles FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE teacher_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teacher_profiles FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE teacher_ratings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teacher_ratings FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE teacher_assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teacher_assignments FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE conservatorium_instruments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conservatorium_instruments FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE branches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE branches FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE rooms ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rooms FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE lessons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lessons FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE lesson_packages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lesson_packages FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE events FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE forms ENABLE ROW LEVEL SECURITY;
+ALTER TABLE forms FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE instrument_rentals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE instrument_rentals FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE scholarship_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE scholarship_applications FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE announcements FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE repertoire_library ENABLE ROW LEVEL SECURITY;
+ALTER TABLE repertoire_library FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE donation_causes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE donation_causes FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE donation_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE donation_records FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE payroll_snapshots ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payroll_snapshots FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE alumni_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE alumni_profiles FORCE ROW LEVEL SECURITY;
+
+ALTER TABLE master_classes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE master_classes FORCE ROW LEVEL SECURITY;
+
+-- ------------------------------------------------------------
+-- C. RLS POLICIES
+-- Each policy is preceded by DROP POLICY IF EXISTS so this
+-- section is idempotent (safe to re-run).
+-- ------------------------------------------------------------
+
+-- ============================================================
+-- CONSERVATORIUMS: public read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "conservatoriums_select_public" ON conservatoriums;
+CREATE POLICY "conservatoriums_select_public" ON conservatoriums
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "conservatoriums_update_own_admin" ON conservatoriums;
+CREATE POLICY "conservatoriums_update_own_admin" ON conservatoriums
+  FOR UPDATE USING (
+    is_site_admin() OR (is_conservatorium_admin() AND id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "conservatoriums_insert_site_admin" ON conservatoriums;
+CREATE POLICY "conservatoriums_insert_site_admin" ON conservatoriums
+  FOR INSERT WITH CHECK (is_site_admin());
+
+DROP POLICY IF EXISTS "conservatoriums_delete_site_admin" ON conservatoriums;
+CREATE POLICY "conservatoriums_delete_site_admin" ON conservatoriums
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- USERS: own row + parent->child + teacher->students + admin
+-- ============================================================
+DROP POLICY IF EXISTS "users_select_own" ON users;
+CREATE POLICY "users_select_own" ON users
+  FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "users_select_parent_children" ON users;
+CREATE POLICY "users_select_parent_children" ON users
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM student_profiles sp WHERE sp.user_id = users.id AND sp.parent_id = auth.uid())
+  );
+
+DROP POLICY IF EXISTS "users_select_teacher_students" ON users;
+CREATE POLICY "users_select_teacher_students" ON users
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM teacher_assignments ta WHERE ta.student_id = users.id AND ta.teacher_id = auth.uid() AND ta.is_active = true)
+  );
+
+DROP POLICY IF EXISTS "users_select_conservatorium_admin" ON users;
+CREATE POLICY "users_select_conservatorium_admin" ON users
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "users_update_own" ON users;
+CREATE POLICY "users_update_own" ON users
+  FOR UPDATE USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id AND role = (SELECT u.role FROM users u WHERE u.id = auth.uid()));
+
+DROP POLICY IF EXISTS "users_insert_admin" ON users;
+CREATE POLICY "users_insert_admin" ON users
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "users_delete_site_admin" ON users;
+CREATE POLICY "users_delete_site_admin" ON users
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- STUDENT PROFILES: own + parent + assigned teacher + admin
+-- ============================================================
+DROP POLICY IF EXISTS "student_profiles_select_own" ON student_profiles;
+CREATE POLICY "student_profiles_select_own" ON student_profiles
+  FOR SELECT USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "student_profiles_select_parent" ON student_profiles;
+CREATE POLICY "student_profiles_select_parent" ON student_profiles
+  FOR SELECT USING (parent_id = auth.uid());
+
+DROP POLICY IF EXISTS "student_profiles_select_teacher" ON student_profiles;
+CREATE POLICY "student_profiles_select_teacher" ON student_profiles
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM teacher_assignments ta WHERE ta.student_id = student_profiles.user_id AND ta.teacher_id = auth.uid() AND ta.is_active = true)
+  );
+
+DROP POLICY IF EXISTS "student_profiles_select_admin" ON student_profiles;
+CREATE POLICY "student_profiles_select_admin" ON student_profiles
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (
+      is_site_admin() OR
+      (SELECT conservatorium_id::text FROM users u WHERE u.id = student_profiles.user_id) = harmonia_conservatorium_id()
+    )
+  );
+
+DROP POLICY IF EXISTS "student_profiles_insert_admin" ON student_profiles;
+CREATE POLICY "student_profiles_insert_admin" ON student_profiles
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "student_profiles_update_admin" ON student_profiles;
+CREATE POLICY "student_profiles_update_admin" ON student_profiles
+  FOR UPDATE USING (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "student_profiles_delete_site_admin" ON student_profiles;
+CREATE POLICY "student_profiles_delete_site_admin" ON student_profiles
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- TEACHER PROFILES: own + public (available) + admin
+-- ============================================================
+DROP POLICY IF EXISTS "teacher_profiles_select_own" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_select_own" ON teacher_profiles
+  FOR SELECT USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "teacher_profiles_select_public_available" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_select_public_available" ON teacher_profiles
+  FOR SELECT USING (available_for_new_students = true);
+
+DROP POLICY IF EXISTS "teacher_profiles_select_admin" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_select_admin" ON teacher_profiles
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (
+      is_site_admin() OR
+      (SELECT conservatorium_id::text FROM users u WHERE u.id = teacher_profiles.user_id) = harmonia_conservatorium_id()
+    )
+  );
+
+DROP POLICY IF EXISTS "teacher_profiles_update_own" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_update_own" ON teacher_profiles
+  FOR UPDATE USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "teacher_profiles_update_admin" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_update_admin" ON teacher_profiles
+  FOR UPDATE USING (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "teacher_profiles_insert_admin" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_insert_admin" ON teacher_profiles
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "teacher_profiles_delete_site_admin" ON teacher_profiles;
+CREATE POLICY "teacher_profiles_delete_site_admin" ON teacher_profiles
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- TEACHER RATINGS: own conservatorium read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "teacher_ratings_select_conservatorium" ON teacher_ratings;
+CREATE POLICY "teacher_ratings_select_conservatorium" ON teacher_ratings
+  FOR SELECT USING (
+    is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "teacher_ratings_insert_authenticated" ON teacher_ratings;
+CREATE POLICY "teacher_ratings_insert_authenticated" ON teacher_ratings
+  FOR INSERT WITH CHECK (
+    reviewer_user_id = auth.uid() AND
+    (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "teacher_ratings_delete_site_admin" ON teacher_ratings;
+CREATE POLICY "teacher_ratings_delete_site_admin" ON teacher_ratings
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- TEACHER ASSIGNMENTS: teacher + student + parent + admin
+-- ============================================================
+DROP POLICY IF EXISTS "teacher_assignments_select_teacher" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_select_teacher" ON teacher_assignments
+  FOR SELECT USING (teacher_id = auth.uid());
+
+DROP POLICY IF EXISTS "teacher_assignments_select_student" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_select_student" ON teacher_assignments
+  FOR SELECT USING (student_id = auth.uid());
+
+DROP POLICY IF EXISTS "teacher_assignments_select_parent" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_select_parent" ON teacher_assignments
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM student_profiles sp WHERE sp.user_id = teacher_assignments.student_id AND sp.parent_id = auth.uid())
+  );
+
+DROP POLICY IF EXISTS "teacher_assignments_select_admin" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_select_admin" ON teacher_assignments
+  FOR SELECT USING (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "teacher_assignments_insert_admin" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_insert_admin" ON teacher_assignments
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "teacher_assignments_update_admin" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_update_admin" ON teacher_assignments
+  FOR UPDATE USING (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "teacher_assignments_delete_admin" ON teacher_assignments;
+CREATE POLICY "teacher_assignments_delete_admin" ON teacher_assignments
+  FOR DELETE USING (is_conservatorium_admin());
+
+-- ============================================================
+-- CONSERVATORIUM INSTRUMENTS: tenant read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "conservatorium_instruments_select_tenant" ON conservatorium_instruments;
+CREATE POLICY "conservatorium_instruments_select_tenant" ON conservatorium_instruments
+  FOR SELECT USING (
+    is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "conservatorium_instruments_insert_admin" ON conservatorium_instruments;
+CREATE POLICY "conservatorium_instruments_insert_admin" ON conservatorium_instruments
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "conservatorium_instruments_update_admin" ON conservatorium_instruments;
+CREATE POLICY "conservatorium_instruments_update_admin" ON conservatorium_instruments
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "conservatorium_instruments_delete_admin" ON conservatorium_instruments;
+CREATE POLICY "conservatorium_instruments_delete_admin" ON conservatorium_instruments
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- BRANCHES: public read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "branches_select_public" ON branches;
+CREATE POLICY "branches_select_public" ON branches
+  FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "branches_insert_admin" ON branches;
+CREATE POLICY "branches_insert_admin" ON branches
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "branches_update_admin" ON branches;
+CREATE POLICY "branches_update_admin" ON branches
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "branches_delete_admin" ON branches;
+CREATE POLICY "branches_delete_admin" ON branches
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- ROOMS: tenant users read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "rooms_select_tenant" ON rooms;
+CREATE POLICY "rooms_select_tenant" ON rooms
+  FOR SELECT USING (
+    is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "rooms_insert_admin" ON rooms;
+CREATE POLICY "rooms_insert_admin" ON rooms
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "rooms_update_admin" ON rooms;
+CREATE POLICY "rooms_update_admin" ON rooms
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "rooms_delete_admin" ON rooms;
+CREATE POLICY "rooms_delete_admin" ON rooms
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- LESSONS: teacher + student + parent + admin
+-- ============================================================
+DROP POLICY IF EXISTS "lessons_select_teacher" ON lessons;
+CREATE POLICY "lessons_select_teacher" ON lessons
+  FOR SELECT USING (teacher_id = auth.uid());
+
+DROP POLICY IF EXISTS "lessons_select_student" ON lessons;
+CREATE POLICY "lessons_select_student" ON lessons
+  FOR SELECT USING (student_id = auth.uid());
+
+DROP POLICY IF EXISTS "lessons_select_parent" ON lessons;
+CREATE POLICY "lessons_select_parent" ON lessons
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM student_profiles sp WHERE sp.user_id = lessons.student_id AND sp.parent_id = auth.uid())
+  );
+
+DROP POLICY IF EXISTS "lessons_select_admin" ON lessons;
+CREATE POLICY "lessons_select_admin" ON lessons
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "lessons_update_teacher" ON lessons;
+CREATE POLICY "lessons_update_teacher" ON lessons
+  FOR UPDATE USING (teacher_id = auth.uid());
+
+DROP POLICY IF EXISTS "lessons_insert_admin" ON lessons;
+CREATE POLICY "lessons_insert_admin" ON lessons
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "lessons_delete_site_admin" ON lessons;
+CREATE POLICY "lessons_delete_site_admin" ON lessons
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- LESSON PACKAGES: tenant users read, admin write
+-- ============================================================
+DROP POLICY IF EXISTS "lesson_packages_select_tenant" ON lesson_packages;
+CREATE POLICY "lesson_packages_select_tenant" ON lesson_packages
+  FOR SELECT USING (
+    is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "lesson_packages_insert_admin" ON lesson_packages;
+CREATE POLICY "lesson_packages_insert_admin" ON lesson_packages
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "lesson_packages_update_admin" ON lesson_packages;
+CREATE POLICY "lesson_packages_update_admin" ON lesson_packages
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "lesson_packages_delete_admin" ON lesson_packages;
+CREATE POLICY "lesson_packages_delete_admin" ON lesson_packages
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- EVENTS: public read (published), admin write
+-- ============================================================
+DROP POLICY IF EXISTS "events_select_public" ON events;
+CREATE POLICY "events_select_public" ON events
+  FOR SELECT USING (
+    status = 'published' OR
+    is_site_admin() OR
+    conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "events_insert_admin" ON events;
+CREATE POLICY "events_insert_admin" ON events
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "events_update_admin" ON events;
+CREATE POLICY "events_update_admin" ON events
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "events_delete_admin" ON events;
+CREATE POLICY "events_delete_admin" ON events
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- FORMS: student own + admin own-tenant
+-- ============================================================
+DROP POLICY IF EXISTS "forms_select_own_student" ON forms;
+CREATE POLICY "forms_select_own_student" ON forms
+  FOR SELECT USING (
+    student_id = auth.uid() OR submitted_by_user_id = auth.uid()
+  );
+
+DROP POLICY IF EXISTS "forms_select_admin" ON forms;
+CREATE POLICY "forms_select_admin" ON forms
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "forms_insert_authenticated" ON forms;
+CREATE POLICY "forms_insert_authenticated" ON forms
+  FOR INSERT WITH CHECK (
+    auth.uid() IS NOT NULL AND
+    (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "forms_update_admin" ON forms;
+CREATE POLICY "forms_update_admin" ON forms
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "forms_delete_site_admin" ON forms;
+CREATE POLICY "forms_delete_site_admin" ON forms
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- INVOICES: payer + parent + admin
+-- ============================================================
+DROP POLICY IF EXISTS "invoices_select_payer" ON invoices;
+CREATE POLICY "invoices_select_payer" ON invoices
+  FOR SELECT USING (payer_id = auth.uid());
+
+DROP POLICY IF EXISTS "invoices_select_parent" ON invoices;
+CREATE POLICY "invoices_select_parent" ON invoices
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM student_profiles sp WHERE sp.parent_id = auth.uid() AND sp.user_id = invoices.payer_id)
+  );
+
+DROP POLICY IF EXISTS "invoices_select_admin" ON invoices;
+CREATE POLICY "invoices_select_admin" ON invoices
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "invoices_insert_admin" ON invoices;
+CREATE POLICY "invoices_insert_admin" ON invoices
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "invoices_update_admin" ON invoices;
+CREATE POLICY "invoices_update_admin" ON invoices
+  FOR UPDATE USING (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "invoices_delete_site_admin" ON invoices;
+CREATE POLICY "invoices_delete_site_admin" ON invoices
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- INSTRUMENT RENTALS: student/parent own + admin own-tenant
+-- ============================================================
+DROP POLICY IF EXISTS "instrument_rentals_select_student" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_select_student" ON instrument_rentals
+  FOR SELECT USING (student_id = auth.uid());
+
+DROP POLICY IF EXISTS "instrument_rentals_select_parent" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_select_parent" ON instrument_rentals
+  FOR SELECT USING (parent_id = auth.uid());
+
+DROP POLICY IF EXISTS "instrument_rentals_select_admin" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_select_admin" ON instrument_rentals
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "instrument_rentals_insert_admin" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_insert_admin" ON instrument_rentals
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "instrument_rentals_update_admin" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_update_admin" ON instrument_rentals
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "instrument_rentals_delete_site_admin" ON instrument_rentals;
+CREATE POLICY "instrument_rentals_delete_site_admin" ON instrument_rentals
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- SCHOLARSHIP APPLICATIONS: student own + admin own-tenant
+-- ============================================================
+DROP POLICY IF EXISTS "scholarship_applications_select_student" ON scholarship_applications;
+CREATE POLICY "scholarship_applications_select_student" ON scholarship_applications
+  FOR SELECT USING (student_id = auth.uid());
+
+DROP POLICY IF EXISTS "scholarship_applications_select_admin" ON scholarship_applications;
+CREATE POLICY "scholarship_applications_select_admin" ON scholarship_applications
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "scholarship_applications_insert_student" ON scholarship_applications;
+CREATE POLICY "scholarship_applications_insert_student" ON scholarship_applications
+  FOR INSERT WITH CHECK (
+    student_id = auth.uid() AND
+    (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "scholarship_applications_update_admin" ON scholarship_applications;
+CREATE POLICY "scholarship_applications_update_admin" ON scholarship_applications
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "scholarship_applications_delete_site_admin" ON scholarship_applications;
+CREATE POLICY "scholarship_applications_delete_site_admin" ON scholarship_applications
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- ANNOUNCEMENTS: admin own-tenant write, tenant users read
+-- ============================================================
+DROP POLICY IF EXISTS "announcements_select_tenant" ON announcements;
+CREATE POLICY "announcements_select_tenant" ON announcements
+  FOR SELECT USING (
+    is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "announcements_insert_admin" ON announcements;
+CREATE POLICY "announcements_insert_admin" ON announcements
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "announcements_update_admin" ON announcements;
+CREATE POLICY "announcements_update_admin" ON announcements
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "announcements_delete_admin" ON announcements;
+CREATE POLICY "announcements_delete_admin" ON announcements
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- REPERTOIRE LIBRARY: public read (approved), ministry write
+-- ============================================================
+DROP POLICY IF EXISTS "repertoire_select_public" ON repertoire_library;
+CREATE POLICY "repertoire_select_public" ON repertoire_library
+  FOR SELECT USING (approved = true OR is_site_admin() OR harmonia_role() IN ('ministry_director', 'MINISTRY_DIRECTOR'));
+
+DROP POLICY IF EXISTS "repertoire_insert_ministry" ON repertoire_library;
+CREATE POLICY "repertoire_insert_ministry" ON repertoire_library
+  FOR INSERT WITH CHECK (harmonia_role() IN ('ministry_director', 'MINISTRY_DIRECTOR') OR is_site_admin());
+
+DROP POLICY IF EXISTS "repertoire_update_ministry" ON repertoire_library;
+CREATE POLICY "repertoire_update_ministry" ON repertoire_library
+  FOR UPDATE USING (harmonia_role() IN ('ministry_director', 'MINISTRY_DIRECTOR') OR is_site_admin());
+
+DROP POLICY IF EXISTS "repertoire_delete_site_admin" ON repertoire_library;
+CREATE POLICY "repertoire_delete_site_admin" ON repertoire_library
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- DONATION CAUSES: public read (active), admin write
+-- ============================================================
+DROP POLICY IF EXISTS "donation_causes_select_public" ON donation_causes;
+CREATE POLICY "donation_causes_select_public" ON donation_causes
+  FOR SELECT USING (
+    is_active = true OR
+    is_site_admin() OR
+    conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "donation_causes_insert_admin" ON donation_causes;
+CREATE POLICY "donation_causes_insert_admin" ON donation_causes
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "donation_causes_update_admin" ON donation_causes;
+CREATE POLICY "donation_causes_update_admin" ON donation_causes
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "donation_causes_delete_admin" ON donation_causes;
+CREATE POLICY "donation_causes_delete_admin" ON donation_causes
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ============================================================
+-- DONATION RECORDS: donor own + admin own-tenant
+-- ============================================================
+DROP POLICY IF EXISTS "donation_records_select_own" ON donation_records;
+CREATE POLICY "donation_records_select_own" ON donation_records
+  FOR SELECT USING (
+    donor_user_id = auth.uid() OR
+    is_site_admin() OR
+    conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "donation_records_insert_authenticated" ON donation_records;
+CREATE POLICY "donation_records_insert_authenticated" ON donation_records
+  FOR INSERT WITH CHECK (
+    auth.uid() IS NOT NULL AND
+    (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "donation_records_update_admin" ON donation_records;
+CREATE POLICY "donation_records_update_admin" ON donation_records
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "donation_records_delete_site_admin" ON donation_records;
+CREATE POLICY "donation_records_delete_site_admin" ON donation_records
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- PAYROLL SNAPSHOTS: teacher own (read) + admin own-tenant
+-- ============================================================
+DROP POLICY IF EXISTS "payroll_snapshots_select_teacher" ON payroll_snapshots;
+CREATE POLICY "payroll_snapshots_select_teacher" ON payroll_snapshots
+  FOR SELECT USING (teacher_id = auth.uid());
+
+DROP POLICY IF EXISTS "payroll_snapshots_select_admin" ON payroll_snapshots;
+CREATE POLICY "payroll_snapshots_select_admin" ON payroll_snapshots
+  FOR SELECT USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "payroll_snapshots_insert_admin" ON payroll_snapshots;
+CREATE POLICY "payroll_snapshots_insert_admin" ON payroll_snapshots
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "payroll_snapshots_update_admin" ON payroll_snapshots;
+CREATE POLICY "payroll_snapshots_update_admin" ON payroll_snapshots
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "payroll_snapshots_delete_site_admin" ON payroll_snapshots;
+CREATE POLICY "payroll_snapshots_delete_site_admin" ON payroll_snapshots
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- ALUMNI PROFILES: public read (if is_public), admin write
+-- ============================================================
+DROP POLICY IF EXISTS "alumni_profiles_select_public" ON alumni_profiles;
+CREATE POLICY "alumni_profiles_select_public" ON alumni_profiles
+  FOR SELECT USING (
+    is_public = true OR
+    user_id = auth.uid() OR
+    is_site_admin() OR
+    conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "alumni_profiles_update_own" ON alumni_profiles;
+CREATE POLICY "alumni_profiles_update_own" ON alumni_profiles
+  FOR UPDATE USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "alumni_profiles_insert_admin" ON alumni_profiles;
+CREATE POLICY "alumni_profiles_insert_admin" ON alumni_profiles
+  FOR INSERT WITH CHECK (is_conservatorium_admin());
+
+DROP POLICY IF EXISTS "alumni_profiles_delete_site_admin" ON alumni_profiles;
+CREATE POLICY "alumni_profiles_delete_site_admin" ON alumni_profiles
+  FOR DELETE USING (is_site_admin());
+
+-- ============================================================
+-- MASTER CLASSES: public read (published), admin write
+-- ============================================================
+DROP POLICY IF EXISTS "master_classes_select_public" ON master_classes;
+CREATE POLICY "master_classes_select_public" ON master_classes
+  FOR SELECT USING (
+    status = 'published' OR
+    is_site_admin() OR
+    conservatorium_id::text = harmonia_conservatorium_id()
+  );
+
+DROP POLICY IF EXISTS "master_classes_insert_admin" ON master_classes;
+CREATE POLICY "master_classes_insert_admin" ON master_classes
+  FOR INSERT WITH CHECK (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "master_classes_update_admin" ON master_classes;
+CREATE POLICY "master_classes_update_admin" ON master_classes
+  FOR UPDATE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+DROP POLICY IF EXISTS "master_classes_delete_admin" ON master_classes;
+CREATE POLICY "master_classes_delete_admin" ON master_classes
+  FOR DELETE USING (
+    is_conservatorium_admin() AND (is_site_admin() OR conservatorium_id::text = harmonia_conservatorium_id())
+  );
+
+-- ------------------------------------------------------------
+-- D. VERIFICATION
+-- Run this query after applying the schema to confirm all
+-- tables have RLS enabled. The result MUST be empty.
+-- ------------------------------------------------------------
+-- Verify: SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;
+-- Result MUST be empty after running this file.

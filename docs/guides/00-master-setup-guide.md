@@ -771,11 +771,11 @@ When you have a domain (e.g., `harmonia.co.il`):
 
 > **Reference:** [`docs/architecture/06-security.md`](../architecture/06-security.md) documents the security architecture including RLS policy design, role-based access control, and the service_role bypass pattern used by Server Actions.
 
-Row Level Security is critical for production. See [Appendix B](#appendix-b-supabase-rls-policies-full-sql) for the full SQL.
+RLS policies are now embedded in `scripts/db/schema.sql` and applied automatically when you run the schema. **No separate RLS migration step is needed.** To verify, run: `SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;` — result must be empty.
 
-- [ ] Step 1: Go to Supabase SQL Editor (production project)
-- [ ] Step 2: Run the RLS SQL from Appendix B
-- [ ] Step 3: Verify in Supabase Dashboard > Authentication > Policies that all tables show policies
+- [ ] Step 1: Confirm `scripts/db/schema.sql` was applied (it includes all RLS helper functions, `ENABLE ROW LEVEL SECURITY`, `FORCE ROW LEVEL SECURITY`, and all policies)
+- [ ] Step 2: Verify in Supabase Dashboard > Authentication > Policies that all tables show policies
+- [ ] Step 3: Run the verification query above in Supabase SQL Editor — result must be empty
 
 ### 5.5 Production Auth Configuration
 
@@ -846,7 +846,7 @@ The GitHub Actions workflow from Phase 2 handles production deploys via git tags
 
 When `DB_BACKEND=supabase`, **all tables must have Row Level Security enabled**. The service role key (used by Server Actions) bypasses RLS, but any direct client-side Supabase queries do not. RLS is defense-in-depth.
 
-The complete table-by-table RLS SQL is in [Appendix B](#appendix-b-supabase-rls-policies-full-sql) and in [`docs/guides/01-security-setup-guide.md`](01-security-setup-guide.md) Section 1 (with step-by-step instructions for 27 tables).
+RLS is now applied automatically by `schema.sql`. The helper functions (`harmonia_role()`, `harmonia_conservatorium_id()`, `is_site_admin()`, `is_conservatorium_admin()`) are defined in schema.sql. No manual step needed.
 
 **Key policies summary:**
 
@@ -888,9 +888,8 @@ CREATE OR REPLACE FUNCTION is_conservatorium_admin() RETURNS BOOLEAN LANGUAGE SQ
 $$;
 ```
 
-- [ ] Run the helper function SQL in Supabase SQL Editor
-- [ ] Run the full RLS migration from [Appendix B](#appendix-b-supabase-rls-policies-full-sql) or `01-security-setup-guide.md`
-- [ ] Verify with: `SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;` -- result should be **empty**
+- [ ] No manual step needed — RLS is applied automatically when `scripts/db/schema.sql` is run
+- [ ] Verify with: `SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;` — result should be **empty**
 
 ### 6.2 Parent-Child Data Isolation
 
@@ -1084,6 +1083,8 @@ if (process.env.NODE_ENV === 'production') {
 ---
 
 ## Appendix B: Supabase RLS Policies (Full SQL)
+
+> **Note:** As of 2026-03-14, RLS policies are embedded directly in `scripts/db/schema.sql`. Appendix B below is retained for reference and to document the policy design decisions.
 
 > **IMPORTANT:** The complete, production-ready RLS SQL covering **27 tables** with fine-grained per-role policies is in [`docs/guides/01-security-setup-guide.md`](01-security-setup-guide.md) Section 1 (Steps 1-35). That guide includes parent-child isolation, teacher-student assignment scoping, immutable consent records, and append-only compliance logs.
 >
@@ -1661,8 +1662,8 @@ echo "$SUPABASE_SERVICE_KEY" | npx vercel env add SUPABASE_SERVICE_KEY productio
 
 | Task | How |
 |------|-----|
-| Run database migrations | `psql "$DATABASE_URL" -f scripts/db/schema.sql` |
-| Seed the database | `psql "$DATABASE_URL" -f scripts/db/seed.sql` |
+| Run database migrations | `psql "$DATABASE_URL" -f scripts/db/schema.sql` (includes RLS — no separate step needed) |
+| Seed the database | `psql "$DATABASE_URL" -f scripts/db/seed.sql` (run after schema.sql) |
 | Deploy to Vercel | `npx vercel deploy --token "$VERCEL_TOKEN"` |
 | Add env vars to Vercel | `echo "$VAR_VALUE" \| npx vercel env add VAR_NAME production` |
 | Create admin accounts | `SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" node scripts/seed-admins.mjs` |

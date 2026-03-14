@@ -27,6 +27,8 @@
     "db:studio": "npx drizzle-kit studio",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "db:verify-rls": "psql \"$DATABASE_URL\" -f scripts/db/rls-verify.sql",
+    "test:tenant": "vitest run tests/lib/tenant-filter.test.ts tests/lib/db/tenant-scoping.test.ts",
     "prepare": "husky"
   },
   "dependencies": {
