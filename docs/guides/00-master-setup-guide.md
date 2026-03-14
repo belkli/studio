@@ -635,8 +635,10 @@ Before any admin touches the demo, verify that NO real PII is present:
 - [ ] **ID numbers** -- confirm no real Israeli ID numbers (Teudat Zehut) appear anywhere in mock data
 - [ ] **Email addresses** -- confirm all test emails use `@example.com` or `@harmonia.local` (non-deliverable)
 - [ ] **Phone numbers** -- confirm all phone numbers are fictional (`050-000-XXXX` pattern)
-- [ ] **Teacher names** -- the 71 directory teachers use real names from conservatorium websites; verify these are publicly available information (staff listings on public websites)
+- [ ] **Teacher names** -- the 484 directory teachers use real names scraped from conservatorium public websites. This is acceptable for the private demo (shown only to that conservatorium's admin to demonstrate "this is how YOUR school would look"). Teachers will register themselves in production -- scraped data is NEVER published to the internet.
+- [ ] **Teacher photos** -- some are hotlinked from external URLs (alumahod.com, teo.org.il). These are for demo visualization only. In production, teachers upload their own photos.
 - [ ] **Admin data** -- `constadmin.json` contains real manager names, emails, and phone numbers; verify each admin can only see their OWN conservatorium's data
+- [ ] **Right to removal** -- any teacher or admin who objects to being in the demo can request removal. Add contact email to demo disclaimer.
 - [ ] **Privacy policy** (`/privacy`) is up to date with sub-processors table
 - [ ] **Terms of service** (`/terms`) page exists
 
@@ -651,9 +653,9 @@ Add a persistent banner to the staging environment:
 {process.env.NEXT_PUBLIC_IS_DEMO === 'true' && (
   <div className="fixed top-0 inset-x-0 z-[9999] bg-amber-500 text-amber-950
                   text-center text-sm font-medium py-1.5 px-4">
-    סביבת הדגמה -- כל הנתונים סינתטיים ואינם מייצגים אנשים אמיתיים
+    סביבת הדגמה -- המידע מבוסס על מקורות ציבוריים ונועד להדגמה בלבד. לבקשת הסרה: demo@harmonia.co.il
     &nbsp;|&nbsp;
-    Demo environment -- all data is synthetic
+    Demo environment -- data sourced from public websites for demonstration only. Removal requests: demo@harmonia.co.il
   </div>
 )}
 ```
