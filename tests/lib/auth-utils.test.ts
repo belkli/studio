@@ -290,14 +290,14 @@ describe('auth-utils', () => {
         it('createSessionCookie throws when Admin SDK is not configured', async () => {
             const { createSessionCookie } = await import('@/lib/auth-utils');
             await expect(createSessionCookie('fake-id-token')).rejects.toThrow(
-                'Firebase Admin SDK is not configured'
+                'Firebase Admin SDK not configured'
             );
         });
 
         it('revokeSession throws when Admin SDK is not configured', async () => {
             const { revokeSession } = await import('@/lib/auth-utils');
             await expect(revokeSession('uid-123')).rejects.toThrow(
-                'Firebase Admin SDK is not configured'
+                'Firebase Admin SDK not configured'
             );
         });
     });
