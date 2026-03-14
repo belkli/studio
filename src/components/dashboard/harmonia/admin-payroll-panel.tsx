@@ -169,6 +169,7 @@ export function AdminPayrollPanel() {
             value={period}
             onChange={(event) => setPeriod(event.target.value)}
             className="h-9 rounded-md border bg-background px-3"
+            dir="ltr"
           />
         </div>
 
