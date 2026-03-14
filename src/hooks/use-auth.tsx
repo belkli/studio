@@ -1,5 +1,5 @@
 ﻿'use client';
-import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { AuthDomainProvider, useAuthDomain } from '@/hooks/domains/auth-domain';
 import { UsersDomainProvider, useUsersDomain } from '@/hooks/domains/users-domain';
 import { LessonsDomainProvider, useLessonsDomain } from '@/hooks/domains/lessons-domain';
@@ -183,8 +183,36 @@ export const AuthContext = createContext<AuthContextType | null>(null);
  * The main provider component that wraps the application.
  * It nests all 8 domain providers and exposes a unified AuthContext
  * for legacy consumers that have not yet been migrated to domain hooks.
+ *
+ * SSR safety: During server-side rendering, the provider tree is NOT rendered.
+ * Instead, children are rendered directly with the SSR_AUTH_FALLBACK context.
+ * This prevents useRouter/useLocale/useAuth cascading SSR failures.
+ * On the client, the full provider tree mounts after hydration.
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  // useSyncExternalStore with getServerSnapshot = false ensures SSR renders the
+  // fallback, while the client renders the full provider tree. No useEffect needed.
+  const isMounted = useSyncExternalStore(
+    () => () => {},           // subscribe (noop — value never changes)
+    () => true,               // getSnapshot (client: always true)
+    () => false,              // getServerSnapshot (SSR: always false)
+  );
+
+  // During SSR: provide the fallback context directly
+  // This avoids the domain provider cascade that fails during SSR
+  if (!isMounted) {
+    return (
+      <AuthContext.Provider value={SSR_AUTH_FALLBACK}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+
+  // Client-side after mount: render the full provider tree
+  return <AuthProviderClient>{children}</AuthProviderClient>;
+};
+
+const AuthProviderClient = ({ children }: { children: React.ReactNode }) => {
   const roomsRef = useRef<Room[]>([]);
   const userRef = useRef<User | null>(null);
   const conservatoriumInstrumentsRef = useRef<ConservatoriumInstrument[]>([]);
