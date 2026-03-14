@@ -1615,10 +1615,66 @@ export const mockProgressReports: ProgressReport[] = [
   },
 ];
 export const mockAnnouncements: Announcement[] = [
-  { id: 'ann-1', conservatoriumId: 'cons-15', title: 'Summer Concert Registration Open', body: 'Register by April 30 for the summer concert.', targetAudience: 'ALL', channels: ['IN_APP'], sentAt: '2026-03-01T09:00:00.000Z' },
-  { id: 'ann-2', conservatoriumId: 'cons-15', title: 'Teacher Meeting — March 20', body: 'Staff meeting at 17:00 in the main hall.', targetAudience: 'TEACHERS', channels: ['IN_APP', 'EMAIL'], sentAt: '2026-03-05T08:00:00.000Z' },
-  { id: 'ann-3', conservatoriumId: 'cons-15', title: 'Term Invoice Due', body: 'Invoices for term 2 are now due.', targetAudience: 'PARENTS', channels: ['EMAIL'], sentAt: '2026-03-07T10:00:00.000Z' },
-  { id: 'ann-4', conservatoriumId: 'cons-15', title: 'Practice Challenge', body: 'Log 30 consecutive days of practice.', targetAudience: 'STUDENTS', channels: ['IN_APP'], sentAt: '2026-03-10T12:00:00.000Z' },
+  {
+    id: 'ann-1',
+    conservatoriumId: 'cons-15',
+    title: 'פתיחת הרישום לקונצרט הקיץ',
+    body: 'הרישום לקונצרט הקיץ השנתי פתוח! יש להירשם עד ה-30 באפריל. מתאים לכל התלמידים מכל הגילאים.',
+    translations: {
+      en: { title: 'Summer Concert Registration Open', body: 'Registration for the annual summer concert is now open! Please register by April 30. Open to all students of all ages.' },
+      ar: { title: 'تسجيل حفل الصيف مفتوح', body: 'التسجيل في الحفل الصيفي السنوي مفتوح الآن! يرجى التسجيل قبل 30 أبريل. مفتوح لجميع الطلاب من جميع الأعمار.' },
+      ru: { title: 'Открыта регистрация на летний концерт', body: 'Регистрация на ежегодный летний концерт открыта! Зарегистрируйтесь до 30 апреля. Для всех учеников всех возрастов.' },
+    },
+    translatedByAI: false,
+    targetAudience: 'ALL',
+    channels: ['IN_APP'],
+    sentAt: '2026-03-01T09:00:00.000Z',
+  },
+  {
+    id: 'ann-2',
+    conservatoriumId: 'cons-15',
+    title: 'ישיבת מורים — 20 במרץ',
+    body: 'ישיבת צוות תתקיים ב-17:00 באולם הראשי. נוכחות חובה לכל המורים. נא לאשר הגעה.',
+    translations: {
+      en: { title: 'Teacher Meeting — March 20', body: 'Staff meeting at 17:00 in the main hall. Attendance is mandatory for all teachers. Please confirm attendance.' },
+      ar: { title: 'اجتماع المعلمين — 20 مارس', body: 'اجتماع الطاقم في الساعة 17:00 في القاعة الرئيسية. الحضور إلزامي لجميع المعلمين. يرجى تأكيد الحضور.' },
+      ru: { title: 'Собрание учителей — 20 марта', body: 'Собрание персонала в 17:00 в главном зале. Явка обязательна для всех учителей. Пожалуйста, подтвердите присутствие.' },
+    },
+    translatedByAI: false,
+    targetAudience: 'TEACHERS',
+    channels: ['IN_APP', 'EMAIL'],
+    sentAt: '2026-03-05T08:00:00.000Z',
+  },
+  {
+    id: 'ann-3',
+    conservatoriumId: 'cons-15',
+    title: 'תשלום שכר לימוד — מועד אחרון',
+    body: 'חשבוניות לסמסטר ב׳ הופקו ועומדות לתשלום. יש לשלם עד סוף החודש כדי להימנע מקנס איחור.',
+    translations: {
+      en: { title: 'Tuition Invoice Due', body: 'Invoices for semester 2 have been issued and are due for payment. Please pay by end of month to avoid late fees.' },
+      ar: { title: 'فاتورة الرسوم الدراسية مستحقة', body: 'تم إصدار فواتير الفصل الدراسي الثاني وهي مستحقة السداد. يرجى الدفع قبل نهاية الشهر لتجنب رسوم التأخير.' },
+      ru: { title: 'Срок оплаты обучения', body: 'Счета за 2-й семестр выставлены и подлежат оплате. Оплатите до конца месяца, чтобы избежать штрафов за просрочку.' },
+    },
+    translatedByAI: false,
+    targetAudience: 'PARENTS',
+    channels: ['EMAIL'],
+    sentAt: '2026-03-07T10:00:00.000Z',
+  },
+  {
+    id: 'ann-4',
+    conservatoriumId: 'cons-15',
+    title: 'אתגר תרגול — 30 ימים ברצף',
+    body: 'מוזמנים להצטרף לאתגר התרגול החודשי! תעדו 30 ימי תרגול רצופים ותקבלו הכרה מיוחדת בטקס הסיום.',
+    translations: {
+      en: { title: 'Practice Challenge — 30 Consecutive Days', body: 'Join the monthly practice challenge! Log 30 consecutive days of practice and receive special recognition at the end-of-year ceremony.' },
+      ar: { title: 'تحدي التدريب — 30 يومًا متتاليًا', body: 'انضم إلى تحدي التدريب الشهري! سجّل 30 يومًا متتاليًا من التدريب واحصل على تقدير خاص في حفل ختام العام.' },
+      ru: { title: 'Музыкальный челлендж — 30 дней подряд', body: 'Присоединяйтесь к ежемесячному челленджу! Отметьтесь 30 дней подряд и получите особое признание на выпускной церемонии.' },
+    },
+    translatedByAI: false,
+    targetAudience: 'STUDENTS',
+    channels: ['IN_APP'],
+    sentAt: '2026-03-10T12:00:00.000Z',
+  },
 ];
 export const mockFormTemplates: FormTemplate[] = [
   {

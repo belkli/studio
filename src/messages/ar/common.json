@@ -388,7 +388,18 @@
       "PARENTS": "أولياء الأمور",
       "TEACHERS": "المعلمون"
     },
-    "submitBtn": "إرسال الإعلان"
+    "submitBtn": "إرسال الإعلان",
+    "autoTranslateBtn": "الترجمة التلقائية بالذكاء الاصطناعي",
+    "autoTranslating": "جارٍ الترجمة...",
+    "autoTranslateSuccess": "تمت الترجمة إلى 3 لغات بنجاح",
+    "autoTranslateError": "خطأ في الترجمة. حاول مرة أخرى.",
+    "aiDisclaimer": "⚠️ الترجمة مولّدة بالذكاء الاصطناعي وقد تحتوي على أخطاء. يرجى التحقق قبل الإرسال إلى المستلمين.",
+    "aiTranslatedBadge": "مترجَم بالذكاء الاصطناعي — قد يحتوي على عدم دقة"
+  },
+  "RecentAnnouncementsCard": {
+    "title": "الإعلانات الأخيرة",
+    "description": "تحديثات مهمة من المعهد الموسيقي.",
+    "empty": "لا توجد إعلانات حديثة."
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "تعيين موسيقيين للفعالية",

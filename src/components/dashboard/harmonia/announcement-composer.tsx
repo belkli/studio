@@ -4,6 +4,7 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Send } from "lucide-react";
+import { Send, Loader2, Languages } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations, useLocale } from 'next-intl';
+import { translateAnnouncement } from "@/app/actions/translate";
+import type { AnnouncementContent } from "@/lib/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getAnnouncementSchema = (t: any) => z.object({
@@ -35,6 +38,13 @@ export function AnnouncementComposer() {
   const { toast } = useToast();
   const { user, addAnnouncement } = useAuth();
 
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translations, setTranslations] = useState<{
+    en?: AnnouncementContent;
+    ar?: AnnouncementContent;
+    ru?: AnnouncementContent;
+  } | undefined>(undefined);
+
   const announcementSchema = getAnnouncementSchema(t);
 
   const channelOptions = [
@@ -54,14 +64,50 @@ export function AnnouncementComposer() {
     },
   });
 
+  const titleValue = form.watch("title");
+  const bodyValue = form.watch("body");
+  const canTranslate = titleValue.length >= 5 && bodyValue.length >= 10;
+
+  const handleAutoTranslate = async () => {
+    setIsTranslating(true);
+    try {
+      const result = await translateAnnouncement(titleValue, bodyValue);
+      if (result.success && result.translations) {
+        setTranslations(result.translations);
+        toast({
+          title: t('autoTranslateSuccess'),
+          description: t('aiDisclaimer'),
+        });
+      } else {
+        toast({
+          title: t('autoTranslateError'),
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: t('autoTranslateError'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   const onSubmit = (data: AnnouncementFormData) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    addAnnouncement(data as any);
+    const announcementPayload: any = { ...data };
+    if (translations) {
+      announcementPayload.translations = translations;
+      announcementPayload.translatedByAI = true;
+    }
+    addAnnouncement(announcementPayload);
     toast({
       title: t('successToast'),
       description: t('successDesc', { title: data.title }),
     });
     form.reset();
+    setTranslations(undefined);
   };
 
   if (!user || (user.role !== 'conservatorium_admin' && user.role !== 'site_admin')) {
@@ -103,6 +149,25 @@ export function AnnouncementComposer() {
                 </FormItem>
               )}
             />
+
+            <div className="flex flex-col gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!canTranslate || isTranslating}
+                onClick={handleAutoTranslate}
+                className="w-fit"
+              >
+                {isTranslating ? (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Languages className="me-2 h-4 w-4" />
+                )}
+                {isTranslating ? t('autoTranslating') : t('autoTranslateBtn')}
+              </Button>
+              <p className="text-xs text-muted-foreground">{t('aiDisclaimer')}</p>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <FormField
@@ -181,4 +246,3 @@ export function AnnouncementComposer() {
     </Card>
   );
 }
-

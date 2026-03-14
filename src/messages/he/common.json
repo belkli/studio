@@ -388,7 +388,18 @@
       "PARENTS": "הורים",
       "TEACHERS": "מורים"
     },
-    "submitBtn": "שלח הכרזה"
+    "submitBtn": "שלח הכרזה",
+    "autoTranslateBtn": "תרגם אוטומטית עם AI",
+    "autoTranslating": "מתרגם...",
+    "autoTranslateSuccess": "תורגם ל-3 שפות בהצלחה",
+    "autoTranslateError": "שגיאה בתרגום. נסה שוב.",
+    "aiDisclaimer": "⚠️ התרגום נוצר על ידי AI ועלול להכיל שגיאות. יש לוודא לפני שליחה.",
+    "aiTranslatedBadge": "תורגם על ידי AI — ייתכנו אי-דיוקים"
+  },
+  "RecentAnnouncementsCard": {
+    "title": "הכרזות אחרונות",
+    "description": "עדכונים חשובים מהקונסרבטוריון.",
+    "empty": "אין הכרזות אחרונות."
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "שיבוץ מוזיקאים לאירוע",

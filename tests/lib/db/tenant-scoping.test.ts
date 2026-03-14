@@ -125,9 +125,9 @@ describe('LessonRepository — tenant isolation via findByConservatorium()', () 
   beforeEach(async () => {
     db = new MemoryDatabaseAdapter(blankSeed());
 
-    await db.lessons.create({ id: 'lesson-a1', conservatoriumId: CONS_A, teacherId: 'teacher-a', studentId: 'student-a', instrument: 'Piano', status: 'SCHEDULED', startTime: NOW, durationMinutes: 45, type: 'REGULAR', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: false, createdAt: NOW, updatedAt: NOW });
-    await db.lessons.create({ id: 'lesson-a2', conservatoriumId: CONS_A, teacherId: 'teacher-a', studentId: 'student-a2', instrument: 'Guitar', status: 'COMPLETED', startTime: NOW, durationMinutes: 30, type: 'REGULAR', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: NOW, updatedAt: NOW });
-    await db.lessons.create({ id: 'lesson-b1', conservatoriumId: CONS_B, teacherId: 'teacher-b', studentId: 'student-b', instrument: 'Violin', status: 'SCHEDULED', startTime: NOW, durationMinutes: 60, type: 'REGULAR', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: false, createdAt: NOW, updatedAt: NOW });
+    await db.lessons.create({ id: 'lesson-a1', conservatoriumId: CONS_A, teacherId: 'teacher-a', studentId: 'student-a', instrument: 'Piano', status: 'SCHEDULED', startTime: NOW, durationMinutes: 45, type: 'ADHOC', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: false, createdAt: NOW, updatedAt: NOW });
+    await db.lessons.create({ id: 'lesson-a2', conservatoriumId: CONS_A, teacherId: 'teacher-a', studentId: 'student-a2', instrument: 'Guitar', status: 'COMPLETED', startTime: NOW, durationMinutes: 30, type: 'ADHOC', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: true, createdAt: NOW, updatedAt: NOW });
+    await db.lessons.create({ id: 'lesson-b1', conservatoriumId: CONS_B, teacherId: 'teacher-b', studentId: 'student-b', instrument: 'Violin', status: 'SCHEDULED', startTime: NOW, durationMinutes: 60, type: 'ADHOC', bookingSource: 'ADMIN', isVirtual: false, isCreditConsumed: false, createdAt: NOW, updatedAt: NOW });
   });
 
   it('returns only lessons for conservatorium-A', async () => {

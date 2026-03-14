@@ -2682,3 +2682,52 @@ UPDATE lesson_packages SET price_amount = 320 WHERE duration_minutes = 30 AND pa
 UPDATE lesson_packages SET price_amount = 490 WHERE duration_minutes = 45 AND package_type ILIKE '%monthly%';
 UPDATE lesson_packages SET price_amount = 560 WHERE duration_minutes = 60 AND package_type ILIKE '%monthly%';
 UPDATE lesson_packages SET price_amount = 100 WHERE package_type ILIKE '%trial%';
+
+-- ============================================================
+-- ANNOUNCEMENTS (demo data — cons-15 = Hod HaSharon)
+-- NOTE: title/body stored in source language (Hebrew).
+-- Per-locale translations are stored in the application layer (Announcement.translations).
+-- ============================================================
+INSERT INTO announcements (id, conservatorium_id, title, body, target_audience, channels, sent_at)
+SELECT
+  'a0000000-0000-0000-0000-000000000001'::uuid,
+  'a1000000-0000-0000-0000-000000000015'::uuid,
+  'פתיחת הרישום לקונצרט הקיץ',
+  'הרישום לקונצרט הקיץ השנתי פתוח! יש להירשם עד ה-30 באפריל. מתאים לכל התלמידים מכל הגילאים.',
+  'ALL',
+  ARRAY['IN_APP'],
+  '2026-03-01 09:00:00+00'
+WHERE NOT EXISTS (SELECT 1 FROM announcements WHERE id = 'a0000000-0000-0000-0000-000000000001'::uuid);
+
+INSERT INTO announcements (id, conservatorium_id, title, body, target_audience, channels, sent_at)
+SELECT
+  'a0000000-0000-0000-0000-000000000002'::uuid,
+  'a1000000-0000-0000-0000-000000000015'::uuid,
+  'ישיבת מורים — 20 במרץ',
+  'ישיבת צוות תתקיים ב-17:00 באולם הראשי. נוכחות חובה לכל המורים. נא לאשר הגעה.',
+  'TEACHERS',
+  ARRAY['IN_APP', 'EMAIL'],
+  '2026-03-05 08:00:00+00'
+WHERE NOT EXISTS (SELECT 1 FROM announcements WHERE id = 'a0000000-0000-0000-0000-000000000002'::uuid);
+
+INSERT INTO announcements (id, conservatorium_id, title, body, target_audience, channels, sent_at)
+SELECT
+  'a0000000-0000-0000-0000-000000000003'::uuid,
+  'a1000000-0000-0000-0000-000000000015'::uuid,
+  'תשלום שכר לימוד — מועד אחרון',
+  'חשבוניות לסמסטר ב׳ הופקו ועומדות לתשלום. יש לשלם עד סוף החודש כדי להימנע מקנס איחור.',
+  'PARENTS',
+  ARRAY['EMAIL'],
+  '2026-03-07 10:00:00+00'
+WHERE NOT EXISTS (SELECT 1 FROM announcements WHERE id = 'a0000000-0000-0000-0000-000000000003'::uuid);
+
+INSERT INTO announcements (id, conservatorium_id, title, body, target_audience, channels, sent_at)
+SELECT
+  'a0000000-0000-0000-0000-000000000004'::uuid,
+  'a1000000-0000-0000-0000-000000000015'::uuid,
+  'אתגר תרגול — 30 ימים ברצף',
+  'מוזמנים להצטרף לאתגר התרגול החודשי! תעדו 30 ימי תרגול רצופים ותקבלו הכרה מיוחדת בטקס הסיום.',
+  'STUDENTS',
+  ARRAY['IN_APP'],
+  '2026-03-10 12:00:00+00'
+WHERE NOT EXISTS (SELECT 1 FROM announcements WHERE id = 'a0000000-0000-0000-0000-000000000004'::uuid);

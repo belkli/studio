@@ -7,6 +7,7 @@ import type {
     Conservatorium,
     UserTranslations,
     TranslationMeta,
+    AnnouncementContent,
 } from '@/lib/types';
 import { computeConservatoriumSourceHash, computeUserSourceHash } from '@/lib/utils/translation-hash';
 
@@ -301,6 +302,46 @@ Hebrew composer: ${composerHe}`;
             if (raw.composer?.[locale]) composerT[locale as 'en' | 'ar' | 'ru'] = raw.composer[locale];
         }
         return { success: true, translations: { title: titleT, composer: composerT } };
+    } catch (err: unknown) {
+        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+    }
+}
+
+export async function translateAnnouncement(
+    titleHe: string,
+    bodyHe: string,
+    locales: TargetLocale[] = ['en', 'ar', 'ru']
+): Promise<{
+    success: boolean;
+    translations?: { en?: AnnouncementContent; ar?: AnnouncementContent; ru?: AnnouncementContent };
+    error?: string;
+}> {
+    const prompt = `You are a professional translator for a music conservatorium in Israel.
+This is an official announcement from a music conservatorium. Use formal language appropriate for parents, students, and teachers.
+
+Translate the following Hebrew announcement (title and body) into ${locales.map(l => LOCALE_NAMES[l]).join(', ')}.
+
+Return ONLY valid JSON with no markdown or code fences:
+{"en":{"title":"...","body":"..."},"ar":{"title":"...","body":"..."},"ru":{"title":"...","body":"..."}}
+
+Hebrew title: ${titleHe}
+Hebrew body: ${bodyHe}`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        let text = result.response.text().trim();
+        text = text.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+        const raw = JSON.parse(text);
+        const translations: { en?: AnnouncementContent; ar?: AnnouncementContent; ru?: AnnouncementContent } = {};
+        for (const locale of locales) {
+            if (raw[locale]?.title && raw[locale]?.body) {
+                translations[locale as 'en' | 'ar' | 'ru'] = {
+                    title: raw[locale].title,
+                    body: raw[locale].body,
+                };
+            }
+        }
+        return { success: true, translations };
     } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }

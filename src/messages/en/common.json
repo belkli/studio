@@ -357,38 +357,49 @@
   },
   "AnnouncementComposer": {
     "errors": {
-      "titleMin": "Title Min",
-      "bodyMin": "Body Min",
-      "minOneChannel": "Min One Channel"
+      "titleMin": "Title must be at least 5 characters.",
+      "bodyMin": "Message must be at least 10 characters.",
+      "minOneChannel": "Select at least one distribution channel."
     },
     "channels": {
-      "IN_APP": "IN_APP",
-      "EMAIL": "EMAIL",
+      "IN_APP": "In-App Notification",
+      "EMAIL": "Email",
       "SMS": "SMS"
     },
-    "successToast": "Success Toast",
-    "successDesc": "Success Desc",
-    "noPermission": "No Permission",
-    "title": "Title",
-    "description": "Description",
+    "successToast": "Announcement sent successfully!",
+    "successDesc": "Message \"{title}\" sent to selected audience.",
+    "noPermission": "You don't have permission to perform this action.",
+    "title": "Create Announcement",
+    "description": "Fill in the announcement details to send.",
     "formLabels": {
       "title": "Title",
-      "body": "Body",
+      "body": "Message Body",
       "targetAudience": "Target Audience",
-      "channels": "Channels"
+      "channels": "Distribution Channels"
     },
     "placeholders": {
-      "title": "Title",
-      "body": "Body",
-      "targetAudience": "Target Audience"
+      "title": "e.g. Reminder about Hanukkah break",
+      "body": "Message body",
+      "targetAudience": "Select recipients"
     },
     "audiences": {
-      "ALL": "ALL",
-      "STUDENTS": "STUDENTS",
-      "PARENTS": "PARENTS",
-      "TEACHERS": "TEACHERS"
+      "ALL": "All Users",
+      "STUDENTS": "Students",
+      "PARENTS": "Parents",
+      "TEACHERS": "Teachers"
     },
-    "submitBtn": "Submit Btn"
+    "submitBtn": "Send Announcement",
+    "autoTranslateBtn": "Auto-translate with AI",
+    "autoTranslating": "Translating...",
+    "autoTranslateSuccess": "Translated to 3 languages successfully",
+    "autoTranslateError": "Translation error. Try again.",
+    "aiDisclaimer": "⚠️ Translation is AI-generated and may contain errors. Verify before sending to recipients.",
+    "aiTranslatedBadge": "AI-translated — may contain inaccuracies"
+  },
+  "RecentAnnouncementsCard": {
+    "title": "Recent Announcements",
+    "description": "Important updates from the conservatorium.",
+    "empty": "No recent announcements."
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "Dialog Assign Title",
