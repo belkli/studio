@@ -135,6 +135,16 @@ export const saveConsentRecord = withAuth(
   async (data) => {
     const db = await getDb();
 
+    const claims = await verifyAuth();
+    if (data.userId !== claims.uid) {
+      const user = await db.users.findById(claims.uid);
+      const isParentOfTarget = user?.role === 'parent' && user?.childIds?.includes(data.userId);
+      const isAdmin = ['site_admin', 'conservatorium_admin'].includes(claims.role || '');
+      if (!isParentOfTarget && !isAdmin) {
+        return { success: false, error: 'Cannot record consent for another user' };
+      }
+    }
+
     const consentTypes: ConsentType[] = [
       ...(data.consentDataProcessing ? ['DATA_PROCESSING' as ConsentType] : []),
       ...(data.consentTerms ? ['TERMS' as ConsentType] : []),
@@ -188,6 +198,17 @@ export const getConsentStatus = withAuth(
   GetConsentStatusSchema,
   async (data) => {
     const db = await getDb();
+
+    const claims = await verifyAuth();
+    if (data.userId !== claims.uid) {
+      const user = await db.users.findById(claims.uid);
+      const isParentOfTarget = user?.role === 'parent' && user?.childIds?.includes(data.userId);
+      const isAdmin = ['site_admin', 'conservatorium_admin'].includes(claims.role || '');
+      if (!isParentOfTarget && !isAdmin) {
+        return { success: false, error: 'Access denied' };
+      }
+    }
+
     const all = await db.consentRecords.list();
     const records = all.filter((r) => r.userId === data.userId);
     // Build map: only count non-revoked records

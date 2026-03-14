@@ -15,6 +15,13 @@ import type { OAuthProfile } from '@/lib/auth/oauth';
 import { getClientAuthProvider } from '@/lib/auth/client-provider';
 import { createSessionAction } from '@/app/actions/auth';
 
+function sanitizeCallbackUrl(url: string | null): string {
+  if (!url) return '/dashboard';
+  // Must be a relative path (starts with /) and not a protocol-relative URL (//)
+  if (url.startsWith('/') && !url.startsWith('//')) return url;
+  return '/dashboard';
+}
+
 export function LoginForm() {
   const t = useTranslations("Auth")
   const { toast } = useToast()
@@ -22,7 +29,7 @@ export function LoginForm() {
   const locale = useLocale()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const callbackUrl = sanitizeCallbackUrl(searchParams.get('callbackUrl'))
   const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')

@@ -20,9 +20,13 @@ const DASHBOARD_ROUTES = [
   '/dashboard/billing',
   '/dashboard/makeups',
   '/dashboard/alumni',
+  '/dashboard/alumni/profile',
   '/dashboard/ai-reschedule',
   '/dashboard/apply-for-aid',
   '/dashboard/profile',
+  '/dashboard/student/repertoire',
+  '/dashboard/student/practice',
+  '/dashboard/school',
   // Teacher
   '/dashboard/teacher',
   '/dashboard/teacher/profile',
@@ -30,6 +34,7 @@ const DASHBOARD_ROUTES = [
   '/dashboard/teacher/availability',
   '/dashboard/teacher/payroll',
   '/dashboard/teacher/reports',
+  '/dashboard/teacher/exams',
   '/dashboard/practice/upload',
   // Parent
   '/dashboard/family',
@@ -40,6 +45,8 @@ const DASHBOARD_ROUTES = [
   '/dashboard/admin/performances',
   '/dashboard/admin/payroll',
   '/dashboard/admin/playing-school',
+  '/dashboard/admin/playing-school/billing',
+  '/dashboard/admin/playing-school/distribute',
   '/dashboard/admin/rentals',
   '/dashboard/admin/branches',
   '/dashboard/admin/form-builder',
@@ -48,6 +55,9 @@ const DASHBOARD_ROUTES = [
   '/dashboard/admin/waitlists',
   '/dashboard/admin/substitute',
   '/dashboard/admin/scholarships',
+  '/dashboard/admin/ministry',
+  '/dashboard/admin/notifications',
+  '/dashboard/admin/notifications/log',
   '/dashboard/users',
   '/dashboard/master-schedule',
   '/dashboard/reports',
@@ -61,13 +71,20 @@ const DASHBOARD_ROUTES = [
   '/dashboard/messages',
   '/dashboard/notifications',
   '/dashboard/forms',
+  '/dashboard/forms/new',
   '/dashboard/settings',
   '/dashboard/settings/conservatorium',
+  '/dashboard/settings/conservatorium/profile',
   '/dashboard/settings/packages',
   '/dashboard/settings/instruments',
+  '/dashboard/settings/calendar',
+  '/dashboard/settings/cancellation',
+  '/dashboard/settings/notifications',
+  '/dashboard/settings/pricing',
   '/dashboard/ministry-export',
   // Ministry
   '/dashboard/ministry',
+  '/dashboard/ministry/repertoire',
   // Extras
   '/dashboard/whats-new',
   '/dashboard/library',
@@ -93,9 +110,21 @@ const PUBLIC_ROUTES = [
   '/',
   '/login',
   '/about',
+  '/about/alumni',
   '/contact',
   '/privacy',
   '/accessibility',
+  '/register',
+  '/playing-school',
+  '/available-now',
+  '/apply-for-aid',
+  '/apply/matchmaker',
+  '/donate',
+  '/help',
+  '/musicians',
+  '/open-day',
+  '/pending-approval',
+  '/try',
 ] as const;
 
 test.describe('Smoke: public pages load', { tag: '@smoke' }, () => {
@@ -134,6 +163,24 @@ test.describe('Smoke: new conservatorium public profile pages load', { tag: '@sm
       await page.goto(route);
       await page.waitForLoadState('domcontentloaded');
       await expect(page).not.toHaveTitle(/error/i);
+      const body = await page.locator('body').textContent();
+      expect(body!.length).toBeGreaterThan(50);
+    });
+  }
+});
+
+const LOCALE_CHECK_ROUTES = [
+  { locale: 'he', path: '/' },
+  { locale: 'en', path: '/en' },
+  { locale: 'ar', path: '/ar' },
+  { locale: 'ru', path: '/ru' },
+];
+
+test.describe('Smoke: locale landing pages load', { tag: '@smoke' }, () => {
+  for (const { locale, path } of LOCALE_CHECK_ROUTES) {
+    test(`Landing page loads in ${locale}`, async ({ page }) => {
+      await page.goto(path);
+      await page.waitForLoadState('domcontentloaded');
       const body = await page.locator('body').textContent();
       expect(body!.length).toBeGreaterThan(50);
     });

@@ -72,6 +72,7 @@ export default function PackagesSettingsPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<LessonPackage | null>(null);
   const [form, setForm] = useState<FormValues>(DEFAULT_FORM);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const canAccess = user?.role === 'conservatorium_admin';
   useEffect(() => {
@@ -276,7 +277,7 @@ export default function PackagesSettingsPage() {
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:text-destructive"
-                      onClick={() => deleteLessonPackage(item.id)}
+                      onClick={() => setConfirmDeleteId(item.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -446,6 +447,28 @@ export default function PackagesSettingsPage() {
               </Button>
             </DialogFooter>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={!!confirmDeleteId} onOpenChange={(v) => { if (!v) setConfirmDeleteId(null); }}>
+        <DialogContent dir={isRtl ? 'rtl' : 'ltr'} className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t('deleteConfirmTitle')}</DialogTitle>
+            <DialogDescription>{t('deleteConfirmDesc')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDeleteId(null)}>{t('cancel')}</Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (confirmDeleteId) deleteLessonPackage(confirmDeleteId);
+                setConfirmDeleteId(null);
+              }}
+            >
+              {t('delete')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

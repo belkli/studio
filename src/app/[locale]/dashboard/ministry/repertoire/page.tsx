@@ -56,6 +56,7 @@ export default function MinistryRepertoirePage() {
     const [editing, setEditing] = useState<Composition | null>(null);
     const [form, setForm] = useState<FormState>(DEFAULT_FORM);
     const [isPending, startTransition] = useTransition();
+    const [confirmDelete, setConfirmDelete] = useState<Composition | null>(null);
 
     const localeKey = locale as 'he' | 'en' | 'ar' | 'ru';
     const BackIcon = isRtl ? ChevronRight : ChevronLeft;
@@ -162,8 +163,14 @@ export default function MinistryRepertoirePage() {
 
     const handleDelete = (c: Composition) => {
         if (!c.id) return;
-        deleteComposition(c.id);
-        toast({ description: t('deletedDesc', { title: getDisplayTitle(c) }) });
+        setConfirmDelete(c);
+    };
+
+    const handleDeleteConfirmed = () => {
+        if (!confirmDelete?.id) return;
+        deleteComposition(confirmDelete.id);
+        toast({ description: t('deletedDesc', { title: getDisplayTitle(confirmDelete) }) });
+        setConfirmDelete(null);
     };
 
     if (!canAccess) {
@@ -389,6 +396,20 @@ export default function MinistryRepertoirePage() {
                         <Button onClick={handleSave} disabled={!form.titleHe.trim() || !form.composerHe.trim()}>
                             {t('save')}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete confirmation dialog */}
+            <Dialog open={!!confirmDelete} onOpenChange={(v) => { if (!v) setConfirmDelete(null); }}>
+                <DialogContent dir={dir} className="max-w-sm">
+                    <DialogHeader>
+                        <DialogTitle>{t('deleteConfirmTitle')}</DialogTitle>
+                        <DialogDescription>{t('deleteConfirmDesc', { title: confirmDelete ? getDisplayTitle(confirmDelete) : '' })}</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setConfirmDelete(null)}>{t('cancel')}</Button>
+                        <Button variant="destructive" onClick={handleDeleteConfirmed}>{t('delete')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -856,6 +856,9 @@
     "addedDesc": "\"{title}\" has been added to the library.",
     "updatedTitle": "Composition Updated",
     "updatedDesc": "\"{title}\" has been updated.",
-    "deletedDesc": "\"{title}\" has been deleted."
+    "deletedDesc": "\"{title}\" has been deleted.",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete Composition",
+    "deleteConfirmDesc": "Are you sure you want to delete \"{title}\"? This action cannot be undone."
   }
 }

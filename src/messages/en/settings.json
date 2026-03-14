@@ -218,7 +218,10 @@
       "empty": "No packages created yet.",
       "premium": "Premium",
       "premiumPackage": "Premium teachers only",
-      "premiumPackageHint": "When enabled, this package can only be booked with premium-flagged teachers (shown with a ⭐ badge). Set a teacher as premium in their user profile."
+      "premiumPackageHint": "When enabled, this package can only be booked with premium-flagged teachers (shown with a ⭐ badge). Set a teacher as premium in their user profile.",
+      "cancel": "Cancel",
+      "deleteConfirmTitle": "Delete Package",
+      "deleteConfirmDesc": "Are you sure you want to delete this package? This action cannot be undone."
     },
     "linkedAccounts": {
       "title": "Linked accounts",

@@ -856,6 +856,9 @@
     "addedDesc": "تمت إضافة \"{title}\" إلى المكتبة.",
     "updatedTitle": "تم تحديث المقطوعة",
     "updatedDesc": "تم تحديث \"{title}\".",
-    "deletedDesc": "تم حذف \"{title}\"."
+    "deletedDesc": "تم حذف \"{title}\".",
+    "delete": "حذف",
+    "deleteConfirmTitle": "حذف المقطوعة",
+    "deleteConfirmDesc": "هل أنت متأكد من حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء."
   }
 }

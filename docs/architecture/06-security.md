@@ -96,6 +96,54 @@ Template in `firestore.rules` enforces:
 
 ---
 
+## 4a. Supabase Row Level Security (RLS) Requirements
+
+When the Supabase backend is used (`DB_BACKEND=supabase`), all tables **must** have RLS enabled and policies deployed before going to production. Server-side access via the service role key bypasses RLS, but direct client queries (e.g., Supabase JS client in the browser) do not.
+
+### Required RLS Policies
+
+| Table | Policy | Rule |
+|-------|--------|------|
+| `users` | `SELECT own row` | `auth.uid() = id` |
+| `users` | `SELECT by conservatorium admin` | `role IN ('conservatorium_admin', 'site_admin')` AND `conservatorium_id = auth.jwt()->>'conservatoriumId'` |
+| `lessons` | `SELECT/INSERT/UPDATE` | `teacher_id = auth.uid()` OR `student_id = auth.uid()` OR admin role |
+| `packages` | `SELECT` | `student_id = auth.uid()` OR parent of student OR admin role |
+| `compositions` | `SELECT` | Public read; write restricted to `ministry_director`, `site_admin` |
+| `consent_records` | `SELECT/INSERT` | `user_id = auth.uid()` |
+| `compliance_logs` | `INSERT` | Any authenticated user (own records only); `SELECT` restricted to `site_admin` |
+| `conservatoriums` | `SELECT` | Public read; write restricted to `conservatorium_admin` for own row, `site_admin` for all |
+
+### Enabling RLS
+
+```sql
+-- Enable RLS on all tables (run once per table)
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lessons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE packages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE compositions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consent_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE compliance_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conservatoriums ENABLE ROW LEVEL SECURITY;
+
+-- Example policy: users can read their own row
+CREATE POLICY "users_select_own" ON users
+  FOR SELECT USING (auth.uid()::text = id);
+
+-- Example policy: conservatorium admins can read users in their conservatorium
+CREATE POLICY "users_select_admin" ON users
+  FOR SELECT USING (
+    auth.jwt()->>'role' IN ('conservatorium_admin', 'site_admin')
+    AND (
+      auth.jwt()->>'role' = 'site_admin'
+      OR conservatorium_id = auth.jwt()->>'conservatoriumId'
+    )
+  );
+```
+
+> **Deployment note:** The service role key (used by Server Actions via `src/lib/db/supabase-adapter.ts`) bypasses RLS. Policies protect against direct Supabase client access or misconfigured credential leaks. Always verify RLS is active in the Supabase dashboard under **Authentication → Policies** before production launch.
+
+---
+
 ## 5. Security Headers
 
 Active in `next.config.ts`:

@@ -856,6 +856,9 @@
     "addedDesc": "«{title}» добавлено в библиотеку.",
     "updatedTitle": "Произведение обновлено",
     "updatedDesc": "«{title}» обновлено.",
-    "deletedDesc": "«{title}» удалено."
+    "deletedDesc": "«{title}» удалено.",
+    "delete": "Удалить",
+    "deleteConfirmTitle": "Удалить произведение",
+    "deleteConfirmDesc": "Вы уверены, что хотите удалить «{title}»? Это действие нельзя отменить."
   }
 }

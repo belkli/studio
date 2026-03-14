@@ -856,6 +856,9 @@
     "addedDesc": "היצירה \"{title}\" נוספה לספרייה.",
     "updatedTitle": "יצירה עודכנה",
     "updatedDesc": "היצירה \"{title}\" עודכנה.",
-    "deletedDesc": "היצירה \"{title}\" נמחקה."
+    "deletedDesc": "היצירה \"{title}\" נמחקה.",
+    "delete": "מחיקה",
+    "deleteConfirmTitle": "מחיקת יצירה",
+    "deleteConfirmDesc": "האם אתה בטוח שברצונך למחוק את \"{title}\"? פעולה זו אינה הפיכה."
   }
 }

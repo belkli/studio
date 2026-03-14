@@ -1,5 +1,5 @@
 
-import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, InstrumentInventory, PerformanceBooking, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental, EventProduction } from './types';
+import type { User, FormSubmission, Notification, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, WaitlistEntry, FormTemplate, AuditLogEntry, InstrumentInventory, PerformanceBooking, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, PerformanceGenre, Alumnus, Masterclass, DonationCause, DonationRecord, InstrumentRental, EventProduction, MakeupCredit } from './types';
 import constAdminData from '../../docs/data/constadmin.json';
 import rawCompositions from './data.json';
 import rawConservatoriums from '../../docs/data/conservatoriums.json';
@@ -1134,6 +1134,47 @@ const additionalParents: User[] = [
     { id: 'parent-user-5', name: 'לימור ברגר', email: 'parent5@example.com', role: 'parent', conservatoriumId: 'cons-66', conservatoriumName: 'קריית אונו', avatarUrl: 'https://i.pravatar.cc/150?u=parent5', idNumber: '922222925', phone: '054-9999993', approved: true, notifications: [], achievements: [], createdAt: '2024-09-01T12:00:00.000Z' },
 ];
 
+// ── Playing school student and school coordinator (FIX-16) ─────────
+const playingSchoolAndCoordinator: User[] = [
+  {
+    id: 'ps-student-1',
+    name: 'אורי שמואל',
+    email: 'ps.student@example.com',
+    role: 'student',
+    accountType: 'PLAYING_SCHOOL',
+    conservatoriumId: 'cons-15',
+    conservatoriumName: 'הוד השרון',
+    approved: true,
+    playingSchoolInfo: {
+      schoolName: 'תיכון הדרים, הוד השרון',
+      schoolSymbol: '44570001',
+      instrument: 'חליל',
+      instrumentReceived: true,
+      receivedAt: '2025-09-15',
+      programType: 'GROUP',
+      municipalSubsidyPercent: 30,
+      ministrySubsidyPercent: 20,
+      parentYearlyContribution: 1200,
+      teacherName: 'מרים כהן',
+    },
+    notifications: [],
+    achievements: [],
+    createdAt: '2025-09-01T00:00:00.000Z',
+  },
+  {
+    id: 'school-coordinator-1',
+    name: 'רינת כספי',
+    email: 'coordinator@example.com',
+    role: 'school_coordinator',
+    conservatoriumId: 'cons-15',
+    conservatoriumName: 'הוד השרון',
+    approved: true,
+    notifications: [],
+    achievements: [],
+    createdAt: '2025-09-01T00:00:00.000Z',
+  },
+];
+
 // Generate Conservatorium Admins from the JSON file, adding the logged-in user for "הוד השרון"
 const conservatoriumAdminUsers: User[] = constAdminData.map(admin => {
     if (admin.location === 'הוד השרון') {
@@ -1223,6 +1264,7 @@ export const mockUsers: User[] = [
     ...directoryTeacherUsers,
     ...additionalStudents,
     ...additionalParents,
+    ...playingSchoolAndCoordinator,
 ].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i); // Remove duplicates
 
 export const mockFormSubmissions: FormSubmission[] = [
@@ -1235,6 +1277,11 @@ export const mockFormSubmissions: FormSubmission[] = [
     { id: 'form-106', formType: 'מבחן שלב', academicYear: 'תשפ"ד', grade: 'י', studentId: studentUser.id, studentName: studentUser.name, status: 'APPROVED', submissionDate: '2026-02-10', totalDuration: '12:00', repertoire: [{ id: 'form106-r1', composer: 'יוהאן סבסטיאן באך', title: 'אינבנציה דו-קולית מס\' 1 בדו מז\'ור', duration: '02:30', genre: 'בארוק' }, { id: 'form106-r2', composer: 'קלמנטי', title: 'סונטינה אופ. 36 מס\' 3', duration: '05:00', genre: 'קלאסי' }, { id: 'form106-r3', composer: 'קרול צ\'רני', title: 'אטיוד אופ. 299 מס\' 1', duration: '04:30', genre: 'תרגיל' }], conservatoriumName: studentUser.conservatoriumName, conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', applicantDetails: { birthDate: studentUser.birthDate, city: studentUser.city, gender: studentUser.gender, phone: studentUser.phone }, schoolDetails: { schoolName: studentUser.schoolName, hasMusicMajor: true, isMajorParticipant: true, plansTheoryExam: false }, teacherDetails: { name: 'מרים כהן', yearsWithTeacher: 10 }, instrumentDetails: { instrument: 'פסנתר', yearsOfStudy: 10 } },
     { id: 'form-107', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'יב', studentId: 'student-user-3', studentName: 'דנה אורן', status: 'APPROVED', submissionDate: '2026-02-14', totalDuration: '25:00', repertoire: [{ id: 'form107-r1', composer: 'פרדריק שופן', title: 'בלדה מס\' 1 בסול מינור, אופ. 23', duration: '08:00', genre: 'רומנטי' }, { id: 'form107-r2', composer: 'לודוויג ואן בטהובן', title: 'סונטה אופ. 57 "אפסיונטה"', duration: '17:00', genre: 'קלאסי' }], conservatoriumName: 'הוד השרון', conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', applicantDetails: { birthDate: '2007-03-22', city: 'הוד השרון', gender: 'נקבה', phone: '052-3333333' }, schoolDetails: { schoolName: 'תיכון הדרים, הוד השרון', hasMusicMajor: true, isMajorParticipant: true, plansTheoryExam: true }, teacherDetails: { name: 'מרים כהן', yearsWithTeacher: 7 }, instrumentDetails: { instrument: 'פסנתר', yearsOfStudy: 7 } },
     { id: 'form-108', formType: 'מלגת הצטיינות', academicYear: 'תשפ"ד', grade: 'יב', studentId: 'student-user-6', studentName: 'נועם שדה', status: 'APPROVED', submissionDate: '2026-02-20', totalDuration: '00:00', repertoire: [], conservatoriumName: 'קריית אונו', conservatoriumManagerName: 'רחל שמיר (מנהלת)', applicantDetails: { birthDate: '2006-09-11', city: 'קריית אונו', gender: 'זכר', phone: '054-6666666' }, schoolDetails: { schoolName: 'תיכון עמל, קריית אונו', hasMusicMajor: false, isMajorParticipant: false, plansTheoryExam: false }, teacherDetails: { name: 'בר ערמון', yearsWithTeacher: 5 }, instrumentDetails: { instrument: 'קלרינט', yearsOfStudy: 5 } },
+    // FIX-14: PENDING_TEACHER status
+    { id: 'form-109', formType: 'רסיטל בגרות', academicYear: 'תשפ"ד', grade: 'י', studentId: 'student-user-3', studentName: 'נועם בן-דוד', teacherId: 'teacher-user-1', status: 'PENDING_TEACHER', submissionDate: '2026-03-10', totalDuration: '10:00', repertoire: [{ id: 'form109-r1', composer: 'יוהאן סבסטיאן באך', title: 'מינואט בסול מז\'ור', duration: '02:30', genre: 'בארוק' }, { id: 'form109-r2', composer: 'לודוויג ואן בטהובן', title: 'סונטינה בסול מז\'ור', duration: '07:30', genre: 'קלאסי' }], conservatoriumName: 'הוד השרון', conservatoriumManagerName: 'יעל פלסטניאר (מנהלת)', instrumentDetails: { instrument: 'פסנתר', yearsOfStudy: 5 } },
+    // FIX-22: exam_registration forms for teacher-user-1 and teacher-user-2
+    { id: 'form-110', formType: 'exam_registration', academicYear: 'תשפ"ד', grade: 'יא', studentId: 'student-user-1', studentName: 'אריאל לוי', teacherId: 'teacher-user-1', status: 'PENDING_ADMIN', submissionDate: '2026-03-05', totalDuration: '00:00', repertoire: [], conservatoriumName: 'הוד השרון', examLevel: 'level_2', examType: 'practical', teacherDeclaration: true, instrument: 'פסנתר' },
+    { id: 'form-111', formType: 'exam_registration', academicYear: 'תשפ"ד', grade: 'י', studentId: 'student-user-5', studentName: 'אריק שמש', teacherId: 'teacher-user-2', status: 'DRAFT', submissionDate: '2026-03-12', totalDuration: '00:00', repertoire: [], conservatoriumName: 'הוד השרון', examLevel: 'level_1', examType: 'practical', teacherDeclaration: false, instrument: 'חליל צד' },
 ];
 export const mockConservatoriumInstruments: ConservatoriumInstrument[] = [
   { id: 'piano', conservatoriumId: 'cons-15', names: { he: 'פסנתר', en: 'Piano', ru: 'Фортепиано', ar: 'بيانو' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
@@ -1245,6 +1292,10 @@ export const mockConservatoriumInstruments: ConservatoriumInstrument[] = [
   { id: 'drums', conservatoriumId: 'cons-15', names: { he: 'תופים', en: 'Drums', ru: 'Ударные', ar: 'طبول' }, isActive: true, teacherCount: 0, availableForRegistration: true, availableForRental: true },
   { id: 'saxophone', conservatoriumId: 'cons-15', names: { he: 'סקסופון', en: 'Saxophone', ru: 'Саксофон', ar: 'ساكسوفون' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
   { id: 'clarinet', conservatoriumId: 'cons-15', names: { he: 'קלרינט', en: 'Clarinet', ru: 'Кларнет', ar: 'كلارينيت' }, isActive: true, teacherCount: 1, availableForRegistration: true, availableForRental: true },
+  // cons-66 instruments (FIX: needed for enrollment wizard)
+  { id: 'piano-66', conservatoriumId: 'cons-66', names: { he: 'פסנתר', en: 'Piano', ru: 'Фортепиано', ar: 'بيانو' }, isActive: true, teacherCount: 3, availableForRegistration: true, availableForRental: true },
+  { id: 'violin-66', conservatoriumId: 'cons-66', names: { he: 'כינור', en: 'Violin', ru: 'Скрипка', ar: 'كمان' }, isActive: true, teacherCount: 2, availableForRegistration: true, availableForRental: false },
+  { id: 'clarinet-66', conservatoriumId: 'cons-66', names: { he: 'קלרינט', en: 'Clarinet', ru: 'Кларнет', ar: 'كلارينيت' }, isActive: true, teacherCount: 2, availableForRegistration: true, availableForRental: false },
 ];
 
 export const mockLessonPackages: LessonPackage[] = [
@@ -1325,7 +1376,83 @@ export const mockLessonPackages: LessonPackage[] = [
   },
 ];
 
-export const mockPackages: Package[] = [];
+export const mockPackages: Package[] = [
+  {
+    id: 'pkg-active-1',
+    conservatoriumId: 'cons-15',
+    studentId: 'student-user-1',
+    type: 'PACK_10',
+    title: 'Pack of 10 Lessons',
+    description: '10 lesson credits, valid through 2026-08-31',
+    totalCredits: 10,
+    usedCredits: 3,
+    price: 1200,
+    paymentStatus: 'PAID',
+    validFrom: '2026-01-01',
+    validUntil: '2026-08-31',
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'pkg-active-2',
+    conservatoriumId: 'cons-15',
+    studentId: 'student-user-2',
+    type: 'PACK_5',
+    title: 'Pack of 5 Lessons',
+    description: '5 lesson credits, valid through 2026-06-30',
+    totalCredits: 5,
+    usedCredits: 1,
+    price: 650,
+    paymentStatus: 'PAID',
+    validFrom: '2026-02-01',
+    validUntil: '2026-06-30',
+    createdAt: '2026-02-01T00:00:00.000Z',
+  },
+  {
+    id: 'pkg-active-3',
+    conservatoriumId: 'cons-15',
+    studentId: 'student-user-3',
+    type: 'PACK_5_PREMIUM',
+    title: 'Premium Pack of 5 Lessons',
+    description: '5 premium lesson credits with premium teacher',
+    totalCredits: 5,
+    usedCredits: 0,
+    price: 900,
+    paymentStatus: 'PAID',
+    validFrom: '2026-03-01',
+    validUntil: '2026-09-01',
+    createdAt: '2026-03-01T00:00:00.000Z',
+  },
+  {
+    id: 'pkg-expired-1',
+    conservatoriumId: 'cons-15',
+    studentId: 'student-user-4',
+    type: 'PACK_5',
+    title: 'Pack of 5 Lessons (Expired)',
+    description: '5 lesson credits — expired',
+    totalCredits: 5,
+    usedCredits: 5,
+    price: 650,
+    paymentStatus: 'PAID',
+    validFrom: '2025-06-01',
+    validUntil: '2025-12-31',
+    createdAt: '2025-06-01T00:00:00.000Z',
+  },
+  {
+    id: 'pkg-trial-1',
+    conservatoriumId: 'cons-15',
+    studentId: 'student-user-5',
+    type: 'TRIAL',
+    title: 'Trial Lesson',
+    description: '1 trial lesson credit',
+    totalCredits: 1,
+    usedCredits: 0,
+    price: 100,
+    paymentStatus: 'PAID',
+    validFrom: '2026-03-10',
+    validUntil: '2026-04-10',
+    createdAt: '2026-03-10T00:00:00.000Z',
+  },
+];
 export const mockLessons: LessonSlot[] = [
     { id: 'lesson-1', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2024-03-04T16:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false },
     { id: 'lesson-2', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: '2024-03-05T17:00:00.000Z', durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'SCHEDULED', createdAt: '2024-03-03T12:00:00.000Z', updatedAt: '2024-03-03T12:00:00.000Z', isCreditConsumed: false, branchId: 'branch-1' },
@@ -1342,21 +1469,228 @@ export const mockLessons: LessonSlot[] = [
     { id: 'lesson-11', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2026-02-25T16:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', roomId: 'room-1', isVirtual: false, status: 'COMPLETED', createdAt: '2026-02-20T12:00:00.000Z', updatedAt: '2026-02-25T16:45:00.000Z', isCreditConsumed: true },
     { id: 'lesson-12', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-2', instrument: 'כינור', startTime: '2026-02-26T17:00:00.000Z', durationMinutes: 60, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-2', isVirtual: false, status: 'COMPLETED', createdAt: '2026-02-20T12:00:00.000Z', updatedAt: '2026-02-26T18:00:00.000Z', isCreditConsumed: true },
     { id: 'lesson-13', conservatoriumId: 'cons-15', teacherId: 'dir-teacher-006', studentId: 'student-user-4', instrument: 'פסנתר', startTime: '2026-03-01T15:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'PARENT', roomId: 'room-1', isVirtual: false, status: 'COMPLETED', createdAt: '2026-02-20T12:00:00.000Z', updatedAt: '2026-03-01T15:45:00.000Z', isCreditConsumed: true },
+    // ── Additional lesson types for QA coverage ──
+    { id: 'lesson-14', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2026-03-20T14:00:00.000Z', durationMinutes: 45, type: 'MAKEUP', bookingSource: 'AUTO_MAKEUP', makeupCreditId: 'mc-credit-1', isVirtual: false, status: 'SCHEDULED', isCreditConsumed: false, createdAt: '2026-03-09T10:00:00.000Z', updatedAt: '2026-03-09T10:00:00.000Z' },
+    { id: 'lesson-15', conservatoriumId: 'cons-15', teacherId: 'teacher-user-2', studentId: 'student-user-5', instrument: 'חליל צד', startTime: '2026-03-18T16:00:00.000Z', durationMinutes: 45, type: 'TRIAL', bookingSource: 'STUDENT_SELF', isVirtual: false, status: 'SCHEDULED', isCreditConsumed: false, createdAt: '2026-03-10T10:00:00.000Z', updatedAt: '2026-03-10T10:00:00.000Z' },
+    { id: 'lesson-16', conservatoriumId: 'cons-15', teacherId: 'teacher-user-1', studentId: 'student-user-1', instrument: 'פסנתר', startTime: '2026-03-07T16:00:00.000Z', durationMinutes: 45, type: 'RECURRING', bookingSource: 'STUDENT_SELF', isVirtual: false, status: 'CANCELLED_TEACHER', cancelledAt: '2026-03-06T09:00:00.000Z', cancelledBy: 'teacher-user-1', cancellationReason: 'Teacher illness', isCreditConsumed: false, createdAt: '2026-03-01T00:00:00.000Z', updatedAt: '2026-03-06T09:00:00.000Z' },
 ];
-export const mockInvoices: Invoice[] = [];
-export const mockPracticeLogs: PracticeLog[] = [];
-export const mockAssignedRepertoire: AssignedRepertoire[] = [];
-export const mockLessonNotes: LessonNote[] = [];
-export const mockMessageThreads: MessageThread[] = [];
-export const mockProgressReports: ProgressReport[] = [];
-export const mockAnnouncements: Announcement[] = [];
-export const mockFormTemplates: FormTemplate[] = [];
-export const mockAuditLog: AuditLogEntry[] = [];
+export const mockInvoices: Invoice[] = [
+  {
+    id: 'inv-1',
+    invoiceNumber: 'INV-2026-001',
+    conservatoriumId: 'cons-15',
+    payerId: 'parent-user-1',
+    lineItems: [{ description: 'Lesson Package (10 × 45min)', total: 1200 }],
+    subtotal: 1200,
+    vatRate: 0.18,
+    vatAmount: 216,
+    total: 1416,
+    status: 'PAID',
+    dueDate: '2026-02-01',
+    paidAt: '2026-01-28',
+    paymentMethod: 'CREDIT_CARD',
+    createdAt: '2026-01-15T00:00:00.000Z',
+  },
+  {
+    id: 'inv-2',
+    invoiceNumber: 'INV-2026-002',
+    conservatoriumId: 'cons-15',
+    payerId: 'parent-user-2',
+    lineItems: [{ description: 'Lesson Package (5 × 45min)', total: 650 }],
+    subtotal: 650,
+    vatRate: 0.18,
+    vatAmount: 117,
+    total: 767,
+    status: 'SENT',
+    dueDate: '2026-03-30',
+    createdAt: '2026-03-01T00:00:00.000Z',
+  },
+  {
+    id: 'inv-3',
+    invoiceNumber: 'INV-2026-003',
+    conservatoriumId: 'cons-15',
+    payerId: 'parent-user-3',
+    lineItems: [{ description: 'Lesson Package (5 × 45min)', total: 650 }],
+    subtotal: 650,
+    vatRate: 0.18,
+    vatAmount: 117,
+    total: 767,
+    status: 'OVERDUE',
+    dueDate: '2026-02-01',
+    createdAt: '2026-01-10T00:00:00.000Z',
+  },
+  {
+    id: 'inv-4',
+    invoiceNumber: 'INV-2026-004',
+    conservatoriumId: 'cons-15',
+    payerId: 'parent-user-1',
+    lineItems: [{ description: 'Annual Plan (45min × 36 lessons)', total: 4320 }],
+    subtotal: 4320,
+    vatRate: 0.18,
+    vatAmount: 778,
+    total: 5098,
+    status: 'DRAFT',
+    dueDate: '2026-04-01',
+    createdAt: '2026-03-10T00:00:00.000Z',
+  },
+  {
+    id: 'inv-5',
+    invoiceNumber: 'INV-2025-099',
+    conservatoriumId: 'cons-15',
+    payerId: 'parent-user-2',
+    lineItems: [{ description: 'Lesson Package (5 × 60min)', total: 750 }],
+    subtotal: 750,
+    vatRate: 0.18,
+    vatAmount: 135,
+    total: 885,
+    status: 'CANCELLED',
+    dueDate: '2025-12-01',
+    createdAt: '2025-11-15T00:00:00.000Z',
+  },
+];
+export const mockPracticeLogs: PracticeLog[] = [
+  { id: 'plog-1', studentId: 'student-user-1', conservatoriumId: 'cons-15', date: '2026-03-13', durationMinutes: 45, mood: 'GREAT', pieces: [{ title: 'Nocturne Op.9 No.2', composerId: 'chopin' }], streakContribution: true, pointsAwarded: 45, createdAt: '2026-03-13T20:00:00.000Z' },
+  { id: 'plog-2', studentId: 'student-user-1', conservatoriumId: 'cons-15', date: '2026-03-12', durationMinutes: 30, mood: 'OKAY', streakContribution: true, pointsAwarded: 30, createdAt: '2026-03-12T19:30:00.000Z' },
+  { id: 'plog-3', studentId: 'student-user-1', conservatoriumId: 'cons-15', date: '2026-03-11', durationMinutes: 60, mood: 'HARD', streakContribution: true, pointsAwarded: 60, createdAt: '2026-03-11T18:00:00.000Z' },
+  { id: 'plog-4', studentId: 'student-user-2', conservatoriumId: 'cons-15', date: '2026-03-13', durationMinutes: 30, mood: 'GREAT', streakContribution: true, pointsAwarded: 30, createdAt: '2026-03-13T21:00:00.000Z' },
+];
+export const mockAssignedRepertoire: AssignedRepertoire[] = [
+  { id: 'rep-1', studentId: 'student-user-1', compositionId: 'comp-db-0', status: 'LEARNING', assignedAt: '2026-01-10T00:00:00.000Z' },
+  { id: 'rep-2', studentId: 'student-user-1', compositionId: 'comp-db-1', status: 'POLISHING', assignedAt: '2025-09-01T00:00:00.000Z' },
+  { id: 'rep-3', studentId: 'student-user-1', compositionId: 'comp-db-2', status: 'PERFORMANCE_READY', assignedAt: '2025-06-01T00:00:00.000Z' },
+  { id: 'rep-4', studentId: 'student-user-2', compositionId: 'comp-db-3', status: 'COMPLETED', assignedAt: '2025-03-01T00:00:00.000Z', completedAt: '2025-12-15T00:00:00.000Z' },
+];
+export const mockLessonNotes: LessonNote[] = [
+  {
+    id: 'note-1', slotId: 'lesson-11', lessonSlotId: 'lesson-11',
+    teacherId: 'teacher-user-1', studentId: 'student-user-1',
+    lessonDate: '2026-02-25T16:00:00.000Z',
+    lessonSummary: 'Worked on Chopin Nocturne Op.9 phrasing and pedaling.',
+    summary: 'Worked on Chopin Nocturne Op.9 phrasing and pedaling.',
+    homeworkAssignment: { description: 'Practice mm. 1-16 slowly', pieces: ['Nocturne Op.9'], specificFocusAreas: ['pedaling'] },
+    isSharedWithStudent: true, isSharedWithParent: true,
+    createdAt: '2026-02-25T17:00:00.000Z',
+  },
+  {
+    id: 'note-2', slotId: 'lesson-12', lessonSlotId: 'lesson-12',
+    teacherId: 'teacher-user-1', studentId: 'student-user-2',
+    lessonDate: '2026-02-26T17:00:00.000Z',
+    lessonSummary: 'Worked on Mozart Sonata K.545 first movement.',
+    summary: 'Worked on Mozart Sonata K.545 first movement.',
+    studioNote: 'Struggling with left-hand independence. May need targeted exercises next week.',
+    technicalFlags: [{ flag: 'TECHNIQUE', detail: 'Left-hand independence below standard' }],
+    teacherMood: 'PRODUCTIVE',
+    isSharedWithStudent: false, isSharedWithParent: false,
+    createdAt: '2026-02-26T18:30:00.000Z',
+  },
+];
+export const mockMessageThreads: MessageThread[] = [
+  {
+    id: 'thread-1',
+    participants: ['teacher-user-1', 'parent-user-1'],
+    lessonSlotId: 'lesson-11',
+    messages: [
+      { senderId: 'teacher-user-1', body: 'Ariel made great progress on Chopin this week!', sentAt: '2026-02-25T17:30:00.000Z' },
+      { senderId: 'parent-user-1', body: 'Thank you! He has been practicing every day.', sentAt: '2026-02-25T18:00:00.000Z', readAt: '2026-02-25T18:05:00.000Z' },
+    ],
+  },
+];
+export const mockProgressReports: ProgressReport[] = [
+  {
+    id: 'report-1',
+    studentId: 'student-user-1',
+    teacherId: 'teacher-user-1',
+    period: 'Spring 2026',
+    reportText: 'אריאל מציג התקדמות מרשימה בטכניקת הפדל ובפיתוח הביטוי המוסיקלי. ממשיך לעבוד על עצמאות יד שמאל.',
+    createdAt: '2026-03-01T10:00:00.000Z',
+    sentAt: '2026-03-02T09:00:00.000Z',
+  },
+  {
+    id: 'report-2',
+    studentId: 'student-user-2',
+    teacherId: 'teacher-user-1',
+    period: 'Spring 2026',
+    reportText: 'תמר עובדת קשה על הסונטה של מוצרט. יש שיפור ניכר בקריאת התווים אך עצמאות יד שמאל עדיין דורשת תשומת לב.',
+    createdAt: '2026-03-01T11:00:00.000Z',
+  },
+];
+export const mockAnnouncements: Announcement[] = [
+  { id: 'ann-1', conservatoriumId: 'cons-15', title: 'Summer Concert Registration Open', body: 'Register by April 30 for the summer concert.', targetAudience: 'ALL', channels: ['IN_APP'], sentAt: '2026-03-01T09:00:00.000Z' },
+  { id: 'ann-2', conservatoriumId: 'cons-15', title: 'Teacher Meeting — March 20', body: 'Staff meeting at 17:00 in the main hall.', targetAudience: 'TEACHERS', channels: ['IN_APP', 'EMAIL'], sentAt: '2026-03-05T08:00:00.000Z' },
+  { id: 'ann-3', conservatoriumId: 'cons-15', title: 'Term Invoice Due', body: 'Invoices for term 2 are now due.', targetAudience: 'PARENTS', channels: ['EMAIL'], sentAt: '2026-03-07T10:00:00.000Z' },
+  { id: 'ann-4', conservatoriumId: 'cons-15', title: 'Practice Challenge', body: 'Log 30 consecutive days of practice.', targetAudience: 'STUDENTS', channels: ['IN_APP'], sentAt: '2026-03-10T12:00:00.000Z' },
+];
+export const mockFormTemplates: FormTemplate[] = [
+  {
+    id: 'tmpl-recital-1',
+    conservatoriumId: 'cons-15',
+    title: 'רסיטל בגרות — תבנית סטנדרטית',
+    description: 'טופס הגשת רפרטואר לבחינת בגרות מעשית במוסיקה',
+    fields: [
+      { id: 'instrument', label: { he: 'כלי נגינה', en: 'Instrument' }, type: 'instrument_select', required: true, order: 1 },
+      { id: 'grade', label: { he: 'כיתה', en: 'Grade' }, type: 'select', required: true, order: 2, options: [{ value: 'י', label: { he: 'י', en: '10' } }, { value: 'יא', label: { he: 'יא', en: '11' } }, { value: 'יב', label: { he: 'יב', en: '12' } }] },
+      { id: 'notes', label: { he: 'הערות', en: 'Notes' }, type: 'textarea', required: false, order: 3 },
+    ],
+    workflow: [
+      { id: 'step-teacher', stepIndex: 1, roleName: 'Teacher Approval', requiredRole: 'teacher' },
+      { id: 'step-admin', stepIndex: 2, roleName: 'Admin Approval', requiredRole: 'conservatorium_admin' },
+    ],
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'tmpl-exam-reg-1',
+    conservatoriumId: 'cons-15',
+    title: 'רישום לבחינה — מבחן שלב',
+    description: 'טופס רישום לבחינת שלב',
+    fields: [
+      { id: 'exam_level', label: { he: 'רמת בחינה', en: 'Exam Level' }, type: 'select', required: true, order: 1, options: [{ value: 'level_1', label: { he: 'שלב א', en: 'Level 1' } }, { value: 'level_2', label: { he: 'שלב ב', en: 'Level 2' } }] },
+      { id: 'teacher_declaration', label: { he: 'הצהרת מורה', en: 'Teacher Declaration' }, type: 'checkbox', required: true, order: 2 },
+    ],
+    workflow: [
+      { id: 'step-teacher', stepIndex: 1, roleName: 'Teacher Approval', requiredRole: 'teacher' },
+    ],
+    createdAt: '2026-01-15T00:00:00.000Z',
+  },
+];
+export const mockAuditLog: AuditLogEntry[] = [
+  {
+    id: 'audit-1',
+    notificationId: 'notif-1',
+    userId: 'student-user-1',
+    channel: 'IN_APP',
+    status: 'DELIVERED',
+    sentAt: '2026-03-01T09:05:00.000Z',
+    title: 'Summer Concert Registration Open',
+    body: 'Register by April 30 for the summer concert.',
+  },
+  {
+    id: 'audit-2',
+    notificationId: 'notif-2',
+    userId: 'teacher-user-1',
+    channel: 'EMAIL',
+    status: 'SENT',
+    sentAt: '2026-03-05T08:05:00.000Z',
+    title: 'Teacher Meeting — March 20',
+    body: 'Staff meeting at 17:00 in the main hall.',
+  },
+  {
+    id: 'audit-3',
+    notificationId: 'notif-3',
+    userId: 'parent-user-1',
+    channel: 'EMAIL',
+    status: 'FAILED',
+    sentAt: '2026-03-07T10:05:00.000Z',
+    title: 'Term Invoice Due',
+    body: 'Invoices for term 2 are now due.',
+    errorMessage: 'SMTP delivery failed: mailbox full',
+  },
+];
 export const mockEvents: EventProduction[] = [
     {
         id: 'event-1',
         conservatoriumId: 'cons-15',
         name: 'קונצרט אביב 2024',
+        title: { he: 'קונצרט אביב 2026', en: 'Spring Concert 2026', ar: 'حفلة الربيع 2026', ru: 'Весенний концерт 2026' },
         type: 'RECITAL',
         venue: 'אולם קונצרטים קטן',
         eventDate: '2026-06-15',
@@ -1366,7 +1700,46 @@ export const mockEvents: EventProduction[] = [
             { id: 'ps-1', studentId: 'student-user-1', studentName: 'אריאל לוי', compositionTitle: 'נוקטורן בקו מז\'ור', composer: 'שופן', duration: '04:30' },
             { id: 'ps-2', studentId: 'student-user-2', studentName: 'תמר ישראלי', compositionTitle: 'סונטה מס\' 16', composer: 'מוצרט', duration: '08:15' }
         ]
-    }
+    },
+    {
+        id: 'event-2',
+        conservatoriumId: 'cons-15',
+        name: 'חזרה כללית — מבחני בגרות',
+        title: { he: 'חזרה כללית — מבחני בגרות', en: 'General Rehearsal — Matriculation Exams', ar: 'بروفة عامة — امتحانات البكالوريا', ru: 'Генеральная репетиция — выпускные экзамены' },
+        type: 'EXAM_PERFORMANCE',
+        venue: 'אולם הרצאות',
+        eventDate: '2026-05-20',
+        startTime: '15:00',
+        status: 'PLANNING',
+        program: [],
+    },
+    {
+        id: 'event-3',
+        conservatoriumId: 'cons-66',
+        name: 'יום הכנה לאודישנים',
+        title: { he: 'יום הכנה לאודישנים', en: 'Audition Prep Day', ar: 'يوم التحضير للأوديشن', ru: 'День подготовки к прослушиванию' },
+        type: 'CONCERT',
+        venue: 'אולם ראשי',
+        eventDate: '2026-04-10',
+        startTime: '19:00',
+        status: 'CLOSED',
+        program: [],
+    },
+    {
+        id: 'event-4',
+        conservatoriumId: 'cons-15',
+        name: 'גמר עונת 2025',
+        title: { he: 'גמר עונת 2025', en: 'Season Final 2025', ar: 'نهاية الموسم 2025', ru: 'Финал сезона 2025' },
+        type: 'RECITAL',
+        venue: 'אולם הגדול',
+        eventDate: '2025-06-20',
+        startTime: '18:00',
+        status: 'COMPLETED',
+        program: [],
+        isPublic: true,
+        isFree: false,
+        ticketPrice: 50,
+    },
 ];
 export const mockInstrumentInventory: InstrumentInventory[] = [
     {
@@ -1402,7 +1775,40 @@ export const mockInstrumentInventory: InstrumentInventory[] = [
         monthlyFeeILS: 220,
     }
 ];
-export const mockPerformanceBookings: PerformanceBooking[] = [];
+export const mockPerformanceBookings: PerformanceBooking[] = [
+  {
+    id: 'perf-booking-1',
+    conservatoriumId: 'cons-15',
+    status: 'INQUIRY_RECEIVED',
+    inquiryReceivedAt: '2026-03-01T10:00:00.000Z',
+    eventName: 'חתונת כהן',
+    eventType: 'חתונה',
+    eventDate: '2026-05-01',
+    eventTime: '19:00',
+    clientName: 'משפחת כהן',
+    clientEmail: 'cohen.wedding@example.com',
+    clientPhone: '050-1234567',
+    totalQuote: 2500,
+  },
+  {
+    id: 'perf-booking-2',
+    conservatoriumId: 'cons-15',
+    status: 'BOOKING_CONFIRMED',
+    inquiryReceivedAt: '2026-02-10T09:00:00.000Z',
+    eventName: 'כנס עסקי',
+    eventType: 'אירוע תאגידי',
+    eventDate: '2026-04-15',
+    eventTime: '20:00',
+    clientName: 'חברת אלפא',
+    clientEmail: 'events@alpha-corp.example.com',
+    clientPhone: '03-9876543',
+    totalQuote: 4500,
+    assignedMusicians: [
+      { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' },
+      { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'כינור' },
+    ],
+  },
+];
 export const mockScholarshipApplications: ScholarshipApplication[] = [
     {
         id: 'schol-app-1',
@@ -1478,8 +1884,26 @@ export const mockDonationCauses: DonationCause[] = [
     },
 ];
 
-export const mockDonations: DonationRecord[] = [];
-export const mockInstrumentRentals: InstrumentRental[] = [];
+export const mockDonations: DonationRecord[] = [
+  { id: 'donation-1', conservatoriumId: 'cons-15', causeId: 'cause-financial-aid', amountILS: 500, frequency: 'once', donorName: 'משפחת לוי', donorEmail: 'levi@example.com', status: 'PAID', createdAt: '2026-02-14T12:00:00.000Z' },
+  { id: 'donation-2', conservatoriumId: 'cons-15', causeId: 'cause-excellence', amountILS: 200, frequency: 'monthly', donorId: 'parent-user-1', donorName: 'רחל ישראלי', status: 'PAID', createdAt: '2026-03-01T08:00:00.000Z' },
+  { id: 'donation-3', conservatoriumId: 'cons-15', causeId: 'cause-equipment', amountILS: 1000, frequency: 'once', donorName: 'אנונימי', status: 'INITIATED', createdAt: '2026-03-10T14:00:00.000Z' },
+];
+export const mockInstrumentRentals: InstrumentRental[] = [
+  {
+    id: 'rental-1', conservatoriumId: 'cons-15', instrumentId: 'inst-1', studentId: 'student-user-4', parentId: 'parent-user-2',
+    rentalModel: 'monthly', depositAmountILS: 1200, monthlyFeeILS: 180,
+    startDate: '2025-09-01', expectedReturnDate: '2026-06-30',
+    status: 'active', signingToken: 'tok-rental-1', parentSignedAt: '2025-08-28T00:00:00.000Z',
+    condition: 'good',
+  },
+  {
+    id: 'rental-2', conservatoriumId: 'cons-15', instrumentId: 'inst-2', studentId: 'student-user-5', parentId: 'parent-user-3',
+    rentalModel: 'deposit', depositAmountILS: 1500,
+    startDate: '2025-09-10', status: 'pending_signature', signingToken: 'tok-rental-2',
+    condition: 'excellent',
+  },
+];
 export const mockOpenDayEvents: OpenDayEvent[] = [
     {
         id: 'open-day-1',
@@ -1508,12 +1932,75 @@ export const mockOpenDayAppointments: OpenDayAppointment[] = [
     }
 ];
 
-export const mockWaitlist: WaitlistEntry[] = [];
+export const mockWaitlist: WaitlistEntry[] = [
+  {
+    id: 'waitlist-1',
+    studentId: 'student-user-3',
+    teacherId: 'teacher-user-1',
+    conservatoriumId: 'cons-15',
+    instrument: 'פסנתר',
+    preferredDays: ['MON', 'WED'],
+    preferredTimes: ['AFTERNOON'],
+    joinedAt: '2026-02-15T10:00:00.000Z',
+    status: 'WAITING',
+  },
+  {
+    id: 'waitlist-2',
+    studentId: 'student-user-5',
+    teacherId: 'teacher-user-2',
+    conservatoriumId: 'cons-15',
+    instrument: 'חליל צד',
+    preferredDays: ['TUE', 'THU'],
+    preferredTimes: ['AFTERNOON'],
+    joinedAt: '2026-03-01T09:00:00.000Z',
+    notifiedAt: '2026-03-10T09:00:00.000Z',
+    status: 'OFFERED',
+    offeredSlotId: 'lesson-7',
+    offeredSlotTime: '2026-03-17T18:00:00.000Z',
+    offerExpiresAt: '2026-03-17T00:00:00.000Z',
+  },
+];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockPracticeVideos: any[] = [];
-export const mockPayrolls: PayrollSummary[] = [];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const mockMakeupCredits: any[] = [];
+export const mockPayrolls: PayrollSummary[] = [
+  {
+    id: 'payroll-1', teacherId: 'teacher-user-1', teacherName: 'מרים כהן',
+    conservatoriumId: 'cons-15', periodStart: '2026-03-01', periodEnd: '2026-03-31',
+    totalHours: 8.5, grossPay: 3200, totalAmount: 3200,
+    status: 'DRAFT',
+    completedLessons: [
+      { slotId: 'lesson-11', studentId: 'student-user-1', studentName: 'אריאל לוי', durationMinutes: 45, rate: 100, subtotal: 100, completedAt: '2026-02-25T16:45:00.000Z' },
+      { slotId: 'lesson-12', studentId: 'student-user-2', studentName: 'תמר ישראלי', durationMinutes: 60, rate: 120, subtotal: 120, completedAt: '2026-02-26T18:00:00.000Z' },
+    ],
+  },
+  {
+    id: 'payroll-2', teacherId: 'teacher-user-2', teacherName: 'דוד המלך',
+    conservatoriumId: 'cons-15', periodStart: '2026-03-01', periodEnd: '2026-03-31',
+    totalHours: 4.0, grossPay: 1800, totalAmount: 1800,
+    status: 'APPROVED',
+    completedLessons: [],
+  },
+];
+export const mockMakeupCredits: MakeupCredit[] = [
+  {
+    id: 'mc-credit-1', conservatoriumId: 'cons-15', studentId: 'student-user-1',
+    issuedBySlotId: 'lesson-11', issuedReason: 'TEACHER_CANCELLATION',
+    issuedAt: '2026-02-20T09:00:00.000Z', expiresAt: '2026-04-20T09:00:00.000Z',
+    status: 'AVAILABLE', amount: 100,
+  },
+  {
+    id: 'mc-credit-2', conservatoriumId: 'cons-15', studentId: 'student-user-2',
+    issuedBySlotId: 'lesson-12', issuedReason: 'STUDENT_NOTICED_CANCEL',
+    issuedAt: '2026-02-18T09:00:00.000Z', expiresAt: '2026-04-18T09:00:00.000Z',
+    status: 'REDEEMED', redeemedBySlotId: 'lesson-6', redeemedAt: '2026-03-09T12:00:00.000Z', amount: 110,
+  },
+  {
+    id: 'mc-credit-3', conservatoriumId: 'cons-15', studentId: 'student-user-1',
+    issuedBySlotId: 'lesson-11', issuedReason: 'CONSERVATORIUM_CANCELLATION',
+    issuedAt: '2025-12-01T09:00:00.000Z', expiresAt: '2026-01-31T09:00:00.000Z',
+    status: 'EXPIRED', amount: 100,
+  },
+];
 export const mockRepertoire: Composition[] = compositions;
 
 export const mockAlumni: Alumnus[] = [
@@ -1649,6 +2136,7 @@ export const initialMockData = {
     mockScholarshipApplications,
     mockDonationCauses,
     mockDonations,
+    mockInstrumentRentals,
     mockOpenDayEvents,
     mockOpenDayAppointments,
     mockBranches,

@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import type { User } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { upsertUserAction } from '@/app/actions';
@@ -40,7 +40,19 @@ export function AuthDomainProvider({
   const [bootstrapResolved, setBootstrapResolved] = useState(false);
   const [, setBootstrapUsedMockFallback] = useState(false);
 
-  const router = useRouter();
+  // useRouter from next-intl's createNavigation requires intl context (useLocale internally).
+  // During SSR this context may not be available yet. We unconditionally call the hook
+  // (React requires hooks to be called in the same order every render), but wrap in
+  // try/catch to handle missing intl context during SSR. The ref ensures callbacks
+  // (login, logout) always see the latest router without being in dependency arrays.
+  const routerRef = useRef<ReturnType<typeof useRouter> | null>(null);
+  try {
+    const r = useRouter();
+    routerRef.current = r;
+  } catch {
+    // SSR or missing intl context — routerRef stays null, which is fine because
+    // login/logout are only called client-side where the context will be available.
+  }
 
   const login = useCallback(
     (email: string): { user: User | null; status: 'approved' | 'pending' | 'not_found' } => {
@@ -54,17 +66,17 @@ export function AuthDomainProvider({
           localStorage.setItem('harmonia-user', JSON.stringify(foundUser));
           setAuthCookie();
           setUser(foundUser);
-          router?.push?.('/dashboard');
+          routerRef.current?.push?.('/dashboard');
           return { user: foundUser, status: 'approved' };
         }
 
-        router?.push?.('/pending-approval');
+        routerRef.current?.push?.('/pending-approval');
         return { user: foundUser, status: 'pending' };
       }
 
       return { user: null, status: 'not_found' };
     },
-    [users, router],
+    [users],
   );
 
   const logout = useCallback(async () => {
@@ -87,8 +99,8 @@ export function AuthDomainProvider({
     localStorage.removeItem('harmonia-user');
     clearAuthCookie();
     setUser(null);
-    router?.push?.('/');
-  }, [router]);
+    routerRef.current?.push?.('/');
+  }, []);
 
   const approveUser = useCallback(
     (userId: string) => {
