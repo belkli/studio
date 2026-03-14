@@ -9,15 +9,16 @@ import { useMemo } from "react";
 import { instruments } from "@/lib/taxonomies";
 import { useTranslations } from "next-intl";
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
     const t = useTranslations('Reports');
-    const { practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
+    const { user, practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
 
-    const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
-    const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
+    const students = useMemo(() => user ? tenantUsers(users, user, 'student') : [], [user, users]);
+    const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [user, users]);
 
     const {
         practiceEngagementRate,

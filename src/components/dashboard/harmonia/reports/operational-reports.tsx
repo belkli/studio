@@ -1,5 +1,6 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -8,13 +9,14 @@ import { getDay, format, startOfWeek } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';
 import { RoomOccupancyHeatmap } from "./room-occupancy-heatmap";
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function OperationalReports() {
     const t = useTranslations('Reports');
-    const { lessons, users } = useAuth();
-    const teachersList = users.filter(u => u.role === 'teacher');
+    const { lessons, users, user } = useAuth();
+    const teachersList = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
     const dateLocale = useDateLocale();
 
     const {
@@ -24,12 +26,13 @@ export function OperationalReports() {
         trialConversionRate,
         makeupUtilizationRate
     } = useMemo(() => {
+        const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
         // Cancellation breakdown
         const cancellationData = [
-            { name: t('cancellationTypes.STUDENT_NOTICED'), value: lessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
-            { name: t('cancellationTypes.STUDENT_NO_NOTICE'), value: lessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
-            { name: t('cancellationTypes.TEACHER'), value: lessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
-            { name: t('cancellationTypes.NO_SHOW_STUDENT'), value: lessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
+            { name: t('cancellationTypes.STUDENT_NOTICED'), value: tenantLessons.filter(l => l.status === 'CANCELLED_STUDENT_NOTICED').length },
+            { name: t('cancellationTypes.STUDENT_NO_NOTICE'), value: tenantLessons.filter(l => l.status === 'CANCELLED_STUDENT_NO_NOTICE').length },
+            { name: t('cancellationTypes.TEACHER'), value: tenantLessons.filter(l => l.status === 'CANCELLED_TEACHER').length },
+            { name: t('cancellationTypes.NO_SHOW_STUDENT'), value: tenantLessons.filter(l => l.status === 'NO_SHOW_STUDENT').length },
         ];
 
         // Cancellations by day
@@ -41,7 +44,7 @@ export function OperationalReports() {
         }
 
         const dailyCancellations = days.map(day => ({ name: day, cancellations: 0 }));
-        lessons.forEach(lesson => {
+        tenantLessons.forEach(lesson => {
             if (lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW')) {
                 const dayIndex = getDay(new Date(lesson.startTime));
                 dailyCancellations[dayIndex].cancellations++;
@@ -61,8 +64,8 @@ export function OperationalReports() {
         }).sort((a, b) => b.capacity - a.capacity);
 
         // Makeup utilization
-        const issuedCredits = lessons.filter(l => ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM'].includes(l.status)).length;
-        const usedCredits = lessons.filter(l => l.type === 'MAKEUP' && l.status === 'COMPLETED').length;
+        const issuedCredits = tenantLessons.filter(l => ['CANCELLED_TEACHER', 'CANCELLED_CONSERVATORIUM'].includes(l.status)).length;
+        const usedCredits = tenantLessons.filter(l => l.type === 'MAKEUP' && l.status === 'COMPLETED').length;
         const makeupUtilization = issuedCredits > 0 ? (usedCredits / issuedCredits) * 100 : 0;
 
         return {
@@ -73,7 +76,7 @@ export function OperationalReports() {
             makeupUtilizationRate: makeupUtilization
         }
 
-    }, [lessons, teachersList, t, dateLocale]);
+    }, [lessons, teachersList, user, t, dateLocale]);
 
     return (
         <div className="space-y-6 mt-6">

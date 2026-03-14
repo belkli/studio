@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { ImageOff, AlertTriangle } from 'lucide-react';
 import { useMemo, useEffect } from 'react';
 import { saveConsentRecord } from '@/app/actions/consent';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 const schema = z.object({
   studentId: z.string().min(1, 'חובה לבחור תלמיד/ה.'),
@@ -28,7 +29,7 @@ interface AssignPerformerDialogProps {
 }
 
 export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPerformerDialogProps) {
-  const { users, assignedRepertoire, compositions, addPerformanceToEvent } = useAuth();
+  const { users, user, assignedRepertoire, compositions, addPerformanceToEvent } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -37,7 +38,7 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
   // eslint-disable-next-line react-hooks/incompatible-library
   const selectedStudentId = form.watch('studentId');
 
-  const students = useMemo(() => users.filter(u => u.role === 'student' && u.approved), [users]);
+  const students = useMemo(() => (user ? tenantUsers(users, user, 'student') : []).filter(u => u.approved), [users, user]);
   const studentIds = useMemo(() => students.map(s => s.id), [students]);
 
   // Fetch PHOTOS consent for all students in this dialog

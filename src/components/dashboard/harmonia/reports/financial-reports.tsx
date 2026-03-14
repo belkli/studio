@@ -9,12 +9,13 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function FinancialReports() {
     const t = useTranslations('Reports');
-    const { invoices, users, lessons } = useAuth();
+    const { invoices, users, lessons, user } = useAuth();
     const dateLocale = useDateLocale();
 
     const {
@@ -67,7 +68,7 @@ export function FinancialReports() {
         const collectionRate = invoices.length > 0 ? (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100 : 0;
 
         // Teacher Revenue
-        const teachers = users.filter(u => u.role === 'teacher');
+        const teachers = user ? tenantUsers(users, user, 'teacher') : [];
         const teacherRevenueData = teachers.map(teacher => ({
             name: teacher.name,
             revenue: 5000 + (teacher.name.split('').reduce((acc: number, ch: string) => acc + ch.charCodeAt(0), 0) % 15001), // Deterministic mock
@@ -80,18 +81,18 @@ export function FinancialReports() {
             teacherRevenue: teacherRevenueData,
         }
 
-    }, [invoices, users, t, dateLocale]);
+    }, [invoices, users, user, t, dateLocale]);
 
     const creditsIssuedThisMonth = useMemo(() => {
         const thisMonth = new Date().getMonth();
         const thisYear = new Date().getFullYear();
-        return lessons.filter(lesson => {
+        return (user ? tenantFilter(lessons, user) : lessons).filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
             return (lesson.status === 'CANCELLED_TEACHER' || lesson.status === 'CANCELLED_CONSERVATORIUM') &&
                 lessonDate.getMonth() === thisMonth &&
                 lessonDate.getFullYear() === thisYear;
         }).length;
-    }, [lessons]);
+    }, [user, lessons]);
 
     return (
         <div className="space-y-6 mt-6">

@@ -5,20 +5,21 @@ import { useAuth } from "@/hooks/use-auth";
 import { useMemo } from "react";
 import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 import { useTranslations } from 'next-intl';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 export function KeyMetricsBar() {
     const t = useTranslations('KeyMetrics');
     const alerts = useAdminAlerts();
-    const { users, lessons, formSubmissions } = useAuth();
+    const { user, users, lessons, formSubmissions } = useAuth();
 
     const stats = useMemo(() => {
-        const activeStudents = users.filter(u => u.role === 'student' && u.approved).length;
+        const activeStudents = user ? tenantUsers(users, user, 'student').filter(u => u.approved).length : 0;
 
         const today = new Date();
         const weekStart = startOfWeek(today, { weekStartsOn: 0 }); // Sunday
         const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
 
-        const lessonsThisWeek = lessons.filter(l => {
+        const lessonsThisWeek = (user ? tenantFilter(lessons, user) : lessons).filter(l => {
             const lessonDate = new Date(l.startTime);
             return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
         }).length;
@@ -26,7 +27,7 @@ export function KeyMetricsBar() {
         const pendingForms = formSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
 
         return { activeStudents, lessonsThisWeek, pendingForms };
-    }, [users, lessons, formSubmissions]);
+    }, [user, users, lessons, formSubmissions]);
 
 
     const metrics = [

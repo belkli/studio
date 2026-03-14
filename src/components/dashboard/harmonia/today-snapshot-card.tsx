@@ -5,15 +5,16 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations, useLocale } from 'next-intl';
+import { tenantFilter } from '@/lib/tenant-filter';
 
 export function TodaySnapshotCard() {
     const t = useTranslations('TodaySnapshot');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
-    const { lessons, users, invoices } = useAuth();
+    const { user, lessons, users, invoices } = useAuth();
 
     const today = new Date();
-    const todayLessons = lessons.filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
+    const todayLessons = (user ? tenantFilter(lessons, user) : lessons).filter(lesson => new Date(lesson.startTime).toDateString() === today.toDateString());
     const failedPayments = invoices.filter(inv => inv.status === 'OVERDUE');
 
     return (

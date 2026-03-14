@@ -10,9 +10,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { DollarSign, FileWarning, Users, TrendingUp } from "lucide-react";
 
 import { useTranslations } from "next-intl";
+import { tenantUsers } from '@/lib/tenant-filter';
 
 export function AdminFinancialDashboard() {
-    const { invoices, users } = useAuth();
+    const { invoices, users, user } = useAuth();
     const t = useTranslations('FinancialDashboard');
     const ti = useTranslations('Invoices');
 
@@ -32,7 +33,7 @@ export function AdminFinancialDashboard() {
     const outstandingInvoices = invoices.filter(inv => inv.status === 'SENT' || inv.status === 'OVERDUE');
     const collectionRate = invoices.length > 0 ? (invoices.filter(i => i.status === 'PAID').length / invoices.length) * 100 : 0;
 
-    const teachers = users.filter(u => u.role === 'teacher');
+    const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
     const _teacherRevenue = useMemo(() => {
         return teachers.map(teacher => ({
             name: teacher.name,
@@ -83,7 +84,7 @@ export function AdminFinancialDashboard() {
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{users.filter(u => u.role === 'student' && u.approved).length}</div>
+                        <div className="text-2xl font-bold">{user ? tenantUsers(users, user, 'student').filter(u => u.approved).length : 0}</div>
                         <p className="text-xs text-muted-foreground">{t('studentsChange', { count: 3 })}</p>
                     </CardContent>
                 </Card>

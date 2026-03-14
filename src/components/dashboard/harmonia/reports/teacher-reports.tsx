@@ -7,13 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import { useMemo } from "react";
 import { isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { useTranslations } from "next-intl";
+import { tenantUsers } from '@/lib/tenant-filter';
 
 export function TeacherReports() {
     const t = useTranslations('Reports');
-    const { users, lessons, practiceLogs } = useAuth();
+    const { users, lessons, practiceLogs, user } = useAuth();
 
     const teacherStats = useMemo(() => {
-        const teachers = users.filter(u => u.role === 'teacher');
+        const teachers = user ? tenantUsers(users, user, 'teacher') : [];
         const now = new Date();
         const start = startOfMonth(now);
         const end = endOfMonth(now);
@@ -51,7 +52,7 @@ export function TeacherReports() {
                 practiceEngagement,
             };
         });
-    }, [users, lessons, practiceLogs]);
+    }, [users, user, lessons, practiceLogs]);
 
     return (
         <div className="space-y-6 mt-6">

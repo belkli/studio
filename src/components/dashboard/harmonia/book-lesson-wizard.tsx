@@ -27,6 +27,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { collectInstrumentTokensFromTeacherInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 // ─── Discount matrix (same as public marketplace) ────────────────────────────
 type SlotUrgency = 'SAME_DAY' | 'TOMORROW';
@@ -194,7 +195,7 @@ interface DealsTabProps {
 function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, isRtl, pendingSlotId }: DealsTabProps) {
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
-    const { users, lessons, conservatoriums, conservatoriumInstruments } = useAuth();
+    const { user, users, lessons, conservatoriums, conservatoriumInstruments } = useAuth();
 
     const [selectedSlot, setSelectedSlot] = useState<EmptySlot | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -208,7 +209,8 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
 
     // Generate empty slots (next 5 days — today + 4)
     const emptySlots = useMemo(() => {
-        const teachers = users.filter((u) => u.role === 'teacher' && u.availability);
+        const teachers = user ? tenantUsers(users, user, 'teacher').filter((u) => u.availability) : [];
+        const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
         const searchDates = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4)];
         const slots: EmptySlot[] = [];
 
@@ -221,7 +223,7 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
                 const teacherDayAvailability = teacher.availability?.find((a) => a.dayOfWeek === dayOfWeek);
                 if (!teacherDayAvailability) return;
 
-                const dayLessons = lessons.filter(
+                const dayLessons = tenantLessons.filter(
                     (l) => l.teacherId === teacher.id && isSameDay(new Date(l.startTime), date)
                 );
 
@@ -264,7 +266,7 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
 
         return Array.from(new Map(slots.map((s) => [s.id, s])).values())
             .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-    }, [users, lessons, today]);
+    }, [user, users, lessons, today]);
 
     // Filter to student's instruments if available
     const filteredSlots = useMemo(() => {
@@ -461,7 +463,7 @@ export function BookLessonWizard() {
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
 
-    const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
+    const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
 
     const [teacherScope, setTeacherScope] = useState<'own' | 'all'>('own');
     const [premiumOnly, setPremiumOnly] = useState(false);
@@ -520,7 +522,8 @@ export function BookLessonWizard() {
                 return;
             }
 
-            const dayLessons = lessons.filter(l =>
+            const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
+            const dayLessons = tenantLessons.filter(l =>
                 l.teacherId === selectedTeacherId &&
                 format(new Date(l.startTime), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
             );
@@ -539,7 +542,7 @@ export function BookLessonWizard() {
             setAvailableSlots(slots);
             setIsLoadingSlots(false);
         }, 300);
-    }, [selectedTeacherId, selectedDate, duration, users, lessons]);
+    }, [selectedTeacherId, selectedDate, duration, users, lessons, user]);
 
     const onSubmit = (data: BookingFormData) => {
         const [hours, minutes] = data.time.split(':');
@@ -573,11 +576,11 @@ export function BookLessonWizard() {
     // All instruments taught by teachers (for "explore other instruments" option)
     const allTeacherInstruments = useMemo(() => {
         const instrumentSet = new Set<string>();
-        users.filter(u => u.role === 'teacher').forEach(teacher => {
+        (user ? tenantUsers(users, user, 'teacher') : []).forEach(teacher => {
             teacher.instruments?.forEach(i => instrumentSet.add(i.instrument));
         });
         return Array.from(instrumentSet).sort();
-    }, [users]);
+    }, [users, user]);
 
     // Instrument combobox options: registered instruments first (marked), then others
     const instrumentOptions = useMemo(() => {

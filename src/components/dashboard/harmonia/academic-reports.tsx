@@ -8,18 +8,19 @@ import { useMemo } from "react";
 import { instruments } from "@/lib/taxonomies";
 import { useTranslations, useLocale } from 'next-intl';
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
-    const { practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
+    const { user, practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
     const t = useTranslations('AcademicReports');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
-    const students = useMemo(() => users.filter(u => u.role === 'student'), [users]);
-    const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
+    const students = useMemo(() => user ? tenantUsers(users, user, 'student') : [], [user, users]);
+    const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [user, users]);
 
     const {
         practiceEngagementRate,

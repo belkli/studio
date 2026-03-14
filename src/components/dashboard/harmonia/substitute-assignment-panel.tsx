@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { UserCog } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 interface AffectedLesson extends LessonSlot {
     originalTeacher?: User;
@@ -20,7 +21,7 @@ interface AffectedLesson extends LessonSlot {
 }
 
 export function SubstituteAssignmentPanel() {
-    const { users, lessons, assignSubstitute, conservatoriumInstruments } = useAuth();
+    const { user, users, lessons, assignSubstitute, conservatoriumInstruments } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('SubstituteAssignmentPanel');
     const dateLocale = useDateLocale();
@@ -28,7 +29,7 @@ export function SubstituteAssignmentPanel() {
     const isRtl = locale === 'he' || locale === 'ar';
 
     const lessonsNeedingSub = useMemo((): AffectedLesson[] => {
-        const teachers = users.filter(u => u.role === 'teacher');
+        const teachers = user ? tenantUsers(users, user, 'teacher') : [];
 
         const affected = lessons
             .filter(lesson => lesson.status === 'CANCELLED_TEACHER' && isFuture(new Date(lesson.startTime)))
@@ -71,7 +72,7 @@ export function SubstituteAssignmentPanel() {
 
         return affected.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
-    }, [lessons, users, conservatoriumInstruments]);
+    }, [lessons, users, conservatoriumInstruments, user]);
 
     const handleAssignSubstitute = (lessonId: string, newTeacherId: string) => {
         const lesson = lessonsNeedingSub.find(l => l.id === lessonId);

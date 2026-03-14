@@ -11,6 +11,7 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTranslations } from 'next-intl';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`);
 
@@ -45,7 +46,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 };
 
 export function MasterScheduleCalendar() {
-    const { users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
+    const { user, users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
     const t = useTranslations('AdminPages.schedule');
     const dateLocale = useDateLocale();
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -56,7 +57,7 @@ export function MasterScheduleCalendar() {
         instrument: 'all',
     });
 
-    const teachers = useMemo(() => users.filter(u => u.role === 'teacher'), [users]);
+    const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
 
     const instrumentOptions = useMemo(() => {
         const fromDb = conservatoriumInstruments
@@ -78,7 +79,8 @@ export function MasterScheduleCalendar() {
     }, [filters.branchId, rooms]);
 
     const filteredLessons = useMemo(() => {
-        return lessons.filter(lesson => {
+        const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
+        return tenantLessons.filter(lesson => {
             const lessonDate = new Date(lesson.startTime);
             const inCurrentWeek = lessonDate >= weekInterval.start && lessonDate <= weekInterval.end;
             if (!inCurrentWeek) return false;
@@ -90,7 +92,7 @@ export function MasterScheduleCalendar() {
 
             return true;
         });
-    }, [lessons, weekInterval, filters]);
+    }, [user, lessons, weekInterval, filters]);
 
     const getLessonsForSlot = (day: Date, time: string) => {
         const slotStartHour = parseInt(time.split(':')[0]);

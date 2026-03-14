@@ -15,6 +15,7 @@ import { GraduationCap, Award, Calendar, CheckCircle, Clock } from 'lucide-react
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 const REPERTOIRE_TEMPLATES = {
     'MINISTRY_LEVEL_1': [
@@ -72,8 +73,8 @@ export function ExamTrackerPanel() {
 
     // Students of this teacher
     const myStudents = useMemo(() => {
-        return users.filter(u => u.role === 'student'); // simplistic map for demo
-    }, [users]);
+        return user ? tenantUsers(users, user, 'student') : []; // simplistic map for demo
+    }, [users, user]);
 
     const [selectedStudent, setSelectedStudent] = useState('');
     const [selectedExamType, setSelectedExamType] = useState('MINISTRY_LEVEL_1');

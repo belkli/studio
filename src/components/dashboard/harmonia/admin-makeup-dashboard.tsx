@@ -16,6 +16,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { extendMakeupWindowAction } from '@/app/actions/makeup';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 interface StudentMakeupBalance {
     student: User;
@@ -100,7 +101,7 @@ function MakeupTable({ balancesToShow, isRtl, t, onSchedule, onExtend }: MakeupT
 }
 
 export function AdminMakeupDashboard() {
-    const { users, lessons, getMakeupCreditBalance, getMakeupCreditsDetail, addLesson } = useAuth();
+    const { user, users, lessons, getMakeupCreditBalance, getMakeupCreditsDetail, addLesson } = useAuth();
     const t = useTranslations('AdminMakeupDashboard');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
@@ -111,7 +112,10 @@ export function AdminMakeupDashboard() {
     const [extendDays, setExtendDays] = useState(14);
 
     const makeupBalances = useMemo(() => {
-        const studentUsers = users.filter(u => u.role === 'student' && u.approved);
+        const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
+        const studentUsers = user
+            ? tenantUsers(users, user, 'student').filter(u => u.approved)
+            : users.filter(u => u.role === 'student' && u.approved);
         const balances: StudentMakeupBalance[] = [];
 
         studentUsers.forEach(student => {
@@ -119,12 +123,12 @@ export function AdminMakeupDashboard() {
             const balance = getMakeupCreditBalance(studentIds);
 
             if (balance > 0) {
-                const grantedLessons = lessons.filter(l =>
+                const grantedLessons = tenantLessons.filter(l =>
                     l.studentId === student.id &&
                     (l.status === 'CANCELLED_TEACHER' || l.status === 'CANCELLED_CONSERVATORIUM' || l.status === 'CANCELLED_STUDENT_NOTICED')
                 ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
-                const usedCredits = lessons.filter(l =>
+                const usedCredits = tenantLessons.filter(l =>
                     l.studentId === student.id &&
                     l.type === 'MAKEUP'
                 ).length;
@@ -147,7 +151,7 @@ export function AdminMakeupDashboard() {
             }
         });
         return balances;
-    }, [users, lessons, getMakeupCreditBalance, getMakeupCreditsDetail]);
+    }, [user, users, lessons, getMakeupCreditBalance, getMakeupCreditsDetail]);
 
     const expiringSoonBalances = useMemo(() => {
         const now = new Date();

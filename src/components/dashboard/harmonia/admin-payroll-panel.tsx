@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { vatBreakdown, VAT_RATE } from '@/lib/vat';
+import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 type TeacherMonthlyRow = {
   teacherId: string;
@@ -89,7 +90,7 @@ function formatMinutes(totalMinutes: number): string {
 }
 
 export function AdminPayrollPanel() {
-  const { users, lessons } = useAuth();
+  const { user, users, lessons } = useAuth();
   const t = useTranslations('Payroll');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
@@ -101,10 +102,11 @@ export function AdminPayrollPanel() {
     const monthStart = new Date(`${period}-01T00:00:00`);
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const teachers = users.filter((user) => user.role === 'teacher');
+    const teachers = user ? tenantUsers(users, user, 'teacher') : [];
 
+    const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
     const byTeacher = teachers.map((teacher) => {
-      const teacherLessons = lessons.filter((lesson) => {
+      const teacherLessons = tenantLessons.filter((lesson) => {
         const when = new Date(lesson.startTime);
         return lesson.teacherId === teacher.id && when >= monthStart && when <= monthEnd;
       });
@@ -139,7 +141,7 @@ export function AdminPayrollPanel() {
       totalHours: Number((totalMinutes / 60).toFixed(2)),
       byTeacher,
     };
-  }, [lessons, period, users]);
+  }, [lessons, period, users, user]);
 
   const generateReport = async () => {
     setIsLoading(true);

@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useTranslations } from 'next-intl';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 interface AssignMusicianDialogProps {
   booking: PerformanceBooking | null;
@@ -20,13 +21,13 @@ interface AssignMusicianDialogProps {
 }
 
 export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }: AssignMusicianDialogProps) {
-  const { users } = useAuth();
+  const { users, user } = useAuth();
   const t = useTranslations('PerformanceBooking');
   const [selectedMusicianIds, setSelectedMusicianIds] = useState<string[]>([]);
 
   const performers = useMemo(() =>
-    users.filter(u => u.role === 'teacher' && u.performanceProfile?.isOptedIn && u.performanceProfile?.adminApproved)
-    , [users]);
+    (user ? tenantUsers(users, user, 'teacher') : []).filter(u => u.performanceProfile?.isOptedIn && u.performanceProfile?.adminApproved)
+    , [users, user]);
 
   // When dialog opens, pre-select already assigned musicians
   useEffect(() => {

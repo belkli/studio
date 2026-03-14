@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getConditionConfig = (t: any): Record<InstrumentCondition, { label: string; className: string }> => ({
@@ -38,7 +39,7 @@ function RentInstrumentDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { users, initiateInstrumentRental } = useAuth();
+  const { user, users, initiateInstrumentRental } = useAuth();
   const t = useTranslations('InstrumentRental');
   const { toast } = useToast();
 
@@ -51,7 +52,7 @@ function RentInstrumentDialog({
   const [purchasePriceILS, setPurchasePriceILS] = useState<number>(5000);
   const [monthsUntilPurchaseEligible, setMonthsUntilPurchaseEligible] = useState<number>(12);
 
-  const students = useMemo(() => users.filter(u => u.role === 'student' && u.approved), [users]);
+  const students = useMemo(() => user ? tenantUsers(users, user, 'student').filter(u => u.approved) : [], [users, user]);
 
   useEffect(() => {
     if (!instrument || !open) return;

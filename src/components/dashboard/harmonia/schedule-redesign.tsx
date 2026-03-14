@@ -14,6 +14,7 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 import { useLocale, useTranslations } from 'next-intl';
 import type { LessonSlot } from '@/lib/types';
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 const timeSlots = Array.from({ length: 13 }, (_, index) => `${String(index + 8).padStart(2, '0')}:00`);
 
@@ -54,7 +55,7 @@ export function ScheduleRedesign() {
     if (isValid(parsed)) setWeekStartRaw(format(addDays(parsed, 7), 'yyyy-MM-dd'));
   };
 
-  const allTeachers = useMemo(() => users.filter((entry) => entry.role === 'teacher'), [users]);
+  const allTeachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
   const allInstruments = useMemo(() => {
     const values = Array.from(new Set(lessons.map((lesson) => lesson.instrument))).filter(Boolean);
     return values.sort((a, b) => a.localeCompare(b));
