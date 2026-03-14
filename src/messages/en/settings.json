@@ -393,6 +393,7 @@
     "address": "Address",
     "conservatorium": "Conservatory",
     "actions": "Actions",
+    "manageRooms": "Manage Rooms",
     "successUpdate": "Branch updated successfully",
     "successAdd": "New branch added successfully",
     "editTitle": "Edit Branch",

@@ -153,7 +153,8 @@
     "lessonsCount": "دروس",
     "absences": "الغيابات",
     "makeups": "حصص تعويضية",
-    "actions": "إجراءات"
+    "actions": "إجراءات",
+    "exportTeacher": "تصدير بيانات المعلم"
   },
   "TeacherPayroll": {
     "amountCol": "المبلغ",

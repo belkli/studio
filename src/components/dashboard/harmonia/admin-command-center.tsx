@@ -39,8 +39,8 @@ export function AdminCommandCenter() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold">{t('welcome', { name: user.name.split(' ')[0] })}</h1>
-                    <p className="text-muted-foreground">{t('controlCenter', { name: user.conservatoriumName || 'Harmonia' })}</p>
+                    <h1 className="text-2xl font-bold text-start">{t('welcome', { name: user.name.split(' ')[0] })}</h1>
+                    <p className="text-muted-foreground text-start">{t('controlCenter', { name: user.conservatoriumName || 'Harmonia' })}</p>
                 </div>
             </div>
 

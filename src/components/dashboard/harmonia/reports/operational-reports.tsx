@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { useMemo } from 'react';
 import { getDay, format, startOfWeek } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useTranslations } from 'next-intl';

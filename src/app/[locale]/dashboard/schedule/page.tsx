@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { PlusCircle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 

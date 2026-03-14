@@ -1,4 +1,6 @@
-﻿import { useLocale, useTranslations } from 'next-intl';
+﻿'use client';
+
+import { useLocale, useTranslations } from 'next-intl';
 import { AnnouncementComposer } from "@/components/dashboard/harmonia/announcement-composer";
 
 export default function AnnouncementsPage() {

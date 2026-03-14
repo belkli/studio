@@ -235,7 +235,7 @@ export function AnnouncementComposer() {
               />
             </div>
           </CardContent>
-          <CardFooter className={`${isRtl ? 'justify-end' : 'justify-start'}`}>
+          <CardFooter className="justify-start">
             <Button type="submit">
               <Send className="me-2 h-4 w-4" />
               {t('submitBtn')}

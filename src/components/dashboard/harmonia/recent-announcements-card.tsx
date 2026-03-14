@@ -46,7 +46,7 @@ export function RecentAnnouncementsCard() {
                     return (
                         <div key={ann.id} className="p-3 rounded-lg bg-muted/50">
                             <div className="flex justify-between items-start">
-                                <h4 className="font-semibold text-sm flex items-center gap-1.5">
+                                <h4 className="font-semibold text-sm flex items-center gap-1.5" dir="auto">
                                     {localizedTitle}
                                     {ann.translatedByAI && locale !== 'he' && (
                                         <span
@@ -61,7 +61,7 @@ export function RecentAnnouncementsCard() {
                                     {formatDistanceToNow(new Date(ann.sentAt), { addSuffix: true, locale: dateLocale })}
                                 </span>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{localizedBody}</p>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2" dir="auto">{localizedBody}</p>
                             <div className="flex items-center gap-2 mt-2">
                                 {ann.channels.map(channel => (
                                     <Badge key={channel} variant="secondary" className="text-xs">

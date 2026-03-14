@@ -75,7 +75,7 @@ export function AdminBranchesDashboard() {
                                 <TableHead>{t('branchName')}</TableHead>
                                 <TableHead>{t('address')}</TableHead>
                                 {user?.role === 'site_admin' && <TableHead>{t('conservatorium')}</TableHead>}
-                                <TableHead className="text-start">{t('actions')}</TableHead>
+                                <TableHead>{t('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -103,7 +103,7 @@ export function AdminBranchesDashboard() {
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => setManagingRoomsBranch(branch)}>
                                                     <Building2 className="w-4 h-4 me-2" />
-                                                    ניהול חדרים
+                                                    {t('manageRooms')}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem className="text-destructive">{tCommon('delete')}</DropdownMenuItem>
                                             </DropdownMenuContent>

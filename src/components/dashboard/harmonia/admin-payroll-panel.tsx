@@ -231,7 +231,7 @@ export function AdminPayrollPanel() {
                   <TableCell className="text-start">{row.absentCount}</TableCell>
                   <TableCell className="text-start">{row.makeupCount}</TableCell>
                   <TableCell className="text-start">
-                    <Button size="sm" variant="ghost" onClick={() => exportTeacherCsv(row.teacherId)}>
+                    <Button size="sm" variant="ghost" onClick={() => exportTeacherCsv(row.teacherId)} aria-label={t('exportTeacher')}>
                       <Download className="h-4 w-4" />
                     </Button>
                   </TableCell>
