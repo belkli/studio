@@ -6,10 +6,12 @@ export type Locale = (typeof LOCALES)[number];
 
 /**
  * Returns the full path for a given locale.
- * Hebrew (default locale) is served at `/path`, others at `/{locale}/path`.
+ * Use explicit locale prefix for all locales for reliable test routing.
+ * Note: `/he/` redirects to `/` (Hebrew canonical), but using explicit `/he` prefix
+ * ensures the test server serves the correct locale.
  */
 export function localePath(locale: string, path: string): string {
-  return locale === 'he' ? path : `/${locale}${path}`;
+  return `/${locale}${path}`;
 }
 
 /**
