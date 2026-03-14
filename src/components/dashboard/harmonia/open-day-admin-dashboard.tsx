@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
 import type { OpenDayAppointment, User } from '@/lib/types';
@@ -55,6 +55,8 @@ function appointmentToRegistration(item: OpenDayAppointment): OpenDayRegistratio
 export function OpenDayAdminDashboard() {
   const { user, users, openDayAppointments, openDayEvents } = useAuth();
   const t = useTranslations('AdminOpenDay');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const { toast } = useToast();
 
   const [time, setTime] = useState('');
@@ -131,7 +133,7 @@ export function OpenDayAdminDashboard() {
         {!currentEvent ? (
           <p className="text-sm text-muted-foreground">{t('noActiveEvent')}</p>
         ) : (
-          <Tabs defaultValue="sessions" className="w-full">
+          <Tabs defaultValue="sessions" className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full max-w-sm grid-cols-2">
               <TabsTrigger value="sessions">{t('sessions')}</TabsTrigger>
               <TabsTrigger value="registrations">{t('registrations')}</TabsTrigger>

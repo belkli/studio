@@ -637,7 +637,7 @@ export function BookLessonWizard() {
     return (
         <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardContent className="pt-6">
-                <Tabs defaultValue={defaultTab}>
+                <Tabs defaultValue={defaultTab} dir={isRtl ? 'rtl' : 'ltr'}>
                     <TabsList className="grid w-full grid-cols-2 mb-6">
                         <TabsTrigger value="regular">{t('regularBookingTab')}</TabsTrigger>
                         <TabsTrigger value="deals" className="gap-1.5">

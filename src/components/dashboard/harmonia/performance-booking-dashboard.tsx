@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { LayoutGrid, List, MoreHorizontal, UserPlus, Send, DollarSign, CheckCircle2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useDateLocale } from '@/hooks/use-date-locale';
@@ -84,6 +84,8 @@ export function PerformanceBookingDashboard() {
   const { performanceBookings, user, assignMusiciansToPerformance, updatePerformanceBookingStatus } = useAuth();
   const { toast } = useToast();
   const t = useTranslations('PerformanceBooking');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const dateLocale = useDateLocale();
 
   const [view, setView] = useState<'list' | 'kanban'>('list');
@@ -149,7 +151,7 @@ export function PerformanceBookingDashboard() {
         </div>
 
         {view === 'list' ? (
-          <Tabs defaultValue="new" className="w-full">
+          <Tabs defaultValue="new" className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
               <TabsTrigger value="new">{t('statusNew')}</TabsTrigger>
               <TabsTrigger value="manager_review">{t('statusManagerReview')}</TabsTrigger>

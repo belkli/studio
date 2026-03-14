@@ -152,7 +152,7 @@ export function EventEditForm({ event }: { event: EventProduction }) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Tabs defaultValue="basic">
+            <Tabs defaultValue="basic" dir={isRtl ? 'rtl' : 'ltr'}>
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">{t('tabBasic')}</TabsTrigger>
                 <TabsTrigger value="venue">{t('tabVenue')}</TabsTrigger>

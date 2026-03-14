@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, XCircle, FileSignature, AlertCircle, Clock, BookOpen, Mic, Award, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 type MinistryForm = {
@@ -33,6 +33,8 @@ const MOCK_FORMS: MinistryForm[] = [
 export function MinistryInboxPanel() {
     const t = useTranslations('Ministry');
     const tCommon = useTranslations('Common');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
 
     const { toast } = useToast();
@@ -86,7 +88,7 @@ export function MinistryInboxPanel() {
                         {pendingForms.length > 0 && <Badge variant="destructive" className="ms-auto rounded-full">{pendingForms.length}</Badge>}
                     </CardTitle>
                 </CardHeader>
-                <Tabs defaultValue="pending" className="flex-1 flex flex-col">
+                <Tabs defaultValue="pending" className="flex-1 flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                     <div className="px-4 border-b">
                         <TabsList className="w-full grid grid-cols-2 bg-muted/50 mb-2">
                             <TabsTrigger value="pending">{t('pending', { count: pendingForms.length })}</TabsTrigger>

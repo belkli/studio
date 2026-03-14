@@ -428,7 +428,7 @@ export function InstrumentRentalDashboard() {
 
   return (
     <>
-      <Tabs defaultValue="available">
+      <Tabs defaultValue="available" dir={isRtl ? 'rtl' : 'ltr'}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="available">{t('availableInStock')} ({available.length})</TabsTrigger>
           <TabsTrigger value="rentals">{t('rentedOut')} ({rentals.length})</TabsTrigger>
