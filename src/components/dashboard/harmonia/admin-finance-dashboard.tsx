@@ -110,9 +110,8 @@ export function AdminFinancialDashboard() {
                     <CardHeader>
                         <CardTitle>{t('revenueByPackage')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
+                    <CardContent className="flex items-center justify-center h-[300px]">
+                        <PieChart width={300} height={280}>
                                 <Pie data={packageRevenueData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} (${entry.value}%)`}>
                                     {packageRevenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -121,7 +120,6 @@ export function AdminFinancialDashboard() {
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)' }} />
                             </PieChart>
-                        </ResponsiveContainer>
                     </CardContent>
                 </Card>
             </div>

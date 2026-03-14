@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Increase timeout for mobile tests — dev mode compilation can be slow
-test.setTimeout(60_000);
+test.setTimeout(120_000);
 
 /**
  * Mobile Responsive Tests
@@ -15,11 +15,11 @@ test.describe('Mobile (375px): Landing page', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Hero section visible and not overflowing', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const h1 = page.locator('h1').first();
-    await expect(h1).toBeVisible({ timeout: 10000 });
+    await expect(h1).toBeVisible({ timeout: 30000 });
 
     // Check no horizontal overflow
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -29,7 +29,7 @@ test.describe('Mobile (375px): Landing page', () => {
   });
 
   test('Content is readable (no text truncation)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const body = await page.locator('body').textContent();
@@ -37,7 +37,7 @@ test.describe('Mobile (375px): Landing page', () => {
   });
 
   test('CTA buttons are visible and tappable', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Look for CTA buttons (register, find conservatory)
@@ -57,12 +57,12 @@ test.describe('Mobile (375px): Login page', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Login form usable on mobile', async ({ page }) => {
-    await page.goto('/login');
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Email input should be visible
     const emailInput = page.getByRole('textbox', { name: /email/i });
-    await expect(emailInput).toBeVisible({ timeout: 10000 });
+    await expect(emailInput).toBeVisible({ timeout: 30000 });
 
     // Check input is wide enough to type into
     const box = await emailInput.boundingBox();
@@ -76,7 +76,7 @@ test.describe('Mobile (375px): Dashboard', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Dashboard loads without horizontal overflow', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
 
@@ -86,7 +86,7 @@ test.describe('Mobile (375px): Dashboard', () => {
   });
 
   test('Sidebar collapses on mobile', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
 
@@ -102,11 +102,11 @@ test.describe('Mobile (375px): Book wizard', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Book wizard tabs usable on mobile', async ({ page }) => {
-    await page.goto('/dashboard/schedule/book');
+    await page.goto('/dashboard/schedule/book', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const content = page.locator('h1, h2, h3, main').first();
-    await expect(content).toBeVisible({ timeout: 15000 });
+    await expect(content).toBeVisible({ timeout: 30000 });
 
     // No horizontal overflow
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -119,11 +119,11 @@ test.describe('Mobile (375px): Billing page', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Billing page readable on mobile', async ({ page }) => {
-    await page.goto('/dashboard/billing');
+    await page.goto('/dashboard/billing', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const content = page.locator('h1, h2, h3, main').first();
-    await expect(content).toBeVisible({ timeout: 15000 });
+    await expect(content).toBeVisible({ timeout: 30000 });
   });
 });
 
@@ -131,9 +131,9 @@ test.describe('Mobile (375px): Cookie banner', () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test('Cookie banner not obscuring content', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
-    await page.reload();
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const banner = page.locator('[role="dialog"], [class*="cookie"]').first();
@@ -152,11 +152,11 @@ test.describe('Tablet (768px): Landing page', () => {
   test.use({ viewport: TABLET_VIEWPORT });
 
   test('Landing page responsive at tablet width', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const h1 = page.locator('h1').first();
-    await expect(h1).toBeVisible({ timeout: 10000 });
+    await expect(h1).toBeVisible({ timeout: 30000 });
 
     // No horizontal overflow
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -169,11 +169,11 @@ test.describe('Tablet (768px): Dashboard', () => {
   test.use({ viewport: TABLET_VIEWPORT });
 
   test('Dashboard sidebar visible or collapsible at tablet', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const content = page.locator('h1, h2, h3, main').first();
-    await expect(content).toBeVisible({ timeout: 15000 });
+    await expect(content).toBeVisible({ timeout: 30000 });
   });
 });
 
@@ -181,18 +181,18 @@ test.describe('Desktop (1280px): Baseline', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test('Landing page at desktop width', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const h1 = page.locator('h1').first();
-    await expect(h1).toBeVisible({ timeout: 10000 });
+    await expect(h1).toBeVisible({ timeout: 30000 });
   });
 
   test('Dashboard at desktop width', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const content = page.locator('h1, h2, h3, main').first();
-    await expect(content).toBeVisible({ timeout: 15000 });
+    await expect(content).toBeVisible({ timeout: 30000 });
   });
 });

@@ -646,7 +646,7 @@ export function BookLessonWizard() {
                     {/* ── Regular booking ── */}
                     <TabsContent value="regular">
                         <FormProvider {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
                                 <div className="flex flex-col xl:grid xl:grid-cols-[280px_1fr] gap-8">
                                     {/* Filters Column */}
                                     <div className="space-y-6">
@@ -837,7 +837,7 @@ export function BookLessonWizard() {
                                     </div>{/* end calendar+slots sub-grid */}
                                 </div>{/* end outer grid */}
 
-                                <div className="pt-6">
+                                <div>
                                     <Button type="submit" disabled={!form.formState.isValid || (user?.role === 'student' || user?.role === 'parent' ? !activePackage : false)}>
                                         {t('bookLesson')}
                                     </Button>

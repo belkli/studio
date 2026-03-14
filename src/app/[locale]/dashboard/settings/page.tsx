@@ -301,18 +301,20 @@ export default function SettingsPage() {
                         <CardTitle>{t('conservatorium.title')}</CardTitle>
                         <CardDescription>{t('conservatorium.description')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2">
-                        <Button asChild variant="default"><Link href="/dashboard/settings/conservatorium/profile">{t('conservatorium.publicProfile')}</Link></Button>
-                        {newFeaturesEnabled && (
-                            <>
-                                <Button asChild variant="outline"><Link href="/dashboard/settings/conservatorium">{t('conservatorium.manageFeatures')}</Link></Button>
-                                <Button asChild variant="outline"><Link href="/dashboard/settings/pricing">{t('conservatorium.pricing')}</Link></Button>
-                                <Button asChild variant="outline"><Link href="/dashboard/settings/cancellation">{t('conservatorium.cancellation')}</Link></Button>
-                                <Button asChild variant="outline"><Link href="/dashboard/settings/instruments">{t('conservatorium.instruments')}</Link></Button>
-                                <Button asChild variant="outline"><Link href="/dashboard/settings/packages">{t('conservatorium.packages')}</Link></Button>
-                                <Button asChild variant="outline"><Link href="/dashboard/ai">{t('conservatorium.manageAI')}</Link></Button>
-                            </>
-                        )}
+                    <CardContent>
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                            <Button asChild variant="default" className="justify-start"><Link href="/dashboard/settings/conservatorium/profile">{t('conservatorium.publicProfile')}</Link></Button>
+                            {newFeaturesEnabled && (
+                                <>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/settings/conservatorium">{t('conservatorium.manageFeatures')}</Link></Button>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/settings/pricing">{t('conservatorium.pricing')}</Link></Button>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/settings/cancellation">{t('conservatorium.cancellation')}</Link></Button>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/settings/instruments">{t('conservatorium.instruments')}</Link></Button>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/settings/packages">{t('conservatorium.packages')}</Link></Button>
+                                    <Button asChild variant="outline" className="justify-start"><Link href="/dashboard/ai">{t('conservatorium.manageAI')}</Link></Button>
+                                </>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
             )}

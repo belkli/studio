@@ -401,11 +401,19 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
               </div>
 
               <Card className="overflow-hidden">
-                {selectedCons.photoUrls?.[0] && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selectedCons.photoUrls[0]} alt={selectedCons.name} className="h-44 w-full object-cover" />
+                {selectedCons.photoUrls?.[0] ? (
+                  <div className="relative h-44 w-full overflow-hidden bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={selectedCons.photoUrls[0]}
+                      alt={selectedCons.name}
+                      className="h-44 w-full object-cover"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-44 w-full bg-muted" />
                 )}
-                {!selectedCons.photoUrls?.[0] && <div className="h-44 w-full bg-muted" />}
                 <CardContent className="space-y-2 p-4 text-sm text-muted-foreground">
                   {selectedCons.location?.city && (
                     <p className="flex items-center gap-2"><MapPin className="h-4 w-4" />{selectedCons.location.address || selectedCons.location.city}</p>

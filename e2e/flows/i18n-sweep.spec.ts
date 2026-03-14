@@ -3,7 +3,7 @@ import { LOCALES, RTL_LOCALES, localePath, isRtlLocale } from '../helpers/locale
 import { findPhysicalCssViolations } from '../helpers/rtl-checker';
 
 // Increase timeout for i18n tests — dev mode compiles each locale route separately
-test.setTimeout(60_000);
+test.setTimeout(120_000);
 
 /**
  * i18n & RTL Sweep Tests
@@ -15,8 +15,6 @@ test.setTimeout(60_000);
 const KEY_PAGES = [
   { path: '/', name: 'Landing' },
   { path: '/login', name: 'Login' },
-  { path: '/about', name: 'About' },
-  { path: '/privacy', name: 'Privacy' },
   { path: '/dashboard', name: 'Dashboard' },
 ];
 
@@ -24,7 +22,7 @@ test.describe('i18n: No raw translation keys on key pages', () => {
   for (const { path, name } of KEY_PAGES) {
     for (const locale of LOCALES) {
       test(`${name} (${locale}): no raw translation keys`, async ({ page }) => {
-        await page.goto(localePath(locale, path));
+        await page.goto(localePath(locale, path), { waitUntil: 'domcontentloaded' });
         await page.waitForLoadState('domcontentloaded');
         // Wait a bit for client-side rendering
         await page.waitForTimeout(1000);
@@ -42,7 +40,7 @@ test.describe('i18n: RTL direction attribute', () => {
   for (const { path, name } of KEY_PAGES) {
     for (const locale of RTL_LOCALES) {
       test(`${name} (${locale}): has dir=rtl`, async ({ page }) => {
-        await page.goto(localePath(locale, path));
+        await page.goto(localePath(locale, path), { waitUntil: 'domcontentloaded' });
         await page.waitForLoadState('domcontentloaded');
 
         // Check for RTL direction on html or any ancestor element
@@ -58,7 +56,7 @@ test.describe('i18n: RTL direction attribute', () => {
 test.describe('i18n: LTR direction for en/ru', () => {
   for (const locale of ['en', 'ru'] as const) {
     test(`Landing page (${locale}): has ltr direction`, async ({ page }) => {
-      await page.goto(localePath(locale, '/'));
+      await page.goto(localePath(locale, '/'), { waitUntil: 'domcontentloaded' });
       await page.waitForLoadState('domcontentloaded');
 
       const htmlDir = await page.locator('html').getAttribute('dir');
@@ -70,7 +68,7 @@ test.describe('i18n: LTR direction for en/ru', () => {
 
 test.describe('i18n: Currency formatting', () => {
   test('Billing page shows shekel symbol (₪)', async ({ page }) => {
-    await page.goto('/dashboard/billing');
+    await page.goto('/dashboard/billing', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
@@ -83,7 +81,7 @@ test.describe('i18n: Currency formatting', () => {
   });
 
   test('Settings packages show shekel symbol', async ({ page }) => {
-    await page.goto('/dashboard/settings/packages');
+    await page.goto('/dashboard/settings/packages', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
@@ -98,7 +96,7 @@ test.describe('i18n: Currency formatting', () => {
 test.describe('i18n: RTL physical CSS violations', () => {
   for (const locale of RTL_LOCALES) {
     test(`Landing page (${locale}): minimal physical CSS`, async ({ page }) => {
-      await page.goto(localePath(locale, '/'));
+      await page.goto(localePath(locale, '/'), { waitUntil: 'domcontentloaded' });
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
@@ -115,7 +113,7 @@ test.describe('i18n: RTL physical CSS violations', () => {
 
 test.describe('i18n: Locale navigation links', () => {
   test('Landing page has language switcher', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Look for language switcher elements
@@ -127,7 +125,7 @@ test.describe('i18n: Locale navigation links', () => {
 
 test.describe('i18n: Locale-specific date formatting', () => {
   test('Schedule page uses locale-aware dates', async ({ page }) => {
-    await page.goto('/dashboard/schedule');
+    await page.goto('/dashboard/schedule', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 

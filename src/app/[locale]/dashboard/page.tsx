@@ -41,7 +41,7 @@ export default function DashboardPage() {
     }
   }, [isLoading, newFeaturesEnabled, user, router]);
 
-  if (isLoading || !user || newFeaturesEnabled) {
+  if (isLoading || !user) {
     return (
       <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="flex items-center justify-between">

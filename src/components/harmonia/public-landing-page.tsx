@@ -159,9 +159,9 @@ export function PublicLandingPage() {
       conservatoriumCount: uniqueConservatoriums.length,
       totalLessons: 450000,
       parentSatisfaction: 75,
-      studentCount: users.filter((user) => user.role === 'student').length,
+      studentCount: 12000,
     }),
-    [uniqueConservatoriums.length, users]
+    [uniqueConservatoriums.length]
   );
 
   // Intersection observer for scroll animations
@@ -192,6 +192,14 @@ export function PublicLandingPage() {
     if (locale === 'ar') return event.title?.ar || event.title?.en || event.name;
     if (locale === 'ru') return event.title?.ru || event.title?.en || event.name;
     return event.title?.en || event.name;
+  };
+
+  const getEventVenue = (event: EventProduction) => {
+    if (event.venueDetails?.name) {
+      if (locale === 'he') return event.venueDetails.name.he || event.venue;
+      return event.venueDetails.name.en || event.venueDetails.name.he || event.venue;
+    }
+    return event.venue;
   };
 
   const handleSearch = () => {
@@ -453,7 +461,7 @@ export function PublicLandingPage() {
                       <CalendarClock className="h-4 w-4" />
                       {new Date(event.eventDate).toLocaleDateString(locale)}
                     </p>
-                    <p className="line-clamp-1">{event.venue}</p>
+                    <p className="line-clamp-1">{getEventVenue(event)}</p>
                   </CardContent>
                 </Card>
               ))}

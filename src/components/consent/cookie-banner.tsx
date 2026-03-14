@@ -26,11 +26,11 @@ export function CookieBanner() {
       role="dialog"
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-desc"
-      className="fixed bottom-0 inset-x-0 z-50 bg-background border-t shadow-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
+      className="fixed bottom-0 inset-x-0 z-50 bg-background border-t shadow-lg px-4 py-3 flex items-center gap-3 sm:p-4 sm:flex-row"
     >
-      <div className="flex-1">
-        <p id="cookie-banner-title" className="font-semibold text-sm">{t('title')}</p>
-        <p id="cookie-banner-desc" className="text-muted-foreground text-xs mt-1">{t('description')}</p>
+      <div className="flex-1 min-w-0">
+        <p id="cookie-banner-title" className="font-semibold text-sm leading-tight">{t('title')}</p>
+        <p id="cookie-banner-desc" className="text-muted-foreground text-xs mt-0.5 line-clamp-2 sm:line-clamp-none">{t('description')}</p>
       </div>
       <div className="flex gap-2 flex-shrink-0">
         <Button size="sm" variant="outline" onClick={reject}>{t('reject')}</Button>

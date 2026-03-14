@@ -233,7 +233,7 @@ export function AccessibilityPanel() {
   return (
     <div
       className="a11y-widget-root"
-      style={position ? ({ left: `${position.x}px`, top: `${position.y}px` } as CSSProperties) : undefined}
+      style={position ? ({ left: `${position.x}px`, top: `${position.y}px` } as CSSProperties) : { visibility: 'hidden' }}
     >
       <div className="a11y-widget-actions">
         <button

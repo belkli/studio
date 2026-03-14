@@ -34,7 +34,7 @@ test.describe('SEC-01: No sensitive data in responses', () => {
   });
 
   test('Page source does not contain raw API keys or tokens', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const source = await page.content();
@@ -49,7 +49,7 @@ test.describe('SEC-01: No sensitive data in responses', () => {
   });
 
   test('Page source does not contain raw password strings', async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const source = await page.content();
@@ -60,7 +60,7 @@ test.describe('SEC-01: No sensitive data in responses', () => {
 
 test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
   async function attemptLoginWith(page: import('@playwright/test').Page, callbackUrl: string) {
-    await page.goto(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+    await page.goto(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`, { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
@@ -99,7 +99,7 @@ test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
     // Use a safer encoding that won't cause browser nav issues
     // Navigate to the page with the encoded callbackUrl — the JS must NOT execute
     const encodedUrl = encodeURIComponent("javascript:alert('xss')");
-    await page.goto(`/login?callbackUrl=${encodedUrl}`);
+    await page.goto(`/login?callbackUrl=${encodedUrl}`, { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const title = await page.title();
@@ -114,7 +114,7 @@ test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
   });
 
   test('Valid /dashboard callback is allowed', async ({ page }) => {
-    await page.goto('/login?callbackUrl=/dashboard');
+    await page.goto('/login?callbackUrl=/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
@@ -139,7 +139,7 @@ test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
 
 test.describe('SEC-03: Tenant isolation smoke test', () => {
   test('Admin page loads without error', async ({ page }) => {
-    await page.goto('/dashboard/admin');
+    await page.goto('/dashboard/admin', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     await expect(page).not.toHaveURL(/error/i);
@@ -148,7 +148,7 @@ test.describe('SEC-03: Tenant isolation smoke test', () => {
   });
 
   test('Admin page content is present and not a raw JSON dump of all tenants', async ({ page }) => {
-    await page.goto('/dashboard/admin');
+    await page.goto('/dashboard/admin', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const bodyText = await page.locator('body').textContent();
@@ -161,7 +161,7 @@ test.describe('SEC-03: Tenant isolation smoke test', () => {
 
 test.describe('SEC-04: Role escalation via URL', () => {
   test('Admin pages accessible for site_admin (dev bypass)', async ({ page }) => {
-    await page.goto('/dashboard/admin');
+    await page.goto('/dashboard/admin', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     await expect(page).not.toHaveURL(/login|unauthorized|403/i);
@@ -170,7 +170,7 @@ test.describe('SEC-04: Role escalation via URL', () => {
   });
 
   test('Ministry pages accessible for site_admin (dev bypass)', async ({ page }) => {
-    await page.goto('/dashboard/ministry');
+    await page.goto('/dashboard/ministry', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     await expect(page).not.toHaveURL(/login|unauthorized|403/i);
@@ -180,7 +180,7 @@ test.describe('SEC-04: Role escalation via URL', () => {
 
   test('Query param ?role= does not escalate privileges', async ({ page }) => {
     // Attempt to inject role via URL — should be ignored by the app
-    await page.goto('/dashboard/admin?role=site_admin');
+    await page.goto('/dashboard/admin?role=site_admin', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Page should not crash/error due to unexpected param
@@ -235,7 +235,7 @@ test.describe('SEC-06: Inline scripts and CSP', () => {
       }
     });
 
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Filter to only security-relevant errors (CSP violations, mixed content)
@@ -254,7 +254,7 @@ test.describe('SEC-06: Inline scripts and CSP', () => {
 
 test.describe('SEC-07: XSS in search inputs', () => {
   test('/about search input does not execute injected script tag', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/about', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const searchInput = page.locator('input[type="search"], input[type="text"], input[placeholder]').first();
@@ -283,7 +283,7 @@ test.describe('SEC-07: XSS in search inputs', () => {
   });
 
   test('/about onerror attribute injection does not execute', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/about', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const searchInput = page.locator('input[type="search"], input[type="text"], input[placeholder]').first();
@@ -305,7 +305,7 @@ test.describe('SEC-07: XSS in search inputs', () => {
   });
 
   test('Registration name input does not execute injected script tag', async ({ page }) => {
-    await page.goto('/register');
+    await page.goto('/register', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const nameInput = page.locator('input[name="name"], input[type="text"]').first();
@@ -323,7 +323,7 @@ test.describe('SEC-07: XSS in search inputs', () => {
 
 test.describe('SEC-08: CSRF protection on forms', () => {
   test('Login form method is POST or handled via Server Action (not GET)', async ({ page }) => {
-    await page.goto('/login');
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const form = page.locator('form').first();
@@ -345,7 +345,7 @@ test.describe('SEC-08: CSRF protection on forms', () => {
       }
     });
 
-    await page.goto('/login');
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
@@ -363,7 +363,7 @@ test.describe('SEC-08: CSRF protection on forms', () => {
 
 test.describe('SEC-09: Cookie security attributes', () => {
   test('Session cookies are HttpOnly', async ({ page, context }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const cookies = await context.cookies();
@@ -375,7 +375,7 @@ test.describe('SEC-09: Cookie security attributes', () => {
   });
 
   test('SameSite=None cookies must also have Secure flag', async ({ page, context }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const cookies = await context.cookies();
@@ -387,7 +387,7 @@ test.describe('SEC-09: Cookie security attributes', () => {
   });
 
   test('Non-HttpOnly cookies do not contain JWT tokens', async ({ page, context }) => {
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const cookies = await context.cookies();
@@ -403,7 +403,7 @@ test.describe('SEC-09: Cookie security attributes', () => {
 test.describe('SEC-11: DSAR actions scoped to own user', () => {
   test('DSAR section is visible in /dashboard/settings', async ({ page }) => {
     // Navigate via English locale to ensure predictable text
-    await page.goto('/en/dashboard/settings');
+    await page.goto('/en/dashboard/settings', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
     await expect(page).not.toHaveURL(/login/);
 
@@ -425,7 +425,7 @@ test.describe('SEC-11: DSAR actions scoped to own user', () => {
 
   test('Export Data button triggers scoped response (stub)', async ({ page }) => {
     // Navigate via English locale to ensure predictable text
-    await page.goto('/en/dashboard/settings');
+    await page.goto('/en/dashboard/settings', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     // Wait for page to fully render by checking h1 first
@@ -454,7 +454,7 @@ test.describe('SEC-11: DSAR actions scoped to own user', () => {
 
 test.describe('SEC-12: Input validation on registration', () => {
   test('Submitting empty registration form shows validation, not server error', async ({ page }) => {
-    await page.goto('/register');
+    await page.goto('/register', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     let serverError = false;
@@ -475,7 +475,7 @@ test.describe('SEC-12: Input validation on registration', () => {
   });
 
   test('Email field rejects obviously invalid format', async ({ page }) => {
-    await page.goto('/register');
+    await page.goto('/register', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
@@ -500,7 +500,7 @@ test.describe('SEC-12: Input validation on registration', () => {
       if (res.status() === 500) serverError = true;
     });
 
-    await page.goto('/register');
+    await page.goto('/register', { waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 
     const submitBtn = page.getByRole('button', { name: /submit|register|הרשמה|המשך|next|continue/i });
