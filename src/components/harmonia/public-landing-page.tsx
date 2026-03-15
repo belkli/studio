@@ -492,7 +492,7 @@ export function PublicLandingPage() {
         </section>
 
         {/* Persona Cards Section */}
-        <section className="bg-gradient-to-br from-primary/8 to-amber-50/50 px-4 py-16" aria-labelledby="personas-heading">
+        <section className="bg-gradient-to-br from-primary/8 to-muted/50 px-4 py-16" aria-labelledby="personas-heading">
           <div className="mx-auto max-w-6xl">
             <div className="mb-10 text-center">
               <h2 id="personas-heading" className="text-3xl font-bold">{t('personasTitle')}</h2>
@@ -505,7 +505,7 @@ export function PublicLandingPage() {
                 { icon: HeartHandshake, title: t('personaParentTitle'), desc: t('personaParentDesc'), href: '/register' },
                 { icon: GraduationCap, title: t('personaStudentTitle'), desc: t('personaStudentDesc'), href: '/register' },
               ].map(({ icon: Icon, title, desc, href }) => (
-                <Card key={title} className="group border-0 bg-white/80 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+                <Card key={title} className="group border-0 bg-card/80 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
                   <CardContent className="p-6">
                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
                       <Icon className="h-6 w-6 text-primary" />
