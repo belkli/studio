@@ -13,6 +13,7 @@ export default defineConfig({
             '**/dist/**',
             'e2e/**',
             '.worktrees/**',
+            '.claude/**',
         ],
         coverage: {
             provider: 'v8',
