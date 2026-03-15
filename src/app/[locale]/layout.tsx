@@ -15,6 +15,7 @@ import { Playfair_Display, Plus_Jakarta_Sans, Heebo, Frank_Ruhl_Libre } from 'ne
 import { getActiveBrand } from '@/lib/themes/active-theme';
 import { BRAND_NAME } from '@/lib/brand';
 import { BrandThemeProvider } from '@/components/brand-theme-provider';
+import { ColorModeScript } from '@/components/color-mode-script';
 
 const playfairDisplay = Playfair_Display({
     subsets: ['latin', 'latin-ext'],
@@ -100,6 +101,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={dir} data-brand={activeBrand}>
+      <head>
+        <ColorModeScript />
+      </head>
       <body className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${heebo.variable} ${frankRuhlLibre.variable} font-body antialiased`}>
         <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
