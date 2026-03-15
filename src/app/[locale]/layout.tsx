@@ -11,12 +11,34 @@ import { notFound } from 'next/navigation';
 import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
 import { AccessibilityPanel } from '@/components/a11y/accessibility-panel';
 import { CookieBanner } from '@/components/consent/cookie-banner';
-import { Rubik } from 'next/font/google';
+import { Playfair_Display, Plus_Jakarta_Sans, Heebo, Frank_Ruhl_Libre } from 'next/font/google';
+import { getActiveTheme } from '@/lib/themes/active-theme';
+import { BRAND_NAME } from '@/lib/brand';
+import { BrandThemeProvider } from '@/components/brand-theme-provider';
 
-const rubik = Rubik({
-    subsets: ['latin', 'hebrew', 'arabic', 'cyrillic'],
+const playfairDisplay = Playfair_Display({
+    subsets: ['latin', 'latin-ext'],
+    weight: ['400', '700', '900'],
+    style: ['normal', 'italic'],
+    variable: '--font-playfair',
+    display: 'swap',
+});
+const plusJakartaSans = Plus_Jakarta_Sans({
+    subsets: ['latin', 'latin-ext'],
+    weight: ['400', '500', '600', '700'],
+    variable: '--font-plus-jakarta',
+    display: 'swap',
+});
+const heebo = Heebo({
+    subsets: ['hebrew', 'latin'],
+    weight: ['400', '500', '700'],
+    variable: '--font-heebo',
+    display: 'swap',
+});
+const frankRuhlLibre = Frank_Ruhl_Libre({
+    subsets: ['hebrew', 'latin'],
     weight: ['400', '700'],
-    variable: '--font-rubik',
+    variable: '--font-frank-ruhl',
     display: 'swap',
 });
 
@@ -30,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{locale: st
     } catch {
         t = (key) => key === 'siteDescription'
             ? 'Advanced management platform for modern music schools and conservatories.'
-            : 'Harmonia';
+            : BRAND_NAME;
     }
     
     return {
@@ -72,14 +94,16 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
+  const activeTheme = getActiveTheme();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const skipToMainLabel = (messages as any)?.Common?.shared?.skipToMain || 'Skip to main content';
 
   return (
-    <html lang={locale} dir={dir}>
-      <body className={`${rubik.variable} font-body antialiased`}>
+    <html lang={locale} dir={dir} data-theme={activeTheme}>
+      <body className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${heebo.variable} ${frankRuhlLibre.variable} font-body antialiased`}>
         <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
+          <BrandThemeProvider>
           <AuthProvider>
             <QueryProvider>
               <div id="main-content" tabIndex={-1}>
@@ -91,6 +115,7 @@ export default async function RootLayout({
               <CookieBanner />
             </QueryProvider>
           </AuthProvider>
+          </BrandThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
