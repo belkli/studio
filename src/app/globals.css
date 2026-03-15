@@ -126,6 +126,33 @@
   --chart-5: 0 84% 60%;
 }
 
+[data-theme="b"] {
+  --background: 40 43% 96%;
+  --foreground: 210 50% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 50% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 50% 11%;
+  --primary: 43 50% 54%;
+  --primary-foreground: 210 50% 11%;
+  --secondary: 210 30% 92%;
+  --secondary-foreground: 210 50% 11%;
+  --muted: 210 30% 92%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 229 52% 47%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 43 20% 82%;
+  --input: 43 20% 82%;
+  --ring: 43 50% 54%;
+  --chart-1: 43 50% 54%;
+  --chart-2: 229 52% 47%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 210 44% 35%;
+  --chart-5: 0 84% 60%;
+}
+
 @layer base {
   * {
     @apply border-border;
