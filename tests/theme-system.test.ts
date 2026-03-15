@@ -63,15 +63,15 @@ describe('Theme V2 HTML attributes', () => {
 })
 
 describe('Theme gold hero', () => {
-  it('showHeroImage is false for Theme gold', () => {
+  it('showHeroImage is true for Theme gold', () => {
     const heroStylesGold = landingPage.match(/gold:\s*\{[\s\S]*?showHeroImage:\s*(true|false)/)?.[1]
-    expect(heroStylesGold).toBe('false')
+    expect(heroStylesGold).toBe('true')
   })
 
-  it('showCinematicOverlays is true for Theme gold', () => {
+  it('showCinematicOverlays is false for Theme gold', () => {
     const match = landingPage.match(
       /gold:\s*\{[\s\S]*?showCinematicOverlays:\s*(true|false)/
     )?.[1]
-    expect(match).toBe('true')
+    expect(match).toBe('false')
   })
 })

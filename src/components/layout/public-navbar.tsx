@@ -21,11 +21,11 @@ const NAVBAR_STYLES = {
         login: 'text-primary font-semibold',
     },
     gold: {
-        header: 'bg-[rgba(13,27,42,0.92)] backdrop-blur-[14px] border-b border-brand-gold/15',
-        link: 'text-foreground/80 hover:text-foreground hover:bg-white/[0.07] rounded-md',
-        activeLink: 'text-foreground',
-        cta: 'bg-gradient-to-br from-brand-indigo-cta to-[hsl(229,52%,47%)] text-white shadow-[0_2px_12px_rgba(45,63,143,0.4)]',
-        login: 'text-foreground/80',
+        header: 'bg-background/90 backdrop-blur-[14px] border-b border-primary/15',
+        link: 'text-foreground/80 hover:text-foreground hover:bg-foreground/[0.07] rounded-md',
+        activeLink: 'text-primary',
+        cta: 'bg-primary text-primary-foreground shadow-[0_2px_12px_rgba(201,168,76,0.35)] cursor-pointer',
+        login: 'text-foreground/80 cursor-pointer',
     },
 } as const;
 
