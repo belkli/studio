@@ -68,10 +68,10 @@ export function AiHelpAssistant() {
     const startWidth = chatWidthRef.current;
 
     const onMove = (moveEvent: PointerEvent) => {
-      // For a left-side panel in LTR: dragging right = wider (positive delta)
-      // For a left-side panel in RTL (rendered on right): dragging left = wider (negative delta)
+      // Sheet is always side="left", handle is always on right edge
+      // Dragging right = wider (positive delta), always
       const delta = moveEvent.clientX - startX;
-      const newWidth = Math.min(CHAT_WIDTH_MAX, Math.max(CHAT_WIDTH_MIN, startWidth + (isRtl ? -delta : delta)));
+      const newWidth = Math.min(CHAT_WIDTH_MAX, Math.max(CHAT_WIDTH_MIN, startWidth + delta));
       setChatWidth(newWidth);
     };
 
@@ -85,7 +85,7 @@ export function AiHelpAssistant() {
 
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp);
-  }, [isRtl]);
+  }, []);
 
   const safeT = useCallback((key: string, fallback: string) => {
     const value = t(key);
@@ -405,9 +405,9 @@ export function AiHelpAssistant() {
           dir={isRtl ? 'rtl' : 'ltr'}
           style={{ width: chatWidth }}
         >
-          {/* Resize drag handle on the trailing edge */}
+          {/* Resize drag handle — always on the right edge (open side) of the left-side sheet */}
           <div
-            className="absolute top-0 bottom-0 end-0 w-1 cursor-col-resize hover:bg-primary/20 active:bg-primary/30 z-50"
+            className="absolute top-0 bottom-0 right-0 w-1 cursor-col-resize hover:bg-primary/20 active:bg-primary/30 z-50"
             onPointerDown={onResizePointerDown}
           />
           <SheetHeader className="p-6 pb-4">
