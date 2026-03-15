@@ -1,5 +1,6 @@
 import type { SVGProps } from 'react';
 import { cn } from '@/lib/utils';
+import type { BrandId } from '@/lib/themes/active-theme';
 
 export const Icons = {
   logo: (props: SVGProps<SVGSVGElement>) => (
@@ -20,24 +21,24 @@ export const Icons = {
       <circle cx="18" cy="16" r="3" />
     </svg>
   ),
-  logoContainer: ({ theme = 'a', showText = true, className, ...props }: {
-    theme?: 'a' | 'b'
+  logoContainer: ({ theme = 'indigo', showText = true, className, ...props }: {
+    theme?: BrandId
     showText?: boolean
     className?: string
   } & SVGProps<SVGSVGElement>) => {
     const containerStyles = {
-      a: 'w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(239,84%,67%)]',
-      b: 'w-[34px] h-[34px] rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light',
+      indigo: 'w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(239,84%,67%)]',
+      gold: 'w-[34px] h-[34px] rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light',
     }
     const textStyles = {
-      a: { base: 'font-heading text-xl font-extrabold text-primary', accent: 'text-[hsl(234,90%,74%)]' },
-      b: { base: 'font-display text-[22px] font-bold italic text-foreground', accent: 'text-brand-gold' },
+      indigo: { base: 'font-heading text-xl font-extrabold text-primary', accent: 'text-[hsl(234,90%,74%)]' },
+      gold: { base: 'font-display text-[22px] font-bold italic text-foreground', accent: 'text-brand-gold' },
     }
-    const s = theme === 'b' ? 'b' : 'a'
+    const s = theme === 'gold' ? 'gold' : 'indigo'
     return (
       <span className={cn('flex items-center gap-2', className)}>
         <span className={cn(containerStyles[s], 'flex items-center justify-center shrink-0')}>
-          <Icons.logo className={cn(s === 'a' ? 'h-[18px] w-[18px] text-white' : 'h-4 w-4 text-[hsl(210,50%,11%)]')} {...props} />
+          <Icons.logo className={cn(s === 'indigo' ? 'h-[18px] w-[18px] text-white' : 'h-4 w-4 text-[hsl(210,50%,11%)]')} {...props} />
         </span>
         {showText && (
           <span className={textStyles[s].base}>

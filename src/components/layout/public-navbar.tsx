@@ -12,14 +12,14 @@ import { Menu } from 'lucide-react';
 import { useBrandTheme } from '@/components/brand-theme-provider';
 
 const NAVBAR_STYLES = {
-    a: {
+    indigo: {
         header: 'bg-background/80 backdrop-blur-sm border-b',
         link: 'text-foreground/80 hover:text-primary hover:underline',
         activeLink: 'text-primary',
         cta: 'bg-primary text-primary-foreground hover:bg-primary/90',
         login: 'text-primary font-semibold',
     },
-    b: {
+    gold: {
         header: 'bg-[rgba(13,27,42,0.92)] backdrop-blur-[14px] border-b border-brand-gold/15',
         link: 'text-foreground/80 hover:text-foreground hover:bg-white/[0.07] rounded-md',
         activeLink: 'text-foreground',

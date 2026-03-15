@@ -1,36 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 describe('getActiveBrand', () => {
-  beforeEach(() => {
-    vi.unstubAllEnvs()
+  it('returns "indigo" by default', async () => {
+    const { getActiveBrand } = await import('@/lib/themes/active-theme')
+    expect(getActiveBrand()).toBe('indigo')
   })
 
-  it('returns "a" by default when env is not set', async () => {
-    vi.stubEnv('NEXT_PUBLIC_LANDING_THEME', '')
+  it('return type is a valid BrandId ("indigo" or "gold")', async () => {
     const { getActiveBrand } = await import('@/lib/themes/active-theme')
-    expect(getActiveBrand()).toBe('a')
-  })
-
-  it('returns "b" when NEXT_PUBLIC_LANDING_THEME is "b"', async () => {
-    vi.stubEnv('NEXT_PUBLIC_LANDING_THEME', 'b')
-    // Need fresh import to pick up env change
-    vi.resetModules()
-    const { getActiveBrand } = await import('@/lib/themes/active-theme')
-    expect(getActiveBrand()).toBe('b')
-  })
-
-  it('returns "b" when NEXT_PUBLIC_LANDING_THEME is "B" (case-insensitive)', async () => {
-    vi.stubEnv('NEXT_PUBLIC_LANDING_THEME', 'B')
-    vi.resetModules()
-    const { getActiveBrand } = await import('@/lib/themes/active-theme')
-    expect(getActiveBrand()).toBe('b')
-  })
-
-  it('returns "a" for any other value', async () => {
-    vi.stubEnv('NEXT_PUBLIC_LANDING_THEME', 'x')
-    vi.resetModules()
-    const { getActiveBrand } = await import('@/lib/themes/active-theme')
-    expect(getActiveBrand()).toBe('a')
+    const result = getActiveBrand()
+    expect(['indigo', 'gold']).toContain(result)
   })
 })
 
@@ -38,6 +17,6 @@ describe('BrandId type', () => {
   it('getActiveBrand return type is BrandId', async () => {
     const { getActiveBrand } = await import('@/lib/themes/active-theme')
     const result = getActiveBrand()
-    expect(['a', 'b']).toContain(result)
+    expect(['indigo', 'gold']).toContain(result)
   })
 })

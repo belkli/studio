@@ -9,11 +9,11 @@ import { useBrandTheme } from '@/components/brand-theme-provider';
 import { cn } from '@/lib/utils';
 
 const LOGIN_PAGE_STYLES = {
-  a: {
+  indigo: {
     container: 'bg-gradient-to-br from-indigo-50/50 via-background to-background',
     backLink: 'text-muted-foreground hover:text-foreground',
   },
-  b: {
+  gold: {
     container: 'bg-gradient-to-br from-[hsl(210,50%,8%)] via-background to-background',
     backLink: 'text-foreground/60 hover:text-brand-gold',
   },

@@ -1,7 +1,5 @@
-export type BrandId = 'a' | 'b'
+export type BrandId = 'indigo' | 'gold'
 
 export function getActiveBrand(): BrandId {
-  const raw = process.env.NEXT_PUBLIC_LANDING_THEME
-  if (raw?.toLowerCase() === 'b') return 'b'
-  return 'a'
+  return 'indigo'
 }

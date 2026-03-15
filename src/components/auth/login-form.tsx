@@ -25,11 +25,11 @@ function sanitizeCallbackUrl(url: string | null): string {
 }
 
 const LOGIN_FORM_STYLES = {
-  a: {
+  indigo: {
     card: 'border',
     heading: 'font-heading',
   },
-  b: {
+  gold: {
     card: 'border border-brand-gold/10',
     heading: 'font-display',
   },

@@ -4,17 +4,15 @@ import type { BrandId } from '@/lib/themes/active-theme'
 
 interface BrandThemeContextValue {
   brand: BrandId
-  isThemeB: boolean
 }
 
 const BrandThemeContext = createContext<BrandThemeContextValue>({
-  brand: 'a',
-  isThemeB: false,
+  brand: 'indigo',
 })
 
 export function BrandThemeProvider({ brand, children }: { brand: BrandId; children: ReactNode }) {
   return (
-    <BrandThemeContext.Provider value={{ brand, isThemeB: brand === 'b' }}>
+    <BrandThemeContext.Provider value={{ brand }}>
       {children}
     </BrandThemeContext.Provider>
   )

@@ -6,74 +6,68 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 describe('BrandThemeProvider', () => {
-  it('provides brand "a" when prop is "a"', async () => {
+  it('provides brand "indigo" when prop is "indigo"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
 
     function TestConsumer() {
-      const { brand, isThemeB } = useBrandTheme()
+      const { brand } = useBrandTheme()
       return (
         <div>
           <span data-testid="brand">{brand}</span>
-          <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
     }
 
     render(
-      <BrandThemeProvider brand="a">
+      <BrandThemeProvider brand="indigo">
         <TestConsumer />
       </BrandThemeProvider>
     )
 
-    expect(screen.getByTestId('brand').textContent).toBe('a')
-    expect(screen.getByTestId('isThemeB').textContent).toBe('false')
+    expect(screen.getByTestId('brand').textContent).toBe('indigo')
   })
 
-  it('provides brand "b" when prop is "b"', async () => {
+  it('provides brand "gold" when prop is "gold"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
 
     function TestConsumer() {
-      const { brand, isThemeB } = useBrandTheme()
+      const { brand } = useBrandTheme()
       return (
         <div>
           <span data-testid="brand">{brand}</span>
-          <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
     }
 
     render(
-      <BrandThemeProvider brand="b">
+      <BrandThemeProvider brand="gold">
         <TestConsumer />
       </BrandThemeProvider>
     )
 
-    expect(screen.getByTestId('brand').textContent).toBe('b')
-    expect(screen.getByTestId('isThemeB').textContent).toBe('true')
+    expect(screen.getByTestId('brand').textContent).toBe('gold')
   })
 
-  it('useBrandTheme returns default values outside provider', async () => {
+  it('useBrandTheme returns default brand "indigo" outside provider', async () => {
     const { useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
 
     function TestConsumer() {
-      const { brand, isThemeB } = useBrandTheme()
+      const { brand } = useBrandTheme()
       return (
         <div>
           <span data-testid="brand">{brand}</span>
-          <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
     }
 
     render(<TestConsumer />)
 
-    expect(screen.getByTestId('brand').textContent).toBe('a')
-    expect(screen.getByTestId('isThemeB').textContent).toBe('false')
+    expect(screen.getByTestId('brand').textContent).toBe('indigo')
   })
 })

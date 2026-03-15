@@ -22,7 +22,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 const LANDING_HERO_IMAGE = '/images/landing-hero.jpg';
 
 const HERO_STYLES = {
-  a: {
+  indigo: {
     wrapper: 'relative overflow-hidden border-b',
     showHeroImage: true,
     imageOverlay: 'absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20',
@@ -38,7 +38,7 @@ const HERO_STYLES = {
     secondaryBtnClass: 'border-white bg-white/10 text-white hover:bg-white/20',
     showCinematicOverlays: false,
   },
-  b: {
+  gold: {
     wrapper: 'relative min-h-[85vh] flex items-center justify-center overflow-hidden',
     showHeroImage: false,
     imageOverlay: '',
@@ -57,12 +57,12 @@ const HERO_STYLES = {
 } as const;
 
 const STATS_STYLES = {
-  a: {
+  indigo: {
     bar: 'border-y bg-primary px-4 py-8',
     number: 'text-3xl font-extrabold text-white',
     label: 'mt-1 text-sm text-white/70',
   },
-  b: {
+  gold: {
     bar: 'bg-brand-navy/80 border-y border-brand-gold/15 py-6 px-4',
     number: 'text-2xl sm:text-3xl font-heading font-bold text-brand-gold',
     label: 'text-foreground/60 text-xs sm:text-sm mt-1',
@@ -76,8 +76,8 @@ export function PublicLandingPage() {
   const router = useRouter();
   const { conservatoriums, conservatoriumInstruments, users, events } = useAuth();
   const { brand } = useBrandTheme();
-  const heroS = HERO_STYLES[brand] ?? HERO_STYLES.a;
-  const statsS = STATS_STYLES[brand] ?? STATS_STYLES.a;
+  const heroS = HERO_STYLES[brand] ?? HERO_STYLES.indigo;
+  const statsS = STATS_STYLES[brand] ?? STATS_STYLES.indigo;
 
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');

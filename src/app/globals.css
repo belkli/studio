@@ -116,7 +116,8 @@
   --brand-indigo-cta: 229 52% 37%;
 }
 
-.dark {
+/* Theme A dark — manual override */
+[data-color-mode="dark"] {
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;
   --card: 222.2 84% 4.9%;
@@ -143,27 +144,52 @@
   --chart-5: 0 84% 60%;
 }
 
-[data-brand="b"] {
-  /* Dark-first: cinematic navy/gold palette matches hero treatment */
-  --background: 210 50% 11%;      /* #0D1B2A deep navy */
-  --foreground: 40 43% 96%;       /* #F9F6F0 warm off-white */
-  --card: 210 44% 15%;            /* slightly lighter than bg */
-  --card-foreground: 40 43% 96%;
-  --popover: 210 44% 15%;
-  --popover-foreground: 40 43% 96%;
-  --primary: 43 50% 54%;          /* #C9A84C gold */
+/* Theme A dark — system preference (only when not locked to light, not gold theme) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-mode="light"]):not([data-brand="gold"]) {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 235 86% 65%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 235 86% 65%;
+  }
+}
+
+/* Theme gold (B) light mode — warm cream (matches good_theme_b_light_mode.jpg) */
+[data-brand="gold"] {
+  --background: 40 43% 96%;        /* #F9F6F0 warm cream */
+  --foreground: 210 50% 11%;       /* #0D1B2A deep navy text */
+  --card: 0 0% 100%;               /* white cards */
+  --card-foreground: 210 50% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 50% 11%;
+  --primary: 43 50% 54%;           /* #C9A84C gold */
   --primary-foreground: 210 50% 11%;
-  --secondary: 210 44% 18%;       /* #1A2E44 navy surface */
-  --secondary-foreground: 40 43% 96%;
-  --muted: 210 44% 18%;
-  --muted-foreground: 40 20% 62%;
-  --accent: 229 52% 47%;          /* indigo CTA */
-  --accent-foreground: 40 43% 96%;
-  --destructive: 0 63% 31%;
+  --secondary: 40 30% 92%;         /* warm light grey */
+  --secondary-foreground: 210 50% 11%;
+  --muted: 40 30% 92%;
+  --muted-foreground: 210 20% 40%;
+  --accent: 229 52% 37%;           /* indigo CTA */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
-  --border: 210 30% 22%;          /* dark border */
-  --input: 210 30% 22%;
-  --ring: 43 50% 54%;             /* gold ring */
+  --border: 40 20% 85%;            /* warm light border */
+  --input: 40 20% 85%;
+  --ring: 43 50% 54%;              /* gold ring */
   --chart-1: 43 50% 54%;
   --chart-2: 229 52% 47%;
   --chart-3: 160 84% 39%;
@@ -171,7 +197,8 @@
   --chart-5: 0 84% 60%;
 }
 
-[data-brand="b"][data-color-mode="dark"] {
+/* Theme gold (B) dark mode — deep navy/gold (manual override) */
+[data-brand="gold"][data-color-mode="dark"] {
   --background: 210 50% 11%;
   --foreground: 40 43% 96%;
   --card: 210 44% 15%;
@@ -198,8 +225,33 @@
   --chart-5: 0 84% 60%;
 }
 
+/* Theme gold (B) dark — system preference */
+@media (prefers-color-scheme: dark) {
+  [data-brand="gold"]:not([data-color-mode="light"]) {
+    --background: 210 50% 11%;
+    --foreground: 40 43% 96%;
+    --card: 210 44% 15%;
+    --card-foreground: 40 43% 96%;
+    --popover: 210 44% 15%;
+    --popover-foreground: 40 43% 96%;
+    --primary: 43 50% 54%;
+    --primary-foreground: 210 50% 11%;
+    --secondary: 210 44% 18%;
+    --secondary-foreground: 40 43% 96%;
+    --muted: 210 44% 18%;
+    --muted-foreground: 40 20% 62%;
+    --accent: 229 52% 47%;
+    --accent-foreground: 40 43% 96%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 43 15% 25%;
+    --input: 43 15% 25%;
+    --ring: 43 70% 69%;
+  }
+}
+
 /* Candidate B font overrides */
-[data-brand="b"] {
+[data-brand="gold"] {
   --font-heading: 'Frank Ruhl Libre', serif;
   --font-body: var(--font-heebo), 'Heebo', sans-serif;
   --font-display: var(--font-playfair), 'Playfair Display', serif;
@@ -219,7 +271,7 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground transition-colors duration-200;
   }
 }
 

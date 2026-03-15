@@ -6,12 +6,12 @@ import { useBrandTheme } from '@/components/brand-theme-provider';
 import { cn } from '@/lib/utils';
 
 const FOOTER_STYLES = {
-    a: {
+    indigo: {
         container: 'border-t bg-muted/50',
         text: 'text-muted-foreground',
         link: 'text-muted-foreground hover:text-primary hover:underline',
     },
-    b: {
+    gold: {
         container: 'border-t border-brand-gold/15 bg-background',
         text: 'text-foreground/60',
         link: 'text-foreground/60 hover:text-brand-gold hover:underline',
