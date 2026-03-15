@@ -1000,11 +1000,48 @@
       "dpaStatus": "הסכם עיבוד נתונים"
     },
     "subProcessors": [
-      { "processor": "Google Cloud Platform (Firebase)", "service": "אימות, מסד נתונים, אחסון, פונקציות ענן", "dataAccessed": "כל נתוני המשתמשים", "location": "europe-west1 (בלגיה)", "dpaStatus": "DPA סטנדרטי של Google" },
-      { "processor": "Cardcom", "service": "עיבוד תשלומים", "dataAccessed": "שם בעל הכרטיס, טוקן תשלום, סכומי חשבונית", "location": "ישראל", "dpaStatus": "בתהליך" },
-      { "processor": "Twilio", "service": "הודעות SMS ו-WhatsApp", "dataAccessed": "מספרי טלפון, תוכן הודעות", "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)", "dpaStatus": "בתהליך" },
-      { "processor": "SendGrid (Twilio)", "service": "שליחת אימייל", "dataAccessed": "כתובות אימייל, תוכן הודעות", "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)", "dpaStatus": "בתהליך" },
-      { "processor": "Google AI (Gemini)", "service": "דוחות התקדמות מבוססי בינה מלאכותית, התאמת מורים", "dataAccessed": "שמות תלמידים, היסטוריית שיעורים, פרופילי מורים", "location": "ארה״ב/איחוד האירופי", "dpaStatus": "בתהליך — כולל בדיקת מדיניות שימוש בנתונים" }
+      {
+        "processor": "Google Cloud Platform (Firebase)",
+        "service": "אימות, מסד נתונים, אחסון, פונקציות ענן",
+        "dataAccessed": "כל נתוני המשתמשים",
+        "location": "europe-west1 (בלגיה)",
+        "dpaStatus": "DPA סטנדרטי של Google"
+      },
+      {
+        "processor": "Cardcom",
+        "service": "עיבוד תשלומים",
+        "dataAccessed": "שם בעל הכרטיס, טוקן תשלום, סכומי חשבונית",
+        "location": "ישראל",
+        "dpaStatus": "בתהליך"
+      },
+      {
+        "processor": "Twilio",
+        "service": "הודעות SMS ו-WhatsApp",
+        "dataAccessed": "מספרי טלפון, תוכן הודעות",
+        "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)",
+        "dpaStatus": "בתהליך"
+      },
+      {
+        "processor": "SendGrid (Twilio)",
+        "service": "שליחת אימייל",
+        "dataAccessed": "כתובות אימייל, תוכן הודעות",
+        "location": "ארה״ב (עם נקודות קצה באיחוד האירופי)",
+        "dpaStatus": "בתהליך"
+      },
+      {
+        "processor": "Google AI (Gemini)",
+        "service": "דוחות התקדמות מבוססי בינה מלאכותית, התאמת מורים",
+        "dataAccessed": "שמות תלמידים, היסטוריית שיעורים, פרופילי מורים",
+        "location": "ארה״ב/איחוד האירופי",
+        "dpaStatus": "בתהליך — כולל בדיקת מדיניות שימוש בנתונים"
+      },
+      {
+        "processor": "Google Gemini (Google LLC)",
+        "service": "תרגום אוטומטי של הודעות (עברית ↔ אנגלית ↔ ערבית ↔ רוסית)",
+        "dataAccessed": "תוכן טקסט ההודעות (ללא נתונים אישיים)",
+        "location": "ארה״ב (Google Cloud)",
+        "dpaStatus": "אינטרסים לגיטימיים — שיפור איכות השירות ונגישותו"
+      }
     ],
     "retentionScheduleTitle": "לוח שמירת נתונים",
     "retentionScheduleBody": "הרמוניה שומרת נתונים בהתאם לתקופות הבאות:",

@@ -1000,11 +1000,48 @@
       "dpaStatus": "Статус DPA"
     },
     "subProcessors": [
-      { "processor": "Google Cloud Platform (Firebase)", "service": "Аутентификация, база данных, хранилище, Cloud Functions", "dataAccessed": "Все данные пользователей", "location": "europe-west1 (Бельгия)", "dpaStatus": "Стандартное DPA Google" },
-      { "processor": "Cardcom", "service": "Обработка платежей", "dataAccessed": "Имя держателя карты, токены оплаты, суммы счетов", "location": "Израиль", "dpaStatus": "В процессе" },
-      { "processor": "Twilio", "service": "SMS и WhatsApp уведомления", "dataAccessed": "Номера телефонов, содержание сообщений", "location": "США (с конечными точками в ЕС)", "dpaStatus": "В процессе" },
-      { "processor": "SendGrid (Twilio)", "service": "Доставка электронной почты", "dataAccessed": "Адреса электронной почты, содержание писем", "location": "США (с конечными точками в ЕС)", "dpaStatus": "В процессе" },
-      { "processor": "Google AI (Gemini)", "service": "Отчёты о прогрессе с ИИ, подбор учителей", "dataAccessed": "Имена учеников, история уроков, профили учителей", "location": "США/ЕС", "dpaStatus": "В процессе — проверка политики использования данных" }
+      {
+        "processor": "Google Cloud Platform (Firebase)",
+        "service": "Аутентификация, база данных, хранилище, Cloud Functions",
+        "dataAccessed": "Все данные пользователей",
+        "location": "europe-west1 (Бельгия)",
+        "dpaStatus": "Стандартное DPA Google"
+      },
+      {
+        "processor": "Cardcom",
+        "service": "Обработка платежей",
+        "dataAccessed": "Имя держателя карты, токены оплаты, суммы счетов",
+        "location": "Израиль",
+        "dpaStatus": "В процессе"
+      },
+      {
+        "processor": "Twilio",
+        "service": "SMS и WhatsApp уведомления",
+        "dataAccessed": "Номера телефонов, содержание сообщений",
+        "location": "США (с конечными точками в ЕС)",
+        "dpaStatus": "В процессе"
+      },
+      {
+        "processor": "SendGrid (Twilio)",
+        "service": "Доставка электронной почты",
+        "dataAccessed": "Адреса электронной почты, содержание писем",
+        "location": "США (с конечными точками в ЕС)",
+        "dpaStatus": "В процессе"
+      },
+      {
+        "processor": "Google AI (Gemini)",
+        "service": "Отчёты о прогрессе с ИИ, подбор учителей",
+        "dataAccessed": "Имена учеников, история уроков, профили учителей",
+        "location": "США/ЕС",
+        "dpaStatus": "В процессе — проверка политики использования данных"
+      },
+      {
+        "processor": "Google Gemini (Google LLC)",
+        "service": "Автоматический перевод объявлений (иврит ↔ английский ↔ арабский ↔ русский)",
+        "dataAccessed": "Текст объявлений (без персональных данных)",
+        "location": "США (Google Cloud)",
+        "dpaStatus": "Законные интересы — повышение качества и доступности сервиса"
+      }
     ],
     "retentionScheduleTitle": "График хранения данных",
     "retentionScheduleBody": "Harmonia хранит данные в соответствии со следующими периодами:",

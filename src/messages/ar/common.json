@@ -1000,11 +1000,48 @@
       "dpaStatus": "حالة اتفاقية معالجة البيانات"
     },
     "subProcessors": [
-      { "processor": "Google Cloud Platform (Firebase)", "service": "المصادقة، قاعدة البيانات، التخزين، وظائف السحابة", "dataAccessed": "جميع بيانات المستخدمين", "location": "europe-west1 (بلجيكا)", "dpaStatus": "اتفاقية DPA القياسية من Google" },
-      { "processor": "Cardcom", "service": "معالجة المدفوعات", "dataAccessed": "اسم حامل البطاقة، رموز الدفع، مبالغ الفواتير", "location": "إسرائيل", "dpaStatus": "قيد المعالجة" },
-      { "processor": "Twilio", "service": "إشعارات SMS و WhatsApp", "dataAccessed": "أرقام الهاتف، محتوى الرسائل", "location": "الولايات المتحدة (مع نقاط نهاية في الاتحاد الأوروبي)", "dpaStatus": "قيد المعالجة" },
-      { "processor": "SendGrid (Twilio)", "service": "تسليم البريد الإلكتروني", "dataAccessed": "عناوين البريد الإلكتروني، محتوى الرسائل", "location": "الولايات المتحدة (مع نقاط نهاية في الاتحاد الأوروبي)", "dpaStatus": "قيد المعالجة" },
-      { "processor": "Google AI (Gemini)", "service": "تقارير التقدم بمساعدة الذكاء الاصطناعي، مطابقة المعلمين", "dataAccessed": "أسماء الطلاب، سجل الدروس، ملفات تعريف المعلمين", "location": "الولايات المتحدة/الاتحاد الأوروبي", "dpaStatus": "قيد المعالجة — مراجعة سياسات استخدام البيانات" }
+      {
+        "processor": "Google Cloud Platform (Firebase)",
+        "service": "المصادقة، قاعدة البيانات، التخزين، وظائف السحابة",
+        "dataAccessed": "جميع بيانات المستخدمين",
+        "location": "europe-west1 (بلجيكا)",
+        "dpaStatus": "اتفاقية DPA القياسية من Google"
+      },
+      {
+        "processor": "Cardcom",
+        "service": "معالجة المدفوعات",
+        "dataAccessed": "اسم حامل البطاقة، رموز الدفع، مبالغ الفواتير",
+        "location": "إسرائيل",
+        "dpaStatus": "قيد المعالجة"
+      },
+      {
+        "processor": "Twilio",
+        "service": "إشعارات SMS و WhatsApp",
+        "dataAccessed": "أرقام الهاتف، محتوى الرسائل",
+        "location": "الولايات المتحدة (مع نقاط نهاية في الاتحاد الأوروبي)",
+        "dpaStatus": "قيد المعالجة"
+      },
+      {
+        "processor": "SendGrid (Twilio)",
+        "service": "تسليم البريد الإلكتروني",
+        "dataAccessed": "عناوين البريد الإلكتروني، محتوى الرسائل",
+        "location": "الولايات المتحدة (مع نقاط نهاية في الاتحاد الأوروبي)",
+        "dpaStatus": "قيد المعالجة"
+      },
+      {
+        "processor": "Google AI (Gemini)",
+        "service": "تقارير التقدم بمساعدة الذكاء الاصطناعي، مطابقة المعلمين",
+        "dataAccessed": "أسماء الطلاب، سجل الدروس، ملفات تعريف المعلمين",
+        "location": "الولايات المتحدة/الاتحاد الأوروبي",
+        "dpaStatus": "قيد المعالجة — مراجعة سياسات استخدام البيانات"
+      },
+      {
+        "processor": "Google Gemini (Google LLC)",
+        "service": "الترجمة التلقائية للإعلانات (العبرية ↔ الإنجليزية ↔ العربية ↔ الروسية)",
+        "dataAccessed": "محتوى نص الإعلانات (بدون بيانات شخصية)",
+        "location": "الولايات المتحدة (Google Cloud)",
+        "dpaStatus": "المصالح المشروعة — تحسين جودة الخدمة وإمكانية الوصول"
+      }
     ],
     "retentionScheduleTitle": "جدول الاحتفاظ بالبيانات",
     "retentionScheduleBody": "تحتفظ هارمونيا بالبيانات وفقاً للفترات التالية:",
