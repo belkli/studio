@@ -32,13 +32,13 @@ describe('MemoryDatabaseAdapter', () => {
         });
 
         it('finds user by email (case-insensitive)', async () => {
-            const found = await db.users.findByEmail('dev@harmonia.local');
+            const found = await db.users.findByEmail('dev@lyriosa.local');
             expect(found).toBeTruthy();
             expect(found?.id).toBe('dev-user');
         });
 
         it('finds user by email regardless of case', async () => {
-            const found = await db.users.findByEmail('DEV@HARMONIA.LOCAL');
+            const found = await db.users.findByEmail('DEV@LYRIOSA.LOCAL');
             expect(found).toBeTruthy();
             expect(found?.id).toBe('dev-user');
         });

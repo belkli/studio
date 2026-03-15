@@ -14,7 +14,7 @@ vi.mock('next/headers', () => ({
                 'x-user-role': 'site_admin',
                 'x-user-conservatorium-id': 'dev-conservatorium',
                 'x-user-approved': 'true',
-                'x-user-email': 'dev@harmonia.local',
+                'x-user-email': 'dev@lyriosa.local',
             };
             return map[key] ?? null;
         },
@@ -46,7 +46,7 @@ describe('auth-utils', () => {
             expect(session).toBeTruthy();
             expect(session.uid).toBe('dev-user');
             expect(session.role).toBe('site_admin');
-            expect(session.email).toBe('dev@harmonia.local');
+            expect(session.email).toBe('dev@lyriosa.local');
             expect(session.conservatoriumId).toBe('dev-conservatorium');
             expect(session.approved).toBe(true);
         });
@@ -101,7 +101,7 @@ describe('auth-utils', () => {
                             'x-user-role': 'site_admin',
                             'x-user-conservatorium-id': 'dev-conservatorium',
                             'x-user-approved': 'true',
-                            'x-user-email': 'dev@harmonia.local',
+                            'x-user-email': 'dev@lyriosa.local',
                         };
                         return map[key] ?? null;
                     },
@@ -117,7 +117,7 @@ describe('auth-utils', () => {
             expect(claims).not.toBeNull();
             expect(claims?.uid).toBe('dev-user');
             expect(claims?.role).toBe('site_admin');
-            expect(claims?.email).toBe('dev@harmonia.local');
+            expect(claims?.email).toBe('dev@lyriosa.local');
             expect(claims?.conservatoriumId).toBe('dev-conservatorium');
             expect(claims?.approved).toBe(true);
         });

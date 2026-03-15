@@ -26,13 +26,13 @@ async function navTo(page: Page, url: string) {
 async function setDevUserInLocalStorage(page: Page) {
   await page.evaluate(() => {
     const devUser = {
-      id: 'dev-user', name: 'Dev Admin', email: 'dev@harmonia.local',
+      id: 'dev-user', name: 'Dev Admin', email: 'dev@lyriosa.local',
       role: 'site_admin', conservatoriumId: 'dev-conservatorium',
       conservatoriumName: 'Dev Conservatorium', approved: true,
       notifications: [], achievements: [], hasSeenWalkthrough: true,
       createdAt: '2024-03-03T12:00:00.000Z',
     };
-    localStorage.setItem('harmonia-user', JSON.stringify(devUser));
+    localStorage.setItem('lyriosa-user', JSON.stringify(devUser));
   });
 }
 

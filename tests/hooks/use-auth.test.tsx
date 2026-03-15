@@ -83,7 +83,7 @@ describe('AuthProvider smoke coverage', () => {
             if (currentConservatorium) {
                 result.current.updateConservatorium({
                     ...currentConservatorium,
-                    name: 'Harmony Center',
+                    name: 'Updated Center',
                 });
             }
 

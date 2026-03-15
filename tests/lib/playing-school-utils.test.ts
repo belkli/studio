@@ -49,7 +49,7 @@ describe('autoCreatePlayingSchoolStudentAccount', () => {
     const result = autoCreatePlayingSchoolStudentAccount(mockParent, enrollmentData);
     expect(result.email).toContain('tom');
     expect(result.email).toContain('cohen');
-    expect(result.email).toContain('@playing-school.harmonia.io');
+    expect(result.email).toContain('@playing-school.lyriosa.io');
   });
 
   it('sets conservatoriumId from parent', () => {

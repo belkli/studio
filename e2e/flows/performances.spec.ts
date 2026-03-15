@@ -8,7 +8,7 @@ import { test, expect, type Page } from '@playwright/test';
 const DEV_USER = {
   id: 'dev-user',
   name: 'Dev Admin',
-  email: 'admin@harmonia.dev',
+  email: 'admin@lyriosa.dev',
   role: 'site_admin',
   conservatoriumId: 'cons-15',
   status: 'approved',
@@ -17,8 +17,8 @@ const DEV_USER = {
 async function setupAuth(page: Page) {
   await page.goto('/en');
   await page.evaluate((user) => {
-    localStorage.setItem('harmonia-user', JSON.stringify(user));
-    localStorage.setItem('harmonia_cookie_consent', JSON.stringify({ essential: true, analytics: false, marketing: false }));
+    localStorage.setItem('lyriosa-user', JSON.stringify(user));
+    localStorage.setItem('lyriosa_cookie_consent', JSON.stringify({ essential: true, analytics: false, marketing: false }));
   }, DEV_USER);
 }
 

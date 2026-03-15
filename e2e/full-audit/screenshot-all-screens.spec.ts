@@ -1,7 +1,7 @@
 /**
  * Full Visual Audit — Screenshot Every Screen
  *
- * Traverses every route in the Harmonia application, interacts with all major
+ * Traverses every route in the Lyriosa application, interacts with all major
  * tabs and expandable sections, and captures full-page screenshots.
  *
  * Prerequisites:
@@ -218,10 +218,10 @@ async function devLogin(page: Page, email: string) {
       try {
         localStorage.setItem(key, value);
         localStorage.setItem(walkthroughKey, 'true');
-        localStorage.setItem('harmonia-walkthrough-seen', 'true');
+        localStorage.setItem('lyriosa-walkthrough-seen', 'true');
       } catch { /* storage may be unavailable before full page init; safe to ignore */ }
     },
-    { key: 'harmonia-user', value: userJson, walkthroughKey: `walkthrough-seen-${userId}` }
+    { key: 'lyriosa-user', value: userJson, walkthroughKey: `walkthrough-seen-${userId}` }
   );
 }
 
@@ -245,7 +245,7 @@ test.beforeEach(async ({ page }) => {
   const devUser = JSON.stringify({
     id: 'dev-user',
     name: 'Dev Admin',
-    email: 'dev@harmonia.local',
+    email: 'dev@lyriosa.local',
     role: 'site_admin',
     conservatoriumId: 'dev-conservatorium',
     conservatoriumName: 'Dev Conservatorium',
@@ -262,13 +262,13 @@ test.beforeEach(async ({ page }) => {
   // Force Hebrew locale cookie at the context level (persists for all navigations)
   await page.context().addCookies([
     { name: 'NEXT_LOCALE', value: 'he', domain: 'localhost', path: '/' },
-    { name: 'harmonia-user', value: '1', domain: 'localhost', path: '/' },
+    { name: 'lyriosa-user', value: '1', domain: 'localhost', path: '/' },
   ]);
 
   await page.addInitScript(({ userJson }: { userJson: string }) => {
     try {
-      localStorage.setItem('harmonia-user', userJson);
-      localStorage.setItem('harmonia-walkthrough-seen', 'true');
+      localStorage.setItem('lyriosa-user', userJson);
+      localStorage.setItem('lyriosa-walkthrough-seen', 'true');
       localStorage.setItem('walkthrough-seen-dev-user', 'true');
     } catch { /* ignore */ }
   }, { userJson: devUser });

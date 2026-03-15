@@ -11,7 +11,7 @@ test.describe('Registration Flow', () => {
   test('register page loads', async ({ page }) => {
     await page.goto('/register');
     // The Hebrew site name uses niqqud: הַרמוֹנְיָה. Accept any locale variant.
-    await expect(page).toHaveTitle(/הרמוניה|הַרמוֹנְיָה|Register|Harmonia|Harmony/i);
+    await expect(page).toHaveTitle(/ליריוסה|Register|Lyriosa/i);
   });
 
   test('shows enrollment wizard form', async ({ page }) => {

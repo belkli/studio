@@ -18,7 +18,7 @@ function makeHeadersMock(overrides: Partial<Record<string, string>> = {}) {
     'x-user-role': 'site_admin',
     'x-user-conservatorium-id': 'dev-conservatorium',
     'x-user-approved': 'true',
-    'x-user-email': 'dev@harmonia.local',
+    'x-user-email': 'dev@lyriosa.local',
   };
   const merged = { ...defaults, ...overrides };
   return {

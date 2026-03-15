@@ -181,7 +181,7 @@ test.describe('Public: Cookie banner', () => {
   test('PP-50: Cookie banner shows on first visit', async ({ page }) => {
     // Clear any existing consent
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
 
@@ -203,7 +203,7 @@ test.describe('Public: Cookie banner', () => {
   test('PP-51: Cookie banner does not show after acceptance', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() =>
-      localStorage.setItem('harmonia_cookie_consent', JSON.stringify({ accepted: true }))
+      localStorage.setItem('lyriosa_cookie_consent', JSON.stringify({ accepted: true }))
     );
     await page.reload();
     await page.waitForLoadState('domcontentloaded');

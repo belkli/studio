@@ -132,7 +132,7 @@ test.describe('Mobile (375px): Cookie banner', () => {
 
   test('Cookie banner not obscuring content', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForLoadState('domcontentloaded');
 

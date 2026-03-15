@@ -15,16 +15,16 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('Public Pages', () => {
   const publicPages = [
-    { path: '/', title: /הרמוניה|Harmonia/ },
-    { path: '/about', title: /קונסרבטוריון|Conservator|Harmonia/ },
-    { path: '/contact', title: /קשר|Contact|Harmonia/ },
-    { path: '/donate', title: /תרומה|Donat|Harmonia/ },
-    { path: '/musicians', title: /מוזיקאים|Musicians|Harmonia/ },
-    { path: '/playing-school', title: /בית ספר|Playing School|Harmonia/ },
-    { path: '/help', title: /עזרה|Help|Harmonia/ },
-    { path: '/accessibility', title: /נגישות|Accessibility|Harmonia/ },
-    { path: '/privacy', title: /פרטיות|Privacy|Harmonia/ },
-    { path: '/open-day', title: /יום פתוח|Open Day|Harmonia/ },
+    { path: '/', title: /ליריוסה|Lyriosa/ },
+    { path: '/about', title: /קונסרבטוריון|Conservator|Lyriosa/ },
+    { path: '/contact', title: /קשר|Contact|Lyriosa/ },
+    { path: '/donate', title: /תרומה|Donat|Lyriosa/ },
+    { path: '/musicians', title: /מוזיקאים|Musicians|Lyriosa/ },
+    { path: '/playing-school', title: /בית ספר|Playing School|Lyriosa/ },
+    { path: '/help', title: /עזרה|Help|Lyriosa/ },
+    { path: '/accessibility', title: /נגישות|Accessibility|Lyriosa/ },
+    { path: '/privacy', title: /פרטיות|Privacy|Lyriosa/ },
+    { path: '/open-day', title: /יום פתוח|Open Day|Lyriosa/ },
   ];
 
   for (const { path } of publicPages) {

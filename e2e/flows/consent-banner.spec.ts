@@ -5,10 +5,10 @@ import { test, expect } from '@playwright/test';
  *
  * Tests the cookie consent banner accept/reject flow.
  * The banner is rendered client-side and persists consent in localStorage
- * under the key `harmonia_cookie_consent`.
+ * under the key `lyriosa_cookie_consent`.
  */
 
-const COOKIE_KEY = 'harmonia_cookie_consent';
+const COOKIE_KEY = 'lyriosa_cookie_consent';
 
 test.describe('Cookie Consent Banner', () => {
   test.beforeEach(async ({ page }) => {

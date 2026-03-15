@@ -82,8 +82,8 @@ describe('sanitizeCallbackUrl — absolute URL attacks (open redirect)', () => {
     expect(sanitizeCallbackUrl('//evil.com/steal?token=abc')).toBe('/dashboard');
   });
 
-  it('blocks https://harmonia.co.il.evil.com (subdomain attack)', () => {
-    expect(sanitizeCallbackUrl('https://harmonia.co.il.evil.com')).toBe('/dashboard');
+  it('blocks https://lyriosa.co.il.evil.com (subdomain attack)', () => {
+    expect(sanitizeCallbackUrl('https://lyriosa.co.il.evil.com')).toBe('/dashboard');
   });
 
   it('blocks javascript:alert(1) (XSS vector)', () => {

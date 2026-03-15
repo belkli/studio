@@ -65,7 +65,7 @@ test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
     if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await emailInput.fill('admin@harmonia.local');
+      await emailInput.fill('admin@lyriosa.local');
     }
 
     const passwordInput = page.locator('input[type="password"]');
@@ -119,7 +119,7 @@ test.describe('SEC-02: callbackUrl open redirect prevention (FIX-13)', () => {
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
     if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await emailInput.fill('admin@harmonia.local');
+      await emailInput.fill('admin@lyriosa.local');
 
       const passwordInput = page.locator('input[type="password"]');
       if (await passwordInput.isVisible({ timeout: 3000 }).catch(() => false)) {

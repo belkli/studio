@@ -9,7 +9,7 @@ import { LOCALES, localePath } from '../helpers/locale';
 test.describe('Legal: Cookie banner', () => {
   test('LC-01: Cookie banner appears on first visit', async ({ page }) => {
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
 
@@ -20,7 +20,7 @@ test.describe('Legal: Cookie banner', () => {
 
   test('LC-02: Cookie banner has accept and reject buttons', async ({ page }) => {
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
 
@@ -34,7 +34,7 @@ test.describe('Legal: Cookie banner', () => {
 
   test('LC-03: Accepting cookies persists to localStorage', async ({ page }) => {
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
 
@@ -45,7 +45,7 @@ test.describe('Legal: Cookie banner', () => {
         await acceptBtn.click();
 
         // Check localStorage was set
-        const consent = await page.evaluate(() => localStorage.getItem('harmonia_cookie_consent'));
+        const consent = await page.evaluate(() => localStorage.getItem('lyriosa_cookie_consent'));
         expect(consent).toBeTruthy();
       }
     }
@@ -55,7 +55,7 @@ test.describe('Legal: Cookie banner', () => {
     for (const locale of LOCALES) {
       const path = locale === 'he' ? '/' : `/${locale}`;
       await page.goto(path);
-      await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+      await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
@@ -159,7 +159,7 @@ test.describe('Legal: Accessibility compliance', () => {
 
   test('LC-51: Cookie banner has proper ARIA attributes', async ({ page }) => {
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('harmonia_cookie_consent'));
+    await page.evaluate(() => localStorage.removeItem('lyriosa_cookie_consent'));
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
 

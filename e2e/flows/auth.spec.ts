@@ -21,7 +21,7 @@ test.describe('Auth: Login page', () => {
       await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible();
 
       // Back to home link exists
-      const backLink = page.locator('a[href="/"], a[href*="harmonia"], a:has-text("Harmonia"), a:has-text("הרמוניה")').first();
+      const backLink = page.locator('a[href="/"], a[href*="lyriosa"], a:has-text("Lyriosa"), a:has-text("ליריוסה")').first();
       await expect(backLink).toBeVisible();
     }
   });
@@ -68,7 +68,7 @@ test.describe('Auth: Login page', () => {
 
     // Fill login form with dev user
     const emailInput = page.getByRole('textbox', { name: /email/i });
-    await emailInput.fill('admin@harmonia.local');
+    await emailInput.fill('admin@lyriosa.local');
 
     const passwordInput = page.locator('input[type="password"]');
     if (await passwordInput.isVisible()) {
@@ -89,7 +89,7 @@ test.describe('Auth: Login page', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.getByRole('textbox', { name: /email/i });
-    await emailInput.fill('admin@harmonia.local');
+    await emailInput.fill('admin@lyriosa.local');
 
     const passwordInput = page.locator('input[type="password"]');
     if (await passwordInput.isVisible()) {

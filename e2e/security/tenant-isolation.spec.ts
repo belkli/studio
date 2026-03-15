@@ -3,15 +3,15 @@
  *
  * AUTH INJECTION MECHANISM:
  * ─────────────────────────
- * The app reads identity from localStorage key "harmonia-user" (see src/hooks/use-auth.tsx line ~685).
+ * The app reads identity from localStorage key "lyriosa-user" (see src/hooks/use-auth.tsx line ~685).
  * On mount the hook does:
- *   const storedUser = localStorage.getItem('harmonia-user');
+ *   const storedUser = localStorage.getItem('lyriosa-user');
  *   const parsedData = JSON.parse(storedUser);
  *   if (VALID_ROLES.includes(parsedData?.role)) { setUser(parsedData); }
  *
  * So to simulate a non-site_admin user in Playwright:
  *   1. Navigate to any page to get the JS runtime running.
- *   2. Set localStorage.setItem('harmonia-user', JSON.stringify(mockUserObject)) before
+ *   2. Set localStorage.setItem('lyriosa-user', JSON.stringify(mockUserObject)) before
  *      navigating to the target route.
  *   3. Navigate to the target route — the AuthProvider picks up the stored user on mount.
  *
@@ -86,7 +86,7 @@ const CONS15_TEACHER = {
 const SITE_ADMIN = {
   id: 'dev-user',
   name: 'Dev Admin',
-  email: 'dev@harmonia.local',
+  email: 'dev@lyriosa.local',
   role: 'site_admin',
   conservatoriumId: 'dev-conservatorium',
   conservatoriumName: 'Dev Conservatorium',
@@ -107,7 +107,7 @@ async function loginAs(page: Page, user: object, targetPath: string) {
   // Load the root page to get a JS context (avoids localStorage access on blank page).
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.evaluate((u) => {
-    localStorage.setItem('harmonia-user', JSON.stringify(u));
+    localStorage.setItem('lyriosa-user', JSON.stringify(u));
   }, user);
   await page.goto(targetPath, { waitUntil: 'domcontentloaded' });
   // Give React hydration + AuthProvider mount time.
@@ -120,7 +120,7 @@ async function loginAs(page: Page, user: object, targetPath: string) {
 async function clearAuth(page: Page) {
   try {
     await page.evaluate(() => {
-      localStorage.removeItem('harmonia-user');
+      localStorage.removeItem('lyriosa-user');
       sessionStorage.clear();
     });
   } catch {
