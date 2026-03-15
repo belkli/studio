@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
+import { useBrandTheme } from '@/components/brand-theme-provider';
 import { getLocalizedConservatorium, getLocalizedUserProfile } from '@/lib/utils/localized-content';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Conservatorium, ConservatoriumInstrument, EventProduction, User } from '@/lib/types';
@@ -20,12 +21,63 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 const LANDING_HERO_IMAGE = '/images/landing-hero.jpg';
 
+const HERO_STYLES = {
+  a: {
+    wrapper: 'relative overflow-hidden border-b',
+    showHeroImage: true,
+    imageOverlay: 'absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20',
+    pulseOverlay: 'absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent animate-pulse',
+    layout: 'relative mx-auto flex min-h-[88vh] max-w-6xl items-center justify-center px-4 py-16',
+    content: 'max-w-3xl text-center text-white',
+    badge: 'mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white/90 backdrop-blur-sm animate-fade-in',
+    heading: 'text-5xl font-extrabold leading-tight tracking-tight md:text-6xl lg:text-7xl animate-fade-in-up animate-delay-200',
+    headingAccent: '',
+    sub: 'mx-auto mt-4 max-w-2xl text-base text-white/85 md:text-lg animate-fade-in-up animate-delay-300',
+    btnRow: 'mt-8 flex flex-wrap justify-center gap-3 animate-fade-in-up animate-delay-400',
+    primaryBtnClass: '',
+    secondaryBtnClass: 'border-white bg-white/10 text-white hover:bg-white/20',
+    showCinematicOverlays: false,
+  },
+  b: {
+    wrapper: 'relative min-h-[85vh] flex items-center justify-center overflow-hidden',
+    showHeroImage: false,
+    imageOverlay: '',
+    pulseOverlay: '',
+    layout: 'relative z-10 text-center max-w-[820px] mx-auto px-6 flex flex-col items-center gap-7',
+    content: '',
+    badge: 'inline-flex items-center gap-2 bg-foreground/10 backdrop-blur-sm border border-brand-gold/30 px-5 py-2 rounded-full text-sm text-foreground/90',
+    heading: 'font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight',
+    headingAccent: 'text-brand-gold-light',
+    sub: 'text-foreground/75 text-lg leading-relaxed max-w-xl',
+    btnRow: 'flex flex-wrap justify-center gap-4',
+    primaryBtnClass: 'bg-gradient-to-br from-brand-indigo-cta to-[hsl(229,52%,47%)] text-white px-8 py-3.5 rounded-xl font-semibold shadow-[0_4px_24px_rgba(45,63,143,0.5)] hover:translate-y-[-2px] transition-all',
+    secondaryBtnClass: 'border-[1.5px] border-foreground/40 text-foreground px-8 py-3.5 rounded-xl font-medium hover:border-brand-gold hover:text-brand-gold-light transition-all',
+    showCinematicOverlays: true,
+  },
+} as const;
+
+const STATS_STYLES = {
+  a: {
+    bar: 'border-y bg-primary px-4 py-8',
+    number: 'text-3xl font-extrabold text-white',
+    label: 'mt-1 text-sm text-white/70',
+  },
+  b: {
+    bar: 'bg-brand-navy/80 border-y border-brand-gold/15 py-6 px-4',
+    number: 'text-2xl sm:text-3xl font-heading font-bold text-brand-gold',
+    label: 'text-foreground/60 text-xs sm:text-sm mt-1',
+  },
+} as const;
+
 export function PublicLandingPage() {
   const t = useTranslations('Landing');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const router = useRouter();
   const { conservatoriums, conservatoriumInstruments, users, events } = useAuth();
+  const { theme } = useBrandTheme();
+  const heroS = HERO_STYLES[theme];
+  const statsS = STATS_STYLES[theme];
 
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');
@@ -241,30 +293,54 @@ export function PublicLandingPage() {
   .section-animate.in-view { opacity: 1; transform: translateY(0); }
 `}</style>
         {/* Hero Section */}
-        <section className="relative overflow-hidden border-b" aria-labelledby="hero-heading">
-          <Image src={LANDING_HERO_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
+        <section className={heroS.wrapper} aria-labelledby="hero-heading">
+          {heroS.showCinematicOverlays && (
+            <>
+              {/* Dark ambient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0a1520] via-[#2a1a0a] to-[#080f1a]" />
+              {/* Warm amber glow */}
+              <div className="absolute inset-0" style={{
+                background: 'radial-gradient(ellipse 60% 80% at 70% 50%, rgba(140,80,20,0.55) 0%, transparent 65%), radial-gradient(ellipse 40% 60% at 80% 30%, rgba(180,110,30,0.4) 0%, transparent 55%)'
+              }} />
+              {/* String lines */}
+              <div className="absolute inset-0 opacity-[0.12]" style={{
+                background: 'repeating-linear-gradient(95deg, transparent, transparent 28px, rgba(201,168,76,0.6) 28px, rgba(201,168,76,0.6) 29px)'
+              }} />
+              {/* Vignette */}
+              <div className="absolute inset-0" style={{
+                background: 'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 30%, rgba(8,15,26,0.65) 100%)'
+              }} />
+              {/* Watermark L */}
+              <div className="absolute top-1/2 end-[8%] -translate-y-1/2 opacity-[0.06] font-display text-[280px] font-bold italic text-brand-gold pointer-events-none select-none leading-none">L</div>
+            </>
+          )}
+          {heroS.showHeroImage && (
+            <>
+              <Image src={LANDING_HERO_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
+              <div className={heroS.imageOverlay} />
+              <div className={heroS.pulseOverlay} style={{ animationDuration: '4s' }} />
+            </>
+          )}
 
-          <div className="relative mx-auto flex min-h-[88vh] max-w-6xl items-center justify-center px-4 py-16">
-            <div className="max-w-3xl text-center text-white">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white/90 backdrop-blur-sm animate-fade-in">
+          <div className={heroS.layout}>
+            <div className={heroS.content}>
+              <div className={heroS.badge}>
                 <Music className="h-4 w-4" />
                 {t('heroBadge')}
               </div>
-              <h1 id="hero-heading" className="text-5xl font-extrabold leading-tight tracking-tight md:text-6xl lg:text-7xl animate-fade-in-up animate-delay-200">
+              <h1 id="hero-heading" className={heroS.heading}>
                 {t('heroTitle')}
               </h1>
-              <p className="mx-auto mt-4 max-w-2xl text-base text-white/85 md:text-lg animate-fade-in-up animate-delay-300">{t('heroSubtitle')}</p>
+              <p className={heroS.sub}>{t('heroSubtitle')}</p>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-3 animate-fade-in-up animate-delay-400">
-                <Button size="lg" asChild>
+              <div className={heroS.btnRow}>
+                <Button size="lg" className={heroS.primaryBtnClass || undefined} asChild>
                   <Link href="/register">{t('registerCta')}</Link>
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white bg-white/10 text-white hover:bg-white/20"
+                  className={heroS.secondaryBtnClass}
                   asChild
                 >
                   <Link href="/about">{t('findConservatory')}</Link>
@@ -275,7 +351,7 @@ export function PublicLandingPage() {
         </section>
 
         {/* Stats Bar */}
-        <section className="border-y bg-primary px-4 py-8" aria-label={t('statConservatories')}>
+        <section className={statsS.bar} aria-label={t('statConservatories')}>
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-0 divide-x divide-white/20 md:grid-cols-4">
             {[
               { value: stats.conservatoriumCount, label: t('statConservatories') },
@@ -284,8 +360,8 @@ export function PublicLandingPage() {
               { value: `+${stats.studentCount.toLocaleString()}`, label: t('statStudents') },
             ].map(({ value, label }) => (
               <div key={label} className="px-6 py-2 text-center first:ps-0 last:pe-0 section-animate">
-                <p className="text-3xl font-extrabold text-white">{value}</p>
-                <p className="mt-1 text-sm text-white/70">{label}</p>
+                <p className={statsS.number}>{value}</p>
+                <p className={statsS.label}>{label}</p>
               </div>
             ))}
           </div>
