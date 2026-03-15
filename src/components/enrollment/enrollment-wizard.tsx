@@ -464,7 +464,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               <CardContent className="space-y-4">
                 <FormField name="studentDetails.childFirstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 <FormField name="studentDetails.childLastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                <FormField name="studentDetails.childBirthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField name="studentDetails.childBirthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               </CardContent>
             </Card>
           </div>
@@ -477,7 +477,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               <FormField name="selfDetails.lastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-              <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+              <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
               <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
             </CardContent>
           </Card>
@@ -1476,7 +1476,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                           <div className="grid grid-cols-2 gap-4">
                             <FormField name="studentDetails.childFirstName" render={({ field }) => (<FormItem> <FormLabel>{t('details.firstName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                             <FormField name="studentDetails.childLastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                            <FormField name="studentDetails.childBirthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField name="studentDetails.childBirthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           </div>
                         </div>
                       </>
@@ -1489,7 +1489,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                           <FormField name="selfDetails.lastName" render={({ field }) => (<FormItem> <FormLabel>{t('details.lastName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           <FormField name="selfDetails.email" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} readOnly={isOauthRegistration} disabled={isOauthRegistration} /></FormControl> <FormMessage /> </FormItem>)} />
                           <FormField name="selfDetails.idNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                          <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                          <FormField name="selfDetails.birthDate" render={({ field }) => (<FormItem> <FormLabel>{t('details.birthDate')}</FormLabel> <FormControl><Input type="date" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                           <FormField name="selfDetails.phone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                         </div>
                       </div>

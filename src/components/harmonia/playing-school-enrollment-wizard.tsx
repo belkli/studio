@@ -388,7 +388,7 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
 
                 <div className="space-y-2">
                   <Label>{t('wizard.dob')}</Label>
-                  <Input type="date" value={studentDob} onChange={(e) => setStudentDob(e.target.value)} />
+                  <Input type="date" dir="ltr" value={studentDob} onChange={(e) => setStudentDob(e.target.value)} />
                 </div>
 
                 <div className="flex gap-2">

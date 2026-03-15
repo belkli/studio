@@ -189,7 +189,7 @@ export function DynamicForm({ template, onSubmit }: DynamicFormProps) {
                         case 'textarea':
                           return <Textarea placeholder={field.placeholder} {...formField} />;
                         case 'date':
-                          return <Input type="date" {...formField} />;
+                          return <Input type="date" dir="ltr" {...formField} />;
                         case 'number':
                           return <Input type="number" placeholder={field.placeholder} {...formField} />;
                         case 'select':

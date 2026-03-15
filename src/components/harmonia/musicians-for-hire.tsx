@@ -198,7 +198,7 @@ export function MusiciansForHire() {
                             {currentStep === 0 && (
                                 <div className="space-y-4 grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2"><Label>{t('form.eventType')}</Label><Select dir={isRtl ? 'rtl' : 'ltr'}><SelectTrigger><SelectValue placeholder={t('form.eventPlaceholder')} /></SelectTrigger><SelectContent><SelectItem value="wedding">{t('occasion.wedding')}</SelectItem><SelectItem value="corporate">{t('occasion.corporate')}</SelectItem><SelectItem value="private">{t('occasion.private')}</SelectItem></SelectContent></Select></div>
-                                    <div className="space-y-2"><Label>{t('form.date')}</Label><Input type="date" /></div>
+                                    <div className="space-y-2"><Label>{t('form.date')}</Label><Input type="date" dir="ltr" /></div>
                                     <div className="space-y-2"><Label>{t('form.location')}</Label><Input placeholder={t('form.locationPlaceholder')} /></div>
                                     <div className="space-y-2"><Label>{t('form.duration')}</Label><Input type="number" defaultValue={2} /></div>
                                 </div>

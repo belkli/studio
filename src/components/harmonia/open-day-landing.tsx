@@ -361,8 +361,8 @@ export function OpenDayLandingPage() {
                   </SelectContent>
                 </Select>
 
-                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} aria-label={t('dateFrom')} />
-                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} aria-label={t('dateTo')} />
+                <Input type="date" dir="ltr" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} aria-label={t('dateFrom')} />
+                <Input type="date" dir="ltr" value={dateTo} onChange={(e) => setDateTo(e.target.value)} aria-label={t('dateTo')} />
 
                 <Button type="button" variant="outline" onClick={handleLocate} disabled={locating}>
                   <LocateFixed className="me-2 h-4 w-4" />

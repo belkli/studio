@@ -379,7 +379,7 @@ export function KenesForm({ user, onSubmit, initialData, isEditing = false, onCa
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <FormField name="eventName" render={({ field }) => (<FormItem><FormLabel>{t('eventName')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField name="eventDate" render={({ field }) => (<FormItem><FormLabel>{t('eventDate')}</FormLabel><FormControl><Input type="date" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField name="eventDate" render={({ field }) => (<FormItem><FormLabel>{t('eventDate')}</FormLabel><FormControl><Input type="date" dir="ltr" placeholder="dd/mm/yyyy" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField name="eventLocation" render={({ field }) => (<FormItem><FormLabel>{t('location')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                     </CardContent>
                 </Card>
