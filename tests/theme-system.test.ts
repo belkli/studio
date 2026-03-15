@@ -33,6 +33,7 @@ describe('Theme V2 CSS architecture', () => {
   it('has system preference media query for Theme A', () => {
     expect(css).toMatch(/@media.*prefers-color-scheme.*dark/)
     expect(css).toMatch(/:root:not\(\[data-color-mode="light"\]\)/)
+    expect(css).toMatch(/:root:not\(\[data-brand="b"\]\)/)
   })
 
   it('has system preference media query for Theme B dark', () => {
