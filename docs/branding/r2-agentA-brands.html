@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 2 - Agent A Brand Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Comic+Neue:wght@400;700&family=Rubik:wght@400;500;600;700;800;900&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: #0a0a1a;
+    color: #f0f0f0;
+  }
+
+  /* === HEADER === */
+  .page-header {
+    text-align: center;
+    padding: 60px 24px 40px;
+    background: linear-gradient(135deg, #1a1a3e 0%, #0a0a1a 100%);
+  }
+  .page-header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    font-size: 18px;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .page-header .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(99, 102, 241, 0.2);
+    color: #a78bfa;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+  }
+
+  /* === BRAND SECTION === */
+  .brand-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .brand-section:last-child { border-bottom: none; }
+
+  .brand-rank {
+    font-family: 'Baloo 2', cursive;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  /* === HERO CARD === */
+  .hero-card {
+    border-radius: 24px;
+    padding: 48px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .hero-card .logo-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .hero-card .brand-name {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero-card .hebrew-name {
+    font-size: 32px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .hero-card .tagline {
+    font-size: 20px;
+    opacity: 0.8;
+    margin-bottom: 32px;
+    max-width: 500px;
+  }
+  .hero-card .domains {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hero-card .domain-badge {
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: monospace;
+  }
+  .domain-available {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  /* === MOCKUP GRID === */
+  .mockup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 768px) {
+    .mockup-grid { grid-template-columns: 1fr; }
+  }
+
+  /* === LANDING MOCKUP === */
+  .landing-mockup {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .mockup-browser {
+    background: #1e1e2e;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browser-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .browser-dot.red { background: #ff5f57; }
+  .browser-dot.yellow { background: #ffbd2e; }
+  .browser-dot.green { background: #28c840; }
+  .browser-url {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: monospace;
+    margin-left: 8px;
+  }
+  .mockup-content {
+    min-height: 320px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* === APP MOCKUP === */
+  .app-mockup {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .app-statusbar {
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .app-content {
+    min-height: 320px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .app-nav-item {
+    text-align: center;
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  .app-nav-item.active { opacity: 1; }
+  .app-nav-icon {
+    width: 24px; height: 24px;
+    margin: 0 auto 4px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* === SCORE TABLE === */
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .score-table th, .score-table td {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .score-table th {
+    color: #94a3b8;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .score-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .score-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  /* === INFO CARD === */
+  .info-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .info-card h4 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    margin-bottom: 12px;
+  }
+  .info-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #cbd5e1;
+  }
+
+  /* === BOTTOM GRID === */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 768px) {
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+
+  /* === CTA BUTTON STYLES === */
+  .cta-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  /* === SUMMARY === */
+  .summary-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .summary-table th, .summary-table td {
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 15px;
+  }
+  .summary-table th {
+    background: rgba(255,255,255,0.06);
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .summary-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .total-score {
+    font-weight: 800;
+    font-size: 20px;
+  }
+
+  /* Brand-specific themes */
+  .zimzi-gradient { background: linear-gradient(135deg, #7c3aed, #2563eb, #06b6d4); }
+  .nagnoo-gradient { background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899); }
+  .mizmar-gradient { background: linear-gradient(135deg, #059669, #0d9488, #0ea5e9); }
+  .bumtak-gradient { background: linear-gradient(135deg, #dc2626, #f97316, #fbbf24); }
+  .klezma-gradient { background: linear-gradient(135deg, #7c3aed, #a855f7, #d946ef); }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+  <div class="badge">ROUND 2 -- AGENT A</div>
+  <h1>Brand Candidates</h1>
+  <p>5 Hebrew-English hybrid names. All domains verified available (.co.il + .com).</p>
+</div>
+
+<!-- ====================================================================== -->
+<!-- BRAND 1: ZimZi -->
+<!-- ====================================================================== -->
+<div class="brand-section" id="zimzi">
+  <div class="brand-rank">Candidate #1</div>
+
+  <div class="hero-card" style="background: linear-gradient(135deg, #1e1145 0%, #0c1a3a 50%, #0a2235 100%);">
+    <div class="logo-area">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #7c3aed, #2563eb); color: white;">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M8 12h28l-28 20h28" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="36" cy="12" r="4" fill="#60a5fa"/>
+          <circle cx="8" cy="32" r="4" fill="#a78bfa"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name" style="font-family: 'Fredoka', sans-serif; color: #e0e7ff;">ZimZi</div>
+        <div class="hebrew-name" style="color: #a5b4fc;">זימזי</div>
+      </div>
+    </div>
+    <div class="tagline" style="color: #c7d2fe;">Hum your world into music.</div>
+    <div class="domains">
+      <span class="domain-badge domain-available">zimzi.co.il</span>
+      <span class="domain-badge domain-available">zimzi.com</span>
+      <span class="domain-badge domain-available">zimzi.io</span>
+    </div>
+  </div>
+
+  <div class="mockup-grid">
+    <!-- Landing page mockup -->
+    <div class="landing-mockup">
+      <div class="mockup-browser">
+        <span class="browser-dot red"></span>
+        <span class="browser-dot yellow"></span>
+        <span class="browser-dot green"></span>
+        <span class="browser-url">zimzi.co.il</span>
+      </div>
+      <div class="mockup-content" style="background: linear-gradient(180deg, #1e1145 0%, #0c1a3a 100%);">
+        <div style="margin-bottom: 16px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect width="60" height="60" rx="16" fill="url(#zimzi-icon-grad)"/>
+            <path d="M14 18h32l-32 24h32" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="46" cy="18" r="5" fill="#60a5fa"/>
+            <circle cx="14" cy="42" r="5" fill="#a78bfa"/>
+            <defs><linearGradient id="zimzi-icon-grad" x1="0" y1="0" x2="60" y2="60"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 700; color: #e0e7ff; margin-bottom: 8px;">ZimZi</div>
+        <div style="font-size: 14px; color: #a5b4fc; margin-bottom: 24px; max-width: 280px;">Israel's music ecosystem. Lessons, events, concerts -- all in one place.</div>
+        <div style="display: flex; gap: 12px;">
+          <span class="cta-btn" style="background: linear-gradient(135deg, #7c3aed, #2563eb); color: white; font-size: 14px; padding: 10px 24px;">Get Started</span>
+          <span class="cta-btn" style="background: rgba(255,255,255,0.08); color: #c7d2fe; font-size: 14px; padding: 10px 24px; border: 1px solid rgba(167,139,250,0.3);">Find a Teacher</span>
+        </div>
+        <div style="display: flex; gap: 32px; margin-top: 28px; font-size: 12px; color: #94a3b8;">
+          <div><span style="font-size: 20px; font-weight: 800; color: #a78bfa; display: block;">85+</span>Conservatoriums</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #60a5fa; display: block;">500+</span>Teachers</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #34d399; display: block;">10K+</span>Students</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- App mockup -->
+    <div class="app-mockup" style="background: #0c1a3a; max-width: 320px; margin: 0 auto; width: 100%;">
+      <div class="app-statusbar" style="color: #a5b4fc;">
+        <span>9:41</span>
+        <span style="font-family: 'Fredoka'; font-weight: 600;">ZimZi</span>
+        <span>100%</span>
+      </div>
+      <div class="app-content" style="padding: 16px;">
+        <div style="font-family: 'Fredoka'; font-size: 22px; font-weight: 700; color: #e0e7ff; margin-bottom: 4px;">Good morning, Yael</div>
+        <div style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Your next lesson is in 2 hours</div>
+
+        <div style="background: linear-gradient(135deg, #7c3aed, #2563eb); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+          <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">UPCOMING</div>
+          <div style="font-size: 16px; font-weight: 700;">Piano Lesson</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px;">with Miriam Cohen -- 11:00 AM</div>
+          <div style="margin-top: 12px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 10px; display: inline-block; font-size: 13px; font-weight: 600;">Join Now</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: rgba(167,139,250,0.12); border-radius: 12px; padding: 16px; border: 1px solid rgba(167,139,250,0.2);">
+            <div style="font-size: 22px; font-weight: 800; color: #a78bfa;">12</div>
+            <div style="font-size: 11px; color: #94a3b8;">Pieces learned</div>
+          </div>
+          <div style="background: rgba(96,165,250,0.12); border-radius: 12px; padding: 16px; border: 1px solid rgba(96,165,250,0.2);">
+            <div style="font-size: 22px; font-weight: 800; color: #60a5fa;">8</div>
+            <div style="font-size: 11px; color: #94a3b8;">Lessons left</div>
+          </div>
+        </div>
+      </div>
+      <div class="app-nav" style="background: rgba(255,255,255,0.03);">
+        <div class="app-nav-item active" style="color: #a78bfa;"><div class="app-nav-icon" style="background: rgba(167,139,250,0.2);"></div>Home</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Schedule</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Music</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="info-card">
+      <h4>Etymology</h4>
+      <p>From Hebrew <strong>zimzum</strong> (זימזום) -- the sound of humming or buzzing. Musical onomatopoeia. The doubled "zi" creates a playful, rhythmic feel that kids naturally repeat.</p>
+    </div>
+    <div class="info-card">
+      <h4>Why It Works</h4>
+      <p>5 letters. Two syllables. Rhymes with itself. A 6-year-old can say it, spell it, and sing it. It sounds like the hum before a song starts -- pure musical anticipation.</p>
+    </div>
+    <div class="info-card">
+      <h4>IP Check</h4>
+      <p><strong>zimzi.org</strong> resolves (likely parked). No known music/tech brands. No Israeli trademark conflicts found. The word is generic Hebrew onomatopoeia -- strong registrability.</p>
+    </div>
+  </div>
+
+  <table class="score-table" style="margin-top: 24px;">
+    <tr><th>Criterion</th><th>Score</th><th></th></tr>
+    <tr><td>Memorability</td><td style="color: #a78bfa; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #a78bfa;"></div></div></td></tr>
+    <tr><td>Kid-friendly</td><td style="color: #60a5fa; font-weight: 700;">10/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 100%; background: #60a5fa;"></div></div></td></tr>
+    <tr><td>Hebrew-fit</td><td style="color: #34d399; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #34d399;"></div></div></td></tr>
+    <tr><td>Global Appeal</td><td style="color: #fbbf24; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #fbbf24;"></div></div></td></tr>
+    <tr><td>Brand Potential</td><td style="color: #f472b6; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #f472b6;"></div></div></td></tr>
+  </table>
+</div>
+
+<!-- ====================================================================== -->
+<!-- BRAND 2: Nagnoo -->
+<!-- ====================================================================== -->
+<div class="brand-section" id="nagnoo">
+  <div class="brand-rank">Candidate #2</div>
+
+  <div class="hero-card" style="background: linear-gradient(135deg, #451a03 0%, #1c1917 50%, #292524 100%);">
+    <div class="logo-area">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white;">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M14 32V14c0-2 1-3 3-3h2c2 0 3 1.5 3 3v18" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="12" cy="34" r="5" fill="#fbbf24"/>
+          <circle cx="24" cy="34" r="5" fill="#f97316"/>
+          <path d="M30 18c3-2 6-1 6 2s-3 4-6 3" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name" style="font-family: 'Baloo 2', cursive; color: #fef3c7;">Nagnoo</div>
+        <div class="hebrew-name" style="color: #fbbf24;">נגנו</div>
+      </div>
+    </div>
+    <div class="tagline" style="color: #fed7aa;">We played. We play. Let's play together.</div>
+    <div class="domains">
+      <span class="domain-badge domain-available">nagnoo.co.il</span>
+      <span class="domain-badge domain-available">nagnoo.com</span>
+      <span class="domain-badge domain-available">nagnoo.io</span>
+    </div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="landing-mockup">
+      <div class="mockup-browser">
+        <span class="browser-dot red"></span>
+        <span class="browser-dot yellow"></span>
+        <span class="browser-dot green"></span>
+        <span class="browser-url">nagnoo.co.il</span>
+      </div>
+      <div class="mockup-content" style="background: linear-gradient(180deg, #451a03 0%, #1c1917 100%);">
+        <div style="margin-bottom: 16px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect width="60" height="60" rx="16" fill="url(#nagnoo-icon-grad)"/>
+            <path d="M18 42V18c0-3 1.5-4 4-4h3c3 0 4 2 4 4v24" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="16" cy="44" r="6" fill="#fbbf24"/>
+            <circle cx="31" cy="44" r="6" fill="#f97316"/>
+            <path d="M38 24c4-3 8-1 8 3s-4 5-8 4" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <defs><linearGradient id="nagnoo-icon-grad" x1="0" y1="0" x2="60" y2="60"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="font-family: 'Baloo 2', cursive; font-size: 36px; font-weight: 800; color: #fef3c7; margin-bottom: 8px;">Nagnoo</div>
+        <div style="font-size: 14px; color: #fcd34d; margin-bottom: 24px; max-width: 280px;">Music connects us. Find your teacher, book a concert, play together.</div>
+        <div style="display: flex; gap: 12px;">
+          <span class="cta-btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; font-size: 14px; padding: 10px 24px;">Start Playing</span>
+          <span class="cta-btn" style="background: rgba(255,255,255,0.08); color: #fcd34d; font-size: 14px; padding: 10px 24px; border: 1px solid rgba(251,191,36,0.3);">Book an Event</span>
+        </div>
+        <div style="display: flex; gap: 32px; margin-top: 28px; font-size: 12px; color: #a8a29e;">
+          <div><span style="font-size: 20px; font-weight: 800; color: #fbbf24; display: block;">85+</span>Schools</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #f97316; display: block;">500+</span>Musicians</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #ef4444; display: block;">1K+</span>Events</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-mockup" style="background: #1c1917; max-width: 320px; margin: 0 auto; width: 100%;">
+      <div class="app-statusbar" style="color: #fbbf24;">
+        <span>9:41</span>
+        <span style="font-family: 'Baloo 2'; font-weight: 700;">Nagnoo</span>
+        <span>100%</span>
+      </div>
+      <div class="app-content" style="padding: 16px;">
+        <div style="font-family: 'Baloo 2'; font-size: 22px; font-weight: 700; color: #fef3c7; margin-bottom: 4px;">Shalom, David!</div>
+        <div style="font-size: 13px; color: #a8a29e; margin-bottom: 20px;">Practice streak: 7 days</div>
+
+        <div style="background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+          <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">TONIGHT</div>
+          <div style="font-size: 16px; font-weight: 700;">Spring Recital</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px;">Hod HaSharon Conservatorium -- 7 PM</div>
+          <div style="margin-top: 12px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 10px; display: inline-block; font-size: 13px; font-weight: 600;">View Tickets</div>
+        </div>
+
+        <div style="font-size: 13px; font-weight: 700; color: #fef3c7; margin-bottom: 10px;">Hire a Musician</div>
+        <div style="display: flex; gap: 10px; overflow-x: auto;">
+          <div style="min-width: 120px; background: rgba(251,191,36,0.1); border-radius: 12px; padding: 12px; border: 1px solid rgba(251,191,36,0.2); text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(251,191,36,0.2); margin: 0 auto 8px;"></div>
+            <div style="font-size: 12px; font-weight: 600; color: #fef3c7;">Wedding</div>
+          </div>
+          <div style="min-width: 120px; background: rgba(249,115,22,0.1); border-radius: 12px; padding: 12px; border: 1px solid rgba(249,115,22,0.2); text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(249,115,22,0.2); margin: 0 auto 8px;"></div>
+            <div style="font-size: 12px; font-weight: 600; color: #fef3c7;">Party</div>
+          </div>
+        </div>
+      </div>
+      <div class="app-nav" style="background: rgba(255,255,255,0.03);">
+        <div class="app-nav-item active" style="color: #fbbf24;"><div class="app-nav-icon" style="background: rgba(251,191,36,0.2);"></div>Home</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Lessons</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Events</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="info-card">
+      <h4>Etymology</h4>
+      <p>From Hebrew <strong>nagnu</strong> (נגנו) -- "we played (music)." First-person plural past tense of the verb <em>le'nagen</em>. Communal, warm, invokes the act of making music together.</p>
+    </div>
+    <div class="info-card">
+      <h4>Why It Works</h4>
+      <p>6 letters. Sounds like "Let's nagnoo!" as a call-to-action. The double "oo" ending is playful and universal. Connects directly to NAGN (user favorite) but adds warmth with the communal "we" form.</p>
+    </div>
+    <div class="info-card">
+      <h4>IP Check</h4>
+      <p>No existing brands found. All major TLDs available (.co.il, .com, .io, .app, .net). Clean slate. The Hebrew verb form is generic -- strong for trademark registration.</p>
+    </div>
+  </div>
+
+  <table class="score-table" style="margin-top: 24px;">
+    <tr><th>Criterion</th><th>Score</th><th></th></tr>
+    <tr><td>Memorability</td><td style="color: #fbbf24; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #fbbf24;"></div></div></td></tr>
+    <tr><td>Kid-friendly</td><td style="color: #f97316; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #f97316;"></div></div></td></tr>
+    <tr><td>Hebrew-fit</td><td style="color: #ef4444; font-weight: 700;">10/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 100%; background: #ef4444;"></div></div></td></tr>
+    <tr><td>Global Appeal</td><td style="color: #a78bfa; font-weight: 700;">7/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 70%; background: #a78bfa;"></div></div></td></tr>
+    <tr><td>Brand Potential</td><td style="color: #34d399; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #34d399;"></div></div></td></tr>
+  </table>
+</div>
+
+<!-- ====================================================================== -->
+<!-- BRAND 3: Mizmar -->
+<!-- ====================================================================== -->
+<div class="brand-section" id="mizmar">
+  <div class="brand-rank">Candidate #3</div>
+
+  <div class="hero-card" style="background: linear-gradient(135deg, #042f2e 0%, #0a1a1a 50%, #0c1f1f 100%);">
+    <div class="logo-area">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #059669, #0ea5e9); color: white;">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M12 34c0-12 6-20 10-22v22" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <path d="M22 12c4 2 10 10 10 22H12" stroke="white" stroke-width="2.5" fill="none"/>
+          <circle cx="17" cy="16" r="2.5" fill="#34d399"/>
+          <circle cx="27" cy="20" r="2.5" fill="#2dd4bf"/>
+          <circle cx="22" cy="28" r="2.5" fill="#06b6d4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name" style="font-family: 'Rubik', sans-serif; font-weight: 800; color: #d1fae5;">Mizmar</div>
+        <div class="hebrew-name" style="color: #6ee7b7;">מזמר</div>
+      </div>
+    </div>
+    <div class="tagline" style="color: #a7f3d0;">Where every psalm becomes a song.</div>
+    <div class="domains">
+      <span class="domain-badge domain-available">mizmar.co.il</span>
+      <span class="domain-badge domain-available">mizmar.com</span>
+    </div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="landing-mockup">
+      <div class="mockup-browser">
+        <span class="browser-dot red"></span>
+        <span class="browser-dot yellow"></span>
+        <span class="browser-dot green"></span>
+        <span class="browser-url">mizmar.co.il</span>
+      </div>
+      <div class="mockup-content" style="background: linear-gradient(180deg, #042f2e 0%, #0a1a1a 100%);">
+        <div style="margin-bottom: 16px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect width="60" height="60" rx="16" fill="url(#mizmar-icon-grad)"/>
+            <path d="M16 44c0-16 8-26 14-28v28" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M30 16c5 3 14 14 14 28H16" stroke="white" stroke-width="3" fill="none"/>
+            <circle cx="22" cy="22" r="3" fill="#34d399"/>
+            <circle cx="34" cy="28" r="3" fill="#2dd4bf"/>
+            <circle cx="30" cy="38" r="3" fill="#06b6d4"/>
+            <defs><linearGradient id="mizmar-icon-grad" x1="0" y1="0" x2="60" y2="60"><stop stop-color="#059669"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="font-family: 'Rubik', sans-serif; font-size: 36px; font-weight: 800; color: #d1fae5; margin-bottom: 8px;">Mizmar</div>
+        <div style="font-size: 14px; color: #6ee7b7; margin-bottom: 24px; max-width: 280px;">Professional music management for Israel's conservatoriums.</div>
+        <div style="display: flex; gap: 12px;">
+          <span class="cta-btn" style="background: linear-gradient(135deg, #059669, #0ea5e9); color: white; font-size: 14px; padding: 10px 24px;">Explore</span>
+          <span class="cta-btn" style="background: rgba(255,255,255,0.06); color: #6ee7b7; font-size: 14px; padding: 10px 24px; border: 1px solid rgba(52,211,153,0.3);">For Schools</span>
+        </div>
+        <div style="display: flex; gap: 32px; margin-top: 28px; font-size: 12px; color: #6b7280;">
+          <div><span style="font-size: 20px; font-weight: 800; color: #34d399; display: block;">85+</span>Schools</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #2dd4bf; display: block;">5K+</span>Repertoire</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #06b6d4; display: block;">50K+</span>Lessons</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-mockup" style="background: #0a1a1a; max-width: 320px; margin: 0 auto; width: 100%;">
+      <div class="app-statusbar" style="color: #6ee7b7;">
+        <span>9:41</span>
+        <span style="font-family: 'Rubik'; font-weight: 700;">Mizmar</span>
+        <span>100%</span>
+      </div>
+      <div class="app-content" style="padding: 16px;">
+        <div style="font-size: 22px; font-weight: 700; color: #d1fae5; margin-bottom: 4px;">Repertoire</div>
+        <div style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">5,217 compositions</div>
+
+        <div style="background: rgba(52,211,153,0.08); border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 1px solid rgba(52,211,153,0.15);">
+          <div style="font-size: 14px; font-weight: 600; color: #d1fae5;">Fur Elise</div>
+          <div style="font-size: 12px; color: #6ee7b7;">Beethoven -- Piano</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <span style="padding: 2px 8px; border-radius: 6px; background: rgba(52,211,153,0.15); color: #34d399; font-size: 10px;">Approved</span>
+            <span style="padding: 2px 8px; border-radius: 6px; background: rgba(6,182,212,0.15); color: #06b6d4; font-size: 10px;">Grade 3</span>
+          </div>
+        </div>
+        <div style="background: rgba(45,212,191,0.08); border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 1px solid rgba(45,212,191,0.15);">
+          <div style="font-size: 14px; font-weight: 600; color: #d1fae5;">Hatikvah</div>
+          <div style="font-size: 12px; color: #6ee7b7;">Traditional -- Violin</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <span style="padding: 2px 8px; border-radius: 6px; background: rgba(52,211,153,0.15); color: #34d399; font-size: 10px;">Approved</span>
+            <span style="padding: 2px 8px; border-radius: 6px; background: rgba(6,182,212,0.15); color: #06b6d4; font-size: 10px;">Grade 5</span>
+          </div>
+        </div>
+        <div style="background: rgba(6,182,212,0.08); border-radius: 12px; padding: 14px; border: 1px solid rgba(6,182,212,0.15);">
+          <div style="font-size: 14px; font-weight: 600; color: #d1fae5;">Yerushalayim Shel Zahav</div>
+          <div style="font-size: 12px; color: #6ee7b7;">Naomi Shemer -- Voice</div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <span style="padding: 2px 8px; border-radius: 6px; background: rgba(52,211,153,0.15); color: #34d399; font-size: 10px;">Approved</span>
+          </div>
+        </div>
+      </div>
+      <div class="app-nav" style="background: rgba(255,255,255,0.03);">
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Home</div>
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Schedule</div>
+        <div class="app-nav-item active" style="color: #34d399;"><div class="app-nav-icon" style="background: rgba(52,211,153,0.2);"></div>Music</div>
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="info-card">
+      <h4>Etymology</h4>
+      <p>From Hebrew <strong>mizmor</strong> (מזמור) -- a psalm or musical composition, and <strong>mezammer</strong> (מזמר) -- "one who sings/plays." Deep roots in Jewish musical tradition. The word appears 57 times in the Book of Psalms.</p>
+    </div>
+    <div class="info-card">
+      <h4>Why It Works</h4>
+      <p>6 letters. Feels professional and established. The "zmar" sound is distinctly Semitic yet pronounceable globally. Bridges ancient tradition with modern tech. Appeals to parents and administrators who want gravitas.</p>
+    </div>
+    <div class="info-card">
+      <h4>IP Check</h4>
+      <p><strong>mizmar.io</strong> is taken (Arabic music blog). <strong>almizmar.com</strong> exists (Arabic reed instrument). But <strong>mizmar.co.il + .com are clear</strong>. Different enough from existing Arabic usage. Strong for Israeli market.</p>
+    </div>
+  </div>
+
+  <table class="score-table" style="margin-top: 24px;">
+    <tr><th>Criterion</th><th>Score</th><th></th></tr>
+    <tr><td>Memorability</td><td style="color: #34d399; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #34d399;"></div></div></td></tr>
+    <tr><td>Kid-friendly</td><td style="color: #2dd4bf; font-weight: 700;">6/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 60%; background: #2dd4bf;"></div></div></td></tr>
+    <tr><td>Hebrew-fit</td><td style="color: #059669; font-weight: 700;">10/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 100%; background: #059669;"></div></div></td></tr>
+    <tr><td>Global Appeal</td><td style="color: #0ea5e9; font-weight: 700;">7/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 70%; background: #0ea5e9;"></div></div></td></tr>
+    <tr><td>Brand Potential</td><td style="color: #a78bfa; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #a78bfa;"></div></div></td></tr>
+  </table>
+</div>
+
+<!-- ====================================================================== -->
+<!-- BRAND 4: BumTak -->
+<!-- ====================================================================== -->
+<div class="brand-section" id="bumtak">
+  <div class="brand-rank">Candidate #4</div>
+
+  <div class="hero-card" style="background: linear-gradient(135deg, #450a0a 0%, #1a0a00 50%, #1c1917 100%);">
+    <div class="logo-area">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #dc2626, #f97316); color: white; border-radius: 50%;">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none"/>
+          <circle cx="22" cy="24" r="8" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <line x1="22" y1="10" x2="22" y2="8" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="18" y1="10" x2="15" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="26" y1="10" x2="29" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 20l4 4-4 4" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M28 20l-4 4 4 4" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name" style="font-family: 'Nunito', sans-serif; font-weight: 900; color: #fef2f2; letter-spacing: -1px;">BumTak</div>
+        <div class="hebrew-name" style="color: #fca5a5;">בום-טאק</div>
+      </div>
+    </div>
+    <div class="tagline" style="color: #fecaca;">Feel the beat. Find your rhythm.</div>
+    <div class="domains">
+      <span class="domain-badge domain-available">bumtak.co.il</span>
+      <span class="domain-badge domain-available">bumtak.com</span>
+      <span class="domain-badge domain-available">bumtak.io</span>
+    </div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="landing-mockup">
+      <div class="mockup-browser">
+        <span class="browser-dot red"></span>
+        <span class="browser-dot yellow"></span>
+        <span class="browser-dot green"></span>
+        <span class="browser-url">bumtak.co.il</span>
+      </div>
+      <div class="mockup-content" style="background: linear-gradient(180deg, #450a0a 0%, #1c1917 100%);">
+        <div style="margin-bottom: 16px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect width="60" height="60" rx="30" fill="url(#bumtak-icon-grad)"/>
+            <circle cx="30" cy="32" r="18" stroke="white" stroke-width="3" fill="none"/>
+            <circle cx="30" cy="32" r="10" stroke="white" stroke-width="2" fill="none" opacity="0.4"/>
+            <path d="M24 26l4 4-4 4" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M36 26l-4 4 4 4" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="30" y1="14" x2="30" y2="10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <defs><linearGradient id="bumtak-icon-grad" x1="0" y1="0" x2="60" y2="60"><stop stop-color="#dc2626"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="font-family: 'Nunito', sans-serif; font-size: 36px; font-weight: 900; color: #fef2f2; margin-bottom: 8px; letter-spacing: -1px;">BumTak</div>
+        <div style="font-size: 14px; color: #fca5a5; margin-bottom: 24px; max-width: 280px;">Music for everyone. Learn, play, perform, celebrate.</div>
+        <div style="display: flex; gap: 12px;">
+          <span class="cta-btn" style="background: linear-gradient(135deg, #dc2626, #f97316); color: white; font-size: 14px; padding: 10px 24px;">Let's Go!</span>
+          <span class="cta-btn" style="background: rgba(255,255,255,0.08); color: #fca5a5; font-size: 14px; padding: 10px 24px; border: 1px solid rgba(248,113,113,0.3);">Hire Musicians</span>
+        </div>
+        <div style="display: flex; gap: 32px; margin-top: 28px; font-size: 12px; color: #78716c;">
+          <div><span style="font-size: 20px; font-weight: 800; color: #f87171; display: block;">85+</span>Schools</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #f97316; display: block;">500+</span>Teachers</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #fbbf24; display: block;">10K+</span>Events</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-mockup" style="background: #1c1917; max-width: 320px; margin: 0 auto; width: 100%;">
+      <div class="app-statusbar" style="color: #f87171;">
+        <span>9:41</span>
+        <span style="font-family: 'Nunito'; font-weight: 900; letter-spacing: -0.5px;">BumTak</span>
+        <span>100%</span>
+      </div>
+      <div class="app-content" style="padding: 16px;">
+        <div style="font-family: 'Nunito'; font-size: 22px; font-weight: 800; color: #fef2f2; margin-bottom: 4px;">Hey Noa!</div>
+        <div style="font-size: 13px; color: #78716c; margin-bottom: 16px;">Ready to rock?</div>
+
+        <div style="background: linear-gradient(135deg, #dc2626, #f97316); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+          <div style="font-size: 12px; color: rgba(255,255,255,0.7);">THIS WEEK</div>
+          <div style="font-size: 18px; font-weight: 800; margin-top: 4px;">3 Lessons</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px;">Drums -- Guitar -- Voice</div>
+          <div style="display: flex; gap: 6px; margin-top: 12px;">
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.5);"></div>
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.3);"></div>
+            <div style="flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15);"></div>
+          </div>
+        </div>
+
+        <div style="font-size: 13px; font-weight: 700; color: #fef2f2; margin-bottom: 10px;">Quick Actions</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+          <div style="background: rgba(248,113,113,0.1); border-radius: 12px; padding: 14px 8px; text-align: center; border: 1px solid rgba(248,113,113,0.2);">
+            <div style="font-size: 11px; font-weight: 700; color: #f87171;">Book</div>
+          </div>
+          <div style="background: rgba(249,115,22,0.1); border-radius: 12px; padding: 14px 8px; text-align: center; border: 1px solid rgba(249,115,22,0.2);">
+            <div style="font-size: 11px; font-weight: 700; color: #f97316;">Practice</div>
+          </div>
+          <div style="background: rgba(251,191,36,0.1); border-radius: 12px; padding: 14px 8px; text-align: center; border: 1px solid rgba(251,191,36,0.2);">
+            <div style="font-size: 11px; font-weight: 700; color: #fbbf24;">Events</div>
+          </div>
+        </div>
+      </div>
+      <div class="app-nav" style="background: rgba(255,255,255,0.03);">
+        <div class="app-nav-item active" style="color: #f87171;"><div class="app-nav-icon" style="background: rgba(248,113,113,0.2);"></div>Home</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Lessons</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Hire</div>
+        <div class="app-nav-item" style="color: #64748b;"><div class="app-nav-icon"></div>Me</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="info-card">
+      <h4>Etymology</h4>
+      <p>Universal onomatopoeia for a drum beat: <strong>BUM</strong> (bass hit) + <strong>TAK</strong> (snare hit). The most basic rhythm pattern in music. Used in Hebrew drum circles (בום-טאק) and recognized across cultures worldwide.</p>
+    </div>
+    <div class="info-card">
+      <h4>Why It Works</h4>
+      <p>6 letters. Explosive energy. Any kid can drum "bum-tak" on a table. It IS music at its most primal. Like ZingZong, it's rhythmic and fun to say. "Let's BumTak!" works as both verb and brand.</p>
+    </div>
+    <div class="info-card">
+      <h4>IP Check</h4>
+      <p>ALL 5 TLDs available (.co.il, .com, .io, .app, .net). Completely clean. Pure onomatopoeia -- not protectable by others but highly distinctive as a brand name in the music-tech space.</p>
+    </div>
+  </div>
+
+  <table class="score-table" style="margin-top: 24px;">
+    <tr><th>Criterion</th><th>Score</th><th></th></tr>
+    <tr><td>Memorability</td><td style="color: #f87171; font-weight: 700;">10/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 100%; background: #f87171;"></div></div></td></tr>
+    <tr><td>Kid-friendly</td><td style="color: #f97316; font-weight: 700;">10/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 100%; background: #f97316;"></div></div></td></tr>
+    <tr><td>Hebrew-fit</td><td style="color: #fbbf24; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #fbbf24;"></div></div></td></tr>
+    <tr><td>Global Appeal</td><td style="color: #34d399; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #34d399;"></div></div></td></tr>
+    <tr><td>Brand Potential</td><td style="color: #a78bfa; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #a78bfa;"></div></div></td></tr>
+  </table>
+</div>
+
+<!-- ====================================================================== -->
+<!-- BRAND 5: Klezma -->
+<!-- ====================================================================== -->
+<div class="brand-section" id="klezma">
+  <div class="brand-rank">Candidate #5</div>
+
+  <div class="hero-card" style="background: linear-gradient(135deg, #2e1065 0%, #1a0533 50%, #0f0326 100%);">
+    <div class="logo-area">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #7c3aed, #d946ef); color: white;">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <path d="M16 36V12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M16 12c0-2 8-6 8 0v8c0 6-8 2-8 0" stroke="white" stroke-width="2.5" fill="none"/>
+          <path d="M28 36V16" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M28 16c0-2 8-6 8 0v6c0 6-8 2-8 0" stroke="white" stroke-width="2.5" fill="none"/>
+          <circle cx="13" cy="36" r="3.5" fill="#c084fc"/>
+          <circle cx="25" cy="36" r="3.5" fill="#e879f9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name" style="font-family: 'Fredoka', sans-serif; font-weight: 700; color: #f3e8ff;">Klezma</div>
+        <div class="hebrew-name" style="color: #c084fc;">כלזמה</div>
+      </div>
+    </div>
+    <div class="tagline" style="color: #ddd6fe;">The soul of music, reimagined.</div>
+    <div class="domains">
+      <span class="domain-badge domain-available">klezma.co.il</span>
+      <span class="domain-badge domain-available">klezma.com</span>
+      <span class="domain-badge domain-available">klezma.io</span>
+    </div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="landing-mockup">
+      <div class="mockup-browser">
+        <span class="browser-dot red"></span>
+        <span class="browser-dot yellow"></span>
+        <span class="browser-dot green"></span>
+        <span class="browser-url">klezma.co.il</span>
+      </div>
+      <div class="mockup-content" style="background: linear-gradient(180deg, #2e1065 0%, #0f0326 100%);">
+        <div style="margin-bottom: 16px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect width="60" height="60" rx="16" fill="url(#klezma-icon-grad)"/>
+            <path d="M20 46V16" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <path d="M20 16c0-3 10-8 10 0v10c0 8-10 3-10 0" stroke="white" stroke-width="3" fill="none"/>
+            <path d="M36 46V22" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <path d="M36 22c0-3 10-8 10 0v8c0 8-10 3-10 0" stroke="white" stroke-width="3" fill="none"/>
+            <circle cx="17" cy="46" r="4.5" fill="#c084fc"/>
+            <circle cx="33" cy="46" r="4.5" fill="#e879f9"/>
+            <defs><linearGradient id="klezma-icon-grad" x1="0" y1="0" x2="60" y2="60"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 700; color: #f3e8ff; margin-bottom: 8px;">Klezma</div>
+        <div style="font-size: 14px; color: #c084fc; margin-bottom: 24px; max-width: 280px;">Where Jewish musical heritage meets modern technology.</div>
+        <div style="display: flex; gap: 12px;">
+          <span class="cta-btn" style="background: linear-gradient(135deg, #7c3aed, #d946ef); color: white; font-size: 14px; padding: 10px 24px;">Discover</span>
+          <span class="cta-btn" style="background: rgba(255,255,255,0.06); color: #c084fc; font-size: 14px; padding: 10px 24px; border: 1px solid rgba(192,132,252,0.3);">Find Events</span>
+        </div>
+        <div style="display: flex; gap: 32px; margin-top: 28px; font-size: 12px; color: #6b7280;">
+          <div><span style="font-size: 20px; font-weight: 800; color: #c084fc; display: block;">85+</span>Schools</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #a855f7; display: block;">500+</span>Artists</div>
+          <div><span style="font-size: 20px; font-weight: 800; color: #e879f9; display: block;">200+</span>Events</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-mockup" style="background: #0f0326; max-width: 320px; margin: 0 auto; width: 100%;">
+      <div class="app-statusbar" style="color: #c084fc;">
+        <span>9:41</span>
+        <span style="font-family: 'Fredoka'; font-weight: 600;">Klezma</span>
+        <span>100%</span>
+      </div>
+      <div class="app-content" style="padding: 16px;">
+        <div style="font-family: 'Fredoka'; font-size: 22px; font-weight: 600; color: #f3e8ff; margin-bottom: 4px;">Upcoming Events</div>
+        <div style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Near Tel Aviv</div>
+
+        <div style="background: linear-gradient(135deg, #7c3aed, #d946ef); border-radius: 16px; padding: 20px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <div style="font-size: 16px; font-weight: 700;">Jazz at the Port</div>
+              <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px;">Friday, 8 PM -- Jaffa</div>
+            </div>
+            <div style="padding: 6px 12px; background: rgba(255,255,255,0.2); border-radius: 8px; font-size: 12px; font-weight: 700;">120 NIS</div>
+          </div>
+          <div style="margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.6);">23 tickets left</div>
+        </div>
+
+        <div style="background: rgba(168,85,247,0.1); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(168,85,247,0.2);">
+          <div style="font-size: 14px; font-weight: 600; color: #f3e8ff;">Spring Recital -- ICM</div>
+          <div style="font-size: 12px; color: #a855f7; margin-top: 2px;">Saturday, 5 PM -- Tel Aviv</div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 6px;">Free admission</div>
+        </div>
+
+        <div style="background: rgba(232,121,249,0.1); border-radius: 16px; padding: 16px; border: 1px solid rgba(232,121,249,0.2);">
+          <div style="font-size: 14px; font-weight: 600; color: #f3e8ff;">Wedding Band Showcase</div>
+          <div style="font-size: 12px; color: #e879f9; margin-top: 2px;">Sunday, 7 PM -- Herzliya</div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 6px;">For hire inquiries</div>
+        </div>
+      </div>
+      <div class="app-nav" style="background: rgba(255,255,255,0.03);">
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Home</div>
+        <div class="app-nav-item active" style="color: #c084fc;"><div class="app-nav-icon" style="background: rgba(192,132,252,0.2);"></div>Events</div>
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Artists</div>
+        <div class="app-nav-item" style="color: #6b7280;"><div class="app-nav-icon"></div>Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="info-card">
+      <h4>Etymology</h4>
+      <p>From <strong>klezmer</strong> (כלי-זמר) -- literally "instruments of song," the iconic Jewish musical tradition. Shortened to "Klezma" -- feels modern, like a tech company name, while carrying centuries of cultural weight.</p>
+    </div>
+    <div class="info-card">
+      <h4>Why It Works</h4>
+      <p>6 letters. Instantly recognizable to anyone who knows klezmer music. The "-ma" suffix softens it, making it approachable. Globally known (klezmer festivals worldwide). Perfect for a platform that bridges tradition and innovation.</p>
+    </div>
+    <div class="info-card">
+      <h4>IP Check</h4>
+      <p>ALL 5 TLDs available (.co.il, .com, .io, .app, .net). No existing "Klezma" brands found. "Klezmer" is generic/descriptive, but "Klezma" as a coined variant is highly registrable as a trademark.</p>
+    </div>
+  </div>
+
+  <table class="score-table" style="margin-top: 24px;">
+    <tr><th>Criterion</th><th>Score</th><th></th></tr>
+    <tr><td>Memorability</td><td style="color: #c084fc; font-weight: 700;">8/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 80%; background: #c084fc;"></div></div></td></tr>
+    <tr><td>Kid-friendly</td><td style="color: #a855f7; font-weight: 700;">7/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 70%; background: #a855f7;"></div></div></td></tr>
+    <tr><td>Hebrew-fit</td><td style="color: #7c3aed; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #7c3aed;"></div></div></td></tr>
+    <tr><td>Global Appeal</td><td style="color: #d946ef; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #d946ef;"></div></div></td></tr>
+    <tr><td>Brand Potential</td><td style="color: #e879f9; font-weight: 700;">9/10</td><td><div class="score-bar" style="width: 120px;"><div class="score-fill" style="width: 90%; background: #e879f9;"></div></div></td></tr>
+  </table>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SUMMARY COMPARISON -->
+<!-- ====================================================================== -->
+<div class="summary-section">
+  <h2 style="font-family: 'Baloo 2', cursive; font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Score Summary</h2>
+  <p style="text-align: center; color: #64748b; margin-bottom: 32px; font-size: 15px;">All 5 candidates with .co.il + .com verified available</p>
+
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th style="text-align: left;">Brand</th>
+        <th>Hebrew</th>
+        <th>Memorable</th>
+        <th>Kid-friendly</th>
+        <th>Hebrew-fit</th>
+        <th>Global</th>
+        <th>Brand</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background: rgba(220, 38, 38, 0.06);">
+        <td style="text-align: left; font-weight: 700; color: #fef2f2;">BumTak</td>
+        <td style="color: #fca5a5;">בום-טאק</td>
+        <td><span style="color: #f87171; font-weight: 700;">10</span></td>
+        <td><span style="color: #f97316; font-weight: 700;">10</span></td>
+        <td><span style="color: #fbbf24; font-weight: 700;">8</span></td>
+        <td><span style="color: #34d399; font-weight: 700;">9</span></td>
+        <td><span style="color: #a78bfa; font-weight: 700;">9</span></td>
+        <td><span class="total-score" style="color: #f87171;">46</span></td>
+      </tr>
+      <tr style="background: rgba(124, 58, 237, 0.06);">
+        <td style="text-align: left; font-weight: 700; color: #e0e7ff;">ZimZi</td>
+        <td style="color: #a5b4fc;">זימזי</td>
+        <td><span style="color: #a78bfa; font-weight: 700;">9</span></td>
+        <td><span style="color: #60a5fa; font-weight: 700;">10</span></td>
+        <td><span style="color: #34d399; font-weight: 700;">9</span></td>
+        <td><span style="color: #fbbf24; font-weight: 700;">8</span></td>
+        <td><span style="color: #f472b6; font-weight: 700;">9</span></td>
+        <td><span class="total-score" style="color: #a78bfa;">45</span></td>
+      </tr>
+      <tr style="background: rgba(124, 58, 237, 0.04);">
+        <td style="text-align: left; font-weight: 700; color: #f3e8ff;">Klezma</td>
+        <td style="color: #c084fc;">כלזמה</td>
+        <td><span style="color: #c084fc; font-weight: 700;">8</span></td>
+        <td><span style="color: #a855f7; font-weight: 700;">7</span></td>
+        <td><span style="color: #7c3aed; font-weight: 700;">9</span></td>
+        <td><span style="color: #d946ef; font-weight: 700;">9</span></td>
+        <td><span style="color: #e879f9; font-weight: 700;">9</span></td>
+        <td><span class="total-score" style="color: #c084fc;">42</span></td>
+      </tr>
+      <tr style="background: rgba(245, 158, 11, 0.04);">
+        <td style="text-align: left; font-weight: 700; color: #fef3c7;">Nagnoo</td>
+        <td style="color: #fbbf24;">נגנו</td>
+        <td><span style="color: #fbbf24; font-weight: 700;">8</span></td>
+        <td><span style="color: #f97316; font-weight: 700;">9</span></td>
+        <td><span style="color: #ef4444; font-weight: 700;">10</span></td>
+        <td><span style="color: #a78bfa; font-weight: 700;">7</span></td>
+        <td><span style="color: #34d399; font-weight: 700;">8</span></td>
+        <td><span class="total-score" style="color: #fbbf24;">42</span></td>
+      </tr>
+      <tr style="background: rgba(5, 150, 105, 0.04);">
+        <td style="text-align: left; font-weight: 700; color: #d1fae5;">Mizmar</td>
+        <td style="color: #6ee7b7;">מזמר</td>
+        <td><span style="color: #34d399; font-weight: 700;">8</span></td>
+        <td><span style="color: #2dd4bf; font-weight: 700;">6</span></td>
+        <td><span style="color: #059669; font-weight: 700;">10</span></td>
+        <td><span style="color: #0ea5e9; font-weight: 700;">7</span></td>
+        <td><span style="color: #a78bfa; font-weight: 700;">8</span></td>
+        <td><span class="total-score" style="color: #34d399;">39</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="text-align: center; margin-top: 40px; padding: 32px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
+    <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 12px;">Agent A's Top Pick</div>
+    <div style="font-family: 'Nunito', sans-serif; font-size: 48px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, #dc2626, #f97316, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BumTak</div>
+    <div style="font-size: 16px; color: #94a3b8; margin-top: 8px;">Total: 46/50 -- Maximum memorability meets universal rhythm</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 2 — Agent C: Sound &amp; Rhythm Brands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Comic+Neue:wght@300;400;700&family=Fredoka:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* TingTing */
+    --tt-primary: #FFB800;
+    --tt-secondary: #1A0A2E;
+    --tt-accent: #FF6B9D;
+    --tt-bg: #FFF9E6;
+    --tt-glow: rgba(255, 184, 0, 0.4);
+
+    /* PlimPlam */
+    --pp-primary: #7C3AED;
+    --pp-secondary: #EC4899;
+    --pp-accent: #06B6D4;
+    --pp-bg: #F5F0FF;
+    --pp-glow: rgba(124, 58, 237, 0.3);
+
+    /* Klingli */
+    --kl-primary: #059669;
+    --kl-secondary: #0EA5E9;
+    --kl-accent: #F59E0B;
+    --kl-bg: #ECFDF5;
+    --kl-glow: rgba(5, 150, 105, 0.3);
+
+    /* DinDong */
+    --dd-primary: #E11D48;
+    --dd-secondary: #F97316;
+    --dd-accent: #FBBF24;
+    --dd-bg: #FFF1F2;
+    --dd-glow: rgba(225, 29, 72, 0.3);
+
+    /* TrimTram */
+    --tr-primary: #2563EB;
+    --tr-secondary: #8B5CF6;
+    --tr-accent: #14B8A6;
+    --tr-bg: #EFF6FF;
+    --tr-glow: rgba(37, 99, 235, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #FAFAFA;
+    color: #1E293B;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== OVERVIEW HEADER ===== */
+  .overview-header {
+    text-align: center;
+    padding: 72px 24px 48px;
+    background: linear-gradient(135deg, #FDF2F8 0%, #EDE9FE 30%, #DBEAFE 60%, #ECFDF5 100%);
+    border-bottom: 2px solid #E2E8F0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overview-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(255, 184, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
+    animation: slowDrift 20s ease-in-out infinite;
+  }
+
+  @keyframes slowDrift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-3%, 2%); }
+  }
+
+  .agent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 24px;
+    border: 2px solid #7C3AED;
+    border-radius: 999px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7C3AED;
+    background: rgba(124, 58, 237, 0.06);
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .agent-badge svg {
+    width: 18px;
+    height: 18px;
+    fill: #7C3AED;
+  }
+
+  .overview-header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    color: #1E293B;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .overview-header h1 span {
+    background: linear-gradient(135deg, #FFB800 0%, #EC4899 50%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .overview-header p {
+    font-size: 18px;
+    color: #64748B;
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  .overview-header .subtitle {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 15px;
+    color: #94A3B8;
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  /* ===== QUICK NAV ===== */
+  .quick-nav {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: rgba(250, 250, 250, 0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    border-bottom: 1px solid #E2E8F0;
+  }
+
+  .quick-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .quick-nav a:nth-child(1) { background: #FFF9E6; color: #92400E; border-color: #FBBF24; }
+  .quick-nav a:nth-child(2) { background: #F5F0FF; color: #6D28D9; border-color: #A78BFA; }
+  .quick-nav a:nth-child(3) { background: #ECFDF5; color: #065F46; border-color: #34D399; }
+  .quick-nav a:nth-child(4) { background: #FFF1F2; color: #9F1239; border-color: #FB7185; }
+  .quick-nav a:nth-child(5) { background: #EFF6FF; color: #1E40AF; border-color: #60A5FA; }
+
+  .quick-nav a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  /* ===== BRAND SECTION ===== */
+  .brand-section {
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-section:nth-child(odd) {
+    background: #FFFFFF;
+  }
+
+  .brand-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .brand-number {
+    font-family: 'Baloo 2', cursive;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  /* ===== HERO MOCKUP ===== */
+  .hero-mockup {
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 32px;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  .hero-mockup .brand-logo {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .hero-mockup .brand-tagline {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-bottom: 32px;
+  }
+
+  .hero-mockup .brand-hebrew {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    direction: rtl;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  .hero-mockup .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 36px;
+    border-radius: 16px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  }
+
+  /* ===== DETAILS GRID ===== */
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .detail-card {
+    padding: 28px;
+    border-radius: 20px;
+    background: #FFFFFF;
+    border: 2px solid #F1F5F9;
+    transition: all 0.2s ease;
+  }
+
+  .detail-card:hover {
+    border-color: #E2E8F0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    transform: translateY(-2px);
+    cursor: pointer;
+  }
+
+  .detail-card h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .detail-card p, .detail-card ul {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #475569;
+  }
+
+  .detail-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .detail-card ul li::before {
+    content: '~';
+    margin-right: 8px;
+    font-weight: 700;
+    opacity: 0.4;
+  }
+
+  /* ===== SCORE GRID ===== */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .score-item {
+    text-align: center;
+    padding: 20px 12px;
+    border-radius: 16px;
+    background: #F8FAFC;
+    border: 2px solid #F1F5F9;
+  }
+
+  .score-item .score-value {
+    font-family: 'Baloo 2', cursive;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .score-item .score-label {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8;
+  }
+
+  .score-total {
+    text-align: center;
+    margin-top: 16px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748B;
+  }
+
+  .score-total span {
+    font-family: 'Baloo 2', cursive;
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  /* ===== DOMAIN BADGE ===== */
+  .domain-badges {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .domain-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    background: #F1F5F9;
+    color: #475569;
+  }
+
+  .domain-badge.available {
+    background: #DCFCE7;
+    color: #166534;
+  }
+
+  .domain-badge.available::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+  }
+
+  /* ===== IP STATUS ===== */
+  .ip-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .ip-status.low { background: #DCFCE7; color: #166534; }
+  .ip-status.medium { background: #FEF9C3; color: #854D0E; }
+
+  /* ===== SOUND WAVE DECORATION ===== */
+  .sound-wave {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 20px 0;
+  }
+
+  .sound-wave .bar {
+    width: 4px;
+    border-radius: 4px;
+    animation: waveAnim 1.2s ease-in-out infinite;
+  }
+
+  @keyframes waveAnim {
+    0%, 100% { height: 8px; }
+    50% { height: 32px; }
+  }
+
+  .sound-wave .bar:nth-child(2) { animation-delay: 0.1s; }
+  .sound-wave .bar:nth-child(3) { animation-delay: 0.2s; }
+  .sound-wave .bar:nth-child(4) { animation-delay: 0.3s; }
+  .sound-wave .bar:nth-child(5) { animation-delay: 0.4s; }
+  .sound-wave .bar:nth-child(6) { animation-delay: 0.3s; }
+  .sound-wave .bar:nth-child(7) { animation-delay: 0.2s; }
+
+  /* ===== FLOATING NOTES ===== */
+  @keyframes floatNote {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+    50% { transform: translateY(-20px) rotate(10deg); opacity: 0.3; }
+    100% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+  }
+
+  .floating-note {
+    position: absolute;
+    font-size: 48px;
+    opacity: 0.12;
+    animation: floatNote 4s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comparison-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .comparison-section h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #1E293B;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  .comparison-table th, .comparison-table td {
+    padding: 16px 20px;
+    text-align: center;
+    font-family: 'Fredoka', sans-serif;
+  }
+
+  .comparison-table thead th {
+    background: #1E293B;
+    color: #F8FAFC;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .comparison-table thead th:first-child {
+    text-align: left;
+  }
+
+  .comparison-table tbody td {
+    border-bottom: 1px solid #F1F5F9;
+    font-size: 15px;
+    color: #475569;
+  }
+
+  .comparison-table tbody td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: #1E293B;
+  }
+
+  .comparison-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .comparison-table tbody tr:nth-child(even) {
+    background: #FAFAFA;
+  }
+
+  .comparison-table .highlight {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 20px;
+  }
+
+  /* ===== APP MOCKUP SECTION ===== */
+  .app-mockup-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .app-mockup {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    border: 2px solid #F1F5F9;
+  }
+
+  .app-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .app-topbar .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .app-topbar .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .app-content {
+    padding: 24px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .app-content .skeleton {
+    height: 12px;
+    border-radius: 6px;
+    opacity: 0.15;
+  }
+
+  .app-content .skeleton.wide { width: 90%; }
+  .app-content .skeleton.med { width: 60%; }
+  .app-content .skeleton.short { width: 40%; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .score-grid { grid-template-columns: repeat(3, 1fr); }
+    .app-mockup-row { grid-template-columns: 1fr; }
+    .quick-nav { gap: 8px; }
+    .quick-nav a { padding: 8px 14px; font-size: 13px; }
+    .hero-mockup { min-height: 400px; padding: 40px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sound-wave .bar { animation: none; height: 16px; }
+    .floating-note { animation: none; }
+    .overview-header::before { animation: none; }
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 48px 24px;
+    background: #F8FAFC;
+    border-top: 2px solid #E2E8F0;
+    font-family: 'Fredoka', sans-serif;
+    color: #94A3B8;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== OVERVIEW HEADER ===== -->
+<header class="overview-header">
+  <div class="agent-badge">
+    <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+    Agent C — Round 2
+  </div>
+  <h1>Sound &amp; <span>Rhythm</span> Names</h1>
+  <p>
+    Onomatopoeia, doubled syllables, and musical sounds that a 7-year-old
+    would use as a nickname. Every name has built-in rhythm.
+  </p>
+  <div class="subtitle">5 candidates | .co.il + .com verified available | IP screened</div>
+</header>
+
+<!-- ===== QUICK NAV ===== -->
+<nav class="quick-nav">
+  <a href="#tingting">TingTing</a>
+  <a href="#plimplam">PlimPlam</a>
+  <a href="#klingli">Klingli</a>
+  <a href="#dindong">DinDong</a>
+  <a href="#trimtram">TrimTram</a>
+</nav>
+
+<!-- ===================================================================
+     BRAND 1: TINGTING
+     =================================================================== -->
+<section class="brand-section" id="tingting" style="background: var(--tt-bg);">
+  <div class="brand-inner">
+    <div class="brand-number">01 / 05</div>
+
+    <!-- HERO -->
+    <div class="hero-mockup" style="background: linear-gradient(160deg, #1A0A2E 0%, #2D1B69 40%, #FFB800 200%); color: #FFFFFF; position: relative;">
+      <div class="floating-note" style="top: 10%; left: 8%; animation-delay: 0s; color: #FFB800;">&#9834;</div>
+      <div class="floating-note" style="top: 20%; right: 12%; animation-delay: 1s; color: #FF6B9D;">&#9835;</div>
+      <div class="floating-note" style="bottom: 15%; left: 15%; animation-delay: 2s; color: #FFB800;">&#9833;</div>
+
+      <div class="sound-wave">
+        <div class="bar" style="background: #FFB800; animation-delay: 0s;"></div>
+        <div class="bar" style="background: #FF6B9D; animation-delay: 0.1s;"></div>
+        <div class="bar" style="background: #FFB800; animation-delay: 0.2s;"></div>
+        <div class="bar" style="background: #FF6B9D; animation-delay: 0.3s;"></div>
+        <div class="bar" style="background: #FFB800; animation-delay: 0.4s;"></div>
+        <div class="bar" style="background: #FF6B9D; animation-delay: 0.3s;"></div>
+        <div class="bar" style="background: #FFB800; animation-delay: 0.2s;"></div>
+      </div>
+
+      <div class="brand-logo" style="font-size: clamp(56px, 8vw, 96px); text-shadow: 0 4px 24px rgba(255, 184, 0, 0.4);">
+        Ting<span style="color: #FFB800;">Ting</span>
+      </div>
+      <div class="brand-tagline" style="font-size: 20px;">Every note rings twice</div>
+      <div class="brand-hebrew">טינג-טינג</div>
+      <a class="cta-btn" style="background: #FFB800; color: #1A0A2E;" href="#">
+        Start Playing
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </a>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3>Why TingTing</h3>
+        <p>
+          The universal sound of a triangle or bell chime. Doubled syllables are
+          scientifically proven to be more memorable (TikTok, Lulu, BonBon).
+          Kids naturally gravitate to repeating sounds — it's how language begins.
+        </p>
+      </div>
+      <div class="detail-card">
+        <h3>Sound Profile</h3>
+        <ul>
+          <li>Bright, metallic bell tone</li>
+          <li>2 identical syllables = instant recall</li>
+          <li>Works in Hebrew: טינג-טינג</li>
+          <li>Natural music class association</li>
+          <li>Easy for ages 5-95 to pronounce</li>
+        </ul>
+      </div>
+      <div class="detail-card">
+        <h3>Brand Identity</h3>
+        <ul>
+          <li>Warm gold + deep purple palette</li>
+          <li>Bell/triangle icon motif</li>
+          <li>Playful yet trustworthy</li>
+          <li>Works for both kids & institutions</li>
+        </ul>
+        <div class="domain-badges">
+          <span class="domain-badge available">tingting.co.il</span>
+          <span class="domain-badge available">tingting.com</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>IP Check</h3>
+        <p>
+          "ASMR TingTing" is a popular YouTuber. "The Ting Tings" are a UK pop duo.
+          Neither operates in music education or Israel. Risk is medium for general
+          music but low for education SaaS.
+        </p>
+        <div class="ip-status medium">Medium — different sector, monitor usage</div>
+      </div>
+    </div>
+
+    <!-- APP MOCKUPS -->
+    <div class="app-mockup-row">
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #1A0A2E; color: #FFB800;">
+          <div class="dots">
+            <div class="dot" style="background: #FF6B9D;"></div>
+            <div class="dot" style="background: #FFB800;"></div>
+            <div class="dot" style="background: #22C55E;"></div>
+          </div>
+          tingting.co.il/dashboard
+        </div>
+        <div class="app-content" style="background: #FFF9E6;">
+          <div class="skeleton wide" style="background: #FFB800;"></div>
+          <div class="skeleton med" style="background: #1A0A2E;"></div>
+          <div class="skeleton short" style="background: #FF6B9D;"></div>
+          <div class="skeleton wide" style="background: #FFB800;"></div>
+          <div class="skeleton med" style="background: #1A0A2E;"></div>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #FFB800; color: #1A0A2E;">
+          <div class="dots">
+            <div class="dot" style="background: #1A0A2E;"></div>
+            <div class="dot" style="background: #FF6B9D;"></div>
+            <div class="dot" style="background: #FFFFFF;"></div>
+          </div>
+          TingTing — Mobile
+        </div>
+        <div class="app-content" style="background: #FFFFFF;">
+          <div class="skeleton wide" style="background: #1A0A2E;"></div>
+          <div class="skeleton short" style="background: #FFB800;"></div>
+          <div class="skeleton med" style="background: #FF6B9D;"></div>
+          <div class="skeleton wide" style="background: #1A0A2E;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tt-primary);">9</div>
+        <div class="score-label">Memorability</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tt-accent);">10</div>
+        <div class="score-label">Kid-friendly</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tt-secondary);">8</div>
+        <div class="score-label">Hebrew-fit</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tt-primary);">9</div>
+        <div class="score-label">Global</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tt-accent);">8</div>
+        <div class="score-label">Brand</div>
+      </div>
+    </div>
+    <div class="score-total"><span style="color: var(--tt-primary);">44</span> / 50</div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     BRAND 2: PLIMPLAM
+     =================================================================== -->
+<section class="brand-section" id="plimplam" style="background: var(--pp-bg);">
+  <div class="brand-inner">
+    <div class="brand-number">02 / 05</div>
+
+    <!-- HERO -->
+    <div class="hero-mockup" style="background: linear-gradient(135deg, #7C3AED 0%, #A855F7 40%, #EC4899 100%); color: #FFFFFF; position: relative;">
+      <div class="floating-note" style="top: 12%; left: 10%; animation-delay: 0.5s; color: #E9D5FF;">&#9835;</div>
+      <div class="floating-note" style="top: 25%; right: 8%; animation-delay: 1.5s; color: #FBCFE8;">&#9834;</div>
+      <div class="floating-note" style="bottom: 18%; right: 20%; animation-delay: 0.8s; color: #E9D5FF;">&#9833;</div>
+
+      <div class="sound-wave">
+        <div class="bar" style="background: #E9D5FF; animation-delay: 0s;"></div>
+        <div class="bar" style="background: #FBCFE8; animation-delay: 0.15s;"></div>
+        <div class="bar" style="background: #E9D5FF; animation-delay: 0.3s;"></div>
+        <div class="bar" style="background: #FBCFE8; animation-delay: 0.45s;"></div>
+        <div class="bar" style="background: #E9D5FF; animation-delay: 0.6s;"></div>
+        <div class="bar" style="background: #FBCFE8; animation-delay: 0.45s;"></div>
+        <div class="bar" style="background: #E9D5FF; animation-delay: 0.3s;"></div>
+      </div>
+
+      <div class="brand-logo" style="font-size: clamp(52px, 8vw, 88px); text-shadow: 0 4px 24px rgba(0,0,0,0.2);">
+        Plim<span style="color: #FBCFE8;">Plam</span>
+      </div>
+      <div class="brand-tagline" style="font-size: 20px;">Where every key tells a story</div>
+      <div class="brand-hebrew">פלים-פלאם</div>
+      <a class="cta-btn" style="background: #FFFFFF; color: #7C3AED;" href="#">
+        Play a Note
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+      </a>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3>Why PlimPlam</h3>
+        <p>
+          The sound of fingers dancing on piano keys — "plim" for the high note,
+          "plam" for the low. It's onomatopoeia that makes you smile.
+          The alternating vowels (i/a) create a natural musical interval feel.
+        </p>
+      </div>
+      <div class="detail-card">
+        <h3>Sound Profile</h3>
+        <ul>
+          <li>Piano key onomatopoeia</li>
+          <li>Alternating vowels create melody</li>
+          <li>Hebrew speakers say it naturally: פלים-פלאם</li>
+          <li>Rhyming pair = sticky memory</li>
+          <li>Sounds like play + music combined</li>
+        </ul>
+      </div>
+      <div class="detail-card">
+        <h3>Brand Identity</h3>
+        <ul>
+          <li>Purple-to-pink gradient = creative energy</li>
+          <li>Piano/keyboard motif in branding</li>
+          <li>Approachable for parents, fun for kids</li>
+          <li>Scales from conservatorium to home use</li>
+        </ul>
+        <div class="domain-badges">
+          <span class="domain-badge available">plimplam.co.il</span>
+          <span class="domain-badge available">plimplam.com</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>IP Check</h3>
+        <p>
+          No significant trademarks found. "Plim Plam" does not appear as a
+          registered brand in music, education, or technology.
+          Clean namespace with no conflicts.
+        </p>
+        <div class="ip-status low">Low Risk — clean namespace</div>
+      </div>
+    </div>
+
+    <!-- APP MOCKUPS -->
+    <div class="app-mockup-row">
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #7C3AED; color: #FFFFFF;">
+          <div class="dots">
+            <div class="dot" style="background: #EC4899;"></div>
+            <div class="dot" style="background: #E9D5FF;"></div>
+            <div class="dot" style="background: #06B6D4;"></div>
+          </div>
+          plimplam.co.il/dashboard
+        </div>
+        <div class="app-content" style="background: #F5F0FF;">
+          <div class="skeleton wide" style="background: #7C3AED;"></div>
+          <div class="skeleton med" style="background: #EC4899;"></div>
+          <div class="skeleton short" style="background: #06B6D4;"></div>
+          <div class="skeleton wide" style="background: #7C3AED;"></div>
+          <div class="skeleton med" style="background: #EC4899;"></div>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #EC4899; color: #FFFFFF;">
+          <div class="dots">
+            <div class="dot" style="background: #7C3AED;"></div>
+            <div class="dot" style="background: #FBCFE8;"></div>
+            <div class="dot" style="background: #FFFFFF;"></div>
+          </div>
+          PlimPlam — Mobile
+        </div>
+        <div class="app-content" style="background: #FFFFFF;">
+          <div class="skeleton wide" style="background: #7C3AED;"></div>
+          <div class="skeleton short" style="background: #EC4899;"></div>
+          <div class="skeleton med" style="background: #06B6D4;"></div>
+          <div class="skeleton wide" style="background: #7C3AED;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="score-value" style="color: var(--pp-primary);">9</div>
+        <div class="score-label">Memorability</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--pp-secondary);">10</div>
+        <div class="score-label">Kid-friendly</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--pp-primary);">9</div>
+        <div class="score-label">Hebrew-fit</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--pp-accent);">8</div>
+        <div class="score-label">Global</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--pp-secondary);">9</div>
+        <div class="score-label">Brand</div>
+      </div>
+    </div>
+    <div class="score-total"><span style="color: var(--pp-primary);">45</span> / 50</div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     BRAND 3: KLINGLI
+     =================================================================== -->
+<section class="brand-section" id="klingli" style="background: var(--kl-bg);">
+  <div class="brand-inner">
+    <div class="brand-number">03 / 05</div>
+
+    <!-- HERO -->
+    <div class="hero-mockup" style="background: linear-gradient(160deg, #064E3B 0%, #059669 50%, #0EA5E9 100%); color: #FFFFFF; position: relative;">
+      <div class="floating-note" style="top: 8%; left: 12%; animation-delay: 0.3s; color: #A7F3D0;">&#9834;</div>
+      <div class="floating-note" style="top: 30%; right: 10%; animation-delay: 1.2s; color: #BAE6FD;">&#9835;</div>
+      <div class="floating-note" style="bottom: 12%; left: 25%; animation-delay: 1.8s; color: #FDE68A;">&#9833;</div>
+
+      <div class="sound-wave">
+        <div class="bar" style="background: #A7F3D0; animation-delay: 0s;"></div>
+        <div class="bar" style="background: #BAE6FD; animation-delay: 0.12s;"></div>
+        <div class="bar" style="background: #FDE68A; animation-delay: 0.24s;"></div>
+        <div class="bar" style="background: #A7F3D0; animation-delay: 0.36s;"></div>
+        <div class="bar" style="background: #BAE6FD; animation-delay: 0.48s;"></div>
+        <div class="bar" style="background: #FDE68A; animation-delay: 0.36s;"></div>
+        <div class="bar" style="background: #A7F3D0; animation-delay: 0.24s;"></div>
+      </div>
+
+      <div class="brand-logo" style="font-size: clamp(56px, 8vw, 96px); text-shadow: 0 4px 24px rgba(0,0,0,0.2);">
+        Kling<span style="color: #A7F3D0;">li</span>
+      </div>
+      <div class="brand-tagline" style="font-size: 20px;">Music that sparkles</div>
+      <div class="brand-hebrew">קלינגלי</div>
+      <a class="cta-btn" style="background: #F59E0B; color: #064E3B;" href="#">
+        Make it Ring
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </a>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3>Why Klingli</h3>
+        <p>
+          From the German "klingelingling" — the sound of a ringing bell or chime.
+          The "-li" suffix is a Swiss/Yiddish diminutive, making it endearing
+          and small-scale, perfect for children. Feels like "little ringing one."
+        </p>
+      </div>
+      <div class="detail-card">
+        <h3>Sound Profile</h3>
+        <ul>
+          <li>Sparkling bell/chime resonance</li>
+          <li>The "kl-" onset = crisp, clear attack</li>
+          <li>"-gli" ending = playful, diminutive</li>
+          <li>Hebrew "kuf-lamed" combo is natural</li>
+          <li>3 syllables with a skip-like rhythm</li>
+        </ul>
+      </div>
+      <div class="detail-card">
+        <h3>Brand Identity</h3>
+        <ul>
+          <li>Emerald + sky blue = fresh, bright</li>
+          <li>Bell/chime icon with sparkle motif</li>
+          <li>Whimsical yet professional</li>
+          <li>European classical music heritage feel</li>
+        </ul>
+        <div class="domain-badges">
+          <span class="domain-badge available">klingli.co.il</span>
+          <span class="domain-badge available">klingli.com</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>IP Check</h3>
+        <p>
+          No trademarks found for "Klingli" in any major registry. The word
+          is not a dictionary term in any major language. Completely
+          original coinage with zero conflicts.
+        </p>
+        <div class="ip-status low">Low Risk — original coinage</div>
+      </div>
+    </div>
+
+    <!-- APP MOCKUPS -->
+    <div class="app-mockup-row">
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #064E3B; color: #A7F3D0;">
+          <div class="dots">
+            <div class="dot" style="background: #059669;"></div>
+            <div class="dot" style="background: #0EA5E9;"></div>
+            <div class="dot" style="background: #F59E0B;"></div>
+          </div>
+          klingli.co.il/dashboard
+        </div>
+        <div class="app-content" style="background: #ECFDF5;">
+          <div class="skeleton wide" style="background: #059669;"></div>
+          <div class="skeleton med" style="background: #0EA5E9;"></div>
+          <div class="skeleton short" style="background: #F59E0B;"></div>
+          <div class="skeleton wide" style="background: #059669;"></div>
+          <div class="skeleton med" style="background: #0EA5E9;"></div>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #0EA5E9; color: #FFFFFF;">
+          <div class="dots">
+            <div class="dot" style="background: #059669;"></div>
+            <div class="dot" style="background: #F59E0B;"></div>
+            <div class="dot" style="background: #FFFFFF;"></div>
+          </div>
+          Klingli — Mobile
+        </div>
+        <div class="app-content" style="background: #FFFFFF;">
+          <div class="skeleton wide" style="background: #064E3B;"></div>
+          <div class="skeleton short" style="background: #059669;"></div>
+          <div class="skeleton med" style="background: #F59E0B;"></div>
+          <div class="skeleton wide" style="background: #0EA5E9;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="score-value" style="color: var(--kl-primary);">8</div>
+        <div class="score-label">Memorability</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--kl-secondary);">9</div>
+        <div class="score-label">Kid-friendly</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--kl-primary);">7</div>
+        <div class="score-label">Hebrew-fit</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--kl-accent);">8</div>
+        <div class="score-label">Global</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--kl-secondary);">8</div>
+        <div class="score-label">Brand</div>
+      </div>
+    </div>
+    <div class="score-total"><span style="color: var(--kl-primary);">40</span> / 50</div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     BRAND 4: DINDONG
+     =================================================================== -->
+<section class="brand-section" id="dindong" style="background: var(--dd-bg);">
+  <div class="brand-inner">
+    <div class="brand-number">04 / 05</div>
+
+    <!-- HERO -->
+    <div class="hero-mockup" style="background: linear-gradient(160deg, #9F1239 0%, #E11D48 40%, #F97316 100%); color: #FFFFFF; position: relative;">
+      <div class="floating-note" style="top: 10%; right: 15%; animation-delay: 0.6s; color: #FBBF24;">&#9834;</div>
+      <div class="floating-note" style="top: 35%; left: 8%; animation-delay: 1.4s; color: #FECDD3;">&#9835;</div>
+      <div class="floating-note" style="bottom: 10%; right: 10%; animation-delay: 0.2s; color: #FBBF24;">&#9833;</div>
+
+      <div class="sound-wave">
+        <div class="bar" style="background: #FBBF24; animation-delay: 0s;"></div>
+        <div class="bar" style="background: #FECDD3; animation-delay: 0.1s;"></div>
+        <div class="bar" style="background: #FBBF24; animation-delay: 0.2s;"></div>
+        <div class="bar" style="background: #FECDD3; animation-delay: 0.3s;"></div>
+        <div class="bar" style="background: #FBBF24; animation-delay: 0.4s;"></div>
+        <div class="bar" style="background: #FECDD3; animation-delay: 0.3s;"></div>
+        <div class="bar" style="background: #FBBF24; animation-delay: 0.2s;"></div>
+      </div>
+
+      <div class="brand-logo" style="font-size: clamp(56px, 8vw, 96px); text-shadow: 0 4px 24px rgba(0,0,0,0.2);">
+        Din<span style="color: #FBBF24;">Dong</span>
+      </div>
+      <div class="brand-tagline" style="font-size: 20px;">Music opens every door</div>
+      <div class="brand-hebrew">דין-דונג</div>
+      <a class="cta-btn" style="background: #FBBF24; color: #9F1239;" href="#">
+        Ring the Bell
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </a>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3>Why DinDong</h3>
+        <p>
+          The universal doorbell chime — and the metaphor is perfect: "music
+          opens every door." The alternating vowels (i/o) create a natural
+          two-note interval, like a real door chime plays a major third.
+          Every child knows this sound.
+        </p>
+      </div>
+      <div class="detail-card">
+        <h3>Sound Profile</h3>
+        <ul>
+          <li>Universal two-note chime</li>
+          <li>Vowel alternation (i/o) = musical interval</li>
+          <li>Hebrew: דין-דונג — very natural</li>
+          <li>Warm, welcoming, inviting sound</li>
+          <li>Built-in brand jingle potential</li>
+        </ul>
+      </div>
+      <div class="detail-card">
+        <h3>Brand Identity</h3>
+        <ul>
+          <li>Warm red-to-orange gradient = energy + warmth</li>
+          <li>Doorbell/welcome motif</li>
+          <li>"Come on in" feeling for parents</li>
+          <li>Strong association with beginnings/openings</li>
+        </ul>
+        <div class="domain-badges">
+          <span class="domain-badge available">dindong.co.il</span>
+          <span class="domain-badge available">dindong.com</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>IP Check</h3>
+        <p>
+          "Ding Dong" (note different spelling) is a Hostess snack brand in the US.
+          However, "DinDong" as one word is distinct spelling. No music or education
+          trademarks found. Medium risk due to phonetic similarity to the snack brand.
+        </p>
+        <div class="ip-status medium">Medium — phonetic overlap with Hostess snack</div>
+      </div>
+    </div>
+
+    <!-- APP MOCKUPS -->
+    <div class="app-mockup-row">
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #9F1239; color: #FECDD3;">
+          <div class="dots">
+            <div class="dot" style="background: #E11D48;"></div>
+            <div class="dot" style="background: #F97316;"></div>
+            <div class="dot" style="background: #FBBF24;"></div>
+          </div>
+          dindong.co.il/dashboard
+        </div>
+        <div class="app-content" style="background: #FFF1F2;">
+          <div class="skeleton wide" style="background: #E11D48;"></div>
+          <div class="skeleton med" style="background: #F97316;"></div>
+          <div class="skeleton short" style="background: #FBBF24;"></div>
+          <div class="skeleton wide" style="background: #E11D48;"></div>
+          <div class="skeleton med" style="background: #F97316;"></div>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #F97316; color: #FFFFFF;">
+          <div class="dots">
+            <div class="dot" style="background: #E11D48;"></div>
+            <div class="dot" style="background: #FBBF24;"></div>
+            <div class="dot" style="background: #FFFFFF;"></div>
+          </div>
+          DinDong — Mobile
+        </div>
+        <div class="app-content" style="background: #FFFFFF;">
+          <div class="skeleton wide" style="background: #9F1239;"></div>
+          <div class="skeleton short" style="background: #E11D48;"></div>
+          <div class="skeleton med" style="background: #FBBF24;"></div>
+          <div class="skeleton wide" style="background: #F97316;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="score-value" style="color: var(--dd-primary);">10</div>
+        <div class="score-label">Memorability</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--dd-secondary);">10</div>
+        <div class="score-label">Kid-friendly</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--dd-primary);">8</div>
+        <div class="score-label">Hebrew-fit</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--dd-accent);">9</div>
+        <div class="score-label">Global</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--dd-secondary);">7</div>
+        <div class="score-label">Brand</div>
+      </div>
+    </div>
+    <div class="score-total"><span style="color: var(--dd-primary);">44</span> / 50</div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     BRAND 5: TRIMTRAM
+     =================================================================== -->
+<section class="brand-section" id="trimtram" style="background: var(--tr-bg);">
+  <div class="brand-inner">
+    <div class="brand-number">05 / 05</div>
+
+    <!-- HERO -->
+    <div class="hero-mockup" style="background: linear-gradient(160deg, #1E3A8A 0%, #2563EB 40%, #8B5CF6 100%); color: #FFFFFF; position: relative;">
+      <div class="floating-note" style="top: 12%; left: 10%; animation-delay: 0.4s; color: #BFDBFE;">&#9834;</div>
+      <div class="floating-note" style="top: 28%; right: 12%; animation-delay: 1.1s; color: #C4B5FD;">&#9835;</div>
+      <div class="floating-note" style="bottom: 15%; left: 20%; animation-delay: 1.6s; color: #5EEAD4;">&#9833;</div>
+
+      <div class="sound-wave">
+        <div class="bar" style="background: #BFDBFE; animation-delay: 0s;"></div>
+        <div class="bar" style="background: #C4B5FD; animation-delay: 0.12s;"></div>
+        <div class="bar" style="background: #5EEAD4; animation-delay: 0.24s;"></div>
+        <div class="bar" style="background: #BFDBFE; animation-delay: 0.36s;"></div>
+        <div class="bar" style="background: #C4B5FD; animation-delay: 0.48s;"></div>
+        <div class="bar" style="background: #5EEAD4; animation-delay: 0.36s;"></div>
+        <div class="bar" style="background: #BFDBFE; animation-delay: 0.24s;"></div>
+      </div>
+
+      <div class="brand-logo" style="font-size: clamp(52px, 8vw, 88px); text-shadow: 0 4px 24px rgba(0,0,0,0.2);">
+        Trim<span style="color: #5EEAD4;">Tram</span>
+      </div>
+      <div class="brand-tagline" style="font-size: 20px;">Rhythm runs through everything</div>
+      <div class="brand-hebrew">טרים-טראם</div>
+      <a class="cta-btn" style="background: #14B8A6; color: #FFFFFF;" href="#">
+        Keep the Beat
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      </a>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3>Why TrimTram</h3>
+        <p>
+          The rhythmic "tr-" consonant cluster mimics a drum roll or
+          a train chugging along tracks. The vowel shift (i to a) gives it
+          forward momentum — like music always pushing to the next beat.
+          It's the sound of rhythm itself.
+        </p>
+      </div>
+      <div class="detail-card">
+        <h3>Sound Profile</h3>
+        <ul>
+          <li>Drum roll / percussion attack</li>
+          <li>"Tr-" onset = energy, forward motion</li>
+          <li>Vowel alternation (i/a) = rhythmic pattern</li>
+          <li>Hebrew "tet-resh" combo is strong</li>
+          <li>Feels like a catchy drum pattern: trim-TRAM</li>
+        </ul>
+      </div>
+      <div class="detail-card">
+        <h3>Brand Identity</h3>
+        <ul>
+          <li>Royal blue + violet gradient = dynamic</li>
+          <li>Drum/percussion motif, teal accents</li>
+          <li>Energetic, rhythmic brand personality</li>
+          <li>Appeals to percussionists & rhythm-focused</li>
+        </ul>
+        <div class="domain-badges">
+          <span class="domain-badge available">trimtram.co.il</span>
+          <span class="domain-badge available">trimtram.com</span>
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>IP Check</h3>
+        <p>
+          No trademarks found for "TrimTram" in music, education, or technology.
+          "Trim" and "Tram" are common English words separately but the compound
+          is unique. Clean namespace.
+        </p>
+        <div class="ip-status low">Low Risk — unique compound</div>
+      </div>
+    </div>
+
+    <!-- APP MOCKUPS -->
+    <div class="app-mockup-row">
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #1E3A8A; color: #BFDBFE;">
+          <div class="dots">
+            <div class="dot" style="background: #2563EB;"></div>
+            <div class="dot" style="background: #8B5CF6;"></div>
+            <div class="dot" style="background: #14B8A6;"></div>
+          </div>
+          trimtram.co.il/dashboard
+        </div>
+        <div class="app-content" style="background: #EFF6FF;">
+          <div class="skeleton wide" style="background: #2563EB;"></div>
+          <div class="skeleton med" style="background: #8B5CF6;"></div>
+          <div class="skeleton short" style="background: #14B8A6;"></div>
+          <div class="skeleton wide" style="background: #2563EB;"></div>
+          <div class="skeleton med" style="background: #8B5CF6;"></div>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="app-topbar" style="background: #14B8A6; color: #FFFFFF;">
+          <div class="dots">
+            <div class="dot" style="background: #2563EB;"></div>
+            <div class="dot" style="background: #8B5CF6;"></div>
+            <div class="dot" style="background: #FFFFFF;"></div>
+          </div>
+          TrimTram — Mobile
+        </div>
+        <div class="app-content" style="background: #FFFFFF;">
+          <div class="skeleton wide" style="background: #1E3A8A;"></div>
+          <div class="skeleton short" style="background: #2563EB;"></div>
+          <div class="skeleton med" style="background: #14B8A6;"></div>
+          <div class="skeleton wide" style="background: #8B5CF6;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORES -->
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tr-primary);">8</div>
+        <div class="score-label">Memorability</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tr-secondary);">8</div>
+        <div class="score-label">Kid-friendly</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tr-primary);">8</div>
+        <div class="score-label">Hebrew-fit</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tr-accent);">7</div>
+        <div class="score-label">Global</div>
+      </div>
+      <div class="score-item">
+        <div class="score-value" style="color: var(--tr-secondary);">8</div>
+        <div class="score-label">Brand</div>
+      </div>
+    </div>
+    <div class="score-total"><span style="color: var(--tr-primary);">39</span> / 50</div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     COMPARISON TABLE
+     =================================================================== -->
+<section class="comparison-section">
+  <h2>Head-to-Head Comparison</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Criterion</th>
+        <th>TingTing</th>
+        <th>PlimPlam</th>
+        <th>Klingli</th>
+        <th>DinDong</th>
+        <th>TrimTram</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Memorability</td>
+        <td class="highlight" style="color: #FFB800;">9</td>
+        <td class="highlight" style="color: #7C3AED;">9</td>
+        <td class="highlight" style="color: #059669;">8</td>
+        <td class="highlight" style="color: #E11D48;">10</td>
+        <td class="highlight" style="color: #2563EB;">8</td>
+      </tr>
+      <tr>
+        <td>Kid-Friendly</td>
+        <td class="highlight" style="color: #FFB800;">10</td>
+        <td class="highlight" style="color: #7C3AED;">10</td>
+        <td class="highlight" style="color: #059669;">9</td>
+        <td class="highlight" style="color: #E11D48;">10</td>
+        <td class="highlight" style="color: #2563EB;">8</td>
+      </tr>
+      <tr>
+        <td>Hebrew-Fit</td>
+        <td class="highlight" style="color: #FFB800;">8</td>
+        <td class="highlight" style="color: #7C3AED;">9</td>
+        <td class="highlight" style="color: #059669;">7</td>
+        <td class="highlight" style="color: #E11D48;">8</td>
+        <td class="highlight" style="color: #2563EB;">8</td>
+      </tr>
+      <tr>
+        <td>Global Appeal</td>
+        <td class="highlight" style="color: #FFB800;">9</td>
+        <td class="highlight" style="color: #7C3AED;">8</td>
+        <td class="highlight" style="color: #059669;">8</td>
+        <td class="highlight" style="color: #E11D48;">9</td>
+        <td class="highlight" style="color: #2563EB;">7</td>
+      </tr>
+      <tr>
+        <td>Brand Potential</td>
+        <td class="highlight" style="color: #FFB800;">8</td>
+        <td class="highlight" style="color: #7C3AED;">9</td>
+        <td class="highlight" style="color: #059669;">8</td>
+        <td class="highlight" style="color: #E11D48;">7</td>
+        <td class="highlight" style="color: #2563EB;">8</td>
+      </tr>
+      <tr>
+        <td>IP Risk</td>
+        <td>Medium</td>
+        <td>Low</td>
+        <td>Low</td>
+        <td>Medium</td>
+        <td>Low</td>
+      </tr>
+      <tr style="background: #F8FAFC; font-weight: 700;">
+        <td style="font-weight: 800;">Total</td>
+        <td class="highlight" style="color: #FFB800;">44</td>
+        <td class="highlight" style="color: #7C3AED;">45</td>
+        <td class="highlight" style="color: #059669;">40</td>
+        <td class="highlight" style="color: #E11D48;">44</td>
+        <td class="highlight" style="color: #2563EB;">39</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p>Agent C — Sound &amp; Rhythm Names | Round 2 | All domains verified via DNS socket check</p>
+  <p style="margin-top: 8px; font-size: 12px;">Both .co.il and .com available for all 5 candidates as of 2026-03-14</p>
+</footer>
+
+</body>
+</html>

@@ -103,7 +103,7 @@ export default async function RootLayout({
       <body className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${heebo.variable} ${frankRuhlLibre.variable} font-body antialiased`}>
         <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
-          <BrandThemeProvider>
+          <BrandThemeProvider theme={activeTheme}>
           <AuthProvider>
             <QueryProvider>
               <div id="main-content" tabIndex={-1}>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Agent 5 - Disruptive &amp; Bold Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand1-primary: #FF3366;
+    --brand1-secondary: #1A0A2E;
+    --brand1-accent: #FFD700;
+    --brand2-primary: #7C3AED;
+    --brand2-secondary: #0F172A;
+    --brand2-accent: #22D3EE;
+    --brand3-primary: #FF6B00;
+    --brand3-secondary: #0D0D0D;
+    --brand3-accent: #00FF88;
+    --brand4-primary: #3B82F6;
+    --brand4-secondary: #020617;
+    --brand4-accent: #F472B6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #08080F;
+    color: #F8FAFC;
+    overflow-x: hidden;
+  }
+
+  /* ============= OVERVIEW HEADER ============= */
+  .overview-header {
+    text-align: center;
+    padding: 80px 24px 40px;
+    background: linear-gradient(135deg, #0F0F23 0%, #1a1035 50%, #0F0F23 100%);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+  }
+
+  .overview-header .agent-badge {
+    display: inline-block;
+    padding: 6px 20px;
+    border: 1px solid #8B5CF6;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #A78BFA;
+    margin-bottom: 20px;
+  }
+
+  .overview-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #F8FAFC 0%, #A78BFA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .overview-header p {
+    font-size: 18px;
+    color: #94A3B8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ============= BRAND SECTION ============= */
+  .brand-section {
+    padding: 80px 24px;
+    position: relative;
+  }
+
+  .brand-section:nth-child(odd) {
+    background: #0B0B18;
+  }
+
+  .brand-section:nth-child(even) {
+    background: #08080F;
+  }
+
+  .brand-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Brand Number */
+  .brand-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #64748B;
+    margin-bottom: 16px;
+  }
+
+  /* ============= HERO MOCKUP ============= */
+  .hero-mockup {
+    border-radius: 20px;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 48px;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-mockup::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.06;
+    background-size: 40px 40px;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  }
+
+  /* Brand 1 - NAGN */
+  .hero-nagn {
+    background: linear-gradient(135deg, #1A0A2E 0%, #2D0A3E 40%, #FF3366 200%);
+    border: 1px solid rgba(255, 51, 102, 0.3);
+  }
+
+  /* Brand 2 - ZAMR */
+  .hero-zamr {
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 40%, #7C3AED 200%);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+  }
+
+  /* Brand 3 - JAMIT */
+  .hero-jamit {
+    background: linear-gradient(135deg, #0D0D0D 0%, #1A0A00 40%, #FF6B00 200%);
+    border: 1px solid rgba(255, 107, 0, 0.3);
+  }
+
+  /* Brand 4 - PLYY */
+  .hero-plyy {
+    background: linear-gradient(135deg, #020617 0%, #0C1445 40%, #3B82F6 200%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .logo-mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(64px, 10vw, 120px);
+    letter-spacing: -3px;
+    line-height: 1;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-hebrew {
+    font-family: 'Heebo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 48px);
+    opacity: 0.7;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tagline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(16px, 2.5vw, 22px);
+    color: rgba(248, 250, 252, 0.75);
+    max-width: 500px;
+    line-height: 1.5;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .cta-primary-nagn { background: #FF3366; color: #fff; }
+  .cta-primary-nagn:hover { box-shadow: 0 8px 32px rgba(255,51,102,0.4); }
+  .cta-secondary-nagn { background: rgba(255,51,102,0.15); color: #FF3366; border: 1px solid rgba(255,51,102,0.3); }
+
+  .cta-primary-zamr { background: #7C3AED; color: #fff; }
+  .cta-primary-zamr:hover { box-shadow: 0 8px 32px rgba(124,58,237,0.4); }
+  .cta-secondary-zamr { background: rgba(124,58,237,0.15); color: #A78BFA; border: 1px solid rgba(124,58,237,0.3); }
+
+  .cta-primary-jamit { background: #FF6B00; color: #fff; }
+  .cta-primary-jamit:hover { box-shadow: 0 8px 32px rgba(255,107,0,0.4); }
+  .cta-secondary-jamit { background: rgba(255,107,0,0.15); color: #FF6B00; border: 1px solid rgba(255,107,0,0.3); }
+
+  .cta-primary-plyy { background: #3B82F6; color: #fff; }
+  .cta-primary-plyy:hover { box-shadow: 0 8px 32px rgba(59,130,246,0.4); }
+  .cta-secondary-plyy { background: rgba(59,130,246,0.15); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); }
+
+  /* Glow orbs */
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  /* ============= INFO GRID ============= */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .info-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  .info-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #64748B;
+    margin-bottom: 12px;
+  }
+
+  .info-card p, .info-card ul {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #CBD5E1;
+  }
+
+  .info-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .info-card ul li {
+    padding: 4px 0;
+  }
+
+  .domain-avail { color: #22C55E; font-weight: 600; }
+  .domain-taken { color: #EF4444; opacity: 0.6; }
+
+  /* ============= FEATURE PILLS ============= */
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94A3B8;
+  }
+
+  /* ============= SCORE TABLE ============= */
+  .score-section {
+    margin-top: 40px;
+  }
+
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .score-table thead th {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 14px 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #64748B;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .score-table td {
+    padding: 14px 20px;
+    font-size: 15px;
+    color: #CBD5E1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .score-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .score-table .score-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .score-high { color: #22C55E; }
+  .score-mid { color: #FBBF24; }
+  .score-low { color: #EF4444; }
+
+  .total-row td {
+    background: rgba(255, 255, 255, 0.04);
+    font-weight: 700;
+  }
+
+  .total-score {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  /* ============= NAV BAR MOCKUP ============= */
+  .nav-mockup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    margin-bottom: 32px;
+  }
+
+  .nav-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links li {
+    font-size: 14px;
+    font-weight: 500;
+    color: #94A3B8;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .nav-links li:hover {
+    color: #F8FAFC;
+  }
+
+  .nav-cta {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  /* ============= STAT BAR ============= */
+  .stat-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .stat-item {
+    padding: 24px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .stat-item:last-child {
+    border-right: none;
+  }
+
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #F8FAFC;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(248,250,252,0.7);
+    margin-top: 4px;
+  }
+
+  /* ============= WINNER BADGE ============= */
+  .winner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ============= COMPARISON TABLE ============= */
+  .comparison-section {
+    padding: 80px 24px;
+    background: linear-gradient(180deg, #08080F 0%, #0F0F23 100%);
+  }
+
+  .comparison-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .comparison-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 48px;
+    color: #F8FAFC;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 900px) {
+    .comparison-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .comparison-grid {
+      grid-template-columns: 1fr;
+    }
+    .stat-bar {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .nav-links {
+      display: none;
+    }
+  }
+
+  .comparison-card {
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .comparison-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .comparison-card .card-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+
+  .comparison-card .card-hebrew {
+    font-family: 'Heebo', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    opacity: 0.6;
+    margin-bottom: 16px;
+  }
+
+  .comparison-card .card-total {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .comparison-card .card-total-label {
+    font-size: 13px;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .card-nagn { background: rgba(255,51,102,0.06); }
+  .card-nagn:hover { border-color: rgba(255,51,102,0.4); }
+  .card-zamr { background: rgba(124,58,237,0.06); }
+  .card-zamr:hover { border-color: rgba(124,58,237,0.4); }
+  .card-jamit { background: rgba(255,107,0,0.06); }
+  .card-jamit:hover { border-color: rgba(255,107,0,0.4); }
+  .card-plyy { background: rgba(59,130,246,0.06); }
+  .card-plyy:hover { border-color: rgba(59,130,246,0.4); }
+
+  .recommended-tag {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============= OVERVIEW HEADER ============= -->
+<header class="overview-header">
+  <div class="agent-badge">Agent 5 -- Disruptive / Bold</div>
+  <h1>4 Brands That Break The Rules</h1>
+  <p>Verb-first, ultra-short, Israeli startup energy. Names people can't forget.</p>
+</header>
+
+<!-- ================================ -->
+<!-- BRAND 1: NAGN                     -->
+<!-- ================================ -->
+<section class="brand-section" id="nagn">
+  <div class="brand-container">
+    <div class="brand-number">Brand 01 / 04</div>
+
+    <!-- Nav mockup -->
+    <div class="nav-mockup">
+      <div class="nav-logo" style="color: #FF3366;">NAGN</div>
+      <ul class="nav-links">
+        <li>Conservatoriums</li>
+        <li>Musicians</li>
+        <li>Concerts</li>
+        <li>Learn</li>
+      </ul>
+      <button class="nav-cta" style="background: #FF3366;">Start Playing</button>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-mockup hero-nagn">
+      <div class="glow-orb" style="width: 400px; height: 400px; background: #FF3366; top: -100px; right: -100px;"></div>
+      <div class="glow-orb" style="width: 300px; height: 300px; background: #FFD700; bottom: -80px; left: -80px;"></div>
+      <div class="logo-mark" style="color: #FF3366;">NAGN</div>
+      <div class="logo-hebrew">נגן</div>
+      <p class="hero-tagline">The verb for music. Schedule, learn, perform, hire -- all in one beat.</p>
+      <div class="hero-cta-row">
+        <a class="cta-btn cta-primary-nagn" href="#">Start Playing</a>
+        <a class="cta-btn cta-secondary-nagn" href="#">Watch Demo</a>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stat-bar" style="background: rgba(255,51,102,0.1); border: 1px solid rgba(255,51,102,0.2);">
+      <div class="stat-item"><div class="stat-num">85+</div><div class="stat-label">Conservatoriums</div></div>
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Musicians</div></div>
+      <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num">1K+</div><div class="stat-label">Concerts</div></div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Brand Story</h3>
+        <p><strong>NAGN</strong> (pronounced "nah-GAN") is the Hebrew verb "to play [music]" -- <span style="font-family: 'Heebo'; font-weight: 700;">נגן</span>. It's what every musician does. 4 letters. One verb. The entire music ecosystem.</p>
+        <p style="margin-top: 12px; color: #FF3366; font-weight: 600;">"Let's NAGN!"</p>
+      </div>
+      <div class="info-card">
+        <h3>Why It's Bold</h3>
+        <ul>
+          <li>+ Hebrew verb turned into global brand (like Waze from "ways")</li>
+          <li>+ Works as action: "I NAGN'd a teacher today"</li>
+          <li>+ 4 letters, punchy, memorable</li>
+          <li>+ No vowels stripped -- authentic transliteration</li>
+          <li>+ Every Israeli musician knows this word</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Domain Status</h3>
+        <ul>
+          <li class="domain-avail">nagn.co.il -- AVAILABLE</li>
+          <li class="domain-taken">nagn.com -- Taken</li>
+          <li class="domain-avail">nagn.org.il -- AVAILABLE</li>
+          <li class="domain-avail">nagn.io -- AVAILABLE</li>
+          <li class="domain-avail">nagn.org -- AVAILABLE</li>
+        </ul>
+        <p style="margin-top: 8px; font-size: 13px;">Primary: <strong>nagn.co.il</strong></p>
+      </div>
+      <div class="info-card">
+        <h3>Visual Identity</h3>
+        <div class="feature-pills">
+          <span class="pill" style="background: rgba(255,51,102,0.15); color: #FF3366; border-color: rgba(255,51,102,0.3);">Hot Pink Primary</span>
+          <span class="pill" style="background: rgba(255,215,0,0.15); color: #FFD700; border-color: rgba(255,215,0,0.3);">Gold Accent</span>
+          <span class="pill">Dark Purple BG</span>
+          <span class="pill">Space Grotesk</span>
+          <span class="pill">Heebo Hebrew</span>
+          <span class="pill">Sharp corners</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-section">
+      <table class="score-table">
+        <thead><tr><th>Criteria</th><th>Score</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Memorability</td><td><span class="score-val score-high">9</span></td><td>Hebrew root verb -- every Israeli knows it instantly</td></tr>
+          <tr><td>Hebrew/English</td><td><span class="score-val score-high">9</span></td><td>Reads naturally in both; clean transliteration</td></tr>
+          <tr><td>Domain</td><td><span class="score-val score-high">8</span></td><td>.co.il available (primary), .io and .org too</td></tr>
+          <tr><td>IP Safety</td><td><span class="score-val score-mid">7</span></td><td>Generic verb -- hard to enforce existing TM</td></tr>
+          <tr><td>Disruption</td><td><span class="score-val score-high">9</span></td><td>Verb-as-brand, Waze energy, Israeli DNA</td></tr>
+          <tr><td>Appeal</td><td><span class="score-val score-high">9</span></td><td>Musicians love it; parents understand it</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td colspan="2"><span class="total-score" style="color: #FF3366;">51 / 60</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ -->
+<!-- BRAND 2: ZAMR                     -->
+<!-- ================================ -->
+<section class="brand-section" id="zamr">
+  <div class="brand-container">
+    <div class="brand-number">Brand 02 / 04</div>
+
+    <div class="nav-mockup">
+      <div class="nav-logo" style="color: #7C3AED;">ZAMR</div>
+      <ul class="nav-links">
+        <li>Conservatoriums</li>
+        <li>Musicians</li>
+        <li>Concerts</li>
+        <li>Learn</li>
+      </ul>
+      <button class="nav-cta" style="background: #7C3AED;">Start Singing</button>
+    </div>
+
+    <div class="hero-mockup hero-zamr">
+      <div class="glow-orb" style="width: 400px; height: 400px; background: #7C3AED; top: -100px; left: -100px;"></div>
+      <div class="glow-orb" style="width: 300px; height: 300px; background: #22D3EE; bottom: -80px; right: -80px;"></div>
+      <div class="logo-mark" style="color: #A78BFA;">ZAMR</div>
+      <div class="logo-hebrew">זמר</div>
+      <p class="hero-tagline">Sing. Play. Perform. The voice of Israel's music scene.</p>
+      <div class="hero-cta-row">
+        <a class="cta-btn cta-primary-zamr" href="#">Join ZAMR</a>
+        <a class="cta-btn cta-secondary-zamr" href="#">Explore</a>
+      </div>
+    </div>
+
+    <div class="stat-bar" style="background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2);">
+      <div class="stat-item"><div class="stat-num">85+</div><div class="stat-label">Conservatoriums</div></div>
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Musicians</div></div>
+      <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num">1K+</div><div class="stat-label">Concerts</div></div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Brand Story</h3>
+        <p><strong>ZAMR</strong> (pronounced "zah-MER") -- from <span style="font-family: 'Heebo'; font-weight: 700;">זמר</span> meaning "sing" or "singer." The root of all Hebrew music words: zemer (song), zmirot (hymns), zamar (musician).</p>
+        <p style="margin-top: 12px; color: #A78BFA; font-weight: 600;">"ZAMR your heart out."</p>
+      </div>
+      <div class="info-card">
+        <h3>Why It's Bold</h3>
+        <ul>
+          <li>+ Deep Hebrew root -- Z.M.R is THE music root</li>
+          <li>+ Sounds powerful, exotic to international ear</li>
+          <li>+ 4 letters, consonant-heavy, unforgettable</li>
+          <li>+ Also Arabic cognate (zamr = flute playing)</li>
+          <li>+ Cross-cultural appeal across Israel's communities</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Domain Status</h3>
+        <ul>
+          <li class="domain-avail">zamr.co.il -- AVAILABLE</li>
+          <li class="domain-taken">zamr.com -- Taken</li>
+          <li class="domain-avail">zamr.org.il -- AVAILABLE</li>
+          <li class="domain-avail">zamr.io -- AVAILABLE</li>
+          <li class="domain-avail">zamr.org -- AVAILABLE</li>
+        </ul>
+        <p style="margin-top: 8px; font-size: 13px;">Primary: <strong>zamr.co.il</strong></p>
+      </div>
+      <div class="info-card">
+        <h3>Visual Identity</h3>
+        <div class="feature-pills">
+          <span class="pill" style="background: rgba(124,58,237,0.15); color: #A78BFA; border-color: rgba(124,58,237,0.3);">Electric Violet</span>
+          <span class="pill" style="background: rgba(34,211,238,0.15); color: #22D3EE; border-color: rgba(34,211,238,0.3);">Cyan Accent</span>
+          <span class="pill">Deep Navy BG</span>
+          <span class="pill">Space Grotesk</span>
+          <span class="pill">Heebo Hebrew</span>
+          <span class="pill">Rounded edges</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-section">
+      <table class="score-table">
+        <thead><tr><th>Criteria</th><th>Score</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Memorability</td><td><span class="score-val score-high">8</span></td><td>Strong Hebrew root, slightly less universal than "play"</td></tr>
+          <tr><td>Hebrew/English</td><td><span class="score-val score-high">8</span></td><td>Easy to pronounce in both, Arabic bonus</td></tr>
+          <tr><td>Domain</td><td><span class="score-val score-high">8</span></td><td>.co.il + .io + .org all available</td></tr>
+          <tr><td>IP Safety</td><td><span class="score-val score-high">8</span></td><td>No major conflicts found for ZAMR</td></tr>
+          <tr><td>Disruption</td><td><span class="score-val score-high">8</span></td><td>Ancient root in modern tech packaging</td></tr>
+          <tr><td>Appeal</td><td><span class="score-val score-mid">7</span></td><td>Musicians love it; "sing" may feel vocal-focused</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td colspan="2"><span class="total-score" style="color: #A78BFA;">47 / 60</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ -->
+<!-- BRAND 3: JAMIT                    -->
+<!-- ================================ -->
+<section class="brand-section" id="jamit">
+  <div class="brand-container">
+    <div class="brand-number">Brand 03 / 04</div>
+
+    <div class="nav-mockup">
+      <div class="nav-logo" style="color: #FF6B00;">JAM<span style="color: #00FF88;">IT</span></div>
+      <ul class="nav-links">
+        <li>Conservatoriums</li>
+        <li>Musicians</li>
+        <li>Concerts</li>
+        <li>Learn</li>
+      </ul>
+      <button class="nav-cta" style="background: linear-gradient(135deg, #FF6B00, #FF8C00);">Jam Now</button>
+    </div>
+
+    <div class="hero-mockup hero-jamit">
+      <div class="glow-orb" style="width: 400px; height: 400px; background: #FF6B00; top: -80px; right: -80px;"></div>
+      <div class="glow-orb" style="width: 300px; height: 300px; background: #00FF88; bottom: -100px; left: -100px;"></div>
+      <div class="logo-mark" style="color: #FF6B00;">JAM<span style="color: #00FF88;">IT</span></div>
+      <div class="logo-hebrew">ג'אמ-איט</div>
+      <p class="hero-tagline">Just jam it. Find musicians, book concerts, learn anything -- in one riff.</p>
+      <div class="hero-cta-row">
+        <a class="cta-btn cta-primary-jamit" href="#">Jam Now</a>
+        <a class="cta-btn cta-secondary-jamit" href="#">How It Works</a>
+      </div>
+    </div>
+
+    <div class="stat-bar" style="background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.2);">
+      <div class="stat-item"><div class="stat-num">85+</div><div class="stat-label">Conservatoriums</div></div>
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Musicians</div></div>
+      <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num">1K+</div><div class="stat-label">Concerts</div></div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Brand Story</h3>
+        <p><strong>JAMIT</strong> -- "Jam" (the universal music verb for improvisation) + "IT" (tech suffix, like "do it"). Both .com AND .co.il available. Pure startup energy.</p>
+        <p style="margin-top: 12px; color: #FF6B00; font-weight: 600;">"Just JAMIT!"</p>
+      </div>
+      <div class="info-card">
+        <h3>Why It's Bold</h3>
+        <ul>
+          <li>+ "Jam" is universally understood = music collaboration</li>
+          <li>+ jamit.com AND jamit.co.il BOTH AVAILABLE</li>
+          <li>+ Natural verb: "Let's jamit" / "I jamit'd a gig"</li>
+          <li>+ Israeli startup naming (compound verb+suffix)</li>
+          <li>+ "IT" suffix = tech authority</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Domain Status</h3>
+        <ul>
+          <li class="domain-avail">jamit.co.il -- AVAILABLE</li>
+          <li class="domain-avail">jamit.com -- AVAILABLE</li>
+          <li class="domain-avail">jamit.org.il -- AVAILABLE</li>
+          <li class="domain-taken">jamit.io -- Taken</li>
+          <li class="domain-taken">jamit.org -- Taken</li>
+        </ul>
+        <p style="margin-top: 8px; font-size: 13px;">Primary: <strong>jamit.com</strong> (!!)</p>
+      </div>
+      <div class="info-card">
+        <h3>Visual Identity</h3>
+        <div class="feature-pills">
+          <span class="pill" style="background: rgba(255,107,0,0.15); color: #FF6B00; border-color: rgba(255,107,0,0.3);">Electric Orange</span>
+          <span class="pill" style="background: rgba(0,255,136,0.15); color: #00FF88; border-color: rgba(0,255,136,0.3);">Neon Green</span>
+          <span class="pill">Pure Black BG</span>
+          <span class="pill">Space Grotesk</span>
+          <span class="pill">Split color logo</span>
+          <span class="pill">High energy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-section">
+      <table class="score-table">
+        <thead><tr><th>Criteria</th><th>Score</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Memorability</td><td><span class="score-val score-high">9</span></td><td>"Jam" + "IT" -- instant recognition, never forgotten</td></tr>
+          <tr><td>Hebrew/English</td><td><span class="score-val score-mid">7</span></td><td>English-first; Hebrew speakers know "jam" but it's borrowed</td></tr>
+          <tr><td>Domain</td><td><span class="score-val score-high">10</span></td><td>jamit.com AND jamit.co.il BOTH available -- unicorn status</td></tr>
+          <tr><td>IP Safety</td><td><span class="score-val score-mid">7</span></td><td>Generic compound word -- low TM risk</td></tr>
+          <tr><td>Disruption</td><td><span class="score-val score-high">10</span></td><td>Most startup-energy name in the set. Nike "Just Do It" vibes.</td></tr>
+          <tr><td>Appeal</td><td><span class="score-val score-high">8</span></td><td>Young, cool, energetic. May feel less "serious" to classical crowd.</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td colspan="2"><span class="total-score" style="color: #FF6B00;">51 / 60</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ -->
+<!-- BRAND 4: PLYY                     -->
+<!-- ================================ -->
+<section class="brand-section" id="plyy">
+  <div class="brand-container">
+    <div class="brand-number">Brand 04 / 04</div>
+
+    <div class="nav-mockup">
+      <div class="nav-logo" style="color: #3B82F6;">PLY<span style="color: #F472B6;">Y</span></div>
+      <ul class="nav-links">
+        <li>Conservatoriums</li>
+        <li>Musicians</li>
+        <li>Concerts</li>
+        <li>Learn</li>
+      </ul>
+      <button class="nav-cta" style="background: linear-gradient(135deg, #3B82F6, #8B5CF6);">Play Now</button>
+    </div>
+
+    <div class="hero-mockup hero-plyy">
+      <div class="glow-orb" style="width: 400px; height: 400px; background: #3B82F6; top: -80px; left: -80px;"></div>
+      <div class="glow-orb" style="width: 300px; height: 300px; background: #F472B6; bottom: -100px; right: -100px;"></div>
+      <div class="logo-mark" style="color: #60A5FA;">PLY<span style="color: #F472B6;">Y</span></div>
+      <div class="logo-hebrew">פליי</div>
+      <p class="hero-tagline">Play, reimagined. Your music life, one tap away.</p>
+      <div class="hero-cta-row">
+        <a class="cta-btn cta-primary-plyy" href="#">Start on PLYY</a>
+        <a class="cta-btn cta-secondary-plyy" href="#">See How</a>
+      </div>
+    </div>
+
+    <div class="stat-bar" style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);">
+      <div class="stat-item"><div class="stat-num">85+</div><div class="stat-label">Conservatoriums</div></div>
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Musicians</div></div>
+      <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num">1K+</div><div class="stat-label">Concerts</div></div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Brand Story</h3>
+        <p><strong>PLYY</strong> (pronounced "ply") -- "Play" stripped to 4 letters with the double-Y Israeli startup twist (like Fiverr's double-R). Universal, instant, bold.</p>
+        <p style="margin-top: 12px; color: #60A5FA; font-weight: 600;">"PLYY it."</p>
+      </div>
+      <div class="info-card">
+        <h3>Why It's Bold</h3>
+        <ul>
+          <li>+ "Play" is THE universal music verb</li>
+          <li>+ Double-Y = Israeli tech DNA (Fiverr pattern)</li>
+          <li>+ 4 letters, looks great as a logo</li>
+          <li>+ Works globally with zero explanation</li>
+          <li>+ Tech-forward: sounds like an API or protocol</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Domain Status</h3>
+        <ul>
+          <li class="domain-avail">plyy.co.il -- AVAILABLE</li>
+          <li class="domain-taken">plyy.com -- Taken</li>
+          <li class="domain-avail">plyy.org.il -- AVAILABLE</li>
+          <li class="domain-avail">plyy.io -- AVAILABLE</li>
+          <li class="domain-avail">plyy.org -- AVAILABLE</li>
+        </ul>
+        <p style="margin-top: 8px; font-size: 13px;">Primary: <strong>plyy.co.il</strong></p>
+      </div>
+      <div class="info-card">
+        <h3>Visual Identity</h3>
+        <div class="feature-pills">
+          <span class="pill" style="background: rgba(59,130,246,0.15); color: #60A5FA; border-color: rgba(59,130,246,0.3);">Electric Blue</span>
+          <span class="pill" style="background: rgba(244,114,182,0.15); color: #F472B6; border-color: rgba(244,114,182,0.3);">Hot Pink Y</span>
+          <span class="pill">Midnight BG</span>
+          <span class="pill">Space Grotesk</span>
+          <span class="pill">Split-letter color</span>
+          <span class="pill">Clean + modern</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-section">
+      <table class="score-table">
+        <thead><tr><th>Criteria</th><th>Score</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Memorability</td><td><span class="score-val score-high">8</span></td><td>Instantly "Play" -- but the spelling needs a beat to click</td></tr>
+          <tr><td>Hebrew/English</td><td><span class="score-val score-mid">6</span></td><td>English-first; Hebrew speakers say "plai" but it's foreign</td></tr>
+          <tr><td>Domain</td><td><span class="score-val score-high">8</span></td><td>.co.il + .io + .org available</td></tr>
+          <tr><td>IP Safety</td><td><span class="score-val score-high">8</span></td><td>PLYY is novel spelling, low TM risk</td></tr>
+          <tr><td>Disruption</td><td><span class="score-val score-high">8</span></td><td>Fiverr-style respelling, clean tech feel</td></tr>
+          <tr><td>Appeal</td><td><span class="score-val score-mid">7</span></td><td>Modern crowd loves it; older crowd may find it confusing</td></tr>
+          <tr class="total-row"><td>TOTAL</td><td colspan="2"><span class="total-score" style="color: #60A5FA;">45 / 60</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============= COMPARISON ============= -->
+<section class="comparison-section">
+  <div class="comparison-container">
+    <h2 class="comparison-title">Final Comparison -- Agent 5</h2>
+    <div class="comparison-grid">
+      <!-- NAGN -->
+      <div class="comparison-card card-nagn">
+        <div class="recommended-tag" style="background: #FF3366; color: #fff;">AGENT 5 TOP PICK</div>
+        <div class="card-logo" style="color: #FF3366;">NAGN</div>
+        <div class="card-hebrew">נגן</div>
+        <div class="card-total" style="color: #FF3366;">51</div>
+        <div class="card-total-label">/ 60 points</div>
+      </div>
+      <!-- ZAMR -->
+      <div class="comparison-card card-zamr">
+        <div class="card-logo" style="color: #A78BFA;">ZAMR</div>
+        <div class="card-hebrew">זמר</div>
+        <div class="card-total" style="color: #A78BFA;">47</div>
+        <div class="card-total-label">/ 60 points</div>
+      </div>
+      <!-- JAMIT -->
+      <div class="comparison-card card-jamit">
+        <div class="recommended-tag" style="background: #FF6B00; color: #fff;">BEST DOMAINS</div>
+        <div class="card-logo" style="color: #FF6B00;">JAM<span style="color: #00FF88;">IT</span></div>
+        <div class="card-hebrew">ג'אמ-איט</div>
+        <div class="card-total" style="color: #FF6B00;">51</div>
+        <div class="card-total-label">/ 60 points</div>
+      </div>
+      <!-- PLYY -->
+      <div class="comparison-card card-plyy">
+        <div class="card-logo" style="color: #60A5FA;">PLY<span style="color: #F472B6;">Y</span></div>
+        <div class="card-hebrew">פליי</div>
+        <div class="card-total" style="color: #60A5FA;">45</div>
+        <div class="card-total-label">/ 60 points</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

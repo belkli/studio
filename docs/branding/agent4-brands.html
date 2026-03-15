@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 4 — Premium/Luxury Brand Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* === Reset & Base === */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #0a0a0a;
+    color: #e8e6e3;
+    line-height: 1.6;
+  }
+
+  /* === Navigation === */
+  .nav-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: center; gap: 2px;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(202,138,4,0.2);
+    padding: 0;
+  }
+  .nav-bar a {
+    color: #a8a29e;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 16px 24px;
+    transition: color 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+  .nav-bar a:hover {
+    color: #CA8A04;
+    background: rgba(202,138,4,0.08);
+  }
+
+  /* === Overview Header === */
+  .overview-header {
+    padding: 120px 40px 60px;
+    text-align: center;
+    background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+    border-bottom: 1px solid rgba(202,138,4,0.15);
+  }
+  .overview-header h1 {
+    font-family: 'Cormorant', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: #CA8A04;
+    margin-bottom: 8px;
+  }
+  .overview-header .subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #78716c;
+  }
+  .overview-header .approach {
+    max-width: 720px;
+    margin: 32px auto 0;
+    font-size: 0.95rem;
+    color: #a8a29e;
+    line-height: 1.8;
+  }
+
+  /* === Brand Section === */
+  .brand-section {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === Brand 1: Maestoso === */
+  .brand-maestoso {
+    background: linear-gradient(135deg, #0C0A09 0%, #1C1917 40%, #0C0A09 100%);
+  }
+  .brand-maestoso .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 40px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .brand-maestoso .hero-text h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 4.5rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: #fafaf9;
+    line-height: 1.1;
+  }
+  .brand-maestoso .hero-text h1 .gold {
+    color: #CA8A04;
+  }
+  .brand-maestoso .hero-text .tagline {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #78716c;
+    margin-top: 24px;
+  }
+  .brand-maestoso .hero-text .desc {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #a8a29e;
+    margin-top: 20px;
+    line-height: 1.8;
+    max-width: 480px;
+  }
+  .brand-maestoso .hero-text .hebrew-name {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 2.2rem;
+    color: #CA8A04;
+    direction: rtl;
+    margin-top: 16px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+  .brand-maestoso .cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .brand-maestoso .btn-gold {
+    display: inline-block;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #CA8A04, #a16207);
+    color: #0C0A09;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-maestoso .btn-gold:hover {
+    background: linear-gradient(135deg, #eab308, #CA8A04);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(202,138,4,0.3);
+  }
+  .brand-maestoso .btn-outline {
+    display: inline-block;
+    padding: 14px 40px;
+    background: transparent;
+    color: #CA8A04;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(202,138,4,0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-maestoso .btn-outline:hover {
+    border-color: #CA8A04;
+    background: rgba(202,138,4,0.08);
+  }
+  .brand-maestoso .hero-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-maestoso .concert-card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(28,25,23,0.8);
+    border: 1px solid rgba(202,138,4,0.2);
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .brand-maestoso .concert-card .card-image {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(135deg, #1a1510, #2d261e, #1a1510);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-maestoso .concert-card .card-image::before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(202,138,4,0.15);
+    border-radius: 50%;
+    animation: maestoso-pulse 4s ease-in-out infinite;
+  }
+  .brand-maestoso .concert-card .card-image::after {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border: 1px solid rgba(202,138,4,0.25);
+    border-radius: 50%;
+    animation: maestoso-pulse 4s ease-in-out infinite 1s;
+  }
+  @keyframes maestoso-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+  .brand-maestoso .concert-card .card-image .note-icon {
+    font-size: 3rem;
+    color: #CA8A04;
+    position: relative;
+    z-index: 2;
+  }
+  .brand-maestoso .concert-card .card-body {
+    padding: 28px 32px;
+  }
+  .brand-maestoso .concert-card .card-label {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #CA8A04;
+    margin-bottom: 8px;
+  }
+  .brand-maestoso .concert-card .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: #fafaf9;
+    margin-bottom: 12px;
+  }
+  .brand-maestoso .concert-card .card-meta {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #78716c;
+  }
+
+  /* Stats bar */
+  .brand-maestoso .stats-bar {
+    background: rgba(28,25,23,0.6);
+    border-top: 1px solid rgba(202,138,4,0.1);
+    border-bottom: 1px solid rgba(202,138,4,0.1);
+    padding: 48px 40px;
+  }
+  .brand-maestoso .stats-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    text-align: center;
+  }
+  .brand-maestoso .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #CA8A04;
+    font-weight: 400;
+  }
+  .brand-maestoso .stat-label {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #78716c;
+    margin-top: 4px;
+  }
+
+  /* === Brand 2: Rubato === */
+  .brand-rubato {
+    background: linear-gradient(180deg, #0f0b18 0%, #1a1128 40%, #0f0b18 100%);
+  }
+  .brand-rubato .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 40px 80px;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .brand-rubato .overline {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #a78bfa;
+    margin-bottom: 24px;
+  }
+  .brand-rubato h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 5.5rem;
+    font-weight: 400;
+    color: #faf5ff;
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+  }
+  .brand-rubato h1 .accent {
+    color: #c084fc;
+    font-style: italic;
+  }
+  .brand-rubato .hebrew-name {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 2.5rem;
+    color: #c084fc;
+    direction: rtl;
+    margin-top: 12px;
+    font-weight: 300;
+  }
+  .brand-rubato .tagline {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1.2rem;
+    color: #a1a1aa;
+    margin-top: 24px;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+  .brand-rubato .cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    justify-content: center;
+  }
+  .brand-rubato .btn-purple {
+    display: inline-block;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #9333ea, #7c3aed);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 24px rgba(147,51,234,0.3);
+  }
+  .brand-rubato .btn-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(147,51,234,0.5);
+  }
+  .brand-rubato .btn-ghost {
+    display: inline-block;
+    padding: 16px 48px;
+    background: transparent;
+    color: #c084fc;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(192,132,252,0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-rubato .btn-ghost:hover {
+    border-color: #c084fc;
+    background: rgba(192,132,252,0.08);
+  }
+
+  /* Feature cards */
+  .brand-rubato .features {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .brand-rubato .feature-card {
+    background: rgba(26,17,40,0.6);
+    border: 1px solid rgba(192,132,252,0.12);
+    padding: 40px 32px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  .brand-rubato .feature-card:hover {
+    border-color: rgba(192,132,252,0.35);
+    transform: translateY(-4px);
+  }
+  .brand-rubato .feature-card .icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: rgba(192,132,252,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c084fc;
+    font-size: 1.2rem;
+  }
+  .brand-rubato .feature-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: #faf5ff;
+    margin-bottom: 8px;
+  }
+  .brand-rubato .feature-card p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #a1a1aa;
+    line-height: 1.6;
+  }
+
+  /* === Brand 3: Arioso === */
+  .brand-arioso {
+    background: linear-gradient(135deg, #0c1117 0%, #0f1923 40%, #0c1117 100%);
+  }
+  .brand-arioso .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 40px 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .brand-arioso .hero-split {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .brand-arioso .overline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #22d3ee;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-arioso .overline::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: #22d3ee;
+  }
+  .brand-arioso h1 {
+    font-family: 'Cormorant', serif;
+    font-size: 5rem;
+    font-weight: 500;
+    color: #f0f9ff;
+    letter-spacing: 0.02em;
+    line-height: 1.08;
+  }
+  .brand-arioso h1 em {
+    font-style: italic;
+    color: #22d3ee;
+    font-weight: 400;
+  }
+  .brand-arioso .hebrew-name {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 2.8rem;
+    color: #22d3ee;
+    direction: rtl;
+    margin-top: 8px;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+  .brand-arioso .desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    color: #94a3b8;
+    margin-top: 24px;
+    max-width: 520px;
+    line-height: 1.8;
+  }
+  .brand-arioso .cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .brand-arioso .btn-cyan {
+    display: inline-block;
+    padding: 14px 44px;
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: #0c1117;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-arioso .btn-cyan:hover {
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(6,182,212,0.3);
+  }
+  .brand-arioso .btn-outline-cyan {
+    display: inline-block;
+    padding: 14px 44px;
+    background: transparent;
+    color: #22d3ee;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(34,211,238,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-arioso .btn-outline-cyan:hover {
+    border-color: #22d3ee;
+    background: rgba(34,211,238,0.06);
+  }
+  /* Arioso right panel — vertical music list */
+  .brand-arioso .music-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .brand-arioso .music-item {
+    background: rgba(15,25,35,0.7);
+    border: 1px solid rgba(34,211,238,0.1);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+  .brand-arioso .music-item:hover {
+    border-color: rgba(34,211,238,0.35);
+  }
+  .brand-arioso .music-item .item-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(34,211,238,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #22d3ee;
+    font-size: 1rem;
+  }
+  .brand-arioso .music-item .item-text h4 {
+    font-family: 'Cormorant', serif;
+    font-size: 1.05rem;
+    color: #f0f9ff;
+    font-weight: 600;
+  }
+  .brand-arioso .music-item .item-text p {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  /* === Brand 4: Crescendo === */
+  .brand-crescendo {
+    background: linear-gradient(180deg, #0a0a0a 0%, #14120f 40%, #0a0a0a 100%);
+  }
+  .brand-crescendo .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 40px 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .brand-crescendo .logo-mark {
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(251,191,36,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .brand-crescendo .logo-mark::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(251,191,36,0.1);
+    border-radius: 50%;
+  }
+  .brand-crescendo .logo-mark svg {
+    width: 36px;
+    height: 36px;
+    color: #fbbf24;
+  }
+  .brand-crescendo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 400;
+    color: #fffbeb;
+    letter-spacing: 0.06em;
+    line-height: 1.05;
+  }
+  .brand-crescendo h1 .dot {
+    color: #fbbf24;
+  }
+  .brand-crescendo .hebrew-name {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 2.4rem;
+    color: #fbbf24;
+    direction: rtl;
+    margin-top: 8px;
+    font-weight: 300;
+  }
+  .brand-crescendo .tagline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: #92400e;
+    margin-top: 24px;
+    text-transform: uppercase;
+  }
+  .brand-crescendo .desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #a8a29e;
+    margin-top: 16px;
+    max-width: 600px;
+    line-height: 1.8;
+  }
+  .brand-crescendo .cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    justify-content: center;
+  }
+  .brand-crescendo .btn-amber {
+    display: inline-block;
+    padding: 16px 52px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0a0a0a;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-crescendo .btn-amber:hover {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 36px rgba(245,158,11,0.35);
+  }
+  .brand-crescendo .btn-outline-amber {
+    display: inline-block;
+    padding: 16px 52px;
+    background: transparent;
+    color: #fbbf24;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(251,191,36,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .brand-crescendo .btn-outline-amber:hover {
+    border-color: #fbbf24;
+    background: rgba(251,191,36,0.06);
+  }
+
+  /* Crescendo services grid */
+  .brand-crescendo .services {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .brand-crescendo .service-card {
+    background: rgba(20,18,15,0.8);
+    border: 1px solid rgba(251,191,36,0.08);
+    padding: 36px 28px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-crescendo .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .brand-crescendo .service-card:hover {
+    border-color: rgba(251,191,36,0.25);
+    transform: translateY(-4px);
+  }
+  .brand-crescendo .service-card:hover::before {
+    opacity: 1;
+  }
+  .brand-crescendo .service-card .svc-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fbbf24;
+    font-size: 1.4rem;
+  }
+  .brand-crescendo .service-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #fffbeb;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .brand-crescendo .service-card p {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #78716c;
+    line-height: 1.6;
+  }
+
+  /* === Scoring Section === */
+  .scoring-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 40px 100px;
+  }
+  .scoring-section h2 {
+    font-family: 'Cormorant', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: #CA8A04;
+    text-align: center;
+    margin-bottom: 48px;
+    letter-spacing: 0.06em;
+  }
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .score-table th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #78716c;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid rgba(202,138,4,0.2);
+  }
+  .score-table td {
+    font-size: 0.9rem;
+    color: #a8a29e;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .score-table td:first-child {
+    font-weight: 600;
+    color: #e8e6e3;
+  }
+  .score-table .total-row td {
+    border-top: 2px solid rgba(202,138,4,0.3);
+    color: #CA8A04;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .score-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 32px;
+    text-align: center;
+  }
+  .score-9, .score-10 { background: rgba(202,138,4,0.15); color: #CA8A04; }
+  .score-8 { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .score-7 { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .score-6 { background: rgba(168,162,158,0.12); color: #a8a29e; }
+  .score-5 { background: rgba(239,68,68,0.1); color: #f87171; }
+
+  /* Divider */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(202,138,4,0.3), transparent);
+    margin: 0;
+  }
+
+  /* === Domain Results Section === */
+  .domain-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+  .domain-section h2 {
+    font-family: 'Cormorant', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #CA8A04;
+    margin-bottom: 40px;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+  .domain-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  .domain-card {
+    background: rgba(28,25,23,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 32px;
+  }
+  .domain-card h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: #e8e6e3;
+    margin-bottom: 16px;
+  }
+  .domain-card .domain-list {
+    list-style: none;
+    padding: 0;
+  }
+  .domain-card .domain-list li {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .domain-card .domain-list li:last-child { border-bottom: none; }
+  .domain-name { color: #a8a29e; font-family: monospace; }
+  .status-available {
+    color: #4ade80;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .status-taken {
+    color: #f87171;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .conflict-note {
+    margin-top: 16px;
+    font-size: 0.82rem;
+    color: #78716c;
+    line-height: 1.6;
+    border-left: 2px solid rgba(202,138,4,0.3);
+    padding-left: 12px;
+  }
+
+  /* SVG Icons (inline) */
+  .icon-svg { display: inline-block; vertical-align: middle; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .brand-maestoso .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .brand-arioso .hero-split { grid-template-columns: 1fr; gap: 40px; }
+    .brand-crescendo .services { grid-template-columns: repeat(2, 1fr); }
+    .brand-rubato .features { grid-template-columns: 1fr; }
+    .domain-grid { grid-template-columns: 1fr; }
+    .brand-maestoso .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .brand-maestoso .hero-text h1 { font-size: 3rem; }
+    .brand-rubato h1 { font-size: 3.5rem; }
+    .brand-arioso h1 { font-size: 3.5rem; }
+    .brand-crescendo h1 { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <a href="#overview">Overview</a>
+  <a href="#maestoso">Maestoso</a>
+  <a href="#rubato">Rubato</a>
+  <a href="#arioso">Arioso</a>
+  <a href="#crescendo">Crescendo</a>
+  <a href="#scoring">Scoring</a>
+  <a href="#domains">Domains</a>
+</nav>
+
+<!-- Overview -->
+<header class="overview-header" id="overview">
+  <h1>Agent 4 &mdash; Premium / Luxury</h1>
+  <div class="subtitle">Four Prestige Brand Concepts for Israel's Music Platform</div>
+  <p class="approach">
+    Each name draws from the Italian musical lexicon &mdash; terms that concert-goers,
+    conservatorium directors, and classical musicians already know by heart. These words
+    carry centuries of cultural gravitas and sound equally prestigious in Hebrew and English.
+    The visual identities evoke concert halls, not software dashboards.
+  </p>
+</header>
+
+<div class="section-divider"></div>
+
+<!-- ============================== BRAND 1: MAESTOSO ============================== -->
+<section class="brand-section brand-maestoso" id="maestoso">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hebrew-name">מאסטוזו</div>
+      <h1>Mae<span class="gold">s</span>toso</h1>
+      <div class="tagline">Majestic &middot; Stately &middot; Grand</div>
+      <p class="desc">
+        A musical direction meaning "play with majesty and grandeur." Maestoso is the
+        definitive platform for Israel's cultural music ecosystem &mdash; where conservatoriums,
+        artists, and audiences converge in one grand stage.
+      </p>
+      <div class="cta-row">
+        <button class="btn-gold">Explore the Stage</button>
+        <button class="btn-outline">Book a Concert</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="concert-card">
+        <div class="card-image">
+          <div class="note-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-label">Featured Performance</div>
+          <div class="card-title">Bach Cello Suites</div>
+          <div class="card-meta">Tel Aviv Conservatorium &middot; March 28, 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div>
+        <div class="stat-num">85+</div>
+        <div class="stat-label">Conservatoriums</div>
+      </div>
+      <div>
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Musicians</div>
+      </div>
+      <div>
+        <div class="stat-num">5,200+</div>
+        <div class="stat-label">Compositions</div>
+      </div>
+      <div>
+        <div class="stat-num">12K+</div>
+        <div class="stat-label">Students</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ============================== BRAND 2: RUBATO ============================== -->
+<section class="brand-section brand-rubato" id="rubato">
+  <div class="hero-inner">
+    <div class="overline">Israel's Premier Music Experience</div>
+    <h1><span class="accent">R</span>ubato</h1>
+    <div class="hebrew-name">רובאטו</div>
+    <p class="tagline">
+      "Tempo rubato" &mdash; stolen time. The expressive freedom that transforms
+      notes into emotion. A platform where music breathes.
+    </p>
+    <div class="cta-row">
+      <button class="btn-purple">Begin Your Journey</button>
+      <button class="btn-ghost">Discover Artists</button>
+    </div>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"/></svg>
+      </div>
+      <h3>Conservatoriums</h3>
+      <p>85+ institutions. Scheduling, billing, ministry reporting &mdash; all orchestrated.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <h3>Musicians for Hire</h3>
+      <p>Find virtuosos for weddings, galas, private events, and corporate functions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <h3>Concert Tickets</h3>
+      <p>Book performances, recitals, and festivals across Israel with one tap.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ============================== BRAND 3: ARIOSO ============================== -->
+<section class="brand-section brand-arioso" id="arioso">
+  <div class="hero-inner">
+    <div class="hero-split">
+      <div>
+        <div class="overline">Israel's Music Ecosystem</div>
+        <h1><em>Arioso</em></h1>
+        <div class="hebrew-name">אריוזו</div>
+        <p class="desc">
+          Between aria and recitative &mdash; Arioso is the lyrical bridge.
+          A platform connecting conservatoriums, musicians, audiences, and
+          families in Israel's most refined cultural network.
+        </p>
+        <div class="cta-row">
+          <button class="btn-cyan">Get Started</button>
+          <button class="btn-outline-cyan">Browse Events</button>
+        </div>
+      </div>
+      <div class="music-panel">
+        <div class="music-item">
+          <div class="item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"/></svg>
+          </div>
+          <div class="item-text">
+            <h4>Conservatoriums</h4>
+            <p>Schedule, bill, report &mdash; all in one place</p>
+          </div>
+        </div>
+        <div class="music-item">
+          <div class="item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="item-text">
+            <h4>Musicians Directory</h4>
+            <p>500+ artists available for events</p>
+          </div>
+        </div>
+        <div class="music-item">
+          <div class="item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="item-text">
+            <h4>Concert Tickets</h4>
+            <p>Recitals, festivals, galas across Israel</p>
+          </div>
+        </div>
+        <div class="music-item">
+          <div class="item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="item-text">
+            <h4>Music Education</h4>
+            <p>Classical + contemporary instrument learning</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ============================== BRAND 4: CRESCENDO ============================== -->
+<section class="brand-section brand-crescendo" id="crescendo">
+  <div class="hero-inner">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+    <h1>Crescendo<span class="dot">.</span></h1>
+    <div class="hebrew-name">קרשנדו</div>
+    <div class="tagline">Growing louder &middot; Building momentum</div>
+    <p class="desc">
+      The most universally recognized musical term. Crescendo captures the rising arc of
+      Israel's music culture &mdash; a platform that amplifies every note, every student,
+      every performance.
+    </p>
+    <div class="cta-row">
+      <button class="btn-amber">Start Now</button>
+      <button class="btn-outline-amber">View Concerts</button>
+    </div>
+  </div>
+  <div class="services">
+    <div class="service-card">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"/></svg>
+      </div>
+      <h3>Conservatoriums</h3>
+      <p>End-to-end management for 85+ music institutions</p>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>Musicians</h3>
+      <p>Hire artists for events, weddings, and private occasions</p>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <h3>Concerts</h3>
+      <p>Discover and book performances across Israel</p>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <h3>Education</h3>
+      <p>Learn classical and contemporary music with top teachers</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ============================== SCORING ============================== -->
+<section class="scoring-section" id="scoring">
+  <h2>Comparative Scoring</h2>
+  <table class="score-table">
+    <thead>
+      <tr>
+        <th>Criterion</th>
+        <th>Maestoso</th>
+        <th>Rubato</th>
+        <th>Arioso</th>
+        <th>Crescendo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Memorability</td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+        <td><span class="score-badge score-10">10</span></td>
+      </tr>
+      <tr>
+        <td>Hebrew Phonetics</td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-10">10</span></td>
+      </tr>
+      <tr>
+        <td>Premium Feel</td>
+        <td><span class="score-badge score-10">10</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+      </tr>
+      <tr>
+        <td>Domain Availability</td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+      </tr>
+      <tr>
+        <td>IP / Conflict Risk</td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+      </tr>
+      <tr>
+        <td>Cultural Fit (Israel)</td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+      </tr>
+      <tr>
+        <td>Versatility (all verticals)</td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+        <td><span class="score-badge score-7">7</span></td>
+        <td><span class="score-badge score-10">10</span></td>
+      </tr>
+      <tr>
+        <td>Sophistication / Elegance</td>
+        <td><span class="score-badge score-10">10</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-9">9</span></td>
+        <td><span class="score-badge score-8">8</span></td>
+      </tr>
+      <tr class="total-row">
+        <td>TOTAL (out of 80)</td>
+        <td>71</td>
+        <td>67</td>
+        <td>62</td>
+        <td>72</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ============================== DOMAINS ============================== -->
+<section class="domain-section" id="domains">
+  <h2>Domain Availability &amp; IP Analysis</h2>
+  <div class="domain-grid">
+    <div class="domain-card">
+      <h3>Maestoso</h3>
+      <ul class="domain-list">
+        <li><span class="domain-name">maestoso.co.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">maestoso.com</span> <span class="status-taken">Taken</span></li>
+        <li><span class="domain-name">maestoso.org.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">maestoso.io</span> <span class="status-available">Available</span></li>
+      </ul>
+      <p class="conflict-note">
+        <strong>IP Risk: Low.</strong> maestoso.com appears to be a small Shopify store (likely fashion/coffee).
+        No music platform conflict. "Maestoso" as a generic Italian musical term is not trademarkable for music services.
+        <strong>Recommended: maestoso.co.il</strong>
+      </p>
+    </div>
+    <div class="domain-card">
+      <h3>Rubato</h3>
+      <ul class="domain-list">
+        <li><span class="domain-name">rubato.co.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">rubato.com</span> <span class="status-taken">Taken (redirects)</span></li>
+        <li><span class="domain-name">rubato.org.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">rubato.io</span> <span class="status-taken">Taken</span></li>
+      </ul>
+      <p class="conflict-note">
+        <strong>IP Risk: Low.</strong> rubato.com redirects to Telepathy (design agency) &mdash; not an active brand.
+        rubato.io may be a music-related project. Generic musical term, low trademark risk for Israeli platform.
+        <strong>Recommended: rubato.co.il</strong>
+      </p>
+    </div>
+    <div class="domain-card">
+      <h3>Arioso</h3>
+      <ul class="domain-list">
+        <li><span class="domain-name">arioso.co.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">arioso.com</span> <span class="status-taken">Taken</span></li>
+        <li><span class="domain-name">arioso.org.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">arioso.io</span> <span class="status-taken">Taken</span></li>
+      </ul>
+      <p class="conflict-note">
+        <strong>IP Risk: Low-Medium.</strong> arioso.com appears to be a domain holding page.
+        Less commonly known than other Italian terms, which makes it more distinctive but less instantly recognizable.
+        <strong>Recommended: arioso.co.il</strong>
+      </p>
+    </div>
+    <div class="domain-card">
+      <h3>Crescendo</h3>
+      <ul class="domain-list">
+        <li><span class="domain-name">crescendo.co.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">crescendo.com</span> <span class="status-taken">Taken</span></li>
+        <li><span class="domain-name">crescendo.org.il</span> <span class="status-available">Available</span></li>
+        <li><span class="domain-name">crescendo.io</span> <span class="status-available">Available</span></li>
+      </ul>
+      <p class="conflict-note">
+        <strong>IP Risk: Medium.</strong> "Crescendo" is used by multiple music-adjacent businesses globally
+        (Crescendo Music app, Crescendo Interactive). However, none operate in Israel's conservatorium/platform space.
+        The .co.il + .io availability makes Israeli market use viable.
+        <strong>Recommended: crescendo.co.il</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

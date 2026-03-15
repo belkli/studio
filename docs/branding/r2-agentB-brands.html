@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Round 2 - Agent B: Invented/Portmanteau Words</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Comic+Neue:wght@300;400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-dark: #0F0F23;
+    --brand-indigo: #4338CA;
+    --brand-green: #22C55E;
+    --text-light: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #030712;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    text-align: center;
+    padding: 80px 24px 48px;
+    background: linear-gradient(135deg, #1E1B4B 0%, #0F0F23 50%, #1a0a2e 100%);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  }
+  .page-header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #818CF8, #A78BFA, #C084FC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .page-header .subtitle {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 24px;
+  }
+  .page-header .agent-badge {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 9999px;
+    padding: 6px 20px;
+    font-size: 0.875rem;
+    color: #A5B4FC;
+    letter-spacing: 0.05em;
+  }
+  .page-header .angle-tag {
+    display: inline-block;
+    margin-top: 16px;
+    background: linear-gradient(135deg, #7C3AED, #6D28D9);
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  /* ===== BRAND CARDS CONTAINER ===== */
+  .brands-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  /* ===== INDIVIDUAL BRAND CARD ===== */
+  .brand-card {
+    background: rgba(15, 15, 35, 0.8);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .brand-card:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+  }
+
+  /* Brand Hero Section */
+  .brand-hero {
+    position: relative;
+    padding: 64px 48px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    overflow: hidden;
+  }
+  .brand-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+  }
+
+  .brand-logo-area {
+    flex-shrink: 0;
+    width: 200px;
+    height: 200px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-name-display {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .brand-info {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .brand-info h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .brand-info .tagline {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .brand-info .etymology {
+    font-size: 0.95rem;
+    color: #A5B4FC;
+    margin-bottom: 12px;
+    padding: 8px 16px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 8px;
+    display: inline-block;
+  }
+  .brand-info .description {
+    font-size: 1rem;
+    color: #CBD5E1;
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  .domain-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .domain-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-weight: 500;
+  }
+  .domain-badge.available {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #4ADE80;
+  }
+  .domain-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22C55E;
+  }
+
+  /* ===== MOCKUP SECTION ===== */
+  .brand-mockup {
+    padding: 0 48px 48px;
+  }
+
+  .mockup-frame {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+
+  .mockup-browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .mockup-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .mockup-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .mockup-dots span:nth-child(1) { background: #EF4444; }
+  .mockup-dots span:nth-child(2) { background: #EAB308; }
+  .mockup-dots span:nth-child(3) { background: #22C55E; }
+  .mockup-url {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .mockup-content {
+    min-height: 520px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== SCORES ===== */
+  .brand-scores {
+    padding: 0 48px 48px;
+  }
+  .scores-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .score-item {
+    text-align: center;
+    padding: 16px 8px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .score-item .score-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .score-item .score-value {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .score-item .score-bar {
+    margin-top: 8px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .score-item .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s;
+  }
+
+  /* ===== IP CHECK ===== */
+  .ip-check {
+    padding: 0 48px 48px;
+  }
+  .ip-check-box {
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: #86EFAC;
+  }
+  .ip-check-box.warning {
+    background: rgba(234, 179, 8, 0.08);
+    border-color: rgba(234, 179, 8, 0.2);
+    color: #FDE68A;
+  }
+  .ip-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .ip-icon.green { background: rgba(34, 197, 94, 0.2); }
+  .ip-icon.yellow { background: rgba(234, 179, 8, 0.2); }
+
+  /* ===== SUMMARY TABLE ===== */
+  .summary-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .summary-section h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 32px;
+    color: #A5B4FC;
+  }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(99, 102, 241, 0.15);
+  }
+  .summary-table th, .summary-table td {
+    padding: 16px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .summary-table th {
+    background: rgba(99, 102, 241, 0.1);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #A5B4FC;
+    font-weight: 600;
+  }
+  .summary-table td {
+    font-size: 0.95rem;
+    color: #E2E8F0;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: left;
+  }
+  .total-col {
+    font-weight: 700;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem !important;
+  }
+
+  /* ===== MOCKUP LANDING PAGES ===== */
+
+  /* --- TWANGO --- */
+  .twango-hero {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF4500 30%, #CC3700 70%, #8B2500 100%);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .twango-hero::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 200, 0, 0.15);
+    filter: blur(60px);
+  }
+  .twango-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .twango-nav .logo { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: white; }
+  .twango-nav .nav-links { display: flex; gap: 24px; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+  .twango-nav .cta-btn { background: #FCD34D; color: #78350F; padding: 10px 24px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; }
+  .twango-hero-content { display: flex; gap: 48px; align-items: center; }
+  .twango-hero-text { flex: 1; }
+  .twango-hero-text h1 { font-family: 'Baloo 2', cursive; font-size: 3rem; font-weight: 800; color: white; line-height: 1.1; margin-bottom: 16px; }
+  .twango-hero-text p { color: rgba(255,255,255,0.85); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.6; }
+  .twango-btn-row { display: flex; gap: 12px; }
+  .twango-btn-primary { background: #FCD34D; color: #78350F; padding: 14px 32px; border-radius: 99px; font-weight: 700; font-size: 1rem; }
+  .twango-btn-secondary { background: rgba(255,255,255,0.15); color: white; padding: 14px 32px; border-radius: 99px; font-weight: 600; font-size: 1rem; border: 1px solid rgba(255,255,255,0.25); }
+  .twango-hero-visual {
+    width: 240px; height: 300px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .twango-guitar-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(252, 211, 77, 0.3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .twango-guitar-icon svg { width: 40px; height: 40px; fill: #FCD34D; }
+  .twango-stats { display: flex; gap: 32px; margin-top: 32px; }
+  .twango-stat { text-align: center; }
+  .twango-stat .num { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 700; color: #FCD34D; }
+  .twango-stat .label { font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
+  .twango-features {
+    background: #1a0800;
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .twango-feature {
+    text-align: center;
+    padding: 20px;
+  }
+  .twango-feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 107, 53, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .twango-feature-icon svg { width: 24px; height: 24px; stroke: #FF6B35; fill: none; stroke-width: 2; }
+  .twango-feature h3 { font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 700; color: #FBBF24; margin-bottom: 4px; }
+  .twango-feature p { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+  /* --- BEATZY --- */
+  .beatzy-hero {
+    background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 40%, #3B0764 100%);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .beatzy-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: 50%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(167, 139, 250, 0.1);
+    filter: blur(80px);
+    transform: translateX(-50%);
+  }
+  .beatzy-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .beatzy-nav .logo { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: white; }
+  .beatzy-nav .logo span { color: #C4B5FD; }
+  .beatzy-nav .cta-btn { background: #A78BFA; color: white; padding: 10px 24px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; }
+  .beatzy-hero-content { text-align: center; max-width: 640px; margin: 0 auto; }
+  .beatzy-hero-content .badge {
+    display: inline-block;
+    background: rgba(167, 139, 250, 0.2);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+    color: #C4B5FD;
+    margin-bottom: 20px;
+  }
+  .beatzy-hero-content h1 { font-family: 'Baloo 2', cursive; font-size: 3.2rem; font-weight: 800; color: white; line-height: 1.1; margin-bottom: 16px; }
+  .beatzy-hero-content h1 .highlight { color: #C4B5FD; }
+  .beatzy-hero-content p { color: rgba(255,255,255,0.75); font-size: 1.05rem; margin-bottom: 28px; line-height: 1.6; }
+  .beatzy-cta-row { display: flex; justify-content: center; gap: 12px; }
+  .beatzy-btn-primary { background: white; color: #5B21B6; padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 1rem; }
+  .beatzy-btn-secondary { background: transparent; color: white; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 1rem; border: 1px solid rgba(255,255,255,0.3); }
+  .beatzy-wave {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 4px;
+    margin-top: 32px;
+    height: 60px;
+  }
+  .beatzy-wave-bar {
+    width: 6px;
+    border-radius: 3px;
+    animation: beatzy-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes beatzy-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .beatzy-features {
+    background: #1a0a2e;
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .beatzy-feature {
+    text-align: center;
+    padding: 20px 12px;
+    background: rgba(124, 58, 237, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(124, 58, 237, 0.15);
+  }
+  .beatzy-feature-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(167, 139, 250, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .beatzy-feature-icon svg { width: 22px; height: 22px; stroke: #A78BFA; fill: none; stroke-width: 2; }
+  .beatzy-feature h3 { font-family: 'Baloo 2', cursive; font-size: 0.9rem; color: #C4B5FD; margin-bottom: 4px; }
+  .beatzy-feature p { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+  /* --- MELODOO --- */
+  .melodoo-hero {
+    background: linear-gradient(160deg, #0EA5E9 0%, #0284C7 35%, #075985 70%, #0C4A6E 100%);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .melodoo-hero::before {
+    content: '';
+    position: absolute;
+    top: 20px; right: 40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.15);
+    filter: blur(50px);
+  }
+  .melodoo-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .melodoo-nav .logo { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: white; }
+  .melodoo-nav .logo .oo { color: #7DD3FC; font-size: 2rem; }
+  .melodoo-nav .cta-btn { background: #38BDF8; color: #0C4A6E; padding: 10px 24px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; }
+  .melodoo-hero-content { display: flex; gap: 40px; align-items: center; }
+  .melodoo-hero-text { flex: 1; }
+  .melodoo-hero-text h1 { font-family: 'Baloo 2', cursive; font-size: 2.8rem; font-weight: 800; color: white; line-height: 1.1; margin-bottom: 12px; }
+  .melodoo-hero-text h1 .oo { color: #7DD3FC; }
+  .melodoo-hero-text p { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 24px; max-width: 440px; }
+  .melodoo-btn-primary { background: #38BDF8; color: #0C4A6E; padding: 14px 32px; border-radius: 99px; font-weight: 700; font-size: 1rem; }
+  .melodoo-notes {
+    display: flex; flex-direction: column; gap: 12px;
+    width: 220px;
+  }
+  .melodoo-note-card {
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex; align-items: center; gap: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .melodoo-note-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .melodoo-note-card:nth-child(1) .melodoo-note-icon { background: rgba(56, 189, 248, 0.25); color: #7DD3FC; }
+  .melodoo-note-card:nth-child(2) .melodoo-note-icon { background: rgba(52, 211, 153, 0.25); color: #6EE7B7; }
+  .melodoo-note-card:nth-child(3) .melodoo-note-icon { background: rgba(251, 191, 36, 0.25); color: #FCD34D; }
+  .melodoo-note-info .title { font-family: 'Baloo 2', cursive; font-size: 0.85rem; color: white; font-weight: 600; }
+  .melodoo-note-info .desc { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+  .melodoo-features {
+    background: #062032;
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .melodoo-feature {
+    text-align: center;
+    padding: 20px;
+    background: rgba(14, 165, 233, 0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(14, 165, 233, 0.12);
+  }
+  .melodoo-feature svg { width: 28px; height: 28px; stroke: #38BDF8; fill: none; stroke-width: 2; margin-bottom: 8px; }
+  .melodoo-feature h3 { font-family: 'Baloo 2', cursive; font-size: 0.95rem; color: #7DD3FC; margin-bottom: 4px; }
+  .melodoo-feature p { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+  /* --- HUMZIK --- */
+  .humzik-hero {
+    background: linear-gradient(145deg, #059669 0%, #047857 40%, #065F46 100%);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .humzik-hero::after {
+    content: '';
+    position: absolute;
+    top: -20px; left: 30%;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: rgba(52, 211, 153, 0.12);
+    filter: blur(70px);
+  }
+  .humzik-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .humzik-nav .logo { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: white; }
+  .humzik-nav .logo .zik { color: #6EE7B7; }
+  .humzik-nav .cta-btn { background: #34D399; color: #064E3B; padding: 10px 24px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; }
+  .humzik-hero-content { display: flex; gap: 48px; align-items: center; }
+  .humzik-hero-text { flex: 1; }
+  .humzik-hero-text .hebrew-hint { font-size: 0.85rem; color: #A7F3D0; margin-bottom: 8px; font-style: italic; }
+  .humzik-hero-text h1 { font-family: 'Baloo 2', cursive; font-size: 3rem; font-weight: 800; color: white; line-height: 1.1; margin-bottom: 16px; }
+  .humzik-hero-text p { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 24px; line-height: 1.6; }
+  .humzik-btn-primary { background: #34D399; color: #064E3B; padding: 14px 32px; border-radius: 99px; font-weight: 700; font-size: 1rem; }
+  .humzik-wave-visual {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .humzik-wave-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+  .humzik-wave-row span {
+    display: block;
+    width: 4px;
+    border-radius: 2px;
+    background: #6EE7B7;
+  }
+  .humzik-features {
+    background: #032619;
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .humzik-feature {
+    text-align: center;
+    padding: 20px;
+  }
+  .humzik-feature svg { width: 28px; height: 28px; stroke: #34D399; fill: none; stroke-width: 2; margin-bottom: 8px; }
+  .humzik-feature h3 { font-family: 'Baloo 2', cursive; font-size: 0.95rem; color: #6EE7B7; margin-bottom: 4px; }
+  .humzik-feature p { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+  /* --- SINGZY --- */
+  .singzy-hero {
+    background: linear-gradient(140deg, #EC4899 0%, #DB2777 35%, #9D174D 100%);
+    padding: 48px 40px;
+    position: relative;
+  }
+  .singzy-hero::after {
+    content: '';
+    position: absolute;
+    top: 10px; right: 10%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(244, 114, 182, 0.15);
+    filter: blur(60px);
+  }
+  .singzy-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .singzy-nav .logo { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; color: white; }
+  .singzy-nav .logo .zy { color: #FBCFE8; }
+  .singzy-nav .cta-btn { background: #FBCFE8; color: #9D174D; padding: 10px 24px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; }
+  .singzy-hero-content { text-align: center; max-width: 580px; margin: 0 auto; }
+  .singzy-hero-content h1 { font-family: 'Baloo 2', cursive; font-size: 3.2rem; font-weight: 800; color: white; line-height: 1.1; margin-bottom: 16px; }
+  .singzy-hero-content h1 .zy { color: #FBCFE8; }
+  .singzy-hero-content p { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 28px; line-height: 1.6; }
+  .singzy-mic-visual {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .singzy-mic-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+  .singzy-mic-circle svg { width: 28px; height: 28px; fill: none; stroke: white; stroke-width: 2; }
+  .singzy-mic-circle.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+  .singzy-cta-row { display: flex; justify-content: center; gap: 12px; }
+  .singzy-btn-primary { background: white; color: #9D174D; padding: 14px 32px; border-radius: 99px; font-weight: 700; font-size: 1rem; }
+  .singzy-btn-secondary { background: transparent; color: white; padding: 14px 32px; border-radius: 99px; font-weight: 600; font-size: 1rem; border: 1px solid rgba(255,255,255,0.3); }
+  .singzy-features {
+    background: #3a0520;
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .singzy-feature {
+    text-align: center;
+    padding: 16px 10px;
+  }
+  .singzy-feature svg { width: 26px; height: 26px; stroke: #F472B6; fill: none; stroke-width: 2; margin-bottom: 8px; }
+  .singzy-feature h3 { font-family: 'Baloo 2', cursive; font-size: 0.85rem; color: #FBCFE8; margin-bottom: 2px; }
+  .singzy-feature p { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .brand-hero { flex-direction: column; padding: 32px 20px; }
+    .brand-logo-area { width: 140px; height: 140px; }
+    .brand-name-display { font-size: 2.5rem; }
+    .brand-info h2 { font-size: 1.8rem; }
+    .scores-grid { grid-template-columns: repeat(3, 1fr); }
+    .twango-hero-content, .melodoo-hero-content, .humzik-hero-content { flex-direction: column; }
+    .beatzy-features, .singzy-features { grid-template-columns: repeat(2, 1fr); }
+    .twango-features, .melodoo-features, .humzik-features { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE HEADER ===== -->
+<header class="page-header">
+  <div class="agent-badge">Round 2 -- Agent B</div>
+  <h1>Invented & Portmanteau Brands</h1>
+  <p class="subtitle">Made-up words that SOUND musical -- mashups, portmanteaus, and invented words that stick in your brain.</p>
+  <div class="angle-tag">Angle: Invented/Portmanteau Words</div>
+</header>
+
+<!-- ===== BRAND CARDS ===== -->
+<div class="brands-container">
+
+  <!-- ========================================= -->
+  <!-- BRAND 1: TWANGO -->
+  <!-- ========================================= -->
+  <div class="brand-card" id="twango">
+    <div class="brand-hero" style="background: linear-gradient(135deg, #FF6B35 0%, #CC3700 100%);">
+      <div class="brand-logo-area" style="background: rgba(252, 211, 77, 0.2); border: 2px solid rgba(252, 211, 77, 0.4);">
+        <span class="brand-name-display" style="color: #FCD34D;">Tw</span>
+      </div>
+      <div class="brand-info">
+        <h2 style="color: #FCD34D;">Twango</h2>
+        <div class="tagline">"Twang your way to music mastery"</div>
+        <div class="etymology">twang (guitar string sound) + go (movement/action)</div>
+        <p class="description">
+          The sound a guitar string makes when plucked -- TWANG -- fused with GO, the universal word for action.
+          Short, punchy, impossible to forget. Kids love saying it. Works perfectly in Hebrew (טוואנגו)
+          and English. Evokes immediate musicality and energy.
+        </p>
+        <div class="domain-badges">
+          <span class="domain-badge available"><span class="dot"></span>twango.co.il</span>
+          <span class="domain-badge available"><span class="dot"></span>twango.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-browser-bar">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <div class="mockup-url">twango.co.il</div>
+        </div>
+        <div class="mockup-content">
+          <div class="twango-hero">
+            <div class="twango-nav">
+              <div class="logo">Twango</div>
+              <div class="nav-links">
+                <span>Lessons</span>
+                <span>Teachers</span>
+                <span>Events</span>
+                <span>About</span>
+              </div>
+              <div class="cta-btn">Start Playing</div>
+            </div>
+            <div class="twango-hero-content">
+              <div class="twango-hero-text">
+                <h1>Twang Into<br>Your Musical<br>Journey</h1>
+                <p>Israel's vibrant music ecosystem -- 85+ conservatoriums, world-class teachers, concerts, and a community that makes every note count.</p>
+                <div class="twango-btn-row">
+                  <div class="twango-btn-primary">Find Your Teacher</div>
+                  <div class="twango-btn-secondary">Browse Concerts</div>
+                </div>
+                <div class="twango-stats">
+                  <div class="twango-stat">
+                    <div class="num">85+</div>
+                    <div class="label">Conservatoriums</div>
+                  </div>
+                  <div class="twango-stat">
+                    <div class="num">500+</div>
+                    <div class="label">Teachers</div>
+                  </div>
+                  <div class="twango-stat">
+                    <div class="num">10K+</div>
+                    <div class="label">Students</div>
+                  </div>
+                </div>
+              </div>
+              <div class="twango-hero-visual">
+                <div class="twango-guitar-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 2l1 6h-2l1-6zM9 10c-3 2-5 6-5 9a3 3 0 003 3h10a3 3 0 003-3c0-3-2-7-5-9l-1 2h-4l-1-2z"/></svg>
+                </div>
+                <div style="font-family: 'Baloo 2', cursive; color: rgba(255,255,255,0.9); font-size: 1.2rem; font-weight: 700;">TWANG!</div>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Your music awaits</div>
+              </div>
+            </div>
+          </div>
+          <div class="twango-features">
+            <div class="twango-feature">
+              <div class="twango-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+              </div>
+              <h3>Music Lessons</h3>
+              <p>Book with top-rated teachers</p>
+            </div>
+            <div class="twango-feature">
+              <div class="twango-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <h3>Concert Tickets</h3>
+              <p>Live music across Israel</p>
+            </div>
+            <div class="twango-feature">
+              <div class="twango-feature-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 00-16 0"/></svg>
+              </div>
+              <h3>Community</h3>
+              <p>Connect with musicians</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-scores">
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="score-label">Memorability</div>
+          <div class="score-value" style="color: #FBBF24;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #FBBF24;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Kid-Friendly</div>
+          <div class="score-value" style="color: #FB923C;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #FB923C;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Hebrew Fit</div>
+          <div class="score-value" style="color: #F87171;">7</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 70%; background: #F87171;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Global</div>
+          <div class="score-value" style="color: #34D399;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #34D399;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Brand</div>
+          <div class="score-value" style="color: #60A5FA;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #60A5FA;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ip-check">
+      <div class="ip-check-box">
+        <div class="ip-icon green">&#10003;</div>
+        <div><strong>IP Check:</strong> "Twango" -- no active trademarks found in music/tech. The word "twang" is generic (guitar sound), and "twango" is an unused invented form. Low conflict risk.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- BRAND 2: BEATZY -->
+  <!-- ========================================= -->
+  <div class="brand-card" id="beatzy">
+    <div class="brand-hero" style="background: linear-gradient(135deg, #7C3AED 0%, #3B0764 100%);">
+      <div class="brand-logo-area" style="background: rgba(167, 139, 250, 0.2); border: 2px solid rgba(167, 139, 250, 0.4);">
+        <span class="brand-name-display" style="color: #C4B5FD;">Bz</span>
+      </div>
+      <div class="brand-info">
+        <h2 style="color: #C4B5FD;">Beatzy</h2>
+        <div class="tagline">"Find your beat, find your teacher"</div>
+        <div class="etymology">beat (rhythm/pulse) + -zy (playful suffix, like "easy")</div>
+        <p class="description">
+          The rhythmic core of all music -- the BEAT -- made playful and approachable with the "-zy" suffix
+          (echoing "easy" and "breezy"). 6 letters, instantly musical. The "zy" ending makes it sound
+          fun and casual, perfect for kids saying "I'm on Beatzy!" Hebrew: ביטזי -- rolls off the tongue.
+        </p>
+        <div class="domain-badges">
+          <span class="domain-badge available"><span class="dot"></span>beatzy.co.il</span>
+          <span class="domain-badge available"><span class="dot"></span>beatzy.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-browser-bar">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <div class="mockup-url">beatzy.co.il</div>
+        </div>
+        <div class="mockup-content">
+          <div class="beatzy-hero">
+            <div class="beatzy-nav">
+              <div class="logo">Beat<span>zy</span></div>
+              <div class="cta-btn">Join Free</div>
+            </div>
+            <div class="beatzy-hero-content">
+              <div class="badge">Israel's #1 Music Platform</div>
+              <h1>Your Music Journey<br>Made <span class="highlight">Beatzy</span></h1>
+              <p>Discover 500+ teachers, book lessons, attend concerts, and join Israel's largest music community. Learning music has never been this easy.</p>
+              <div class="beatzy-wave">
+                <div class="beatzy-wave-bar" style="height: 20px; background: #A78BFA; animation-delay: 0s;"></div>
+                <div class="beatzy-wave-bar" style="height: 35px; background: #C4B5FD; animation-delay: 0.1s;"></div>
+                <div class="beatzy-wave-bar" style="height: 50px; background: #A78BFA; animation-delay: 0.2s;"></div>
+                <div class="beatzy-wave-bar" style="height: 40px; background: #C4B5FD; animation-delay: 0.3s;"></div>
+                <div class="beatzy-wave-bar" style="height: 55px; background: #A78BFA; animation-delay: 0.4s;"></div>
+                <div class="beatzy-wave-bar" style="height: 30px; background: #C4B5FD; animation-delay: 0.5s;"></div>
+                <div class="beatzy-wave-bar" style="height: 45px; background: #A78BFA; animation-delay: 0.6s;"></div>
+                <div class="beatzy-wave-bar" style="height: 25px; background: #C4B5FD; animation-delay: 0.7s;"></div>
+                <div class="beatzy-wave-bar" style="height: 50px; background: #A78BFA; animation-delay: 0.8s;"></div>
+                <div class="beatzy-wave-bar" style="height: 35px; background: #C4B5FD; animation-delay: 0.9s;"></div>
+                <div class="beatzy-wave-bar" style="height: 20px; background: #A78BFA; animation-delay: 1.0s;"></div>
+              </div>
+              <div class="beatzy-cta-row">
+                <div class="beatzy-btn-primary">Start Learning</div>
+                <div class="beatzy-btn-secondary">Explore Teachers</div>
+              </div>
+            </div>
+          </div>
+          <div class="beatzy-features">
+            <div class="beatzy-feature">
+              <div class="beatzy-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+              </div>
+              <h3>Lessons</h3>
+              <p>Book your perfect teacher</p>
+            </div>
+            <div class="beatzy-feature">
+              <div class="beatzy-feature-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
+              </div>
+              <h3>Practice</h3>
+              <p>Interactive repertoire</p>
+            </div>
+            <div class="beatzy-feature">
+              <div class="beatzy-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <h3>Community</h3>
+              <p>Connect & collaborate</p>
+            </div>
+            <div class="beatzy-feature">
+              <div class="beatzy-feature-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <h3>Events</h3>
+              <p>Concerts & festivals</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-scores">
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="score-label">Memorability</div>
+          <div class="score-value" style="color: #A78BFA;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #A78BFA;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Kid-Friendly</div>
+          <div class="score-value" style="color: #C4B5FD;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #C4B5FD;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Hebrew Fit</div>
+          <div class="score-value" style="color: #F87171;">7</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 70%; background: #F87171;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Global</div>
+          <div class="score-value" style="color: #34D399;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #34D399;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Brand</div>
+          <div class="score-value" style="color: #60A5FA;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #60A5FA;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ip-check">
+      <div class="ip-check-box">
+        <div class="ip-icon green">&#10003;</div>
+        <div><strong>IP Check:</strong> "Beatzy" -- no active trademarks found. "Beat" is generic in music, and the "-zy" suffix creates a distinct coined word. No conflicts in music/tech/education sectors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- BRAND 3: MELODOO -->
+  <!-- ========================================= -->
+  <div class="brand-card" id="melodoo">
+    <div class="brand-hero" style="background: linear-gradient(135deg, #0EA5E9 0%, #0C4A6E 100%);">
+      <div class="brand-logo-area" style="background: rgba(56, 189, 248, 0.2); border: 2px solid rgba(56, 189, 248, 0.4);">
+        <span class="brand-name-display" style="color: #7DD3FC;">M<span style="color: #38BDF8;">oo</span></span>
+      </div>
+      <div class="brand-info">
+        <h2 style="color: #7DD3FC;">Mel<span style="color: #38BDF8;">oo</span>doo</h2>
+        <div class="tagline">"Where melodies come to play"</div>
+        <div class="etymology">melody + "oo" (playful doubling, like "voodoo" / "wahoo")</div>
+        <p class="description">
+          Takes "melody" and transforms it with a playful double-O ending that kids adore saying.
+          The "oo" sound is universally fun across languages -- Hebrew speakers love it (מלודו).
+          7 letters, 3 syllables, rhythmic and bouncy. Sounds like something between a melody and
+          a happy exclamation. The double-O creates a visual logo opportunity.
+        </p>
+        <div class="domain-badges">
+          <span class="domain-badge available"><span class="dot"></span>melodoo.co.il</span>
+          <span class="domain-badge available"><span class="dot"></span>melodoo.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-browser-bar">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <div class="mockup-url">melodoo.co.il</div>
+        </div>
+        <div class="mockup-content">
+          <div class="melodoo-hero">
+            <div class="melodoo-nav">
+              <div class="logo">Melod<span class="oo">oo</span></div>
+              <div class="cta-btn">Get Started</div>
+            </div>
+            <div class="melodoo-hero-content">
+              <div class="melodoo-hero-text">
+                <h1>Every Melody<br>Starts With<br>Melod<span class="oo">oo</span></h1>
+                <p>Israel's music lifestyle platform. Find teachers, book lessons, attend concerts, and grow as a musician in our vibrant community.</p>
+                <div class="melodoo-btn-primary">Explore Melodoo</div>
+              </div>
+              <div class="melodoo-notes">
+                <div class="melodoo-note-card">
+                  <div class="melodoo-note-icon">85+</div>
+                  <div class="melodoo-note-info">
+                    <div class="title">Conservatoriums</div>
+                    <div class="desc">Across all of Israel</div>
+                  </div>
+                </div>
+                <div class="melodoo-note-card">
+                  <div class="melodoo-note-icon">500+</div>
+                  <div class="melodoo-note-info">
+                    <div class="title">Expert Teachers</div>
+                    <div class="desc">Every instrument</div>
+                  </div>
+                </div>
+                <div class="melodoo-note-card">
+                  <div class="melodoo-note-icon">5K+</div>
+                  <div class="melodoo-note-info">
+                    <div class="title">Sheet Music</div>
+                    <div class="desc">Ministry-approved repertoire</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="melodoo-features">
+            <div class="melodoo-feature">
+              <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+              <h3>Learn Music</h3>
+              <p>Book lessons with top teachers</p>
+            </div>
+            <div class="melodoo-feature">
+              <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+              <h3>Hire Musicians</h3>
+              <p>For events & celebrations</p>
+            </div>
+            <div class="melodoo-feature">
+              <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              <h3>Live Events</h3>
+              <p>Concerts & festivals near you</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-scores">
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="score-label">Memorability</div>
+          <div class="score-value" style="color: #38BDF8;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #38BDF8;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Kid-Friendly</div>
+          <div class="score-value" style="color: #7DD3FC;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #7DD3FC;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Hebrew Fit</div>
+          <div class="score-value" style="color: #F87171;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #F87171;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Global</div>
+          <div class="score-value" style="color: #34D399;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #34D399;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Brand</div>
+          <div class="score-value" style="color: #60A5FA;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #60A5FA;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ip-check">
+      <div class="ip-check-box">
+        <div class="ip-icon green">&#10003;</div>
+        <div><strong>IP Check:</strong> "Melodoo" -- no active trademarks. "Melody" is generic but "Melodoo" is a distinct invented spelling. No conflicts found in music, education, or tech sectors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- BRAND 4: HUMZIK -->
+  <!-- ========================================= -->
+  <div class="brand-card" id="humzik">
+    <div class="brand-hero" style="background: linear-gradient(135deg, #059669 0%, #065F46 100%);">
+      <div class="brand-logo-area" style="background: rgba(52, 211, 153, 0.2); border: 2px solid rgba(52, 211, 153, 0.4);">
+        <span class="brand-name-display" style="color: #6EE7B7;">Hz</span>
+      </div>
+      <div class="brand-info">
+        <h2 style="color: #6EE7B7;">Hum<span style="color: #34D399;">zik</span></h2>
+        <div class="tagline">"Hum it, play it, live it"</div>
+        <div class="etymology">hum (musical humming) + muzik/zik (Hebrew: music = muzika/zemer)</div>
+        <p class="description">
+          Fuses the universal act of humming -- the most natural musical expression -- with "zik",
+          a fragment of the Hebrew word "muzika" (music). This is the most Hebrew-native name in the set.
+          6 letters, punchy, and carries a dual-language charm. Israeli kids will get it instantly.
+          Even sounds like a frequency unit (Hz), adding a techy-musical double meaning.
+        </p>
+        <div class="domain-badges">
+          <span class="domain-badge available"><span class="dot"></span>humzik.co.il</span>
+          <span class="domain-badge available"><span class="dot"></span>humzik.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-browser-bar">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <div class="mockup-url">humzik.co.il</div>
+        </div>
+        <div class="mockup-content">
+          <div class="humzik-hero">
+            <div class="humzik-nav">
+              <div class="logo">Hum<span class="zik">zik</span></div>
+              <div class="cta-btn">Start Humming</div>
+            </div>
+            <div class="humzik-hero-content">
+              <div class="humzik-hero-text">
+                <div class="hebrew-hint">From hum + muzika -- the sound of Israel</div>
+                <h1>Your Music.<br>Your Frequency.</h1>
+                <p>Connect with 500+ teachers across 85+ conservatoriums. Book lessons, discover repertoire, and join Israel's musical heartbeat.</p>
+                <div class="humzik-btn-primary">Find Your Frequency</div>
+              </div>
+              <div class="humzik-wave-visual">
+                <div class="humzik-wave-row">
+                  <span style="height: 12px;"></span>
+                  <span style="height: 24px;"></span>
+                  <span style="height: 36px;"></span>
+                  <span style="height: 48px;"></span>
+                  <span style="height: 36px;"></span>
+                  <span style="height: 24px;"></span>
+                  <span style="height: 12px;"></span>
+                  <span style="height: 24px;"></span>
+                  <span style="height: 40px;"></span>
+                  <span style="height: 52px;"></span>
+                  <span style="height: 40px;"></span>
+                  <span style="height: 24px;"></span>
+                  <span style="height: 12px;"></span>
+                </div>
+                <div style="text-align: center; font-family: 'Baloo 2', cursive; font-size: 2.5rem; font-weight: 800; color: #6EE7B7; letter-spacing: 4px;">Hz</div>
+                <div style="text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5);">Your musical frequency</div>
+              </div>
+            </div>
+          </div>
+          <div class="humzik-features">
+            <div class="humzik-feature">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 00-16 0"/></svg>
+              <h3>Expert Teachers</h3>
+              <p>500+ verified musicians</p>
+            </div>
+            <div class="humzik-feature">
+              <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+              <h3>Smart Booking</h3>
+              <p>Last-minute deals & packages</p>
+            </div>
+            <div class="humzik-feature">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              <h3>Sheet Music</h3>
+              <p>5,000+ compositions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-scores">
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="score-label">Memorability</div>
+          <div class="score-value" style="color: #34D399;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #34D399;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Kid-Friendly</div>
+          <div class="score-value" style="color: #6EE7B7;">7</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 70%; background: #6EE7B7;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Hebrew Fit</div>
+          <div class="score-value" style="color: #F87171;">10</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 100%; background: #F87171;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Global</div>
+          <div class="score-value" style="color: #60A5FA;">7</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 70%; background: #60A5FA;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Brand</div>
+          <div class="score-value" style="color: #C4B5FD;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #C4B5FD;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ip-check">
+      <div class="ip-check-box">
+        <div class="ip-icon green">&#10003;</div>
+        <div><strong>IP Check:</strong> "Humzik" -- completely invented portmanteau. No trademarks, no existing businesses. "Hum" is generic, "zik" is a Hebrew fragment. Zero conflict risk. Highly defensible as a trademark.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- BRAND 5: SINGZY -->
+  <!-- ========================================= -->
+  <div class="brand-card" id="singzy">
+    <div class="brand-hero" style="background: linear-gradient(135deg, #EC4899 0%, #9D174D 100%);">
+      <div class="brand-logo-area" style="background: rgba(244, 114, 182, 0.2); border: 2px solid rgba(244, 114, 182, 0.4);">
+        <span class="brand-name-display" style="color: #FBCFE8;">Sz</span>
+      </div>
+      <div class="brand-info">
+        <h2 style="color: #FBCFE8;">Sing<span style="color: #F472B6;">zy</span></h2>
+        <div class="tagline">"Sing it. Learn it. Live it."</div>
+        <div class="etymology">sing (voice/music) + -zy (easy, breezy -- playful suffix)</div>
+        <p class="description">
+          The most universal musical act -- singing -- made delightfully casual with the "-zy" suffix.
+          Immediately communicates "music" to anyone in any language. 6 letters, 2 syllables,
+          bouncy and fun. Kids will say "Let's go to Singzy!" Hebrew: סינגזי -- natural, easy to
+          pronounce. Strong verb-based brand name that implies action and joy.
+        </p>
+        <div class="domain-badges">
+          <span class="domain-badge available"><span class="dot"></span>singzy.co.il</span>
+          <span class="domain-badge available"><span class="dot"></span>singzy.com</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-mockup">
+      <div class="mockup-frame">
+        <div class="mockup-browser-bar">
+          <div class="mockup-dots"><span></span><span></span><span></span></div>
+          <div class="mockup-url">singzy.co.il</div>
+        </div>
+        <div class="mockup-content">
+          <div class="singzy-hero">
+            <div class="singzy-nav">
+              <div class="logo">Sing<span class="zy">zy</span></div>
+              <div class="cta-btn">Join Now</div>
+            </div>
+            <div class="singzy-hero-content">
+              <div class="singzy-mic-visual">
+                <div class="singzy-mic-circle">
+                  <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+                </div>
+                <div class="singzy-mic-circle active">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+                </div>
+                <div class="singzy-mic-circle">
+                  <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                </div>
+              </div>
+              <h1>Make Music<br>Feel Sing<span class="zy">zy</span></h1>
+              <p>Israel's all-in-one music platform. Lessons, concerts, sheet music, and a community of 10,000+ musicians.</p>
+              <div class="singzy-cta-row">
+                <div class="singzy-btn-primary">Start Singing</div>
+                <div class="singzy-btn-secondary">Meet Teachers</div>
+              </div>
+            </div>
+          </div>
+          <div class="singzy-features">
+            <div class="singzy-feature">
+              <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
+              <h3>Voice</h3>
+              <p>Vocal coaching</p>
+            </div>
+            <div class="singzy-feature">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              <h3>Instruments</h3>
+              <p>Every genre</p>
+            </div>
+            <div class="singzy-feature">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              <h3>Community</h3>
+              <p>10K+ musicians</p>
+            </div>
+            <div class="singzy-feature">
+              <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              <h3>Events</h3>
+              <p>Live concerts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-scores">
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="score-label">Memorability</div>
+          <div class="score-value" style="color: #F472B6;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #F472B6;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Kid-Friendly</div>
+          <div class="score-value" style="color: #FBCFE8;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #FBCFE8;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Hebrew Fit</div>
+          <div class="score-value" style="color: #F87171;">7</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 70%; background: #F87171;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Global</div>
+          <div class="score-value" style="color: #34D399;">9</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 90%; background: #34D399;"></div></div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Brand</div>
+          <div class="score-value" style="color: #60A5FA;">8</div>
+          <div class="score-bar"><div class="score-bar-fill" style="width: 80%; background: #60A5FA;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ip-check">
+      <div class="ip-check-box">
+        <div class="ip-icon green">&#10003;</div>
+        <div><strong>IP Check:</strong> "Singzy" -- no active trademarks found. "Sing" is generic but "Singzy" as a coined word is distinct. No conflicts in music platforms or education sectors.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- brands-container -->
+
+<!-- ===== SUMMARY TABLE ===== -->
+<div class="summary-section">
+  <h2>Scorecard Summary</h2>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th style="text-align: left;">Brand</th>
+        <th>Memorability</th>
+        <th>Kid-Friendly</th>
+        <th>Hebrew Fit</th>
+        <th>Global</th>
+        <th>Brand</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color: #FCD34D;">Twango</td>
+        <td>9</td>
+        <td>9</td>
+        <td>7</td>
+        <td>9</td>
+        <td>9</td>
+        <td class="total-col" style="color: #FBBF24;">43</td>
+      </tr>
+      <tr>
+        <td style="color: #C4B5FD;">Beatzy</td>
+        <td>8</td>
+        <td>8</td>
+        <td>7</td>
+        <td>9</td>
+        <td>8</td>
+        <td class="total-col" style="color: #A78BFA;">40</td>
+      </tr>
+      <tr>
+        <td style="color: #7DD3FC;">Melodoo</td>
+        <td>8</td>
+        <td>9</td>
+        <td>8</td>
+        <td>8</td>
+        <td>8</td>
+        <td class="total-col" style="color: #38BDF8;">41</td>
+      </tr>
+      <tr>
+        <td style="color: #6EE7B7;">Humzik</td>
+        <td>8</td>
+        <td>7</td>
+        <td>10</td>
+        <td>7</td>
+        <td>8</td>
+        <td class="total-col" style="color: #34D399;">40</td>
+      </tr>
+      <tr>
+        <td style="color: #FBCFE8;">Singzy</td>
+        <td>9</td>
+        <td>9</td>
+        <td>7</td>
+        <td>9</td>
+        <td>8</td>
+        <td class="total-col" style="color: #F472B6;">42</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

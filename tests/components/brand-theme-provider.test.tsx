@@ -1,18 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 
-// We'll test the BrandThemeProvider and useBrandTheme hook
 describe('BrandThemeProvider', () => {
-  beforeEach(() => {
-    // Reset data-theme attribute
-    document.documentElement.removeAttribute('data-theme')
-  })
-
-  it('defaults to theme "a" when no data-theme is set on html', async () => {
+  it('provides theme "a" when prop is "a"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
@@ -28,7 +22,7 @@ describe('BrandThemeProvider', () => {
     }
 
     render(
-      <BrandThemeProvider>
+      <BrandThemeProvider theme="a">
         <TestConsumer />
       </BrandThemeProvider>
     )
@@ -37,9 +31,7 @@ describe('BrandThemeProvider', () => {
     expect(screen.getByTestId('isThemeB').textContent).toBe('false')
   })
 
-  it('reads theme "b" from data-theme attribute', async () => {
-    document.documentElement.dataset.theme = 'b'
-
+  it('provides theme "b" when prop is "b"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
@@ -55,14 +47,10 @@ describe('BrandThemeProvider', () => {
     }
 
     render(
-      <BrandThemeProvider>
+      <BrandThemeProvider theme="b">
         <TestConsumer />
       </BrandThemeProvider>
     )
-
-    // After useEffect runs, theme should be 'b'
-    // Wait for effect
-    await new Promise((r) => setTimeout(r, 50))
 
     expect(screen.getByTestId('theme').textContent).toBe('b')
     expect(screen.getByTestId('isThemeB').textContent).toBe('true')
@@ -85,7 +73,6 @@ describe('BrandThemeProvider', () => {
 
     render(<TestConsumer />)
 
-    // Should return defaults from context
     expect(screen.getByTestId('theme').textContent).toBe('a')
     expect(screen.getByTestId('isThemeB').textContent).toBe('false')
   })

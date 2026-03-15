@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand Agent 1 — Hebrew Musical Roots + Modern Tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Work+Sans:wght@300;400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Rubik:wght@400;500;600;700;800&family=Heebo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Work Sans', sans-serif;
+      background: #0a0a0f;
+      color: #e2e2e8;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== HEADER ===== */
+    .page-header {
+      text-align: center;
+      padding: 80px 24px 48px;
+      position: relative;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .agent-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a78bfa;
+      margin-bottom: 24px;
+    }
+    .page-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #e2e2e8, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .page-header p {
+      font-size: 18px;
+      color: #9494a8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ===== BRAND CARDS GRID ===== */
+    .brands-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+    }
+
+    /* ===== INDIVIDUAL BRAND SECTION ===== */
+    .brand-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* --- Hero Banner per brand --- */
+    .brand-hero {
+      position: relative;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+      padding: 60px 40px;
+      overflow: hidden;
+    }
+
+    .brand-hero .hero-glow {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .brand-logo-area {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .brand-logo-area .logo-mark {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .brand-logo-area .logo-hebrew {
+      font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+      font-size: 32px;
+      font-weight: 500;
+      opacity: 0.7;
+      direction: rtl;
+    }
+    .brand-hero .tagline {
+      position: relative;
+      z-index: 2;
+      font-size: 20px;
+      font-weight: 400;
+      text-align: center;
+      max-width: 500px;
+      opacity: 0.85;
+    }
+    .brand-hero .tagline-he {
+      position: relative;
+      z-index: 2;
+      font-family: 'Heebo', sans-serif;
+      font-size: 18px;
+      direction: rtl;
+      opacity: 0.6;
+    }
+
+    /* --- Mock Hero App Bar --- */
+    .mock-app-bar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .mock-btn {
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .mock-btn:hover {
+      transform: translateY(-2px);
+    }
+    .mock-btn.primary {
+      color: #fff;
+    }
+    .mock-btn.secondary {
+      background: rgba(255,255,255,0.08);
+      color: #e2e2e8;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* --- Brand Info Section --- */
+    .brand-info {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 768px) {
+      .brand-info { grid-template-columns: 1fr; }
+    }
+
+    .info-block h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6b6b80;
+      margin-bottom: 16px;
+    }
+    .info-block p, .info-block li {
+      font-size: 15px;
+      color: #b8b8cc;
+      line-height: 1.8;
+    }
+    .info-block ul {
+      list-style: none;
+      padding: 0;
+    }
+    .info-block ul li::before {
+      content: '  ';
+      margin-right: 8px;
+    }
+
+    /* --- Color Palette --- */
+    .palette-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .swatch {
+      width: 56px; height: 56px;
+      border-radius: 12px;
+      position: relative;
+      cursor: default;
+      border: 2px solid rgba(255,255,255,0.05);
+      transition: transform 0.15s;
+    }
+    .swatch:hover { transform: scale(1.1); }
+    .swatch-label {
+      font-size: 11px;
+      text-align: center;
+      margin-top: 4px;
+      color: #6b6b80;
+      font-family: 'Space Grotesk', monospace;
+    }
+
+    /* --- Domain Badges --- */
+    .domain-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .domain-badge {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 500;
+    }
+    .domain-badge.available {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80;
+    }
+    .domain-badge.taken {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: #f87171;
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    /* --- Score Cards --- */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .score-card {
+      text-align: center;
+      padding: 16px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .score-card .score-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .score-card .score-label {
+      font-size: 11px;
+      color: #6b6b80;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* --- Typography Preview --- */
+    .type-preview {
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 12px;
+    }
+    .type-preview .heading-sample {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .type-preview .body-sample {
+      font-size: 15px;
+      opacity: 0.7;
+      line-height: 1.7;
+    }
+
+    /* --- Brand Number Badge --- */
+    .brand-number {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #e2e2e8;
+    }
+
+    /* --- Ranking Badge (top right) --- */
+    .rank-badge {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 10;
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* ===== FOOTER ===== */
+    .page-footer {
+      text-align: center;
+      padding: 60px 24px 40px;
+      color: #4a4a5e;
+      font-size: 13px;
+    }
+
+    /* ===== COMPARISON TABLE ===== */
+    .comparison-section {
+      max-width: 1000px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+    .comparison-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 32px;
+      color: #e2e2e8;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .comparison-table th, .comparison-table td {
+      padding: 14px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .comparison-table th {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      color: #a78bfa;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .comparison-table td {
+      color: #b8b8cc;
+    }
+    .comparison-table tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    .winner-row {
+      background: rgba(99,102,241,0.08) !important;
+    }
+    .winner-row td {
+      color: #e2e2e8;
+      font-weight: 600;
+    }
+
+    /* ===== MOCK UI SECTION ===== */
+    .mock-ui {
+      position: relative;
+      z-index: 2;
+      margin-top: 32px;
+      width: 100%;
+      max-width: 700px;
+      padding: 0 20px;
+    }
+    .mock-phone {
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 20px;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+    .mock-phone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .mock-phone-logo {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .mock-phone-nav {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      opacity: 0.5;
+    }
+    .mock-card {
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .mock-card-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .mock-card-subtitle {
+      font-size: 12px;
+      opacity: 0.6;
+    }
+    .mock-card-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .mock-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* Total Score highlight */
+    .total-score {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .total-label {
+      font-size: 12px;
+      text-align: center;
+      color: #6b6b80;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== PAGE HEADER ===== -->
+  <header class="page-header">
+    <div class="agent-badge">Agent 1 -- Hebrew Musical Roots + Modern Tech</div>
+    <h1>4 Brand Candidates</h1>
+    <p>Names rooted in ancient Hebrew music tradition, designed for the modern Israeli music ecosystem.</p>
+  </header>
+
+  <div class="brands-grid">
+
+    <!-- ============================================================ -->
+    <!-- BRAND 1: ZMIRAH -->
+    <!-- ============================================================ -->
+    <section class="brand-section" id="zmirah">
+      <div class="brand-hero" style="background: linear-gradient(135deg, #0f0a1e 0%, #1a0d2e 40%, #0d1117 100%);">
+        <span class="brand-number">#1</span>
+        <span class="rank-badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;">TOP PICK</span>
+        <div class="hero-glow" style="background: radial-gradient(circle, #7c3aed, transparent); top: -100px; left: 50%; transform: translateX(-50%);"></div>
+        <div class="hero-glow" style="background: radial-gradient(circle, #a855f7, transparent); bottom: -150px; right: -100px; width: 400px; height: 400px;"></div>
+
+        <div class="brand-logo-area">
+          <div class="logo-mark" style="font-family: 'Playfair Display', serif; background: linear-gradient(135deg, #c084fc, #e9d5ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Zmirah</div>
+          <div class="logo-hebrew" style="color: #c4b5fd;">זמירה</div>
+        </div>
+        <div class="tagline" style="color: #e9d5ff;">Every note finds its home.</div>
+        <div class="tagline-he">כל צליל מוצא את ביתו.</div>
+
+        <div class="mock-app-bar">
+          <button class="mock-btn primary" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">Start Your Journey</button>
+          <button class="mock-btn secondary">Find a Musician</button>
+        </div>
+
+        <!-- Mini phone mockup -->
+        <div class="mock-ui">
+          <div class="mock-phone">
+            <div class="mock-phone-header">
+              <span class="mock-phone-logo" style="font-family: 'Playfair Display', serif; color: #c084fc;">Z</span>
+              <div class="mock-phone-nav">
+                <span>Home</span><span>Search</span><span>Schedule</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.2);">
+              <div class="mock-card-title" style="color: #e9d5ff;">Next Lesson: Piano</div>
+              <div class="mock-card-subtitle" style="color: #a78bfa;">Today, 16:00 -- Miriam Cohen</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(168,85,247,0.2); color: #c084fc;">Conservatorium Hod HaSharon</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="mock-card-title" style="color: #d4d4e8;">Upcoming Concert</div>
+              <div class="mock-card-subtitle" style="color: #8b8ba0;">Tel Aviv Recital Hall -- Fri 20:30</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(234,179,8,0.15); color: #fbbf24;">2 tickets left</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-info">
+        <div class="info-block">
+          <h3>Etymology & Story</h3>
+          <p><strong>Zmirah</strong> (זמירה) comes from the Hebrew root <em>z-m-r</em> (ז-מ-ר), meaning "to sing" or "to make music." The word appears in Psalms and ancient Hebrew poetry. In modern Hebrew, <em>zemer</em> means a song, and <em>zmirah</em> is the act of singing -- the living, breathing expression of music itself.</p>
+          <p style="margin-top: 12px;">The "-ah" ending gives it a feminine, flowing quality that feels both ancient and fresh. It rolls off the tongue in English ("zmee-rah") and is instantly recognizable to any Hebrew speaker.</p>
+          <ul style="margin-top: 12px;">
+            <li>Biblical root: Psalms, Song of Songs</li>
+            <li>Meaning: "Song / singing / musical expression"</li>
+            <li>Pronunciation: zmee-RAH (stress on last syllable)</li>
+            <li>Easy to spell in English, natural in Hebrew</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>Brand Rationale</h3>
+          <p>Zmirah positions the platform as the <em>act of music</em> itself -- not just a tool, but the song that connects teacher to student, performer to audience, musician to community. It works across every user persona:</p>
+          <ul style="margin-top: 8px;">
+            <li>Students: "My Zmirah" = my musical journey</li>
+            <li>Teachers: "On Zmirah" = where I teach</li>
+            <li>Parents: "Check Zmirah" = the music app</li>
+            <li>Event seekers: "Book on Zmirah" = find musicians</li>
+          </ul>
+          <p style="margin-top: 12px;">The Z gives it a sharp, memorable start (like Zoom, Zara). The -ah ending connects to Hebrew tradition while sounding modern globally.</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Color Palette</h3>
+          <div class="palette-row">
+            <div>
+              <div class="swatch" style="background: #7c3aed;"></div>
+              <div class="swatch-label">#7C3AED</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #a855f7;"></div>
+              <div class="swatch-label">#A855F7</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #e9d5ff;"></div>
+              <div class="swatch-label">#E9D5FF</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #0f0a1e;"></div>
+              <div class="swatch-label">#0F0A1E</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #fbbf24;"></div>
+              <div class="swatch-label">#FBBF24</div>
+            </div>
+          </div>
+          <p>Deep violet + lavender mist. The purple evokes creativity, royalty, and artistic expression. Gold accent for premium features and CTAs.</p>
+
+          <h3 style="margin-top: 24px;">Typography</h3>
+          <div class="type-preview">
+            <div class="heading-sample" style="font-family: 'Playfair Display', serif; color: #e9d5ff;">The Art of Music Education</div>
+            <div class="body-sample" style="font-family: 'DM Sans', sans-serif;">Connecting 85+ conservatoriums, thousands of musicians, and a vibrant community of students and music lovers across Israel.</div>
+          </div>
+          <p style="margin-top: 8px; font-size: 13px; color: #6b6b80;">Heading: Playfair Display | Body: DM Sans | Hebrew: Frank Ruhl Libre</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Domain Availability</h3>
+          <div class="domain-badges">
+            <span class="domain-badge available">zmirah.co.il</span>
+            <span class="domain-badge available">zmirah.com</span>
+            <span class="domain-badge available">zmirah.org.il</span>
+            <span class="domain-badge available">zmirah.io</span>
+            <span class="domain-badge available">zmirah.org</span>
+          </div>
+          <p style="margin-top: 12px; color: #4ade80; font-weight: 600;">All 5 domains available! Perfect situation.</p>
+
+          <h3 style="margin-top: 24px;">Trademark Check</h3>
+          <p>No known music/tech brands called "Zmirah." The word exists as a Hebrew first name (uncommon) and in Jewish liturgical contexts (zmirot = Shabbat songs). No commercial conflicts found in Israeli or international trademark registries. Low risk of IP collision.</p>
+
+          <h3 style="margin-top: 24px;">Scores</h3>
+          <div class="scores-grid">
+            <div class="score-card">
+              <div class="score-val" style="color: #a855f7;">9</div>
+              <div class="score-label">Memorable</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #a855f7;">10</div>
+              <div class="score-label">Hebrew-Fit</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #a855f7;">8</div>
+              <div class="score-label">Global Appeal</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #a855f7;">9</div>
+              <div class="score-label">Brand Potential</div>
+            </div>
+          </div>
+          <div class="total-score" style="color: #a855f7;">36<span style="font-size: 20px; opacity: 0.5;">/40</span></div>
+          <div class="total-label">Total Score</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- BRAND 2: NIGUNO -->
+    <!-- ============================================================ -->
+    <section class="brand-section" id="niguno">
+      <div class="brand-hero" style="background: linear-gradient(135deg, #071115 0%, #0c1e25 40%, #0a1628 100%);">
+        <span class="brand-number">#2</span>
+        <span class="rank-badge" style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); color: #22d3ee;">RUNNER UP</span>
+        <div class="hero-glow" style="background: radial-gradient(circle, #0891b2, transparent); top: -80px; right: 10%;"></div>
+        <div class="hero-glow" style="background: radial-gradient(circle, #06b6d4, transparent); bottom: -120px; left: 5%; width: 350px; height: 350px;"></div>
+
+        <div class="brand-logo-area">
+          <div class="logo-mark" style="font-family: 'Outfit', sans-serif; font-weight: 900; background: linear-gradient(135deg, #22d3ee, #67e8f9, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">niguno</div>
+          <div class="logo-hebrew" style="color: #67e8f9;">ניגונו</div>
+        </div>
+        <div class="tagline" style="color: #cffafe;">Your melody. Your way.</div>
+        <div class="tagline-he">הניגון שלך. הדרך שלך.</div>
+
+        <div class="mock-app-bar">
+          <button class="mock-btn primary" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">Explore Music</button>
+          <button class="mock-btn secondary">Book a Concert</button>
+        </div>
+
+        <div class="mock-ui">
+          <div class="mock-phone">
+            <div class="mock-phone-header">
+              <span class="mock-phone-logo" style="font-family: 'Outfit', sans-serif; font-weight: 900; color: #22d3ee;">n</span>
+              <div class="mock-phone-nav">
+                <span>Learn</span><span>Play</span><span>Events</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.2);">
+              <div class="mock-card-title" style="color: #cffafe;">Practice Streak: 7 days</div>
+              <div class="mock-card-subtitle" style="color: #67e8f9;">Keep going! Your Bach piece sounds great.</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(6,182,212,0.2); color: #22d3ee;">Violin</span>
+                <span class="mock-tag" style="background: rgba(16,185,129,0.15); color: #34d399;">Level 4</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="mock-card-title" style="color: #d4d4e8;">Musicians Near You</div>
+              <div class="mock-card-subtitle" style="color: #8b8ba0;">3 pianists available for your wedding</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(168,85,247,0.15); color: #c084fc;">Haifa area</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-info">
+        <div class="info-block">
+          <h3>Etymology & Story</h3>
+          <p><strong>Niguno</strong> (ניגונו) literally means "his melody" or "his tune" in Hebrew -- from <em>nigun</em> (ניגון), one of the most spiritually charged words in Jewish music. A nigun is a wordless melody, passed from generation to generation, transcending language.</p>
+          <p style="margin-top: 12px;">The possessive suffix "-o" (his/its) makes it personal: this is YOUR nigun, your personal melody. In Hasidic tradition, every soul has its own nigun. The lowercase branding gives it a modern, approachable, tech-startup feel (like spotify, airbnb).</p>
+          <ul style="margin-top: 12px;">
+            <li>Root: nigun (ניגון) = melody, tune, musical motif</li>
+            <li>"-o" suffix = possessive (his/its melody)</li>
+            <li>Deep Hasidic/Kabbalistic resonance</li>
+            <li>Lowercase style: modern tech identity</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>Brand Rationale</h3>
+          <p>Niguno captures the idea that every person in the music ecosystem has their own melody -- their own role, their own contribution. It is deeply, authentically Israeli while having zero pronunciation problems in English.</p>
+          <ul style="margin-top: 8px;">
+            <li>The "n" lowercase logo mark is clean and iconic</li>
+            <li>Works as a verb: "niguno it" (find music on niguno)</li>
+            <li>Spiritual depth for those who know; cool sound for those who don't</li>
+            <li>All 5 TLDs available = clean slate</li>
+          </ul>
+          <p style="margin-top: 12px;">Teal/cyan palette evokes clarity, flow, and digital innovation while remaining warm and inviting.</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Color Palette</h3>
+          <div class="palette-row">
+            <div>
+              <div class="swatch" style="background: #0891b2;"></div>
+              <div class="swatch-label">#0891B2</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #22d3ee;"></div>
+              <div class="swatch-label">#22D3EE</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #cffafe;"></div>
+              <div class="swatch-label">#CFFAFE</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #071115;"></div>
+              <div class="swatch-label">#071115</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #34d399;"></div>
+              <div class="swatch-label">#34D399</div>
+            </div>
+          </div>
+          <p>Deep ocean teal + cyan glow. The palette suggests digital clarity and musical flow. Green accent for success states and gamification.</p>
+
+          <h3 style="margin-top: 24px;">Typography</h3>
+          <div class="type-preview">
+            <div class="heading-sample" style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #cffafe;">Every Soul Has Its Melody</div>
+            <div class="body-sample" style="font-family: 'Work Sans', sans-serif;">From conservatorium classrooms to wedding stages, niguno connects Israel's entire music world in one elegant platform.</div>
+          </div>
+          <p style="margin-top: 8px; font-size: 13px; color: #6b6b80;">Heading: Outfit (800) | Body: Work Sans | Hebrew: Heebo</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Domain Availability</h3>
+          <div class="domain-badges">
+            <span class="domain-badge available">niguno.co.il</span>
+            <span class="domain-badge available">niguno.com</span>
+            <span class="domain-badge available">niguno.org.il</span>
+            <span class="domain-badge available">niguno.io</span>
+            <span class="domain-badge available">niguno.org</span>
+          </div>
+          <p style="margin-top: 12px; color: #4ade80; font-weight: 600;">All 5 domains available!</p>
+
+          <h3 style="margin-top: 24px;">Trademark Check</h3>
+          <p>"Nigun" appears in Jewish cultural contexts (Nigun Music, various albums), but "Niguno" with the possessive suffix is unique. No commercial brand, app, or tech company found using this exact name. Very low IP risk.</p>
+
+          <h3 style="margin-top: 24px;">Scores</h3>
+          <div class="scores-grid">
+            <div class="score-card">
+              <div class="score-val" style="color: #22d3ee;">8</div>
+              <div class="score-label">Memorable</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #22d3ee;">10</div>
+              <div class="score-label">Hebrew-Fit</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #22d3ee;">7</div>
+              <div class="score-label">Global Appeal</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #22d3ee;">9</div>
+              <div class="score-label">Brand Potential</div>
+            </div>
+          </div>
+          <div class="total-score" style="color: #22d3ee;">34<span style="font-size: 20px; opacity: 0.5;">/40</span></div>
+          <div class="total-label">Total Score</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- BRAND 3: KINORA -->
+    <!-- ============================================================ -->
+    <section class="brand-section" id="kinora">
+      <div class="brand-hero" style="background: linear-gradient(135deg, #1a0a00 0%, #2d1400 40%, #1a0f05 100%);">
+        <span class="brand-number">#3</span>
+        <div class="hero-glow" style="background: radial-gradient(circle, #d97706, transparent); top: -60px; left: 30%;"></div>
+        <div class="hero-glow" style="background: radial-gradient(circle, #f59e0b, transparent); bottom: -100px; right: 20%; width: 350px; height: 350px;"></div>
+
+        <div class="brand-logo-area">
+          <div class="logo-mark" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #fbbf24, #fef3c7, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">KINORA</div>
+          <div class="logo-hebrew" style="color: #fcd34d;">כינורא</div>
+        </div>
+        <div class="tagline" style="color: #fef3c7;">Where Israel's music comes alive.</div>
+        <div class="tagline-he">איפה שהמוזיקה הישראלית חיה.</div>
+
+        <div class="mock-app-bar">
+          <button class="mock-btn primary" style="background: linear-gradient(135deg, #d97706, #f59e0b);">Find Your Teacher</button>
+          <button class="mock-btn secondary">Browse Events</button>
+        </div>
+
+        <div class="mock-ui">
+          <div class="mock-phone">
+            <div class="mock-phone-header">
+              <span class="mock-phone-logo" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #fbbf24;">K</span>
+              <div class="mock-phone-nav">
+                <span>Discover</span><span>Lessons</span><span>Hire</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(217,119,6,0.12); border: 1px solid rgba(217,119,6,0.2);">
+              <div class="mock-card-title" style="color: #fef3c7;">Your Repertoire</div>
+              <div class="mock-card-subtitle" style="color: #fbbf24;">3 new pieces assigned this week</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(245,158,11,0.2); color: #fbbf24;">Cello</span>
+                <span class="mock-tag" style="background: rgba(245,158,11,0.15); color: #fcd34d;">Grade 6</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="mock-card-title" style="color: #d4d4e8;">Hire a Musician</div>
+              <div class="mock-card-subtitle" style="color: #8b8ba0;">Jazz trio for corporate event, Tel Aviv</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(139,92,246,0.15); color: #a78bfa;">Starting 1,500 NIS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-info">
+        <div class="info-block">
+          <h3>Etymology & Story</h3>
+          <p><strong>Kinora</strong> (כינורא) is derived from <em>kinnor</em> (כינור), the biblical lyre -- the instrument King David played. The kinnor is THE symbol of Jewish music, appearing throughout the Bible and immortalized in the phrase "kinnor David" (David's harp).</p>
+          <p style="margin-top: 12px;">The "-a" ending transforms it from the instrument itself into something larger: a place, a concept, a platform. It follows the Hebrew pattern of creating abstract nouns (like "menorah" from "ner"). In Aramaic, "kinora" was actually used as a variant of kinnor.</p>
+          <ul style="margin-top: 12px;">
+            <li>Root: kinnor (כינור) = David's lyre/harp</li>
+            <li>Most iconic musical instrument in Jewish history</li>
+            <li>"-a" suffix = place/concept (Aramaic pattern)</li>
+            <li>Strong, regal sound: KIN-or-ah</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>Brand Rationale</h3>
+          <p>Kinora carries the weight of 3,000 years of Jewish music in just 6 letters. The kinnor appears on Israeli coins, in the national anthem, and in the cultural consciousness of every Israeli. This name says: "We are the continuation of that musical tradition."</p>
+          <ul style="margin-top: 8px;">
+            <li>Instant recognition for Hebrew speakers</li>
+            <li>The "K" gives it a strong, tech-friendly start</li>
+            <li>All-caps styling creates a bold, confident brand</li>
+            <li>.co.il available (the #1 priority domain)</li>
+          </ul>
+          <p style="margin-top: 12px;">Warm amber/gold palette channels the golden strings of the kinnor and premium Israeli craftsmanship.</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Color Palette</h3>
+          <div class="palette-row">
+            <div>
+              <div class="swatch" style="background: #d97706;"></div>
+              <div class="swatch-label">#D97706</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #f59e0b;"></div>
+              <div class="swatch-label">#F59E0B</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #fef3c7;"></div>
+              <div class="swatch-label">#FEF3C7</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #1a0a00;"></div>
+              <div class="swatch-label">#1A0A00</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #a78bfa;"></div>
+              <div class="swatch-label">#A78BFA</div>
+            </div>
+          </div>
+          <p>Warm amber gold on dark brown-black. Evokes heritage, quality, and the golden era of music. Purple accent for modern tech elements.</p>
+
+          <h3 style="margin-top: 24px;">Typography</h3>
+          <div class="type-preview">
+            <div class="heading-sample" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #fef3c7;">The Sound of 3,000 Years</div>
+            <div class="body-sample" style="font-family: 'DM Sans', sans-serif;">Israel's premier music platform. From David's lyre to your next lesson, concert, or celebration.</div>
+          </div>
+          <p style="margin-top: 8px; font-size: 13px; color: #6b6b80;">Heading: Space Grotesk | Body: DM Sans | Hebrew: Rubik</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Domain Availability</h3>
+          <div class="domain-badges">
+            <span class="domain-badge available">kinora.co.il</span>
+            <span class="domain-badge taken">kinora.com</span>
+            <span class="domain-badge available">kinora.org.il</span>
+            <span class="domain-badge taken">kinora.io</span>
+            <span class="domain-badge taken">kinora.org</span>
+          </div>
+          <p style="margin-top: 12px; color: #fbbf24; font-weight: 500;">Top-priority .co.il available. .com/.io taken (may be acquirable).</p>
+
+          <h3 style="margin-top: 24px;">Trademark Check</h3>
+          <p>"Kinora" appears as: a type of Victorian-era optical toy (kinora = early film viewer), and some minor product names. No music platform or Israeli tech brand uses this name. The historical kinora device is obscure enough to not cause confusion. Moderate-low IP risk.</p>
+
+          <h3 style="margin-top: 24px;">Scores</h3>
+          <div class="scores-grid">
+            <div class="score-card">
+              <div class="score-val" style="color: #fbbf24;">9</div>
+              <div class="score-label">Memorable</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #fbbf24;">10</div>
+              <div class="score-label">Hebrew-Fit</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #fbbf24;">7</div>
+              <div class="score-label">Global Appeal</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #fbbf24;">8</div>
+              <div class="score-label">Brand Potential</div>
+            </div>
+          </div>
+          <div class="total-score" style="color: #fbbf24;">34<span style="font-size: 20px; opacity: 0.5;">/40</span></div>
+          <div class="total-label">Total Score</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- BRAND 4: TSLILO -->
+    <!-- ============================================================ -->
+    <section class="brand-section" id="tslilo">
+      <div class="brand-hero" style="background: linear-gradient(135deg, #030f1a 0%, #0a1628 40%, #061220 100%);">
+        <span class="brand-number">#4</span>
+        <div class="hero-glow" style="background: radial-gradient(circle, #2563eb, transparent); top: -80px; left: 40%;"></div>
+        <div class="hero-glow" style="background: radial-gradient(circle, #3b82f6, transparent); bottom: -130px; right: 10%; width: 400px; height: 400px;"></div>
+
+        <div class="brand-logo-area">
+          <div class="logo-mark" style="font-family: 'Rubik', sans-serif; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #dbeafe, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tslilo</div>
+          <div class="logo-hebrew" style="color: #93c5fd;">צלילו</div>
+        </div>
+        <div class="tagline" style="color: #dbeafe;">Sound. Connected. Alive.</div>
+        <div class="tagline-he">צליל. מחובר. חי.</div>
+
+        <div class="mock-app-bar">
+          <button class="mock-btn primary" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">Get Started Free</button>
+          <button class="mock-btn secondary">Watch Demo</button>
+        </div>
+
+        <div class="mock-ui">
+          <div class="mock-phone">
+            <div class="mock-phone-header">
+              <span class="mock-phone-logo" style="font-family: 'Rubik', sans-serif; font-weight: 800; color: #60a5fa;">Ts</span>
+              <div class="mock-phone-nav">
+                <span>Feed</span><span>Schedule</span><span>Library</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.2);">
+              <div class="mock-card-title" style="color: #dbeafe;">Ministry Report Due</div>
+              <div class="mock-card-subtitle" style="color: #60a5fa;">Q1 student progress -- 3 days left</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(59,130,246,0.2); color: #60a5fa;">Admin</span>
+                <span class="mock-tag" style="background: rgba(245,158,11,0.15); color: #fbbf24;">Urgent</span>
+              </div>
+            </div>
+            <div class="mock-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="mock-card-title" style="color: #d4d4e8;">Wedding Gig Offer</div>
+              <div class="mock-card-subtitle" style="color: #8b8ba0;">String quartet -- June 15, Jerusalem</div>
+              <div class="mock-card-row">
+                <span class="mock-tag" style="background: rgba(16,185,129,0.15); color: #34d399;">4,200 NIS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-info">
+        <div class="info-block">
+          <h3>Etymology & Story</h3>
+          <p><strong>Tslilo</strong> (צלילו) comes from <em>tslil</em> (צליל), the Hebrew word for "sound" or "tone" -- the most fundamental unit of music. Every note, every chord, every melody begins with a single tslil. The "-o" possessive suffix means "its sound" or "his sound."</p>
+          <p style="margin-top: 12px;">The Ts (tsadi) at the start gives it a distinctly Hebrew character that is impossible to confuse with any English word. It is authentic, specific, and proudly Israeli. The sound "tsli-lo" has a rhythmic, musical quality itself.</p>
+          <ul style="margin-top: 12px;">
+            <li>Root: tslil (צליל) = sound, tone, note</li>
+            <li>The fundamental building block of all music</li>
+            <li>"-o" possessive: "its sound" -- the platform's voice</li>
+            <li>Rhythmic pronunciation: tsli-LO</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h3>Brand Rationale</h3>
+          <p>Tslilo is the most audaciously Hebrew option -- it leans into the uniqueness of the language rather than away from it. The "Ts" sound is distinctly Semitic and impossible to mistake for any other brand. For the Israeli market, this is a feature, not a bug.</p>
+          <ul style="margin-top: 8px;">
+            <li>100% unique: no brand anywhere sounds like this</li>
+            <li>The "sound/tone" meaning covers ALL music activities</li>
+            <li>Represents the platform as the "sound" of the ecosystem</li>
+            <li>All 5 domains available</li>
+          </ul>
+          <p style="margin-top: 12px;">Electric blue palette suggests technology, trust, and clarity. The blue is Israel's national color, adding patriotic resonance.</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Color Palette</h3>
+          <div class="palette-row">
+            <div>
+              <div class="swatch" style="background: #2563eb;"></div>
+              <div class="swatch-label">#2563EB</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #3b82f6;"></div>
+              <div class="swatch-label">#3B82F6</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #dbeafe;"></div>
+              <div class="swatch-label">#DBEAFE</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #030f1a;"></div>
+              <div class="swatch-label">#030F1A</div>
+            </div>
+            <div>
+              <div class="swatch" style="background: #f59e0b;"></div>
+              <div class="swatch-label">#F59E0B</div>
+            </div>
+          </div>
+          <p>Israeli blue + electric accents on dark navy. National color identity meets modern tech. Amber accent for alerts and premium features.</p>
+
+          <h3 style="margin-top: 24px;">Typography</h3>
+          <div class="type-preview">
+            <div class="heading-sample" style="font-family: 'Rubik', sans-serif; font-weight: 800; color: #dbeafe;">The Sound of Israeli Music</div>
+            <div class="body-sample" style="font-family: 'Work Sans', sans-serif;">One platform for learning, performing, hiring, and celebrating music. Built in Israel, for Israel.</div>
+          </div>
+          <p style="margin-top: 8px; font-size: 13px; color: #6b6b80;">Heading: Rubik (800) | Body: Work Sans | Hebrew: Heebo</p>
+        </div>
+
+        <div class="info-block">
+          <h3>Domain Availability</h3>
+          <div class="domain-badges">
+            <span class="domain-badge available">tslilo.co.il</span>
+            <span class="domain-badge available">tslilo.com</span>
+            <span class="domain-badge available">tslilo.org.il</span>
+            <span class="domain-badge available">tslilo.io</span>
+            <span class="domain-badge available">tslilo.org</span>
+          </div>
+          <p style="margin-top: 12px; color: #4ade80; font-weight: 600;">All 5 domains available!</p>
+
+          <h3 style="margin-top: 24px;">Trademark Check</h3>
+          <p>No results for "Tslilo" in any commercial context. The word is essentially invented (though grammatically correct Hebrew). Zero trademark risk. The only consideration: non-Hebrew speakers may initially struggle with the "Ts" pronunciation, but this becomes a memorable talking point.</p>
+
+          <h3 style="margin-top: 24px;">Scores</h3>
+          <div class="scores-grid">
+            <div class="score-card">
+              <div class="score-val" style="color: #60a5fa;">7</div>
+              <div class="score-label">Memorable</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #60a5fa;">10</div>
+              <div class="score-label">Hebrew-Fit</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #60a5fa;">5</div>
+              <div class="score-label">Global Appeal</div>
+            </div>
+            <div class="score-card">
+              <div class="score-val" style="color: #60a5fa;">8</div>
+              <div class="score-label">Brand Potential</div>
+            </div>
+          </div>
+          <div class="total-score" style="color: #60a5fa;">30<span style="font-size: 20px; opacity: 0.5;">/40</span></div>
+          <div class="total-label">Total Score</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== COMPARISON TABLE ===== -->
+  <section class="comparison-section">
+    <h2>Head-to-Head Comparison</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th style="color: #a855f7;">Zmirah</th>
+          <th style="color: #22d3ee;">niguno</th>
+          <th style="color: #fbbf24;">KINORA</th>
+          <th style="color: #60a5fa;">Tslilo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Memorability</td>
+          <td>9</td><td>8</td><td>9</td><td>7</td>
+        </tr>
+        <tr>
+          <td>Hebrew Fit</td>
+          <td>10</td><td>10</td><td>10</td><td>10</td>
+        </tr>
+        <tr>
+          <td>Global Appeal</td>
+          <td>8</td><td>7</td><td>7</td><td>5</td>
+        </tr>
+        <tr>
+          <td>Brand Potential</td>
+          <td>9</td><td>9</td><td>8</td><td>8</td>
+        </tr>
+        <tr>
+          <td>Domain Score</td>
+          <td>5/5</td><td>5/5</td><td>2/5</td><td>5/5</td>
+        </tr>
+        <tr>
+          <td>IP Risk</td>
+          <td>Low</td><td>Very Low</td><td>Low-Med</td><td>None</td>
+        </tr>
+        <tr>
+          <td>Easy to Spell</td>
+          <td>Yes</td><td>Yes</td><td>Yes</td><td>Moderate</td>
+        </tr>
+        <tr class="winner-row">
+          <td>TOTAL</td>
+          <td style="color: #a855f7;">36/40</td>
+          <td style="color: #22d3ee;">34/40</td>
+          <td style="color: #fbbf24;">34/40</td>
+          <td style="color: #60a5fa;">30/40</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="page-footer">
+    <p>Brand Agent 1 -- Hebrew Musical Roots + Modern Tech | Domain checks performed via DNS resolution | March 2026</p>
+  </footer>
+
+</body>
+</html>

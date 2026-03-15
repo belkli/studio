@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Round 2 - Agent D (Wildcard) - 5 Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Comic+Neue:wght@300;400;700&family=Rubik:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Secular+One&family=Heebo:wght@300;400;500;600;700;800;900&family=Varela+Round&family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: #0a0a1a;
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(180deg, #1a1a3e 0%, #0a0a1a 100%);
+  }
+  .page-header h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .page-header .subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .page-header .agent-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ===== BRAND CARDS ===== */
+  .brands-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  .brand-section {
+    background: #12122a;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    scroll-margin-top: 20px;
+  }
+
+  /* --- Hero inside each brand --- */
+  .brand-hero {
+    position: relative;
+    padding: 60px 40px;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .brand-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    z-index: 0;
+  }
+  .brand-hero > * { position: relative; z-index: 1; }
+
+  .brand-hero .brand-number {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,0.8);
+  }
+
+  .brand-hero .logo-text {
+    font-size: 5.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 12px;
+    letter-spacing: -2px;
+  }
+  .brand-hero .logo-hebrew {
+    font-size: 2.2rem;
+    font-weight: 500;
+    opacity: 0.7;
+    margin-bottom: 8px;
+    font-family: 'Heebo', sans-serif;
+  }
+  .brand-hero .tagline {
+    font-size: 1.3rem;
+    font-weight: 400;
+    opacity: 0.85;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .brand-hero .domain-tag {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* --- Info panel below hero --- */
+  .brand-info {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 768px) {
+    .brand-info { grid-template-columns: 1fr; }
+  }
+
+  .info-block h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .info-block p, .info-block li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #cbd5e1;
+  }
+  .info-block ul {
+    list-style: none;
+    padding: 0;
+  }
+  .info-block ul li::before {
+    content: '\2192';
+    margin-right: 8px;
+    color: #64748b;
+  }
+
+  /* --- Score bar --- */
+  .score-bar {
+    padding: 24px 40px;
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+  }
+  .score-item {
+    text-align: center;
+    min-width: 110px;
+  }
+  .score-item .score-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+  .score-value {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .score-max {
+    font-size: 0.9rem;
+    color: #475569;
+    font-weight: 400;
+  }
+
+  /* --- Mini landing page preview --- */
+  .landing-preview {
+    margin: 0 40px 40px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #fff;
+    color: #1e293b;
+  }
+
+  .preview-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .preview-nav .nav-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+  .preview-nav .nav-links {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+  .preview-nav .nav-cta {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  .preview-hero-section {
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-hero-section h2 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .preview-hero-section p {
+    font-size: 1.05rem;
+    color: #64748b;
+    max-width: 500px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+  .preview-hero-section .hero-cta {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+  .preview-hero-section .hero-cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .preview-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 40px;
+    background: #f8fafc;
+  }
+  .preview-feature {
+    text-align: center;
+    padding: 24px 16px;
+  }
+  .preview-feature .feat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+  }
+  .preview-feature h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .preview-feature p {
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .preview-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding: 32px 40px;
+    text-align: center;
+  }
+  .preview-stat .stat-num {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .preview-stat .stat-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .preview-footer {
+    padding: 20px 40px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  /* ===== NAV DOTS (side) ===== */
+  .nav-dots {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot:hover {
+    transform: scale(1.3);
+    border-color: #fff;
+  }
+  .nav-dot-label {
+    position: absolute;
+    right: 24px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .nav-dot:hover .nav-dot-label { opacity: 1; }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comparison-section {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+  }
+  .comparison-section h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 32px;
+    color: #e2e8f0;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #12122a;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .comparison-table thead th {
+    background: rgba(0,0,0,0.3);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+  }
+  .comparison-table tbody tr {
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .comparison-table tbody tr:hover {
+    background: rgba(255,255,255,0.02);
+  }
+  .comparison-table .brand-col {
+    font-weight: 700;
+    text-align: left;
+    font-size: 1rem;
+  }
+  .total-cell {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .ip-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .ip-low { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .ip-med { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+  /* ===== ICON SVGs (inline) ===== */
+  .icon-svg {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* ===== Decorative shapes ===== */
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    filter: blur(40px);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .brand-hero .logo-text { font-size: 3.5rem; }
+    .brand-hero .tagline { font-size: 1rem; }
+    .brand-info { padding: 24px; }
+    .score-bar { padding: 16px; gap: 16px; }
+    .preview-features { grid-template-columns: 1fr; }
+    .preview-stats { flex-direction: column; gap: 16px; }
+    .landing-preview { margin: 0 16px 24px; }
+    .nav-dots { display: none; }
+  }
+
+  /* ===== BRAND-SPECIFIC COLORS ===== */
+
+  /* 1. Hazmir - Deep forest green + gold */
+  .brand-hazmir .brand-hero {
+    background: linear-gradient(135deg, #064e3b 0%, #0f766e 40%, #134e4a 100%);
+  }
+  .brand-hazmir .brand-hero::before {
+    background: radial-gradient(circle at 30% 70%, #fbbf24 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, #10b981 0%, transparent 50%);
+    opacity: 0.2;
+  }
+  .brand-hazmir .logo-text { color: #fbbf24; text-shadow: 0 4px 24px rgba(251,191,36,0.3); }
+  .brand-hazmir .score-value { color: #10b981; }
+  .brand-hazmir .nav-brand { color: #064e3b; }
+  .brand-hazmir .nav-cta, .brand-hazmir .hero-cta { background: linear-gradient(135deg, #064e3b, #0f766e); }
+  .brand-hazmir .preview-hero-section { background: linear-gradient(180deg, #ecfdf5 0%, #fff 100%); }
+  .brand-hazmir .preview-hero-section h2 { color: #064e3b; }
+  .brand-hazmir .feat-icon { background: #ecfdf5; color: #064e3b; }
+  .brand-hazmir .stat-num { color: #064e3b; }
+
+  /* 2. Nignu - Warm indigo + rose */
+  .brand-nignu .brand-hero {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 40%, #6366f1 100%);
+  }
+  .brand-nignu .brand-hero::before {
+    background: radial-gradient(circle at 20% 80%, #f43f5e 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, #a78bfa 0%, transparent 50%);
+    opacity: 0.25;
+  }
+  .brand-nignu .logo-text { color: #fff; text-shadow: 0 4px 24px rgba(167,139,250,0.4); }
+  .brand-nignu .score-value { color: #818cf8; }
+  .brand-nignu .nav-brand { color: #312e81; }
+  .brand-nignu .nav-cta, .brand-nignu .hero-cta { background: linear-gradient(135deg, #4338ca, #6366f1); }
+  .brand-nignu .preview-hero-section { background: linear-gradient(180deg, #eef2ff 0%, #fff 100%); }
+  .brand-nignu .preview-hero-section h2 { color: #312e81; }
+  .brand-nignu .feat-icon { background: #eef2ff; color: #4338ca; }
+  .brand-nignu .stat-num { color: #4338ca; }
+
+  /* 3. Zangin - Electric orange + black */
+  .brand-zangin .brand-hero {
+    background: linear-gradient(135deg, #1c1917 0%, #292524 40%, #44403c 100%);
+  }
+  .brand-zangin .brand-hero::before {
+    background: radial-gradient(circle at 40% 60%, #f97316 0%, transparent 50%),
+                radial-gradient(circle at 60% 40%, #ef4444 0%, transparent 50%);
+    opacity: 0.3;
+  }
+  .brand-zangin .logo-text { color: #f97316; text-shadow: 0 4px 24px rgba(249,115,22,0.4); }
+  .brand-zangin .score-value { color: #f97316; }
+  .brand-zangin .nav-brand { color: #1c1917; }
+  .brand-zangin .nav-cta, .brand-zangin .hero-cta { background: linear-gradient(135deg, #ea580c, #f97316); }
+  .brand-zangin .preview-hero-section { background: linear-gradient(180deg, #fff7ed 0%, #fff 100%); }
+  .brand-zangin .preview-hero-section h2 { color: #1c1917; }
+  .brand-zangin .feat-icon { background: #fff7ed; color: #ea580c; }
+  .brand-zangin .stat-num { color: #ea580c; }
+
+  /* 4. Atzlil - Sky blue + violet */
+  .brand-atzlil .brand-hero {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 40%, #7c3aed 100%);
+  }
+  .brand-atzlil .brand-hero::before {
+    background: radial-gradient(circle at 25% 75%, #38bdf8 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #c084fc 0%, transparent 50%);
+    opacity: 0.25;
+  }
+  .brand-atzlil .logo-text { color: #e0f2fe; text-shadow: 0 4px 24px rgba(56,189,248,0.4); }
+  .brand-atzlil .score-value { color: #38bdf8; }
+  .brand-atzlil .nav-brand { color: #0c4a6e; }
+  .brand-atzlil .nav-cta, .brand-atzlil .hero-cta { background: linear-gradient(135deg, #0369a1, #7c3aed); }
+  .brand-atzlil .preview-hero-section { background: linear-gradient(180deg, #f0f9ff 0%, #faf5ff 50%, #fff 100%); }
+  .brand-atzlil .preview-hero-section h2 { color: #0c4a6e; }
+  .brand-atzlil .feat-icon { background: #f0f9ff; color: #0369a1; }
+  .brand-atzlil .stat-num { color: #0369a1; }
+
+  /* 5. Twango - Coral pink + teal */
+  .brand-twango .brand-hero {
+    background: linear-gradient(135deg, #831843 0%, #be185d 40%, #0d9488 100%);
+  }
+  .brand-twango .brand-hero::before {
+    background: radial-gradient(circle at 30% 70%, #fb7185 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, #2dd4bf 0%, transparent 50%);
+    opacity: 0.25;
+  }
+  .brand-twango .logo-text { color: #fda4af; text-shadow: 0 4px 24px rgba(251,113,133,0.4); }
+  .brand-twango .score-value { color: #f43f5e; }
+  .brand-twango .nav-brand { color: #831843; }
+  .brand-twango .nav-cta, .brand-twango .hero-cta { background: linear-gradient(135deg, #be185d, #0d9488); }
+  .brand-twango .preview-hero-section { background: linear-gradient(180deg, #fff1f2 0%, #f0fdfa 50%, #fff 100%); }
+  .brand-twango .preview-hero-section h2 { color: #831843; }
+  .brand-twango .feat-icon { background: #fff1f2; color: #be185d; }
+  .brand-twango .stat-num { color: #be185d; }
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<nav class="nav-dots" aria-label="Brand navigation">
+  <a class="nav-dot" href="#hazmir" style="background: #10b981;"><span class="nav-dot-label">Hazmir</span></a>
+  <a class="nav-dot" href="#nignu" style="background: #818cf8;"><span class="nav-dot-label">Nignu</span></a>
+  <a class="nav-dot" href="#zangin" style="background: #f97316;"><span class="nav-dot-label">Zangin</span></a>
+  <a class="nav-dot" href="#atzlil" style="background: #38bdf8;"><span class="nav-dot-label">Atzlil</span></a>
+  <a class="nav-dot" href="#twango" style="background: #f43f5e;"><span class="nav-dot-label">Twango</span></a>
+</nav>
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="agent-badge">Agent D - Wildcard</div>
+  <h1>Round 2 Brand Candidates</h1>
+  <p class="subtitle">
+    Out-of-the-box names from nature, Hebrew verbs, onomatopoeia, and unexpected metaphors.
+    Each name has both .co.il and .com available.
+  </p>
+</header>
+
+<!-- BRANDS -->
+<main class="brands-grid">
+
+  <!-- ============================== -->
+  <!-- 1. HAZMIR                      -->
+  <!-- ============================== -->
+  <section id="hazmir" class="brand-section brand-hazmir">
+    <div class="brand-hero">
+      <span class="brand-number">#1</span>
+      <div>
+        <div class="logo-hebrew">&#x5D4;&#x5B7;&#x5D6;&#x5B8;&#x5DE;&#x5B4;&#x5D9;&#x5E8;</div>
+        <div class="logo-text" style="font-family: 'Fredoka', sans-serif;">Hazmir</div>
+        <div class="tagline">The nightingale sings. Your music takes flight.</div>
+        <span class="domain-tag">hazmir.co.il &middot; hazmir.com</span>
+      </div>
+    </div>
+
+    <div class="brand-info">
+      <div class="info-block">
+        <h3>Why This Name</h3>
+        <p>
+          <strong>Hazmir</strong> means "the nightingale" in Hebrew. The nightingale is nature's
+          most celebrated musician - it sings complex melodies in the dark, teaching itself through
+          practice. This is the perfect metaphor for a music education platform. The word carries
+          deep roots in Hebrew poetry and Israeli folk tradition. Short, dignified, and unforgettable.
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Brand Potential</h3>
+        <ul>
+          <li>Can become a verb: "Come hazmir with us" (come make music)</li>
+          <li>Natural mascot: a stylized nightingale icon</li>
+          <li>Works in every context: kids, professionals, concerts</li>
+          <li>Hebrew root z-m-r = song, pruning, strength</li>
+          <li>Sophisticated enough for conservatoriums, warm enough for kids</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>IP Analysis</h3>
+        <p>
+          "Hazmir" is a Hebrew common noun (nightingale). Not registered as a trademark in
+          tech, music, or education sectors. Appears in poetry and folk songs as a literary
+          reference. No competing commercial platforms use this name. <strong>Low conflict risk.</strong>
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Angle: Nature + Music</h3>
+        <p>
+          The wildcard angle here is taking a NATURE word and making it a music brand. The
+          nightingale is universally recognized as a symbol of beautiful music. Israeli kids
+          learn about the zamir in school. Adults associate it with elegance and artistry.
+          It bridges generation gaps effortlessly.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mini landing preview -->
+    <div class="landing-preview">
+      <div class="preview-nav">
+        <span class="nav-brand" style="font-family: 'Fredoka', sans-serif; color: #064e3b;">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M12 3c-1.5 0-3 .5-4 1.5C6 6 5 8 5 10c0 3 2 5 4 6l3 2 3-2c2-1 4-3 4-6 0-2-1-4-3-5.5C15 3.5 13.5 3 12 3z"/><path d="M12 8v4"/><circle cx="12" cy="14" r="1"/></svg>
+          Hazmir
+        </span>
+        <div class="nav-links">
+          <span>Teachers</span>
+          <span>Conservatoriums</span>
+          <span>Concerts</span>
+        </div>
+        <button class="nav-cta" style="background: linear-gradient(135deg, #064e3b, #0f766e);">Start Playing</button>
+      </div>
+      <div class="preview-hero-section">
+        <h2 style="color: #064e3b; font-family: 'Fredoka', sans-serif;">Where Every Student<br>Finds Their Song</h2>
+        <p>Israel's music education ecosystem. Find teachers, join conservatoriums, book concerts - all in one place.</p>
+        <a class="hero-cta" href="#" style="background: linear-gradient(135deg, #064e3b, #0f766e);">Explore Hazmir</a>
+      </div>
+      <div class="preview-features">
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #ecfdf5; color: #064e3b;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h4>85 Conservatoriums</h4>
+          <p>Every music school in Israel, connected on one platform</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #ecfdf5; color: #064e3b;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h4>500+ Teachers</h4>
+          <p>Find the perfect teacher for any instrument, any level</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #ecfdf5; color: #064e3b;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h4>Live Concerts</h4>
+          <p>Book performances, hire musicians, fill seats</p>
+        </div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #064e3b; font-family: 'Fredoka';">12,000+</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #064e3b; font-family: 'Fredoka';">85</div>
+          <div class="stat-label">Conservatoriums</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #064e3b; font-family: 'Fredoka';">500+</div>
+          <div class="stat-label">Teachers</div>
+        </div>
+      </div>
+      <div class="preview-footer">hazmir.co.il &mdash; Israel's Music Ecosystem</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Kid-Friendly</div><div class="score-value">7<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Hebrew-Fit</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Global</div><div class="score-value">7<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Brand</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 2. NIGNU                       -->
+  <!-- ============================== -->
+  <section id="nignu" class="brand-section brand-nignu">
+    <div class="brand-hero">
+      <span class="brand-number">#2</span>
+      <div>
+        <div class="logo-hebrew">&#x5E0;&#x5B4;&#x5D2;&#x5B0;&#x5E0;&#x5D5;&#x5BC;</div>
+        <div class="logo-text" style="font-family: 'Baloo 2', cursive;">Nignu</div>
+        <div class="tagline">We played. We play. We will play together.</div>
+        <span class="domain-tag">nignu.co.il &middot; nignu.com</span>
+      </div>
+    </div>
+
+    <div class="brand-info">
+      <div class="info-block">
+        <h3>Why This Name</h3>
+        <p>
+          <strong>Nignu</strong> is the first person plural past tense of "le'nagen" (to play music) -
+          literally "we played." It's communal, warm, and action-oriented. The "we" is built into
+          the grammar. It evokes a shared memory of making music together, and an invitation to
+          do it again. Phonetically close to "nigun" (Jewish spiritual melody) but distinctly different.
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Brand Potential</h3>
+        <ul>
+          <li>Built-in community: "we" is in the word itself</li>
+          <li>Natural call-to-action: "Bo nignu!" (Come, let's play!)</li>
+          <li>Echoes "nigun" - deep Jewish musical tradition</li>
+          <li>Two syllables, punchy, easy for kids to say</li>
+          <li>Works as a verb in daily Hebrew conversation</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>IP Analysis</h3>
+        <p>
+          "Nignu" is a standard Hebrew verb conjugation of n-g-n (to play music). Not registered
+          as a brand. Related word "nigun" is a genre term (Hasidic melody), not trademarked.
+          The spelling and meaning are distinct enough. <strong>Low conflict risk.</strong>
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Angle: Hebrew Verb as Brand</h3>
+        <p>
+          The wildcard here is turning a VERB into a platform name. Like how "Google" became
+          "to google" - but in reverse. "Nignu" is already a verb, and the brand inherits all
+          that active, communal energy. Israeli parents can say "the kids nignu today" and it
+          means both "played music" and "used the platform."
+        </p>
+      </div>
+    </div>
+
+    <!-- Mini landing preview -->
+    <div class="landing-preview">
+      <div class="preview-nav">
+        <span class="nav-brand" style="font-family: 'Baloo 2', cursive; color: #312e81;">Nignu</span>
+        <div class="nav-links">
+          <span>Teachers</span>
+          <span>Schools</span>
+          <span>Events</span>
+        </div>
+        <button class="nav-cta" style="background: linear-gradient(135deg, #4338ca, #6366f1);">Join Us</button>
+      </div>
+      <div class="preview-hero-section" style="background: linear-gradient(180deg, #eef2ff 0%, #fff 100%);">
+        <h2 style="color: #312e81; font-family: 'Baloo 2', cursive;">Music Is Better<br>When We Play Together</h2>
+        <p>The community platform connecting Israel's musicians, students, teachers, and music lovers.</p>
+        <a class="hero-cta" href="#" style="background: linear-gradient(135deg, #4338ca, #6366f1);">Bo Nignu!</a>
+      </div>
+      <div class="preview-features" style="background: #faf5ff;">
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #eef2ff; color: #4338ca;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h4>Find Your Teacher</h4>
+          <p>Matched by style, schedule, and skill level</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #eef2ff; color: #4338ca;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <h4>Track Progress</h4>
+          <p>Repertoire, recordings, and milestones in one place</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #eef2ff; color: #4338ca;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h4>Community</h4>
+          <p>Connect with other musicians and families near you</p>
+        </div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #4338ca; font-family: 'Fredoka';">12,000+</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #4338ca; font-family: 'Fredoka';">85</div>
+          <div class="stat-label">Schools</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #4338ca; font-family: 'Fredoka';">500+</div>
+          <div class="stat-label">Teachers</div>
+        </div>
+      </div>
+      <div class="preview-footer">nignu.co.il &mdash; Bo Nignu!</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-value">8<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Kid-Friendly</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Hebrew-Fit</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Global</div><div class="score-value">5<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Brand</div><div class="score-value">8<span class="score-max">/10</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 3. ZANGIN                      -->
+  <!-- ============================== -->
+  <section id="zangin" class="brand-section brand-zangin">
+    <div class="brand-hero">
+      <span class="brand-number">#3</span>
+      <div>
+        <div class="logo-hebrew">&#x5D6;&#x5B7;&#x5E0;&#x5B0;&#x5D2;&#x5B4;&#x5D9;&#x5DF;</div>
+        <div class="logo-text" style="font-family: 'Rubik', sans-serif; font-weight: 900; letter-spacing: -3px;">ZANGIN</div>
+        <div class="tagline">The sound of a string that won't stop ringing.</div>
+        <span class="domain-tag">zangin.co.il &middot; zangin.com</span>
+      </div>
+    </div>
+
+    <div class="brand-info">
+      <div class="info-block">
+        <h3>Why This Name</h3>
+        <p>
+          <strong>Zangin</strong> is a pure invention - and that's its power. It sounds like a
+          string being plucked: ZANG! The "-in" suffix gives it a Hebrew feel (like "zangin li" =
+          "zing me"). It's the onomatopoeia of music happening. Raw, energetic, impossible to forget.
+          Kids will hear it once and repeat it. Adults will feel its electric energy.
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Brand Potential</h3>
+        <ul>
+          <li>Instant verb potential: "Zangini!" (zing me!)</li>
+          <li>Sounds like action - a string being struck</li>
+          <li>Zero IP conflicts - completely invented word</li>
+          <li>Works globally: "zing/zang" is universally musical</li>
+          <li>Perfect for a bold, modern music-tech brand</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>IP Analysis</h3>
+        <p>
+          "Zangin" is not a word in any language. Complete blank slate for trademark registration.
+          No existing brands, no competing products. The root "zang" appears in some Germanic
+          languages (song) but the specific form "Zangin" is unused.
+          <strong>Very low conflict risk.</strong>
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Angle: Invented Onomatopoeia</h3>
+        <p>
+          The wildcard here is creating a word that SOUNDS like music. Not describing music,
+          not referencing music - BEING the sound of music. "ZANG" is a guitar string. "ZANGIN"
+          is the vibe of that string still ringing. It's startup-nation energy meets musical
+          soul. Think Shazam, Spotify, Waze - invented words that became verbs.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mini landing preview -->
+    <div class="landing-preview">
+      <div class="preview-nav">
+        <span class="nav-brand" style="font-family: 'Rubik', sans-serif; font-weight: 900; color: #1c1917;">ZANGIN</span>
+        <div class="nav-links">
+          <span>Discover</span>
+          <span>Learn</span>
+          <span>Perform</span>
+        </div>
+        <button class="nav-cta" style="background: linear-gradient(135deg, #ea580c, #f97316);">Get Started</button>
+      </div>
+      <div class="preview-hero-section" style="background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);">
+        <h2 style="color: #1c1917; font-family: 'Rubik', sans-serif; font-weight: 900;">Feel the ZANG.<br>Play Your Music.</h2>
+        <p>Israel's boldest music platform. Find teachers, book gigs, discover talent - all electrified.</p>
+        <a class="hero-cta" href="#" style="background: linear-gradient(135deg, #ea580c, #f97316);">Zangini!</a>
+      </div>
+      <div class="preview-features">
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff7ed; color: #ea580c;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h4>Instant Booking</h4>
+          <p>Find available teachers and book in under 60 seconds</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff7ed; color: #ea580c;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h4>85 Schools</h4>
+          <p>Every conservatorium in Israel, one electric platform</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff7ed; color: #ea580c;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <h4>Live Performances</h4>
+          <p>Stream, attend, and book concerts across the country</p>
+        </div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #ea580c; font-family: 'Fredoka';">12,000+</div>
+          <div class="stat-label">Musicians</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #ea580c; font-family: 'Fredoka';">85</div>
+          <div class="stat-label">Schools</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #ea580c; font-family: 'Fredoka';">1,000+</div>
+          <div class="stat-label">Events/Year</div>
+        </div>
+      </div>
+      <div class="preview-footer">zangin.co.il &mdash; Feel the ZANG.</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Kid-Friendly</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Hebrew-Fit</div><div class="score-value">8<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Global</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Brand</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 4. ATZLIL                      -->
+  <!-- ============================== -->
+  <section id="atzlil" class="brand-section brand-atzlil">
+    <div class="brand-hero">
+      <span class="brand-number">#4</span>
+      <div>
+        <div class="logo-hebrew">&#x5D0;&#x5B7;&#x5E6;&#x5B0;&#x5DC;&#x5B4;&#x5D9;&#x5DC;</div>
+        <div class="logo-text" style="font-family: 'Varela Round', sans-serif;">Atzlil</div>
+        <div class="tagline">I will make a sound. I will be heard.</div>
+        <span class="domain-tag">atzlil.co.il &middot; atzlil.com</span>
+      </div>
+    </div>
+
+    <div class="brand-info">
+      <div class="info-block">
+        <h3>Why This Name</h3>
+        <p>
+          <strong>Atzlil</strong> is first person future tense of "letztzel" (to ring/sound/resonate) -
+          "I will make a tone." It's aspirational and personal. Every student who joins the platform
+          is saying "I will sound" - a declaration of musical ambition. The word contains "tzlil"
+          (tone/note) within it, connecting to the fundamental building block of music.
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Brand Potential</h3>
+        <ul>
+          <li>First person = personal, empowering ("I will sound")</li>
+          <li>Contains "tzlil" (tone) - instant music association</li>
+          <li>Future tense = forward-looking, aspirational</li>
+          <li>The "atz" opening is punchy and attention-grabbing</li>
+          <li>Works for all ages: a child's first note, a performer's career</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>IP Analysis</h3>
+        <p>
+          "Atzlil" is a Hebrew verb conjugation. Close to "Tzlil" which is a known Israeli music
+          brand (tzlil.co.il is taken). However, "Atzlil" is a different word with different meaning
+          (first person future vs. noun). The prefix "a-" creates sufficient distinction.
+          <strong>Low-medium conflict risk.</strong>
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Angle: Future Tense as Promise</h3>
+        <p>
+          The wildcard here is using GRAMMAR as brand strategy. A future-tense verb as a brand
+          name is a promise - not "we are" or "we were" but "I WILL." It shifts the brand identity
+          from the platform to the user. Every musician on Atzlil is making a declaration: I will
+          be heard. That's incredibly powerful positioning.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mini landing preview -->
+    <div class="landing-preview">
+      <div class="preview-nav">
+        <span class="nav-brand" style="font-family: 'Varela Round', sans-serif; color: #0c4a6e;">
+          Atzlil
+        </span>
+        <div class="nav-links">
+          <span>Learn</span>
+          <span>Perform</span>
+          <span>Connect</span>
+        </div>
+        <button class="nav-cta" style="background: linear-gradient(135deg, #0369a1, #7c3aed);">Start Your Journey</button>
+      </div>
+      <div class="preview-hero-section" style="background: linear-gradient(180deg, #f0f9ff 0%, #faf5ff 50%, #fff 100%);">
+        <h2 style="color: #0c4a6e; font-family: 'Varela Round', sans-serif;">Your Sound.<br>Your Future. Your Stage.</h2>
+        <p>A platform built around YOU - the musician, the student, the dreamer. Find your path in music.</p>
+        <a class="hero-cta" href="#" style="background: linear-gradient(135deg, #0369a1, #7c3aed);">I Will Sound</a>
+      </div>
+      <div class="preview-features" style="background: #f8fafc;">
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #f0f9ff; color: #0369a1;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h4>Personalized Learning</h4>
+          <p>AI-matched teachers based on your goals and style</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #f0f9ff; color: #0369a1;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h4>Sheet Music Library</h4>
+          <p>5,000+ compositions across all levels and genres</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #f0f9ff; color: #0369a1;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h4>Progress Tracking</h4>
+          <p>Visualize your musical journey from first note to stage</p>
+        </div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #0369a1; font-family: 'Fredoka';">12,000+</div>
+          <div class="stat-label">Musicians</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #0369a1; font-family: 'Fredoka';">5,000+</div>
+          <div class="stat-label">Compositions</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #0369a1; font-family: 'Fredoka';">85</div>
+          <div class="stat-label">Schools</div>
+        </div>
+      </div>
+      <div class="preview-footer">atzlil.co.il &mdash; I Will Sound.</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-value">7<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Kid-Friendly</div><div class="score-value">6<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Hebrew-Fit</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Global</div><div class="score-value">5<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Brand</div><div class="score-value">8<span class="score-max">/10</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 5. TWANGO                      -->
+  <!-- ============================== -->
+  <section id="twango" class="brand-section brand-twango">
+    <div class="brand-hero">
+      <span class="brand-number">#5</span>
+      <div>
+        <div class="logo-hebrew" style="font-size: 1.6rem; opacity: 0.5;">Onomatopoeia - no Hebrew root</div>
+        <div class="logo-text" style="font-family: 'Fredoka', sans-serif; letter-spacing: -1px;">Twango</div>
+        <div class="tagline">The sound a guitar makes when it means business.</div>
+        <span class="domain-tag">twango.co.il &middot; twango.com</span>
+      </div>
+    </div>
+
+    <div class="brand-info">
+      <div class="info-block">
+        <h3>Why This Name</h3>
+        <p>
+          <strong>Twango</strong> is the sound of a guitar string snapping back - TWANG! - with
+          a playful "o" ending that makes it a character, not just a sound. Think of it: a banjo
+          goes twang, a guitar goes twang, and now your music platform goes TWANGO. It's globally
+          recognizable (twang is understood in English, and the sound is universal), endlessly
+          fun to say, and has the energy of music happening right now.
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Brand Potential</h3>
+        <ul>
+          <li>Universal onomatopoeia - no translation needed</li>
+          <li>The "-o" ending gives it personality (like Waze-o, Shazam-o)</li>
+          <li>Perfect mascot potential: a character called Twango</li>
+          <li>Works for merch, kids' programs, concert branding</li>
+          <li>Highest global appeal of all 5 candidates</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>IP Analysis</h3>
+        <p>
+          "Twango" is not a registered trademark in music/education/tech. "Twang" is a common
+          English word for a string sound, but "Twango" as a branded form is unused. There was
+          a defunct music social network called "Twango" (photo sharing, acquired by Nokia 2007,
+          shut down). Sufficient time has passed for re-registration.
+          <strong>Low-medium conflict risk.</strong>
+        </p>
+      </div>
+      <div class="info-block">
+        <h3>Angle: Global Onomatopoeia</h3>
+        <p>
+          The wildcard here is going GLOBAL-FIRST from Israel. While other names root in Hebrew,
+          Twango roots in the universal language of musical sound. A kid in Tel Aviv and a kid
+          in Tokyo both know what a twang sounds like. This is the "startup nation" angle -
+          an Israeli platform with a name that needs zero explanation anywhere on Earth.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mini landing preview -->
+    <div class="landing-preview">
+      <div class="preview-nav">
+        <span class="nav-brand" style="font-family: 'Fredoka', sans-serif; color: #831843;">Twango</span>
+        <div class="nav-links">
+          <span>Play</span>
+          <span>Learn</span>
+          <span>Connect</span>
+        </div>
+        <button class="nav-cta" style="background: linear-gradient(135deg, #be185d, #0d9488);">Get Twanging</button>
+      </div>
+      <div class="preview-hero-section" style="background: linear-gradient(180deg, #fff1f2 0%, #f0fdfa 50%, #fff 100%);">
+        <h2 style="color: #831843; font-family: 'Fredoka', sans-serif;">Music Starts With<br>One Good TWANG</h2>
+        <p>Israel's most vibrant music community. Teachers, schools, concerts - all in one electric place.</p>
+        <a class="hero-cta" href="#" style="background: linear-gradient(135deg, #be185d, #0d9488);">Start Twanging</a>
+      </div>
+      <div class="preview-features" style="background: #fdf2f8;">
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff1f2; color: #be185d;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <h4>All Instruments</h4>
+          <p>Piano, guitar, violin, oud, drums - find your sound</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff1f2; color: #be185d;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h4>Instant Match</h4>
+          <p>AI pairs you with the perfect teacher in seconds</p>
+        </div>
+        <div class="preview-feature">
+          <div class="feat-icon" style="background: #fff1f2; color: #be185d;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h4>Live Events</h4>
+          <p>Concerts, recitals, open mic nights across Israel</p>
+        </div>
+      </div>
+      <div class="preview-stats">
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #be185d; font-family: 'Fredoka';">12,000+</div>
+          <div class="stat-label">Musicians</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #be185d; font-family: 'Fredoka';">85</div>
+          <div class="stat-label">Schools</div>
+        </div>
+        <div class="preview-stat">
+          <div class="stat-num" style="color: #be185d; font-family: 'Fredoka';">500+</div>
+          <div class="stat-label">Teachers</div>
+        </div>
+      </div>
+      <div class="preview-footer">twango.co.il &mdash; One Good TWANG.</div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-item"><div class="score-label">Memorability</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Kid-Friendly</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Hebrew-Fit</div><div class="score-value">5<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Global</div><div class="score-value">10<span class="score-max">/10</span></div></div>
+      <div class="score-item"><div class="score-label">Brand</div><div class="score-value">9<span class="score-max">/10</span></div></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- COMPARISON TABLE -->
+<section class="comparison-section">
+  <h2>Scorecard Comparison</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th style="text-align: left;">Brand</th>
+        <th>Memorability</th>
+        <th>Kid-Friendly</th>
+        <th>Hebrew-Fit</th>
+        <th>Global</th>
+        <th>Brand</th>
+        <th>Total</th>
+        <th>IP Risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="brand-col" style="color: #10b981;">Hazmir</td>
+        <td>9</td><td>7</td><td>10</td><td>7</td><td>9</td>
+        <td class="total-cell" style="color: #10b981;">42</td>
+        <td><span class="ip-badge ip-low">Low</span></td>
+      </tr>
+      <tr>
+        <td class="brand-col" style="color: #818cf8;">Nignu</td>
+        <td>8</td><td>9</td><td>10</td><td>5</td><td>8</td>
+        <td class="total-cell" style="color: #818cf8;">40</td>
+        <td><span class="ip-badge ip-low">Low</span></td>
+      </tr>
+      <tr>
+        <td class="brand-col" style="color: #f97316;">Zangin</td>
+        <td>10</td><td>9</td><td>8</td><td>9</td><td>9</td>
+        <td class="total-cell" style="color: #f97316;">45</td>
+        <td><span class="ip-badge ip-low">Very Low</span></td>
+      </tr>
+      <tr>
+        <td class="brand-col" style="color: #38bdf8;">Atzlil</td>
+        <td>7</td><td>6</td><td>9</td><td>5</td><td>8</td>
+        <td class="total-cell" style="color: #38bdf8;">35</td>
+        <td><span class="ip-badge ip-med">Low-Med</span></td>
+      </tr>
+      <tr>
+        <td class="brand-col" style="color: #f43f5e;">Twango</td>
+        <td>10</td><td>10</td><td>5</td><td>10</td><td>9</td>
+        <td class="total-cell" style="color: #f43f5e;">44</td>
+        <td><span class="ip-badge ip-med">Low-Med</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>

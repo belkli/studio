@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 import type { ThemeId } from '@/lib/themes/active-theme'
 
 interface BrandThemeContextValue {
@@ -13,14 +13,7 @@ const BrandThemeContext = createContext<BrandThemeContextValue>({
   isThemeB: false,
 })
 
-export function BrandThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeId>('a')
-
-  useEffect(() => {
-    const dt = document.documentElement.dataset.theme
-    if (dt === 'b') setTheme('b')
-  }, [])
-
+export function BrandThemeProvider({ theme, children }: { theme: ThemeId; children: ReactNode }) {
   return (
     <BrandThemeContext.Provider value={{ theme, isThemeB: theme === 'b' }}>
       {children}

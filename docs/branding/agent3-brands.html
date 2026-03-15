@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent 3 — Playful &amp; Fun Brand Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Righteous&family=Poppins:wght@300;400;500;600;700&family=Varela+Round&family=Nunito+Sans:wght@300;400;500;600;700&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #0a0a1a;
+    color: #f0f0f0;
+    overflow-x: hidden;
+  }
+
+  /* === AGENT HEADER === */
+  .agent-header {
+    text-align: center;
+    padding: 60px 24px 40px;
+    background: linear-gradient(135deg, #1a0533 0%, #0d0d2b 50%, #0a1628 100%);
+    border-bottom: 3px solid #7c3aed;
+  }
+  .agent-header h1 {
+    font-family: 'Righteous', sans-serif;
+    font-size: 48px;
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .agent-header .subtitle {
+    font-size: 20px;
+    color: #c4b5fd;
+    font-weight: 300;
+  }
+  .agent-header .angle-badge {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 8px 24px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* === BRAND SECTION === */
+  .brand-section {
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-section:nth-child(odd) {
+    background: #0f0f23;
+  }
+  .brand-section:nth-child(even) {
+    background: #0a0a1a;
+  }
+
+  .brand-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* === BRAND HEADER === */
+  .brand-number {
+    font-family: 'Righteous', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+  .brand-name-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .hebrew-name {
+    font-size: 36px;
+    font-weight: 700;
+    direction: rtl;
+  }
+  .domain-tag {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #22c55e20;
+    color: #4ade80;
+    border: 1px solid #22c55e40;
+  }
+  .brand-tagline {
+    font-size: 16px;
+    opacity: 0.7;
+    margin-bottom: 40px;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* === HERO MOCKUP === */
+  .hero-mockup {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+    margin-bottom: 40px;
+  }
+  .hero-mockup .hero-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .hero-mockup h2 {
+    font-size: 56px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero-mockup .hero-sub {
+    font-size: 20px;
+    margin-bottom: 32px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .hero-mockup .cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-mockup .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hero-mockup .cta-btn:hover {
+    transform: translateY(-2px);
+  }
+  .hero-mockup .cta-secondary {
+    background: transparent;
+    border: 2px solid;
+  }
+
+  /* Floating decorations */
+  .float-element {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  /* === PALETTE & DETAILS ROW === */
+  .details-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .palette-card, .info-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .palette-card h3, .info-card h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+
+  .color-swatches {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch-label {
+    font-size: 11px;
+    text-align: center;
+    margin-top: 6px;
+    opacity: 0.6;
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+  }
+  .score-item .label { font-size: 13px; opacity: 0.7; }
+  .score-item .value {
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .font-preview {
+    margin-top: 16px;
+  }
+  .font-preview .heading-font {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .font-preview .body-font {
+    font-size: 15px;
+    opacity: 0.6;
+    line-height: 1.5;
+  }
+
+  .domain-list {
+    list-style: none;
+    margin-top: 12px;
+  }
+  .domain-list li {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+  }
+  .domain-list .status-available {
+    color: #4ade80;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .domain-list .status-taken {
+    color: #f87171;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  /* === OVERALL SCORES TABLE === */
+  .scores-section {
+    padding: 80px 24px;
+    background: linear-gradient(135deg, #0d0d2b 0%, #1a0533 100%);
+  }
+  .scores-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .scores-section h2 {
+    font-family: 'Righteous', sans-serif;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    font-weight: 600;
+  }
+  td { font-size: 15px; }
+  td:first-child { font-weight: 600; }
+  .score-high { color: #4ade80; font-weight: 700; }
+  .score-mid { color: #facc15; font-weight: 700; }
+  .score-low { color: #f87171; font-weight: 700; }
+  tr:last-child td {
+    font-size: 18px;
+    font-weight: 700;
+    border-top: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .winner-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: 8px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: white;
+  }
+
+  /* === MUSICAL NOTE DECORATIONS === */
+  .note-float {
+    position: absolute;
+    font-size: 48px;
+    opacity: 0.06;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .details-row { grid-template-columns: 1fr; }
+    .hero-mockup h2 { font-size: 36px; }
+    .hero-mockup { padding: 40px 24px; min-height: 400px; }
+    .agent-header h1 { font-size: 32px; }
+    .score-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ================================ */
+  /* BRAND 1: TumTum                  */
+  /* ================================ */
+  .tumtum-hero {
+    background: linear-gradient(145deg, #FF6B9D 0%, #C850C0 40%, #7B2FF7 80%, #4A1FB8 100%);
+    font-family: 'Fredoka', sans-serif;
+  }
+  .tumtum-hero .hero-badge {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    backdrop-filter: blur(8px);
+  }
+  .tumtum-hero h2 {
+    font-family: 'Fredoka', sans-serif;
+    color: white;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .tumtum-hero .hero-sub { color: rgba(255,255,255,0.9); }
+  .tumtum-hero .cta-btn.primary {
+    background: white;
+    color: #7B2FF7;
+    box-shadow: 0 8px 30px rgba(123,47,247,0.3);
+    border-radius: 50px;
+  }
+  .tumtum-hero .cta-btn.primary:hover {
+    box-shadow: 0 12px 40px rgba(123,47,247,0.4);
+  }
+  .tumtum-hero .cta-secondary {
+    color: white;
+    border-color: rgba(255,255,255,0.5);
+    border-radius: 50px;
+  }
+  .tumtum-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.15);
+  }
+
+  /* ================================ */
+  /* BRAND 2: TingAling               */
+  /* ================================ */
+  .tingaling-hero {
+    background: #FFFBEB;
+    font-family: 'Baloo 2', sans-serif;
+    position: relative;
+  }
+  .tingaling-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FDE68A 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tingaling-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #A7F3D0 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tingaling-hero .hero-badge {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 2px solid #FDE68A;
+  }
+  .tingaling-hero h2 {
+    font-family: 'Baloo 2', sans-serif;
+    color: #1E1B4B;
+  }
+  .tingaling-hero .hero-sub { color: #64748B; }
+  .tingaling-hero .cta-btn.primary {
+    background: #F59E0B;
+    color: white;
+    box-shadow: 0 8px 30px rgba(245,158,11,0.3);
+    border-radius: 16px;
+  }
+  .tingaling-hero .cta-secondary {
+    color: #F59E0B;
+    border-color: #F59E0B;
+    border-radius: 16px;
+  }
+  /* Floating bell shapes */
+  .ting-bell {
+    position: absolute;
+    width: 40px; height: 40px;
+    background: #FDE68A;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  /* ================================ */
+  /* BRAND 3: ZingZong                */
+  /* ================================ */
+  .zingzong-hero {
+    background: #0F172A;
+    font-family: 'Righteous', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  .zingzong-stripe {
+    position: absolute;
+    height: 8px;
+    transform: skewY(-3deg);
+    pointer-events: none;
+  }
+  .zingzong-hero .hero-badge {
+    background: linear-gradient(135deg, #06B6D4, #8B5CF6);
+    color: white;
+  }
+  .zingzong-hero h2 {
+    font-family: 'Righteous', sans-serif;
+    color: white;
+    font-size: 64px;
+    letter-spacing: -1px;
+  }
+  .zingzong-hero .hero-sub {
+    color: #94A3B8;
+    font-family: 'Poppins', sans-serif;
+  }
+  .zingzong-hero .cta-btn.primary {
+    background: linear-gradient(135deg, #06B6D4, #8B5CF6);
+    color: white;
+    box-shadow: 0 8px 30px rgba(139,92,246,0.4);
+    border-radius: 14px;
+  }
+  .zingzong-hero .cta-secondary {
+    color: #06B6D4;
+    border-color: #06B6D4;
+    border-radius: 14px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* ================================ */
+  /* BRAND 4: KolKol                  */
+  /* ================================ */
+  .kolkol-hero {
+    background: linear-gradient(150deg, #FFF1F2 0%, #FFF7ED 50%, #ECFDF5 100%);
+    font-family: 'Varela Round', sans-serif;
+    position: relative;
+  }
+  .kolkol-hero .hero-badge {
+    background: #E0E7FF;
+    color: #4338CA;
+    border: 2px solid #C7D2FE;
+  }
+  .kolkol-hero h2 {
+    font-family: 'Fredoka', sans-serif;
+    color: #1E1B4B;
+  }
+  .kolkol-hero .hero-sub {
+    color: #475569;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  .kolkol-hero .cta-btn.primary {
+    background: #4F46E5;
+    color: white;
+    box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+    border-radius: 50px;
+  }
+  .kolkol-hero .cta-secondary {
+    color: #4F46E5;
+    border-color: #4F46E5;
+    border-radius: 50px;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  .kolkol-blob {
+    position: absolute;
+    border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  /* === LOGO SVG STYLES === */
+  .logo-area {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .logo-area svg {
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+  }
+
+  /* === FEATURES MINI STRIP === */
+  .features-strip {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+    position: relative;
+    z-index: 2;
+  }
+  .feature-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .feature-chip svg { width: 18px; height: 18px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============ AGENT HEADER ============ -->
+<header class="agent-header">
+  <h1>Agent 3 Brand Proposals</h1>
+  <div class="subtitle">4 playful, fun, unforgettable music platform brands</div>
+  <div class="angle-badge">Playful &amp; Fun Energy</div>
+</header>
+
+<!-- ============ BRAND 1: TumTum ============ -->
+<section class="brand-section" id="tumtum">
+  <div class="brand-container">
+    <div class="brand-number">Brand Candidate 01</div>
+    <div class="brand-name-row">
+      <h2 style="font-family:'Fredoka',sans-serif; font-size:48px; background: linear-gradient(135deg, #FF6B9D, #7B2FF7); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">TumTum</h2>
+      <span class="hebrew-name" style="color:#C850C0;">טום-טום</span>
+      <span class="domain-tag">tumtum.co.il AVAILABLE</span>
+    </div>
+    <div class="brand-tagline">
+      The sound of a drum, the beat of your heart. "TumTum" is Hebrew onomatopoeia for drumming —
+      universally understood, impossibly fun to say, and captures the pulse of music itself.
+      In Hebrew slang, "tum" also evokes "innocence" (tam/tom), giving it warmth.
+    </div>
+
+    <!-- Hero Mockup -->
+    <div class="hero-mockup tumtum-hero">
+      <div class="tumtum-circle" style="width:300px;height:300px;top:-80px;right:-60px;"></div>
+      <div class="tumtum-circle" style="width:200px;height:200px;bottom:-40px;left:-30px;"></div>
+      <div class="tumtum-circle" style="width:120px;height:120px;top:40%;left:10%;"></div>
+
+      <div class="logo-area">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" fill="white" fill-opacity="0.95"/>
+          <circle cx="40" cy="40" r="28" fill="#C850C0" fill-opacity="0.15"/>
+          <circle cx="40" cy="40" r="20" fill="#7B2FF7" fill-opacity="0.2"/>
+          <circle cx="40" cy="40" r="12" fill="white"/>
+          <path d="M35 32 L35 52 M45 28 L45 52" stroke="#7B2FF7" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="33" cy="52" rx="6" ry="4" fill="#7B2FF7"/>
+          <ellipse cx="43" cy="52" rx="6" ry="4" fill="#C850C0"/>
+        </svg>
+      </div>
+
+      <div class="hero-badge">The rhythm of Israel's music scene</div>
+      <h2>Feel the TumTum.</h2>
+      <div class="hero-sub">Lessons, concerts, musicians for hire — everything music in one playful platform.</div>
+      <div class="cta-row">
+        <button class="cta-btn primary">Start Playing</button>
+        <button class="cta-btn cta-secondary">Explore Musicians</button>
+      </div>
+
+      <div class="features-strip">
+        <div class="feature-chip" style="background:rgba(255,255,255,0.2); color:white;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          85+ Schools
+        </div>
+        <div class="feature-chip" style="background:rgba(255,255,255,0.2); color:white;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          500+ Musicians
+        </div>
+        <div class="feature-chip" style="background:rgba(255,255,255,0.2); color:white;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Live Concerts
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Row -->
+    <div class="details-row">
+      <div class="palette-card">
+        <h3>Color Palette</h3>
+        <div class="color-swatches">
+          <div>
+            <div class="swatch" style="background:#FF6B9D;"></div>
+            <div class="swatch-label">Rosie</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#C850C0;"></div>
+            <div class="swatch-label">Orchid</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#7B2FF7;"></div>
+            <div class="swatch-label">Violet</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#4A1FB8;"></div>
+            <div class="swatch-label">Deep</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#FFFFFF; border-color:#ddd;"></div>
+            <div class="swatch-label">White</div>
+          </div>
+        </div>
+        <div class="font-preview" style="font-family:'Fredoka',sans-serif;">
+          <div class="heading-font">Fredoka Bold — Headings</div>
+          <div class="body-font" style="font-family:'Nunito',sans-serif;">Nunito — Body text feels warm and friendly, perfect for all ages. Rounded letterforms match the TumTum vibe.</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Domain Availability</h3>
+        <ul class="domain-list">
+          <li><span>tumtum.co.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>tumtum.org.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>tumtum.com</span> <span class="status-taken">TAKEN</span></li>
+          <li><span>tumtum.io</span> <span class="status-taken">TAKEN</span></li>
+        </ul>
+        <h3 style="margin-top:24px;">Scores</h3>
+        <div class="score-grid">
+          <div class="score-item"><span class="label">Memorable</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">HE+EN</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">No IP Risk</span><span class="value score-mid">7</span></div>
+          <div class="score-item"><span class="label">Domain</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">All Ages</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">Smile Factor</span><span class="value score-high">10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND 2: TingAling ============ -->
+<section class="brand-section" id="tingaling">
+  <div class="brand-container">
+    <div class="brand-number">Brand Candidate 02</div>
+    <div class="brand-name-row">
+      <h2 style="font-family:'Baloo 2',sans-serif; font-size:48px; color:#F59E0B;">TingAling</h2>
+      <span class="hebrew-name" style="color:#D97706;">טינג-אלינג</span>
+      <span class="domain-tag">tingaling.co.il AVAILABLE</span>
+    </div>
+    <div class="brand-tagline">
+      The delightful sound of a triangle or bell chime — universally recognized and instantly joyful.
+      "Ting-a-ling" makes you think of music class, doorbells, ice cream trucks — all warm memories.
+      Short, rhythmic, impossible NOT to smile when you say it out loud.
+    </div>
+
+    <!-- Hero Mockup -->
+    <div class="hero-mockup tingaling-hero">
+      <div class="ting-bell" style="top:15%;left:8%;width:50px;height:50px;transform:rotate(-15deg);"></div>
+      <div class="ting-bell" style="top:25%;right:12%;width:35px;height:35px;transform:rotate(20deg);opacity:0.15;"></div>
+      <div class="ting-bell" style="bottom:20%;left:15%;width:28px;height:28px;transform:rotate(10deg);opacity:0.12;"></div>
+      <div class="ting-bell" style="bottom:30%;right:8%;width:45px;height:45px;transform:rotate(-8deg);opacity:0.1;"></div>
+
+      <div class="logo-area">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" fill="#FEF3C7"/>
+          <path d="M40 16 L40 48" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+          <path d="M28 48 L52 48" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="40" cy="52" r="5" fill="#F59E0B"/>
+          <!-- Bell shape -->
+          <path d="M28 48 Q28 30 40 24 Q52 30 52 48" fill="#FBBF24" fill-opacity="0.4" stroke="#F59E0B" stroke-width="2"/>
+          <!-- Sound waves -->
+          <path d="M58 30 Q64 36 58 42" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+          <path d="M22 30 Q16 36 22 42" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        </svg>
+      </div>
+
+      <div class="hero-badge">Ring in a new era of music</div>
+      <h2 style="color:#1E1B4B;">Ting-a-ling!<br>Your Music Awaits.</h2>
+      <div class="hero-sub">Find teachers, book concerts, hire musicians. Israel's happiest music platform.</div>
+      <div class="cta-row">
+        <button class="cta-btn primary">Ring the Bell</button>
+        <button class="cta-btn cta-secondary">Browse Concerts</button>
+      </div>
+
+      <div class="features-strip">
+        <div class="feature-chip" style="background:#FEF3C7; color:#92400E; border:2px solid #FDE68A;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Learn Music
+        </div>
+        <div class="feature-chip" style="background:#ECFDF5; color:#065F46; border:2px solid #A7F3D0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Hire Musicians
+        </div>
+        <div class="feature-chip" style="background:#EDE9FE; color:#5B21B6; border:2px solid #DDD6FE;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Get Tickets
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Row -->
+    <div class="details-row">
+      <div class="palette-card">
+        <h3>Color Palette</h3>
+        <div class="color-swatches">
+          <div>
+            <div class="swatch" style="background:#F59E0B;"></div>
+            <div class="swatch-label">Amber</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#FBBF24;"></div>
+            <div class="swatch-label">Gold</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#34D399;"></div>
+            <div class="swatch-label">Mint</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#8B5CF6;"></div>
+            <div class="swatch-label">Violet</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#FFFBEB; border-color:#FDE68A;"></div>
+            <div class="swatch-label">Cream</div>
+          </div>
+        </div>
+        <div class="font-preview" style="font-family:'Baloo 2',sans-serif;">
+          <div class="heading-font">Baloo 2 Bold — Headings</div>
+          <div class="body-font" style="font-family:'Nunito',sans-serif;">Nunito — Warm, rounded, friendly. Baloo 2 adds an extra dose of personality and playfulness to headlines.</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Domain Availability</h3>
+        <ul class="domain-list">
+          <li><span>tingaling.co.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>tingaling.org.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>tingaling.io</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>tingaling.com</span> <span class="status-taken">TAKEN (parked)</span></li>
+        </ul>
+        <h3 style="margin-top:24px;">Scores</h3>
+        <div class="score-grid">
+          <div class="score-item"><span class="label">Memorable</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">HE+EN</span><span class="value score-mid">7</span></div>
+          <div class="score-item"><span class="label">No IP Risk</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">Domain</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">All Ages</span><span class="value score-high">8</span></div>
+          <div class="score-item"><span class="label">Smile Factor</span><span class="value score-high">9</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND 3: ZingZong ============ -->
+<section class="brand-section" id="zingzong">
+  <div class="brand-container">
+    <div class="brand-number">Brand Candidate 03</div>
+    <div class="brand-name-row">
+      <h2 style="font-family:'Righteous',sans-serif; font-size:48px; background: linear-gradient(135deg, #06B6D4, #8B5CF6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">ZingZong</h2>
+      <span class="hebrew-name" style="color:#06B6D4;">זינג-זונג</span>
+      <span class="domain-tag">zingzong.co.il + .io AVAILABLE</span>
+    </div>
+    <div class="brand-tagline">
+      "Zing" = energy, excitement. "Zong" = a playful twist on "song." Together: electric music energy.
+      The Z-Z alliteration makes it stick in your head. Works as a verb: "Let's ZingZong tonight!"
+      Modern, edgy-fun — appeals to teens AND adults who don't take themselves too seriously.
+    </div>
+
+    <!-- Hero Mockup -->
+    <div class="hero-mockup zingzong-hero">
+      <div class="zingzong-stripe" style="width:100%;top:20%;left:0;background:linear-gradient(90deg,transparent,#06B6D4,transparent);opacity:0.08;"></div>
+      <div class="zingzong-stripe" style="width:100%;top:50%;left:0;background:linear-gradient(90deg,transparent,#8B5CF6,transparent);opacity:0.06;"></div>
+      <div class="zingzong-stripe" style="width:100%;top:75%;left:0;background:linear-gradient(90deg,transparent,#EC4899,transparent);opacity:0.05;"></div>
+
+      <div class="logo-area">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <rect x="4" y="4" width="72" height="72" rx="16" fill="url(#zz-grad)"/>
+          <!-- Z lightning bolt shape -->
+          <path d="M28 24 L50 24 L34 42 L54 42 L30 60 L38 44 L24 44 Z" fill="white" fill-opacity="0.95"/>
+          <!-- Sound waves -->
+          <circle cx="58" cy="28" r="4" fill="#06B6D4" opacity="0.6"/>
+          <circle cx="64" cy="36" r="3" fill="#8B5CF6" opacity="0.4"/>
+          <circle cx="60" cy="20" r="2.5" fill="#EC4899" opacity="0.5"/>
+          <defs>
+            <linearGradient id="zz-grad" x1="0" y1="0" x2="80" y2="80">
+              <stop offset="0%" stop-color="#06B6D4"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="hero-badge">Where music gets electric</div>
+      <h2>Zing it.<br>Zong it.</h2>
+      <div class="hero-sub">Israel's all-in-one music platform. Learn. Perform. Hire. Experience.</div>
+      <div class="cta-row">
+        <button class="cta-btn primary">Get Zinging</button>
+        <button class="cta-btn cta-secondary">Find a Gig</button>
+      </div>
+
+      <div class="features-strip">
+        <div class="feature-chip" style="background:rgba(6,182,212,0.15); color:#06B6D4; border:1px solid rgba(6,182,212,0.3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          85+ Schools
+        </div>
+        <div class="feature-chip" style="background:rgba(139,92,246,0.15); color:#A78BFA; border:1px solid rgba(139,92,246,0.3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Musicians
+        </div>
+        <div class="feature-chip" style="background:rgba(236,72,153,0.15); color:#F472B6; border:1px solid rgba(236,72,153,0.3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Live Events
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Row -->
+    <div class="details-row">
+      <div class="palette-card">
+        <h3>Color Palette</h3>
+        <div class="color-swatches">
+          <div>
+            <div class="swatch" style="background:#06B6D4;"></div>
+            <div class="swatch-label">Cyan</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#8B5CF6;"></div>
+            <div class="swatch-label">Violet</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#EC4899;"></div>
+            <div class="swatch-label">Pink</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#0F172A;"></div>
+            <div class="swatch-label">Dark</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#F8FAFC;"></div>
+            <div class="swatch-label">Light</div>
+          </div>
+        </div>
+        <div class="font-preview" style="font-family:'Righteous',sans-serif;">
+          <div class="heading-font">Righteous — Headings</div>
+          <div class="body-font" style="font-family:'Poppins',sans-serif;">Poppins — Modern, clean, geometric. The Righteous + Poppins combo brings bold entertainment energy with professional readability.</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Domain Availability</h3>
+        <ul class="domain-list">
+          <li><span>zingzong.co.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>zingzong.org.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>zingzong.io</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>zingzong.com</span> <span class="status-taken">TAKEN</span></li>
+        </ul>
+        <h3 style="margin-top:24px;">Scores</h3>
+        <div class="score-grid">
+          <div class="score-item"><span class="label">Memorable</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">HE+EN</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">No IP Risk</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">Domain</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">All Ages</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">Smile Factor</span><span class="value score-high">9</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND 4: KolKol ============ -->
+<section class="brand-section" id="kolkol">
+  <div class="brand-container">
+    <div class="brand-number">Brand Candidate 04</div>
+    <div class="brand-name-row">
+      <h2 style="font-family:'Fredoka',sans-serif; font-size:48px; color:#4F46E5;">KolKol</h2>
+      <span class="hebrew-name" style="color:#7C3AED;">קול-קול</span>
+      <span class="domain-tag">kolkol.co.il AVAILABLE</span>
+    </div>
+    <div class="brand-tagline">
+      "Kol" (קול) means "voice" and "sound" in Hebrew. Doubled = "every voice, every sound."
+      Deep Hebrew meaning + playful repetition = perfect dual-language brand. Also echoes "call-call" in English.
+      The most culturally rooted name that still feels modern, playful, and internationally appealing.
+    </div>
+
+    <!-- Hero Mockup -->
+    <div class="hero-mockup kolkol-hero">
+      <div class="kolkol-blob" style="width:300px;height:300px;top:-100px;right:-50px;background:#C7D2FE;"></div>
+      <div class="kolkol-blob" style="width:250px;height:250px;bottom:-80px;left:-60px;background:#FECDD3;"></div>
+      <div class="kolkol-blob" style="width:180px;height:180px;top:40%;left:5%;background:#A7F3D0;opacity:0.1;"></div>
+
+      <div class="logo-area">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" fill="white" stroke="#E0E7FF" stroke-width="2"/>
+          <!-- Two overlapping sound waves = two "kol" -->
+          <circle cx="32" cy="40" r="14" fill="#EDE9FE" stroke="#4F46E5" stroke-width="2"/>
+          <circle cx="48" cy="40" r="14" fill="#DBEAFE" stroke="#7C3AED" stroke-width="2"/>
+          <!-- Overlap area -->
+          <path d="M40 28 A14 14 0 0 0 40 52 A14 14 0 0 0 40 28" fill="#C7D2FE" opacity="0.6"/>
+          <!-- Musical note in center -->
+          <path d="M40 34 L40 48" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="37" cy="48" r="3.5" fill="#4F46E5"/>
+          <path d="M40 34 L46 32 L46 38" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="hero-badge">Every voice. Every sound.</div>
+      <h2 style="font-size:52px;">KolKol.<br>Your Sound, Amplified.</h2>
+      <div class="hero-sub">Israel's music ecosystem — learn, teach, perform, celebrate. All voices welcome.</div>
+      <div class="cta-row">
+        <button class="cta-btn primary">Find Your Sound</button>
+        <button class="cta-btn cta-secondary">Explore Platform</button>
+      </div>
+
+      <div class="features-strip">
+        <div class="feature-chip" style="background:white; color:#4F46E5; border:2px solid #E0E7FF; box-shadow:0 2px 8px rgba(79,70,229,0.1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Music Schools
+        </div>
+        <div class="feature-chip" style="background:white; color:#7C3AED; border:2px solid #EDE9FE; box-shadow:0 2px 8px rgba(124,58,237,0.1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Musicians
+        </div>
+        <div class="feature-chip" style="background:white; color:#EC4899; border:2px solid #FCE7F3; box-shadow:0 2px 8px rgba(236,72,153,0.1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Concerts
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Row -->
+    <div class="details-row">
+      <div class="palette-card">
+        <h3>Color Palette</h3>
+        <div class="color-swatches">
+          <div>
+            <div class="swatch" style="background:#4F46E5;"></div>
+            <div class="swatch-label">Indigo</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#7C3AED;"></div>
+            <div class="swatch-label">Purple</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#EC4899;"></div>
+            <div class="swatch-label">Pink</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#34D399;"></div>
+            <div class="swatch-label">Emerald</div>
+          </div>
+          <div>
+            <div class="swatch" style="background:#FFF1F2; border-color:#FECDD3;"></div>
+            <div class="swatch-label">Blush</div>
+          </div>
+        </div>
+        <div class="font-preview" style="font-family:'Fredoka',sans-serif;">
+          <div class="heading-font">Fredoka — Headings</div>
+          <div class="body-font" style="font-family:'Nunito Sans',sans-serif;">Nunito Sans — Clean and readable body text with rounded warmth. Fredoka headings bring the playfulness; Nunito Sans keeps it professional.</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Domain Availability</h3>
+        <ul class="domain-list">
+          <li><span>kolkol.co.il</span> <span class="status-available">AVAILABLE</span></li>
+          <li><span>kolkol.org.il</span> <span class="status-available">AVAILABLE (likely)</span></li>
+          <li><span>kolkol.com</span> <span class="status-taken">TAKEN</span></li>
+          <li><span>kolkol.io</span> <span class="status-available">CHECK</span></li>
+        </ul>
+        <h3 style="margin-top:24px;">Scores</h3>
+        <div class="score-grid">
+          <div class="score-item"><span class="label">Memorable</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">HE+EN</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">No IP Risk</span><span class="value score-high">9</span></div>
+          <div class="score-item"><span class="label">Domain</span><span class="value score-high">8</span></div>
+          <div class="score-item"><span class="label">All Ages</span><span class="value score-high">10</span></div>
+          <div class="score-item"><span class="label">Smile Factor</span><span class="value score-high">8</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPARISON TABLE ============ -->
+<section class="scores-section">
+  <div class="scores-container">
+    <h2>Final Scoring Comparison</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th>TumTum</th>
+          <th>TingAling</th>
+          <th>ZingZong</th>
+          <th>KolKol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Memorable / Catchy</td>
+          <td class="score-high">10</td>
+          <td class="score-high">9</td>
+          <td class="score-high">10</td>
+          <td class="score-high">9</td>
+        </tr>
+        <tr>
+          <td>Works in HE + EN</td>
+          <td class="score-high">10</td>
+          <td class="score-mid">7</td>
+          <td class="score-high">9</td>
+          <td class="score-high">10</td>
+        </tr>
+        <tr>
+          <td>No IP / Trademark Risk</td>
+          <td class="score-mid">7</td>
+          <td class="score-high">9</td>
+          <td class="score-high">9</td>
+          <td class="score-high">9</td>
+        </tr>
+        <tr>
+          <td>Domain Available (.co.il)</td>
+          <td class="score-high">9</td>
+          <td class="score-high">9</td>
+          <td class="score-high">10</td>
+          <td class="score-high">8</td>
+        </tr>
+        <tr>
+          <td>Attracts All Ages</td>
+          <td class="score-high">9</td>
+          <td class="score-high">8</td>
+          <td class="score-high">9</td>
+          <td class="score-high">10</td>
+        </tr>
+        <tr>
+          <td>Smile / Warmth Factor</td>
+          <td class="score-high">10</td>
+          <td class="score-high">9</td>
+          <td class="score-high">9</td>
+          <td class="score-high">8</td>
+        </tr>
+        <tr>
+          <td>TOTAL <span class="winner-badge">WINNER</span></td>
+          <td class="score-high">55</td>
+          <td>51</td>
+          <td class="score-high">56 <span class="winner-badge">TOP PICK</span></td>
+          <td class="score-high">54</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:48px; text-align:center; padding:32px; background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid rgba(255,255,255,0.08);">
+      <div style="font-size:14px; text-transform:uppercase; letter-spacing:2px; opacity:0.5; margin-bottom:12px;">Agent 3 Top Pick</div>
+      <div style="font-family:'Righteous',sans-serif; font-size:48px; background: linear-gradient(135deg, #06B6D4, #8B5CF6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px;">ZingZong</div>
+      <div style="font-size:16px; opacity:0.6; max-width:600px; margin:0 auto; line-height:1.6;">
+        Best domain availability (.co.il + .io + .org.il all free), highest memorability,
+        strong bilingual appeal, modern-fun positioning that works for all ages.
+        Runner-up: TumTum (deeper Hebrew roots, incredible smile factor).
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
