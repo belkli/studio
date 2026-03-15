@@ -23,7 +23,7 @@
       "submissionDate": "Submission Date",
       "colorModeLightLabel": "Switch to dark mode",
       "colorModeDarkLabel": "Switch to system mode",
-      "colorModeSystemLabel": "Switch to light mode"
+      "colorModeSystemLabel": "Switch to dark mode"
     },
     "errors": {
       "generalTitle": "Something went wrong",

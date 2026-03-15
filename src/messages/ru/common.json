@@ -23,7 +23,7 @@
       "submissionDate": "Дата подачи",
       "colorModeLightLabel": "Переключить на тёмный режим",
       "colorModeDarkLabel": "Переключить на системные настройки",
-      "colorModeSystemLabel": "Переключить на светлый режим"
+      "colorModeSystemLabel": "Переключить на тёмный режим"
     },
     "errors": {
       "generalTitle": "Что-то пошло не так",

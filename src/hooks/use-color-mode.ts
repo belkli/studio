@@ -28,22 +28,20 @@ function readStoredPreference(): ColorModePreference {
   return 'system'
 }
 
-function isSystemDark(): boolean {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-}
-
 export function useColorMode() {
   const [preference, setPreference] = useState<ColorModePreference>(() => {
     if (typeof window === 'undefined') return 'system'
     return readStoredPreference()
   })
+  const [systemDark, setSystemDark] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = () => {
-      if (readStoredPreference() === 'system') {
-        setPreference('system')
-      }
+      setSystemDark(mq.matches)
     }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
@@ -78,7 +76,7 @@ export function useColorMode() {
 
   const isDark =
     preference === 'dark' ||
-    (preference === 'system' && typeof window !== 'undefined' && isSystemDark())
+    (preference === 'system' && systemDark)
 
   return { preference, setMode, isDark }
 }

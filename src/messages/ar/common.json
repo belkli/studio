@@ -23,7 +23,7 @@
       "submissionDate": "تاريخ التقديم",
       "colorModeLightLabel": "التبديل إلى الوضع الداكن",
       "colorModeDarkLabel": "التبديل إلى إعدادات النظام",
-      "colorModeSystemLabel": "التبديل إلى الوضع الفاتح"
+      "colorModeSystemLabel": "التبديل إلى الوضع الداكن"
     },
     "errors": {
       "generalTitle": "حدث خطأ ما",
