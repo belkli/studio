@@ -45,7 +45,7 @@ export function LoginForm() {
   const callbackUrl = sanitizeCallbackUrl(searchParams.get('callbackUrl'))
   const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
   const { brand } = useBrandTheme()
-  const s = LOGIN_FORM_STYLES[brand]
+  const s = LOGIN_FORM_STYLES[brand] ?? LOGIN_FORM_STYLES.indigo
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

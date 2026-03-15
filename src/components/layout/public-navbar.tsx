@@ -38,7 +38,7 @@ export function PublicNavbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const { brand } = useBrandTheme();
-    const s = NAVBAR_STYLES[brand];
+    const s = NAVBAR_STYLES[brand] ?? NAVBAR_STYLES.indigo;
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect

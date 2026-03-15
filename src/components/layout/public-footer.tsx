@@ -23,7 +23,7 @@ export function PublicFooter() {
     const tHome = useTranslations('HomePage');
     const tAccessibility = useTranslations('AccessibilityPage');
     const { brand } = useBrandTheme();
-    const s = FOOTER_STYLES[brand];
+    const s = FOOTER_STYLES[brand] ?? FOOTER_STYLES.indigo;
 
     return (
         <footer className={cn('flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 mt-auto', s.container)}>
