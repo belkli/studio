@@ -10,7 +10,7 @@
       "tokenPlaceholder": "Enter token...",
       "go": "Go",
       "title": "Who is registering?",
-      "subtitle": "Fill in details to join Harmonia.",
+      "subtitle": "Fill in details to join Lyriosa.",
       "parent": "I am registering my child",
       "self": "I am registering myself (age 13+)",
       "playingSchool": "I'm registering for the Playing School program",
@@ -184,7 +184,7 @@
       "title": "Registration Agreement",
       "subtitle": "Please read the full agreement and mark your consents before signing.",
       "s1Title": "Definitions",
-      "s1Body": "\"The Conservatory\" — the institution detailed in the addendum. \"Harmonia Platform\" — the digital music education management system. \"The Student\" — the person registering for lessons. \"Parent/Guardian\" — a legal parent of a minor under 18. \"Tuition\" — the monthly payment including {vatRate}% VAT as detailed in the conservatory addendum.",
+      "s1Body": "\"The Conservatory\" — the institution detailed in the addendum. \"Lyriosa Platform\" — the digital music education management system. \"The Student\" — the person registering for lessons. \"Parent/Guardian\" — a legal parent of a minor under 18. \"Tuition\" — the monthly payment including {vatRate}% VAT as detailed in the conservatory addendum.",
       "s2Title": "Service Terms",
       "s2Body": "Tuition includes {vatRate}% VAT. Studies include, by track: weekly individual lesson, music theory, ensemble playing, concerts, and enrichment activities. Minimum 33 lessons per year. Teacher assignment is at the conservatory management's discretion. In security situations/force majeure — lessons will move to online format and will count as lessons.",
       "s3Title": "Absences and Make-up Lessons",
@@ -194,13 +194,13 @@
       "s5Title": "14-Day Cancellation Right — Consumer Protection Law",
       "s5Body": "When registration was completed remotely (online, by email), the consumer has a legal right to cancel within 14 days of the transaction, without giving a reason. Money will be refunded within 14 days of receiving the cancellation notice, minus a pro-rata deduction for lessons already given. Lessons already taken cannot be cancelled.",
       "s6Title": "Privacy Protection and Data Processing",
-      "s6Body": "Harmonia Platform and the conservatory collect: identity (name, ID, date of birth), contact (phone, email), pedagogical information (lessons, attendance, teacher notes), financial (credit token only via Cardcom), and media (practice recordings with consent only). Sub-processors: Google Cloud/Firebase (Belgium), Cardcom (Israel), Twilio/SendGrid (US/Europe), Google AI/Gemini. Student records kept 7 years from end of studies; financial records — 7 years.",
+      "s6Body": "Lyriosa Platform and the conservatory collect: identity (name, ID, date of birth), contact (phone, email), pedagogical information (lessons, attendance, teacher notes), financial (credit token only via Cardcom), and media (practice recordings with consent only). Sub-processors: Google Cloud/Firebase (Belgium), Cardcom (Israel), Twilio/SendGrid (US/Europe), Google AI/Gemini. Student records kept 7 years from end of studies; financial records — 7 years.",
       "s7Title": "Data Subject Rights (DSAR)",
-      "s7Body": "Right of access: to receive a copy of all information stored about you. Right to rectification: to correct inaccurate information. Right to erasure: subject to legal retention obligations. Right to withdraw consent: to cancel consent to marketing/recordings at any time. Contact: privacy@harmonia.co.il — response within 30 days (extendable to 60 in justified circumstances).",
+      "s7Body": "Right of access: to receive a copy of all information stored about you. Right to rectification: to correct inaccurate information. Right to erasure: subject to legal retention obligations. Right to withdraw consent: to cancel consent to marketing/recordings at any time. Contact: privacy@lyriosa.co.il — response within 30 days (extendable to 60 in justified circumstances).",
       "s8Title": "Ownership of Content and Recordings",
-      "s8Body": "Practice recordings (home practice): these are the exclusive property of the student. Harmonia and the conservatory will not use them for marketing, advertising, or AI training. Access is limited to the student, parent, and the relevant teacher only. Event/concert recordings and photos (concerts, performances, open days): these are works of the conservatory and are used for documentation and routine publication of public activities. Use for commercial/promotional purposes (e.g. campaigns, advertisements, sponsored content) requires separate consent as set out in the photos/video consent clause.",
+      "s8Body": "Practice recordings (home practice): these are the exclusive property of the student. Lyriosa and the conservatory will not use them for marketing, advertising, or AI training. Access is limited to the student, parent, and the relevant teacher only. Event/concert recordings and photos (concerts, performances, open days): these are works of the conservatory and are used for documentation and routine publication of public activities. Use for commercial/promotional purposes (e.g. campaigns, advertisements, sponsored content) requires separate consent as set out in the photos/video consent clause.",
       "s9Title": "Accessibility and Law",
-      "s9Body": "The platform strives to meet accessibility standard IS 5568 (WCAG 2.1 AA). To report: accessibility@harmonia.co.il. This agreement is subject to the laws of the State of Israel. Nothing in this agreement detracts from consumer rights under the Consumer Protection Law, 5741-1981.",
+      "s9Body": "The platform strives to meet accessibility standard IS 5568 (WCAG 2.1 AA). To report: accessibility@lyriosa.co.il. This agreement is subject to the laws of the State of Israel. Nothing in this agreement detracts from consumer rights under the Consumer Protection Law, 5741-1981.",
       "s10Title": "Conservatory Addendum",
       "s10BodyDefault": "No special addendum has been defined for this conservatory.",
       "readNote": "After reading the agreement, confirm each consent separately:",
@@ -217,9 +217,9 @@
       "consent5Optional": "(optional)",
       "agreeCheckbox": "I have signed the registration agreement",
       "signPrompt": "After confirming consents, sign digitally:",
-      "termsTitle": "Harmonia Terms of Service",
-      "termsBody": "The Harmonia platform provides music education management services.",
-      "agreeCheckboxLegacy": "I have read and agree to Harmonia's Terms of Service"
+      "termsTitle": "Lyriosa Terms of Service",
+      "termsBody": "The Lyriosa platform provides music education management services.",
+      "agreeCheckboxLegacy": "I have read and agree to Lyriosa's Terms of Service"
     },
     "paymentPlan": {
       "title": "Estimated Payment Plan",
@@ -475,7 +475,7 @@
     },
     "finder": {
       "title": "Find a Playing School Program",
-      "subtitle": "School music programs in partnership with Harmonia conservatories.",
+      "subtitle": "School music programs in partnership with Lyriosa conservatories.",
       "enquirySuccessTitle": "Request sent",
       "enquirySuccessDesc": "We received your details and will contact you soon.",
       "searchPlaceholder": "Search by city, school name, or symbol...",
@@ -506,7 +506,7 @@
         "cello": "Cello",
         "voice": "Voice"
       },
-      "heroBadge": "Harmonia Playing School"
+      "heroBadge": "Lyriosa Playing School"
     },
     "familyHub": {
       "title": "Title",

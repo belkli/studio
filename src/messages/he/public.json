@@ -6,7 +6,7 @@
     "heroTitle": "המוזיקה מתחילה כאן",
     "learnMoreBtn": "מידע נוסף",
     "privacyPolicy": "מדיניות פרטיות",
-    "title": "הַרמוֹנְיָה"
+    "title": "ליריוסה"
   },
   "AboutPage": {
     "about": "אודות",
@@ -32,7 +32,7 @@
     "showingCount": "מציג {count} קונסרבטוריונים",
     "sortedByDistance": "ממוין לפי מרחק",
     "sortedByLocation": "ממוין לפי מיקום",
-    "subtitle": "רשת הקונסרבטוריונים של הרמוניה — חינוך מוסיקלי מקצועי לכל הגילאים, בכל רחבי הארץ.",
+    "subtitle": "רשת הקונסרבטוריונים של ליריוסה — חינוך מוסיקלי מקצועי לכל הגילאים, בכל רחבי הארץ.",
     "teachers": "צוות מורים ({count})",
     "title": "מוצאים את הקונסרבטוריון שלכם",
     "unitKm": "{count}ק\"מ",
@@ -230,7 +230,7 @@
     "resultsTitle": "תוצאות חיפוש עבור \"{query}\"",
     "searchPlaceholder": "חפש מאמרים...",
     "subtitle": "איך נוכל לעזור לך היום?",
-    "title": "מרכז העזרה של הרמוניה",
+    "title": "מרכז העזרה של ליריוסה",
     "category_SchedulingLessons": "לוח זמנים ושיעורים",
     "category_PaymentsBilling": "תשלומים וחיובים",
     "category_FormsApprovals": "טפסים ואישורים",
@@ -271,7 +271,7 @@
     "sendMessage": "שלח הודעה",
     "placeholder": "שאל אותי משהו...",
     "suggestionsTitle": "הצעות:",
-    "title": "עוזר AI של הרמוניה",
+    "title": "עוזר AI של ליריוסה",
     "welcomeMessage": "שלום! אני הרמוני, עוזר ה-AI. איך אוכל לעזור לך היום?",
     "quickQuestions": {
       "default": {
@@ -321,7 +321,7 @@
     "cityPlaceholder": "עיר",
     "instrumentPlaceholder": "כלי נגינה",
     "search": "חיפוש",
-    "conservatoryFallback": "קונסרבטוריון מקצועי ברשת הרמוניה.",
+    "conservatoryFallback": "קונסרבטוריון מקצועי ברשת ליריוסה.",
     "viewAll": "הצג את כל {count} החממות",
     "howItWorksTitle": "איך זה עובד",
     "step1Title": "מצא חממה",
@@ -332,7 +332,7 @@
     "step3Desc": "שיעורים מותאמים אישית עם מורים מנוסים.",
     "featuredTeachersTitle": "מורים מומלצים",
     "recommendedTeachersTooltip": "מורים אלו נבחרו על פי זמינות, דירוג ופרופיל מלא.",
-    "teacherFallback": "מורה מנוסה ברשת הרמוניה.",
+    "teacherFallback": "מורה מנוסה ברשת ליריוסה.",
     "upcomingEventsTitle": "אירועים קרובים",
     "eventsFallback": "אין אירועים מתוכננים כרגע. בדקו שוב בקרוב.",
     "openDaysTitle": "ימים פתוחים קרובים",

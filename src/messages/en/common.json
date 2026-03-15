@@ -113,7 +113,7 @@
   },
   "AccessibilityPage": {
     "title": "Accessibility Statement",
-    "intro": "Harmonia is committed to digital accessibility and to continuous improvement under WCAG 2.1 AA and Israeli Standard IS 5568.",
+    "intro": "Lyriosa is committed to digital accessibility and to continuous improvement under WCAG 2.1 AA and Israeli Standard IS 5568.",
     "footerLink": "Accessibility statement",
     "measuresTitle": "Accessibility Measures",
     "measures": {
@@ -162,7 +162,7 @@
     "restart": "Start new session"
   },
   "Metadata": {
-    "siteName": "Harmonia",
+    "siteName": "Lyriosa",
     "siteDescription": "Smart management system for advanced conservatories."
   },
   "AccessibilityWidget": {
@@ -951,10 +951,10 @@
   },
   "PrivacyPage": {
     "title": "Privacy Statement and Terms of Use",
-    "intro": "Harmonia respects your privacy and processes personal data only for clear educational, operational, and legal purposes.",
+    "intro": "Lyriosa respects your privacy and processes personal data only for clear educational, operational, and legal purposes.",
     "footerLink": "Privacy statement",
     "generalTitle": "General",
-    "generalBody": "This policy explains how the site collects, uses, stores, secures, and shares personal data when using Harmonia services.",
+    "generalBody": "This policy explains how the site collects, uses, stores, secures, and shares personal data when using Lyriosa services.",
     "lawfulBasisTitle": "Legal Basis",
     "lawfulBasisBody": "Data is processed pursuant to the Israeli Privacy Protection Law 5741-1981, contractual necessity, legitimate interests, and consent where required.",
     "dataTitle": "Data We Collect",
@@ -995,11 +995,11 @@
     "termsTitle": "Terms of Use Summary",
     "termsBody": "By using the site, users agree to lawful use only, accurate data submission, and non-abuse of systems, content, or accounts.",
     "contactTitle": "Privacy Contact",
-    "contactDescription": "For privacy requests, correction, deletion, or clarification, contact privacy@harmonia.co.il or the relevant conservatorium contact listed below.",
+    "contactDescription": "For privacy requests, correction, deletion, or clarification, contact privacy@lyriosa.co.il or the relevant conservatorium contact listed below.",
     "contactResponseLabel": "Response time",
     "contactResponseValue": "Up to 30 days (up to 60 days in justified cases)",
     "contactDirectoryTitle": "Privacy Contacts by Conservatorium",
-    "contactDirectoryDescription": "If a dedicated privacy contact is not configured, Harmonia shows the primary conservatorium admin contact.",
+    "contactDirectoryDescription": "If a dedicated privacy contact is not configured, Lyriosa shows the primary conservatorium admin contact.",
     "contactDirectoryEmpty": "No conservatorium contacts were found.",
     "directoryHeaders": {
       "conservatorium": "Conservatorium",
@@ -1017,7 +1017,7 @@
     "legalNote": "This statement is provided for transparency and does not replace legal advice tailored to your organization.",
     "lastUpdated": "Last updated: March 3, 2026",
     "subProcessorsTitle": "Sub-processors",
-    "subProcessorsBody": "Harmonia uses the following third-party service providers to process personal data:",
+    "subProcessorsBody": "Lyriosa uses the following third-party service providers to process personal data:",
     "subProcessorsTableHeaders": {
       "processor": "Processor",
       "service": "Service",
@@ -1070,7 +1070,7 @@
       }
     ],
     "retentionScheduleTitle": "Data Retention Schedule",
-    "retentionScheduleBody": "Harmonia retains data according to the following periods:",
+    "retentionScheduleBody": "Lyriosa retains data according to the following periods:",
     "retentionScheduleItems": [
       "Financial records: 7 years (per Israeli Income Tax Ordinance)",
       "Student records: 7 years after the student reaches age 18 (per Privacy Protection Law)",
@@ -1079,7 +1079,7 @@
     ],
     "dsarTitle": "Exercising Your Rights",
     "dsarBody": "To request data access, correction, deletion, or to withdraw consent, you may:",
-    "dsarEmail": "privacy@harmonia.co.il",
+    "dsarEmail": "privacy@lyriosa.co.il",
     "dsarSettingsLink": "Use the data tools in your account settings"
   },
   "Events": {

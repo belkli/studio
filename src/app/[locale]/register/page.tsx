@@ -22,7 +22,7 @@ export default async function RegisterPage({
 
     if (token) {
         return (
-            <div dir={isRtl ? 'rtl' : 'ltr'} className="flex min-h-dvh flex-col bg-gradient-to-br from-indigo-50/50 via-background to-background">
+            <div dir={isRtl ? 'rtl' : 'ltr'} className="flex min-h-dvh flex-col bg-gradient-to-br from-primary/5 via-background to-background">
                 <PublicNavbar />
                 <main className="flex flex-1 items-start justify-center px-4 pb-8 pt-20">
                     <RegistrationSessionGuard storageKey="register-session:token">
@@ -39,7 +39,7 @@ export default async function RegisterPage({
     }
 
     return (
-        <div dir={isRtl ? 'rtl' : 'ltr'} className="flex min-h-dvh flex-col bg-gradient-to-br from-indigo-50/50 via-background to-background">
+        <div dir={isRtl ? 'rtl' : 'ltr'} className="flex min-h-dvh flex-col bg-gradient-to-br from-primary/5 via-background to-background">
             <PublicNavbar />
             <main className="flex flex-1 items-start justify-center px-4 pb-8 pt-20">
                 <RegistrationSessionGuard storageKey="register-session:default">

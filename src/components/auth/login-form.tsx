@@ -14,6 +14,8 @@ import { useTranslations, useLocale } from "next-intl"
 import type { OAuthProfile } from '@/lib/auth/oauth';
 import { getClientAuthProvider } from '@/lib/auth/client-provider';
 import { createSessionAction } from '@/app/actions/auth';
+import { useBrandTheme } from '@/components/brand-theme-provider';
+import { cn } from '@/lib/utils';
 
 function sanitizeCallbackUrl(url: string | null): string {
   if (!url) return '/dashboard';
@@ -21,6 +23,17 @@ function sanitizeCallbackUrl(url: string | null): string {
   if (url.startsWith('/') && !url.startsWith('//')) return url;
   return '/dashboard';
 }
+
+const LOGIN_FORM_STYLES = {
+  a: {
+    card: 'border',
+    heading: 'font-heading',
+  },
+  b: {
+    card: 'border border-brand-gold/10',
+    heading: 'font-display',
+  },
+} as const;
 
 export function LoginForm() {
   const t = useTranslations("Auth")
@@ -31,6 +44,8 @@ export function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = sanitizeCallbackUrl(searchParams.get('callbackUrl'))
   const dir = (locale === 'he' || locale === 'ar') ? 'rtl' : 'ltr'
+  const { theme } = useBrandTheme()
+  const s = LOGIN_FORM_STYLES[theme]
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -252,9 +267,9 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-4 shadow-xl">
+    <Card className={cn("w-full max-w-md mx-4 shadow-xl", s.card)}>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">{t('cardTitle')}</CardTitle>
+        <CardTitle className={cn("text-2xl font-bold", s.heading)}>{t('cardTitle')}</CardTitle>
         <CardDescription>{t('cardDescription')}</CardDescription>
       </CardHeader>
       <CardContent>

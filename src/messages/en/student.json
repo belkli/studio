@@ -468,7 +468,7 @@
   "ReschedulingChat": {
     "cardTitle": "AI Lesson Scheduling Assistant",
     "cardSubtitle": "Manage your lessons through a simple conversation.",
-    "greeting": "Hello! I'm Harmonia's AI assistant. How can I help you with your schedule today? For example: \"I need to cancel my lesson tomorrow\" or \"When is my next lesson?\"",
+    "greeting": "Hello! I'm Lyriosa's AI assistant. How can I help you with your schedule today? For example: \"I need to cancel my lesson tomorrow\" or \"When is my next lesson?\"",
     "actionCancelled": "OK, the action was cancelled. How else can I help?",
     "systemUpdated": "Great, I've updated the system. Is there anything else I can help with?",
     "lessonCancelledTitle": "Lesson cancelled",

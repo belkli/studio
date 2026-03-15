@@ -67,7 +67,7 @@
     "processing": "Processing...",
     "proceedToPayment": "Proceed to Secure Payment",
     "setupAltPayment": "Setup Alternative Payment / Recurring",
-    "securityNotice": "All payments are processed through CardCom, which complies with the strict PCI-DSS security standard. Credit card details are not saved in Harmony's systems.",
+    "securityNotice": "All payments are processed through CardCom, which complies with the strict PCI-DSS security standard. Credit card details are not saved in Lyriosa's systems.",
     "invoiceDetails": "Invoice Details",
     "viewInvoices": "View open invoices and payment history.",
     "immediatePayment": "Immediate Payment",

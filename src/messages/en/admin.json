@@ -463,7 +463,7 @@
     "library": "Library",
     "users": "Users",
     "ministry": "Ministry",
-    "logo": "Harmonia",
+    "logo": "Lyriosa",
     "logout": "Logout",
     "notifications": "Notifications",
     "noNotifications": "No Notifications",
@@ -846,7 +846,7 @@
       "noPermissionDesc": "This page is available for students and parents only."
     },
     "applyForAid": {
-      "metaTitle": "Financial Aid Application | Harmonia",
+      "metaTitle": "Financial Aid Application | Lyriosa",
       "title": "Scholarships & Financial Aid",
       "description": "Apply for a study scholarship from the conservatorium's fund."
     },

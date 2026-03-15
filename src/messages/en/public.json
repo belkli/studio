@@ -1,6 +1,6 @@
 {
   "HomePage": {
-    "title": "Harmonia",
+    "title": "Lyriosa",
     "heroTitle": "The music starts here",
     "heroSubtitle": "Smart management system and advanced learning experience for music conservatories",
     "discoverBtn": "Discover system",
@@ -10,7 +10,7 @@
   },
   "AboutPage": {
     "title": "Find Your Conservatory",
-    "subtitle": "The Harmonia Conservatory network — professional music education for all ages, nationwide.",
+    "subtitle": "The Lyriosa Conservatory network — professional music education for all ages, nationwide.",
     "searchPlaceholder": "Search by city, conservatory name...",
     "citySortPlaceholder": "Sort by city...",
     "locateMe": "Current Location",
@@ -72,7 +72,7 @@
   },
   "MusiciansForHire": {
     "heroTitle": "Professional Musicians for Unforgettable Events",
-    "heroSubtitle": "All musicians from Harmonia - vetted, reliable, and fully insured.",
+    "heroSubtitle": "All musicians from Lyriosa - vetted, reliable, and fully insured.",
     "getQuote": "Get an Instant Quote",
     "features": {
       "experienced": "Experienced & Vetted",
@@ -226,7 +226,7 @@
     }
   },
   "HelpCenter": {
-    "title": "Harmonia Help Center",
+    "title": "Lyriosa Help Center",
     "subtitle": "How can we help you today?",
     "searchPlaceholder": "Search articles...",
     "resultsTitle": "Search results for \"{query}\"",
@@ -264,11 +264,11 @@
     }
   },
   "HelpAssistant": {
-    "title": "Harmonia AI Assistant",
+    "title": "Lyriosa AI Assistant",
     "description": "Ask me anything about the system, and I'll do my best to help.",
     "placeholder": "Ask me something...",
     "suggestionsTitle": "Suggestions:",
-    "welcomeMessage": "Hello! I'm Harmony, your AI assistant. How can I help you today?",
+    "welcomeMessage": "Hello! I'm Lyria, your AI assistant. How can I help you today?",
     "errorMessage": "I'm sorry, an error occurred. Please try again later.",
     "openAssistant": "Open AI Assistant",
     "sendMessage": "Send message",
@@ -321,7 +321,7 @@
     "cityPlaceholder": "City",
     "instrumentPlaceholder": "Instrument",
     "search": "Search",
-    "conservatoryFallback": "Professional conservatory in the Harmonia network.",
+    "conservatoryFallback": "Professional conservatory in the Lyriosa network.",
     "viewAll": "View all {count} conservatories",
     "howItWorksTitle": "How it works",
     "step1Title": "Find conservatory",
@@ -332,7 +332,7 @@
     "step3Desc": "Personalized lessons with experienced teachers.",
     "featuredTeachersTitle": "Featured teachers",
     "recommendedTeachersTooltip": "These teachers were selected based on availability, rating and profile completeness.",
-    "teacherFallback": "Experienced teacher in the Harmonia network.",
+    "teacherFallback": "Experienced teacher in the Lyriosa network.",
     "upcomingEventsTitle": "Upcoming events",
     "eventsFallback": "No events scheduled at the moment. Check back soon.",
     "openDaysTitle": "Upcoming open days",
