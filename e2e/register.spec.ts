@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Registration Flow', () => {
   test('register page loads', async ({ page }) => {
     await page.goto('/register');
-    // The Hebrew site name uses niqqud: הַרמוֹנְיָה. Accept any locale variant.
+    // Accept any locale variant of the brand name.
     await expect(page).toHaveTitle(/ליריוסה|Register|Lyriosa/i);
   });
 

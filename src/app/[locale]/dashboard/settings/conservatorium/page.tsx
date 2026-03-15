@@ -81,13 +81,13 @@ export default function ConservatoriumSettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>ניהול תכונות (Features)</CardTitle>
-                    <CardDescription>הפעל או כבה את מערכת &quot;הרמוניה&quot; החדשה עבור המוסד שלך.</CardDescription>
+                    <CardDescription>הפעל או כבה את מערכת &quot;ליריוסה&quot; החדשה עבור המוסד שלך.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center justify-between rounded-lg border p-4">
                         <div>
                             <Label htmlFor="features-toggle" className="font-semibold">
-                                הפעל את מערכת הרמוניה החדשה
+                                הפעל את מערכת ליריוסה החדשה
                             </Label>
                             <p className="text-sm text-muted-foreground">
                                 כולל דשבורדים חדשים, ניהול משפחות, רישום מתקדם, ועוד.
