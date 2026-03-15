@@ -4,12 +4,37 @@
 
 ### Always use available skills
 Before responding to any task, check available skills and invoke the relevant one via the `Skill` tool. Even a 1% chance a skill applies means you must invoke it. Key skills for this project:
+
+#### Feature work
 - **superpowers:brainstorming** — before any new feature or UX work
 - **superpowers:writing-plans** — before implementing multi-step tasks
 - **superpowers:test-driven-development** — before writing implementation code
+- **superpowers:using-git-worktrees** — before starting isolated feature work
+- **superpowers:executing-plans** — when executing a written plan in a new session
+- **superpowers:subagent-driven-development** — when splitting plan into parallel tasks
+- **superpowers:dispatching-parallel-agents** — for 2+ independent tasks
+- **superpowers:finishing-a-development-branch** — after implementation is complete
+
+#### UI / Design
 - **ui-ux-pro-max** — for any UI/UX design, component selection, or wireframing
+- **frontend-design:frontend-design** — for building production-grade web components/pages
+- **web-design-guidelines** — when auditing UI for accessibility or best practices
+- **vercel-composition-patterns** — when refactoring components or designing reusable APIs
+- **vercel-react-best-practices** — when writing/reviewing React or Next.js performance code
+
+#### Debugging & Review
 - **superpowers:systematic-debugging** — before proposing any bug fix
 - **superpowers:verification-before-completion** — before claiming work is done
+- **superpowers:requesting-code-review** — before merging or after completing a feature
+- **superpowers:receiving-code-review** — when acting on review feedback
+- **pr-review-toolkit:review-pr** — for comprehensive PR review
+- **code-review:code-review** — for reviewing a pull request
+- **simplify** — after writing code, to reduce complexity and improve clarity
+
+#### Maintenance
+- **claude-md-management:revise-claude-md** — at end of session to capture learnings
+- **claude-md-management:claude-md-improver** — to audit/improve CLAUDE.md quality
+- **feature-dev:feature-dev** — guided feature development with codebase analysis
 
 When spawning subagents, always instruct them to invoke the relevant skill(s) for their role (e.g., ux agents must invoke `ui-ux-pro-max`, dev agents must invoke `superpowers:test-driven-development`).
 
