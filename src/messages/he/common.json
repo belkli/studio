@@ -20,7 +20,10 @@
       "closeMenu": "סגור תפריט",
       "formType": "סוג טופס",
       "grade": "כיתה",
-      "submissionDate": "תאריך הגשה"
+      "submissionDate": "תאריך הגשה",
+      "colorModeLightLabel": "עבור למצב כהה",
+      "colorModeDarkLabel": "עבור להעדפת מערכת",
+      "colorModeSystemLabel": "עבור למצב בהיר"
     },
     "errors": {
       "generalTitle": "משהו השתבש",

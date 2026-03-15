@@ -20,7 +20,10 @@
       "closeMenu": "Close menu",
       "formType": "Form Type",
       "grade": "Grade",
-      "submissionDate": "Submission Date"
+      "submissionDate": "Submission Date",
+      "colorModeLightLabel": "Switch to dark mode",
+      "colorModeDarkLabel": "Switch to system mode",
+      "colorModeSystemLabel": "Switch to light mode"
     },
     "errors": {
       "generalTitle": "Something went wrong",

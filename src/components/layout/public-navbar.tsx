@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { ColorModeToggle } from '@/components/color-mode-toggle';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -83,6 +84,7 @@ export function PublicNavbar() {
 
             <div className="hidden shrink-0 items-center gap-2 md:flex">
                 <LanguageSwitcher />
+                <ColorModeToggle />
                 <Button asChild variant="ghost" className={s.login}>
                     <Link href="/login">{tNav('login')}</Link>
                 </Button>
@@ -93,6 +95,7 @@ export function PublicNavbar() {
 
             <div className="ms-auto flex items-center md:hidden">
                 <LanguageSwitcher />
+                <ColorModeToggle />
                 {!mounted ? (
                     <Button variant="ghost" size="icon" disabled aria-label={tCommon('openMenu')}>
                         <Menu className="h-5 w-5" />

@@ -20,7 +20,10 @@
       "closeMenu": "Закрыть меню",
       "formType": "Тип формы",
       "grade": "Класс",
-      "submissionDate": "Дата подачи"
+      "submissionDate": "Дата подачи",
+      "colorModeLightLabel": "Переключить на тёмный режим",
+      "colorModeDarkLabel": "Переключить на системные настройки",
+      "colorModeSystemLabel": "Переключить на светлый режим"
     },
     "errors": {
       "generalTitle": "Что-то пошло не так",
