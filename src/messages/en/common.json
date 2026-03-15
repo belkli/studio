@@ -400,7 +400,28 @@
     "autoTranslateError": "Translation error. Try again.",
     "aiDisclaimer": "⚠️ Translation is AI-generated and may contain errors. Verify before sending to recipients.",
     "aiTranslatedBadge": "AI-translated — may contain inaccuracies",
-    "translationPreviewTitle": "Translation preview"
+    "translationPreviewTitle": "Translation preview",
+    "translationPreviewEmpty": "Click 'Auto-translate' to generate translations",
+    "localeNames": {
+      "he": "Hebrew",
+      "en": "English",
+      "ar": "Arabic",
+      "ru": "Russian"
+    },
+    "sourceLocale": "Source language",
+    "aiBadge": "AI",
+    "editedBadge": "Edited",
+    "revertToAI": "Revert to AI translation",
+    "retryTranslation": "Retry",
+    "translationFailed": "Translation failed",
+    "translationTitle": "Title",
+    "translationBody": "Message body",
+    "noStudentsInLocale": "No students in this language",
+    "staleWarning": "Source text has changed since translations were generated. Re-translate?",
+    "retranslateAll": "Re-translate all",
+    "publishHebrewOnly": "Publish in Hebrew only",
+    "publishHebrewOnlyConfirm": "This announcement will only be sent in Hebrew. Continue?",
+    "aiGeneratedDisclaimer": "This translation was automatically generated and may contain inaccuracies"
   },
   "RecentAnnouncementsCard": {
     "title": "Recent Announcements",

@@ -400,7 +400,28 @@
     "autoTranslateError": "שגיאה בתרגום. נסה שוב.",
     "aiDisclaimer": "⚠️ התרגום נוצר על ידי AI ועלול להכיל שגיאות. יש לוודא לפני שליחה.",
     "aiTranslatedBadge": "תורגם על ידי AI — ייתכנו אי-דיוקים",
-    "translationPreviewTitle": "תצוגה מקדימה של תרגומים"
+    "translationPreviewTitle": "תצוגה מקדימה של תרגומים",
+    "translationPreviewEmpty": "לחץ 'תרגם אוטומטית' כדי לייצר תרגומים",
+    "localeNames": {
+      "he": "עברית",
+      "en": "אנגלית",
+      "ar": "ערבית",
+      "ru": "רוסית"
+    },
+    "sourceLocale": "שפת מקור",
+    "aiBadge": "AI",
+    "editedBadge": "נערך",
+    "revertToAI": "חזור לתרגום AI",
+    "retryTranslation": "נסה שוב",
+    "translationFailed": "התרגום נכשל",
+    "translationTitle": "כותרת",
+    "translationBody": "גוף ההודעה",
+    "noStudentsInLocale": "אין תלמידים בשפה זו",
+    "staleWarning": "טקסט המקור השתנה מאז יצירת התרגומים. לתרגם מחדש?",
+    "retranslateAll": "תרגם שוב הכל",
+    "publishHebrewOnly": "פרסם בעברית בלבד",
+    "publishHebrewOnlyConfirm": "הכרזה זו תישלח בעברית בלבד. להמשיך?",
+    "aiGeneratedDisclaimer": "תרגום זה נוצר אוטומטית ועלול להכיל אי-דיוקים"
   },
   "RecentAnnouncementsCard": {
     "title": "הכרזות אחרונות",

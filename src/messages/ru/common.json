@@ -400,7 +400,28 @@
     "autoTranslateError": "Ошибка перевода. Попробуйте снова.",
     "aiDisclaimer": "⚠️ Перевод выполнен с помощью ИИ и может содержать ошибки. Проверьте перед отправкой получателям.",
     "aiTranslatedBadge": "Переведено ИИ — возможны неточности",
-    "translationPreviewTitle": "Предварительный просмотр переводов"
+    "translationPreviewTitle": "Предварительный просмотр переводов",
+    "translationPreviewEmpty": "Нажмите 'Автоперевод', чтобы создать переводы",
+    "localeNames": {
+      "he": "Иврит",
+      "en": "Английский",
+      "ar": "Арабский",
+      "ru": "Русский"
+    },
+    "sourceLocale": "Исходный язык",
+    "aiBadge": "ИИ",
+    "editedBadge": "Изменено",
+    "revertToAI": "Вернуть перевод ИИ",
+    "retryTranslation": "Повторить",
+    "translationFailed": "Ошибка перевода",
+    "translationTitle": "Заголовок",
+    "translationBody": "Текст сообщения",
+    "noStudentsInLocale": "Нет учеников для этого языка",
+    "staleWarning": "Исходный текст изменился после создания переводов. Перевести заново?",
+    "retranslateAll": "Перевести всё заново",
+    "publishHebrewOnly": "Опубликовать только на иврите",
+    "publishHebrewOnlyConfirm": "Это объявление будет отправлено только на иврите. Продолжить?",
+    "aiGeneratedDisclaimer": "Этот перевод создан автоматически и может содержать неточности"
   },
   "RecentAnnouncementsCard": {
     "title": "Последние объявления",
