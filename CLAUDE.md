@@ -1,5 +1,18 @@
 # Harmonia — Claude Code Context
 
+## Workflow Standards
+
+### Always use available skills
+Before responding to any task, check available skills and invoke the relevant one via the `Skill` tool. Even a 1% chance a skill applies means you must invoke it. Key skills for this project:
+- **superpowers:brainstorming** — before any new feature or UX work
+- **superpowers:writing-plans** — before implementing multi-step tasks
+- **superpowers:test-driven-development** — before writing implementation code
+- **ui-ux-pro-max** — for any UI/UX design, component selection, or wireframing
+- **superpowers:systematic-debugging** — before proposing any bug fix
+- **superpowers:verification-before-completion** — before claiming work is done
+
+When spawning subagents, always instruct them to invoke the relevant skill(s) for their role (e.g., ux agents must invoke `ui-ux-pro-max`, dev agents must invoke `superpowers:test-driven-development`).
+
 ## Key Patterns
 
 ### Internal links
