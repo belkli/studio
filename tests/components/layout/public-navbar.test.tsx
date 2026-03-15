@@ -12,7 +12,10 @@ describe('PublicNavbar', () => {
 
     it('renders the logo and title', () => {
         renderWithProviders(<PublicNavbar />);
-        expect(screen.getByText(/הַרמוֹנְיָה/i)).toBeInTheDocument();
+        const logos = screen.getAllByText((_content, node) => {
+            return node?.textContent === 'Lyriosa';
+        });
+        expect(logos.length).toBeGreaterThan(0);
     });
 
     it('renders all navigation links', () => {
