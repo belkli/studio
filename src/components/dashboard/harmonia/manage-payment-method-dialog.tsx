@@ -9,16 +9,17 @@ import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { InputGroup, InputGroupText } from '@/components/ui/input-group';
 import { CreditCard, Calendar, Lock } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
-const paymentSchema = z.object({
-  cardNumber: z.string().min(16, "מספר כרטיס לא תקין").max(16, "מספר כרטיס לא תקין"),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "תאריך תפוגה לא תקין (MM/YY)"),
-  cvc: z.string().min(3, "CVC לא תקין").max(4, "CVC לא תקין"),
-  cardHolder: z.string().min(2, "חובה להזין שם בעל הכרטיס"),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getPaymentSchema = (t: any) => z.object({
+  cardNumber: z.string().min(16, t('validation.cardNumberInvalid')).max(16, t('validation.cardNumberInvalid')),
+  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, t('validation.expiryDateInvalid')),
+  cvc: z.string().min(3, t('validation.cvcInvalid')).max(4, t('validation.cvcInvalid')),
+  cardHolder: z.string().min(2, t('validation.cardHolderRequired')),
 });
 
-type PaymentFormData = z.infer<typeof paymentSchema>;
+type PaymentFormData = z.infer<ReturnType<typeof getPaymentSchema>>;
 
 interface ManagePaymentMethodDialogProps {
   open: boolean;
@@ -28,6 +29,9 @@ interface ManagePaymentMethodDialogProps {
 
 export function ManagePaymentMethodDialog({ open, onOpenChange, onSave }: ManagePaymentMethodDialogProps) {
   const t = useTranslations('PaymentSettings');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const paymentSchema = getPaymentSchema(t);
   const form = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
   });
@@ -43,7 +47,7 @@ export function ManagePaymentMethodDialog({ open, onOpenChange, onSave }: Manage
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl">
+      <DialogContent dir={isRtl ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle>{t('updateMethodTitle')}</DialogTitle>
           <DialogDescription>{t('updateMethodDesc')}</DialogDescription>
@@ -51,17 +55,17 @@ export function ManagePaymentMethodDialog({ open, onOpenChange, onSave }: Manage
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
             <FormField control={form.control} name="cardHolder" render={({ field }) => (
-              <FormItem><FormLabel>{t('cardHolder')}</FormLabel><FormControl><Input placeholder="ישראל ישראלי" {...field} /></FormControl><FormMessage /></FormItem>
+              <FormItem><FormLabel>{t('cardHolder')}</FormLabel><FormControl><Input placeholder={t('cardHolderPlaceholder')} {...field} /></FormControl><FormMessage /></FormItem>
             )} />
             <FormField control={form.control} name="cardNumber" render={({ field }) => (
-              <FormItem><FormLabel>{t('cardNumber')}</FormLabel><InputGroup><InputGroupText><CreditCard /></InputGroupText><FormControl><Input dir="ltr" className="rounded-s-none text-left" placeholder="•••• •••• •••• ••••" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
+              <FormItem><FormLabel>{t('cardNumber')}</FormLabel><InputGroup><InputGroupText><CreditCard /></InputGroupText><FormControl><Input dir="ltr" className="rounded-s-none text-start" placeholder="•••• •••• •••• ••••" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
             )} />
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="expiryDate" render={({ field }) => (
-                <FormItem><FormLabel>{t('expiryDate')}</FormLabel><InputGroup><InputGroupText><Calendar /></InputGroupText><FormControl><Input dir="ltr" className="rounded-s-none text-left" placeholder="MM/YY" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
+                <FormItem><FormLabel>{t('expiryDate')}</FormLabel><InputGroup><InputGroupText><Calendar /></InputGroupText><FormControl><Input dir="ltr" className="rounded-s-none text-start" placeholder="MM/YY" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="cvc" render={({ field }) => (
-                <FormItem><FormLabel>{t('cvc')}</FormLabel><InputGroup><InputGroupText><Lock /></InputGroupText><FormControl><Input dir="ltr" type="password" className="rounded-s-none text-left" placeholder="•••" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
+                <FormItem><FormLabel>{t('cvc')}</FormLabel><InputGroup><InputGroupText><Lock /></InputGroupText><FormControl><Input dir="ltr" type="password" className="rounded-s-none text-start" placeholder="•••" {...field} /></FormControl></InputGroup><FormMessage /></FormItem>
               )} />
             </div>
             <DialogFooter className="pt-4">

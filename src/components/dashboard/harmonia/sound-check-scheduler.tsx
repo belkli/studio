@@ -9,6 +9,7 @@ import { useDateLocale } from '@/hooks/use-date-locale';
 import { Send, Sparkles } from 'lucide-react';
 import type { EventProduction } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface SoundCheckSchedulerProps {
     event: EventProduction;
@@ -18,6 +19,9 @@ interface SoundCheckSchedulerProps {
 export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProps) {
     const { toast } = useToast();
     const dateLocale = useDateLocale();
+    const t = useTranslations('SoundCheckScheduler');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const handleTimeChange = (performanceId: string, time: string) => {
         const updatedSchedule = event.soundCheckSchedule?.map(slot =>
@@ -38,37 +42,37 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
             return slot;
         });
         onUpdate({ ...event, soundCheckSchedule: newSchedule });
-        toast({ title: "לו\"ז חזרות נוצר בהצלחה" });
+        toast({ title: t('scheduleCreated') });
     };
 
     const handleSendSchedule = () => {
         toast({
-            title: "לוח הזמנים נשלח!",
-            description: "הודעות נשלחו לכל המבצעים עם שעת ההגעה שלהם.",
+            title: t('scheduleSentTitle'),
+            description: t('scheduleSentDesc'),
         });
     }
 
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
-                <CardTitle>לוח חזרות וסאונד-צ&apos;ק</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 {event.dressRehearsalDate && (
                     <p className="text-sm">
-                        <span className="font-semibold">חזרה גנרלית:</span> {format(new Date(event.dressRehearsalDate), 'EEEE, dd/MM/yyyy', { locale: dateLocale })}
+                        <span className="font-semibold">{t('dressRehearsal')}</span> {format(new Date(event.dressRehearsalDate), 'EEEE, dd/MM/yyyy', { locale: dateLocale })}
                     </p>
                 )}
                 <Button variant="outline" size="sm" onClick={autoGenerateSchedule} className="w-full">
                     <Sparkles className="me-2 h-4 w-4 text-yellow-500" />
-                    צור לוח זמנים אוטומטי
+                    {t('autoGenerate')}
                 </Button>
                 <div className="max-h-80 overflow-y-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>מבצע/ת</TableHead>
-                                <TableHead>שעה</TableHead>
+                                <TableHead className="text-start">{t('colPerformer')}</TableHead>
+                                <TableHead className="text-start">{t('colTime')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -91,7 +95,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
                             {event.program.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={2} className="text-center h-24">
-                                        שבץ מבצעים כדי ליצור לו&quot;ז חזרות.
+                                        {t('emptyState')}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -102,7 +106,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
             <CardFooter>
                 <Button className="w-full" onClick={handleSendSchedule} disabled={!event.soundCheckSchedule || event.soundCheckSchedule.length === 0}>
                     <Send className="me-2 h-4 w-4" />
-                    שלח לו&quot;ז למבצעים
+                    {t('sendSchedule')}
                 </Button>
             </CardFooter>
         </Card>

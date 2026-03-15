@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { PerformanceBooking } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface SendQuoteDialogProps {
   booking: PerformanceBooking | null;
@@ -18,6 +18,8 @@ interface SendQuoteDialogProps {
 export function SendQuoteDialog({ booking, open, onOpenChange, onConfirm }: SendQuoteDialogProps) {
   const [message, setMessage] = useState('');
   const t = useTranslations('PerformanceBooking');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   if (!booking) return null;
 
@@ -28,7 +30,7 @@ export function SendQuoteDialog({ booking, open, onOpenChange, onConfirm }: Send
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl" className="sm:max-w-lg">
+      <DialogContent dir={isRtl ? 'rtl' : 'ltr'} className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t('dialogSendQuoteTitle')}</DialogTitle>
           <DialogDescription>

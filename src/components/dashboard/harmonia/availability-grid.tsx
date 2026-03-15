@@ -148,7 +148,7 @@ export function AvailabilityGrid() {
             </CardContent>
             <CardFooter>
                 <Button onClick={handleSaveChanges} disabled={!isDirty}>
-                    <Save className={isRtl ? "ms-2 h-4 w-4" : "me-2 h-4 w-4"} />
+                    <Save className="me-2 h-4 w-4" />
                     {t('saveBtn')}
                 </Button>
             </CardFooter>

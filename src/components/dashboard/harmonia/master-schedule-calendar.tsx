@@ -10,13 +10,14 @@ import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval } from 'date
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`);
 
 const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
     const { users } = useAuth();
+    const t = useTranslations('AdminPages.schedule');
     const student = users.find(u => u.id === lesson.studentId);
     const teacher = users.find(u => u.id === lesson.teacherId);
     const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
@@ -26,7 +27,7 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
             <Tooltip>
                 <TooltipTrigger asChild>
                     <div className={cn(
-                        "p-1.5 rounded-md text-[10px] h-full overflow-hidden text-end leading-tight",
+                        "p-1.5 rounded-md text-[10px] h-full overflow-hidden text-start leading-tight",
                         isCancelled ? "bg-gray-100 border-e-2 border-gray-400 text-gray-500 italic" : "bg-blue-50 border-e-2 border-blue-400 text-blue-800"
                     )}>
                         <p className="font-bold truncate">{student?.name}</p>
@@ -35,10 +36,10 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
                     </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>{lesson.instrument} with {teacher?.name}</p>
-                    <p>Student: {student?.name}</p>
-                    <p>Status: {lesson.status}</p>
-                    <p>Room: {lesson.roomId}</p>
+                    <p>{t('tooltipInstrument', { instrument: lesson.instrument, teacher: teacher?.name ?? t('unknown') })}</p>
+                    <p>{t('tooltipStudent', { student: student?.name ?? t('unknown') })}</p>
+                    <p>{t('tooltipStatus', { status: lesson.status })}</p>
+                    <p>{t('tooltipRoom', { room: lesson.roomId ?? t('notAssigned') })}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
@@ -48,6 +49,8 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
 export function MasterScheduleCalendar() {
     const { user, users, lessons, branches, rooms, conservatoriumInstruments } = useAuth();
     const t = useTranslations('AdminPages.schedule');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [filters, setFilters] = useState({
@@ -118,20 +121,20 @@ export function MasterScheduleCalendar() {
     }
 
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} aria-label={t('prevWeek')}><ArrowRight className="h-4 w-4" /></Button>
-                        <span className="font-semibold text-lg">{format(weekInterval.start, 'd בMMM')} - {format(weekInterval.end, 'd בMMM yyyy', { locale: dateLocale })}</span>
-                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} aria-label={t('nextWeek')}><ArrowLeft className="h-4 w-4" /></Button>
+                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} aria-label={t('prevWeek')}>{isRtl ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}</Button>
+                        <span className="font-semibold text-lg">{format(weekInterval.start, 'd MMM', { locale: dateLocale })} - {format(weekInterval.end, 'd MMM yyyy', { locale: dateLocale })}</span>
+                        <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} aria-label={t('nextWeek')}>{isRtl ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}</Button>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                         <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
-                        <Select dir="rtl" value={filters.branchId} onValueChange={(v) => handleFilterChange('branchId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל הסניפים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הסניפים</SelectItem>{branches.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.teacherId} onValueChange={(v) => handleFilterChange('teacherId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל המורים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל המורים</SelectItem>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל החדרים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל החדרים</SelectItem>{filteredRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
-                        <Select dir="rtl" value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Music className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder="כל הכלים" /></div></SelectTrigger><SelectContent><SelectItem value="all">כל הכלים</SelectItem>{instrumentOptions.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select>
+                        <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.branchId} onValueChange={(v) => handleFilterChange('branchId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Building2 className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder={t('allBranches')} /></div></SelectTrigger><SelectContent><SelectItem value="all">{t('allBranches')}</SelectItem>{branches.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.teacherId} onValueChange={(v) => handleFilterChange('teacherId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><UserIcon className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder={t('allTeachers')} /></div></SelectTrigger><SelectContent><SelectItem value="all">{t('allTeachers')}</SelectItem>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.roomId} onValueChange={(v) => handleFilterChange('roomId', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><DoorOpen className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder={t('allRooms')} /></div></SelectTrigger><SelectContent><SelectItem value="all">{t('allRooms')}</SelectItem>{filteredRooms.map(r => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent></Select>
+                        <Select dir={isRtl ? 'rtl' : 'ltr'} value={filters.instrument} onValueChange={(v) => handleFilterChange('instrument', v)}><SelectTrigger className="w-[180px]"><div className="flex items-center gap-2"><Music className="h-4 w-4 text-muted-foreground" /><SelectValue placeholder={t('allInstruments')} /></div></SelectTrigger><SelectContent><SelectItem value="all">{t('allInstruments')}</SelectItem>{instrumentOptions.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select>
                     </div>
                 </div>
             </CardHeader>

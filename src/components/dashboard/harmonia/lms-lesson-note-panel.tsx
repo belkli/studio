@@ -11,12 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Save, AlertTriangle, Mic, FileText } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, studentId: string }) {
     const { lessonNotes, addLessonNote, users } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('LessonManagement');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const [publicSummary, setPublicSummary] = useState('');
     const [homeworkDesc, setHomeworkDesc] = useState('');
@@ -81,7 +83,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
     ];
 
     return (
-        <Card className="max-w-4xl border-t-4 border-t-primary">
+        <Card className="max-w-4xl border-t-4 border-t-primary" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader className="bg-muted/30 pb-4">
                 <CardTitle className="flex justify-between items-center">
                     <span>{t('lessonNoteStudent', { name: student?.name || '' })}</span>
@@ -167,7 +169,7 @@ export function LmsLessonNotePanel({ lessonId, studentId }: { lessonId: string, 
 
                         <div className="space-y-2">
                             <Label>{t('lessonMood')}</Label>
-                            <Select dir="rtl" value={mood} onValueChange={setMood}>
+                            <Select dir={isRtl ? 'rtl' : 'ltr'} value={mood} onValueChange={setMood}>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('selectMood')} />
                                 </SelectTrigger>

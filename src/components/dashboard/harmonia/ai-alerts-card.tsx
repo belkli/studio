@@ -9,7 +9,7 @@ import { useState } from "react";
 import type { EmptySlot } from "@/lib/types";
 import { PromoteSlotDialog } from "./promote-slot-dialog";
 import { useRouter } from "@/i18n/routing";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 
 
@@ -28,6 +28,8 @@ const SEVERITY_ICONS: { [key: string]: string } = {
 
 export function AiAlertsCard() {
     const t = useTranslations('AiAlerts');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const alerts = useAdminAlerts();
     const router = useRouter();
     const [promoteSlot, setPromoteSlot] = useState<EmptySlot | null>(null);
@@ -42,7 +44,7 @@ export function AiAlertsCard() {
 
     return (
         <>
-            <Card className="h-full flex flex-col">
+            <Card className="h-full flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="text-primary" />

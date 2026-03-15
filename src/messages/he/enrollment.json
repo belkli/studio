@@ -489,7 +489,16 @@
       "noUpcoming": "אין שיעורים קרובים",
       "viewAttendance": "צפייה בנוכחות",
       "excellenceNominated": "מועמד/ת למסלול מצוינות",
-      "viewDetails": "צפייה בפרטים"
+      "viewDetails": "צפייה בפרטים",
+      "instrumentStatus": "סטטוס כלי נגינה",
+      "received": "התקבל",
+      "pendingCollection": "ממתין לאיסוף",
+      "groupLesson": "שיעור קבוצתי",
+      "individualLesson": "שיעור אישי",
+      "programTypes": {
+        "GROUP": "קבוצתי",
+        "INDIVIDUAL": "אישי"
+      }
     },
     "mock": {
       "schoolName": "שם בית הספר",
@@ -575,6 +584,12 @@
     "inviteCoordinatorDesc": "הזינו פרטי רכז/ת ושלחו הזמנה.",
     "coordinatorEmail": "אימייל רכז/ת",
     "sendInvite": "שליחת הזמנה",
+    "invalidEmail": "אימייל לא תקין",
+    "invalidEmailDesc": "נא להזין כתובת אימייל תקינה.",
+    "invitationSent": "ההזמנה נשלחה",
+    "inviteError": "שגיאה",
+    "inviteErrorDesc": "שליחת ההזמנה נכשלה.",
+    "sending": "שולח...",
     "pageTitle": "בקשה לתמיכה כלכלית / מלגה",
     "adminSubtitle": "ניהול תפעולי",
     "activePartnerships": "שותפויות פעילות",
@@ -738,7 +753,11 @@
     "offerTitle": "הזמנה למסלול מצוינות",
     "successTitle": "ההרשמה אושרה",
     "tuitionDescription": "שכר לימוד חודשי למסלול.",
-    "tuitionTitle": "שכר לימוד"
+    "tuitionTitle": "שכר לימוד",
+    "backBtn": "חזרה",
+    "badgeLabel": "מסלול מצוינות",
+    "errorTitle": "שגיאה",
+    "errorDesc": "הפעולה נכשלה. נסו שנית."
   },
   "TeacherRating": {
     "title": "דרג/י את {teacher}",
@@ -750,5 +769,15 @@
     "thankYou": "תודה על הדירוג!",
     "alreadyRated": "כבר דירגת מורה זה/ה.",
     "rateTeacher": "דרג/י מורה"
+  },
+  "PromoteSlotDialog": {
+    "title": "קידום שיעור פנוי",
+    "description": "שיעור {instrument} עם {teacher} ביום {dateTime}",
+    "aiSuggestionsTitle": "הצעות ממוקדות של AI",
+    "aiSuggestionsDesc": "רשימת התלמידים עם הסיכוי הגבוה ביותר להזמין שיעור זה.",
+    "cancelBtn": "ביטול",
+    "sendBtn": "שלח הצעות ל-{count} תלמידים",
+    "toastTitle": "ההצעות נשלחו!",
+    "toastDesc": "הודעות SMS מותאמות אישית נשלחו לתלמידים המוצעים."
   }
 }

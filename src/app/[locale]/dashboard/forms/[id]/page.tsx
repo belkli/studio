@@ -102,7 +102,7 @@ export default function FormDetailsPage() {
         doc.text(rtl(form.formType), pageWidth / 2, 20, { align: 'center' });
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
-        doc.text(rtl(`שנת לימודים: ${form.academicYear || new Date().getFullYear()}`), pageWidth / 2, 28, { align: 'center' });
+        doc.text(rtl(`${t('academicYear')}: ${form.academicYear || new Date().getFullYear()}`), pageWidth / 2, 28, { align: 'center' });
 
         let lastY = 40;
 
@@ -257,7 +257,7 @@ export default function FormDetailsPage() {
                 ...form,
                 status: 'APPROVED' as FormStatus,
                 signatureUrl: result.dataUrl,
-                signedAt: new Date().toLocaleDateString('he-IL'),
+                signedAt: new Date().toLocaleDateString(locale),
             };
             updateForm(updatedForm);
 
@@ -397,24 +397,24 @@ export default function FormDetailsPage() {
 
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={dir}>
             <div className="flex items-center justify-between">
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/forms">
-                        <ArrowLeft className="ms-2 h-4 w-4" />
+                        <ArrowLeft className="me-2 h-4 w-4" />
                         {t('backToAll')}
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">
                     {isRevisable && (
                         <Button onClick={() => setIsEditing(true)}>
-                            <Edit className="ms-2 h-4 w-4" />
+                            <Edit className="me-2 h-4 w-4" />
                             {t('fixAndResubmit')}
                         </Button>
                     )}
                     {(form.status === 'APPROVED' || form.status === 'FINAL_APPROVED') && (
                         <Button onClick={() => generatePdf(form)} variant="outline">
-                            <Download className="ms-2 h-4 w-4" />
+                            <Download className="me-2 h-4 w-4" />
                             {t('downloadPdf')}
                         </Button>
                     )}
@@ -476,9 +476,9 @@ export default function FormDetailsPage() {
 
                                         let displayValue = String(value);
                                         if (field.type === 'checkbox') {
-                                            displayValue = value ? (t('labels.yes') || 'כן') : (t('labels.no') || 'לא');
+                                            displayValue = value ? t('labels.yes') : t('labels.no');
                                         } else if (typeof value === 'boolean') {
-                                            displayValue = value ? (t('labels.yes') || 'כן') : (t('labels.no') || 'לא');
+                                            displayValue = value ? t('labels.yes') : t('labels.no');
                                         }
 
                                         const fieldLabel = typeof field.label === 'string'
@@ -548,15 +548,15 @@ export default function FormDetailsPage() {
                             )}
                             {form.formType === 'כנס / אירוע' && (
                                 <>
-                                    <DetailsCard title="1. פרטי האירוע" columns={3}>
-                                        <DetailItem label="שם האירוע" value={form.eventName} />
-                                        <DetailItem label="תאריך" value={form.eventDate} />
-                                        <DetailItem label="מיקום" value={form.eventLocation} />
+                                    <DetailsCard title={t('kenesEventDetails')} columns={3}>
+                                        <DetailItem label={t('kenesEventName')} value={form.eventName} />
+                                        <DetailItem label={t('kenesDate')} value={form.eventDate} />
+                                        <DetailItem label={t('kenesLocation')} value={form.eventLocation} />
                                     </DetailsCard>
-                                    <DetailsCard title="2. פרטי ההרכב" columns={3}>
-                                        <DetailItem label="מנצח/ת" value={form.conductor} />
-                                        <DetailItem label="מלווה" value={form.accompanist} />
-                                        <DetailItem label="מספר משתתפים" value={form.numParticipants} />
+                                    <DetailsCard title={t('kenesEnsembleDetails')} columns={3}>
+                                        <DetailItem label={t('kenesConductor')} value={form.conductor} />
+                                        <DetailItem label={t('kenesAccompanist')} value={form.accompanist} />
+                                        <DetailItem label={t('kenesNumParticipants')} value={form.numParticipants} />
                                     </DetailsCard>
                                 </>
                             )}
@@ -582,9 +582,9 @@ export default function FormDetailsPage() {
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead>{tl('composer')}</TableHead>
-                                                    <TableHead>{tl('pieceTitle')}</TableHead>
-                                                    <TableHead>{tl('genre')}</TableHead>
+                                                    <TableHead className="text-start">{tl('composer')}</TableHead>
+                                                    <TableHead className="text-start">{tl('pieceTitle')}</TableHead>
+                                                    <TableHead className="text-start">{tl('genre')}</TableHead>
                                                     <TableHead className="text-center">{tl('duration')}</TableHead>
                                                 </TableRow>
                                             </TableHeader>
@@ -616,8 +616,8 @@ export default function FormDetailsPage() {
                                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         <Textarea placeholder={t('labels.addNote' as any) || "הוסף הערה (אופציונלי)..."} />
                                         <div className="flex gap-4">
-                                            <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="ms-2 h-4 w-4" /> {t('approveAndForward')}</Button>
-                                            <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> {t('reject')}</Button>
+                                            <Button onClick={handleTeacherApprove} className="flex-1 bg-green-600 hover:bg-green-700"><Check className="me-2 h-4 w-4" /> {t('approveAndForward')}</Button>
+                                            <Button onClick={handleTeacherReject} variant="destructive" className="flex-1"><ThumbsDown className="me-2 h-4 w-4" /> {t('reject')}</Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -632,8 +632,8 @@ export default function FormDetailsPage() {
                                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         <Textarea placeholder={t('labels.addNote' as any) || "הוסף הערה (אופציונלי)..."} />
                                         <div className="flex gap-4">
-                                            <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="ms-2 h-4 w-4" /> {t('approveAndSign')}</Button>
-                                            <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="ms-2 h-4 w-4" /> {t('reject')}</Button>
+                                            <Button onClick={() => setSignatureDialogOpen(true)} className="flex-1 bg-green-600 hover:bg-green-700"><Signature className="me-2 h-4 w-4" /> {t('approveAndSign')}</Button>
+                                            <Button onClick={handleAdminReject} variant="destructive" className="flex-1"><ThumbsDown className="me-2 h-4 w-4" /> {t('reject')}</Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -645,8 +645,8 @@ export default function FormDetailsPage() {
                                         <CardTitle>{t('ministryActions')}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="flex gap-4">
-                                        <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="ms-2 h-4 w-4" /> {t('finalApprove')}</Button>
-                                        <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="ms-2 h-4 w-4" /> {t('requestChanges')}</Button>
+                                        <Button onClick={handleMinistryFinalApprove} className="flex-1 bg-blue-600 hover:bg-blue-700"><CircleCheckBig className="me-2 h-4 w-4" /> {t('finalApprove')}</Button>
+                                        <Button onClick={() => setMinistryRejectionDialogOpen(true)} variant="destructive" className="flex-1 bg-purple-600 hover:bg-purple-700"><ShieldAlert className="me-2 h-4 w-4" /> {t('requestChanges')}</Button>
                                     </CardContent>
                                 </Card>
                             )}
@@ -663,8 +663,7 @@ export default function FormDetailsPage() {
                             </Avatar>
                             <div>
                                 <CardTitle>{form.studentName}</CardTitle>
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                <CardDescription>{t('studentRole' as any) || 'תלמיד/ה'}</CardDescription>
+                                <CardDescription>{t('studentRole')}</CardDescription>
                             </div>
                         </CardHeader>
                     </Card>

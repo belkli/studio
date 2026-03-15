@@ -53,6 +53,7 @@
     "weeklyGoalProgress": "{current} / {goal} دقيقة",
     "welcomeStudent": "مرحباً، {name}",
     "welcomeTitle": "مرحباً، {studentName}!",
+    "programTypeLabel": "برنامج {type}",
     "T": "ت"
   },
   "StudentBilling": {
@@ -97,7 +98,13 @@
     "pausedWithinCoolingOff": "تم إيقاف الاشتراك خلال فترة التجربة (14 يومًا). يحق لك استرداد كامل.",
     "pausedConfirmation": "تم إيقاف الاشتراك. سيصبح التغيير ساريًا خلال 3 أيام عمل.",
     "pauseError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "paymentError": "خطأ في الدفع",
+    "paymentErrorDesc": "تعذّر إنشاء رابط الدفع. يرجى المحاولة مرة أخرى لاحقًا.",
+    "cancelSubscriptionConfirm": "هل أنت متأكد من رغبتك في إلغاء الاشتراك لـ {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "cancelledWithinCoolingOff": "تم الإلغاء خلال فترة التجربة (14 يومًا). يحق لك استرداد كامل المبلغ.",
+    "cancelledConfirmation": "سيصبح الإلغاء ساريًا خلال 3 أيام عمل.",
+    "cancelError": "حدث خطأ. يرجى المحاولة مرة أخرى."
   },
   "StudentPractice": {
     "attachVideo": "إرفاق فيديو",
@@ -420,5 +427,56 @@
     "dateSent": "تاريخ الإرسال",
     "actions": "الإجراءات",
     "download": "تنزيل"
+  },
+  "PracticeCoach": {
+    "title": "مدرب شخصي بالذكاء الاصطناعي",
+    "description": "اعزف مقطعاً قصيراً (30-60 ثانية) واحصل على تقييم فوري.",
+    "recording": "جارٍ التسجيل...",
+    "analyzing": "جارٍ تحليل الأداء...",
+    "feedbackTitle": "ملخص التقييم",
+    "feedbackDesc": "أداء ممتاز! إليك بعض النقاط للتحسين.",
+    "pitchAccuracy": "دقة النغمة",
+    "rhythmAccuracy": "دقة الإيقاع",
+    "observations": "ملاحظات رئيسية:"
+  },
+  "MultimediaFeedback": {
+    "title": "ملاحظات الوسائط المتعددة",
+    "description": "شاهد فيديوهات التمرين التي رفعها الطالب وأضف ملاحظاتك.",
+    "noVideos": "لم يرفع الطالب أي فيديوهات بعد.",
+    "watchVideo": "مشاهدة الفيديو",
+    "yourFeedback": "ملاحظاتك:",
+    "writeFeedbackPlaceholder": "اكتب ملاحظاتك...",
+    "sendFeedbackSrOnly": "إرسال الملاحظات",
+    "feedbackSentToast": "تم إرسال الملاحظات بنجاح",
+    "sentAgo": "أُرسل {time}"
+  },
+  "PracticeVideoUpload": {
+    "formTitle": "رفع فيديو تمرين",
+    "formDesc": "أرسل فيديو قصيراً (حتى 60 ثانية) لمعلمك للحصول على ملاحظات خلال الأسبوع.",
+    "dropzoneText": "اسحب ملف فيديو هنا، أو انقر للاختيار",
+    "dropzoneFormats": "MP4، MOV، WebM — حتى 60 ثانية",
+    "repertoireLabel": "لأي قطعة يتعلق هذا الفيديو؟",
+    "repertoirePlaceholder": "اختر قطعة من الريبرتوار...",
+    "notesLabel": "ملاحظات للمعلم (اختياري)",
+    "notesPlaceholder": "مثال: لست متأكداً من الأصبع هنا، أو هل الديناميكية صحيحة؟",
+    "uploading": "جارٍ الرفع...",
+    "submitBtn": "إرسال للملاحظات",
+    "uploadSuccessTitle": "تم رفع الفيديو بنجاح!",
+    "uploadSuccessDesc": "سيتلقى معلمك إشعاراً ويمكنه تقديم ملاحظات.",
+    "errorSelectPiece": "يجب اختيار قطعة."
+  },
+  "ReschedulingChat": {
+    "cardTitle": "مساعد تنسيق الدروس بالذكاء الاصطناعي",
+    "cardSubtitle": "أدر دروسك من خلال محادثة بسيطة.",
+    "greeting": "مرحباً! أنا مساعد Harmonia الذكي. كيف يمكنني مساعدتك في جدولك اليوم؟ مثلاً: \"أحتاج إلى إلغاء درسي غداً\" أو \"متى درسي القادم؟\"",
+    "actionCancelled": "حسناً، تم إلغاء الإجراء. كيف يمكنني مساعدتك أيضاً؟",
+    "systemUpdated": "ممتاز، قمت بتحديث النظام. هل هناك شيء آخر يمكنني المساعدة به؟",
+    "lessonCancelledTitle": "تم إلغاء الدرس",
+    "lessonCancelledDesc": "تم إلغاء درس {instrument} بنجاح.",
+    "lessonRescheduledTitle": "تمت إعادة جدولة الدرس",
+    "lessonRescheduledDesc": "تم نقل درس {instrument} إلى موعد جديد.",
+    "confirmYes": "نعم، تأكيد",
+    "confirmNo": "لا، إلغاء",
+    "inputPlaceholder": "اكتب رسالة..."
   }
 }

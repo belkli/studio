@@ -78,6 +78,8 @@
       "rejected": "مرفوض"
     },
     "PENDING": "قيد الانتظار",
+    "PENDING_ADMIN": "بانتظار مراجعة المسؤول",
+    "PENDING_TEACHER": "بانتظار مراجعة المعلم",
     "APPROVED": "موافق عليه",
     "REJECTED": "مرفوض",
     "REVISION_REQUIRED": "يتطلب مراجعة",
@@ -276,6 +278,9 @@
     "oauthErrorDesc": "لا يمكن إكمال تسجيل الدخول الاجتماعي. يرجى المحاولة مرة أخرى."
   },
   "Reports": {
+    "tabFinancial": "التقارير المالية",
+    "tabOperational": "التقارير التشغيلية",
+    "tabAcademic": "التقارير الأكاديمية",
     "teachers": "تقارير المعلمين",
     "practiceEngagement": "معدل المشاركة في التدريب",
     "practiceEngagementDesc": "نسبة الطلاب الذين سجلوا تدريبًا الأسبوع الماضي.",
@@ -399,7 +404,9 @@
   "RecentAnnouncementsCard": {
     "title": "الإعلانات الأخيرة",
     "description": "تحديثات مهمة من المعهد الموسيقي.",
-    "empty": "لا توجد إعلانات حديثة."
+    "empty": "لا توجد إعلانات حديثة.",
+    "channel_EMAIL": "بريد إلكتروني",
+    "channel_SMS": "رسالة نصية"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "تعيين موسيقيين للفعالية",
@@ -493,7 +500,16 @@
     "colDuration": "المدة",
     "colActions": "إجراءات",
     "actionRemove": "إزالة",
-    "emptyProgram": "لم يتم تعيين مشاركين في البرنامج بعد."
+    "emptyProgram": "لم يتم تعيين مشاركين في البرنامج بعد.",
+    "colPhotoConsent": "موافقة التصوير",
+    "noPhotoConsentAria": "لا توجد موافقة على التصوير",
+    "noPhotoConsentTooltip": "لا توجد موافقة على نشر الصور/الفيديو لأغراض تجارية. يجب التأكد من عدم إمكانية التعرف على الطالب/ة في المنشورات.",
+    "eventTypes": {
+      "RECITAL": "حفل موسيقي فردي",
+      "CONCERT": "حفل موسيقي",
+      "EXAM_PERFORMANCE": "أداء امتحان",
+      "OPEN_DAY": "يوم مفتوح"
+    }
   },
   "EventForm": {
     "errors": {
@@ -756,6 +772,10 @@
     "saveChanges": "حفظ التغييرات"
   },
   "TeacherReports": {
+    "pageTitle": "تقاريري",
+    "pageSubtitle": "نظرة عامة على نشاطك وتقدم الطلاب ودخلك.",
+    "noPermission": "ليس لديك إذن لعرض هذه الصفحة.",
+    "noPermissionTitle": "التقارير والتحليلات",
     "activeStudentsTitle": "الطلاب النشطون",
     "activeStudentsDesc": "الطلاب تحت إشرافك",
     "lessonsThisMonthTitle": "الدروس هذا الشهر",
@@ -899,7 +919,8 @@
     "bookNow": "احجز الآن",
     "today": "اليوم",
     "tomorrow": "غداً",
-    "minutes": "دقيقة"
+    "minutes": "دقيقة",
+    "premium": "بريميوم"
   },
   "PrivacyPage": {
     "title": "بيان الخصوصية وشروط الاستخدام",
@@ -1102,5 +1123,28 @@
     "cancel": "إلغاء",
     "confirm": "تأكيد التوقيع",
     "errorEmpty": "يرجى التوقيع قبل التأكيد"
+  },
+  "FamilyHub": {
+    "inviteChildToManage": "ادعُ {name} لإدارة حسابه",
+    "addChildTitle": "تسجيل طفل/ة إضافي/ة",
+    "newRegistration": "تسجيل جديد"
+  },
+  "AssignPerformer": {
+    "studentRequired": "يجب اختيار طالب/ة.",
+    "repertoireRequired": "يجب اختيار مقطوعة.",
+    "unknownComposition": "مقطوعة غير معروفة",
+    "dialogTitle": "إضافة مؤدٍّ للفعالية",
+    "dialogDesc": "اختر طالبًا ومقطوعة جاهزة للأداء من الريبرتوار الخاص به.",
+    "studentLabel": "طالب/ة",
+    "studentPlaceholder": "اختر طالبًا...",
+    "noPhotoConsent": "بدون موافقة على التصوير",
+    "noPhotoConsentTooltip": "لم يوافق هذا الطالب/ة على نشر صور/فيديو لأغراض تجارية. تجنب نشر صور معرّفة من الفعالية.",
+    "noConsentWarning": "لم يوافق هذا الطالب/ة على نشر صور لأغراض تجارية. عند توثيق الفعالية، تجنب نشر صور معرّفة على وسائل التواصل الاجتماعي ومواد التسويق.",
+    "requestConsent": "طلب موافقة",
+    "compositionLabel": "مقطوعة",
+    "compositionPlaceholder": "اختر مقطوعة...",
+    "noReadyCompositions": "لا توجد مقطوعات جاهزة للأداء",
+    "cancelBtn": "إلغاء",
+    "addToProgram": "إضافة للبرنامج"
   }
 }

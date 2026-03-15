@@ -10,12 +10,14 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useDateLocale } from '@/hooks/use-date-locale';
 
 export function WeeklyDigestCard({ child }: { child: User }) {
     const { users, lessons, practiceLogs, assignedRepertoire, lessonNotes, compositions } = useAuth();
     const t = useTranslations('WeeklyDigestCard');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
 
     const statusTranslations: Record<AssignedRepertoire['status'], string> = useMemo(() => ({
@@ -66,7 +68,7 @@ export function WeeklyDigestCard({ child }: { child: User }) {
     }, [child, users, lessons, practiceLogs, assignedRepertoire, lessonNotes]);
 
     return (
-        <Card className="w-full">
+        <Card className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <CardTitle>
                     {t('cardTitle', { childName: child.name.split(' ')[0] })}
@@ -168,7 +170,7 @@ export function WeeklyDigestCard({ child }: { child: User }) {
                     </Button>
                     <Button variant="outline" size="sm" className="flex-1" asChild>
                         <Link href="/dashboard/messages" title={t('sendMessageTitle')}>
-                            <MessageSquare className="ms-2 h-4 w-4" />
+                            <MessageSquare className="me-2 h-4 w-4" />
                             {t('sendMessageBtn')}
                         </Link>
                     </Button>

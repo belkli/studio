@@ -11,6 +11,7 @@ import { processNlpRescheduleRequest } from '@/app/actions';
 import type { RescheduleResponse } from '@/ai/flows/reschedule-flow';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations, useLocale } from 'next-intl';
 import { add, set } from 'date-fns';
 
 interface Message {
@@ -20,7 +21,10 @@ interface Message {
 }
 
 export function ReschedulingChatWidget() {
-  const [messages, setMessages] = useState<Message[]>([{ sender: 'bot', text: 'שלום! אני סוכן ה-AI של הרמוניה. איך אוכל לעזור לך עם מערכת השעות שלך היום? למשל: "אני צריך/ה לבטל את השיעור שלי מחר" או "מתי השיעור הבא שלי?"' }]);
+  const t = useTranslations('ReschedulingChat');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const [messages, setMessages] = useState<Message[]>([{ sender: 'bot', text: t('greeting') }]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user, lessons, users, cancelLesson, rescheduleLesson } = useAuth();
@@ -84,7 +88,7 @@ export function ReschedulingChatWidget() {
     const { type, lessonId } = response.proposedChange;
 
     if (!accepted) {
-      const clarificationMessage: Message = { sender: 'bot', text: 'בסדר, הפעולה בוטלה. איך עוד אוכל לעזור?' };
+      const clarificationMessage: Message = { sender: 'bot', text: t('actionCancelled') };
       setMessages(prev => [...prev, clarificationMessage]);
       return;
     }
@@ -92,24 +96,24 @@ export function ReschedulingChatWidget() {
     if (type === 'CANCEL' && lessonId) {
       cancelLesson(lessonId, false);
       const lesson = lessons.find(l => l.id === lessonId);
-      toast({ title: 'השיעור בוטל', description: `שיעור ${lesson?.instrument} בוטל בהצלחה.` });
+      toast({ title: t('lessonCancelledTitle'), description: t('lessonCancelledDesc', { instrument: lesson?.instrument || '' }) });
     } else if (type === 'RESCHEDULE' && lessonId && 'newStartTime' in response.proposedChange) {
       rescheduleLesson(lessonId, response.proposedChange.newStartTime);
       const lesson = lessons.find(l => l.id === lessonId);
-      toast({ title: 'השיעור נקבע מחדש', description: `שיעור ${lesson?.instrument} נקבע למועד חדש.` });
+      toast({ title: t('lessonRescheduledTitle'), description: t('lessonRescheduledDesc', { instrument: lesson?.instrument || '' }) });
     }
 
-    const confirmationMessage: Message = { sender: 'bot', text: 'מצוין, עדכנתי את המערכת. האם יש משהו נוסף שאוכל לעזור בו?' };
+    const confirmationMessage: Message = { sender: 'bot', text: t('systemUpdated') };
     setMessages(prev => [...prev, confirmationMessage]);
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="flex flex-row items-center gap-4">
         <div className="p-2 bg-primary/10 rounded-full"><BrainCircuit className="h-6 w-6 text-primary" /></div>
         <div>
-          <CardTitle>עוזר תיאום שיעורים AI</CardTitle>
-          <p className="text-sm text-muted-foreground">נהל את השיעורים שלך באמצעות שיחה פשוטה.</p>
+          <CardTitle>{t('cardTitle')}</CardTitle>
+          <p className="text-sm text-muted-foreground">{t('cardSubtitle')}</p>
         </div>
       </CardHeader>
       <CardContent>
@@ -123,10 +127,10 @@ export function ReschedulingChatWidget() {
                   {message.response?.actionType === 'CONFIRMATION_NEEDED' && (
                     <div className="flex gap-2 mt-3 border-t pt-2 border-muted-foreground/20">
                       <Button size="sm" variant="secondary" className="flex-1 bg-green-200 text-green-800 hover:bg-green-300" onClick={() => handleConfirmation(message.response!, true)}>
-                        <Check className="ms-1 h-4 w-4" /> כן, אשר
+                        <Check className="me-1 h-4 w-4" /> {t('confirmYes')}
                       </Button>
                       <Button size="sm" variant="secondary" className="flex-1 bg-red-200 text-red-800 hover:bg-red-300" onClick={() => handleConfirmation(message.response!, false)}>
-                        <X className="ms-1 h-4 w-4" /> לא, בטל
+                        <X className="me-1 h-4 w-4" /> {t('confirmNo')}
                       </Button>
                     </div>
                   )}
@@ -149,7 +153,7 @@ export function ReschedulingChatWidget() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="כתוב הודעה..."
+            placeholder={t('inputPlaceholder')}
             disabled={isLoading}
           />
           <Button onClick={handleSend} disabled={isLoading || !input.trim()}>

@@ -5,16 +5,18 @@ import { FinancialReports } from "./reports/financial-reports";
 import { OperationalReports } from "./reports/operational-reports";
 import { AcademicReports } from "./reports/academic-reports";
 import { TeacherReports } from "./reports/teacher-reports";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function AdminReportsDashboard() {
     const t = useTranslations('Reports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     return (
-        <Tabs defaultValue="financial" dir="rtl">
+        <Tabs defaultValue="financial" dir={isRtl ? 'rtl' : 'ltr'}>
             <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="financial">דוחות פיננסיים</TabsTrigger>
-                <TabsTrigger value="operational">דוחות תפעוליים</TabsTrigger>
-                <TabsTrigger value="academic">דוחות אקדמיים</TabsTrigger>
+                <TabsTrigger value="financial">{t('tabFinancial')}</TabsTrigger>
+                <TabsTrigger value="operational">{t('tabOperational')}</TabsTrigger>
+                <TabsTrigger value="academic">{t('tabAcademic')}</TabsTrigger>
                 <TabsTrigger value="teachers">{t('teachers')}</TabsTrigger>
             </TabsList>
             <TabsContent value="financial">

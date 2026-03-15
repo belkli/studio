@@ -93,7 +93,14 @@
     "expiryDate": "Expiry Date",
     "cvc": "CVC",
     "cancel": "Cancel",
-    "saveButton": "Save Card"
+    "saveButton": "Save Card",
+    "cardHolderPlaceholder": "John Doe",
+    "validation": {
+      "cardNumberInvalid": "Invalid card number",
+      "expiryDateInvalid": "Invalid expiry date (MM/YY)",
+      "cvcInvalid": "Invalid CVC",
+      "cardHolderRequired": "Cardholder name is required"
+    }
   },
   "Payroll": {
     "drafts": "Drafts",
@@ -154,7 +161,10 @@
     "absences": "Absences",
     "makeups": "Makeups",
     "actions": "Actions",
-    "exportTeacher": "Export teacher data"
+    "exportTeacher": "Export teacher data",
+    "hours": "Hours",
+    "conservatorium": "Conservatorium",
+    "allConservatoriums": "All Conservatoriums"
   },
   "TeacherPayroll": {
     "statusDraft": "Under Review",
@@ -187,7 +197,17 @@
     "status": "Status",
     "minutes": "minutes",
     "noLessons": "No lessons in the selected period.",
-    "downloadMyReport": "Download my report"
+    "downloadMyReport": "Download my report",
+    "lessonStatuses": {
+      "SCHEDULED": "Scheduled",
+      "COMPLETED": "Completed",
+      "CANCELLED_STUDENT_NOTICED": "Cancelled by student (with notice)",
+      "CANCELLED_STUDENT_NO_NOTICE": "Cancelled by student (no notice)",
+      "CANCELLED_TEACHER": "Cancelled by teacher",
+      "CANCELLED_CONSERVATORIUM": "Cancelled by conservatorium",
+      "NO_SHOW_STUDENT": "Student no-show",
+      "NO_SHOW_TEACHER": "Teacher no-show"
+    }
   },
   "TeacherPayrollPage": {
     "title": "My payroll",

@@ -14,6 +14,7 @@ export function TeacherReportsDashboard() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { user: teacher, users, lessons, practiceLogs, formSubmissions }: { user: User | null, users: User[], lessons: any[], practiceLogs: PracticeLog[], formSubmissions: FormSubmission[] } = useAuth();
     const t = useTranslations('TeacherReports');
+    const tStatus = useTranslations('Status');
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
@@ -78,7 +79,7 @@ export function TeacherReportsDashboard() {
     if (!teacher) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -173,7 +174,7 @@ export function TeacherReportsDashboard() {
                                     <TableCell className="text-start">{form.formType}</TableCell>
                                     <TableCell className="text-start">{form.submissionDate}</TableCell>
                                     <TableCell className="text-start">
-                                        <span className="text-sm text-muted-foreground">{form.status}</span>
+                                        <span className="text-sm text-muted-foreground">{tStatus.has(form.status) ? tStatus(form.status) : form.status}</span>
                                     </TableCell>
                                 </TableRow>
                             )) : (

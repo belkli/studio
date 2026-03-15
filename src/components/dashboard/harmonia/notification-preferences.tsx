@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Save } from 'lucide-react';
 import type { NotificationType, Channel, NotificationPreferences as NotificationPreferencesType } from '@/lib/types';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const getNotificationPreferencesSchema = (t: any) => z.object({
     preferences: z.object({
@@ -51,6 +51,8 @@ export function NotificationPreferences() {
     const { user, updateNotificationPreferences } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('NotificationPreferences');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const formSchema = getNotificationPreferencesSchema(t);
 
     const notificationTypes: { id: NotificationType, label: string }[] = [
@@ -115,7 +117,7 @@ export function NotificationPreferences() {
 
     return (
         <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('channelPreferencesTitle')}</CardTitle>
@@ -125,7 +127,7 @@ export function NotificationPreferences() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>{t('notificationTypeHeader')}</TableHead>
+                                    <TableHead className="text-start">{t('notificationTypeHeader')}</TableHead>
                                     {channels.map(channel => <TableHead key={channel.id} className="text-center">{channel.label}</TableHead>)}
                                 </TableRow>
                             </TableHeader>
@@ -189,7 +191,7 @@ export function NotificationPreferences() {
                         <FormField control={form.control} name="language" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('notificationLanguageLabel')}</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                                     <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                                     <SelectContent>
                                         <SelectItem value="HE">{t('langHebrew')}</SelectItem>

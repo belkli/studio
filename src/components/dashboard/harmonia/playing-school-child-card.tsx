@@ -3,11 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Music, School, User as UserIcon, Calendar, ArrowRight, CheckCircle2, Clock, Star, Sparkles } from "lucide-react";
+import { Music, School, User as UserIcon, Calendar, ArrowRight, ArrowLeft, CheckCircle2, Clock, Star, Sparkles } from "lucide-react";
 import { ExcellenceTrackOfferModal } from "../../harmonia/excellence-track-offer-modal";
 import { useState } from "react";
 import type { User, PlayingSchoolInfo } from "@/lib/types";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
 
@@ -19,12 +19,14 @@ interface PlayingSchoolChildCardProps {
 
 export function PlayingSchoolChildCard({ child, psInfo, className }: PlayingSchoolChildCardProps) {
     const t = useTranslations('PlayingSchool.familyHub');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [isOfferOpen, setIsOfferOpen] = useState(false);
 
     const isNominated = psInfo.excellenceTrackNominated && !psInfo.excellenceTrackAccepted;
 
     return (
-        <Card className={cn("overflow-hidden border-indigo-100 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-indigo-50/30", className)}>
+        <Card dir={isRtl ? 'rtl' : 'ltr'} className={cn("overflow-hidden border-indigo-100 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-indigo-50/30", className)}>
             <CardHeader className="pb-3 border-b border-indigo-50">
                 <div className="flex justify-between items-start">
                     <div className="space-y-1">
@@ -37,7 +39,7 @@ export function PlayingSchoolChildCard({ child, psInfo, className }: PlayingScho
                         </CardDescription>
                     </div>
                     <Badge variant="outline" className="border-indigo-200 text-indigo-700 bg-white">
-                        {psInfo.programType}
+                        {t(`programTypes.${psInfo.programType}`)}
                     </Badge>
                 </div>
             </CardHeader>
@@ -79,7 +81,7 @@ export function PlayingSchoolChildCard({ child, psInfo, className }: PlayingScho
                             </div>
                             <div>
                                 <p className="text-xs text-muted-foreground line-clamp-1">{psInfo.schoolName}</p>
-                                <p className="text-sm font-bold">{psInfo.lessonDay}, {psInfo.programType === 'GROUP' ? 'Group Lesson' : 'Individual'}</p>
+                                <p className="text-sm font-bold">{psInfo.lessonDay}, {psInfo.programType === 'GROUP' ? t('groupLesson') : t('individualLesson')}</p>
                             </div>
                         </div>
                     ) : (
@@ -92,17 +94,17 @@ export function PlayingSchoolChildCard({ child, psInfo, className }: PlayingScho
 
                 <div className="flex items-center justify-between pt-2">
                     <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Instrument Status</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{t('instrumentStatus')}</p>
                         <div className="flex items-center gap-1.5">
                             {psInfo.instrumentReceived ? (
                                 <>
                                     <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                    <span className="text-sm font-medium">Received</span>
+                                    <span className="text-sm font-medium">{t('received')}</span>
                                 </>
                             ) : (
                                 <>
                                     <Clock className="h-4 w-4 text-orange-400" />
-                                    <span className="text-sm font-medium">Pending collection</span>
+                                    <span className="text-sm font-medium">{t('pendingCollection')}</span>
                                 </>
                             )}
                         </div>
@@ -127,7 +129,7 @@ export function PlayingSchoolChildCard({ child, psInfo, className }: PlayingScho
                 )}
                 <Button variant="link" className="w-full text-indigo-700 font-semibold gap-2 no-underline hover:no-underline group" size="sm">
                     {t('viewDetails')}
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    {isRtl ? <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
                 </Button>
 
                 <ExcellenceTrackOfferModal

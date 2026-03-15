@@ -103,11 +103,26 @@
       "allRooms": "جميع الغرف",
       "prevWeek": "الأسبوع السابق",
       "nextWeek": "الأسبوع التالي",
+      "cancelled": "ملغى",
+      "withName": "مع {name}",
+      "todayBtn": "اليوم",
+      "virtualLabel": "افتراضي",
+      "roomLabel": "غرفة {roomId}",
+      "lessonCancelled": "تم إلغاء الدرس",
+      "cancelWithCredit": "تمت إضافة رصيد لدرس تعويضي إلى حسابك.",
+      "cancelNoCredit": "لم يتم منح رصيد وفقًا لسياسة الإلغاء.",
+      "dateRangeFormat": "d MMM",
       "export": "تصدير CSV",
       "time": "الوقت",
       "teacherHeading": "المعلم: {teacher}",
       "unknown": "غير معروف",
-      "notAssigned": "غير معين"
+      "notAssigned": "غير معين",
+      "allBranches": "جميع الفروع",
+      "filterBranch": "الفرع",
+      "tooltipInstrument": "{instrument} مع {teacher}",
+      "tooltipStudent": "الطالب: {student}",
+      "tooltipStatus": "الحالة: {status}",
+      "tooltipRoom": "الغرفة: {room}"
     },
     "substitute": {
       "noPermission": "ليس لديك صلاحية لعرض هذه الصفحة.",
@@ -391,7 +406,17 @@
     "overdue": "متأخر",
     "room": "غرفة {number}",
     "subtitle": "ماذا يحدث اليوم في الكونسرفتوار.",
-    "title": "نظرة عامة يومية"
+    "title": "نظرة عامة يومية",
+    "lessonStatuses": {
+      "SCHEDULED": "مجدول",
+      "COMPLETED": "مكتمل",
+      "CANCELLED_STUDENT_NOTICED": "ملغى (مع إشعار)",
+      "CANCELLED_STUDENT_NO_NOTICE": "ملغى (بدون إشعار)",
+      "CANCELLED_TEACHER": "ألغاه المعلم",
+      "CANCELLED_CONSERVATORIUM": "ألغته الكونسرفتوار",
+      "NO_SHOW_STUDENT": "غياب",
+      "NO_SHOW_TEACHER": "غياب المعلم"
+    }
   },
   "KeyMetrics": {
     "activeStudents": "الطلاب النشطون",
@@ -636,7 +661,20 @@
       "description": "التحديثات الأخيرة ذات الصلة بحسابك.",
       "empty": "لا توجد تحديثات جديدة في الوقت الحالي.",
       "new": "جديد",
-      "openItem": "يفتح"
+      "openItem": "يفتح",
+      "itemTypes": {
+        "announcement": "إعلان",
+        "event": "حدث",
+        "form": "نموذج",
+        "schedule_change": "تغيير الجدول",
+        "payment": "دفع",
+        "master_class": "درس متقدم"
+      },
+      "invoiceStatuses": {
+        "SENT": "في انتظار الدفع",
+        "OVERDUE": "متأخر"
+      },
+      "invoiceDue": "مستحق بتاريخ {date} • ₪{amount}"
     }
   },
   "UserManagement": {
@@ -761,6 +799,12 @@
       "description": "خطط وأدر وأنتج جميع فعاليات المعهد الموسيقي.",
       "createButton": "إنشاء فعالية جديدة"
     },
+    "EventsList": {
+      "participants": "{count} مشاركين",
+      "free": "مجاني",
+      "manageEvent": "إدارة الفعالية",
+      "atTime": "الساعة {time}"
+    },
     "newEvent": {
       "title": "إنشاء فعالية جديدة",
       "description": "أدخل التفاصيل الأساسية لإنشاء فعالية جديدة في النظام."
@@ -860,5 +904,17 @@
     "delete": "حذف",
     "deleteConfirmTitle": "حذف المقطوعة",
     "deleteConfirmDesc": "هل أنت متأكد من حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "SoundCheckScheduler": {
+    "title": "جدول البروفات وفحص الصوت",
+    "dressRehearsal": "البروفة العامة:",
+    "autoGenerate": "إنشاء جدول تلقائي",
+    "colPerformer": "المؤدي",
+    "colTime": "الوقت",
+    "emptyState": "أضف مؤدين لإنشاء جدول بروفات.",
+    "sendSchedule": "إرسال الجدول للمؤدين",
+    "scheduleCreated": "تم إنشاء جدول البروفات بنجاح",
+    "scheduleSentTitle": "تم إرسال الجدول!",
+    "scheduleSentDesc": "تم إرسال رسائل لجميع المؤدين مع أوقات وصولهم."
   }
 }

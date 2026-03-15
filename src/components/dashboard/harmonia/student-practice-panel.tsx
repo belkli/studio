@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Music, Calendar, Clock, Trophy, Flame, PlayCircle, Star, Video, UploadCloud, Activity, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function StudentPracticePanel() {
@@ -22,6 +22,8 @@ export function StudentPracticePanel() {
     const { toast } = useToast();
     const t = useTranslations('StudentPractice');
     const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const [duration, setDuration] = useState('30');
     const [repertoireId, setRepertoireId] = useState('');
@@ -93,7 +95,7 @@ export function StudentPracticePanel() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
                     <CardHeader className="pb-2">
@@ -134,7 +136,7 @@ export function StudentPracticePanel() {
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
                             <Label>{t('whatDidYouPractice')}</Label>
-                            <Select dir="rtl" value={repertoireId} onValueChange={setRepertoireId}>
+                            <Select dir={isRtl ? 'rtl' : 'ltr'} value={repertoireId} onValueChange={setRepertoireId}>
                                 <SelectTrigger><SelectValue placeholder={t('selectPiece')} /></SelectTrigger>
                                 <SelectContent>
                                     {myRepertoire.length === 0 ? (
@@ -195,7 +197,7 @@ export function StudentPracticePanel() {
                                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} ${t('chartMinAbbrev')}`} />
                                 <Tooltip
                                     cursor={{ fill: 'hsl(var(--muted))' }}
-                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: 'rtl' }}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderColor: 'hsl(var(--border))', direction: isRtl ? 'rtl' : 'ltr' }}
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     formatter={(value: any) => [`${value} ${t('chartMinAbbrev')}`, t('chartTooltipTime')]}
                                 />
@@ -213,10 +215,10 @@ export function StudentPracticePanel() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>{t('colDate')}</TableHead>
-                                    <TableHead>{t('colTopic')}</TableHead>
-                                    <TableHead>{t('colDuration')}</TableHead>
-                                    <TableHead>{t('colFeedback')}</TableHead>
+                                    <TableHead className="text-start">{t('colDate')}</TableHead>
+                                    <TableHead className="text-start">{t('colTopic')}</TableHead>
+                                    <TableHead className="text-start">{t('colDuration')}</TableHead>
+                                    <TableHead className="text-start">{t('colFeedback')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { useDateLocale } from '@/hooks/use-date-locale';
 import { collectInstrumentTokensFromConservatoriumInstrument, normalizeInstrumentToken } from '@/lib/instrument-matching';
 
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ export function OpenDayLandingPage() {
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const { toast } = useToast();
+  const dateLocale = useDateLocale();
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
@@ -66,7 +68,7 @@ export function OpenDayLandingPage() {
     conservatoriums.forEach((item) => {
       if (item.location?.city) set.add(item.location.city);
     });
-    return Array.from(set).sort((a, b) => a.localeCompare(b, locale === 'he' ? 'he' : 'en'));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, locale));
   }, [conservatoriums, locale]);
 
   const instrumentOptions = useMemo(() => {
@@ -80,7 +82,7 @@ export function OpenDayLandingPage() {
     return conservatoriumInstruments
       .filter((item) => item.isActive)
       .map((item) => ({ value: item.id, label: localeName(item) }))
-      .sort((a, b) => a.label.localeCompare(b.label, locale === 'he' ? 'he' : 'en'));
+      .sort((a, b) => a.label.localeCompare(b.label, locale));
   }, [conservatoriumInstruments, locale]);
 
   const filteredEvents = useMemo(() => {
@@ -378,7 +380,7 @@ export function OpenDayLandingPage() {
                         <CardDescription>{cons?.name}</CardDescription>
                       </CardHeader>
                       <CardContent className="flex-1 space-y-2 text-sm text-muted-foreground">
-                        <p className="flex items-center"><Calendar className="me-2 h-4 w-4" />{format(new Date(event.date), 'dd/MM/yyyy')}</p>
+                        <p className="flex items-center"><Calendar className="me-2 h-4 w-4" />{format(new Date(event.date), 'dd/MM/yyyy', { locale: dateLocale })}</p>
                         <p className="flex items-center"><Clock className="me-2 h-4 w-4" />{event.startTime} - {event.endTime}</p>
                       </CardContent>
                       <CardFooter>

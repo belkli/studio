@@ -708,7 +708,7 @@ export function BookLessonWizard() {
                                                         )}
                                                     >
                                                         <Star className={cn("h-3 w-3", premiumOnly ? "fill-yellow-500 text-yellow-500" : "text-slate-400")} />
-                                                        Premium
+                                                        {t('premiumLabel')}
                                                     </button>
                                                 </div>
                                                 <Combobox

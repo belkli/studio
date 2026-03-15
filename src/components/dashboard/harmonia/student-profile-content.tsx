@@ -133,8 +133,10 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
         }
     };
 
+    const isRtl = locale === 'he' || locale === 'ar';
+
     return (
-        <>
+        <div dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{isParentView ? t('parentViewTitle', { studentName: student.name.split(' ')[0] }) : t('welcomeTitle', { studentName: student.name.split(' ')[0] })}</h1>
@@ -168,7 +170,7 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                             {t('schoolProgram')}
                         </CardTitle>
                         <CardDescription>
-                            {student.playingSchoolInfo.schoolName} — {student.playingSchoolInfo.programType} Program
+                            {student.playingSchoolInfo.schoolName} — {t('programTypeLabel', { type: student.playingSchoolInfo.programType })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -283,8 +285,8 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>{t('piece')}</TableHead>
-                                    <TableHead>{t('status')}</TableHead>
+                                    <TableHead className="text-start">{t('piece')}</TableHead>
+                                    <TableHead className="text-start">{t('status')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -442,6 +444,6 @@ export function StudentProfilePageContent({ student, isParentView = false }: { s
                 open={!!rateTarget}
                 onOpenChange={(open) => !open && setRateTarget(null)}
             />
-        </>
+        </div>
     )
 }

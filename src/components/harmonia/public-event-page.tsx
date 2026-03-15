@@ -114,7 +114,7 @@ export function PublicEventPage() {
                     <Separator />
                     <div className="text-center">
                       <p className="text-sm text-muted-foreground">{t('totalPayment')}</p>
-                      <p className="text-3xl font-bold">?{(event.ticketPrice ?? 0) * ticketCount}</p>
+                      <p className="text-3xl font-bold">₪{(event.ticketPrice ?? 0) * ticketCount}</p>
                     </div>
                   </>
                 ) : (

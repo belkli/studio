@@ -16,13 +16,15 @@ import { add, set, format, getDay, isBefore, isToday } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import type { LessonSlot } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
-const rescheduleSchema = z.object({
-    date: z.date().nullable().refine(val => !!val, { message: "חובה לבחור תאריך." }),
-    time: z.string().min(1, "חובה לבחור שעה."),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getRescheduleSchema = (t: any) => z.object({
+    date: z.date().nullable().refine(val => !!val, { message: t('dateRequired') }),
+    time: z.string().min(1, t('timeRequired')),
 });
 
-type RescheduleFormData = z.infer<typeof rescheduleSchema>;
+type RescheduleFormData = z.infer<ReturnType<typeof getRescheduleSchema>>;
 
 interface RescheduleLessonDialogProps {
     lesson: LessonSlot | null;
@@ -35,12 +37,15 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
     const { users, lessons } = useAuth();
     const dateLocale = useDateLocale();
     const { toast } = useToast();
+    const t = useTranslations('LessonManagement');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
     const form = useForm<RescheduleFormData>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        resolver: zodResolver(rescheduleSchema) as any,
+        resolver: zodResolver(getRescheduleSchema(t)) as any,
         defaultValues: {
             date: new Date(),
         },
@@ -123,8 +128,8 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
         onConfirm(newStartTime.toISOString());
 
         toast({
-            title: 'השיעור נקבע מחדש!',
-            description: `השיעור עודכן למועד: ${format(newStartTime, 'dd/MM/yy HH:mm')}.`
+            title: t('rescheduleSuccess'),
+            description: t('rescheduleSuccessDesc', { dateTime: format(newStartTime, 'dd/MM/yy HH:mm') }),
         });
         onOpenChange(false);
     };
@@ -135,12 +140,11 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent dir="rtl" className="sm:max-w-3xl">
+            <DialogContent dir={isRtl ? 'rtl' : 'ltr'} className="sm:max-w-3xl">
                 <DialogHeader>
-                    <DialogTitle>שינוי מועד שיעור - {lesson.instrument}</DialogTitle>
+                    <DialogTitle>{t('rescheduleDialogTitle', { instrument: lesson.instrument })}</DialogTitle>
                     <DialogDescription>
-                        בחר/י תאריך ושעה חדשים לשיעור עם {teacher?.name}.
-                        אורך השיעור: {lesson.durationMinutes} דקות.
+                        {t('rescheduleDialogDesc', { teacherName: teacher?.name || '', durationMinutes: String(lesson.durationMinutes) })}
                     </DialogDescription>
                 </DialogHeader>
                 <FormProvider {...form}>
@@ -165,15 +169,15 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
 
                             <FormField name="time" control={form.control} render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>שעות פנויות</FormLabel>
+                                    <FormLabel>{t('availableHours')}</FormLabel>
                                     <FormControl>
                                         <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-2 border rounded-md">
                                             {isLoadingSlots && <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
-                                            {!isLoadingSlots && availableSlots.length === 0 && <p className="text-center text-sm text-muted-foreground p-4">לא נמצאו שעות פנויות בתאריך זה.</p>}
+                                            {!isLoadingSlots && availableSlots.length === 0 && <p className="text-center text-sm text-muted-foreground p-4">{t('noSlotsForDate')}</p>}
                                             {!isLoadingSlots && availableSlots.map(slot => (
                                                 <FormItem key={slot}>
                                                     <FormControl>
-                                                        <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
+                                                        <label className="flex items-center gap-3 p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground">
                                                             <RadioGroupItem value={slot} id={slot} className="hidden" />
                                                             <span className="font-mono">{slot}</span>
                                                         </label>
@@ -188,10 +192,10 @@ export function RescheduleLessonDialog({ lesson, open, onOpenChange, onConfirm }
                         </div>
                         <DialogFooter>
                             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                                ביטול
+                                {t('cancel')}
                             </Button>
                             <Button type="submit" disabled={!form.formState.isValid}>
-                                קבע מועד חדש
+                                {t('setNewDate')}
                             </Button>
                         </DialogFooter>
                     </form>

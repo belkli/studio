@@ -94,7 +94,7 @@ export function PlayingSchoolFinder({ className }: PlayingSchoolFinderProps) {
   };
 
   return (
-    <div className={cn('space-y-12', className)}>
+    <div className={cn('space-y-12', className)} dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3">
         <div className="group relative md:col-span-2">
           <Search className="absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-indigo-600" />

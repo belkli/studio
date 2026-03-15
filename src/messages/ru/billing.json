@@ -92,6 +92,13 @@
     "cvc": "Код",
     "expiryDate": "Срок действия",
     "saveButton": "Сохранить карту",
+    "cardHolderPlaceholder": "Иван Иванов",
+    "validation": {
+      "cardNumberInvalid": "Неверный номер карты",
+      "expiryDateInvalid": "Неверный срок действия (MM/YY)",
+      "cvcInvalid": "Неверный CVC",
+      "cardHolderRequired": "Необходимо указать имя владельца карты"
+    },
     "updateMethodDesc": "Пожалуйста, введите данные вашей новой кредитной карты.",
     "updateMethodTitle": "Обновить способ оплаты"
   },
@@ -154,7 +161,10 @@
     "absences": "Отсутствие",
     "makeups": "Отработки",
     "actions": "Действия",
-    "exportTeacher": "Экспорт данных преподавателя"
+    "exportTeacher": "Экспорт данных преподавателя",
+    "hours": "Часы",
+    "conservatorium": "Консерватория",
+    "allConservatoriums": "Все консерватории"
   },
   "TeacherPayroll": {
     "amountCol": "Сумма",
@@ -187,7 +197,17 @@
     "status": "Статус",
     "minutes": "минут",
     "noLessons": "Нет уроков в выбранный период.",
-    "downloadMyReport": "Скачать мой отчет"
+    "downloadMyReport": "Скачать мой отчет",
+    "lessonStatuses": {
+      "SCHEDULED": "Запланирован",
+      "COMPLETED": "Завершён",
+      "CANCELLED_STUDENT_NOTICED": "Отменён учеником (с уведомлением)",
+      "CANCELLED_STUDENT_NO_NOTICE": "Отменён учеником (без уведомления)",
+      "CANCELLED_TEACHER": "Отменён преподавателем",
+      "CANCELLED_CONSERVATORIUM": "Отменён консерваторией",
+      "NO_SHOW_STUDENT": "Ученик не явился",
+      "NO_SHOW_TEACHER": "Преподаватель не явился"
+    }
   },
   "TeacherPayrollPage": {
     "title": "Моя зарплата",

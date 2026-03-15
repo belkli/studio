@@ -211,6 +211,10 @@
     "translateNow": "Translate Now",
     "retranslateAll": "Retranslate All",
     "translationCoverage": "Translation Coverage",
+    "languageSupport": "Language support for this profile",
+    "upToDate": "Up to date",
+    "translating": "Translating...",
+    "fields": "fields",
     "sourceContent": "Source Content (Hebrew)",
     "noTranslationYet": "No translation yet",
     "fieldLabels": {

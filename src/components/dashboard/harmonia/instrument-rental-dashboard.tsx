@@ -427,7 +427,7 @@ export function InstrumentRentalDashboard() {
   );
 
   return (
-    <>
+    <div dir={isRtl ? 'rtl' : 'ltr'}>
       <Tabs defaultValue="available" dir={isRtl ? 'rtl' : 'ltr'}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="available">{t('availableInStock')} ({available.length})</TabsTrigger>
@@ -563,6 +563,6 @@ export function InstrumentRentalDashboard() {
           }
         }}
       />
-    </>
+    </div>
   );
 }

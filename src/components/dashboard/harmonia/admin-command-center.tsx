@@ -11,11 +11,13 @@ import { AiAlertsCard } from "./ai-alerts-card";
 import { useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 
 export function AdminCommandCenter() {
     const t = useTranslations('AdminDashboard');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { user, users, formSubmissions, payrolls } = useAuth();
 
     const stats = useMemo(() => {
@@ -36,7 +38,7 @@ export function AdminCommandCenter() {
     if (!user) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-start">{t('welcome', { name: user.name.split(' ')[0] })}</h1>

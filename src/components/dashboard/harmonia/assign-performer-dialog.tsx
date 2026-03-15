@@ -14,13 +14,14 @@ import { ImageOff, AlertTriangle } from 'lucide-react';
 import { useMemo, useEffect } from 'react';
 import { saveConsentRecord } from '@/app/actions/consent';
 import { tenantUsers } from '@/lib/tenant-filter';
+import { useTranslations, useLocale } from 'next-intl';
 
-const schema = z.object({
-  studentId: z.string().min(1, 'חובה לבחור תלמיד/ה.'),
-  repertoireId: z.string().min(1, 'חובה לבחור יצירה.'),
+const getSchema = (t: (key: string) => string) => z.object({
+  studentId: z.string().min(1, t('studentRequired')),
+  repertoireId: z.string().min(1, t('repertoireRequired')),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof getSchema>>;
 
 interface AssignPerformerDialogProps {
   eventId: string;
@@ -30,9 +31,12 @@ interface AssignPerformerDialogProps {
 
 export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPerformerDialogProps) {
   const { users, user, assignedRepertoire, compositions, addPerformanceToEvent } = useAuth();
+  const t = useTranslations('AssignPerformer');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(getSchema(t)),
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -54,10 +58,10 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
         const composition = compositions.find(c => c.id === r.compositionId);
         return {
           id: r.id,
-          label: composition ? `${composition.title} (${composition.composer})` : 'יצירה לא ידועה',
+          label: composition ? `${composition.title} (${composition.composer})` : t('unknownComposition'),
         };
       });
-  }, [selectedStudentId, assignedRepertoire, compositions]);
+  }, [selectedStudentId, assignedRepertoire, compositions, t]);
 
   useEffect(() => {
     form.resetField('repertoireId');
@@ -79,10 +83,10 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
   return (
     <TooltipProvider>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent dir="rtl">
+        <DialogContent dir={isRtl ? 'rtl' : 'ltr'}>
           <DialogHeader>
-            <DialogTitle>הוספת מבצע/ת לאירוע</DialogTitle>
-            <DialogDescription>בחר תלמיד/ה ויצירה מהרפרטואר שמוכן לביצוע.</DialogDescription>
+            <DialogTitle>{t('dialogTitle')}</DialogTitle>
+            <DialogDescription>{t('dialogDesc')}</DialogDescription>
           </DialogHeader>
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
@@ -91,10 +95,10 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                 name="studentId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>תלמיד/ה</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} dir="rtl">
+                    <FormLabel>{t('studentLabel')}</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                       <FormControl>
-                        <SelectTrigger><SelectValue placeholder="בחר תלמיד/ה..." /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t('studentPlaceholder')} /></SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {students.map(student => {
@@ -109,11 +113,11 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <span className="inline-flex items-center">
-                                        <ImageOff className="h-3.5 w-3.5 text-amber-500" aria-label="ללא הסכמת צילום" />
+                                        <ImageOff className="h-3.5 w-3.5 text-amber-500" aria-label={t('noPhotoConsent')} />
                                       </span>
                                     </TooltipTrigger>
                                     <TooltipContent side="left" className="max-w-56 text-xs">
-                                      תלמיד/ה זה/זו לא אישר/ה פרסום תמונות/וידאו לצרכים מסחריים. יש להימנע מפרסום מזהה של תמונות אירוע.
+                                      {t('noPhotoConsentTooltip')}
                                     </TooltipContent>
                                   </Tooltip>
                                 )}
@@ -133,8 +137,8 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                 <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300">
                   <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <span>
-                    תלמיד/ה זה/זו לא אישר/ה פרסום תמונות לצרכים מסחריים. בעת תיעוד האירוע יש להימנע מפרסום תמונות מזהות ברשתות חברתיות ובחומרי פרסום.
-                    ניתן <button type="button" className="underline font-medium" onClick={() => {
+                    {t('noConsentWarning')}{' '}
+                    <button type="button" className="underline font-medium" onClick={() => {
                         const student = students.find(s => s.id === selectedStudentId);
                         if (!student) return;
                         saveConsentRecord({
@@ -144,7 +148,7 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                           consentTerms: false,
                           consentVideoRecording: true,
                         });
-                      }}>לבקש הסכמה</button> מההורה/תלמיד/ה.
+                      }}>{t('requestConsent')}</button>
                   </span>
                 </div>
               )}
@@ -154,16 +158,16 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
                 name="repertoireId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>יצירה</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} dir="rtl" disabled={!selectedStudentId}>
+                    <FormLabel>{t('compositionLabel')}</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} dir={isRtl ? 'rtl' : 'ltr'} disabled={!selectedStudentId}>
                       <FormControl>
-                        <SelectTrigger><SelectValue placeholder="בחר יצירה..." /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={t('compositionPlaceholder')} /></SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {availableRepertoire.length > 0 ? (
                           availableRepertoire.map(rep => <SelectItem key={rep.id} value={rep.id}>{rep.label}</SelectItem>)
                         ) : (
-                          <SelectItem value="none" disabled>אין יצירות מוכנות לביצוע</SelectItem>
+                          <SelectItem value="none" disabled>{t('noReadyCompositions')}</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
@@ -173,9 +177,9 @@ export function AssignPerformerDialog({ eventId, open, onOpenChange }: AssignPer
               />
               <DialogFooter>
                 <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)}>
-                  ביטול
+                  {t('cancelBtn')}
                 </Button>
-                <Button type="submit">הוסף לתוכנית</Button>
+                <Button type="submit">{t('addToProgram')}</Button>
               </DialogFooter>
             </form>
           </FormProvider>

@@ -119,7 +119,7 @@ export function CancellationPolicySettings() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className={`flex ${isRtl ? 'justify-end' : 'justify-start'} mt-6`}>
+                <div className="flex justify-end mt-6">
                     <Button type="submit" disabled={!form.formState.isDirty}>
                         <Save className="me-2 h-4 w-4" />
                         {t('saveChanges')}

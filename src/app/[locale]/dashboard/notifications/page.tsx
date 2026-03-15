@@ -83,7 +83,7 @@ export default function NotificationsPage() {
 
             <Card>
                 <CardHeader className="p-0 border-b">
-                    <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+                    <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
                         <TabsList className="grid w-full grid-cols-2 rounded-t-lg rounded-b-none h-auto p-0">
                             <TabsTrigger value="all" className="py-3 rounded-t-lg rounded-b-none data-[state=active]:shadow-none data-[state=active]:border-b-2 border-b-primary">{t('all')}</TabsTrigger>
                             <TabsTrigger value="unread" className="py-3 rounded-t-lg rounded-b-none data-[state=active]:shadow-none data-[state=active]:border-b-2 border-b-primary">

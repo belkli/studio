@@ -14,8 +14,15 @@ import { useToast } from '@/hooks/use-toast';
 import { GraduationCap, Award, Calendar, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { tenantUsers } from '@/lib/tenant-filter';
+
+const EXAM_TYPE_KEYS: Record<string, string> = {
+    'MINISTRY_LEVEL_1': 'ministryLevel1',
+    'MINISTRY_LEVEL_2': 'ministryLevel2',
+    'BAGRUT': 'bagrut',
+    'OTHER': 'customExam',
+};
 
 const REPERTOIRE_TEMPLATES = {
     'MINISTRY_LEVEL_1': [
@@ -67,6 +74,8 @@ export function ExamTrackerPanel() {
     const { toast } = useToast();
     const t = useTranslations('ExamTracker');
     const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     // For a real app, trackersState would come from context/context state.
     const [trackers, setTrackers] = useState<ExamPrepTracker[]>(MOCK_TRACKERS);
@@ -148,7 +157,7 @@ export function ExamTrackerPanel() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex justify-between items-center">
                 <Button onClick={() => setShowNewForm(!showNewForm)}>
                     <GraduationCap className="h-4 w-4 me-2" />
@@ -165,7 +174,7 @@ export function ExamTrackerPanel() {
                     <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <Label>{t('selectStudent')}</Label>
-                            <Select dir="rtl" value={selectedStudent} onValueChange={setSelectedStudent}>
+                            <Select dir={isRtl ? 'rtl' : 'ltr'} value={selectedStudent} onValueChange={setSelectedStudent}>
                                 <SelectTrigger><SelectValue placeholder={t('selectStudentPlaceholder')} /></SelectTrigger>
                                 <SelectContent>
                                     {myStudents.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
@@ -178,7 +187,7 @@ export function ExamTrackerPanel() {
                         </div>
                         <div className="space-y-2">
                             <Label>{t('examTypeLabel')}</Label>
-                            <Select dir="rtl" value={selectedExamType} onValueChange={setSelectedExamType}>
+                            <Select dir={isRtl ? 'rtl' : 'ltr'} value={selectedExamType} onValueChange={setSelectedExamType}>
                                 <SelectTrigger><SelectValue placeholder={t('examTypePlaceholder')} /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="MINISTRY_LEVEL_1">{t('ministryLevel1')}</SelectItem>
@@ -205,7 +214,7 @@ export function ExamTrackerPanel() {
                                         {getTrackerStudentName(tracker)}
                                         <Badge variant="outline">{tracker.instrument}</Badge>
                                         <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-none">
-                                            {tracker.examType.replace(/_/g, ' ')}
+                                            {t(EXAM_TYPE_KEYS[tracker.examType] || 'customExam')}
                                         </Badge>
                                     </CardTitle>
                                     <CardDescription className="flex items-center gap-2 mt-2">
@@ -228,10 +237,10 @@ export function ExamTrackerPanel() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('colCategory')}</TableHead>
-                                        <TableHead className="w-1/2">{t('colPieceTaskDetails')}</TableHead>
-                                        <TableHead>{t('colMasteryStatus')}</TableHead>
-                                        <TableHead>{t('colTeacherNotes')}</TableHead>
+                                        <TableHead className="text-start">{t('colCategory')}</TableHead>
+                                        <TableHead className="w-1/2 text-start">{t('colPieceTaskDetails')}</TableHead>
+                                        <TableHead className="text-start">{t('colMasteryStatus')}</TableHead>
+                                        <TableHead className="text-start">{t('colTeacherNotes')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -242,7 +251,7 @@ export function ExamTrackerPanel() {
                                             </TableCell>
                                             <TableCell className="font-medium">{req.description}</TableCell>
                                             <TableCell>
-                                                <Select dir="rtl" value={req.status} onValueChange={(val) => updateRequirementStatus(tracker.id!, idx, val)}>
+                                                <Select dir={isRtl ? 'rtl' : 'ltr'} value={req.status} onValueChange={(val) => updateRequirementStatus(tracker.id!, idx, val)}>
                                                     <SelectTrigger className="border-0 bg-transparent h-8 w-fit space-x-2">
                                                         {renderStatusBadge(req.status)}
                                                     </SelectTrigger>

@@ -115,7 +115,7 @@ export function TeacherProfileEditor() {
           </CardHeader>
 
           <CardContent>
-            <Tabs defaultValue="basic" className="w-full">
+            <Tabs defaultValue="basic" className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="basic">{t('basicInfo')}</TabsTrigger>
                 <TabsTrigger value="bio">{t('bio')}</TabsTrigger>

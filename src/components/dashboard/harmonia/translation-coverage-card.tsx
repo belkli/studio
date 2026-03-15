@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { TranslationMeta } from '@/lib/types';
@@ -22,11 +22,13 @@ export function TranslationCoverageCard({
     isTranslating = false
 }: TranslationCoverageCardProps) {
     const t = useTranslations('PublicProfiles');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const locales = ['en', 'ar', 'ru'];
 
     return (
-        <Card className="mb-6">
+        <Card className="mb-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <div>
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -34,7 +36,7 @@ export function TranslationCoverageCard({
                         {t('translationCoverage')}
                     </CardTitle>
                     <CardDescription>
-                        Language support for this profile
+                        {t('languageSupport')}
                     </CardDescription>
                 </div>
                 {onRetranslateAll && (
@@ -44,7 +46,7 @@ export function TranslationCoverageCard({
                         onClick={onRetranslateAll}
                         disabled={isTranslating}
                     >
-                        {isTranslating ? 'Translating...' : t('retranslateAll')}
+                        {isTranslating ? t('translating') : t('retranslateAll')}
                     </Button>
                 )}
             </CardHeader>
@@ -64,7 +66,7 @@ export function TranslationCoverageCard({
                                     {progress === 100 ? (
                                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 flex items-center gap-1">
                                             <CheckCircle2 className="w-3 h-3" />
-                                            Up to date
+                                            {t('upToDate')}
                                         </Badge>
                                     ) : (
                                         <Badge variant="destructive" className="flex items-center gap-1">
@@ -77,8 +79,8 @@ export function TranslationCoverageCard({
                                 <Progress value={progress} className="h-1.5" />
 
                                 <div className="text-xs text-muted-foreground flex justify-between">
-                                    <span>{progress === 100 ? `${baseFieldsCount}/${baseFieldsCount} fields` : `0/${baseFieldsCount} fields`}</span>
-                                    <span>{updated ? new Date(updated).toLocaleDateString() : t('noTranslationYet')}</span>
+                                    <span>{progress === 100 ? `${baseFieldsCount}/${baseFieldsCount} ${t('fields')}` : `0/${baseFieldsCount} ${t('fields')}`}</span>
+                                    <span>{updated ? new Date(updated).toLocaleDateString(locale) : t('noTranslationYet')}</span>
                                 </div>
                             </div>
                         );

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Mic, Loader2, Target, Gauge, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useTranslations, useLocale } from 'next-intl';
 
 type Feedback = {
     pitchAccuracy: number;
@@ -14,6 +15,9 @@ type Feedback = {
 };
 
 export function PracticeCoach() {
+    const t = useTranslations('PracticeCoach');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [isRecording, setIsRecording] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -42,10 +46,10 @@ export function PracticeCoach() {
     };
 
     return (
-        <Card className="w-full max-w-lg">
+        <Card className="w-full max-w-lg" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader className="text-center">
-                <CardTitle>מאמן אישי מבוסס AI</CardTitle>
-                <CardDescription>נגן קטע קצר (30-60 שניות) וקבל משוב מיידי.</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="flex justify-center">
@@ -62,32 +66,32 @@ export function PracticeCoach() {
                         )}
                     </Button>
                 </div>
-                {isRecording && <p className="text-center text-red-500 font-medium animate-pulse">מקליט...</p>}
+                {isRecording && <p className="text-center text-red-500 font-medium animate-pulse">{t('recording')}</p>}
                 {isAnalyzing && (
                     <div className="flex items-center justify-center gap-2 text-muted-foreground">
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        <p>מנתח את הביצוע...</p>
+                        <p>{t('analyzing')}</p>
                     </div>
                 )}
                 {feedback && (
                     <div className="space-y-4 animate-in fade-in-50">
                         <Alert>
                             <Star className="h-4 w-4" />
-                            <AlertTitle>סיכום משוב</AlertTitle>
+                            <AlertTitle>{t('feedbackTitle')}</AlertTitle>
                             <AlertDescription>
-                                ביצוע מצוין! הנה כמה נקודות לשיפור.
+                                {t('feedbackDesc')}
                             </AlertDescription>
                         </Alert>
                         <div className="grid grid-cols-2 gap-4">
                              <Card>
-                                 <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><Target/> דיוק בגובה הצליל</CardTitle></CardHeader>
+                                 <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><Target/> {t('pitchAccuracy')}</CardTitle></CardHeader>
                                  <CardContent>
                                      <p className="text-2xl font-bold">{feedback.pitchAccuracy}%</p>
                                       <Progress value={feedback.pitchAccuracy} className="h-2 mt-1"/>
                                  </CardContent>
                              </Card>
                              <Card>
-                                 <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><Gauge/> דיוק קצבי</CardTitle></CardHeader>
+                                 <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center gap-2"><Gauge/> {t('rhythmAccuracy')}</CardTitle></CardHeader>
                                  <CardContent>
                                      <p className="text-2xl font-bold">{feedback.rhythmAccuracy}%</p>
                                      <Progress value={feedback.rhythmAccuracy} className="h-2 mt-1"/>
@@ -95,7 +99,7 @@ export function PracticeCoach() {
                              </Card>
                         </div>
                         <div>
-                            <h4 className="font-semibold mb-2">הבחנות עיקריות:</h4>
+                            <h4 className="font-semibold mb-2">{t('observations')}</h4>
                             <ul className="space-y-2 list-disc pe-4 text-sm">
                                 {feedback.observations.map((obs, i) => <li key={i}>{obs}</li>)}
                             </ul>

@@ -140,7 +140,7 @@ export function EventDetails() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <Button variant="ghost" asChild>
                     <Link href="/dashboard/events">
@@ -154,7 +154,7 @@ export function EventDetails() {
                             <Badge className={cn("cursor-pointer", statusConfig[event.status].className)}>{statusConfig[event.status].label}</Badge>
                         </DropdownMenuTrigger>
                         {isAdmin && (
-                            <DropdownMenuContent>
+                            <DropdownMenuContent align="end">
                                 {(Object.keys(statusConfig) as EventProductionStatus[]).map((s) => (
                                     <DropdownMenuItem key={s} onClick={() => handleStatusChange(s)}>
                                         {statusConfig[s].label}
@@ -170,7 +170,7 @@ export function EventDetails() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl">{event.name}</CardTitle>
-                    <CardDescription>{event.type}</CardDescription>
+                    <CardDescription>{t(`eventTypes.${event.type}`)}</CardDescription>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-3 gap-4 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-4 w-4" /><span>{format(new Date(event.eventDate), 'yyyy-MM-dd', { locale: dateLocale })}</span></div>
@@ -204,7 +204,7 @@ export function EventDetails() {
                                         <TableHead className="text-start">{t('colComposition')}</TableHead>
                                         <TableHead className="text-start">{t('colComposer')}</TableHead>
                                         <TableHead className="text-start">{t('colDuration')}</TableHead>
-                                        <TableHead className="w-8" title="הסכמת צילום">
+                                        <TableHead className="w-8" title={t('colPhotoConsent')}>
                                             <ImageOff className="h-3.5 w-3.5 text-muted-foreground" />
                                         </TableHead>
                                         <TableHead className="text-end">{t('colActions')}</TableHead>
@@ -224,11 +224,11 @@ export function EventDetails() {
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
                                                                 <span className="inline-flex">
-                                                                    <ImageOff className="h-3.5 w-3.5 text-amber-500" aria-label="ללא הסכמת צילום" />
+                                                                    <ImageOff className="h-3.5 w-3.5 text-amber-500" aria-label={t('noPhotoConsentAria')} />
                                                                 </span>
                                                             </TooltipTrigger>
-                                                            <TooltipContent side="left" className="max-w-56 text-xs">
-                                                                ללא הסכמת פרסום תמונות/וידאו לצרכים מסחריים. יש לוודא שהתלמיד/ה אינו/ה מזוהה בפרסומים.
+                                                            <TooltipContent side={isRtl ? 'right' : 'left'} className="max-w-56 text-xs">
+                                                                {t('noPhotoConsentTooltip')}
                                                             </TooltipContent>
                                                         </Tooltip>
                                                     </TooltipProvider>

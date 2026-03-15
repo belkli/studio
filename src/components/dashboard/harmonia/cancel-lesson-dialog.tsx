@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import type { LessonSlot } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CancelLessonDialogProps {
     lesson: LessonSlot | null;
@@ -22,9 +23,12 @@ interface CancelLessonDialogProps {
 
 export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: CancelLessonDialogProps) {
     const { conservatoriums } = useAuth();
+    const t = useTranslations('LessonManagement');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     if (!lesson) return null;
-    
+
     const conservatorium = conservatoriums.find(c => c.id === lesson.conservatoriumId);
     const policy = conservatorium?.cancellationPolicy;
     const noticeHours = policy?.studentNoticeHoursRequired ?? 24;
@@ -34,16 +38,19 @@ export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: Ca
     const hoursUntilLesson = (lessonStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
     const hasNotice = hoursUntilLesson > noticeHours;
 
-    const title = `ביטול שיעור ${lesson.instrument}`;
-    const description = `האם לבטל את השיעור בתאריך ${lessonStartTime.toLocaleDateString('he-IL')} בשעה ${lessonStartTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}?`;
+    const title = t('cancelDialogTitle', { instrument: lesson.instrument });
+    const description = t('cancelDialogDesc', {
+        date: lessonStartTime.toLocaleDateString(locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar' : locale === 'ru' ? 'ru-RU' : 'en-US'),
+        time: lessonStartTime.toLocaleTimeString(locale === 'he' ? 'he-IL' : locale === 'ar' ? 'ar' : locale === 'ru' ? 'ru-RU' : 'en-US', { hour: '2-digit', minute: '2-digit' }),
+    });
 
     const policyMessage = hasNotice
-        ? `מכיוון שהביטול מתבצע יותר מ-${noticeHours} שעות לפני השיעור, תזוכה/י בשיעור השלמה.`
-        : `שימו לב: מכיוון שהביטול מתבצע פחות מ-${noticeHours} שעות לפני השיעור, לא יינתן זיכוי על פי מדיניות הקונסרבטוריון.`;
+        ? t('cancelWithNoticePolicy', { hours: String(noticeHours) })
+        : t('cancelWithoutNoticePolicy', { hours: String(noticeHours) });
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent dir="rtl">
+            <AlertDialogContent dir={isRtl ? 'rtl' : 'ltr'}>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -54,9 +61,9 @@ export function CancelLessonDialog({ lesson, open, onOpenChange, onConfirm }: Ca
                     {policyMessage}
                 </div>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>חזרה</AlertDialogCancel>
+                    <AlertDialogCancel>{t('backAction')}</AlertDialogCancel>
                     <AlertDialogAction onClick={() => onConfirm(hasNotice)} className={!hasNotice ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}>
-                        {hasNotice ? "כן, בטל וקבל זיכוי" : "כן, בטל בכל זאת"}
+                        {hasNotice ? t('cancelWithCredit') : t('cancelAnyway')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

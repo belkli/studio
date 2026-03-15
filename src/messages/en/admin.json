@@ -41,11 +41,26 @@
       "allRooms": "All rooms",
       "prevWeek": "Previous week",
       "nextWeek": "Next week",
+      "cancelled": "Cancelled",
+      "withName": "with {name}",
+      "todayBtn": "Today",
+      "virtualLabel": "Virtual",
+      "roomLabel": "Room {roomId}",
+      "lessonCancelled": "Lesson cancelled",
+      "cancelWithCredit": "A makeup lesson credit has been added to your account.",
+      "cancelNoCredit": "No credit issued per the cancellation policy.",
+      "dateRangeFormat": "d MMM",
       "export": "Export CSV",
       "time": "Time",
       "teacherHeading": "Teacher: {teacher}",
       "unknown": "Unknown",
-      "notAssigned": "Not assigned"
+      "notAssigned": "Not assigned",
+      "allBranches": "All branches",
+      "filterBranch": "Branch",
+      "tooltipInstrument": "{instrument} with {teacher}",
+      "tooltipStudent": "Student: {student}",
+      "tooltipStatus": "Status: {status}",
+      "tooltipRoom": "Room: {room}"
     },
     "branches": {
       "subtitle": "View, add, and edit conservatorium branches.",
@@ -301,7 +316,7 @@
     "causeDescHe": "Description (Hebrew)",
     "causeDescEn": "Description (English)",
     "causeCategory": "Category",
-    "causeTargetAmount": "Target amount (ILS)",
+    "causeTargetAmount": "Target amount (₪)",
     "addCause": "Add cause",
     "causeAddedSuccess": "Donation cause added successfully.",
     "categoryFinancialAid": "Financial Aid",
@@ -391,7 +406,17 @@
     "overdue": "Overdue",
     "fullSchedule": "To Full Schedule",
     "room": "Room {number}",
-    "notAssigned": "Not Assigned"
+    "notAssigned": "Not Assigned",
+    "lessonStatuses": {
+      "SCHEDULED": "Scheduled",
+      "COMPLETED": "Completed",
+      "CANCELLED_STUDENT_NOTICED": "Cancelled (with notice)",
+      "CANCELLED_STUDENT_NO_NOTICE": "Cancelled (no notice)",
+      "CANCELLED_TEACHER": "Cancelled by teacher",
+      "CANCELLED_CONSERVATORIUM": "Cancelled by conservatorium",
+      "NO_SHOW_STUDENT": "No-show",
+      "NO_SHOW_TEACHER": "Teacher no-show"
+    }
   },
   "KeyMetrics": {
     "activeStudents": "Active Students",
@@ -636,7 +661,20 @@
       "description": "Recent updates relevant to your account.",
       "empty": "No new updates right now.",
       "new": "New",
-      "openItem": "Open"
+      "openItem": "Open",
+      "itemTypes": {
+        "announcement": "Announcement",
+        "event": "Event",
+        "form": "Form",
+        "schedule_change": "Schedule Change",
+        "payment": "Payment",
+        "master_class": "Master Class"
+      },
+      "invoiceStatuses": {
+        "SENT": "Pending Payment",
+        "OVERDUE": "Overdue"
+      },
+      "invoiceDue": "Due {date} • ₪{amount}"
     }
   },
   "UserManagement": {
@@ -761,6 +799,12 @@
       "description": "Plan, manage, and produce all conservatorium events.",
       "createButton": "Create New Event"
     },
+    "EventsList": {
+      "participants": "{count} participants",
+      "free": "Free",
+      "manageEvent": "Manage Event",
+      "atTime": "at {time}"
+    },
     "newEvent": {
       "title": "Create New Event",
       "description": "Enter the basic details to create a new event in the system."
@@ -860,5 +904,17 @@
     "delete": "Delete",
     "deleteConfirmTitle": "Delete Composition",
     "deleteConfirmDesc": "Are you sure you want to delete \"{title}\"? This action cannot be undone."
+  },
+  "SoundCheckScheduler": {
+    "title": "Rehearsal & Sound Check Schedule",
+    "dressRehearsal": "Dress rehearsal:",
+    "autoGenerate": "Auto-generate schedule",
+    "colPerformer": "Performer",
+    "colTime": "Time",
+    "emptyState": "Assign performers to create a rehearsal schedule.",
+    "sendSchedule": "Send schedule to performers",
+    "scheduleCreated": "Rehearsal schedule created successfully",
+    "scheduleSentTitle": "Schedule sent!",
+    "scheduleSentDesc": "Messages sent to all performers with their arrival times."
   }
 }

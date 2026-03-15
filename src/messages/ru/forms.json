@@ -18,6 +18,14 @@
     "gradeLabel": "Класс",
     "history": "История утверждений",
     "instrumentDetails": "Детали инструмента",
+    "kenesAccompanist": "Аккомпаниатор",
+    "kenesConductor": "Дирижёр",
+    "kenesDate": "Дата",
+    "kenesEnsembleDetails": "2. Детали ансамбля",
+    "kenesEventDetails": "1. Детали мероприятия",
+    "kenesEventName": "Название мероприятия",
+    "kenesLocation": "Место проведения",
+    "kenesNumParticipants": "Количество участников",
     "labels": {
       "addNote": "Добавить заметку (необязательно)...",
       "birthDate": "Дата рождения",
@@ -255,7 +263,33 @@
     "recitalTemplateTitle": "Форма концерта",
     "recitalTemplateDesc": "Готовый шаблон выступления с расширенными полями.",
     "removeField": "Удалить поле",
-    "removeStep": "Удалить шаг"
+    "removeStep": "Удалить шаг",
+    "fieldTypes": {
+      "text": "Текст",
+      "textarea": "Текстовая область",
+      "number": "Число",
+      "date": "Дата",
+      "select": "Выпадающий список",
+      "multiselect": "Множественный выбор",
+      "checkbox": "Флажок",
+      "checkboxGroup": "Группа флажков",
+      "radio": "Переключатель",
+      "fileUpload": "Загрузка файла",
+      "signature": "Подпись",
+      "composerSelect": "Выбор композитора",
+      "teacherSelect": "Выбор учителя",
+      "instrumentSelect": "Выбор инструмента",
+      "separator": "Разделитель",
+      "heading": "Заголовок",
+      "infoText": "Информационный текст",
+      "conditionalGroup": "Условная группа"
+    },
+    "operators": {
+      "equals": "Равно",
+      "notEquals": "Не равно",
+      "contains": "Содержит",
+      "notEmpty": "Не пусто"
+    }
   },
   "ExamRegistrationForm": {
     "addComposition": "Добавить произведение",
@@ -671,6 +705,22 @@
     "dealBookedDescPromo": "Урок забронирован за ₪{price} (скидка {discount}%)",
     "dealBookedDescPackage": "Урок списан из вашего активного пакета",
     "selectTeacherFirst": "Сначала выберите учителя, чтобы увидеть доступное время",
-    "step3Time": "Шаг 3: Выберите время"
+    "step3Time": "Шаг 3: Выберите время",
+    "premiumLabel": "Премиум",
+    "dateRequired": "Необходимо выбрать дату.",
+    "rescheduleSuccess": "Урок перенесён!",
+    "rescheduleSuccessDesc": "Урок обновлён на: {dateTime}.",
+    "rescheduleDialogTitle": "Перенос урока — {instrument}",
+    "rescheduleDialogDesc": "Выберите новую дату и время для урока с {teacherName}. Продолжительность: {durationMinutes} минут.",
+    "availableHours": "Доступные часы",
+    "noSlotsForDate": "Нет доступных слотов на эту дату.",
+    "setNewDate": "Назначить новую дату",
+    "cancelDialogTitle": "Отмена урока {instrument}",
+    "cancelDialogDesc": "Отменить урок {date} в {time}?",
+    "cancelWithNoticePolicy": "Поскольку отмена происходит более чем за {hours} часов до урока, вы получите компенсационный кредит.",
+    "cancelWithoutNoticePolicy": "Внимание: поскольку отмена происходит менее чем за {hours} часов до урока, кредит не будет начислен в соответствии с политикой консерватории.",
+    "backAction": "Назад",
+    "cancelWithCredit": "Да, отменить и получить кредит",
+    "cancelAnyway": "Да, всё равно отменить"
   }
 }

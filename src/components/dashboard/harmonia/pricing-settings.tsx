@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Save, Star } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 const getPricingSchema = (t: (key: string) => string) => z.object({
     baseRatePerLesson: z.object({
@@ -45,6 +45,8 @@ export function PricingSettings() {
     const { user, conservatoriums, updateConservatorium } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('PricingSettings');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const pricingSchema = useMemo(() => getPricingSchema(t), [t]);
 
@@ -75,7 +77,7 @@ export function PricingSettings() {
     return (
         <>
             <FormProvider {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <form onSubmit={form.handleSubmit(onSubmit)} dir={isRtl ? 'rtl' : 'ltr'}>
                     <div className="space-y-6">
                         <Card>
                             <CardHeader>
@@ -179,12 +181,12 @@ export function PricingSettings() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.branch')}</TableHead>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.min30')}</TableHead>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.min45')}</TableHead>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.min60')}</TableHead>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.pack5')}</TableHead>
-                                        <TableHead className="text-[var(--text-align)]">{t('comparison.yearly')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.branch')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.min30')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.min45')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.min60')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.pack5')}</TableHead>
+                                        <TableHead className="text-start">{t('comparison.yearly')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

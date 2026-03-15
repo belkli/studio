@@ -77,7 +77,7 @@ export function MinistryInboxPanel() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-140px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-140px)]" dir={isRtl ? 'rtl' : 'ltr'}>
 
             {/* Sidebar Inbox List */}
             <Card className="lg:col-span-1 shadow-sm flex flex-col overflow-hidden border-t-4 border-t-purple-700">
@@ -148,7 +148,7 @@ export function MinistryInboxPanel() {
                                     <CardDescription className="text-base mt-1">{activeForm.conservatorium}</CardDescription>
                                 </div>
                                 <div className="text-start text-sm text-muted-foreground">
-                                    <div className="flex items-center justify-end gap-1 mb-1"><Clock className="w-3 h-3" /> {t('submittedDate')} {format(new Date(activeForm.submittedAt), 'dd/MM/yyyy')}</div>
+                                    <div className="flex items-center justify-end gap-1 mb-1"><Clock className="w-3 h-3" /> {t('submittedDate')} {format(new Date(activeForm.submittedAt), 'dd/MM/yyyy', { locale: dateLocale })}</div>
                                     {activeForm.status !== 'SUBMITTED' && (
                                         <Badge className={`mt-2 ${activeForm.status === 'APPROVED' ? 'bg-green-600' : activeForm.status === 'REJECTED' ? 'bg-red-600' : 'bg-yellow-600'}`}>
                                             {t('currentStatus')} {t(activeForm.status === 'APPROVED' ? 'approved' : activeForm.status === 'REJECTED' ? 'rejected' : 'returned')}

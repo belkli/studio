@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +20,7 @@ export function TodaySnapshotCard() {
     const failedPayments = invoices.filter(inv => inv.status === 'OVERDUE');
 
     return (
-        <Card className="h-full">
+        <Card className="h-full" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>{t('subtitle')}</CardDescription>
@@ -32,13 +34,13 @@ export function TodaySnapshotCard() {
                             const teacher = users.find(u => u.id === lesson.teacherId);
                             return (
                                 <div key={index} className="flex items-center gap-4 text-sm p-2 rounded-md hover:bg-muted/50">
-                                    <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString(locale === 'he' ? 'he-IL' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                                    <span className="font-mono text-muted-foreground">{new Date(lesson.startTime).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</span>
                                     <span className="font-medium flex-1">{student?.name}</span>
                                     <span className="text-muted-foreground">{teacher?.name}</span>
                                     <span className="text-muted-foreground">
                                         {lesson.roomId ? t('room', { number: lesson.roomId }) : t('notAssigned')}
                                     </span>
-                                    {lesson.status !== 'SCHEDULED' && <Badge variant={lesson.status === 'CANCELLED_STUDENT_NO_NOTICE' ? 'destructive' : 'secondary'}>{lesson.status}</Badge>}
+                                    {lesson.status !== 'SCHEDULED' && <Badge variant={lesson.status === 'CANCELLED_STUDENT_NO_NOTICE' ? 'destructive' : 'secondary'}>{t(`lessonStatuses.${lesson.status}`)}</Badge>}
                                 </div>
                             )
                         }) : <p className="text-sm text-muted-foreground">{t('noLessons')}</p>}

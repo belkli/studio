@@ -5,7 +5,7 @@ import { FormsList } from "@/components/dashboard/forms-list";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
@@ -15,6 +15,8 @@ export default function FormsPage() {
     const t = useTranslations('FormsPage');
     const tCommon = useTranslations('Common.shared');
     const { user } = useAuth();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [searchQuery, setSearchQuery] = useState('');
 
     // Role-aware subtitle
@@ -40,7 +42,7 @@ export default function FormsPage() {
     const draftStatuses: FormStatus[] = ['DRAFT'];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-start justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('title')}</h1>
@@ -53,7 +55,7 @@ export default function FormsPage() {
                 )}
             </div>
 
-            <Tabs defaultValue="all">
+            <Tabs defaultValue="all" dir={isRtl ? 'rtl' : 'ltr'}>
                 <div className="flex items-center justify-between border-b pb-4">
                     <TabsList>
                         <TabsTrigger value="all">{t('tabs.all')}</TabsTrigger>

@@ -6,16 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { DollarSign, FileWarning, Users, TrendingUp } from "lucide-react";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { tenantUsers } from '@/lib/tenant-filter';
 
 export function AdminFinancialDashboard() {
     const { invoices, users, user } = useAuth();
     const t = useTranslations('FinancialDashboard');
     const ti = useTranslations('Invoices');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const revenueData = [
         { name: t('months.jan'), revenue: 41200 },
@@ -46,7 +48,7 @@ export function AdminFinancialDashboard() {
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -111,16 +113,19 @@ export function AdminFinancialDashboard() {
                     <CardHeader>
                         <CardTitle>{t('revenueByPackage')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-center justify-center h-[300px]">
-                        <PieChart width={300} height={280}>
-                                <Pie data={packageRevenueData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} (${entry.value}%)`}>
+                    <CardContent className="h-[340px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={packageRevenueData} cx="50%" cy="45%" labelLine={false} outerRadius={90} fill="#8884d8" dataKey="value" nameKey="name">
                                     {packageRevenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: 'var(--radius)' }} />
+                                <Legend layout="horizontal" verticalAlign="bottom" align="center" iconSize={10} wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
                             </PieChart>
+                        </ResponsiveContainer>
                     </CardContent>
                 </Card>
             </div>
@@ -133,11 +138,11 @@ export function AdminFinancialDashboard() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{ti('invoiceNumber')}</TableHead>
-                                <TableHead>{ti('payer')}</TableHead>
-                                <TableHead>{ti('dueDate')}</TableHead>
-                                <TableHead>{ti('amount')}</TableHead>
-                                <TableHead>{ti('status')}</TableHead>
+                                <TableHead className="text-start">{ti('invoiceNumber')}</TableHead>
+                                <TableHead className="text-start">{ti('payer')}</TableHead>
+                                <TableHead className="text-start">{ti('dueDate')}</TableHead>
+                                <TableHead className="text-start">{ti('amount')}</TableHead>
+                                <TableHead className="text-start">{ti('status')}</TableHead>
                                 <TableHead className="text-start">{ti('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -146,7 +151,7 @@ export function AdminFinancialDashboard() {
                                 <TableRow key={invoice.id}>
                                     <TableCell className="font-mono">{invoice.invoiceNumber}</TableCell>
                                     <TableCell>{users.find(u => u.id === invoice.payerId)?.name}</TableCell>
-                                    <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
+                                    <TableCell>{new Date(invoice.dueDate).toLocaleDateString(locale)}</TableCell>
                                     <TableCell>{invoice.total} ₪</TableCell>
                                     <TableCell><Badge variant={invoice.status === 'OVERDUE' ? 'destructive' : 'secondary'}>{ti(`statuses.${invoice.status}`)}</Badge></TableCell>
                                     <TableCell className="text-start">

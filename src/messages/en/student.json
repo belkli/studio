@@ -53,6 +53,7 @@
     "recentPractices": "Recent Practices",
     "allPractices": "All Practices",
     "noRecentTeacherNotes": "No Recent Teacher Notes",
+    "programTypeLabel": "{type} Program",
     "T": "T"
   },
   "StudentBilling": {
@@ -97,7 +98,13 @@
     "pausedWithinCoolingOff": "Subscription paused within the 14-day trial period. You are eligible for a full refund.",
     "pausedConfirmation": "Subscription paused. The change will take effect within 3 business days.",
     "pauseError": "An error occurred. Please try again.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "paymentError": "Payment Error",
+    "paymentErrorDesc": "Could not generate payment link. Please try again later.",
+    "cancelSubscriptionConfirm": "Are you sure you want to cancel the subscription for {name}? This action cannot be undone.",
+    "cancelledWithinCoolingOff": "Cancellation completed within the 14-day trial period. You are eligible for a full refund.",
+    "cancelledConfirmation": "Cancellation will take effect within 3 business days.",
+    "cancelError": "An error occurred. Please try again."
   },
   "StudentPractice": {
     "durationMustBePositive": "Duration must be greater than zero.",
@@ -420,5 +427,56 @@
     "dateSent": "Date Sent",
     "actions": "Actions",
     "download": "Download"
+  },
+  "PracticeCoach": {
+    "title": "AI Personal Coach",
+    "description": "Play a short passage (30-60 seconds) and get instant feedback.",
+    "recording": "Recording...",
+    "analyzing": "Analyzing your performance...",
+    "feedbackTitle": "Feedback Summary",
+    "feedbackDesc": "Excellent performance! Here are some points to improve.",
+    "pitchAccuracy": "Pitch Accuracy",
+    "rhythmAccuracy": "Rhythm Accuracy",
+    "observations": "Key Observations:"
+  },
+  "MultimediaFeedback": {
+    "title": "Multimedia Feedback",
+    "description": "Watch practice videos uploaded by the student and add feedback.",
+    "noVideos": "The student has not uploaded any videos yet.",
+    "watchVideo": "Watch Video",
+    "yourFeedback": "Your Feedback:",
+    "writeFeedbackPlaceholder": "Write feedback...",
+    "sendFeedbackSrOnly": "Send feedback",
+    "feedbackSentToast": "Feedback sent successfully",
+    "sentAgo": "Sent {time}"
+  },
+  "PracticeVideoUpload": {
+    "formTitle": "Upload Practice Video",
+    "formDesc": "Send a short video (up to 60 seconds) to your teacher for mid-week feedback.",
+    "dropzoneText": "Drag a video file here, or click to select",
+    "dropzoneFormats": "MP4, MOV, WebM — up to 60 seconds",
+    "repertoireLabel": "Which piece is this video for?",
+    "repertoirePlaceholder": "Select a piece from your repertoire...",
+    "notesLabel": "Notes for teacher (optional)",
+    "notesPlaceholder": "e.g., I'm not sure about the fingering here, or is the dynamics correct?",
+    "uploading": "Uploading...",
+    "submitBtn": "Send for feedback",
+    "uploadSuccessTitle": "Video uploaded successfully!",
+    "uploadSuccessDesc": "Your teacher will be notified and can provide feedback.",
+    "errorSelectPiece": "Please select a piece."
+  },
+  "ReschedulingChat": {
+    "cardTitle": "AI Lesson Scheduling Assistant",
+    "cardSubtitle": "Manage your lessons through a simple conversation.",
+    "greeting": "Hello! I'm Harmonia's AI assistant. How can I help you with your schedule today? For example: \"I need to cancel my lesson tomorrow\" or \"When is my next lesson?\"",
+    "actionCancelled": "OK, the action was cancelled. How else can I help?",
+    "systemUpdated": "Great, I've updated the system. Is there anything else I can help with?",
+    "lessonCancelledTitle": "Lesson cancelled",
+    "lessonCancelledDesc": "The {instrument} lesson was cancelled successfully.",
+    "lessonRescheduledTitle": "Lesson rescheduled",
+    "lessonRescheduledDesc": "The {instrument} lesson was moved to a new time.",
+    "confirmYes": "Yes, confirm",
+    "confirmNo": "No, cancel",
+    "inputPlaceholder": "Write a message..."
   }
 }

@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import type { PerformanceBooking } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { tenantUsers } from '@/lib/tenant-filter';
 
 interface AssignMusicianDialogProps {
@@ -23,6 +23,8 @@ interface AssignMusicianDialogProps {
 export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }: AssignMusicianDialogProps) {
   const { users, user } = useAuth();
   const t = useTranslations('PerformanceBooking');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const [selectedMusicianIds, setSelectedMusicianIds] = useState<string[]>([]);
 
   const performers = useMemo(() =>
@@ -53,7 +55,7 @@ export function AssignMusicianDialog({ booking, open, onOpenChange, onConfirm }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl" className="sm:max-w-md">
+      <DialogContent dir={isRtl ? 'rtl' : 'ltr'} className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t('dialogAssignTitle')}</DialogTitle>
           <DialogDescription>

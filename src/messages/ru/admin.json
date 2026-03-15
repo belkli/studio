@@ -103,11 +103,26 @@
       "allRooms": "Все классы",
       "prevWeek": "Предыдущая неделя",
       "nextWeek": "Следующая неделя",
+      "cancelled": "Отменён",
+      "withName": "с {name}",
+      "todayBtn": "Сегодня",
+      "virtualLabel": "Виртуальный",
+      "roomLabel": "Комната {roomId}",
+      "lessonCancelled": "Урок отменён",
+      "cancelWithCredit": "Кредит на компенсационный урок добавлен на ваш счёт.",
+      "cancelNoCredit": "Кредит не начислен в соответствии с политикой отмены.",
+      "dateRangeFormat": "d MMM",
       "export": "Экспорт CSV",
       "time": "Время",
       "teacherHeading": "Учитель: {teacher}",
       "unknown": "Неизвестно",
-      "notAssigned": "Не назначен"
+      "notAssigned": "Не назначен",
+      "allBranches": "Все филиалы",
+      "filterBranch": "Филиал",
+      "tooltipInstrument": "{instrument} с {teacher}",
+      "tooltipStudent": "Ученик: {student}",
+      "tooltipStatus": "Статус: {status}",
+      "tooltipRoom": "Комната: {room}"
     },
     "substitute": {
       "noPermission": "У вас нет прав для просмотра этой страницы.",
@@ -301,7 +316,7 @@
     "causeDescHe": "Описание (иврит)",
     "causeDescEn": "Описание (англ.)",
     "causeCategory": "Категория",
-    "causeTargetAmount": "Целевая сумма (ILS)",
+    "causeTargetAmount": "Целевая сумма (₪)",
     "addCause": "Добавить причину",
     "causeAddedSuccess": "Причина пожертвования успешно добавлена.",
     "categoryFinancialAid": "Финансовая помощь",
@@ -391,7 +406,17 @@
     "overdue": "Просрочено",
     "room": "Кабинет {number}",
     "subtitle": "Что происходит сегодня в консерватории.",
-    "title": "Дневной обзор"
+    "title": "Дневной обзор",
+    "lessonStatuses": {
+      "SCHEDULED": "Запланирован",
+      "COMPLETED": "Завершён",
+      "CANCELLED_STUDENT_NOTICED": "Отменён (с уведомлением)",
+      "CANCELLED_STUDENT_NO_NOTICE": "Отменён (без уведомления)",
+      "CANCELLED_TEACHER": "Отменён преподавателем",
+      "CANCELLED_CONSERVATORIUM": "Отменён консерваторией",
+      "NO_SHOW_STUDENT": "Не явился",
+      "NO_SHOW_TEACHER": "Преподаватель не явился"
+    }
   },
   "KeyMetrics": {
     "activeStudents": "Активные ученики",
@@ -636,7 +661,20 @@
       "description": "Последние обновления, относящиеся к вашей учетной записи.",
       "empty": "Новых обновлений сейчас нет.",
       "new": "Новый",
-      "openItem": "Открыть"
+      "openItem": "Открыть",
+      "itemTypes": {
+        "announcement": "Объявление",
+        "event": "Мероприятие",
+        "form": "Форма",
+        "schedule_change": "Изменение расписания",
+        "payment": "Платёж",
+        "master_class": "Мастер-класс"
+      },
+      "invoiceStatuses": {
+        "SENT": "Ожидает оплаты",
+        "OVERDUE": "Просрочено"
+      },
+      "invoiceDue": "Срок {date} • ₪{amount}"
     }
   },
   "UserManagement": {
@@ -761,6 +799,12 @@
       "description": "Планируйте, управляйте и организуйте все мероприятия консерватории.",
       "createButton": "Создать новое мероприятие"
     },
+    "EventsList": {
+      "participants": "{count} участников",
+      "free": "Бесплатно",
+      "manageEvent": "Управление мероприятием",
+      "atTime": "в {time}"
+    },
     "newEvent": {
       "title": "Создать новое мероприятие",
       "description": "Введите основные сведения для создания нового мероприятия в системе."
@@ -860,5 +904,17 @@
     "delete": "Удалить",
     "deleteConfirmTitle": "Удалить произведение",
     "deleteConfirmDesc": "Вы уверены, что хотите удалить «{title}»? Это действие нельзя отменить."
+  },
+  "SoundCheckScheduler": {
+    "title": "Расписание репетиций и саундчека",
+    "dressRehearsal": "Генеральная репетиция:",
+    "autoGenerate": "Создать расписание автоматически",
+    "colPerformer": "Исполнитель",
+    "colTime": "Время",
+    "emptyState": "Назначьте исполнителей для создания расписания репетиций.",
+    "sendSchedule": "Отправить расписание исполнителям",
+    "scheduleCreated": "Расписание репетиций создано",
+    "scheduleSentTitle": "Расписание отправлено!",
+    "scheduleSentDesc": "Сообщения отправлены всем исполнителям с указанием времени прибытия."
   }
 }

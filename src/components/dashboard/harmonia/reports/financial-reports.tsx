@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useAuth } from "@/hooks/use-auth";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -17,6 +17,8 @@ export function FinancialReports() {
     const t = useTranslations('Reports');
     const { invoices, users, lessons, user } = useAuth();
     const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const {
         revenueData,
@@ -95,7 +97,7 @@ export function FinancialReports() {
     }, [user, lessons]);
 
     return (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <Card>
                 <CardHeader>
                     <CardTitle>{t('financialTitle')}</CardTitle>
@@ -126,15 +128,16 @@ export function FinancialReports() {
                     <CardHeader>
                         <CardTitle>{t('revenueByPackage')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[300px]">
+                    <CardContent className="h-[340px] pb-2">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={packageRevenueData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} ${entry.value}%`}>
+                                <Pie data={packageRevenueData} cx="50%" cy="45%" labelLine={false} outerRadius={90} fill="#8884d8" dataKey="value" nameKey="name">
                                     {packageRevenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
                                 <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} />
+                                <Legend layout="horizontal" verticalAlign="bottom" align="center" iconSize={10} wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -174,7 +177,7 @@ export function FinancialReports() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('teacher')}</TableHead>
+                                <TableHead className="text-start">{t('teacher')}</TableHead>
                                 <TableHead className="text-start">{t('monthlyRevenueEstimate')}</TableHead>
                             </TableRow>
                         </TableHeader>

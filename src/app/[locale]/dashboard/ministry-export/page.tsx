@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import type { FormStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,6 +20,8 @@ export default function MinistryExportPage() {
   const { toast } = useToast();
   const t = useTranslations('MinistryExport');
   const tc = useTranslations('Common.shared');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const formsForExport = useMemo(() => {
@@ -110,7 +112,7 @@ export default function MinistryExportPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div>
         <h1 className="text-2xl font-bold">{t('pageTitle')}</h1>
         <p className="text-muted-foreground">{t('pageSubtitle')}</p>
@@ -137,12 +139,12 @@ export default function MinistryExportPage() {
                     aria-label="Select all"
                   />
                 </TableHead>
-                <TableHead>{t('studentName')}</TableHead>
-                <TableHead>{tc('formType')}</TableHead>
-                <TableHead>{t('idNumber')}</TableHead>
-                <TableHead>{t('gradeLevel')}</TableHead>
-                <TableHead>{tc('status')}</TableHead>
-                <TableHead>{t('approvalDate')}</TableHead>
+                <TableHead className="text-start">{t('studentName')}</TableHead>
+                <TableHead className="text-start">{tc('formType')}</TableHead>
+                <TableHead className="text-start">{t('idNumber')}</TableHead>
+                <TableHead className="text-start">{t('gradeLevel')}</TableHead>
+                <TableHead className="text-start">{tc('status')}</TableHead>
+                <TableHead className="text-start">{t('approvalDate')}</TableHead>
                 <TableHead className="text-start"><span className="sr-only">{tc('actions')}</span></TableHead>
               </TableRow>
             </TableHeader>
@@ -158,14 +160,14 @@ export default function MinistryExportPage() {
                         aria-label="Select row"
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{form.studentName}</TableCell>
-                    <TableCell>{form.formType}</TableCell>
-                    <TableCell>{student?.idNumber || '-'}</TableCell>
-                    <TableCell>{form.grade || form.examLevel || '-'}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-start font-medium">{form.studentName}</TableCell>
+                    <TableCell className="text-start">{form.formType}</TableCell>
+                    <TableCell className="text-start">{student?.idNumber || '-'}</TableCell>
+                    <TableCell className="text-start">{form.grade || form.examLevel || '-'}</TableCell>
+                    <TableCell className="text-start">
                       <StatusBadge status={form.status} />
                     </TableCell>
-                    <TableCell>{form.signedAt || new Date(form.submissionDate).toLocaleDateString('he-IL')}</TableCell>
+                    <TableCell className="text-start">{form.signedAt || new Date(form.submissionDate).toLocaleDateString('he-IL')}</TableCell>
                     <TableCell className="text-start">
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>

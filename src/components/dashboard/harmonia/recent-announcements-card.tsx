@@ -30,7 +30,7 @@ export function RecentAnnouncementsCard() {
     };
 
     return (
-        <Card className="h-full">
+        <Card className="h-full" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>{t('description')}</CardDescription>
@@ -66,7 +66,7 @@ export function RecentAnnouncementsCard() {
                                 {ann.channels.map(channel => (
                                     <Badge key={channel} variant="secondary" className="text-xs">
                                         {getChannelIcon(channel)}
-                                        <span className="ms-1">{channel}</span>
+                                        <span className="ms-1">{t(`channel_${channel}`)}</span>
                                     </Badge>
                                 ))}
                             </div>

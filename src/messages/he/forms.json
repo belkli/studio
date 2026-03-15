@@ -18,6 +18,14 @@
     "gradeLabel": "כיתה",
     "history": "היסטוריית אישורים",
     "instrumentDetails": "פרטי כלי נגינה",
+    "kenesAccompanist": "מלווה",
+    "kenesConductor": "מנצח/ת",
+    "kenesDate": "תאריך",
+    "kenesEnsembleDetails": "2. פרטי ההרכב",
+    "kenesEventDetails": "1. פרטי האירוע",
+    "kenesEventName": "שם האירוע",
+    "kenesLocation": "מיקום",
+    "kenesNumParticipants": "מספר משתתפים",
     "labels": {
       "addNote": "הוסף הערה (אופציונלי)...",
       "birthDate": "תאריך לידה",
@@ -255,7 +263,33 @@
     "recitalTemplateTitle": "טופס רסיטל",
     "recitalTemplateDesc": "תבנית רסיטל בנויה מראש עם שדות מתקדמים.",
     "removeField": "הסר שדה",
-    "removeStep": "הסר שלב"
+    "removeStep": "הסר שלב",
+    "fieldTypes": {
+      "text": "טקסט",
+      "textarea": "אזור טקסט",
+      "number": "מספר",
+      "date": "תאריך",
+      "select": "רשימה נפתחת",
+      "multiselect": "בחירה מרובה",
+      "checkbox": "תיבת סימון",
+      "checkboxGroup": "קבוצת תיבות סימון",
+      "radio": "בחירה יחידה",
+      "fileUpload": "העלאת קובץ",
+      "signature": "חתימה",
+      "composerSelect": "בחירת מלחין",
+      "teacherSelect": "בחירת מורה",
+      "instrumentSelect": "בחירת כלי נגינה",
+      "separator": "מפריד",
+      "heading": "כותרת",
+      "infoText": "טקסט מידע",
+      "conditionalGroup": "קבוצה מותנית"
+    },
+    "operators": {
+      "equals": "שווה ל",
+      "notEquals": "שונה מ",
+      "contains": "מכיל",
+      "notEmpty": "לא ריק"
+    }
   },
   "ExamRegistrationForm": {
     "addComposition": "הוספת יצירה",
@@ -671,6 +705,22 @@
     "dealBookedDescPromo": "הוזמן שיעור במחיר ₪{price} (הנחה של {discount}%)",
     "dealBookedDescPackage": "השיעור קוזז מהחבילה הפעילה שלך",
     "selectTeacherFirst": "בחר מורה תחילה כדי לראות שעות פנויות",
-    "step3Time": "3. בחר שעה"
+    "step3Time": "3. בחר שעה",
+    "premiumLabel": "פרימיום",
+    "dateRequired": "חובה לבחור תאריך.",
+    "rescheduleSuccess": "השיעור נקבע מחדש!",
+    "rescheduleSuccessDesc": "השיעור עודכן למועד: {dateTime}.",
+    "rescheduleDialogTitle": "שינוי מועד שיעור - {instrument}",
+    "rescheduleDialogDesc": "בחר/י תאריך ושעה חדשים לשיעור עם {teacherName}. אורך השיעור: {durationMinutes} דקות.",
+    "availableHours": "שעות פנויות",
+    "noSlotsForDate": "לא נמצאו שעות פנויות בתאריך זה.",
+    "setNewDate": "קבע מועד חדש",
+    "cancelDialogTitle": "ביטול שיעור {instrument}",
+    "cancelDialogDesc": "האם לבטל את השיעור בתאריך {date} בשעה {time}?",
+    "cancelWithNoticePolicy": "מכיוון שהביטול מתבצע יותר מ-{hours} שעות לפני השיעור, תזוכה/י בשיעור השלמה.",
+    "cancelWithoutNoticePolicy": "שימו לב: מכיוון שהביטול מתבצע פחות מ-{hours} שעות לפני השיעור, לא יינתן זיכוי על פי מדיניות הקונסרבטוריון.",
+    "backAction": "חזרה",
+    "cancelWithCredit": "כן, בטל וקבל זיכוי",
+    "cancelAnyway": "כן, בטל בכל זאת"
   }
 }

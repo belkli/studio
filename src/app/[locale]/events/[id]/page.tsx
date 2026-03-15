@@ -2,15 +2,17 @@ import { PublicEventPage } from '@/components/harmonia/public-event-page';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function EventPage() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     return (
-        <div className="flex flex-col min-h-dvh bg-background">
+        <div className="flex flex-col min-h-dvh bg-background" dir={isRtl ? 'rtl' : 'ltr'}>
             <header className="px-4 lg:px-6 h-14 flex items-center bg-background/80 backdrop-blur-sm fixed top-0 w-full z-50 border-b">
                 <Link href="/" className="flex items-center justify-center" prefetch={false}>
                     <Icons.logo className="h-6 w-6 text-primary" />

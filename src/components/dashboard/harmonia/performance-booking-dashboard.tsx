@@ -53,7 +53,7 @@ const BookingActions = ({
         <MoreHorizontal className="h-4 w-4" />
       </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent>
+    <DropdownMenuContent align="end">
       <DropdownMenuItem onClick={onAssignClick}>
         <UserPlus className="me-2 h-4 w-4" />
         {t('actionAssignMusicians')}
@@ -137,7 +137,7 @@ export function PerformanceBookingDashboard() {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-start">{t('title')}</h2>
           <div className="flex gap-2">
@@ -166,11 +166,11 @@ export function PerformanceBookingDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>{t('event')}</TableHead>
-                          <TableHead>{t('client')}</TableHead>
-                          <TableHead>{t('dateLabel')}</TableHead>
-                          <TableHead>{t('quoteLabel')}</TableHead>
-                          <TableHead>{t('actions')}</TableHead>
+                          <TableHead className="text-start">{t('event')}</TableHead>
+                          <TableHead className="text-start">{t('client')}</TableHead>
+                          <TableHead className="text-start">{t('dateLabel')}</TableHead>
+                          <TableHead className="text-start">{t('quoteLabel')}</TableHead>
+                          <TableHead className="text-start">{t('actions')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -181,11 +181,11 @@ export function PerformanceBookingDashboard() {
                         )}
                         {(bookingsByColumn[column.id] || []).map((booking) => (
                           <TableRow key={booking.id}>
-                            <TableCell className="font-medium">{booking.eventName}</TableCell>
-                            <TableCell>{booking.clientName}</TableCell>
-                            <TableCell>{format(new Date(booking.eventDate), 'dd/MM/yyyy', { locale: dateLocale })} · {booking.eventTime}</TableCell>
-                            <TableCell>{t('currencySymbol')}{booking.totalQuote.toLocaleString()}</TableCell>
-                            <TableCell>
+                            <TableCell className="font-medium text-start">{booking.eventName}</TableCell>
+                            <TableCell className="text-start">{booking.clientName}</TableCell>
+                            <TableCell className="text-start">{format(new Date(booking.eventDate), 'dd/MM/yyyy', { locale: dateLocale })} · {booking.eventTime}</TableCell>
+                            <TableCell className="text-start">{t('currencySymbol')}{booking.totalQuote.toLocaleString()}</TableCell>
+                            <TableCell className="text-start">
                               <BookingActions
                                 booking={booking}
                                 onAssignClick={() => handleAssignClick(booking)}

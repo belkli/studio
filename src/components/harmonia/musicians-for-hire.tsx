@@ -74,7 +74,7 @@ export function MusiciansForHire() {
     const [currentStep, setCurrentStep] = useState(0);
 
     return (
-        <>
+        <div dir={isRtl ? 'rtl' : 'ltr'}>
             {/* ── Hero ── */}
             <section className="relative w-full min-h-[88vh] flex items-center justify-center text-center text-white overflow-hidden">
                 {/* Background image */}
@@ -242,6 +242,6 @@ export function MusiciansForHire() {
                     </div>
                 </div>
             </section>
-        </>
+        </div>
     )
 }

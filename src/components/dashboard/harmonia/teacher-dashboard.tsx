@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
@@ -99,6 +99,8 @@ export function TeacherDashboard() {
     const { user, users, lessons, formSubmissions, practiceLogs, packages, events } = useAuth();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
     const t = useTranslations("Dashboard.Teacher");
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const assignedStudents = useMemo(
         () => (user ? users.filter(u => user.students?.includes(u.id)) : []),
@@ -124,7 +126,7 @@ export function TeacherDashboard() {
     const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
 
     return (
-        <div className="space-y-8 p-8">
+        <div className="space-y-8 p-8" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('welcomeTitle', { name: user.name.split(' ')[0] })}</h1>

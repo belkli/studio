@@ -14,21 +14,28 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "@/i18n/routing";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { getUploadSignedUrl } from "@/app/actions/storage";
+import { useTranslations, useLocale } from 'next-intl';
 
-const videoUploadSchema = z.object({
-  repertoireId: z.string().min(1, "יש לבחור יצירה."),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createVideoUploadSchema = (t: any) => z.object({
+  repertoireId: z.string().min(1, t('errorSelectPiece')),
   studentNote: z.string().optional(),
 });
 
-type VideoUploadFormData = z.infer<typeof videoUploadSchema>;
+type VideoUploadFormData = z.infer<ReturnType<typeof createVideoUploadSchema>>;
 
 export function PracticeVideoUploadForm() {
   const { toast } = useToast();
   const { user, addPracticeVideo, assignedRepertoire, compositions } = useAuth();
   const router = useRouter();
+  const t = useTranslations('PracticeVideoUpload');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const videoUploadSchema = createVideoUploadSchema(t);
 
   const studentId = user?.role === 'student' ? user.id : (user?.role === 'parent' ? user.childIds?.[0] : undefined);
 
@@ -86,17 +93,17 @@ export function PracticeVideoUploadForm() {
 
     setIsUploading(false);
     toast({
-      title: "הוידאו הועלה בהצלחה!",
-      description: `המורה שלך יקבל התראה ויוכל לתת משוב.`,
+      title: t('uploadSuccessTitle'),
+      description: t('uploadSuccessDesc'),
     });
     router.push('/dashboard/progress');
   };
 
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full max-w-lg" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader>
-        <CardTitle>העלאת וידאו לאימון</CardTitle>
-        <CardDescription>שלח/י סרטון קצר (עד 60 שניות) למורה לקבלת משוב באמצע השבוע.</CardDescription>
+        <CardTitle>{t('formTitle')}</CardTitle>
+        <CardDescription>{t('formDesc')}</CardDescription>
       </CardHeader>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -116,19 +123,19 @@ export function PracticeVideoUploadForm() {
               {selectedFile ? (
                 <p className="mt-4 text-sm font-medium">{selectedFile.name}</p>
               ) : (
-                <p className="mt-4 text-muted-foreground">גרור קובץ וידאו לכאן, או לחץ כדי לבחור</p>
+                <p className="mt-4 text-muted-foreground">{t('dropzoneText')}</p>
               )}
-              <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM — עד 60 שניות</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('dropzoneFormats')}</p>
             </div>
             <FormField
               control={form.control}
               name="repertoireId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>לאיזו יצירה מתייחס הוידאו?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                  <FormLabel>{t('repertoireLabel')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                     <FormControl>
-                      <SelectTrigger><SelectValue placeholder="בחר יצירה מהרפרטואר..." /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t('repertoirePlaceholder')} /></SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {studentRepertoire.map(rep => {
@@ -146,9 +153,9 @@ export function PracticeVideoUploadForm() {
               name="studentNote"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>הערות למורה (אופציונלי)</FormLabel>
+                  <FormLabel>{t('notesLabel')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="לדוגמה: אני לא בטוח/ה לגבי האצבוע כאן, או האם הדינמיקה נכונה?" {...field} />
+                    <Textarea placeholder={t('notesPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,7 +165,7 @@ export function PracticeVideoUploadForm() {
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isUploading}>
               {isUploading ? <Loader2 className="animate-spin h-4 w-4 me-2" /> : <UploadCloud className="h-4 w-4 me-2" />}
-              {isUploading ? 'מעלה...' : 'שלח למשוב'}
+              {isUploading ? t('uploading') : t('submitBtn')}
             </Button>
           </CardFooter>
         </form>

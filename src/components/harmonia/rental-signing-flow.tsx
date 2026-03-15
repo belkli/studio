@@ -134,9 +134,9 @@ export function RentalSigningFlow({ rental, token }: { rental: InstrumentRental;
                 <li>{t('instrumentType')}: {instrument?.type || t('unknown')}</li>
                 <li>{t('rentedTo')}: {student?.name || t('unknown')}</li>
                 <li>{t('rentalModel')}: {t(modelKeyByValue[rental.rentalModel])}</li>
-                {rental.depositAmountILS ? <li>{t('depositAmount')}: {rental.depositAmountILS}</li> : null}
-                {rental.monthlyFeeILS ? <li>{t('monthlyFee')}: {rental.monthlyFeeILS}</li> : null}
-                {rental.purchasePriceILS ? <li>{t('purchasePrice')}: {rental.purchasePriceILS}</li> : null}
+                {rental.depositAmountILS ? <li>{t('depositAmount')}: ₪{rental.depositAmountILS.toLocaleString()}</li> : null}
+                {rental.monthlyFeeILS ? <li>{t('monthlyFee')}: ₪{rental.monthlyFeeILS.toLocaleString()}</li> : null}
+                {rental.purchasePriceILS ? <li>{t('purchasePrice')}: ₪{rental.purchasePriceILS.toLocaleString()}</li> : null}
                 {rental.monthsUntilPurchaseEligible ? <li>{t('monthsUntilPurchase')}: {rental.monthsUntilPurchaseEligible}</li> : null}
                 <li>{t('startDate')}: {rental.startDate}</li>
                 {rental.expectedReturnDate ? <li>{t('expectedReturnDate')}: {rental.expectedReturnDate}</li> : null}

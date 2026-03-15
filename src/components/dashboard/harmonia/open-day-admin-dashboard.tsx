@@ -191,11 +191,11 @@ export function OpenDayAdminDashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('childName')}</TableHead>
-                    <TableHead>{t('instrument')}</TableHead>
-                    <TableHead>{t('status')}</TableHead>
-                    <TableHead>{t('assignedSession')}</TableHead>
-                    <TableHead>{t('notes')}</TableHead>
+                    <TableHead className="text-start">{t('childName')}</TableHead>
+                    <TableHead className="text-start">{t('instrument')}</TableHead>
+                    <TableHead className="text-start">{t('status')}</TableHead>
+                    <TableHead className="text-start">{t('assignedSession')}</TableHead>
+                    <TableHead className="text-start">{t('notes')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -206,12 +206,12 @@ export function OpenDayAdminDashboard() {
                   )}
                   {registrations.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>
+                      <TableCell className="text-start">
                         <div className="font-medium">{item.childName}</div>
                         <div className="text-xs text-muted-foreground">{item.visitorName}</div>
                       </TableCell>
-                      <TableCell>{item.instrument}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-start">{item.instrument}</TableCell>
+                      <TableCell className="text-start">
                         <Select value={item.status} onValueChange={(value) => updateRegistration(item.id, { status: value as OpenDayRegistration['status'] })}>
                           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -222,7 +222,7 @@ export function OpenDayAdminDashboard() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-start">
                         <Select value={item.sessionId || 'unassigned'} onValueChange={(value) => updateRegistration(item.id, { sessionId: value === 'unassigned' ? undefined : value })}>
                           <SelectTrigger className="w-44"><SelectValue placeholder={t('selectSession')} /></SelectTrigger>
                           <SelectContent>
@@ -233,7 +233,7 @@ export function OpenDayAdminDashboard() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-start">
                         <Input
                           value={item.notes || ''}
                           onChange={(event) => updateRegistration(item.id, { notes: event.target.value })}

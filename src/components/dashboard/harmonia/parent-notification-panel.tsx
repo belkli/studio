@@ -44,7 +44,7 @@ export function ParentNotificationPanel() {
     };
 
     return (
-        <Card className="max-w-3xl border-t-4 border-t-purple-600 shadow-sm">
+        <Card className="max-w-3xl border-t-4 border-t-purple-600 shadow-sm" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <BellRing className="w-5 h-5 text-purple-600" />
@@ -143,7 +143,7 @@ export function ParentNotificationPanel() {
                     )}
                 </div>
 
-                <div className={`pt-4 flex ${isRtl ? 'justify-end' : 'justify-start'}`}>
+                <div className="pt-4 flex justify-end">
                     <Button onClick={handleSave} disabled={isSaving} className="px-8">
                         {isSaving ? t('savingBtn') : <><Save className="w-4 h-4 me-2" /> {t('saveBtn')}</>}
                     </Button>

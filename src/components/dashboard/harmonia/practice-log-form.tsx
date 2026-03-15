@@ -17,7 +17,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "@/i18n/routing";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { User } from '@/lib/types';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createPracticeLogSchema = (t: any) => z.object({
@@ -36,6 +36,8 @@ export function PracticeLogForm() {
   const { user, users, addPracticeLog } = useAuth();
   const router = useRouter();
   const t = useTranslations('PracticeLogForm');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   const practiceLogSchema = createPracticeLogSchema(t);
   type PracticeLogFormData = z.infer<typeof practiceLogSchema>;
@@ -80,7 +82,7 @@ export function PracticeLogForm() {
   };
 
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full max-w-lg" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader>
         <CardTitle>{t('formTitle')}</CardTitle>
         <CardDescription>{t('formDesc')}</CardDescription>
@@ -95,7 +97,7 @@ export function PracticeLogForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('logForLabel')}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}>
                       <FormControl>
                         <SelectTrigger><SelectValue placeholder={t('selectChildPlaceholder')} /></SelectTrigger>
                       </FormControl>

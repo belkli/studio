@@ -112,7 +112,7 @@ export function AcademicReports() {
 
 
     return (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>

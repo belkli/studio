@@ -110,7 +110,7 @@ export function StudentBillingDashboard() {
             const { url } = await getPlayingSchoolPaymentUrl(invoiceId);
             window.location.href = url;
         } catch {
-            toast({ variant: 'destructive', title: 'Payment Error', description: 'Could not generate payment link. Please try again later.' });
+            toast({ variant: 'destructive', title: t('paymentError'), description: t('paymentErrorDesc') });
         } finally {
             setIsProcessingPayment(null);
         }
@@ -118,7 +118,7 @@ export function StudentBillingDashboard() {
 
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             {user.role === 'parent' && studentChildren.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                     {studentChildren.map(child => (
@@ -259,11 +259,11 @@ export function StudentBillingDashboard() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>{ti('invoiceNumber')}</TableHead>
-                                    <TableHead>{ti('date')}</TableHead>
-                                    <TableHead>{ti('details')}</TableHead>
-                                    <TableHead>{ti('amount')}</TableHead>
-                                    <TableHead>{ti('status')}</TableHead>
+                                    <TableHead className="text-start">{ti('invoiceNumber')}</TableHead>
+                                    <TableHead className="text-start">{ti('date')}</TableHead>
+                                    <TableHead className="text-start">{ti('details')}</TableHead>
+                                    <TableHead className="text-start">{ti('amount')}</TableHead>
+                                    <TableHead className="text-start">{ti('status')}</TableHead>
                                     <TableHead className="text-start">{ti('actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -302,10 +302,10 @@ export function StudentBillingDashboard() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{ti('date')}</TableHead>
-                                        <TableHead>{ti('details')}</TableHead>
-                                        <TableHead>{ti('amount')}</TableHead>
-                                        <TableHead>{ti('status')}</TableHead>
+                                        <TableHead className="text-start">{ti('date')}</TableHead>
+                                        <TableHead className="text-start">{ti('details')}</TableHead>
+                                        <TableHead className="text-start">{ti('amount')}</TableHead>
+                                        <TableHead className="text-start">{ti('status')}</TableHead>
                                         <TableHead className="text-start">{ti('actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -384,7 +384,7 @@ export function StudentBillingDashboard() {
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>{t('cancelSubscription')}</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            {`Are you sure you want to cancel the subscription for ${activeStudent?.name || 'this student'}? This action cannot be undone.`}
+                                            {t('cancelSubscriptionConfirm', { name: activeStudent?.name || '' })}
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
@@ -400,12 +400,12 @@ export function StudentBillingDashboard() {
                                                 toast({
                                                     title: t('cancelSubscription'),
                                                     description: result.withinCoolingOff
-                                                        ? 'הביטול התבצע בתוך תקופת ההתנסות (14 ימים). זכאי/ת להחזר מלא.'
-                                                        : 'הביטול יכנס לתוקף תוך 3 ימי עסקים.',
+                                                        ? t('cancelledWithinCoolingOff')
+                                                        : t('cancelledConfirmation'),
                                                 });
                                             }
                                         } catch {
-                                            toast({ variant: 'destructive', title: t('cancelSubscription'), description: 'אירעה שגיאה. אנא נסה שוב.' });
+                                            toast({ variant: 'destructive', title: t('cancelSubscription'), description: t('cancelError') });
                                         } finally {
                                             setIsCancelling(false);
                                         }

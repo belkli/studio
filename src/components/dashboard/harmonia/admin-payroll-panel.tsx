@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { vatBreakdown, VAT_RATE } from '@/lib/vat';
 import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
@@ -90,23 +91,32 @@ function formatMinutes(totalMinutes: number): string {
 }
 
 export function AdminPayrollPanel() {
-  const { user, users, lessons } = useAuth();
+  const { user, users, lessons, conservatoriums } = useAuth();
   const t = useTranslations('Payroll');
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
 
+  const isSiteAdmin = user?.role === 'site_admin';
   const [period, setPeriod] = useState<string>('2026-03');
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedConsId, setSelectedConsId] = useState<string>(user?.conservatoriumId ?? '');
+
+  // For site_admin: act as if we are scoped to selectedConsId; for others: own conservatorium
+  const effectiveConsId = isSiteAdmin ? selectedConsId : (user?.conservatoriumId ?? '');
 
   const report = useMemo<PayrollReport>(() => {
     const monthStart = new Date(`${period}-01T00:00:00`);
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const teachers = user ? tenantUsers(users, user, 'teacher') : [];
+    const teachers = effectiveConsId
+      ? users.filter(u => u.role === 'teacher' && u.conservatoriumId === effectiveConsId)
+      : (user ? tenantUsers(users, user, 'teacher') : []);
 
-    const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
+    const scopedLessons = effectiveConsId
+      ? lessons.filter(l => l.conservatoriumId === effectiveConsId)
+      : (user ? tenantFilter(lessons, user) : lessons);
     const byTeacher = teachers.map((teacher) => {
-      const teacherLessons = tenantLessons.filter((lesson) => {
+      const teacherLessons = scopedLessons.filter((lesson) => {
         const when = new Date(lesson.startTime);
         return lesson.teacherId === teacher.id && when >= monthStart && when <= monthEnd;
       });
@@ -141,7 +151,7 @@ export function AdminPayrollPanel() {
       totalHours: Number((totalMinutes / 60).toFixed(2)),
       byTeacher,
     };
-  }, [lessons, period, users, user]);
+  }, [lessons, period, users, user, effectiveConsId]);
 
   const generateReport = async () => {
     setIsLoading(true);
@@ -162,6 +172,21 @@ export function AdminPayrollPanel() {
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-wrap items-end gap-4">
+        {isSiteAdmin && (
+          <div className="space-y-1">
+            <label className="text-sm text-muted-foreground">{t('conservatorium')}</label>
+            <Select value={selectedConsId} onValueChange={setSelectedConsId} dir={isRtl ? 'rtl' : 'ltr'}>
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder={t('allConservatoriums')} />
+              </SelectTrigger>
+              <SelectContent>
+                {conservatoriums.map(c => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="space-y-1">
           <label className="text-sm text-muted-foreground">{t('period')}</label>
           <input
@@ -171,6 +196,11 @@ export function AdminPayrollPanel() {
             className="h-9 rounded-md border bg-background px-3"
             dir="ltr"
           />
+          {period && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {new Date(period + '-01').toLocaleDateString(locale, { month: 'long', year: 'numeric' })}
+            </p>
+          )}
         </div>
 
         <Button onClick={generateReport} disabled={isLoading}>
@@ -203,7 +233,7 @@ export function AdminPayrollPanel() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-start">{t('totalHours')}</CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-start">{report.totalHours}h</CardContent>
+          <CardContent className="text-2xl font-bold text-start">{report.totalHours} {t('hours')}</CardContent>
         </Card>
       </div>
 

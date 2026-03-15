@@ -12,11 +12,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { BranchEditDialog } from './branch-edit-dialog';
 import { RoomManagementDialog } from './room-management-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function AdminBranchesDashboard() {
     const t = useTranslations('Branches');
     const tCommon = useTranslations('Common');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { user, branches, addBranch, updateBranch, conservatoriums } = useAuth();
     const { toast } = useToast();
 
@@ -55,7 +57,7 @@ export function AdminBranchesDashboard() {
 
     return (
         <>
-            <Card>
+            <Card dir={isRtl ? 'rtl' : 'ltr'}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>{t('title')}</CardTitle>
@@ -72,10 +74,10 @@ export function AdminBranchesDashboard() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('branchName')}</TableHead>
-                                <TableHead>{t('address')}</TableHead>
-                                {user?.role === 'site_admin' && <TableHead>{t('conservatorium')}</TableHead>}
-                                <TableHead>{t('actions')}</TableHead>
+                                <TableHead className="text-start">{t('branchName')}</TableHead>
+                                <TableHead className="text-start">{t('address')}</TableHead>
+                                {user?.role === 'site_admin' && <TableHead className="text-start">{t('conservatorium')}</TableHead>}
+                                <TableHead className="text-end">{t('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -91,12 +93,12 @@ export function AdminBranchesDashboard() {
                                             {conservatoriums.find(c => c.id === branch.conservatoriumId)?.name || branch.conservatoriumId}
                                         </TableCell>
                                     )}
-                                    <TableCell className="text-start">
+                                    <TableCell className="text-end">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" size="icon" aria-label={tCommon('shared.openMenu')}><MoreHorizontal className="h-4 w-4" /></Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
+                                            <DropdownMenuContent align="end">
                                                 <DropdownMenuItem onClick={() => handleEditClick(branch)}>
                                                     <Edit className="w-4 h-4 me-2" />
                                                     {tCommon('edit')}

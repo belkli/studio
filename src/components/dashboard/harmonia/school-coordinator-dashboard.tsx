@@ -45,7 +45,7 @@ export function SchoolCoordinatorDashboard() {
     // ── Main Component ────────────────────────────────────────────────────────────
 
     return (
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-6" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Header */}
             <div className="flex items-center gap-3">
                 <School className="h-7 w-7 text-primary" />

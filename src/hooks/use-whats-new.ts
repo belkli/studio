@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import type { UserRole } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
+import { useLocale, useTranslations } from 'next-intl';
 
 export type WhatsNewItemType =
   | 'announcement'
@@ -25,6 +26,8 @@ export interface WhatsNewItem {
 const PENDING_FORM_STATUSES = new Set(['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED']);
 
 export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: string): WhatsNewItem[] {
+  const locale = useLocale();
+  const t = useTranslations('Dashboard.whatsNewFeed');
   const {
     user,
     users,
@@ -53,15 +56,18 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
         return ann.conservatoriumId === conservatoriumId;
       })
       .slice(0, 6)
-      .map<WhatsNewItem>((ann) => ({
-        id: `announcement-${ann.id}`,
-        type: 'announcement',
-        title: ann.title,
-        description: ann.body,
-        createdAt: ann.sentAt,
-        link: '/dashboard/announcements',
-        isRead: false,
-      }));
+      .map<WhatsNewItem>((ann) => {
+        const localized = locale !== 'he' && ann.translations?.[locale as keyof typeof ann.translations];
+        return {
+          id: `announcement-${ann.id}`,
+          type: 'announcement',
+          title: localized ? localized.title : ann.title,
+          description: localized ? localized.body : ann.body,
+          createdAt: ann.sentAt,
+          link: '/dashboard/announcements',
+          isRead: false,
+        };
+      });
 
     const eventItems = events
       .filter((event) => {
@@ -117,8 +123,11 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
       .map<WhatsNewItem>((invoice) => ({
         id: `payment-${invoice.id}`,
         type: 'payment',
-        title: invoice.invoiceNumber,
-        description: invoice.status,
+        title: t(`invoiceStatuses.${invoice.status as 'SENT' | 'OVERDUE'}`),
+        description: t('invoiceDue', {
+          date: new Date(invoice.dueDate).toLocaleDateString(locale, { day: 'numeric', month: 'short' }),
+          amount: invoice.total.toLocaleString(),
+        }),
         createdAt: invoice.dueDate,
         link: '/dashboard/billing',
         isRead: false,
@@ -150,7 +159,7 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
       .map<WhatsNewItem>((masterclass) => ({
         id: `masterclass-${masterclass.id}`,
         type: 'master_class',
-        title: masterclass.title.en,
+        title: masterclass.title[locale as keyof typeof masterclass.title] || masterclass.title.he || masterclass.title.en || '',
         description: masterclass.instructor.displayName,
         createdAt: masterclass.date,
         link: '/dashboard/alumni',
@@ -163,6 +172,8 @@ export function useWhatsNew(userId: string, role: UserRole, conservatoriumId?: s
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 10);
   }, [
+    t,
+    locale,
     conservatoriumId,
     announcements,
     events,

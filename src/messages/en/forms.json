@@ -5,6 +5,14 @@
     "schoolDetails": "2. School Details",
     "studyDetails": "3 & 4. Study & Teaching Details",
     "instrumentDetails": "Instrument Details",
+    "kenesAccompanist": "Accompanist",
+    "kenesConductor": "Conductor",
+    "kenesDate": "Date",
+    "kenesEnsembleDetails": "2. Ensemble Details",
+    "kenesEventDetails": "1. Event Details",
+    "kenesEventName": "Event Name",
+    "kenesLocation": "Location",
+    "kenesNumParticipants": "Number of Participants",
     "teacherDetails": "Teacher Details",
     "examDetails": "Exam Details",
     "repertoireTitle": "Repertoire",
@@ -255,7 +263,33 @@
     "recitalTemplateTitle": "Recital Form",
     "recitalTemplateDesc": "Prebuilt recital template with advanced fields.",
     "removeField": "Remove field",
-    "removeStep": "Remove step"
+    "removeStep": "Remove step",
+    "fieldTypes": {
+      "text": "Text",
+      "textarea": "Text Area",
+      "number": "Number",
+      "date": "Date",
+      "select": "Dropdown",
+      "multiselect": "Multi-select",
+      "checkbox": "Checkbox",
+      "checkboxGroup": "Checkbox Group",
+      "radio": "Radio",
+      "fileUpload": "File Upload",
+      "signature": "Signature",
+      "composerSelect": "Composer Select",
+      "teacherSelect": "Teacher Select",
+      "instrumentSelect": "Instrument Select",
+      "separator": "Separator",
+      "heading": "Heading",
+      "infoText": "Info Text",
+      "conditionalGroup": "Conditional Group"
+    },
+    "operators": {
+      "equals": "Equals",
+      "notEquals": "Not Equals",
+      "contains": "Contains",
+      "notEmpty": "Not Empty"
+    }
   },
   "ExamRegistrationForm": {
     "validation": {
@@ -671,6 +705,22 @@
     "dealBookedDescPromo": "Booked lesson at ₪{price} ({discount}% off)",
     "dealBookedDescPackage": "Lesson deducted from your active package",
     "selectTeacherFirst": "Select a teacher first to see available times",
-    "step3Time": "3. Choose Time"
+    "step3Time": "3. Choose Time",
+    "premiumLabel": "Premium",
+    "dateRequired": "Please select a date.",
+    "rescheduleSuccess": "Lesson rescheduled!",
+    "rescheduleSuccessDesc": "Lesson updated to: {dateTime}.",
+    "rescheduleDialogTitle": "Reschedule {instrument} Lesson",
+    "rescheduleDialogDesc": "Choose a new date and time for your lesson with {teacherName}. Duration: {durationMinutes} minutes.",
+    "availableHours": "Available hours",
+    "noSlotsForDate": "No available slots for this date.",
+    "setNewDate": "Set New Date",
+    "cancelDialogTitle": "Cancel {instrument} Lesson",
+    "cancelDialogDesc": "Cancel the lesson on {date} at {time}?",
+    "cancelWithNoticePolicy": "Since the cancellation is more than {hours} hours before the lesson, you will receive a makeup credit.",
+    "cancelWithoutNoticePolicy": "Note: Since the cancellation is less than {hours} hours before the lesson, no credit will be given per conservatorium policy.",
+    "backAction": "Back",
+    "cancelWithCredit": "Yes, cancel and get credit",
+    "cancelAnyway": "Yes, cancel anyway"
   }
 }

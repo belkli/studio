@@ -15,13 +15,12 @@ import { LessonDetailDialog } from './lesson-detail-dialog';
 import { addDays, startOfWeek, endOfWeek, format, eachDayOfInterval, isSameDay } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ScheduleCalendarProps {
     lessons: LessonSlot[];
 }
 
-const _days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
 const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().padStart(2, '0')}:00`); // 08:00 to 20:00
 
 const typeColorMap = {
@@ -34,6 +33,7 @@ const typeColorMap = {
 
 const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => void; }) => {
     const { users, user: currentUser } = useAuth();
+    const t = useTranslations('AdminPages.schedule');
     const isTeacher = currentUser?.role === 'teacher';
     const otherUser = users.find(u => u.id === (isTeacher ? lesson.studentId : lesson.teacherId));
 
@@ -46,9 +46,9 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
                 className="bg-gray-100 border-e-4 border-gray-400 p-2 rounded-lg text-xs h-full overflow-hidden text-gray-500 italic cursor-pointer hover:bg-gray-200 transition-colors"
                 onClick={onClick}
             >
-                <p className="font-bold truncate">בוטל</p>
+                <p className="font-bold truncate">{t('cancelled')}</p>
                 <p className="truncate">{lesson.instrument}</p>
-                <p className="truncate text-gray-400">{isTeacher ? otherUser?.name : `עם ${otherUser?.name}`}</p>
+                <p className="truncate text-gray-400">{isTeacher ? otherUser?.name : t('withName', { name: otherUser?.name ?? '' })}</p>
             </div>
         )
     }
@@ -67,8 +67,8 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
         >
             <div>
                 <p className={cn("font-bold truncate", lesson.status !== 'COMPLETED' && !isPast && "text-inherit")}>{lesson.instrument}</p>
-                <p className={cn("truncate opacity-80")}>{isTeacher ? otherUser?.name : `עם ${otherUser?.name}`}</p>
-                <Badge variant="secondary" className="mt-1 bg-white/50 text-inherit text-[10px] py-0 h-4 border-none">{lesson.isVirtual ? "וירטואלי" : `חדר ${lesson.roomId || '?'}`}</Badge>
+                <p className={cn("truncate opacity-80")}>{isTeacher ? otherUser?.name : t('withName', { name: otherUser?.name ?? '' })}</p>
+                <Badge variant="secondary" className="mt-1 bg-white/50 text-inherit text-[10px] py-0 h-4 border-none">{lesson.isVirtual ? t('virtualLabel') : t('roomLabel', { roomId: lesson.roomId || '?' })}</Badge>
             </div>
         </div>
     )
@@ -76,6 +76,8 @@ const LessonCard = ({ lesson, onClick }: { lesson: LessonSlot; onClick: () => vo
 
 export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
     const t = useTranslations('AdminPages.schedule');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedLesson, setSelectedLesson] = useState<LessonSlot | null>(null);
     const [lessonToCancel, setLessonToCancel] = useState<LessonSlot | null>(null);
@@ -101,7 +103,7 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
     const handleConfirmCancel = (withNotice: boolean) => {
         if (lessonToCancel) {
             cancelLesson(lessonToCancel.id, withNotice);
-            toast({ title: "השיעור בוטל", description: withNotice ? "זיכוי לשיעור השלמה נוסף לחשבונך." : "לא ניתן זיכוי על פי מדיניות הביטולים." });
+            toast({ title: t('lessonCancelled'), description: withNotice ? t('cancelWithCredit') : t('cancelNoCredit') });
             setLessonToCancel(null);
             setSelectedLesson(null);
         }
@@ -131,27 +133,27 @@ export function ScheduleCalendar({ lessons }: ScheduleCalendarProps) {
 
     return (
         <>
-            <Card className="border-none shadow-none bg-transparent">
+            <Card dir={isRtl ? 'rtl' : 'ltr'} className="border-none shadow-none bg-transparent">
                 <CardHeader className="px-0 pb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="icon" onClick={() => handleWeekChange('prev')} className="h-8 w-8" aria-label={t('prevWeek')}>
-                                <ArrowRight className="h-4 w-4" />
+                                {isRtl ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
                             </Button>
                             <div className="flex flex-col items-center min-w-[140px]">
                                 <span className="font-bold text-sm">
-                                    {format(weekInterval.start, 'd בMMM')} - {format(weekInterval.end, 'd בMMM')}
+                                    {format(weekInterval.start, t('dateRangeFormat'), { locale: dateLocale })} - {format(weekInterval.end, t('dateRangeFormat'), { locale: dateLocale })}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                                     {format(weekInterval.end, 'yyyy')}
                                 </span>
                             </div>
                             <Button variant="outline" size="icon" onClick={() => handleWeekChange('next')} className="h-8 w-8" aria-label={t('nextWeek')}>
-                                <ArrowLeft className="h-4 w-4" />
+                                {isRtl ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                             </Button>
                         </div>
                         <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())} className="h-8 text-xs font-medium">
-                            היום
+                            {t('todayBtn')}
                         </Button>
                     </div>
                 </CardHeader>

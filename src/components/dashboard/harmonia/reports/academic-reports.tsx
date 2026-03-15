@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMemo } from "react";
 import { instruments } from "@/lib/taxonomies";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { userHasInstrument } from '@/lib/instrument-matching';
 import { tenantUsers } from '@/lib/tenant-filter';
 
@@ -15,6 +15,8 @@ const RechartsTooltip = Tooltip as any;
 
 export function AcademicReports() {
     const t = useTranslations('Reports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { user, practiceLogs, users, assignedRepertoire, conservatoriumInstruments } = useAuth();
 
     const students = useMemo(() => user ? tenantUsers(users, user, 'student') : [], [user, users]);
@@ -110,7 +112,7 @@ export function AcademicReports() {
 
 
     return (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader>
@@ -191,8 +193,8 @@ export function AcademicReports() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('student')}</TableHead>
-                                <TableHead>{t('teacher')}</TableHead>
+                                <TableHead className="text-start">{t('student')}</TableHead>
+                                <TableHead className="text-start">{t('teacher')}</TableHead>
                                 <TableHead className="text-start">{t('totalMinutes')}</TableHead>
                             </TableRow>
                         </TableHeader>

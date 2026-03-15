@@ -153,7 +153,7 @@ export function TeacherPayrollView() {
                   <TableCell className="text-start">{lesson.studentName}</TableCell>
                   <TableCell className="text-start">{lesson.instrument}</TableCell>
                   <TableCell className="text-start">{lesson.durationMinutes} {t('minutes')}</TableCell>
-                  <TableCell className="text-start">{lesson.status}</TableCell>
+                  <TableCell className="text-start">{t(`lessonStatuses.${lesson.status}`)}</TableCell>
                 </TableRow>
               ))}
               {report.lessons.length === 0 && (

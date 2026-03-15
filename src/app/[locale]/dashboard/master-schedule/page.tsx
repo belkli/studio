@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 const MasterScheduleCalendar = dynamic(
     () => import("@/components/dashboard/harmonia/master-schedule-calendar").then(mod => ({ default: mod.MasterScheduleCalendar })),
@@ -13,11 +13,13 @@ const MasterScheduleCalendar = dynamic(
 export default function MasterSchedulePage() {
     const { user } = useAuth();
     const t = useTranslations('DashboardPages');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const isAdmin = user?.role === 'conservatorium_admin' || user?.role === 'site_admin';
 
     if (!isAdmin) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
                 <div>
                     <h1 className="text-2xl font-bold">{t('masterSchedule.title')}</h1>
                     <p className="text-muted-foreground">{t('masterSchedule.noPermissionDesc')}</p>
@@ -27,7 +29,7 @@ export default function MasterSchedulePage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
                 <h1 className="text-2xl font-bold">{t('masterSchedule.title')}</h1>
                 <p className="text-muted-foreground">{t('masterSchedule.description')}</p>

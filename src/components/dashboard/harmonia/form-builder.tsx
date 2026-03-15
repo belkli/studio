@@ -40,6 +40,21 @@ const FIELD_TYPES = [
   'conditional_group',
 ] as const;
 
+const FIELD_TYPE_KEYS: Record<string, string> = {
+  text: 'fieldTypes.text', textarea: 'fieldTypes.textarea', number: 'fieldTypes.number',
+  date: 'fieldTypes.date', select: 'fieldTypes.select', multiselect: 'fieldTypes.multiselect',
+  checkbox: 'fieldTypes.checkbox', checkbox_group: 'fieldTypes.checkboxGroup', radio: 'fieldTypes.radio',
+  file_upload: 'fieldTypes.fileUpload', signature: 'fieldTypes.signature',
+  composer_select: 'fieldTypes.composerSelect', teacher_select: 'fieldTypes.teacherSelect',
+  instrument_select: 'fieldTypes.instrumentSelect', separator: 'fieldTypes.separator',
+  heading: 'fieldTypes.heading', info_text: 'fieldTypes.infoText', conditional_group: 'fieldTypes.conditionalGroup',
+};
+
+const _OPERATOR_KEYS: Record<string, string> = {
+  equals: 'operators.equals', not_equals: 'operators.notEquals',
+  contains: 'operators.contains', not_empty: 'operators.notEmpty',
+};
+
 const getFieldSchema = (t: any) => z.object({
   id: z.string().min(1),
   label: z.string().min(1, t('labelRequired')),
@@ -200,7 +215,7 @@ export function FormBuilder() {
                     <FormField control={form.control} name={`fields.${index}.id`} render={({ field: f }) => (<FormItem><FormLabel>{t('fieldId')}</FormLabel><FormControl><Input {...f} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name={`fields.${index}.label`} render={({ field: f }) => (<FormItem><FormLabel>{t('fieldLabel')}</FormLabel><FormControl><Input {...f} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name={`fields.${index}.type`} render={({ field: f }) => (
-                      <FormItem><FormLabel>{t('fieldType')}</FormLabel><Select onValueChange={f.onChange} value={f.value} dir={dir}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent>{FIELD_TYPES.map((opt) => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>
+                      <FormItem><FormLabel>{t('fieldType')}</FormLabel><Select onValueChange={f.onChange} value={f.value} dir={dir}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent>{FIELD_TYPES.map((opt) => <SelectItem key={opt} value={opt}>{t(FIELD_TYPE_KEYS[opt] || opt)}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>
                     )} />
                   </div>
 
@@ -213,7 +228,7 @@ export function FormBuilder() {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <FormField control={form.control} name={`fields.${index}.showIfFieldId`} render={({ field: f }) => (<FormItem><FormLabel>{t('showIfField')}</FormLabel><FormControl><Input {...f} placeholder={t('optional')} /></FormControl></FormItem>)} />
                     <FormField control={form.control} name={`fields.${index}.showIfOperator`} render={({ field: f }) => (
-                      <FormItem><FormLabel>{t('showIfOperator')}</FormLabel><Select onValueChange={f.onChange} value={f.value} dir={dir}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="equals">equals</SelectItem><SelectItem value="not_equals">not_equals</SelectItem><SelectItem value="contains">contains</SelectItem><SelectItem value="not_empty">not_empty</SelectItem></SelectContent></Select></FormItem>
+                      <FormItem><FormLabel>{t('showIfOperator')}</FormLabel><Select onValueChange={f.onChange} value={f.value} dir={dir}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="equals">{t('operators.equals')}</SelectItem><SelectItem value="not_equals">{t('operators.notEquals')}</SelectItem><SelectItem value="contains">{t('operators.contains')}</SelectItem><SelectItem value="not_empty">{t('operators.notEmpty')}</SelectItem></SelectContent></Select></FormItem>
                     )} />
                     <FormField control={form.control} name={`fields.${index}.showIfValue`} render={({ field: f }) => (<FormItem><FormLabel>{t('showIfValue')}</FormLabel><FormControl><Input {...f} placeholder={t('optional')} /></FormControl></FormItem>)} />
                   </div>

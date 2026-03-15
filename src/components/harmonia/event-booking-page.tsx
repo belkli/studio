@@ -102,7 +102,7 @@ export function EventBookingPage() {
                   <div key={tier.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <p className="font-medium">{getTierName(tier)}</p>
-                      <p className="text-sm text-muted-foreground">{tier.priceILS === 0 ? t('free') : `ILS ${tier.priceILS}`}</p>
+                      <p className="text-sm text-muted-foreground">{tier.priceILS === 0 ? t('free') : `₪${tier.priceILS}`}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button type="button" variant="outline" size="sm" onClick={() => setQuantity(tier.id, (quantities[tier.id] || 0) - 1)}>-</Button>
@@ -145,7 +145,7 @@ export function EventBookingPage() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between"><span>{t('ticketsCount')}</span><span>{totalSelected}</span></div>
                 <Separator />
-                <div className="flex justify-between text-lg font-semibold"><span>{t('totalPayment')}</span><span>{event.isFree ? t('free') : `ILS ${totalAmount}`}</span></div>
+                <div className="flex justify-between text-lg font-semibold"><span>{t('totalPayment')}</span><span>{event.isFree ? t('free') : `₪${totalAmount}`}</span></div>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>{t('backStep')}</Button>

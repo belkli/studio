@@ -223,7 +223,7 @@ export function MessagingInterface() {
                         )}
                         <div className={cn('max-w-xs rounded-lg p-3 lg:max-w-md', message.senderId === user.id ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
                           <p className="text-sm">{message.body}</p>
-                          <p className="mt-1 text-xs opacity-70 text-start">{new Date(message.sentAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="mt-1 text-xs opacity-70 text-start">{new Date(message.sentAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                         {message.senderId === user.id && (
                           <Avatar className="h-6 w-6">

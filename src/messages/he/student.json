@@ -53,6 +53,7 @@
     "weeklyGoalProgress": "{current} / {goal} דקות",
     "welcomeStudent": "ברוך הבא, {name}",
     "welcomeTitle": "ברוך הבא, {studentName}!",
+    "programTypeLabel": "תוכנית {type}",
     "T": "ט"
   },
   "StudentBilling": {
@@ -97,7 +98,13 @@
     "pausedWithinCoolingOff": "המנוי הושהה בתוך תקופת ההתנסות (14 ימים). זכאי/ת להחזר מלא.",
     "pausedConfirmation": "המנוי הושהה. השינוי ייכנס לתוקף תוך 3 ימי עסקים.",
     "pauseError": "אירעה שגיאה. אנא נסה שוב.",
-    "cancel": "ביטול"
+    "cancel": "ביטול",
+    "paymentError": "שגיאת תשלום",
+    "paymentErrorDesc": "לא ניתן ליצור קישור תשלום. אנא נסה שוב מאוחר יותר.",
+    "cancelSubscriptionConfirm": "האם ברצונך לבטל את המנוי עבור {name}? פעולה זו אינה ניתנת לביטול.",
+    "cancelledWithinCoolingOff": "הביטול התבצע בתוך תקופת ההתנסות (14 ימים). זכאי/ת להחזר מלא.",
+    "cancelledConfirmation": "הביטול יכנס לתוקף תוך 3 ימי עסקים.",
+    "cancelError": "אירעה שגיאה. אנא נסה שוב."
   },
   "StudentPractice": {
     "attachVideo": "צירוף וידאו",
@@ -420,5 +427,56 @@
     "dateSent": "תאריך שליחה",
     "actions": "פעולות",
     "download": "הורד"
+  },
+  "PracticeCoach": {
+    "title": "מאמן אישי מבוסס AI",
+    "description": "נגן קטע קצר (30-60 שניות) וקבל משוב מיידי.",
+    "recording": "מקליט...",
+    "analyzing": "מנתח את הביצוע...",
+    "feedbackTitle": "סיכום משוב",
+    "feedbackDesc": "ביצוע מצוין! הנה כמה נקודות לשיפור.",
+    "pitchAccuracy": "דיוק בגובה הצליל",
+    "rhythmAccuracy": "דיוק קצבי",
+    "observations": "הבחנות עיקריות:"
+  },
+  "MultimediaFeedback": {
+    "title": "משוב מולטימדיה",
+    "description": "צפה בסרטוני אימון שהתלמיד/ה העלה/תה והוסף משוב.",
+    "noVideos": "התלמיד/ה עוד לא העלה/תה סרטונים.",
+    "watchVideo": "צפה בסרטון",
+    "yourFeedback": "המשוב שלך:",
+    "writeFeedbackPlaceholder": "כתוב משוב...",
+    "sendFeedbackSrOnly": "שלח משוב",
+    "feedbackSentToast": "המשוב נשלח בהצלחה",
+    "sentAgo": "נשלח {time}"
+  },
+  "PracticeVideoUpload": {
+    "formTitle": "העלאת וידאו לאימון",
+    "formDesc": "שלח/י סרטון קצר (עד 60 שניות) למורה לקבלת משוב באמצע השבוע.",
+    "dropzoneText": "גרור קובץ וידאו לכאן, או לחץ כדי לבחור",
+    "dropzoneFormats": "MP4, MOV, WebM — עד 60 שניות",
+    "repertoireLabel": "לאיזו יצירה מתייחס הוידאו?",
+    "repertoirePlaceholder": "בחר יצירה מהרפרטואר...",
+    "notesLabel": "הערות למורה (אופציונלי)",
+    "notesPlaceholder": "לדוגמה: אני לא בטוח/ה לגבי האצבוע כאן, או האם הדינמיקה נכונה?",
+    "uploading": "מעלה...",
+    "submitBtn": "שלח למשוב",
+    "uploadSuccessTitle": "הוידאו הועלה בהצלחה!",
+    "uploadSuccessDesc": "המורה שלך יקבל התראה ויוכל לתת משוב.",
+    "errorSelectPiece": "יש לבחור יצירה."
+  },
+  "ReschedulingChat": {
+    "cardTitle": "עוזר תיאום שיעורים AI",
+    "cardSubtitle": "נהל את השיעורים שלך באמצעות שיחה פשוטה.",
+    "greeting": "שלום! אני סוכן ה-AI של הרמוניה. איך אוכל לעזור לך עם מערכת השעות שלך היום? למשל: \"אני צריך/ה לבטל את השיעור שלי מחר\" או \"מתי השיעור הבא שלי?\"",
+    "actionCancelled": "בסדר, הפעולה בוטלה. איך עוד אוכל לעזור?",
+    "systemUpdated": "מצוין, עדכנתי את המערכת. האם יש משהו נוסף שאוכל לעזור בו?",
+    "lessonCancelledTitle": "השיעור בוטל",
+    "lessonCancelledDesc": "שיעור {instrument} בוטל בהצלחה.",
+    "lessonRescheduledTitle": "השיעור נקבע מחדש",
+    "lessonRescheduledDesc": "שיעור {instrument} נקבע למועד חדש.",
+    "confirmYes": "כן, אשר",
+    "confirmNo": "לא, בטל",
+    "inputPlaceholder": "כתוב הודעה..."
   }
 }

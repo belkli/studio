@@ -114,7 +114,7 @@ export function SlotPromotionCard({ slot }: SlotPromotionCardProps) {
                     {slot.teacher.isPremiumTeacher && (
                         <span className="inline-flex items-center gap-0.5 text-xs font-bold text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-full px-2 py-0.5 mt-1">
                             <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                            Premium
+                            {t('premium')}
                         </span>
                     )}
                     <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">

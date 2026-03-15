@@ -158,7 +158,7 @@ export default function AdminScholarshipsPage() {
             <Banknote className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">ILS 185,000</div>
+            <div className="text-2xl font-bold">₪185,000</div>
             <p className="text-xs text-muted-foreground">{t('yearOverYear', { percent: '12' })}</p>
           </CardContent>
         </Card>
@@ -168,7 +168,7 @@ export default function AdminScholarshipsPage() {
             <HandCoins className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">ILS 42,500</div>
+            <div className="text-2xl font-bold">₪42,500</div>
             <p className="text-xs text-muted-foreground">{t('forStudents', { count: '24' })}</p>
           </CardContent>
         </Card>
@@ -218,7 +218,7 @@ export default function AdminScholarshipsPage() {
                     <TableRow key={app.id}>
                       <TableCell className="font-medium">{app.studentName}</TableCell>
                       <TableCell>{app.instrument}</TableCell>
-                      <TableCell>{new Date(app.submittedAt).toLocaleDateString('en-US')}</TableCell>
+                      <TableCell>{new Date(app.submittedAt).toLocaleDateString(locale)}</TableCell>
                       <TableCell><Badge variant="outline" className="font-mono">{app.priorityScore}</Badge></TableCell>
                       <TableCell>
                         <Badge variant="outline" className={statusConfig[app.status].className}>
@@ -302,8 +302,8 @@ export default function AdminScholarshipsPage() {
               .sort((a, b) => a.priority - b.priority)
               .map((cause) => (
                 <div key={cause.id} className="rounded-md border p-3">
-                  <p className="font-medium">{cause.names.en}</p>
-                  <p className="text-sm text-muted-foreground">{cause.descriptions.en}</p>
+                  <p className="font-medium">{locale === 'he' || !cause.names.en ? cause.names.he : cause.names[locale as keyof typeof cause.names] || cause.names.en}</p>
+                  <p className="text-sm text-muted-foreground">{locale === 'he' || !cause.descriptions.en ? cause.descriptions.he : cause.descriptions[locale as keyof typeof cause.descriptions] || cause.descriptions.en}</p>
                 </div>
               ))}
           </div>

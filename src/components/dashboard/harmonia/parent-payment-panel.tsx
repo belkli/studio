@@ -7,11 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { CreditCard, FileText, CheckCircle2, AlertCircle, History, ExternalLink, ShieldCheck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function ParentPaymentPanel() {
     const { toast } = useToast();
     const t = useTranslations('ParentPayment');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const MOCK_INVOICES = [
         { id: 'inv-101', month: t('sep2026'), amount: 800, status: 'PAID', date: '2026-09-01' },
@@ -50,7 +52,7 @@ export function ParentPaymentPanel() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 {/* Billing Summary */}
@@ -101,9 +103,9 @@ export function ParentPaymentPanel() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>{t('requestNo')}</TableHead>
-                                            <TableHead>{t('month')}</TableHead>
-                                            <TableHead>{t('details')}</TableHead>
+                                            <TableHead className="text-start">{t('requestNo')}</TableHead>
+                                            <TableHead className="text-start">{t('month')}</TableHead>
+                                            <TableHead className="text-start">{t('details')}</TableHead>
                                             <TableHead className="text-end">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>
@@ -136,9 +138,9 @@ export function ParentPaymentPanel() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>{t('receiptNo')}</TableHead>
-                                            <TableHead>{t('month')}</TableHead>
-                                            <TableHead>{t('status')}</TableHead>
+                                            <TableHead className="text-start">{t('receiptNo')}</TableHead>
+                                            <TableHead className="text-start">{t('month')}</TableHead>
+                                            <TableHead className="text-start">{t('status')}</TableHead>
                                             <TableHead className="text-end">{t('amount')}</TableHead>
                                             <TableHead></TableHead>
                                         </TableRow>

@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { userHasInstrument } from '@/lib/instrument-matching';
 
 
@@ -30,6 +30,8 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<TargetSlotsOutput['suggestions']>([]);
   const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+  const t = useTranslations('PromoteSlotDialog');
   const dateLocale = useDateLocale();
 
   useEffect(() => {
@@ -71,26 +73,26 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
 
   const handleSendPromotions = () => {
     toast({
-      title: "ההצעות נשלחו!",
-      description: "הודעות SMS מותאמות אישית נשלחו לתלמידים המוצעים."
+      title: t('toastTitle'),
+      description: t('toastDesc')
     });
     onOpenChange(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl" className="sm:max-w-lg">
+      <DialogContent dir={isRtl ? 'rtl' : 'ltr'} className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>קידום שיעור פנוי</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            {slot && `שיעור ${slot.instrument} עם ${slot.teacher.name} ביום ${format(slot.startTime, 'EEEE, HH:mm', { locale: dateLocale })}`}
+            {slot && t('description', { instrument: slot.instrument, teacher: slot.teacher.name, dateTime: format(slot.startTime, 'EEEE, HH:mm', { locale: dateLocale }) })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
-          <h4 className="font-semibold mb-2">הצעות ממוקדות של AI</h4>
+          <h4 className="font-semibold mb-2">{t('aiSuggestionsTitle')}</h4>
           <p className="text-sm text-muted-foreground mb-4">
-            רשימת התלמידים עם הסיכוי הגבוה ביותר להזמין שיעור זה.
+            {t('aiSuggestionsDesc')}
           </p>
           {isLoading ? (
             <div className="flex justify-center items-center h-48">
@@ -126,10 +128,10 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('cancelBtn')}</Button>
           <Button onClick={handleSendPromotions} disabled={isLoading || suggestions.length === 0}>
             <Send className="h-4 w-4 me-2" />
-            שלח הצעות ל-{suggestions.length} תלמידים
+            {t('sendBtn', { count: suggestions.length })}
           </Button>
         </DialogFooter>
       </DialogContent>

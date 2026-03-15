@@ -43,24 +43,24 @@ export const WeeklyCalendar = ({ lessons, students }: { lessons: LessonSlot[], s
     const displayDays = isRTL ? [...days].reverse() : days;
 
     return (
-        <div className="w-full">
+        <div className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
                     <Button onClick={returnToToday} variant="outline">{t('today')}</Button>
                     <div className="flex items-center gap-2">
                         <Button onClick={prevWeek} variant="ghost" size="icon" aria-label={t('prevWeek')}>
-                            {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                            {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
                         <span className="text-lg font-semibold w-48 text-center">{weekDisplay}</span>
                         <Button onClick={nextWeek} variant="ghost" size="icon" aria-label={t('nextWeek')}>
-                            {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                            {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-7 border-t border-l rounded-lg overflow-hidden">
+            <div className="grid grid-cols-7 border-t border-s rounded-lg overflow-hidden">
                 {displayDays.map(day => (
-                    <div key={day.toString()} className="border-r">
+                    <div key={day.toString()} className="border-e">
                         <div className={cn(
                             "text-center py-2 border-b",
                             isToday(day) && "bg-primary/10 text-primary font-bold"

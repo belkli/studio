@@ -3,7 +3,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { z } from 'zod';
 
 import type { Alumnus } from '@/lib/types';
@@ -36,6 +36,8 @@ interface AlumnusFormProps {
 export function AlumnusForm({ initialData, onSubmit, onCancel, isSubmitting }: AlumnusFormProps) {
   const t = useTranslations('AlumniPage');
   const commonT = useTranslations('Common');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   const form = useForm<AlumnusFormValues>({
     resolver: zodResolver(AlumnusSchema) as any,
@@ -72,7 +74,7 @@ export function AlumnusForm({ initialData, onSubmit, onCancel, isSubmitting }: A
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className='space-y-4'>
+      <form onSubmit={form.handleSubmit(handleFormSubmit as any)} className='space-y-4' dir={isRtl ? 'rtl' : 'ltr'}>
         <FormField control={form.control as any} name='displayName' render={({ field }) => (
           <FormItem><FormLabel>{t('displayName')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
         )} />

@@ -219,7 +219,11 @@
     "sourceContent": "المحتوى الأصلي (عبري)",
     "staleTranslation": "ترجمة قديمة",
     "translateNow": "ترجم الآن",
-    "translationCoverage": "تغطية الترجمة"
+    "translationCoverage": "تغطية الترجمة",
+    "languageSupport": "دعم اللغات لهذا الملف الشخصي",
+    "upToDate": "محدّث",
+    "translating": "جارٍ الترجمة...",
+    "fields": "حقول"
   },
   "HelpCenter": {
     "noResults": "لم يتم العثور على مقالات مطابقة.",

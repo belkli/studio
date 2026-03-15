@@ -92,6 +92,13 @@
     "cvc": "קוד אבטחה (CVC)",
     "expiryDate": "תאריך תפוגה",
     "saveButton": "שמור כרטיס",
+    "cardHolderPlaceholder": "ישראל ישראלי",
+    "validation": {
+      "cardNumberInvalid": "מספר כרטיס לא תקין",
+      "expiryDateInvalid": "תאריך תפוגה לא תקין (MM/YY)",
+      "cvcInvalid": "CVC לא תקין",
+      "cardHolderRequired": "חובה להזין שם בעל הכרטיס"
+    },
     "updateMethodDesc": "אנא הכנס את פרטי כרטיס האשראי החדש שלך.",
     "updateMethodTitle": "עדכון אמצעי תשלום"
   },
@@ -154,7 +161,10 @@
     "absences": "היעדרויות",
     "makeups": "השלמות",
     "actions": "פעולות",
-    "exportTeacher": "ייצוא נתוני מורה"
+    "exportTeacher": "ייצוא נתוני מורה",
+    "hours": "שעות",
+    "conservatorium": "קונסרבטוריון",
+    "allConservatoriums": "כל הקונסרבטוריונים"
   },
   "TeacherPayroll": {
     "amountCol": "סכום",
@@ -187,7 +197,17 @@
     "status": "סטטוס",
     "minutes": "דקות",
     "noLessons": "אין שיעורים בתקופה שנבחרה.",
-    "downloadMyReport": "הורד את הדוח שלי"
+    "downloadMyReport": "הורד את הדוח שלי",
+    "lessonStatuses": {
+      "SCHEDULED": "מתוזמן",
+      "COMPLETED": "הושלם",
+      "CANCELLED_STUDENT_NOTICED": "בוטל ע\"י תלמיד (בהודעה)",
+      "CANCELLED_STUDENT_NO_NOTICE": "בוטל ע\"י תלמיד (ללא הודעה)",
+      "CANCELLED_TEACHER": "בוטל ע\"י מורה",
+      "CANCELLED_CONSERVATORIUM": "בוטל ע\"י קונסרבטוריון",
+      "NO_SHOW_STUDENT": "תלמיד לא הגיע",
+      "NO_SHOW_TEACHER": "מורה לא הגיע"
+    }
   },
   "TeacherPayrollPage": {
     "title": "השכר שלי",

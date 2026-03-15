@@ -78,6 +78,8 @@
       "rejected": "נדחה"
     },
     "PENDING": "ממתין לאישור",
+    "PENDING_ADMIN": "ממתין לאישור מנהל",
+    "PENDING_TEACHER": "ממתין לאישור מורה",
     "APPROVED": "מאושר",
     "REJECTED": "נדחה",
     "REVISION_REQUIRED": "נדרש תיקון",
@@ -276,6 +278,9 @@
     "oauthErrorDesc": "לא ניתן היה להשלים את הכניסה החברתית. אנא נסה שוב."
   },
   "Reports": {
+    "tabFinancial": "דוחות פיננסיים",
+    "tabOperational": "דוחות תפעוליים",
+    "tabAcademic": "דוחות אקדמיים",
     "teachers": "דוחות מורים",
     "practiceEngagement": "שיעור מעורבות באימונים",
     "practiceEngagementDesc": "אחוז התלמידים שרשמו אימון בשבוע האחרון.",
@@ -399,7 +404,9 @@
   "RecentAnnouncementsCard": {
     "title": "הכרזות אחרונות",
     "description": "עדכונים חשובים מהקונסרבטוריון.",
-    "empty": "אין הכרזות אחרונות."
+    "empty": "אין הכרזות אחרונות.",
+    "channel_EMAIL": "דוא\"ל",
+    "channel_SMS": "SMS"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "שיבוץ מוזיקאים לאירוע",
@@ -493,7 +500,16 @@
     "colDuration": "משך",
     "colActions": "פעולות",
     "actionRemove": "הסר",
-    "emptyProgram": "טרם שובצו משתתפים לתוכנית."
+    "emptyProgram": "טרם שובצו משתתפים לתוכנית.",
+    "colPhotoConsent": "הסכמת צילום",
+    "noPhotoConsentAria": "ללא הסכמת צילום",
+    "noPhotoConsentTooltip": "ללא הסכמת פרסום תמונות/וידאו לצרכים מסחריים. יש לוודא שהתלמיד/ה אינו/ה מזוהה בפרסומים.",
+    "eventTypes": {
+      "RECITAL": "רסיטל",
+      "CONCERT": "קונצרט",
+      "EXAM_PERFORMANCE": "הופעת בחינה",
+      "OPEN_DAY": "יום פתוח"
+    }
   },
   "EventForm": {
     "errors": {
@@ -756,6 +772,10 @@
     "saveChanges": "שמור שינויים"
   },
   "TeacherReports": {
+    "pageTitle": "הדוחות שלי",
+    "pageSubtitle": "סקירה כללית של הפעילות, התקדמות התלמידים וההכנסות שלך.",
+    "noPermission": "אין לך הרשאה לצפות בעמוד זה.",
+    "noPermissionTitle": "דוחות ואנליטיקה",
     "activeStudentsTitle": "תלמידים פעילים",
     "activeStudentsDesc": "תלמידים תחת הנחייתך",
     "lessonsThisMonthTitle": "שיעורים החודש",
@@ -899,7 +919,8 @@
     "bookNow": "הזמן עכשיו",
     "today": "היום",
     "tomorrow": "מחר",
-    "minutes": "דקות"
+    "minutes": "דקות",
+    "premium": "פרימיום"
   },
   "PrivacyPage": {
     "title": "הצהרת פרטיות ותנאי שימוש",
@@ -1102,5 +1123,28 @@
     "cancel": "ביטול",
     "confirm": "אשר חתימה",
     "errorEmpty": "נא לחתום לפני האישור"
+  },
+  "FamilyHub": {
+    "inviteChildToManage": "הזמן את {name} לנהל את החשבון",
+    "addChildTitle": "רישום ילד/ה נוסף/ת",
+    "newRegistration": "הרשמה חדשה"
+  },
+  "AssignPerformer": {
+    "studentRequired": "חובה לבחור תלמיד/ה.",
+    "repertoireRequired": "חובה לבחור יצירה.",
+    "unknownComposition": "יצירה לא ידועה",
+    "dialogTitle": "הוספת מבצע/ת לאירוע",
+    "dialogDesc": "בחר תלמיד/ה ויצירה מהרפרטואר שמוכן לביצוע.",
+    "studentLabel": "תלמיד/ה",
+    "studentPlaceholder": "בחר תלמיד/ה...",
+    "noPhotoConsent": "ללא הסכמת צילום",
+    "noPhotoConsentTooltip": "תלמיד/ה זה/זו לא אישר/ה פרסום תמונות/וידאו לצרכים מסחריים. יש להימנע מפרסום מזהה של תמונות אירוע.",
+    "noConsentWarning": "תלמיד/ה זה/זו לא אישר/ה פרסום תמונות לצרכים מסחריים. בעת תיעוד האירוע יש להימנע מפרסום תמונות מזהות ברשתות חברתיות ובחומרי פרסום.",
+    "requestConsent": "לבקש הסכמה",
+    "compositionLabel": "יצירה",
+    "compositionPlaceholder": "בחר יצירה...",
+    "noReadyCompositions": "אין יצירות מוכנות לביצוע",
+    "cancelBtn": "ביטול",
+    "addToProgram": "הוסף לתוכנית"
   }
 }

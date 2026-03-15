@@ -489,7 +489,16 @@
       "noUpcoming": "لا توجد مواعيد قادمة",
       "viewAttendance": "عرض الحضور",
       "excellenceNominated": "مرشح لمسار التميز",
-      "viewDetails": "عرض التفاصيل"
+      "viewDetails": "عرض التفاصيل",
+      "instrumentStatus": "حالة الآلة",
+      "received": "تم الاستلام",
+      "pendingCollection": "بانتظار الاستلام",
+      "groupLesson": "درس جماعي",
+      "individualLesson": "درس فردي",
+      "programTypes": {
+        "GROUP": "جماعي",
+        "INDIVIDUAL": "فردي"
+      }
     },
     "mock": {
       "schoolName": "اسم المدرسة",
@@ -575,6 +584,12 @@
     "inviteCoordinatorDesc": "أدخل بيانات المنسّق وأرسل الدعوة.",
     "coordinatorEmail": "بريد المنسّق",
     "sendInvite": "إرسال دعوة",
+    "invalidEmail": "بريد إلكتروني غير صالح",
+    "invalidEmailDesc": "يرجى إدخال عنوان بريد إلكتروني صالح.",
+    "invitationSent": "تم إرسال الدعوة",
+    "inviteError": "خطأ",
+    "inviteErrorDesc": "فشل إرسال الدعوة.",
+    "sending": "جارٍ الإرسال...",
     "pageTitle": "طلب مساعدة مالية / منحة",
     "adminSubtitle": "إدارة تشغيلية",
     "activePartnerships": "الشراكات النشطة",
@@ -738,7 +753,11 @@
     "offerTitle": "دعوة لمسار التميز",
     "successTitle": "تم تأكيد التسجيل",
     "tuitionDescription": "الرسوم الشهرية للمسار.",
-    "tuitionTitle": "الرسوم الدراسية"
+    "tuitionTitle": "الرسوم الدراسية",
+    "backBtn": "رجوع",
+    "badgeLabel": "مسار التميز",
+    "errorTitle": "خطأ",
+    "errorDesc": "فشل الإجراء. يرجى المحاولة مرة أخرى."
   },
   "TeacherRating": {
     "title": "قيّم {teacher}",
@@ -750,5 +769,15 @@
     "thankYou": "شكراً على تقييمك!",
     "alreadyRated": "لقد قيّمت هذا المعلم مسبقاً.",
     "rateTeacher": "قيّم المعلم"
+  },
+  "PromoteSlotDialog": {
+    "title": "ترويج درس شاغر",
+    "description": "درس {instrument} مع {teacher} في {dateTime}",
+    "aiSuggestionsTitle": "اقتراحات AI الموجّهة",
+    "aiSuggestionsDesc": "الطلاب الأكثر احتمالاً لحجز هذا الدرس.",
+    "cancelBtn": "إلغاء",
+    "sendBtn": "إرسال عروض لـ {count} طلاب",
+    "toastTitle": "تم إرسال العروض!",
+    "toastDesc": "تم إرسال رسائل SMS مخصصة للطلاب المقترحين."
   }
 }

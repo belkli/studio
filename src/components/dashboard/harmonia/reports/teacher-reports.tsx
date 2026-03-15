@@ -6,11 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useMemo } from "react";
 import { isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { tenantUsers } from '@/lib/tenant-filter';
 
 export function TeacherReports() {
     const t = useTranslations('Reports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { users, lessons, practiceLogs, user } = useAuth();
 
     const teacherStats = useMemo(() => {
@@ -55,7 +57,7 @@ export function TeacherReports() {
     }, [users, user, lessons, practiceLogs]);
 
     return (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <Card>
                 <CardHeader>
                     <CardTitle>{t('teacherPerformance')}</CardTitle>
@@ -65,12 +67,12 @@ export function TeacherReports() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{t('teacher')}</TableHead>
-                                <TableHead>{t('studentsCapacity')}</TableHead>
-                                <TableHead>{t('lessonsThisMonth')}</TableHead>
-                                <TableHead>{t('attendanceRate')}</TableHead>
-                                <TableHead>{t('teacherCancellations')}</TableHead>
-                                <TableHead>{t('studentPracticeEngagement')}</TableHead>
+                                <TableHead className="text-start">{t('teacher')}</TableHead>
+                                <TableHead className="text-start">{t('studentsCapacity')}</TableHead>
+                                <TableHead className="text-start">{t('lessonsThisMonth')}</TableHead>
+                                <TableHead className="text-start">{t('attendanceRate')}</TableHead>
+                                <TableHead className="text-start">{t('teacherCancellations')}</TableHead>
+                                <TableHead className="text-start">{t('studentPracticeEngagement')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

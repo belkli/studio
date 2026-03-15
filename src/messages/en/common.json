@@ -78,6 +78,8 @@
       "rejected": "Rejected"
     },
     "PENDING": "Pending",
+    "PENDING_ADMIN": "Pending Admin Review",
+    "PENDING_TEACHER": "Pending Teacher Review",
     "APPROVED": "Approved",
     "REJECTED": "Rejected",
     "REVISION_REQUIRED": "Revision Required",
@@ -276,6 +278,9 @@
     "oauthErrorDesc": "Could not complete social sign-in. Please try again."
   },
   "Reports": {
+    "tabFinancial": "Financial Reports",
+    "tabOperational": "Operational Reports",
+    "tabAcademic": "Academic Reports",
     "teachers": "Teachers",
     "practiceEngagement": "Practice Engagement",
     "practiceEngagementDesc": "Practice Engagement Desc",
@@ -399,7 +404,9 @@
   "RecentAnnouncementsCard": {
     "title": "Recent Announcements",
     "description": "Important updates from the conservatorium.",
-    "empty": "No recent announcements."
+    "empty": "No recent announcements.",
+    "channel_EMAIL": "Email",
+    "channel_SMS": "SMS"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "Dialog Assign Title",
@@ -493,7 +500,16 @@
     "colDuration": "Col Duration",
     "colActions": "Col Actions",
     "actionRemove": "Action Remove",
-    "emptyProgram": "Empty Program"
+    "emptyProgram": "Empty Program",
+    "colPhotoConsent": "Photo consent",
+    "noPhotoConsentAria": "No photo consent",
+    "noPhotoConsentTooltip": "No consent for publishing photos/video for commercial purposes. Ensure the student is not identifiable in publications.",
+    "eventTypes": {
+      "RECITAL": "Recital",
+      "CONCERT": "Concert",
+      "EXAM_PERFORMANCE": "Exam Performance",
+      "OPEN_DAY": "Open Day"
+    }
   },
   "EventForm": {
     "errors": {
@@ -509,10 +525,10 @@
     "namePlaceholder": "Name Placeholder",
     "typeLabel": "Type Label",
     "types": {
-      "RECITAL": "RECITAL",
-      "CONCERT": "CONCERT",
-      "EXAM_PERFORMANCE": "EXAM_PERFORMANCE",
-      "OPEN_DAY": "OPEN_DAY"
+      "RECITAL": "Recital",
+      "CONCERT": "Concert",
+      "EXAM_PERFORMANCE": "Exam Performance",
+      "OPEN_DAY": "Open Day"
     },
     "dateLabel": "Date Label",
     "timeLabel": "Time Label",
@@ -756,6 +772,10 @@
     "saveChanges": "Save Changes"
   },
   "TeacherReports": {
+    "pageTitle": "My Reports",
+    "pageSubtitle": "Overview of your activity, student progress, and earnings.",
+    "noPermission": "You do not have permission to view this page.",
+    "noPermissionTitle": "Reports & Analytics",
     "activeStudentsTitle": "Active Students Title",
     "activeStudentsDesc": "Active Students Desc",
     "lessonsThisMonthTitle": "Lessons This Month Title",
@@ -899,7 +919,8 @@
     "bookNow": "Book Now",
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "minutes": "min"
+    "minutes": "min",
+    "premium": "Premium"
   },
   "PrivacyPage": {
     "title": "Privacy Statement and Terms of Use",
@@ -1101,5 +1122,28 @@
     "cancel": "Cancel",
     "confirm": "Confirm signature",
     "errorEmpty": "Please sign before confirming"
+  },
+  "FamilyHub": {
+    "inviteChildToManage": "Invite {name} to manage their account",
+    "addChildTitle": "Register another child",
+    "newRegistration": "New registration"
+  },
+  "AssignPerformer": {
+    "studentRequired": "Please select a student.",
+    "repertoireRequired": "Please select a composition.",
+    "unknownComposition": "Unknown composition",
+    "dialogTitle": "Add performer to event",
+    "dialogDesc": "Select a student and a performance-ready composition from their repertoire.",
+    "studentLabel": "Student",
+    "studentPlaceholder": "Select a student...",
+    "noPhotoConsent": "No photo consent",
+    "noPhotoConsentTooltip": "This student has not consented to publishing photos/videos for commercial purposes. Avoid publishing identifiable event photos.",
+    "noConsentWarning": "This student has not consented to publishing photos for commercial purposes. When documenting the event, avoid publishing identifiable photos on social media and marketing materials.",
+    "requestConsent": "Request consent",
+    "compositionLabel": "Composition",
+    "compositionPlaceholder": "Select a composition...",
+    "noReadyCompositions": "No performance-ready compositions",
+    "cancelBtn": "Cancel",
+    "addToProgram": "Add to program"
   }
 }

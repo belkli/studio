@@ -534,7 +534,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                     <SelectTrigger><SelectValue placeholder={t('package.placeholder')} /></SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availablePackages.map((p) => <SelectItem key={p.id} value={p.id}>{p.names.he} - {p.priceILS} ILS</SelectItem>)}
+                    {availablePackages.map((p) => <SelectItem key={p.id} value={p.id}>{p.names.he} - ₪{p.priceILS}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />

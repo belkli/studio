@@ -90,11 +90,11 @@ export function AdminWaitlistDashboard() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{t('student')}</TableHead>
-                            <TableHead>{t('requestedTeacher')}</TableHead>
-                            <TableHead>{t('instrument')}</TableHead>
-                            <TableHead>{t('joinedDate')}</TableHead>
-                            <TableHead>{t('status')}</TableHead>
+                            <TableHead className="text-start">{t('student')}</TableHead>
+                            <TableHead className="text-start">{t('requestedTeacher')}</TableHead>
+                            <TableHead className="text-start">{t('instrument')}</TableHead>
+                            <TableHead className="text-start">{t('joinedDate')}</TableHead>
+                            <TableHead className="text-start">{t('status')}</TableHead>
                             <TableHead className="text-start">{t('actions')}</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -141,26 +141,27 @@ export function AdminWaitlistDashboard() {
                                             </>
                                         )}
                                     </TableCell>
-                                    <TableCell className="text-start space-x-2 space-x-reverse">
+                                    <TableCell className="text-start">
+                                        <div className="flex items-center gap-2">
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             disabled={entry.status === 'OFFERED'}
                                             onClick={() => handleOffer(entry, entry.studentName)}
                                         >
-                                            <Send className="ms-2 h-3 w-3" />
+                                            <Send className="me-1 h-3 w-3" />
                                             {t('sendOffer')}
                                         </Button>
                                         {entry.status === 'OFFERED' && (
                                             <Button variant="ghost" size="sm" onClick={() => { revokeWaitlistOffer(entry.id); toast({ title: t('offerRevoked') }); }}>
-                                                <Undo className="ms-2 h-3 w-3" />
+                                                <Undo className="me-1 h-3 w-3" />
                                                 {t('revokeOffer')}
                                             </Button>
                                         )}
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                                                    <Trash2 className="ms-2 h-3 w-3" />
+                                                    <Trash2 className="me-1 h-3 w-3" />
                                                     {t('remove')}
                                                 </Button>
                                             </AlertDialogTrigger>
@@ -179,6 +180,7 @@ export function AdminWaitlistDashboard() {
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))

@@ -205,7 +205,7 @@ function InviteCoordinatorDialog({ partnershipId, schoolName, isRtl }: { partner
 
     const handleSubmit = async () => {
         if (!email || !email.includes('@')) {
-            toast({ variant: 'destructive', title: 'Invalid Email', description: 'Please enter a valid email address.' });
+            toast({ variant: 'destructive', title: t('invalidEmail'), description: t('invalidEmailDesc') });
             return;
         }
 
@@ -213,10 +213,10 @@ function InviteCoordinatorDialog({ partnershipId, schoolName, isRtl }: { partner
         try {
             const { inviteSchoolCoordinator } = await import('@/app/actions');
             const result = await inviteSchoolCoordinator({ partnershipId, email });
-            toast({ title: 'Invitation Sent', description: result.message });
+            toast({ title: t('invitationSent'), description: result.message });
             setOpen(false);
         } catch {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to send invitation.' });
+            toast({ variant: 'destructive', title: t('inviteError'), description: t('inviteErrorDesc') });
         } finally {
             setIsSending(false);
         }
@@ -255,7 +255,7 @@ function InviteCoordinatorDialog({ partnershipId, schoolName, isRtl }: { partner
                 <DialogFooter className={cn(isRtl && "sm:justify-start")}>
                     <Button variant="outline" onClick={() => setOpen(false)}>{t('cancel')}</Button>
                     <Button onClick={handleSubmit} disabled={isSending}>
-                        {isSending ? "Sending..." : t('sendInvite')}
+                        {isSending ? t('sending') : t('sendInvite')}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -281,7 +281,7 @@ export function SchoolPartnershipDashboard() {
         setPartnerships(prev => [p, ...prev]);
 
     return (
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-6" dir={isRtl ? 'rtl' : 'ltr'}>
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>

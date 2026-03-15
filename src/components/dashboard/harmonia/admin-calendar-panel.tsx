@@ -50,7 +50,7 @@ export function AdminCalendarPanel() {
     const t = useTranslations('AdminCalendarPanel');
     const locale = useLocale();
     const dateLocale = useDateLocale();
-    const isHe = locale === 'he';
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const typeLabels: Record<string, string> = {
         'NATIONAL_HOLIDAY': t('typeNationalHoliday'),
@@ -101,7 +101,7 @@ export function AdminCalendarPanel() {
     };
 
     return (
-        <Card>
+        <Card dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader className="flex flex-row items-start justify-between">
                 <div>
                     <CardTitle className="flex items-center gap-2 shadow-sm"><CalendarDays className="h-5 w-5 text-primary" /> {t('panelTitle', { count: closures.length })}</CardTitle>
@@ -136,7 +136,7 @@ export function AdminCalendarPanel() {
                                     <TableCell className="font-medium text-start">
                                         {format(new Date(c.date), 'dd/MM/yyyy', { locale: dateLocale })}
                                     </TableCell>
-                                    <TableCell className="text-start">{isHe ? c.nameHe : c.name}</TableCell>
+                                    <TableCell className="text-start">{isRtl ? c.nameHe : c.name}</TableCell>
                                     <TableCell className="text-start">
                                         <Badge variant={c.type === 'NATIONAL_HOLIDAY' ? 'default' : 'secondary'}>
                                             {typeLabels[c.type] || c.type}

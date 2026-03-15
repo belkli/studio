@@ -488,8 +488,17 @@
       "nextLesson": "Следующий урок:",
       "noUpcoming": "Нет ближайших занятий",
       "viewAttendance": "Просмотр посещаемости",
-    "excellenceNominated": "Номинирован на программу развития",
-      "viewDetails": "Просмотр деталей"
+      "excellenceNominated": "Номинирован на программу развития",
+      "viewDetails": "Просмотр деталей",
+      "instrumentStatus": "Статус инструмента",
+      "received": "Получен",
+      "pendingCollection": "Ожидает получения",
+      "groupLesson": "Групповое занятие",
+      "individualLesson": "Индивидуальное занятие",
+      "programTypes": {
+        "GROUP": "Групповая",
+        "INDIVIDUAL": "Индивидуальная"
+      }
     },
     "mock": {
       "schoolName": "Название школы",
@@ -575,6 +584,12 @@
     "inviteCoordinatorDesc": "Введите данные координатора и отправьте приглашение.",
     "coordinatorEmail": "Email координатора",
     "sendInvite": "Отправить приглашение",
+    "invalidEmail": "Неверный email",
+    "invalidEmailDesc": "Пожалуйста, введите корректный адрес электронной почты.",
+    "invitationSent": "Приглашение отправлено",
+    "inviteError": "Ошибка",
+    "inviteErrorDesc": "Не удалось отправить приглашение.",
+    "sending": "Отправка...",
     "pageTitle": "Заявка на финансовую помощь / стипендию",
     "adminSubtitle": "Операционное управление",
     "activePartnerships": "Активные партнёрства",
@@ -738,7 +753,11 @@
     "offerTitle": "Приглашение на трек совершенства",
     "successTitle": "Зачисление подтверждено",
     "tuitionDescription": "Ежемесячная стоимость участия.",
-    "tuitionTitle": "Стоимость обучения"
+    "tuitionTitle": "Стоимость обучения",
+    "backBtn": "Назад",
+    "badgeLabel": "Трек совершенства",
+    "errorTitle": "Ошибка",
+    "errorDesc": "Действие не выполнено. Попробуйте ещё раз."
   },
   "TeacherRating": {
     "title": "Оценить {teacher}",
@@ -750,5 +769,15 @@
     "thankYou": "Спасибо за вашу оценку!",
     "alreadyRated": "Вы уже оценили этого учителя.",
     "rateTeacher": "Оценить учителя"
+  },
+  "PromoteSlotDialog": {
+    "title": "Продвижение свободного урока",
+    "description": "Урок {instrument} с {teacher} в {dateTime}",
+    "aiSuggestionsTitle": "Целевые предложения AI",
+    "aiSuggestionsDesc": "Ученики, которые с наибольшей вероятностью забронируют этот урок.",
+    "cancelBtn": "Отмена",
+    "sendBtn": "Отправить предложения {count} ученикам",
+    "toastTitle": "Предложения отправлены!",
+    "toastDesc": "Персонализированные SMS-сообщения были отправлены рекомендованным ученикам."
   }
 }

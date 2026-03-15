@@ -1,14 +1,18 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, BookOpen, Calendar, Bell } from "lucide-react"
 import { useAdminAlerts } from "@/hooks/use-admin-alerts";
 import { useAuth } from "@/hooks/use-auth";
 import { useMemo } from "react";
 import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
 export function KeyMetricsBar() {
     const t = useTranslations('KeyMetrics');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const alerts = useAdminAlerts();
     const { user, users, lessons, formSubmissions } = useAuth();
 
@@ -24,7 +28,7 @@ export function KeyMetricsBar() {
             return isWithinInterval(lessonDate, { start: weekStart, end: weekEnd });
         }).length;
 
-        const pendingForms = formSubmissions.filter(f => ['ממתין לאישור מורה', 'ממתין לאישור מנהל'].includes(f.status)).length;
+        const pendingForms = formSubmissions.filter(f => f.status === 'PENDING_TEACHER' || f.status === 'PENDING_ADMIN').length;
 
         return { activeStudents, lessonsThisWeek, pendingForms };
     }, [user, users, lessons, formSubmissions]);
@@ -38,7 +42,7 @@ export function KeyMetricsBar() {
     ]
 
     return (
-        <div id="key-metrics-bar" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div id="key-metrics-bar" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" dir={isRtl ? 'rtl' : 'ltr'}>
             {metrics.map((stat) => (
                 <Card key={stat.title}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

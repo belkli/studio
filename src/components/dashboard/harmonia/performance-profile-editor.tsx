@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle, Save, Trash2, Video } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const createPerformanceProfileSchema = (t: any) => z.object({
     isOptedIn: z.boolean().default(false),
@@ -35,6 +35,8 @@ export function PerformanceProfileEditor() {
     const { user, updateUser } = useAuth();
     const { toast } = useToast();
     const t = useTranslations('PerformanceProfileEditor');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const performanceProfileSchema = createPerformanceProfileSchema(t);
     type PerformanceProfileFormData = z.infer<typeof performanceProfileSchema>;
@@ -78,7 +80,7 @@ export function PerformanceProfileEditor() {
     return (
         <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="space-y-6">
+                <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
                     <Card>
                         <CardHeader>
                             <FormField
@@ -138,7 +140,7 @@ export function PerformanceProfileEditor() {
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
                                                 {performanceGenres.map((item) => (
                                                     <FormField key={item.id} name="performanceGenres" render={({ field }) => (
-                                                        <FormItem className="flex flex-row items-start space-x-2 space-x-reverse rounded-md border p-3 bg-muted/30">
+                                                        <FormItem className="flex flex-row items-start gap-2 rounded-md border p-3 bg-muted/30">
                                                             <FormControl><Checkbox checked={field.value?.includes(item.id)} onCheckedChange={(checked) => (checked ? field.onChange([...(field.value || []), item.id]) : field.onChange(field.value?.filter((value: string) => value !== item.id)))} /></FormControl>
                                                             <FormLabel className="font-normal">{item.label}</FormLabel>
                                                         </FormItem>
@@ -148,8 +150,8 @@ export function PerformanceProfileEditor() {
                                         </FormItem>
                                     )} />
                                     <div className="flex gap-4">
-                                        <FormField control={form.control} name="canPerformSolo" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('soloToggle')}</FormLabel></FormItem>)} />
-                                        <FormField control={form.control} name="canPerformChamber" render={({ field }) => (<FormItem className="flex flex-row items-center space-x-2 space-x-reverse"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('chamberToggle')}</FormLabel></FormItem>)} />
+                                        <FormField control={form.control} name="canPerformSolo" render={({ field }) => (<FormItem className="flex flex-row items-center gap-2"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('soloToggle')}</FormLabel></FormItem>)} />
+                                        <FormField control={form.control} name="canPerformChamber" render={({ field }) => (<FormItem className="flex flex-row items-center gap-2"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel>{t('chamberToggle')}</FormLabel></FormItem>)} />
                                     </div>
                                 </CardContent>
                             </Card>

@@ -92,6 +92,13 @@
     "cvc": "رمز الأمان (CVC)",
     "expiryDate": "تاريخ انتهاء الصلاحية",
     "saveButton": "حفظ البطاقة",
+    "cardHolderPlaceholder": "محمد أحمد",
+    "validation": {
+      "cardNumberInvalid": "رقم البطاقة غير صالح",
+      "expiryDateInvalid": "تاريخ انتهاء الصلاحية غير صالح (MM/YY)",
+      "cvcInvalid": "رمز CVC غير صالح",
+      "cardHolderRequired": "يجب إدخال اسم صاحب البطاقة"
+    },
     "updateMethodDesc": "يرجى إدخال تفاصيل بطاقتك الائتمانية الجديدة.",
     "updateMethodTitle": "تحديث وسيلة الدفع"
   },
@@ -154,7 +161,10 @@
     "absences": "الغيابات",
     "makeups": "حصص تعويضية",
     "actions": "إجراءات",
-    "exportTeacher": "تصدير بيانات المعلم"
+    "exportTeacher": "تصدير بيانات المعلم",
+    "hours": "ساعات",
+    "conservatorium": "معهد موسيقى",
+    "allConservatoriums": "جميع المعاهد"
   },
   "TeacherPayroll": {
     "amountCol": "المبلغ",
@@ -187,7 +197,17 @@
     "status": "الحالة",
     "minutes": "دقائق",
     "noLessons": "لا توجد دروس في الفترة المحددة.",
-    "downloadMyReport": "تنزيل تقريري"
+    "downloadMyReport": "تنزيل تقريري",
+    "lessonStatuses": {
+      "SCHEDULED": "مجدول",
+      "COMPLETED": "مكتمل",
+      "CANCELLED_STUDENT_NOTICED": "ألغاه الطالب (مع إشعار)",
+      "CANCELLED_STUDENT_NO_NOTICE": "ألغاه الطالب (بدون إشعار)",
+      "CANCELLED_TEACHER": "ألغاه المعلم",
+      "CANCELLED_CONSERVATORIUM": "ألغته الكونسرفتوار",
+      "NO_SHOW_STUDENT": "غياب الطالب",
+      "NO_SHOW_TEACHER": "غياب المعلم"
+    }
   },
   "TeacherPayrollPage": {
     "title": "كشوف المرتبات الخاصة بي",

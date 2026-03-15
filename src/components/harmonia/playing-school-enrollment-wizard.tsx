@@ -328,19 +328,19 @@ export function PlayingSchoolEnrollmentWizard({ token }: Props) {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span>{t('wizard.basePrice')}</span>
-                      <span>{schoolInfo.basePrice} ILS</span>
+                      <span>₪{schoolInfo.basePrice}</span>
                     </div>
                     <div className="flex justify-between text-green-700">
                       <span>{t('wizard.municipalSubsidy', { percent: municipalPercent })}</span>
-                      <span>-{schoolInfo.subsidies.municipal} ILS</span>
+                      <span>-₪{schoolInfo.subsidies.municipal}</span>
                     </div>
                     <div className="flex justify-between text-green-700">
                       <span>{t('wizard.ministrySubsidy', { percent: ministryPercent })}</span>
-                      <span>-{schoolInfo.subsidies.ministry} ILS</span>
+                      <span>-₪{schoolInfo.subsidies.ministry}</span>
                     </div>
                     <div className="mt-2 flex justify-between border-t pt-2 font-bold">
                       <span>{t('wizard.parentContribution')}</span>
-                      <span>{schoolInfo.parentContribution} ILS</span>
+                      <span>₪{schoolInfo.parentContribution}</span>
                     </div>
                   </div>
                 </div>

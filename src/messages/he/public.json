@@ -219,7 +219,11 @@
     "sourceContent": "תוכן מקור (עברית)",
     "staleTranslation": "תרגום לא מעודכן",
     "translateNow": "תרגם עכשיו",
-    "translationCoverage": "כיסוי תרגום"
+    "translationCoverage": "כיסוי תרגום",
+    "languageSupport": "תמיכה בשפות לפרופיל זה",
+    "upToDate": "מעודכן",
+    "translating": "מתרגם...",
+    "fields": "שדות"
   },
   "HelpCenter": {
     "noResults": "לא נמצאו מאמרים תואמים.",

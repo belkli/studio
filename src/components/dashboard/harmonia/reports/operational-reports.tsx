@@ -3,10 +3,10 @@
 import { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { getDay, format, startOfWeek } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { RoomOccupancyHeatmap } from "./room-occupancy-heatmap";
 import { tenantFilter, tenantUsers } from '@/lib/tenant-filter';
 
@@ -14,6 +14,8 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export function OperationalReports() {
     const t = useTranslations('Reports');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { lessons, users, user } = useAuth();
     const teachersList = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
     const dateLocale = useDateLocale();
@@ -78,21 +80,22 @@ export function OperationalReports() {
     }, [lessons, teachersList, user, t, dateLocale]);
 
     return (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-1">
                     <CardHeader>
                         <CardTitle>{t('cancellationDistribution')}</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[250px]">
+                    <CardContent className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={cancellationData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={(entry) => `${entry.name} (${entry.value})`}>
+                                <Pie data={cancellationData} cx="50%" cy="45%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name">
                                     {cancellationData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
                                 <Tooltip formatter={(value: any) => [value, t('lessonCount')]} />
+                                <Legend layout="horizontal" verticalAlign="bottom" align="center" iconSize={10} wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>

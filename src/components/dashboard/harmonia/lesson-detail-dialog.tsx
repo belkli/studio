@@ -26,7 +26,7 @@ import {
 import { format } from "date-fns";
 import type { LessonSlot, User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useDateLocale } from "@/hooks/use-date-locale";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -54,6 +54,8 @@ export function LessonDetailDialog({
 }: LessonDetailDialogProps) {
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const { submitTeacherRating } = useAuth();
     const { toast } = useToast();
     const [ratingValue, setRatingValue] = useState(0);
@@ -89,7 +91,7 @@ export function LessonDetailDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]" dir="rtl">
+            <DialogContent className="sm:max-w-[425px]" dir={isRtl ? 'rtl' : 'ltr'}>
                 <DialogHeader className="text-start">
                     <div className="flex justify-between items-start mb-2">
                         <Badge variant="outline" className={cn("font-medium", typeInfo.color)}>

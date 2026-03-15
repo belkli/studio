@@ -9,8 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Video, MessageSquare, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
 import { useDateLocale } from '@/hooks/use-date-locale';
+import { useTranslations, useLocale } from 'next-intl';
 import type { User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -22,6 +22,9 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
   const { practiceVideos, addVideoFeedback } = useAuth();
   const dateLocale = useDateLocale();
   const { toast } = useToast();
+  const t = useTranslations('MultimediaFeedback');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
   const [newFeedback, setNewFeedback] = useState<Record<string, string>>({});
 
   const studentVideos = useMemo(() => {
@@ -36,18 +39,18 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
 
     addVideoFeedback(videoId, comment);
     setNewFeedback(prev => ({ ...prev, [videoId]: '' }));
-    toast({ title: 'המשוב נשלח בהצלחה' });
+    toast({ title: t('feedbackSentToast') });
   };
 
   return (
-    <Card>
+    <Card dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Video /> משוב מולטימדיה</CardTitle>
-        <CardDescription>צפה בסרטוני אימון שהתלמיד/ה העלה/תה והוסף משוב.</CardDescription>
+        <CardTitle className="flex items-center gap-2"><Video /> {t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         {studentVideos.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">התלמיד/ה עוד לא העלה/תה סרטונים.</p>
+          <p className="text-center text-muted-foreground py-8">{t('noVideos')}</p>
         ) : (
           <ScrollArea className="h-96 pe-4">
             <div className="space-y-6">
@@ -57,15 +60,15 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                     <div>
                       <h4 className="font-semibold">{video.repertoireTitle}</h4>
                       <p className="text-xs text-muted-foreground">
-                        נשלח {formatDistanceToNow(new Date(video.createdAt), { addSuffix: true, locale: he })}
+                        {t('sentAgo', { time: formatDistanceToNow(new Date(video.createdAt), { addSuffix: true, locale: dateLocale }) })}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm">צפה בסרטון</Button>
+                    <Button variant="outline" size="sm">{t('watchVideo')}</Button>
                   </div>
                   {video.studentNote && <p className="text-sm italic mt-2 p-2 bg-background/50 rounded-md">&quot;{video.studentNote}&quot;</p>}
 
                   <div className="mt-4 space-y-3">
-                    <h5 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" />המשוב שלך:</h5>
+                    <h5 className="text-sm font-semibold flex items-center gap-2"><MessageSquare className="h-4 w-4" />{t('yourFeedback')}</h5>
                     {video.feedback?.map((fb, index) => (
                       <div key={index} className="text-xs p-2 rounded-md bg-background/50">
                         <p>{fb.comment}</p>
@@ -77,14 +80,14 @@ export function MultimediaFeedbackCard({ student }: MultimediaFeedbackCardProps)
                     ))}
                     <div className="flex gap-2">
                       <Textarea
-                        placeholder="כתוב משוב..."
+                        placeholder={t('writeFeedbackPlaceholder')}
                         rows={2}
                         value={newFeedback[video.id] || ''}
                         onChange={(e) => setNewFeedback(prev => ({ ...prev, [video.id]: e.target.value }))}
                       />
                       <Button size="icon" onClick={() => handleSendFeedback(video.id)} disabled={!newFeedback[video.id]}>
                         <Send className="h-4 w-4" />
-                        <span className="sr-only">Send feedback</span>
+                        <span className="sr-only">{t('sendFeedbackSrOnly')}</span>
                       </Button>
                     </div>
                   </div>

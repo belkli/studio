@@ -219,7 +219,11 @@
     "sourceContent": "Исходный контент (Иврит)",
     "staleTranslation": "Устаревший перевод",
     "translateNow": "Перевести сейчас",
-    "translationCoverage": "Покрытие перевода"
+    "translationCoverage": "Покрытие перевода",
+    "languageSupport": "Языковая поддержка для этого профиля",
+    "upToDate": "Актуально",
+    "translating": "Перевод...",
+    "fields": "полей"
   },
   "HelpCenter": {
     "noResults": "Совпадающие статьи не найдены.",

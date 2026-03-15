@@ -6,7 +6,7 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, CheckCircle2, Loader2, Sparkles, Music, Users, GraduationCap, Coins } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "@/hooks/use-toast";
 import { acceptExcellenceTrackOffer, declineExcellenceTrackOffer } from "@/app/actions";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,8 @@ interface ExcellenceTrackOfferModalProps {
 
 export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentName: _studentName }: ExcellenceTrackOfferModalProps) {
     const t = useTranslations('ExcellenceTrack');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const [isAccepting, setIsAccepting] = useState(false);
     const [isDeclining, setIsDeclining] = useState(false);
     const [showDeclineForm, setShowDeclineForm] = useState(false);
@@ -32,7 +34,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
             toast({ title: t('successTitle'), description: result.message });
             onClose();
         } catch {
-            toast({ variant: 'destructive', title: 'Error', description: 'Action failed. Please try again.' });
+            toast({ variant: 'destructive', title: t('errorTitle'), description: t('errorDesc') });
         } finally {
             setIsAccepting(false);
         }
@@ -45,7 +47,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
             toast({ title: t('declineTitle'), description: result.message });
             onClose();
         } catch {
-            toast({ variant: 'destructive', title: 'Error', description: 'Action failed. Please try again.' });
+            toast({ variant: 'destructive', title: t('errorTitle'), description: t('errorDesc') });
         } finally {
             setIsDeclining(false);
         }
@@ -54,14 +56,14 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white relative">
-                    <Sparkles className="absolute top-4 right-4 h-12 w-12 text-white/20 animate-pulse" />
+                    <Sparkles className="absolute top-4 end-4 h-12 w-12 text-white/20 animate-pulse" />
                     <DialogHeader>
                         <Badge className="w-fit bg-white/20 hover:bg-white/30 text-white border-none mb-4 px-3 py-1 text-xs uppercase tracking-wider font-bold">
                             <Star className="h-3 w-3 me-2 fill-yellow-400 text-yellow-400" />
-                            Excellence Track
+                            {t('badgeLabel')}
                         </Badge>
                         <DialogTitle className="text-3xl font-black">{t('offerTitle')}</DialogTitle>
                         <DialogDescription className="text-indigo-100 text-lg font-medium mt-2">
@@ -156,7 +158,7 @@ export function ExcellenceTrackOfferModal({ isOpen, onClose, studentId, studentN
                                 onClick={() => setShowDeclineForm(false)}
                                 disabled={isAccepting || isDeclining}
                             >
-                                Back
+                                {t('backBtn')}
                             </Button>
                         </>
                     )}

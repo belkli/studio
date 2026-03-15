@@ -18,6 +18,14 @@
     "gradeLabel": "الصف",
     "history": "سجل الموافقات",
     "instrumentDetails": "تفاصيل الآلة",
+    "kenesAccompanist": "مرافق",
+    "kenesConductor": "قائد الفرقة",
+    "kenesDate": "التاريخ",
+    "kenesEnsembleDetails": "2. تفاصيل الفرقة",
+    "kenesEventDetails": "1. تفاصيل الحدث",
+    "kenesEventName": "اسم الحدث",
+    "kenesLocation": "الموقع",
+    "kenesNumParticipants": "عدد المشاركين",
     "labels": {
       "addNote": "إضافة ملاحظة (اختياري)...",
       "birthDate": "تاريخ الميلاد",
@@ -255,7 +263,33 @@
     "recitalTemplateTitle": "نموذج الحيثية",
     "recitalTemplateDesc": "قالب الحفل الذي تم إنشاؤه مسبقًا مع الحقول المتقدمة.",
     "removeField": "إزالة الحقل",
-    "removeStep": "إزالة الخطوة"
+    "removeStep": "إزالة الخطوة",
+    "fieldTypes": {
+      "text": "نص",
+      "textarea": "منطقة نص",
+      "number": "رقم",
+      "date": "تاريخ",
+      "select": "قائمة منسدلة",
+      "multiselect": "اختيار متعدد",
+      "checkbox": "خانة اختيار",
+      "checkboxGroup": "مجموعة خانات اختيار",
+      "radio": "اختيار فردي",
+      "fileUpload": "رفع ملف",
+      "signature": "توقيع",
+      "composerSelect": "اختيار مؤلف",
+      "teacherSelect": "اختيار معلم",
+      "instrumentSelect": "اختيار آلة موسيقية",
+      "separator": "فاصل",
+      "heading": "عنوان",
+      "infoText": "نص معلومات",
+      "conditionalGroup": "مجموعة شرطية"
+    },
+    "operators": {
+      "equals": "يساوي",
+      "notEquals": "لا يساوي",
+      "contains": "يحتوي",
+      "notEmpty": "غير فارغ"
+    }
   },
   "ExamRegistrationForm": {
     "addComposition": "إضافة قطعة",
@@ -671,6 +705,22 @@
     "dealBookedDescPromo": "تم حجز الدرس بسعر ₪{price} (خصم {discount}%)",
     "dealBookedDescPackage": "تم خصم الدرس من حزمتك النشطة",
     "selectTeacherFirst": "اختر معلماً أولاً لرؤية الأوقات المتاحة",
-    "step3Time": "3. اختر الوقت"
+    "step3Time": "3. اختر الوقت",
+    "premiumLabel": "بريميوم",
+    "dateRequired": "يرجى اختيار تاريخ.",
+    "rescheduleSuccess": "تمت إعادة جدولة الدرس!",
+    "rescheduleSuccessDesc": "تم تحديث الدرس إلى: {dateTime}.",
+    "rescheduleDialogTitle": "إعادة جدولة درس {instrument}",
+    "rescheduleDialogDesc": "اختر تاريخًا ووقتًا جديدين للدرس مع {teacherName}. المدة: {durationMinutes} دقيقة.",
+    "availableHours": "الأوقات المتاحة",
+    "noSlotsForDate": "لا توجد أوقات متاحة في هذا التاريخ.",
+    "setNewDate": "تحديد موعد جديد",
+    "cancelDialogTitle": "إلغاء درس {instrument}",
+    "cancelDialogDesc": "هل تريد إلغاء الدرس بتاريخ {date} في الساعة {time}؟",
+    "cancelWithNoticePolicy": "بما أن الإلغاء يتم قبل أكثر من {hours} ساعة من الدرس، ستحصل على رصيد تعويضي.",
+    "cancelWithoutNoticePolicy": "ملاحظة: بما أن الإلغاء يتم قبل أقل من {hours} ساعة من الدرس، لن يتم منح رصيد وفقًا لسياسة المعهد.",
+    "backAction": "رجوع",
+    "cancelWithCredit": "نعم، إلغاء مع رصيد",
+    "cancelAnyway": "نعم، إلغاء على أي حال"
   }
 }

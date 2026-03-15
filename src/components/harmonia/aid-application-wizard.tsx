@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export function AidApplicationWizard() {
     const [step, setStep] = useState(1);
@@ -21,6 +21,8 @@ export function AidApplicationWizard() {
     const { toast } = useToast();
     const { addScholarshipApplication } = useAuth();
     const t = useTranslations('ScholarshipApplication');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     const handleNext = () => setStep((s) => Math.min(s + 1, 3));
     const handleBack = () => setStep((s) => Math.max(s - 1, 1));
@@ -44,7 +46,7 @@ export function AidApplicationWizard() {
 
     if (isDone) {
         return (
-            <Card className="w-full max-w-2xl mx-auto shadow-sm">
+            <Card className="w-full max-w-2xl mx-auto shadow-sm" dir={isRtl ? 'rtl' : 'ltr'}>
                 <CardContent className="pt-12 pb-12 flex flex-col items-center text-center space-y-4">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
                         <CheckCircle2 className="w-8 h-8 text-primary" />
@@ -68,7 +70,7 @@ export function AidApplicationWizard() {
     ];
 
     return (
-        <Card className="w-full max-w-2xl mx-auto shadow-sm">
+        <Card className="w-full max-w-2xl mx-auto shadow-sm" dir={isRtl ? 'rtl' : 'ltr'}>
             <CardHeader>
                 <CardTitle>{t('pageTitle')}</CardTitle>
                 <CardDescription>
@@ -77,8 +79,8 @@ export function AidApplicationWizard() {
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between mb-8 relative">
-                    <div className="absolute top-1/2 left-0 right-0 h-1 bg-muted -z-10 -translate-y-1/2 rounded-full" />
-                    <div className={cn("absolute top-1/2 right-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300",
+                    <div className="absolute top-1/2 inset-x-0 h-1 bg-muted -z-10 -translate-y-1/2 rounded-full" />
+                    <div className={cn("absolute top-1/2 inset-x-0 h-1 bg-primary -z-10 -translate-y-1/2 rounded-full transition-all duration-300",
                         step === 1 ? 'w-0' : step === 2 ? 'w-1/2' : 'w-full'
                     )} />
 
@@ -113,7 +115,7 @@ export function AidApplicationWizard() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="instrument">{t('instrument')}</Label>
-                                    <Select dir="rtl" required>
+                                    <Select dir={isRtl ? 'rtl' : 'ltr'} required>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t('selectInstrument')} />
                                         </SelectTrigger>
@@ -136,7 +138,7 @@ export function AidApplicationWizard() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="income">{t('familyIncome')}</Label>
-                                    <Select dir="rtl" required>
+                                    <Select dir={isRtl ? 'rtl' : 'ltr'} required>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t('selectIncome')} />
                                         </SelectTrigger>

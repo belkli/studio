@@ -3,11 +3,13 @@
 import { NotificationAuditLog } from "@/components/dashboard/harmonia/notification-audit-log";
 import { useAdminGuard } from '@/hooks/use-admin-guard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function NotificationLogPage() {
     const { user, isLoading } = useAdminGuard();
     const tAdmin = useTranslations('AdminPages.notificationsLog');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
 
     if (isLoading || !user) {
         return (
@@ -22,7 +24,7 @@ export default function NotificationLogPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
             <div>
                 <h1 className="text-2xl font-bold">{tAdmin('titleSystem')}</h1>
                 <p className="text-muted-foreground">{tAdmin('subtitle')}</p>

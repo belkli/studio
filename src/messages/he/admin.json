@@ -103,11 +103,26 @@
       "allRooms": "כל החדרים",
       "prevWeek": "שבוע קודם",
       "nextWeek": "שבוע הבא",
+      "cancelled": "בוטל",
+      "withName": "עם {name}",
+      "todayBtn": "היום",
+      "virtualLabel": "וירטואלי",
+      "roomLabel": "חדר {roomId}",
+      "lessonCancelled": "השיעור בוטל",
+      "cancelWithCredit": "זיכוי לשיעור השלמה נוסף לחשבונך.",
+      "cancelNoCredit": "לא ניתן זיכוי על פי מדיניות הביטולים.",
+      "dateRangeFormat": "d בMMM",
       "export": "ייצוא CSV",
       "time": "זמן",
       "teacherHeading": "מורה: {teacher}",
       "unknown": "לא ידוע",
-      "notAssigned": "לא שויך"
+      "notAssigned": "לא שויך",
+      "allBranches": "כל הסניפים",
+      "filterBranch": "סניף",
+      "tooltipInstrument": "{instrument} עם {teacher}",
+      "tooltipStudent": "תלמיד/ה: {student}",
+      "tooltipStatus": "סטטוס: {status}",
+      "tooltipRoom": "חדר: {room}"
     },
     "substitute": {
       "noPermission": "אין לך הרשאה לצפות בדף זה.",
@@ -301,7 +316,7 @@
     "causeDescHe": "תיאור (עברית)",
     "causeDescEn": "תיאור (אנגלית)",
     "causeCategory": "קטגוריה",
-    "causeTargetAmount": "סכום יעד (ILS)",
+    "causeTargetAmount": "סכום יעד (₪)",
     "addCause": "הוסף סיבה",
     "causeAddedSuccess": "סיבה לתרומה נוספה בהצלחה.",
     "categoryFinancialAid": "סיוע כספי",
@@ -391,7 +406,17 @@
     "overdue": "בפיגור",
     "room": "חדר {number}",
     "subtitle": "מה קורה היום בקונסרבטוריון.",
-    "title": "תמונת מצב יומית"
+    "title": "תמונת מצב יומית",
+    "lessonStatuses": {
+      "SCHEDULED": "מתוזמן",
+      "COMPLETED": "הושלם",
+      "CANCELLED_STUDENT_NOTICED": "בוטל (בהודעה)",
+      "CANCELLED_STUDENT_NO_NOTICE": "בוטל (ללא הודעה)",
+      "CANCELLED_TEACHER": "בוטל ע\"י מורה",
+      "CANCELLED_CONSERVATORIUM": "בוטל ע\"י קונסרבטוריון",
+      "NO_SHOW_STUDENT": "לא הגיע",
+      "NO_SHOW_TEACHER": "מורה לא הגיע"
+    }
   },
   "KeyMetrics": {
     "activeStudents": "תלמידים פעילים",
@@ -636,7 +661,20 @@
       "description": "עדכונים אחרונים הרלוונטיים לחשבון שלך.",
       "empty": "אין עדכונים חדשים כרגע.",
       "new": "חָדָשׁ",
-      "openItem": "לִפְתוֹחַ"
+      "openItem": "לִפְתוֹחַ",
+      "itemTypes": {
+        "announcement": "הכרזה",
+        "event": "אירוע",
+        "form": "טופס",
+        "schedule_change": "שינוי לוח זמנים",
+        "payment": "תשלום",
+        "master_class": "מאסטרקלאס"
+      },
+      "invoiceStatuses": {
+        "SENT": "ממתין לתשלום",
+        "OVERDUE": "בפיגור"
+      },
+      "invoiceDue": "לתשלום עד {date} • ₪{amount}"
     }
   },
   "UserManagement": {
@@ -761,6 +799,12 @@
       "description": "תכנן, נהל והפק את כל האירועים של הקונסרבטוריון.",
       "createButton": "צור אירוע חדש"
     },
+    "EventsList": {
+      "participants": "{count} משתתפים",
+      "free": "חינם",
+      "manageEvent": "נהל אירוע",
+      "atTime": "בשעה {time}"
+    },
     "newEvent": {
       "title": "יצירת אירוע חדש",
       "description": "הזן את הפרטים הבסיסיים כדי ליצור אירוע חדש במערכת."
@@ -860,5 +904,17 @@
     "delete": "מחיקה",
     "deleteConfirmTitle": "מחיקת יצירה",
     "deleteConfirmDesc": "האם אתה בטוח שברצונך למחוק את \"{title}\"? פעולה זו אינה הפיכה."
+  },
+  "SoundCheckScheduler": {
+    "title": "לוח חזרות וסאונד-צ'ק",
+    "dressRehearsal": "חזרה גנרלית:",
+    "autoGenerate": "צור לוח זמנים אוטומטי",
+    "colPerformer": "מבצע/ת",
+    "colTime": "שעה",
+    "emptyState": "שבץ מבצעים כדי ליצור לו\"ז חזרות.",
+    "sendSchedule": "שלח לו\"ז למבצעים",
+    "scheduleCreated": "לו\"ז חזרות נוצר בהצלחה",
+    "scheduleSentTitle": "לוח הזמנים נשלח!",
+    "scheduleSentDesc": "הודעות נשלחו לכל המבצעים עם שעת ההגעה שלהם."
   }
 }

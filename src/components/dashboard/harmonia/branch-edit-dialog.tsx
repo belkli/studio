@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { Branch } from '@/lib/types';
 import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface BranchEditDialogProps {
   branch?: Branch | null;
@@ -22,6 +22,8 @@ interface BranchEditDialogProps {
 export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchEditDialogProps) {
   const t = useTranslations('Branches');
   const tCommon = useTranslations('Common');
+  const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
 
   const branchSchema = z.object({
     name: z.string().min(3, t('validation.nameMin', { min: 3 })),
@@ -60,7 +62,7 @@ export function BranchEditDialog({ branch, open, onOpenChange, onSave }: BranchE
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent dir={isRtl ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle>{branch ? t('editTitle') : t('addTitle')}</DialogTitle>
           <DialogDescription>

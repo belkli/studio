@@ -489,7 +489,16 @@
       "noUpcoming": "No Upcoming",
       "viewAttendance": "View Attendance",
       "excellenceNominated": "Excellence Nominated",
-      "viewDetails": "View Details"
+      "viewDetails": "View Details",
+      "instrumentStatus": "Instrument Status",
+      "received": "Received",
+      "pendingCollection": "Pending collection",
+      "groupLesson": "Group Lesson",
+      "individualLesson": "Individual",
+      "programTypes": {
+        "GROUP": "Group",
+        "INDIVIDUAL": "Individual"
+      }
     },
     "mock": {
       "schoolName": "School Name",
@@ -575,6 +584,12 @@
     "inviteCoordinatorDesc": "Invite Coordinator Desc",
     "coordinatorEmail": "Coordinator Email",
     "sendInvite": "Send Invite",
+    "invalidEmail": "Invalid Email",
+    "invalidEmailDesc": "Please enter a valid email address.",
+    "invitationSent": "Invitation Sent",
+    "inviteError": "Error",
+    "inviteErrorDesc": "Failed to send invitation.",
+    "sending": "Sending...",
     "pageTitle": "Page Title",
     "adminSubtitle": "Admin Subtitle",
     "activePartnerships": "Active Partnerships",
@@ -738,7 +753,11 @@
     "declineReasonLabel": "Reason for declining",
     "notInterestedReason": "Not interested at this time",
     "acceptBtn": "Accept invitation",
-    "declineBtn": "Decline"
+    "declineBtn": "Decline",
+    "backBtn": "Back",
+    "badgeLabel": "Excellence Track",
+    "errorTitle": "Error",
+    "errorDesc": "Action failed. Please try again."
   },
   "TeacherRating": {
     "title": "Rate {teacher}",
@@ -750,5 +769,15 @@
     "thankYou": "Thank you for your rating!",
     "alreadyRated": "You have already rated this teacher.",
     "rateTeacher": "Rate teacher"
+  },
+  "PromoteSlotDialog": {
+    "title": "Promote Empty Lesson",
+    "description": "{instrument} lesson with {teacher} on {dateTime}",
+    "aiSuggestionsTitle": "AI-targeted suggestions",
+    "aiSuggestionsDesc": "Students most likely to book this lesson.",
+    "cancelBtn": "Cancel",
+    "sendBtn": "Send offers to {count} students",
+    "toastTitle": "Offers sent!",
+    "toastDesc": "Personalized SMS messages were sent to the suggested students."
   }
 }

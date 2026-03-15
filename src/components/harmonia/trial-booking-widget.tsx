@@ -40,6 +40,7 @@ const TRIAL_DRAFT_STORAGE_PREFIX = 'trial-booking-draft:v1';
 export function TrialBookingWidget() {
     const t = useTranslations('TrialBooking');
     const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
     const dateLocale = useDateLocale();
     const { toast } = useToast();
     const { users, conservatoriumInstruments } = useAuth();
@@ -236,14 +237,14 @@ export function TrialBookingWidget() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -50 }}
                                 transition={{ duration: 0.3 }}
-                                dir="rtl"
+                                dir={isRtl ? 'rtl' : 'ltr'}
                             >
                                 {currentStep === 0 && <FormField name="instrument" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('instrument')}</FormLabel> <Combobox options={instrumentOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('instrumentPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 1 && <FormField name="teacherId" render={({ field }) => (<FormItem className="flex flex-col"> <FormLabel>{t('teacher')}</FormLabel> <Combobox options={teacherOptions} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('teacherPlaceholder')} /> <FormMessage /> </FormItem>)} />}
                                 {currentStep === 2 && (
                                     <div className="grid md:grid-cols-2 gap-8">
                                         <FormField name="date" control={form.control} render={({ field }) => (<FormItem className="flex justify-center"><FormControl><UICalendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => isBefore(date, new Date())} initialFocus locale={dateLocale} className="rounded-md border" /></FormControl><FormMessage /></FormItem>)} />
-                                        <FormField name="time" control={form.control} render={({ field }) => (<FormItem> <FormLabel>{t('availableSlots')}</FormLabel> <FormControl> <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md"> {isLoadingSlots ? <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : availableSlots.length === 0 ? <p className="text-center text-sm text-muted-foreground p-4">{t('noSlots')}</p> : availableSlots.map(slot => (<FormItem key={slot}> <FormControl> <label className="flex items-center space-x-3 space-x-reverse p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground" dir="rtl"> <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" /> <span className="font-mono">{slot}</span> </label> </FormControl> </FormItem>))} </RadioGroup> </FormControl> <FormMessage /> </FormItem>)} />
+                                        <FormField name="time" control={form.control} render={({ field }) => (<FormItem> <FormLabel>{t('availableSlots')}</FormLabel> <FormControl> <RadioGroup onValueChange={field.onChange} value={field.value} className="max-h-80 overflow-y-auto p-1 border rounded-md"> {isLoadingSlots ? <div className="flex justify-center items-center h-48"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : availableSlots.length === 0 ? <p className="text-center text-sm text-muted-foreground p-4">{t('noSlots')}</p> : availableSlots.map(slot => (<FormItem key={slot}> <FormControl> <label className="flex items-center gap-3 p-3 rounded-md hover:bg-muted cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground"> <RadioGroupItem value={slot} id={`time-${slot}`} className="hidden" /> <span className="font-mono">{slot}</span> </label> </FormControl> </FormItem>))} </RadioGroup> </FormControl> <FormMessage /> </FormItem>)} />
                                     </div>
                                 )}
                                 {currentStep === 3 && (
@@ -270,12 +271,12 @@ export function TrialBookingWidget() {
             <CardFooter>
                 <div className="w-full flex justify-between">
                     <Button variant="outline" onClick={() => setCurrentStep(s => s - 1)} disabled={currentStep === 0}>
-                        <ArrowRight className="h-4 w-4 me-2" />
+                        {isRtl ? <ArrowRight className="h-4 w-4 me-2" /> : <ArrowLeft className="h-4 w-4 me-2" />}
                         {t('back')}
                     </Button>
                     <Button onClick={processStep}>
                         {currentStep === steps.length - 1 ? t('payment.button') : t('next')}
-                        {currentStep < steps.length - 1 && <ArrowLeft className="h-4 w-4 ms-2" />}
+                        {currentStep < steps.length - 1 && (isRtl ? <ArrowLeft className="h-4 w-4 ms-2" /> : <ArrowRight className="h-4 w-4 ms-2" />)}
                     </Button>
                 </div>
             </CardFooter>
