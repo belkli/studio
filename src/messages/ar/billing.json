@@ -212,5 +212,13 @@
   "TeacherPayrollPage": {
     "title": "كشوف المرتبات الخاصة بي",
     "subtitle": "عرض الدروس الشهرية والساعات المبلغ عنها."
+  },
+  "InstallmentSelector": {
+    "selectPayments": "اختر عدد الأقساط",
+    "payment": "قسط",
+    "payments": "أقساط",
+    "perMonth": "/شهر",
+    "totalToPay": "إجمالي المبلغ:",
+    "noInterest": "بدون فوائد · خصم شهري تلقائي"
   }
 }

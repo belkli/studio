@@ -147,7 +147,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
-                                <Combobox
+                                <Combobox dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"}
                                     options={composerOptions.map(c => ({ value: c.id, label: c.names[locale] || c.names.en || c.name }))}
                                     selectedValue={currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(composerField.value))?.id || ""}
                                     onSelectedValueChange={(value) => {
@@ -176,7 +176,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
-                                <Combobox
+                                <Combobox dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"}
                                     options={compositionOptions.map(c => ({ value: c.id || '', label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
@@ -192,7 +192,7 @@ const RepertoireItem = ({ index, remove, fields }: { index: number, remove: (ind
                 />
 
                 <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
-                    <FormItem> <FormLabel>{t('genre')}</FormLabel> <Select dir="rtl" onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
+                    <FormItem> <FormLabel>{t('genre')}</FormLabel> <Select dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"} onValueChange={field.onChange} value={field.value}> <FormControl><SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger></FormControl> <SelectContent>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent> </Select> <FormMessage /> </FormItem>
                 )} />
 
                 <FormField control={control} name={`repertoire.${index}.duration`} render={({ field }) => (<FormItem> <FormLabel>{t('duration')}</FormLabel> <FormControl><Input dir='ltr' placeholder="MM:SS" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
@@ -224,6 +224,7 @@ const getHebrewAcademicYear = () => {
 export function ExamRegistrationForm({ user, student, onSubmit, isEditing = false, onCancel, initialData }: ExamRegistrationFormProps) {
     const t = useTranslations('ExamRegistrationForm');
     const nt = useTranslations('NewForm');
+    const locale = useLocale();
     const emptyComposition = { id: '', composerId: '', composer: '', title: '', genre: '', duration: '00:00', approved: true };
 
     const form = useForm<FormData>({
@@ -297,7 +298,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                         <FormField control={form.control} name="examLevel" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('examLevel')}</FormLabel>
-                                <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"} onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl><SelectTrigger><SelectValue placeholder={t('selectLevel')} /></SelectTrigger></FormControl>
                                     <SelectContent>{examLevels.map(level => <SelectItem key={level} value={level}>{level}</SelectItem>)}</SelectContent>
                                 </Select>
@@ -307,7 +308,7 @@ export function ExamRegistrationForm({ user, student, onSubmit, isEditing = fals
                         <FormField control={form.control} name="examType" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('examType')}</FormLabel>
-                                <Select dir="rtl" onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"} onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl><SelectTrigger><SelectValue placeholder={t('selectType')} /></SelectTrigger></FormControl>
                                     <SelectContent>{examTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent>
                                 </Select>

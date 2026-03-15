@@ -189,7 +189,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('composer')}</FormLabel>
                             <FormControl>
-                                <Combobox
+                                <Combobox dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"}
                                     options={composerOptions.map(c => ({ value: c.id, label: c.names[locale] || c.names.en || c.name }))}
                                     selectedValue={currentRepertoireItem?.composerId || composerOptions.find(c => Object.values(c.names).includes(composerField.value))?.id || ""}
                                     onSelectedValueChange={(value) => {
@@ -218,7 +218,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('compositionTitle')}</FormLabel>
                             <FormControl>
-                                <Combobox
+                                <Combobox dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"}
                                     options={compositionOptions.map(c => ({ value: c.id!, label: c.title }))}
                                     selectedValue={currentRepertoireItem.id || titleField.value}
                                     onSelectedValueChange={handleSelectComposition}
@@ -236,7 +236,7 @@ const KenesRepertoireItem = ({ index, remove, fields }: { index: number, remove:
                 <FormField control={control} name={`repertoire.${index}.genre`} render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('genre')}</FormLabel>
-                        <Select dir="rtl" onValueChange={field.onChange} value={field.value}>
+                        <Select dir={(locale === "he" || locale === "ar") ? "rtl" : "ltr"} onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                                 <SelectTrigger><SelectValue placeholder={t('selectGenre')} /></SelectTrigger>
                             </FormControl>

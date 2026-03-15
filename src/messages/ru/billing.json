@@ -212,5 +212,13 @@
   "TeacherPayrollPage": {
     "title": "Моя зарплата",
     "subtitle": "Просматривайте ежемесячные уроки и сообщаемые часы."
+  },
+  "InstallmentSelector": {
+    "selectPayments": "Выберите количество платежей",
+    "payment": "платёж",
+    "payments": "платежей",
+    "perMonth": "/мес",
+    "totalToPay": "Итого к оплате:",
+    "noInterest": "Без процентов · Автоматическое ежемесячное списание"
   }
 }

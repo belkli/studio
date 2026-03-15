@@ -161,7 +161,7 @@ export function AssignRepertoireDialog({ studentId, open, onOpenChange }: Assign
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>{t('searchLabel')}</FormLabel>
-                  <Combobox
+                  <Combobox dir={isRtl ? "rtl" : "ltr"}
                     options={compositionOptions}
                     selectedValue={field.value}
                     onSelectedValueChange={field.onChange}

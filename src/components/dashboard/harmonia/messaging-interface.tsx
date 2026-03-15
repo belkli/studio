@@ -268,7 +268,7 @@ export function MessagingInterface() {
           <div className="space-y-4">
             <div className="space-y-2">
               <p className="text-sm font-medium">{t('to')}</p>
-              <Combobox
+              <Combobox dir={isRtl ? "rtl" : "ltr"}
                 options={recipientOptions}
                 selectedValue={recipientId}
                 onSelectedValueChange={setRecipientId}

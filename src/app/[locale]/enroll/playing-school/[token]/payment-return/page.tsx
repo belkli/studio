@@ -5,13 +5,17 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CheckCircle, XCircle, Loader2, ArrowRight, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function PlayingSchoolPaymentReturnPage() {
     useParams();
     const searchParams = useSearchParams();
     const router = useRouter();
     const t = useTranslations('PlayingSchool.wizard');
+    const tPay = useTranslations('PlayingSchool.paymentReturn');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+    const dir = isRtl ? 'rtl' : 'ltr';
 
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [enrollmentId, setEnrollmentId] = useState<string | null>(null);
@@ -33,10 +37,10 @@ export default function PlayingSchoolPaymentReturnPage() {
 
     if (status === 'loading') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background p-4">
+            <div className="min-h-screen flex items-center justify-center bg-background p-4" dir={dir}>
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <p className="text-lg font-medium">Verifying payment status...</p>
+                    <p className="text-lg font-medium">{tPay('verifying')}</p>
                 </div>
             </div>
         );
@@ -44,18 +48,16 @@ export default function PlayingSchoolPaymentReturnPage() {
 
     if (status === 'error') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background p-4" dir="rtl">
+            <div className="min-h-screen flex items-center justify-center bg-background p-4" dir={dir}>
                 <Card className="max-w-md w-full text-center shadow-xl">
                     <CardHeader>
                         <XCircle className="h-16 w-16 text-destructive mx-auto" />
-                        <CardTitle className="text-2xl mt-4">Payment Failed</CardTitle>
-                        <CardDescription>
-                            We couldn&apos;t process your payment. Please try again or contact support.
-                        </CardDescription>
+                        <CardTitle className="text-2xl mt-4">{tPay('failedTitle')}</CardTitle>
+                        <CardDescription>{tPay('failedDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-2">
-                        <Button onClick={() => router.back()}>Try Again</Button>
-                        <Button variant="ghost" onClick={() => router.push('/')}>Back to Home</Button>
+                        <Button onClick={() => router.back()}>{tPay('tryAgain')}</Button>
+                        <Button variant="ghost" onClick={() => router.push('/')}>{tPay('backHome')}</Button>
                     </CardContent>
                 </Card>
             </div>
@@ -63,7 +65,7 @@ export default function PlayingSchoolPaymentReturnPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-4" dir="rtl">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4" dir={dir}>
             <Card className="max-w-md w-full text-center shadow-xl">
                 <CardHeader>
                     <div className="mx-auto bg-green-100 dark:bg-green-900 rounded-full p-3 w-fit">
@@ -71,7 +73,7 @@ export default function PlayingSchoolPaymentReturnPage() {
                     </div>
                     <CardTitle className="text-2xl mt-4">{t('success')}</CardTitle>
                     <CardDescription>
-                        Registration successful! Enrollment ID: {enrollmentId}
+                        {tPay('successDesc', { id: enrollmentId ?? '' })}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -82,10 +84,10 @@ export default function PlayingSchoolPaymentReturnPage() {
 
                     <div className="flex flex-col gap-2">
                         <Button className="w-full gap-2" onClick={() => router.push('/dashboard/family')}>
-                            Go to Family Dashboard <ArrowRight className="h-4 w-4" />
+                            {tPay('goToDashboard')} <ArrowRight className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" className="w-full gap-2" onClick={() => router.push('/')}>
-                            <Home className="h-4 w-4" /> Home
+                            <Home className="h-4 w-4" /> {tPay('home')}
                         </Button>
                     </div>
                 </CardContent>

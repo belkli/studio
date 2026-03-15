@@ -437,7 +437,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
               <FormItem className="flex flex-col">
                 <FormLabel>{t('role.conservatorium')}</FormLabel>
                 {isSiteAdmin ? (
-                  <Combobox options={adminConservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
+                  <Combobox dir={isRtl ? "rtl" : "ltr"} options={adminConservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
                 ) : (
                   <div className="rounded-md bg-muted p-3 text-start text-sm">{user?.conservatoriumName}</div>
                 )}
@@ -489,14 +489,14 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
             <FormField name="instrument" render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('musical.instrument')}</FormLabel>
-                <Combobox options={availableInstruments} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('musical.instrumentPlaceholder')} />
+                <Combobox dir={isRtl ? "rtl" : "ltr"} options={availableInstruments} selectedValue={field.value} onSelectedValueChange={field.onChange} placeholder={t('musical.instrumentPlaceholder')} />
                 <FormMessage />
               </FormItem>
             )} />
             <FormField name="level" render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('musical.level')}</FormLabel>
-                <Combobox
+                <Combobox dir={isRtl ? "rtl" : "ltr"}
                   options={[
                     { value: 'Beginner', label: t('musical.levels.Beginner') },
                     { value: 'Intermediate', label: t('musical.levels.Intermediate') },
@@ -513,7 +513,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
             <FormField name="lessonDuration" render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('musical.duration')}</FormLabel>
-                <Combobox
+                <Combobox dir={isRtl ? "rtl" : "ltr"}
                   options={[
                     { value: '30', label: t('musical.minutes', { min: 30 }) },
                     { value: '45', label: t('musical.minutes', { min: 45 }) },
@@ -1388,7 +1388,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                       <FormField name="conservatorium" render={({ field }) => (
                         <FormItem className="flex flex-col">
                           <FormLabel>{t('role.conservatorium')}</FormLabel>
-                          <Combobox options={conservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
+                          <Combobox dir={isRtl ? "rtl" : "ltr"} options={conservatoriumOptions} selectedValue={field.value ?? ''} onSelectedValueChange={field.onChange} placeholder={t('role.conservatoriumPlaceholder')} />
                           <FormMessage />
                         </FormItem>
                       )} />

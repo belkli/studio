@@ -643,7 +643,17 @@
       "whatsapp": "ווטסאפ",
       "openLink": "פתח קישור"
     },
-    "coordinatorPageTitle": "ניהול תוכניות בית ספר מנגן"
+    "coordinatorPageTitle": "ניהול תוכניות בית ספר מנגן",
+    "paymentReturn": {
+      "verifying": "מאמת את סטטוס התשלום...",
+      "failedTitle": "התשלום נכשל",
+      "failedDesc": "לא הצלחנו לעבד את התשלום שלך. נסה שוב או פנה לתמיכה.",
+      "tryAgain": "נסה שוב",
+      "backHome": "חזרה לדף הבית",
+      "successDesc": "ההרשמה הצליחה! מספר הרשמה: {id}",
+      "goToDashboard": "עבור ללוח הבית המשפחתי",
+      "home": "דף הבית"
+    }
   },
   "OpenDay": {
     "allBranches": "כל הסניפים והקונסרבטוריונים",

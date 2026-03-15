@@ -643,7 +643,17 @@
       "whatsapp": "WhatsApp",
       "openLink": "Open link"
     },
-    "coordinatorPageTitle": "Playing School Coordinator"
+    "coordinatorPageTitle": "Playing School Coordinator",
+    "paymentReturn": {
+      "verifying": "Verifying payment status...",
+      "failedTitle": "Payment Failed",
+      "failedDesc": "We could not process your payment. Please try again or contact support.",
+      "tryAgain": "Try Again",
+      "backHome": "Back to Home",
+      "successDesc": "Registration successful! Enrollment ID: {id}",
+      "goToDashboard": "Go to Family Dashboard",
+      "home": "Home"
+    }
   },
   "OpenDay": {
     "heroTitle": "Conservatory Open Day",

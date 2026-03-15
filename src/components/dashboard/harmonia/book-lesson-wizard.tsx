@@ -659,7 +659,7 @@ export function BookLessonWizard() {
                                             <FormField name="studentId" control={form.control} render={({ field }) => (
                                                 <FormItem className="flex flex-col">
                                                     <FormLabel>{t('selectStudent')}</FormLabel>
-                                                    <Combobox
+                                                    <Combobox dir={isRtl ? "rtl" : "ltr"}
                                                         options={childrenOptions}
                                                         selectedValue={field.value}
                                                         onSelectedValueChange={field.onChange}
@@ -673,7 +673,7 @@ export function BookLessonWizard() {
                                         <FormField name="instrument" control={form.control} render={({ field }) => (
                                             <FormItem className="flex flex-col">
                                                 <FormLabel>{t('instrument')}</FormLabel>
-                                                <Combobox
+                                                <Combobox dir={isRtl ? "rtl" : "ltr"}
                                                     options={instrumentOptions}
                                                     selectedValue={field.value}
                                                     onSelectedValueChange={field.onChange}
@@ -711,7 +711,7 @@ export function BookLessonWizard() {
                                                         {t('premiumLabel')}
                                                     </button>
                                                 </div>
-                                                <Combobox
+                                                <Combobox dir={isRtl ? "rtl" : "ltr"}
                                                     options={filteredTeachers.map(t2 => ({ value: t2.id, label: t2.isPremiumTeacher ? `⭐ ${t2.name!}` : t2.name! }))}
                                                     selectedValue={field.value}
                                                     onSelectedValueChange={field.onChange}
@@ -724,7 +724,7 @@ export function BookLessonWizard() {
                                         <FormField name="durationMinutes" control={form.control} render={({ field }) => (
                                             <FormItem className="flex flex-col">
                                                 <FormLabel>{t('lessonDuration')}</FormLabel>
-                                                <Combobox
+                                                <Combobox dir={isRtl ? "rtl" : "ltr"}
                                                     options={[
                                                         { value: '30', label: t('duration30') },
                                                         { value: '45', label: t('duration45') },

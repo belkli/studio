@@ -643,7 +643,17 @@
       "whatsapp": "واتساب",
       "openLink": "فتح الرابط"
     },
-    "coordinatorPageTitle": "منسق المدرسة الموسيقية"
+    "coordinatorPageTitle": "منسق المدرسة الموسيقية",
+    "paymentReturn": {
+      "verifying": "جارٍ التحقق من حالة الدفع...",
+      "failedTitle": "فشل الدفع",
+      "failedDesc": "تعذّر معالجة دفعتك. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.",
+      "tryAgain": "المحاولة مجدداً",
+      "backHome": "العودة إلى الصفحة الرئيسية",
+      "successDesc": "تم التسجيل بنجاح! رقم التسجيل: {id}",
+      "goToDashboard": "انتقل إلى لوحة الأسرة",
+      "home": "الرئيسية"
+    }
   },
   "OpenDay": {
     "allBranches": "جميع الفروع والكونسرفتوار",

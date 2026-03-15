@@ -212,5 +212,13 @@
   "TeacherPayrollPage": {
     "title": "My payroll",
     "subtitle": "View your monthly lessons and reported hours."
+  },
+  "InstallmentSelector": {
+    "selectPayments": "Select number of payments",
+    "payment": "payment",
+    "payments": "payments",
+    "perMonth": "/month",
+    "totalToPay": "Total to pay:",
+    "noInterest": "No interest · Automatic monthly charge"
   }
 }

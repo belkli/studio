@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import type { InstallmentOption } from '@/lib/types';
 
 interface InstallmentSelectorProps {
@@ -20,7 +21,7 @@ interface InstallmentSelectorProps {
 }
 
 function formatCurrency(amount: number, currency = '₪'): string {
-    return `${currency}${amount.toLocaleString('he-IL')}`;
+    return `${currency}${amount.toLocaleString()}`;
 }
 
 export function InstallmentSelector({
@@ -31,12 +32,17 @@ export function InstallmentSelector({
     currency = '₪',
     disabled = false,
 }: InstallmentSelectorProps) {
+    const t = useTranslations('InstallmentSelector');
+    const locale = useLocale();
+    const isRtl = locale === 'he' || locale === 'ar';
+    const dir = isRtl ? 'rtl' : 'ltr';
+
     return (
-        <div className="space-y-3">
-            <label className="block text-sm font-medium text-foreground" dir="rtl">
-                בחר מספר תשלומים
+        <div className="space-y-3" dir={dir}>
+            <label className="block text-sm font-medium text-foreground">
+                {t('selectPayments')}
             </label>
-            <div className="grid grid-cols-5 gap-2" dir="rtl">
+            <div className="grid grid-cols-5 gap-2">
                 {options.map((option) => {
                     const isSelected = option.count === selectedCount;
                     return (
@@ -58,13 +64,13 @@ export function InstallmentSelector({
                                 {option.count}
                             </span>
                             <span className="text-xs text-muted-foreground mt-0.5">
-                                {option.count === 1 ? 'תשלום' : 'תשלומים'}
+                                {option.count === 1 ? t('payment') : t('payments')}
                             </span>
                             <span className={`text-sm font-medium mt-1 ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                                 {formatCurrency(option.monthlyAmount, currency)}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                /חודש
+                                {t('perMonth')}
                             </span>
                             {isSelected && (
                                 <div className="absolute -top-1 -end-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
@@ -77,13 +83,13 @@ export function InstallmentSelector({
                     );
                 })}
             </div>
-            <div className="flex justify-between items-center pt-2 border-t border-border text-sm" dir="rtl">
-                <span className="text-muted-foreground">סה&quot;כ לתשלום:</span>
+            <div className="flex justify-between items-center pt-2 border-t border-border text-sm">
+                <span className="text-muted-foreground">{t('totalToPay')}</span>
                 <span className="font-bold text-foreground">{formatCurrency(totalAmount, currency)}</span>
             </div>
             {selectedCount > 1 && (
-                <p className="text-xs text-muted-foreground text-center" dir="rtl">
-                    ללא ריבית · חיוב אוטומטי חודשי
+                <p className="text-xs text-muted-foreground text-center">
+                    {t('noInterest')}
                 </p>
             )}
         </div>

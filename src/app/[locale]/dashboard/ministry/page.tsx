@@ -123,7 +123,7 @@ export default function MinistryDashboard() {
               </SelectContent>
             </Select>
 
-            <Combobox
+            <Combobox dir={isRtl ? "rtl" : "ltr"}
               options={[
                 { value: 'all', label: t('allConservatories') },
                 ...conservatoriums.map(c => ({ value: c.name, label: c.name })),
@@ -143,7 +143,7 @@ export default function MinistryDashboard() {
               </SelectContent>
             </Select>
 
-            <Combobox
+            <Combobox dir={isRtl ? "rtl" : "ltr"}
               options={[
                 { value: 'all', label: t('allInstruments') },
                 ...instrumentOptions.map(i => ({ value: i, label: i })),

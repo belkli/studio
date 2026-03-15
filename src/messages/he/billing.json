@@ -212,5 +212,13 @@
   "TeacherPayrollPage": {
     "title": "השכר שלי",
     "subtitle": "הצג את השיעורים החודשיים והשעות המדווחות שלך."
+  },
+  "InstallmentSelector": {
+    "selectPayments": "בחר מספר תשלומים",
+    "payment": "תשלום",
+    "payments": "תשלומים",
+    "perMonth": "/חודש",
+    "totalToPay": "סה\"כ לתשלום:",
+    "noInterest": "ללא ריבית · חיוב אוטומטי חודשי"
   }
 }

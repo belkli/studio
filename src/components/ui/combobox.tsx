@@ -26,10 +26,12 @@ type ComboboxProps = {
   placeholder?: string;
   searchPlaceholder?: string;
   notFoundMessage?: string;
+  loadingMessage?: string;
   onInputChange?: (search: string) => void;
   isLoading?: boolean;
   disabled?: boolean;
   filter?: boolean;
+  dir?: 'rtl' | 'ltr';
 };
 
 export function Combobox({
@@ -39,10 +41,12 @@ export function Combobox({
   placeholder,
   searchPlaceholder,
   notFoundMessage,
+  loadingMessage,
   onInputChange,
   isLoading = false,
   disabled = false,
   filter = true,
+  dir,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -66,17 +70,17 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent
         className="w-[--radix-popover-trigger-width] p-0"
-        dir="rtl"
+        dir={dir}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <Command filter={filter ? undefined : () => 1} dir="rtl">
+        <Command filter={filter ? undefined : () => 1} dir={dir}>
           <CommandInput
             placeholder={searchPlaceholder}
             onValueChange={onInputChange}
           />
           <CommandList>
-            {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">טוען...</div>}
+            {isLoading && <div className="p-4 text-sm text-center text-muted-foreground">{loadingMessage ?? '...'}</div>}
             {!isLoading && <CommandEmpty>{notFoundMessage}</CommandEmpty>}
             <CommandGroup>
               {options.map((option, index) => (
