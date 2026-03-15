@@ -10,6 +10,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createSessionCookie } from '@/lib/auth-utils';
 import { createRateLimiter } from '@/lib/rate-limit';
+import { BRAND_COOKIE_NAME } from '@/lib/brand';
 
 const SESSION_COOKIE_NAME = '__session';
 const SESSION_MAX_AGE = 14 * 24 * 60 * 60; // 14 days in seconds
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Clear legacy mock cookie
-    response.cookies.delete('harmonia-user');
+    response.cookies.delete(BRAND_COOKIE_NAME);
 
     return response;
   } catch (error) {

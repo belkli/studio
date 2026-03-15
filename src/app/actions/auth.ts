@@ -12,6 +12,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createSessionCookie, revokeSession, verifyAuth } from '@/lib/auth-utils';
+import { BRAND_COOKIE_NAME } from '@/lib/brand';
 
 const SESSION_COOKIE_NAME = '__session';
 const SESSION_MAX_AGE = 14 * 24 * 60 * 60; // 14 days in seconds
@@ -42,7 +43,7 @@ export async function createSessionAction(
     });
 
     // Clear the legacy mock cookie
-    cookieStore.delete('harmonia-user');
+    cookieStore.delete(BRAND_COOKIE_NAME);
 
     return { ok: true };
   } catch (error) {
@@ -55,7 +56,7 @@ export async function createSessionAction(
  * Sign out the current user by:
  * 1. Revoking Firebase refresh tokens (server-side)
  * 2. Deleting the __session cookie
- * 3. Deleting the legacy harmonia-user cookie
+ * 3. Deleting the legacy cookie
  * 4. Redirecting to /login
  */
 export async function signOutAction(): Promise<void> {
@@ -68,7 +69,7 @@ export async function signOutAction(): Promise<void> {
 
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
-  cookieStore.delete('harmonia-user');
+  cookieStore.delete(BRAND_COOKIE_NAME);
 
   redirect('/login');
 }

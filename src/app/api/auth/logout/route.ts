@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getServerAuthProvider } from '@/lib/auth/server-provider';
+import { BRAND_COOKIE_NAME } from '@/lib/brand';
 
 const SESSION_COOKIE_NAME = '__session';
 
@@ -29,6 +30,6 @@ export async function POST() {
 
   const response = NextResponse.json({ ok: true });
   response.cookies.delete(SESSION_COOKIE_NAME);
-  response.cookies.delete('harmonia-user');
+  response.cookies.delete(BRAND_COOKIE_NAME);
   return response;
 }

@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link, usePathname } from '@/i18n/routing';
+import { BRAND_HELP_FAB_POSITION_KEY, BRAND_HELP_FAB_MINIMIZED_KEY } from '@/lib/brand';
 import { useTranslations, useLocale } from 'next-intl';
 
 interface Message {
@@ -20,8 +21,8 @@ interface Message {
   response?: HelpAssistantResponse;
 }
 
-const FAB_POSITION_KEY = 'harmonia.help.fab.position.v1';
-const FAB_MINIMIZED_KEY = 'harmonia.help.fab.minimized.v1';
+const FAB_POSITION_KEY = BRAND_HELP_FAB_POSITION_KEY;
+const FAB_MINIMIZED_KEY = BRAND_HELP_FAB_MINIMIZED_KEY;
 
 export function AiHelpAssistant() {
   const t = useTranslations('HelpAssistant');

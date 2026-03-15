@@ -11,6 +11,7 @@ import { AdminDomainProvider, useAdminDomain } from '@/hooks/domains/admin-domai
 import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, PerformanceAssignment, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
+import { BRAND_LOCALSTORAGE_KEY } from '@/lib/brand';
 
 /**
  * Defines the shape of the authentication context, including all state and action dispatchers.
@@ -650,7 +651,7 @@ function AuthProviderInner({
             if (!currentUser) return currentUser;
             const matched = finalUsers.find((candidate: User) => candidate.email.toLowerCase() === currentUser.email.toLowerCase());
             if (!matched) return currentUser;
-            localStorage.setItem('harmonia-user', JSON.stringify(matched));
+            localStorage.setItem(BRAND_LOCALSTORAGE_KEY, JSON.stringify(matched));
             setAuthCookie();
             return matched;
           });
@@ -686,7 +687,7 @@ function AuthProviderInner({
 
   // On initial load, check for a user in localStorage to persist login state with role validation.
   useEffect(() => {
-    const storedUser = localStorage.getItem('harmonia-user');
+    const storedUser = localStorage.getItem(BRAND_LOCALSTORAGE_KEY);
     if (storedUser) {
       try {
         const parsedData = JSON.parse(storedUser);
@@ -695,11 +696,11 @@ function AuthProviderInner({
           setUser(parsedData);
           setAuthCookie();
         } else {
-          localStorage.removeItem('harmonia-user');
+          localStorage.removeItem(BRAND_LOCALSTORAGE_KEY);
           clearAuthCookie();
         }
       } catch {
-        localStorage.removeItem('harmonia-user');
+        localStorage.removeItem(BRAND_LOCALSTORAGE_KEY);
         clearAuthCookie();
       }
     }

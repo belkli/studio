@@ -1,7 +1,9 @@
+import { BRAND_COOKIE_NAME } from '@/lib/brand';
+
 export const setAuthCookie = () => {
-  document.cookie = 'harmonia-user=1; path=/; max-age=2592000; samesite=lax';
+  document.cookie = `${BRAND_COOKIE_NAME}=1; path=/; max-age=2592000; samesite=lax`;
 };
 
 export const clearAuthCookie = () => {
-  document.cookie = 'harmonia-user=; path=/; max-age=0; samesite=lax';
+  document.cookie = `${BRAND_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
 };

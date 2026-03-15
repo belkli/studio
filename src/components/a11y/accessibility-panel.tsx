@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { Accessibility, Maximize2, Minimize2 } from 'lucide-react';
+import { BRAND_A11Y_PREFS_KEY, BRAND_A11Y_POSITION_KEY, BRAND_A11Y_MINIMIZED_KEY } from '@/lib/brand';
 
 type A11yPrefs = {
   fontScale: number;
@@ -15,9 +16,9 @@ type A11yPrefs = {
   invertColors: boolean;
 };
 
-const STORAGE_KEY = 'harmonia.a11y.prefs.v1';
-const POSITION_KEY = 'harmonia.a11y.position.v1';
-const MINIMIZED_KEY = 'harmonia.a11y.minimized.v1';
+const STORAGE_KEY = BRAND_A11Y_PREFS_KEY;
+const POSITION_KEY = BRAND_A11Y_POSITION_KEY;
+const MINIMIZED_KEY = BRAND_A11Y_MINIMIZED_KEY;
 const DEFAULT_PREFS: A11yPrefs = {
   fontScale: 100,
   highContrast: false,

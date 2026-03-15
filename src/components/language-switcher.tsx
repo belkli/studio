@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { routing } from '@/i18n/routing';
 import { updateUserLanguagePreference } from '@/app/actions';
+import { BRAND_LOCALE_STORAGE_KEY } from '@/lib/brand';
 
 type LocaleOption = {
     code: 'he' | 'en' | 'ru' | 'ar';
@@ -43,7 +44,7 @@ const LOCALES: LocaleOption[] = [
     },
 ];
 
-const LOCALE_STORAGE_KEY = 'harmonia_locale';
+const LOCALE_STORAGE_KEY = BRAND_LOCALE_STORAGE_KEY;
 
 export function LanguageSwitcher() {
     const [mounted, setMounted] = React.useState(false);

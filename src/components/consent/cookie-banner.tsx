@@ -2,8 +2,9 @@
 import { useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { BRAND_COOKIE_CONSENT_KEY } from '@/lib/brand';
 
-const COOKIE_KEY = 'harmonia_cookie_consent';
+const COOKIE_KEY = BRAND_COOKIE_CONSENT_KEY;
 
 function subscribe(cb: () => void) {
   window.addEventListener('storage', cb);

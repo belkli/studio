@@ -4,6 +4,7 @@ import type { User } from '@/lib/types';
 import { useRouter } from '@/i18n/routing';
 import { upsertUserAction } from '@/app/actions';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
+import { BRAND_LOCALSTORAGE_KEY } from '@/lib/brand';
 import { useUsersDomain } from './users-domain';
 
 export interface AuthDomainContextType {
@@ -63,7 +64,7 @@ export function AuthDomainProvider({
 
       if (foundUser) {
         if (foundUser.approved !== false) {
-          localStorage.setItem('harmonia-user', JSON.stringify(foundUser));
+          localStorage.setItem(BRAND_LOCALSTORAGE_KEY, JSON.stringify(foundUser));
           setAuthCookie();
           setUser(foundUser);
           routerRef.current?.push?.('/dashboard');
@@ -96,7 +97,7 @@ export function AuthDomainProvider({
       // Network error — clear local state anyway
     }
 
-    localStorage.removeItem('harmonia-user');
+    localStorage.removeItem(BRAND_LOCALSTORAGE_KEY);
     clearAuthCookie();
     setUser(null);
     routerRef.current?.push?.('/');

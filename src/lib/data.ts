@@ -1224,7 +1224,7 @@ export const siteAdminUser: User = {
 
 // Synthetic dev-mode user — matches the claims returned by auth-utils.ts DEV FALLBACK
 export const devUser: User = {
-    id: 'dev-user', name: 'Dev Admin', email: 'dev@harmonia.local', role: 'site_admin', conservatoriumId: 'dev-conservatorium', conservatoriumName: 'Dev Conservatorium', avatarUrl: 'https://i.pravatar.cc/150?u=dev', idNumber: '000000000', phone: '000-0000000', approved: true, notifications: [], achievements: [], hasSeenWalkthrough: true, createdAt: '2024-03-03T12:00:00.000Z',
+    id: 'dev-user', name: 'Dev Admin', email: 'dev@lyriosa.local', role: 'site_admin', conservatoriumId: 'dev-conservatorium', conservatoriumName: 'Dev Conservatorium', avatarUrl: 'https://i.pravatar.cc/150?u=dev', idNumber: '000000000', phone: '000-0000000', approved: true, notifications: [], achievements: [], hasSeenWalkthrough: true, createdAt: '2024-03-03T12:00:00.000Z',
 };
 
 export const ministryDirectorUser: User = {

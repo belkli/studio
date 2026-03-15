@@ -64,7 +64,7 @@ async function generateSignedUrl(storagePath: string): Promise<string> {
   if (AUTH_PROVIDER === 'supabase') {
     const { createClient } = await import('@supabase/supabase-js');
     const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
-    const { data } = await sb.storage.from('harmonia-private').createSignedUrl(storagePath, 15 * 60);
+    const { data } = await sb.storage.from('lyriosa-private').createSignedUrl(storagePath, 15 * 60);
     if (!data?.signedUrl) throw new Error('Failed to generate signed URL');
     return data.signedUrl;
   }
@@ -295,7 +295,7 @@ export async function getUploadSignedUrl(input: {
   if (AUTH_PROVIDER === 'supabase') {
     const { createClient } = await import('@supabase/supabase-js');
     const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
-    const { data } = await sb.storage.from('harmonia-private').createSignedUploadUrl(storagePath);
+    const { data } = await sb.storage.from('lyriosa-private').createSignedUploadUrl(storagePath);
     if (!data?.signedUrl) throw new Error('Failed to generate upload signed URL');
     return { uploadUrl: data.signedUrl, storagePath };
   }

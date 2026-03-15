@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useCallback, useMemo, useRef } fro
 import type { User, NotificationPreferences, PaymentMethod } from '@/lib/types';
 import { upsertUserAction } from '@/app/actions';
 import { setAuthCookie } from '@/lib/auth-cookie';
+import { BRAND_LOCALSTORAGE_KEY } from '@/lib/brand';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -111,7 +112,7 @@ export function UsersDomainProvider({ children }: { children: React.ReactNode })
     const { user, setUser } = authSettersRef.current;
     if (user?.id === updatedUser.id) {
       setUser(updatedUser);
-      localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
+      localStorage.setItem(BRAND_LOCALSTORAGE_KEY, JSON.stringify(updatedUser));
       setAuthCookie();
     }
 
@@ -123,7 +124,7 @@ export function UsersDomainProvider({ children }: { children: React.ReactNode })
         if (currentUser?.id === saved.id) {
           setCurrentUser((prevCurrent) => {
             if (prevCurrent?.id !== saved.id) return prevCurrent;
-            localStorage.setItem('harmonia-user', JSON.stringify(saved));
+            localStorage.setItem(BRAND_LOCALSTORAGE_KEY, JSON.stringify(saved));
             setAuthCookie();
             return saved;
           });
@@ -146,7 +147,7 @@ export function UsersDomainProvider({ children }: { children: React.ReactNode })
     if (user?.id === userId) {
       const updatedUser = { ...user, hasSeenWalkthrough: true };
       setUser(updatedUser);
-      localStorage.setItem('harmonia-user', JSON.stringify(updatedUser));
+      localStorage.setItem(BRAND_LOCALSTORAGE_KEY, JSON.stringify(updatedUser));
       setAuthCookie();
     }
   }, []);

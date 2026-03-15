@@ -11,9 +11,10 @@ import { headers } from 'next/headers';
 import { getServerAuthProvider } from '@/lib/auth/server-provider';
 import type { SessionClaims } from '@/lib/auth/provider';
 import type { UserRole } from '@/lib/types';
+import { BRAND_DEV_EMAIL } from '@/lib/brand';
 
-// Re-export SessionClaims under the existing HarmoniaClaims name with narrower role type
-export interface HarmoniaClaims extends Omit<SessionClaims, 'role'> {
+// Re-export SessionClaims under the existing LyriosaClaims name with narrower role type
+export interface LyriosaClaims extends Omit<SessionClaims, 'role'> {
   role: UserRole;
 }
 
@@ -24,7 +25,7 @@ export interface HarmoniaClaims extends Omit<SessionClaims, 'role'> {
  * These headers are set by src/middleware.ts after JWT validation.
  * Returns null if headers are not present (unauthenticated request).
  */
-export async function getClaimsFromRequest(): Promise<HarmoniaClaims | null> {
+export async function getClaimsFromRequest(): Promise<LyriosaClaims | null> {
   const headerStore = await headers();
   const uid = headerStore.get('x-user-id');
   const role = headerStore.get('x-user-role');
@@ -60,7 +61,7 @@ const SESSION_EXPIRY_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
  * When no auth provider credentials are set (local dev), falls back
  * to reading claims from middleware headers.
  */
-export async function verifyAuth(): Promise<HarmoniaClaims> {
+export async function verifyAuth(): Promise<LyriosaClaims> {
   const provider = await getServerAuthProvider();
 
   // Try provider session cookie verification first
@@ -88,7 +89,7 @@ export async function verifyAuth(): Promise<HarmoniaClaims> {
     console.warn('\n[auth-utils] *** DEV-ONLY FALLBACK ACTIVE ***\n  No auth provider configured.\n');
     return {
       uid: 'dev-user',
-      email: 'dev@harmonia.local',
+      email: BRAND_DEV_EMAIL,
       role: 'site_admin' as UserRole,
       conservatoriumId: 'dev-conservatorium',
       approved: true,
@@ -115,7 +116,7 @@ const GLOBAL_ADMIN_ROLES: UserRole[] = ['site_admin', 'superadmin'];
 export async function requireRole(
   allowedRoles: UserRole[],
   conservatoriumIdMustMatch?: string
-): Promise<HarmoniaClaims> {
+): Promise<LyriosaClaims> {
   const claims = await verifyAuth();
 
   if (!claims.approved) {

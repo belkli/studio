@@ -1,5 +1,5 @@
 /**
- * @fileoverview Next.js Edge Proxy for Harmonia (Next.js 16 — replaces middleware.ts).
+ * @fileoverview Next.js Edge Proxy for Lyriosa (Next.js 16 — replaces middleware.ts).
  *
  * Responsibilities:
  * 1. Validate session cookies on protected routes (/dashboard/*)
@@ -180,7 +180,7 @@ export default async function proxy(request: NextRequest) {
 
     // Inject claims as request headers for Server Components
     const activeClaims = isDevBypass
-      ? { uid: 'dev-user', role: 'site_admin', conservatoriumId: 'dev-conservatorium', approved: true, email: 'dev@harmonia.local' }
+      ? { uid: 'dev-user', role: 'site_admin', conservatoriumId: 'dev-conservatorium', approved: true, email: 'dev@lyriosa.local' }
       : claims!;
 
     const response = intlMiddleware(request);
