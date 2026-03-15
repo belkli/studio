@@ -1,21 +1,20 @@
 'use client'
-
 import { createContext, useContext, type ReactNode } from 'react'
-import type { ThemeId } from '@/lib/themes/active-theme'
+import type { BrandId } from '@/lib/themes/active-theme'
 
 interface BrandThemeContextValue {
-  theme: ThemeId
+  brand: BrandId
   isThemeB: boolean
 }
 
 const BrandThemeContext = createContext<BrandThemeContextValue>({
-  theme: 'a',
+  brand: 'a',
   isThemeB: false,
 })
 
-export function BrandThemeProvider({ theme, children }: { theme: ThemeId; children: ReactNode }) {
+export function BrandThemeProvider({ brand, children }: { brand: BrandId; children: ReactNode }) {
   return (
-    <BrandThemeContext.Provider value={{ theme, isThemeB: theme === 'b' }}>
+    <BrandThemeContext.Provider value={{ brand, isThemeB: brand === 'b' }}>
       {children}
     </BrandThemeContext.Provider>
   )

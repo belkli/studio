@@ -12,7 +12,7 @@ import { AiHelpAssistant } from '@/components/harmonia/ai-help-assistant';
 import { AccessibilityPanel } from '@/components/a11y/accessibility-panel';
 import { CookieBanner } from '@/components/consent/cookie-banner';
 import { Playfair_Display, Plus_Jakarta_Sans, Heebo, Frank_Ruhl_Libre } from 'next/font/google';
-import { getActiveTheme } from '@/lib/themes/active-theme';
+import { getActiveBrand } from '@/lib/themes/active-theme';
 import { BRAND_NAME } from '@/lib/brand';
 import { BrandThemeProvider } from '@/components/brand-theme-provider';
 
@@ -94,16 +94,16 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
-  const activeTheme = getActiveTheme();
+  const activeBrand = getActiveBrand();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const skipToMainLabel = (messages as any)?.Common?.shared?.skipToMain || 'Skip to main content';
 
   return (
-    <html lang={locale} dir={dir} data-theme={activeTheme}>
+    <html lang={locale} dir={dir} data-brand={activeBrand}>
       <body className={`${playfairDisplay.variable} ${plusJakartaSans.variable} ${heebo.variable} ${frankRuhlLibre.variable} font-body antialiased`}>
         <a href="#main-content" className="skip-link">{skipToMainLabel}</a>
         <NextIntlClientProvider messages={messages}>
-          <BrandThemeProvider theme={activeTheme}>
+          <BrandThemeProvider brand={activeBrand}>
           <AuthProvider>
             <QueryProvider>
               <div id="main-content" tabIndex={-1}>

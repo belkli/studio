@@ -22,8 +22,8 @@ export function PublicFooter() {
     const tNav = useTranslations('Navigation');
     const tHome = useTranslations('HomePage');
     const tAccessibility = useTranslations('AccessibilityPage');
-    const { theme } = useBrandTheme();
-    const s = FOOTER_STYLES[theme];
+    const { brand } = useBrandTheme();
+    const s = FOOTER_STYLES[brand];
 
     return (
         <footer className={cn('flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 mt-auto', s.container)}>

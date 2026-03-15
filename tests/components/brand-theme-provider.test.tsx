@@ -6,53 +6,53 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 describe('BrandThemeProvider', () => {
-  it('provides theme "a" when prop is "a"', async () => {
+  it('provides brand "a" when prop is "a"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
 
     function TestConsumer() {
-      const { theme, isThemeB } = useBrandTheme()
+      const { brand, isThemeB } = useBrandTheme()
       return (
         <div>
-          <span data-testid="theme">{theme}</span>
+          <span data-testid="brand">{brand}</span>
           <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
     }
 
     render(
-      <BrandThemeProvider theme="a">
+      <BrandThemeProvider brand="a">
         <TestConsumer />
       </BrandThemeProvider>
     )
 
-    expect(screen.getByTestId('theme').textContent).toBe('a')
+    expect(screen.getByTestId('brand').textContent).toBe('a')
     expect(screen.getByTestId('isThemeB').textContent).toBe('false')
   })
 
-  it('provides theme "b" when prop is "b"', async () => {
+  it('provides brand "b" when prop is "b"', async () => {
     const { BrandThemeProvider, useBrandTheme } = await import(
       '@/components/brand-theme-provider'
     )
 
     function TestConsumer() {
-      const { theme, isThemeB } = useBrandTheme()
+      const { brand, isThemeB } = useBrandTheme()
       return (
         <div>
-          <span data-testid="theme">{theme}</span>
+          <span data-testid="brand">{brand}</span>
           <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
     }
 
     render(
-      <BrandThemeProvider theme="b">
+      <BrandThemeProvider brand="b">
         <TestConsumer />
       </BrandThemeProvider>
     )
 
-    expect(screen.getByTestId('theme').textContent).toBe('b')
+    expect(screen.getByTestId('brand').textContent).toBe('b')
     expect(screen.getByTestId('isThemeB').textContent).toBe('true')
   })
 
@@ -62,10 +62,10 @@ describe('BrandThemeProvider', () => {
     )
 
     function TestConsumer() {
-      const { theme, isThemeB } = useBrandTheme()
+      const { brand, isThemeB } = useBrandTheme()
       return (
         <div>
-          <span data-testid="theme">{theme}</span>
+          <span data-testid="brand">{brand}</span>
           <span data-testid="isThemeB">{String(isThemeB)}</span>
         </div>
       )
@@ -73,7 +73,7 @@ describe('BrandThemeProvider', () => {
 
     render(<TestConsumer />)
 
-    expect(screen.getByTestId('theme').textContent).toBe('a')
+    expect(screen.getByTestId('brand').textContent).toBe('a')
     expect(screen.getByTestId('isThemeB').textContent).toBe('false')
   })
 })

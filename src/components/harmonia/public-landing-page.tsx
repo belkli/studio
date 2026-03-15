@@ -75,9 +75,9 @@ export function PublicLandingPage() {
   const isRtl = locale === 'he' || locale === 'ar';
   const router = useRouter();
   const { conservatoriums, conservatoriumInstruments, users, events } = useAuth();
-  const { theme } = useBrandTheme();
-  const heroS = HERO_STYLES[theme] ?? HERO_STYLES.a;
-  const statsS = STATS_STYLES[theme] ?? STATS_STYLES.a;
+  const { brand } = useBrandTheme();
+  const heroS = HERO_STYLES[brand] ?? HERO_STYLES.a;
+  const statsS = STATS_STYLES[brand] ?? STATS_STYLES.a;
 
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');

@@ -36,8 +36,8 @@ export function PublicNavbar() {
     const isRtl = locale === 'he' || locale === 'ar';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const { theme } = useBrandTheme();
-    const s = NAVBAR_STYLES[theme];
+    const { brand } = useBrandTheme();
+    const s = NAVBAR_STYLES[brand];
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -62,7 +62,7 @@ export function PublicNavbar() {
     return (
         <header className={cn('fixed top-0 z-50 flex h-14 w-full items-center px-4 lg:px-6', s.header)}>
             <Link href="/" className="flex shrink-0 items-center justify-center" onClick={() => setMobileOpen(false)}>
-                <Icons.logoContainer theme={theme} />
+                <Icons.logoContainer theme={brand} />
             </Link>
 
             <nav className="hidden flex-1 items-center gap-4 ps-8 sm:gap-6 md:flex">
@@ -109,7 +109,7 @@ export function PublicNavbar() {
                         <SheetContent side={isRtl ? 'right' : 'left'} className="w-3/4">
                             <div className="mt-8 flex flex-col gap-4">
                                 <Link href="/" className="mb-4 flex items-center justify-start" onClick={() => setMobileOpen(false)}>
-                                    <Icons.logoContainer theme={theme} />
+                                    <Icons.logoContainer theme={brand} />
                                 </Link>
                                 {navItems.map((item) => (
                                     <Link

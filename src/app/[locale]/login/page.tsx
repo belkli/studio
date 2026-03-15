@@ -21,8 +21,8 @@ const LOGIN_PAGE_STYLES = {
 
 export default function LoginPage() {
   const t = useTranslations('Common.errors');
-  const { theme } = useBrandTheme();
-  const s = LOGIN_PAGE_STYLES[theme];
+  const { brand } = useBrandTheme();
+  const s = LOGIN_PAGE_STYLES[brand];
 
   return (
     <div className={cn('relative flex items-center justify-center min-h-screen', s.container)}>
