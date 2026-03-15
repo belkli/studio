@@ -21,7 +21,7 @@ export default async function DashboardLayout({
   const tAccessibility = await getTranslations({ locale, namespace: 'AccessibilityPage' });
 
   return (
-    <SidebarProvider dir={isRtl ? 'rtl' : 'ltr'}>
+    <SidebarProvider dir={isRtl ? 'rtl' : 'ltr'} data-theme="a">
       <Sidebar side={sidebarSide} collapsible="icon">
         <SidebarNav />
       </Sidebar>
