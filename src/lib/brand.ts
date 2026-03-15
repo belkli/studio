@@ -19,6 +19,7 @@ export const BRAND_A11Y_POSITION_KEY = 'lyriosa.a11y.position.v1'
 export const BRAND_A11Y_MINIMIZED_KEY = 'lyriosa.a11y.minimized.v1'
 export const BRAND_HELP_FAB_POSITION_KEY = 'lyriosa.help.fab.position.v1'
 export const BRAND_HELP_FAB_MINIMIZED_KEY = 'lyriosa.help.fab.minimized.v1'
+export const BRAND_HELP_CHAT_WIDTH_KEY = 'lyriosa.help.chat.width'
 export const BRAND_WALKTHROUGH_KEY = 'lyriosa-walkthrough-seen'
 
 export const BRAND_STORAGE_BUCKET = 'lyriosa-private'

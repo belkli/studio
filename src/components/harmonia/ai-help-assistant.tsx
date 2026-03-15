@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link, usePathname } from '@/i18n/routing';
-import { BRAND_HELP_FAB_POSITION_KEY, BRAND_HELP_FAB_MINIMIZED_KEY } from '@/lib/brand';
+import { BRAND_HELP_FAB_POSITION_KEY, BRAND_HELP_FAB_MINIMIZED_KEY, BRAND_HELP_CHAT_WIDTH_KEY } from '@/lib/brand';
 import { useTranslations, useLocale } from 'next-intl';
 
 interface Message {
@@ -23,6 +23,10 @@ interface Message {
 
 const FAB_POSITION_KEY = BRAND_HELP_FAB_POSITION_KEY;
 const FAB_MINIMIZED_KEY = BRAND_HELP_FAB_MINIMIZED_KEY;
+const CHAT_WIDTH_KEY = BRAND_HELP_CHAT_WIDTH_KEY;
+const CHAT_WIDTH_DEFAULT = 420;
+const CHAT_WIDTH_MIN = 320;
+const CHAT_WIDTH_MAX = 700;
 
 export function AiHelpAssistant() {
   const t = useTranslations('HelpAssistant');
@@ -34,13 +38,55 @@ export function AiHelpAssistant() {
   const [sidebarOffset, setSidebarOffset] = useState('0px');
   const [fabPosition, setFabPosition] = useState<{ x: number; y: number } | null>(null);
   const [fabMinimized, setFabMinimized] = useState(false);
+  const [chatWidth, setChatWidth] = useState(() => {
+    if (typeof window === 'undefined') return CHAT_WIDTH_DEFAULT;
+    try {
+      const stored = localStorage.getItem(CHAT_WIDTH_KEY);
+      if (stored) {
+        const parsed = Number(stored);
+        if (!Number.isNaN(parsed) && parsed >= CHAT_WIDTH_MIN && parsed <= CHAT_WIDTH_MAX) return parsed;
+      }
+    } catch { /* ignore */ }
+    return CHAT_WIDTH_DEFAULT;
+  });
   const { user } = useAuth();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLButtonElement | null>(null);
   const dragStateRef = useRef<{ pointerId: number; startX: number; startY: number } | null>(null);
   const suppressClickRef = useRef(false);
+  const chatWidthRef = useRef(chatWidth);
   const pathname = usePathname();
   const locale = useLocale();
+  const isRtl = locale === 'he' || locale === 'ar';
+
+  // Keep chatWidthRef in sync for use in pointer event handlers
+  useEffect(() => { chatWidthRef.current = chatWidth; }, [chatWidth]);
+
+  const onResizePointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = chatWidthRef.current;
+
+    const onMove = (moveEvent: PointerEvent) => {
+      // For a left-side panel in LTR: dragging right = wider (positive delta)
+      // For a left-side panel in RTL (rendered on right): dragging left = wider (negative delta)
+      const delta = moveEvent.clientX - startX;
+      const newWidth = Math.min(CHAT_WIDTH_MAX, Math.max(CHAT_WIDTH_MIN, startWidth + (isRtl ? -delta : delta)));
+      setChatWidth(newWidth);
+    };
+
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      try {
+        localStorage.setItem(CHAT_WIDTH_KEY, String(chatWidthRef.current));
+      } catch { /* ignore */ }
+    };
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  }, [isRtl]);
+
   const safeT = useCallback((key: string, fallback: string) => {
     const value = t(key);
     if (
@@ -353,13 +399,23 @@ export function AiHelpAssistant() {
       </div>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent className="flex flex-col p-0" side="left">
+        <SheetContent
+          className="flex flex-col p-0 !max-w-none [&>button]:end-4 [&>button]:inset-inline-end-4 [&>button]:right-auto [&>button]:left-auto"
+          side="left"
+          dir={isRtl ? 'rtl' : 'ltr'}
+          style={{ width: chatWidth }}
+        >
+          {/* Resize drag handle on the trailing edge */}
+          <div
+            className="absolute top-0 bottom-0 end-0 w-1 cursor-col-resize hover:bg-primary/20 active:bg-primary/30 z-50"
+            onPointerDown={onResizePointerDown}
+          />
           <SheetHeader className="p-6 pb-4">
             <SheetTitle className="flex items-center gap-2 text-xl">
               <Bot />
               {t('title')}
             </SheetTitle>
-            <SheetDescription>{t('description')}</SheetDescription>
+            <SheetDescription className="text-start">{t('description')}</SheetDescription>
           </SheetHeader>
           <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
             <div className="space-y-4 py-4">
@@ -369,7 +425,7 @@ export function AiHelpAssistant() {
                     <Avatar className="h-8 w-8"><AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback></Avatar>
                   )}
                   <div className={cn('rounded-lg px-4 py-2 max-w-[85%]', message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                    <p className="text-sm whitespace-pre-wrap text-start">{message.text}</p>
                     {message.sender === 'bot' && message.response?.suggestedActions && (
                       <div className="mt-3 flex flex-col gap-2 border-t border-muted-foreground/20 pt-3">
                         {message.response.suggestedActions.map((action, i) => (
@@ -393,7 +449,7 @@ export function AiHelpAssistant() {
               )}
               {messages.length <= 1 && !isLoading && (
                 <div className="pt-4">
-                  <p className="mb-2 text-sm font-medium">{t('suggestionsTitle')}</p>
+                  <p className="mb-2 text-sm font-medium text-start">{t('suggestionsTitle')}</p>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {suggestedQuestions.map((q) => (
                       <Button key={q} variant="outline" size="sm" className="h-auto justify-start text-wrap" onClick={() => handleSendMessage(q)}>
