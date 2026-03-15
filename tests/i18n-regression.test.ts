@@ -124,4 +124,20 @@ describe('i18n / RTL regression checks', () => {
     }
     expect(violations).toHaveLength(0);
   });
+
+  it('should not use deprecated data-theme attribute (use data-brand)', () => {
+    const violations: string[] = []
+    for (const file of srcFiles) {
+      // Skip test files and CSS (CSS is checked separately)
+      if (file.includes('.test.') || file.includes('.spec.') || file.endsWith('.css')) continue
+      const content = readFileSync(file, 'utf-8')
+      if (content.includes('data-theme=')) {
+        violations.push(file.replace(ROOT, ''))
+      }
+    }
+    if (violations.length > 0) {
+      console.error('data-theme violations (use data-brand instead):\n' + violations.join('\n'))
+    }
+    expect(violations).toHaveLength(0)
+  })
 });
