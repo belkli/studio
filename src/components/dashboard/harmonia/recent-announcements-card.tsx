@@ -70,6 +70,11 @@ export function RecentAnnouncementsCard() {
                                     </Badge>
                                 ))}
                             </div>
+                            {ann.translatedByAI && locale !== 'he' && (
+                                <p className="text-xs text-muted-foreground/70 mt-2 italic">
+                                    {tComposer('aiGeneratedDisclaimer')}
+                                </p>
+                            )}
                         </div>
                     );
                 }) : (

@@ -400,7 +400,28 @@
     "autoTranslateError": "خطأ في الترجمة. حاول مرة أخرى.",
     "aiDisclaimer": "⚠️ الترجمة مولّدة بالذكاء الاصطناعي وقد تحتوي على أخطاء. يرجى التحقق قبل الإرسال إلى المستلمين.",
     "aiTranslatedBadge": "مترجَم بالذكاء الاصطناعي — قد يحتوي على عدم دقة",
-    "translationPreviewTitle": "معاينة الترجمة"
+    "translationPreviewTitle": "معاينة الترجمة",
+    "translationPreviewEmpty": "انقر 'ترجمة تلقائية' لإنشاء الترجمات",
+    "localeNames": {
+      "he": "العبرية",
+      "en": "الإنجليزية",
+      "ar": "العربية",
+      "ru": "الروسية"
+    },
+    "sourceLocale": "اللغة المصدر",
+    "aiBadge": "AI",
+    "editedBadge": "تم التعديل",
+    "revertToAI": "العودة إلى ترجمة AI",
+    "retryTranslation": "إعادة المحاولة",
+    "translationFailed": "فشلت الترجمة",
+    "translationTitle": "العنوان",
+    "translationBody": "نص الرسالة",
+    "noStudentsInLocale": "لا يوجد طلاب بهذه اللغة",
+    "staleWarning": "تغير النص المصدر منذ إنشاء الترجمات. إعادة الترجمة؟",
+    "retranslateAll": "إعادة ترجمة الكل",
+    "publishHebrewOnly": "نشر بالعبرية فقط",
+    "publishHebrewOnlyConfirm": "سيتم إرسال هذا الإعلان باللغة العبرية فقط. هل تريد المتابعة؟",
+    "aiGeneratedDisclaimer": "تمت ترجمة هذا النص آليًا وقد يحتوي على عدم دقة"
   },
   "RecentAnnouncementsCard": {
     "title": "الإعلانات الأخيرة",
