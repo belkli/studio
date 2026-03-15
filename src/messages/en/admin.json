@@ -524,7 +524,8 @@
     "ministryRepertoire": "Manage Repertoire",
     "groupMySchool": "My School",
     "mySchool": "My School",
-    "makeups": "Makeups"
+    "makeups": "Makeups",
+    "performanceInvitations": "Performance Invitations"
   },
   "Dashboard": {
     "makeups": {
@@ -620,7 +621,9 @@
         "today": "Today",
         "prevWeek": "Previous week",
         "nextWeek": "Next week"
-      }
+      },
+      "performanceInvitationsBanner": "You have {count} performance invitation(s) — please respond",
+      "viewInvitations": "View Invitations"
     },
     "header": {
       "notifications": "Notifications",

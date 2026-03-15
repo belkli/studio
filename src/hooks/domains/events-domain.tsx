@@ -5,6 +5,7 @@ import type {
   EventProductionStatus,
   PerformanceBooking,
   PerformanceBookingStatus,
+  PerformanceAssignment,
   Masterclass,
   StudentMasterClassAllowance,
   OpenDayEvent,
@@ -62,8 +63,9 @@ export interface EventsDomainContextType {
   ) => { success: boolean; soldOut?: boolean; bookingRef?: string; totalAmount: number };
   addPerformanceToEvent: (eventId: string, studentId: string, repertoireId: string) => void;
   removePerformanceFromEvent: (eventId: string, performanceId: string) => void;
-  assignMusiciansToPerformance: (bookingId: string, musicianIds: string[]) => void;
+  assignMusiciansToPerformance: (bookingId: string, assignments: Pick<PerformanceAssignment, 'userId' | 'role'>[]) => void;
   updatePerformanceBookingStatus: (bookingId: string, status: PerformanceBookingStatus) => void;
+  respondToPerformanceInvitation: (bookingId: string, userId: string, accept: boolean, declineReason?: string) => void;
   addPerformanceBooking: (bookingData: Partial<PerformanceBooking>) => void;
   createMasterClass: (payload: Partial<Masterclass>) => Masterclass;
   publishMasterClass: (masterClassId: string) => void;
@@ -329,24 +331,34 @@ export function EventsDomainProvider({
   // ---------------------------------------------------------------------------
   // assignMusiciansToPerformance
   // ---------------------------------------------------------------------------
-  const assignMusiciansToPerformance = useCallback((bookingId: string, musicianIds: string[]) => {
+  const assignMusiciansToPerformance = useCallback((bookingId: string, assignments: Pick<PerformanceAssignment, 'userId' | 'role'>[]) => {
     setMockPerformanceBookings(prev =>
       prev.map(booking => {
         if (booking.id === bookingId) {
-          const assignedMusicians = musicianIds.map(id => {
-            const musicianUser = users.find(u => u.id === id);
+          const now = new Date().toISOString();
+          const assignedMusicians: PerformanceAssignment[] = assignments.map(a => {
+            const musicianUser = users.find(u => u.id === a.userId);
+            // Preserve existing assignment data (response, rate) if already assigned
+            const existing = booking.assignedMusicians?.find(m => m.userId === a.userId);
             return {
-              userId: id,
+              userId: a.userId,
               name: musicianUser?.name || 'Unknown',
               instrument: musicianUser?.instruments?.[0]?.instrument || 'Unknown',
+              role: a.role,
+              status: existing?.status ?? 'pending',
+              ratePerHour: musicianUser?.performanceProfile?.performanceRatePerHour ?? existing?.ratePerHour,
+              responseAt: existing?.responseAt,
+              declineReason: existing?.declineReason,
+              assignedAt: existing?.assignedAt ?? now,
+              assignedBy: existing?.assignedBy ?? (user?.id ?? 'admin'),
             };
           });
-          return { ...booking, assignedMusicians, status: 'MUSICIANS_CONFIRMED' };
+          return { ...booking, assignedMusicians, status: 'INVITATIONS_SENT' as PerformanceBookingStatus };
         }
         return booking;
       })
     );
-  }, [users]);
+  }, [users, user]);
 
   // ---------------------------------------------------------------------------
   // updatePerformanceBookingStatus
@@ -356,6 +368,36 @@ export function EventsDomainProvider({
       prev.map(booking =>
         booking.id === bookingId ? { ...booking, status } : booking
       )
+    );
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // respondToPerformanceInvitation (teacher action, client-side mock)
+  // ---------------------------------------------------------------------------
+  const respondToPerformanceInvitation = useCallback((
+    bookingId: string,
+    userId: string,
+    accept: boolean,
+    declineReason?: string
+  ) => {
+    setMockPerformanceBookings(prev =>
+      prev.map(booking => {
+        if (booking.id !== bookingId) return booking;
+        const now = new Date().toISOString();
+        const updatedMusicians = (booking.assignedMusicians ?? []).map(m => {
+          if (m.userId !== userId) return m;
+          return {
+            ...m,
+            status: accept ? 'accepted' as const : 'declined' as const,
+            responseAt: now,
+            declineReason: accept ? undefined : declineReason,
+          };
+        });
+        const allAccepted = updatedMusicians.every(m => m.status === 'accepted');
+        const hasDeclined = updatedMusicians.some(m => m.status === 'declined');
+        const newStatus: PerformanceBookingStatus = allAccepted ? 'CONFIRMED' : hasDeclined ? 'MUSICIANS_NEEDED' : booking.status;
+        return { ...booking, assignedMusicians: updatedMusicians, status: newStatus };
+      })
     );
   }, []);
 
@@ -624,6 +666,7 @@ export function EventsDomainProvider({
       removePerformanceFromEvent,
       assignMusiciansToPerformance,
       updatePerformanceBookingStatus,
+      respondToPerformanceInvitation,
       addPerformanceBooking,
       createMasterClass,
       publishMasterClass,
@@ -648,6 +691,7 @@ export function EventsDomainProvider({
       removePerformanceFromEvent,
       assignMusiciansToPerformance,
       updatePerformanceBookingStatus,
+      respondToPerformanceInvitation,
       addPerformanceBooking,
       createMasterClass,
       publishMasterClass,

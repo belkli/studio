@@ -4,7 +4,7 @@ import type { FormSubmission } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
-import { Eye, Check, ThumbsDown, Edit, RotateCcw, X } from 'lucide-react';
+import { Eye, Check, ThumbsDown, Edit, RotateCcw, X, PartyPopper } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { useMemo, useState } from 'react';
@@ -12,6 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLocale, useTranslations } from "next-intl";
+import { EmptyState } from '@/components/ui/empty-state';
+import { isInUserApprovalQueue, isOverdue } from '@/lib/form-utils';
 
 type BulkAction = 'approve' | 'reject' | 'request_revision';
 
@@ -123,7 +125,7 @@ const ApprovalsTable = ({
                                     />
                                 </TableCell>
                                 <TableCell className="font-medium text-start">
-                                    <Link href={`/dashboard/forms/${form.id}`} className="hover:underline">{form.studentName}</Link>
+                                    <Link href={`/dashboard/forms/${form.id}?from=approvals`} className="hover:underline">{form.studentName}</Link>
                                 </TableCell>
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 <TableCell className="text-start">{t(`formTypes.${form.formType}` as any) || form.formType}</TableCell>
@@ -136,7 +138,7 @@ const ApprovalsTable = ({
                                 <TableCell className="text-start">
                                     <div className="flex justify-start gap-2">
                                         <Button asChild variant="outline" size="sm">
-                                            <Link href={`/dashboard/forms/${form.id}`}>
+                                            <Link href={`/dashboard/forms/${form.id}?from=approvals`}>
                                                 <Eye className="me-1 h-4 w-4" />
                                                 {tc('view')}
                                             </Link>
@@ -146,7 +148,7 @@ const ApprovalsTable = ({
                                             <>
                                                 {canRevise ? (
                                                     <Button asChild variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700">
-                                                        <Link href={`/dashboard/forms/${form.id}?edit=true`}>
+                                                        <Link href={`/dashboard/forms/${form.id}?edit=true&from=approvals`}>
                                                             <Edit className="me-1 h-4 w-4" />
                                                             {t('reviseAndSend')}
                                                         </Link>
@@ -183,29 +185,11 @@ export default function ApprovalsPage() {
     const locale = useLocale();
     const isRtl = locale === 'he' || locale === 'ar';
 
-    const { myQueue, allPending } = useMemo(() => {
-        if (!user) return { myQueue: [], allPending: [] };
+    const { myQueue, allPending, overdueForms } = useMemo(() => {
+        if (!user) return { myQueue: [], allPending: [], overdueForms: [] };
 
         const openStatuses: FormSubmission['status'][] = ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED', 'APPROVED'];
-        const myQueueForms = formSubmissions.filter((form) => {
-            if (form.status === 'DRAFT' || form.status === 'REJECTED' || form.status === 'FINAL_APPROVED') {
-                return false;
-            }
-
-            switch (user.role) {
-                case 'teacher':
-                    return form.status === 'PENDING_TEACHER' && Boolean(user.students?.includes(form.studentId));
-                case 'delegated_admin':
-                case 'conservatorium_admin':
-                    return (form.status === 'PENDING_ADMIN' || form.status === 'REVISION_REQUIRED') && form.conservatoriumId === user.conservatoriumId;
-                case 'site_admin':
-                    return form.status === 'PENDING_ADMIN' || form.status === 'REVISION_REQUIRED';
-                case 'ministry_director':
-                    return form.status === 'APPROVED';
-                default:
-                    return false;
-            }
-        });
+        const myQueueForms = formSubmissions.filter((form) => isInUserApprovalQueue(form, user));
 
         const allPendingForms = formSubmissions.filter((form) => {
             if (!openStatuses.includes(form.status)) {
@@ -223,7 +207,9 @@ export default function ApprovalsPage() {
             return true;
         });
 
-        return { myQueue: myQueueForms, allPending: allPendingForms };
+        const overdueFormsList = allPendingForms.filter(form => isOverdue(form));
+
+        return { myQueue: myQueueForms, allPending: allPendingForms, overdueForms: overdueFormsList };
     }, [user, formSubmissions]);
 
     const handleApprove = (form: FormSubmission) => {
@@ -279,11 +265,26 @@ export default function ApprovalsPage() {
             <Tabs defaultValue="my-queue" dir={isRtl ? 'rtl' : 'ltr'}>
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="my-queue">
-                        {t('tabs.forYourHandling')}
-                        {myQueue.length > 0 && <span className="ms-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{myQueue.length}</span>}
+                        {t('tabs.myQueue')}
+                        {myQueue.length > 0 && (
+                            <span
+                                className="ms-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white"
+                                aria-live="polite"
+                                aria-label={t('queueCount', { count: myQueue.length })}
+                            >
+                                {myQueue.length}
+                            </span>
+                        )}
                     </TabsTrigger>
-                    <TabsTrigger value="all-open">{t('tabs.allOpenForms')}</TabsTrigger>
-                    <TabsTrigger value="overdue" disabled>{t('tabs.overdue')}</TabsTrigger>
+                    <TabsTrigger value="all-open">{t('tabs.allOpen')}</TabsTrigger>
+                    <TabsTrigger value="overdue">
+                        {t('tabs.overdue')}
+                        {overdueForms.length > 0 && (
+                            <span className="ms-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
+                                {overdueForms.length}
+                            </span>
+                        )}
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value="my-queue" className="mt-6">
                     <Card>
@@ -292,14 +293,22 @@ export default function ApprovalsPage() {
                             <CardDescription>{t('myQueueDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ApprovalsTable
-                                forms={myQueue}
-                                onApprove={handleApprove}
-                                onReject={handleReject}
-                                showActions={true}
-                                onBulkAction={handleBulkAction}
-                                allowBulkActions={Boolean(user && (user.role === 'conservatorium_admin' || user.role === 'delegated_admin' || user.role === 'site_admin'))}
-                            />
+                            {myQueue.length === 0 ? (
+                                <EmptyState
+                                    icon={PartyPopper}
+                                    title={t('allCaughtUp')}
+                                    description={t('noPendingApprovals')}
+                                />
+                            ) : (
+                                <ApprovalsTable
+                                    forms={myQueue}
+                                    onApprove={handleApprove}
+                                    onReject={handleReject}
+                                    showActions={true}
+                                    onBulkAction={handleBulkAction}
+                                    allowBulkActions={Boolean(user && (user.role === 'conservatorium_admin' || user.role === 'delegated_admin' || user.role === 'site_admin'))}
+                                />
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -318,6 +327,32 @@ export default function ApprovalsPage() {
                                 onBulkAction={handleBulkAction}
                                 allowBulkActions={false}
                             />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="overdue" className="mt-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('overdueTitle')}</CardTitle>
+                            <CardDescription>{t('overdueDesc')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {overdueForms.length === 0 ? (
+                                <EmptyState
+                                    icon={PartyPopper}
+                                    title={t('allCaughtUp')}
+                                    description={t('noOverdueForms')}
+                                />
+                            ) : (
+                                <ApprovalsTable
+                                    forms={overdueForms}
+                                    onApprove={handleApprove}
+                                    onReject={handleReject}
+                                    showActions={true}
+                                    onBulkAction={handleBulkAction}
+                                    allowBulkActions={Boolean(user && (user.role === 'conservatorium_admin' || user.role === 'delegated_admin' || user.role === 'site_admin'))}
+                                />
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>

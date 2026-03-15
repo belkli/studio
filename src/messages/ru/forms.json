@@ -5,6 +5,7 @@
     "approveAndForward": "Одобрить и переслать администратору",
     "approveAndSign": "Одобрить и подписать",
     "backToAll": "Вернуться ко всем формам",
+    "backToApprovals": "Вернуться к утверждениям",
     "clear": "Очистить",
     "clearSignature": "Очистить подпись",
     "confirmSignature": "Подтвердить подпись",
@@ -142,7 +143,8 @@
       "all": "Все",
       "approved": "Одобрено",
       "drafts": "Черновики",
-      "pending": "Ожидают"
+      "pending": "Ожидают",
+      "rejected": "Отклонено"
     },
     "title": "Формы и запросы"
   },
@@ -200,8 +202,16 @@
     "tabs": {
       "allOpenForms": "Все открытые формы",
       "forYourHandling": "На вашей обработке",
+      "myQueue": "Моя очередь",
+      "allOpen": "Все открытые",
       "overdue": "Просрочено"
     },
+    "allCaughtUp": "Всё сделано!",
+    "noPendingApprovals": "Сейчас нет форм, ожидающих вашего рассмотрения.",
+    "queueCount": "{count} ожидают",
+    "overdueTitle": "Просроченные формы",
+    "overdueDesc": "Формы, превысившие срок в 7 дней.",
+    "noOverdueForms": "Просроченных форм нет.",
     "title": "Утверждения",
     "type": "Тип",
     "view": "Просмотр",

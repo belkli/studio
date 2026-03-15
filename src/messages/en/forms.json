@@ -18,6 +18,7 @@
     "repertoireTitle": "Repertoire",
     "totalDuration": "Total Duration",
     "backToAll": "Back to all forms",
+    "backToApprovals": "Back to Approvals",
     "fixAndResubmit": "Fix and Resubmit",
     "downloadPdf": "Download PDF",
     "teacherActions": "Teacher Actions",
@@ -134,7 +135,8 @@
       "all": "All Forms",
       "pending": "Pending",
       "approved": "Approved",
-      "drafts": "Drafts"
+      "drafts": "Drafts",
+      "rejected": "Rejected"
     },
     "noForms": "No forms to display",
     "table": {
@@ -194,8 +196,16 @@
     "tabs": {
       "forYourHandling": "For Your Handling",
       "allOpenForms": "All Open Forms",
+      "myQueue": "My Queue",
+      "allOpen": "All Open",
       "overdue": "Overdue"
     },
+    "allCaughtUp": "All caught up!",
+    "noPendingApprovals": "No forms are waiting for your review right now.",
+    "queueCount": "{count} pending",
+    "overdueTitle": "Overdue Forms",
+    "overdueDesc": "Forms that have exceeded the 7-day SLA limit.",
+    "noOverdueForms": "No overdue forms right now.",
     "myQueueTitle": "Forms Pending Your Handling",
     "myQueueDesc": "These forms require your approval, rejection, or revision to proceed.",
     "allOpenTitle": "All Open Forms in the System",

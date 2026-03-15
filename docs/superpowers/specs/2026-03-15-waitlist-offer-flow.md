@@ -280,17 +280,28 @@ ACCEPTED --[24h expires]-------> EXPIRED
 
 ---
 
-## 8. Migration Path
+## 8. Implementation Steps (Greenfield)
 
-1. Add `DEFERRED` to `WaitlistStatus` type.
-2. Add new fields to `WaitlistEntry` type.
-3. Create `OfferSlotDialog` component.
-4. Create `/dashboard/waitlist/offer/[entryId]` page.
-5. Add server actions for offer/accept/decline/defer.
-6. Add notification creation on offer send.
-7. Add parent dashboard banner for pending offers.
-8. Update admin waitlist dashboard with stats bar and FIFO guidance.
-9. Add soft-lock mechanism for offered slots.
+**Note:** This is greenfield -- no production users. Build the ideal design from scratch.
+
+### Phase 1: Data Model & Security
+1. Define the complete `WaitlistStatus` type with all states: `WAITING | OFFERED | ACCEPTED | DECLINED | EXPIRED | DEFERRED`.
+2. Define the complete `WaitlistEntry` type with all fields (section 3 above).
+3. Refactor `withAuth()` to accept `{ roles }` parameter (BLOCKING-SEC-01).
+4. Implement atomic compare-and-swap for offer acceptance in all DB adapters (BLOCKING-SEC-02).
+5. Add conservatoriumId server-side override to all waitlist actions (SEC-CROSS-03).
+6. Add server-side expiry enforcement.
+
+### Phase 2: Core Implementation
+7. Build server actions: offer, accept, decline, defer, expire, revoke (section 4).
+8. Build `OfferSlotDialog` component (admin selects real slot from teacher's availability).
+9. Build `/dashboard/waitlist/offer/[entryId]` page (parent accept/decline/defer with countdown).
+10. Add slot soft-lock mechanism with explicit release on decline/expire/defer/revoke.
+
+### Phase 3: Integration
+11. Update admin waitlist dashboard with FIFO guidance, stats bar, skip-reason enforcement.
+12. Add parent dashboard banner for pending offers.
+13. Wire notification system: in-app + email on offer send, expiry, and acceptance.
 
 ---
 
@@ -721,13 +732,9 @@ The client-side `setInterval(expireWaitlistOffers, 60000)` is insufficient for p
 2. **On accept attempt:** Check `offerExpiresAt` server-side (as shown in S2 above).
 3. **For Postgres:** Consider a `pg_cron` job or application-level cron (e.g., Vercel Cron) that runs `UPDATE waitlist_entries SET status = 'EXPIRED' WHERE status = 'OFFERED' AND offer_expires_at < NOW()` every 5 minutes.
 
-### S5. Updated Migration Path (prepend security steps)
+### S5. Security Steps
 
-Insert before step 1:
-- **0a.** Refactor `withAuth()` to accept `roles` parameter (BLOCKING-SEC-01).
-- **0b.** Implement atomic compare-and-swap for offer acceptance in all three DB adapters (BLOCKING-SEC-02).
-- **0c.** Add conservatoriumId server-side override to all waitlist actions (SEC-CROSS-03).
-- **0d.** Add server-side expiry enforcement (S4 above).
+These are now incorporated as Phase 1 of the Implementation Steps (section 8). No separate migration needed -- security is built in from the start.
 
 ---
 

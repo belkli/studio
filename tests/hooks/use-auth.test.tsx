@@ -129,7 +129,7 @@ describe('AuthProvider smoke coverage', () => {
                 result.current.updateEventStatus(eventId, 'COMPLETED');
             }
             if (bookingId) {
-                result.current.assignMusiciansToPerformance(bookingId, ['teacher-user-1']);
+                result.current.assignMusiciansToPerformance(bookingId, [{ userId: 'teacher-user-1', role: 'ensemble' }]);
                 result.current.updatePerformanceBookingStatus(bookingId, 'BOOKING_CONFIRMED');
             }
         });

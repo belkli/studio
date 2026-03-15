@@ -346,18 +346,63 @@ In kanban view, each card shows:
 
 ---
 
-## 8. Migration Path
+## 8. Implementation Steps (Greenfield)
 
-1. Define `PerformanceAssignment` type and `PerformanceAssignmentStatus`.
-2. Update `PerformanceBooking.assignedMusicians` type (backward-compatible: old data has no `status` field, default to `'accepted'`).
-3. Add `requiredRoles`, `eventDurationHours`, `estimatedMusicianCost`, `adminNotes` to `PerformanceBooking`.
-4. Rewrite `AssignMusicianDialog` with filter + role picker + availability check.
-5. Create `src/lib/performance-utils.ts` with `checkMusicianAvailability()`.
-6. Create `/dashboard/performances/invitations` page for musicians.
-7. Add musician dashboard banner for pending invitations.
-8. Add server actions for assignment and response.
-9. Update booking card display with assignment status badges.
-10. Add cost calculation to booking cards and Send Quote dialog.
+**Note:** This is greenfield -- no production users, no migration guards needed. Build the ideal design from scratch.
+
+### Revised Pipeline Status (Greenfield Design)
+
+Replace the existing 7-stage pipeline entirely. See section "Greenfield: Simplified Performance Pipeline" below for the recommended enum. Summary:
+
+```
+DRAFT → PENDING_REVIEW → MUSICIANS_NEEDED → INVITATIONS_SENT → QUOTE_READY → QUOTE_SENT → CONTRACTS_PENDING → CONFIRMED → COMPLETED | CANCELLED
+```
+
+Key changes from the brownfield pipeline:
+- Collapses "Manager Review" + "Music Review" into `PENDING_REVIEW`
+- Explicit `CONTRACTS_PENDING` stage (legally required -- client must sign before deposit)
+- `CONFIRMED` = contracts signed + deposit received
+- `CANCELLED` with reason at any stage
+
+### Phase 1: Security Foundation (steps 1-5)
+1. Refactor `withAuth()` to accept `{ roles }` parameter (BLOCKING-SEC-01).
+2. Add conservatoriumId tenant verification to all performance actions (SEC-CROSS-03).
+3. Add rate/cost data filtering by role -- use `projectBookingForRole()` DTO projection (non-admin cannot see rates). Never use in-place mutation (`delete obj.field`); always project into a new object.
+4. Add musician eligibility verification (opted-in + admin-approved) (SEC-PERF-08).
+5. Add opt-out warning badge -- if a previously opted-in musician has `isOptedIn: false`, show a warning badge on their existing assignments.
+
+### Phase 2: Data Model & Actions (steps 6-12)
+6. Define `PerformanceAssignment` type with full schema: `userId, name, instrument, role, status, ratePerHour, responseAt, declineReason, assignedAt, assignedBy`.
+7. Define `PerformanceAssignmentStatus`: `pending | accepted | declined | opted_out`.
+8. Define `PerformanceBooking` with `assignedMusicians: PerformanceAssignment[]` and `requiredRoles: { instrument, role, count }[]`.
+9. Define `PerformanceQuotation` type (see `docs/legal/performance-booking-legal-brief.md` section 4) with: quotationNumber, issueDate, validUntil, clientDetails, conservatoriumDetails, eventDetails, lineItems (musician fees, equipment, travel), subtotal, vatRate, vatAmount, total, paymentTerms, cancellationTerms, signatureFields.
+10. Extend `PerformanceProfile` with tax fields: `taxStatus: 'employee' | 'licensed_dealer' | 'exempt_dealer'`, `businessNumber?: string`, `taxWithholdingRate?: number`.
+11. Create `src/lib/performance-utils.ts` with `checkMusicianAvailability()`, `calculateBookingCost()`, `generateQuotationNumber()`.
+12. Build server actions:
+    - `assignMusiciansAction` (admin: assign musicians with roles)
+    - `respondToAssignmentAction` (musician: accept/decline invitation)
+    - `sendQuotationAction` (admin: generate and send quotation to client, transitions `QUOTE_READY → QUOTE_SENT`)
+    - `signQuotationAction` (client: digitally sign quotation, transitions `QUOTE_SENT → CONTRACTS_PENDING`)
+    - `recordDepositAction` (admin: record deposit payment, transitions `CONTRACTS_PENDING → CONFIRMED`)
+
+### Phase 3: Quotation & Contract / Legal Integration (steps 13-17)
+13. Build `PerformanceQuotation` generator -- server action that assembles line items from assigned musicians, applies VAT per `src/lib/vat.ts`, and produces a structured quotation object. Status: `QUOTE_READY → QUOTE_SENT`.
+14. Build quotation PDF renderer (or structured HTML view) showing all legally required fields per Israeli Consumer Protection Law (see Legal section L2).
+15. Build client-facing quotation review + digital signing page at `/dashboard/performances/[bookingId]/sign`. Use the existing `SignatureCapture` component and `saveSignatureAction` pattern from the enrollment wizard. Status: `QUOTE_SENT → CONTRACTS_PENDING`.
+16. Build internal musician engagement confirmation -- when a musician accepts an assignment, generate a confirmation record documenting: musician identity, event details, agreed rate, cancellation terms, IP/recording consent.
+17. Implement cancellation flow with sliding-scale fees per Legal section L6:
+    - Declined within 72h response deadline: no penalty
+    - Accepted, cancels >72h before event: warning only
+    - Accepted, cancels 24-72h before event: ILS 200 or 20% of fee (whichever lower)
+    - Accepted, cancels <24h / no-show: full fee forfeited
+    - Client cancellation: graduated scale per Legal section L3 clause 4
+
+### Phase 4: UI Components & Integration (steps 18-22)
+18. Build assignment Sheet drawer with instrument filter, availability/conflict detection, role picker, and cost summary (replacing current simple Dialog).
+19. Build `/dashboard/performances/invitations` page for musicians -- list of pending/past invitations with accept/decline actions.
+20. Build musician dashboard banner for pending invitations (count badge in sidebar).
+21. Build client quotation view with signing flow (4-step: Review Details, Review Terms, SignatureCapture, Confirmation). Status: `CONTRACTS_PENDING → CONFIRMED` when contracts signed + deposit received.
+22. Update booking card display in kanban/list views with assignment status badges, cost summary, and all pipeline stages from the greenfield enum.
 
 ---
 
@@ -1123,13 +1168,9 @@ if (!musician.performanceProfile?.isOptedIn || !musician.performanceProfile?.adm
 3. The admin must manually reassign the slot or confirm removal.
 This prevents silent changes to confirmed bookings.
 
-### S5. Updated Migration Path (prepend security steps)
+### S5. Security in Implementation Steps
 
-Insert before step 1:
-- **0a.** Refactor `withAuth()` to accept `roles` parameter (BLOCKING-SEC-01).
-- **0b.** Add conservatoriumId tenant verification to all performance actions (SEC-CROSS-03).
-- **0c.** Add rate/cost data filtering by role (S3 above).
-- **0d.** Add musician eligibility verification (S4 above).
+These security requirements are now incorporated as Phase 1 of the Implementation Steps (section 8). No separate migration needed -- security is built in from the start.
 
 ---
 
@@ -1214,6 +1255,7 @@ Insert before step 1:
 | Same musician in overlapping events | Conflict warning shown. Both assignments allowed (admin override). |
 | Event cancelled after musicians confirmed | All musicians notified. Booking status -> cancelled. |
 | No opted-in musicians available | Empty state in dialog: "No musicians match filters. Invite teachers to opt in to performances." |
+| Decline reason visibility | Admin sees all decline reasons. The declined musician sees their own reason. Other musicians and clients see only "Performer TBD" for unfilled slots. (SEC-PERF-04) |
 
 ### Legal & Contract User Stories
 
@@ -1338,7 +1380,7 @@ Every quotation generated by the platform MUST include these fields (legal basis
 | Payment terms (deposit amount, balance due date) | Contract terms |
 | Cancellation terms (must reference 14-day cooling-off) | Consumer Protection S. 14g |
 
-**VAT note:** Current Israeli VAT rate is 18% (since Jan 2025). The platform handles this via `src/lib/vat.ts` with `VAT_RATE = 0.18` and per-conservatorium overrides via `getVatRate()`. The PM's AC-9 references 17% -- this must be corrected to 18%.
+**VAT note:** Current Israeli VAT rate is 18% (since Jan 2025). The platform handles this via `src/lib/vat.ts` with `VAT_RATE = 0.18` and per-conservatorium overrides via `getVatRate()`. All specs now use 18%.
 
 **Quotation validity:** After expiry, the quotation auto-transitions to `EXPIRED` status. An expired quotation is no longer a binding offer (Contract Law S. 3(2)). Admin can re-issue.
 
@@ -1500,9 +1542,9 @@ export type PerformanceQuotation = {
 };
 ```
 
-### L11. Correction: VAT Rate in AC-9
+### L11. VAT Rate Confirmation
 
-The PM's AC-9 references "VAT (17% = 1,350 ILS)". This is incorrect. Israel's VAT rate has been **18%** since January 2025. The platform already reflects this in `src/lib/vat.ts` (VAT_RATE = 0.18). All quotation and contract amounts must use 18%.
+All PM acceptance criteria (AC-9, v1 bullet) now correctly reference 18% VAT, matching `src/lib/vat.ts` (VAT_RATE = 0.18). No further correction needed.
 
 ---
 

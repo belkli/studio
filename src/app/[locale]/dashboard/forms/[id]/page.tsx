@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, Send, ThumbsDown, ArrowLeft, Signature, Download, CircleCheckBig, ShieldAlert, Edit } from 'lucide-react';
+import { Check, Send, ThumbsDown, ArrowLeft, ArrowRight, Signature, Download, CircleCheckBig, ShieldAlert, Edit } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
@@ -47,6 +47,8 @@ export default function FormDetailsPage() {
     const params = useParams();
     const searchParams = useSearchParams();
     const formId = params.id as string;
+    const fromContext = searchParams.get('from') === 'approvals' ? 'approvals' : 'forms';
+    const isFromApprovals = fromContext === 'approvals';
     const { toast } = useToast();
     const { user, users, conservatoriums, formSubmissions: forms, updateForm, formTemplates } = useAuth();
     const t = useTranslations('Forms');
@@ -62,13 +64,14 @@ export default function FormDetailsPage() {
         if (!user || !form) {
             return { isTeacherApproval: false, isAdminFinalApproval: false, isMinistryApproval: false, isRevisable: false };
         }
+        // SECURITY: always check role + form.status server-side; isFromApprovals is a UI hint only
         return {
-            isTeacherApproval: user.role === 'teacher' && form.status === 'PENDING_TEACHER',
-            isAdminFinalApproval: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'PENDING_ADMIN',
-            isMinistryApproval: user.role === 'ministry_director' && form.status === 'APPROVED',
-            isRevisable: (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'REVISION_REQUIRED',
+            isTeacherApproval: isFromApprovals && user.role === 'teacher' && form.status === 'PENDING_TEACHER',
+            isAdminFinalApproval: isFromApprovals && (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'PENDING_ADMIN',
+            isMinistryApproval: isFromApprovals && user.role === 'ministry_director' && form.status === 'APPROVED',
+            isRevisable: isFromApprovals && (user.role === 'conservatorium_admin' || user.role === 'site_admin') && form.status === 'REVISION_REQUIRED',
         }
-    }, [user, form]);
+    }, [user, form, isFromApprovals]);
 
     const [isEditing, setIsEditing] = useState(() => searchParams.get('edit') === 'true' && isRevisable);
     const [isSignatureDialogOpen, setSignatureDialogOpen] = useState(false);
@@ -400,9 +403,12 @@ export default function FormDetailsPage() {
         <div className="space-y-6" dir={dir}>
             <div className="flex items-center justify-between">
                 <Button variant="ghost" asChild>
-                    <Link href="/dashboard/forms">
-                        <ArrowLeft className="me-2 h-4 w-4" />
-                        {t('backToAll')}
+                    <Link href={isFromApprovals ? '/dashboard/approvals' : '/dashboard/forms'}>
+                        {dir === 'rtl'
+                            ? <ArrowRight className="me-2 h-4 w-4" />
+                            : <ArrowLeft className="me-2 h-4 w-4" />
+                        }
+                        {isFromApprovals ? t('backToApprovals') : t('backToAll')}
                     </Link>
                 </Button>
                 <div className="flex items-center gap-4">

@@ -1,4 +1,6 @@
-import { useMemo, useEffect } from 'react';
+'use client';
+
+import { useMemo, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import type { WaitlistEntry, WaitlistStatus } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -22,8 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from '@/components/ui/empty-state';
 import { useTranslations } from 'next-intl';
-
-
+import { OfferSlotDialog } from './offer-slot-dialog';
 
 const statusClasses: Record<WaitlistStatus, string> = {
     WAITING: 'bg-blue-100 text-blue-800',
@@ -36,13 +37,18 @@ const statusClasses: Record<WaitlistStatus, string> = {
     WITHDRAWN: 'bg-gray-200 text-gray-600',
 };
 
+type EnrichedEntry = WaitlistEntry & { studentName: string; teacherName: string };
+
 export function AdminWaitlistDashboard() {
     const t = useTranslations('Waitlist');
+    const tOffer = useTranslations('WaitlistOffer');
     const tCommon = useTranslations('Common');
     const dateLocale = useDateLocale();
 
     const { user, waitlist: waitlistEntries, updateWaitlistStatus, offerSlotToWaitlisted, expireWaitlistOffers, revokeWaitlistOffer, users } = useAuth();
     const { toast } = useToast();
+
+    const [offerDialogEntry, setOfferDialogEntry] = useState<EnrichedEntry | null>(null);
 
     useEffect(() => {
         expireWaitlistOffers();
@@ -50,7 +56,7 @@ export function AdminWaitlistDashboard() {
         return () => clearInterval(interval);
     }, [expireWaitlistOffers]);
 
-    const visibleWaitlist = useMemo(() => {
+    const visibleWaitlist = useMemo((): EnrichedEntry[] => {
         if (!user) return [];
         return waitlistEntries.map(entry => {
             const student = users.find(u => u.id === entry.studentId);
@@ -64,19 +70,28 @@ export function AdminWaitlistDashboard() {
             .sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
     }, [user, waitlistEntries, users, t]);
 
-    const handleOffer = (entry: WaitlistEntry & { studentName: string }, studentName: string) => {
+    // First WAITING entry = next in queue (FIFO)
+    const firstWaitingId = useMemo(() => {
+        const waiting = visibleWaitlist.filter(e => e.status === 'WAITING');
+        return waiting.length > 0 ? waiting[0].id : null;
+    }, [visibleWaitlist]);
+
+    const handleOfferConfirm = (entryId: string, slotId: string, offerExpiresAt: string) => {
+        const entry = visibleWaitlist.find(e => e.id === entryId);
+        if (!entry) return;
         const day = entry.preferredDays?.[0] ?? 'SUN';
         const time = entry.preferredTimes?.[0];
         const slotLabel = time ? `${day} ${time}` : day;
-        offerSlotToWaitlisted(entry.id, `slot-${entry.id}-offer`, slotLabel);
+        offerSlotToWaitlisted(entryId, slotId, slotLabel);
         toast({
             title: t('offerSent'),
-            description: t('offerSentDesc', { name: studentName }),
+            description: t('offerSentDesc', { name: entry.studentName }),
         });
-    }
+        setOfferDialogEntry(null);
+    };
 
     const handleRemove = (entryId: string) => {
-        updateWaitlistStatus(entryId, 'DECLINED'); // Or a new "REMOVED" status
+        updateWaitlistStatus(entryId, 'DECLINED');
         toast({
             variant: "destructive",
             title: t('removed'),
@@ -84,113 +99,144 @@ export function AdminWaitlistDashboard() {
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('title')}</CardTitle>
-                <CardDescription>{t('description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="text-start">{t('student')}</TableHead>
-                            <TableHead className="text-start">{t('requestedTeacher')}</TableHead>
-                            <TableHead className="text-start">{t('instrument')}</TableHead>
-                            <TableHead className="text-start">{t('joinedDate')}</TableHead>
-                            <TableHead className="text-start">{t('status')}</TableHead>
-                            <TableHead className="text-start">{t('actions')}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {visibleWaitlist.length === 0 ? (
+        <>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('title')}</CardTitle>
+                    <CardDescription>{t('description')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={6} className="p-0">
-                                    <EmptyState
-                                        icon={ListChecks}
-                                        title={t('emptyTitle')}
-                                        description={t('emptyDesc')}
-                                        className="py-12"
-                                    />
-                                </TableCell>
+                                <TableHead className="text-start">{t('student')}</TableHead>
+                                <TableHead className="text-start">{t('requestedTeacher')}</TableHead>
+                                <TableHead className="text-start">{t('instrument')}</TableHead>
+                                <TableHead className="text-start">{t('joinedDate')}</TableHead>
+                                <TableHead className="text-start">{t('status')}</TableHead>
+                                <TableHead className="text-start">{t('actions')}</TableHead>
                             </TableRow>
-                        ) : (
-                            visibleWaitlist.map(entry => (
-                                <TableRow key={entry.id}>
-                                    <TableCell className="font-medium">{entry.studentName}</TableCell>
-                                    <TableCell>{entry.teacherName}</TableCell>
-                                    <TableCell>{entry.instrument}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col">
-                                            <span>{format(new Date(entry.joinedAt), 'dd/MM/yyyy')}</span>
-                                            <span className="text-xs text-muted-foreground">
-                                                ({formatDistanceToNow(new Date(entry.joinedAt), { locale: dateLocale, addSuffix: true })})
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge className={statusClasses[entry.status]}>
-                                            {t(`statuses.${entry.status}`)}
-                                        </Badge>
-                                        {entry.status === 'OFFERED' && (
-                                            <>
-                                                {entry.offeredSlotTime && (
-                                                    <div className="text-xs text-muted-foreground mt-1">{entry.offeredSlotTime}</div>
-                                                )}
-                                                {entry.offerExpiresAt && (
-                                                    <div className="text-xs text-muted-foreground">
-                                                        {t('offerExpiresIn', { time: formatDistanceToNow(new Date(entry.offerExpiresAt)) })}
-                                                    </div>
-                                                )}
-                                            </>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-start">
-                                        <div className="flex items-center gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={entry.status === 'OFFERED'}
-                                            onClick={() => handleOffer(entry, entry.studentName)}
-                                        >
-                                            <Send className="me-1 h-3 w-3" />
-                                            {t('sendOffer')}
-                                        </Button>
-                                        {entry.status === 'OFFERED' && (
-                                            <Button variant="ghost" size="sm" onClick={() => { revokeWaitlistOffer(entry.id); toast({ title: t('offerRevoked') }); }}>
-                                                <Undo className="me-1 h-3 w-3" />
-                                                {t('revokeOffer')}
-                                            </Button>
-                                        )}
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                                                    <Trash2 className="me-1 h-3 w-3" />
-                                                    {t('remove')}
-                                                </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>{t('removeTitle')}</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        {t('removeConfirm', { name: entry.studentName })}
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => handleRemove(entry.id)} className="bg-destructive hover:bg-destructive/90">
-                                                        {t('confirmRemove')}
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                        </div>
+                        </TableHeader>
+                        <TableBody>
+                            {visibleWaitlist.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="p-0">
+                                        <EmptyState
+                                            icon={ListChecks}
+                                            title={t('emptyTitle')}
+                                            description={t('emptyDesc')}
+                                            className="py-12"
+                                        />
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+                            ) : (
+                                visibleWaitlist.map(entry => (
+                                    <TableRow key={entry.id}>
+                                        <TableCell className="font-medium">
+                                            <div className="flex items-center gap-1.5">
+                                                {entry.studentName}
+                                                {entry.id === firstWaitingId && (
+                                                    <Badge variant="outline" className="text-xs border-blue-400 text-blue-700">
+                                                        {tOffer('nextInQueue')}
+                                                    </Badge>
+                                                )}
+                                                {(entry.deferredCount ?? 0) > 0 && (
+                                                    <Badge variant="outline" className="text-xs border-orange-400 text-orange-700">
+                                                        {tOffer('deferredCount', { count: entry.deferredCount ?? 0, max: 2 })}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            {entry.skipReason && (
+                                                <p className="text-xs text-muted-foreground mt-0.5">
+                                                    {tOffer('skipReasonLabel')}: {entry.skipReason}
+                                                </p>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>{entry.teacherName}</TableCell>
+                                        <TableCell>{entry.instrument}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col">
+                                                <span>{format(new Date(entry.joinedAt), 'dd/MM/yyyy')}</span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    ({formatDistanceToNow(new Date(entry.joinedAt), { locale: dateLocale, addSuffix: true })})
+                                                </span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge className={statusClasses[entry.status]}>
+                                                {t(`statuses.${entry.status}`)}
+                                            </Badge>
+                                            {entry.status === 'OFFERED' && (
+                                                <>
+                                                    {entry.offeredSlotTime && (
+                                                        <div className="text-xs text-muted-foreground mt-1">{entry.offeredSlotTime}</div>
+                                                    )}
+                                                    {entry.offerExpiresAt && (
+                                                        <div className="text-xs text-muted-foreground">
+                                                            {t('offerExpiresIn', { time: formatDistanceToNow(new Date(entry.offerExpiresAt)) })}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="text-start">
+                                            <div className="flex items-center gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={entry.status === 'OFFERED'}
+                                                onClick={() => setOfferDialogEntry(entry)}
+                                            >
+                                                <Send className="me-1 h-3 w-3" />
+                                                {t('sendOffer')}
+                                            </Button>
+                                            {entry.status === 'OFFERED' && (
+                                                <Button variant="ghost" size="sm" onClick={() => { revokeWaitlistOffer(entry.id); toast({ title: t('offerRevoked') }); }}>
+                                                    <Undo className="me-1 h-3 w-3" />
+                                                    {t('revokeOffer')}
+                                                </Button>
+                                            )}
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                                                        <Trash2 className="me-1 h-3 w-3" />
+                                                        {t('remove')}
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>{t('removeTitle')}</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            {t('removeConfirm', { name: entry.studentName })}
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => handleRemove(entry.id)} className="bg-destructive hover:bg-destructive/90">
+                                                            {t('confirmRemove')}
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            {/* OfferSlotDialog */}
+            {offerDialogEntry && (
+                <OfferSlotDialog
+                    entry={offerDialogEntry}
+                    open={!!offerDialogEntry}
+                    onOpenChange={open => { if (!open) setOfferDialogEntry(null); }}
+                    onConfirm={handleOfferConfirm}
+                />
+            )}
+        </>
     );
 }

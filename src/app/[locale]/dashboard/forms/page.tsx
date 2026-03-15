@@ -40,6 +40,7 @@ export default function FormsPage() {
     const pendingStatuses: FormStatus[] = ['PENDING_TEACHER', 'PENDING_ADMIN', 'REVISION_REQUIRED'];
     const approvedStatuses: FormStatus[] = ['APPROVED', 'FINAL_APPROVED'];
     const draftStatuses: FormStatus[] = ['DRAFT'];
+    const rejectedStatuses: FormStatus[] = ['REJECTED'];
 
     return (
         <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -62,6 +63,7 @@ export default function FormsPage() {
                         <TabsTrigger value="pending">{t('tabs.pending')}</TabsTrigger>
                         <TabsTrigger value="approved">{t('tabs.approved')}</TabsTrigger>
                         <TabsTrigger value="drafts">{t('tabs.drafts')}</TabsTrigger>
+                        <TabsTrigger value="rejected">{t('tabs.rejected')}</TabsTrigger>
                     </TabsList>
                     <div className="relative w-full max-w-xs">
                         <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -75,24 +77,34 @@ export default function FormsPage() {
                     </div>
                 </div>
                 <TabsContent value="all" className="pt-4">
-                    <FormsList searchQuery={searchQuery} />
+                    <FormsList searchQuery={searchQuery} fromContext="forms" />
                 </TabsContent>
                 <TabsContent value="pending" className="pt-4">
                     <FormsList
                         statusFilter={pendingStatuses}
                         searchQuery={searchQuery}
+                        fromContext="forms"
                     />
                 </TabsContent>
                 <TabsContent value="approved" className="pt-4">
                     <FormsList
                         statusFilter={approvedStatuses}
                         searchQuery={searchQuery}
+                        fromContext="forms"
                     />
                 </TabsContent>
                 <TabsContent value="drafts" className="pt-4">
                     <FormsList
                         statusFilter={draftStatuses}
                         searchQuery={searchQuery}
+                        fromContext="forms"
+                    />
+                </TabsContent>
+                <TabsContent value="rejected" className="pt-4">
+                    <FormsList
+                        statusFilter={rejectedStatuses}
+                        searchQuery={searchQuery}
+                        fromContext="forms"
                     />
                 </TabsContent>
             </Tabs>

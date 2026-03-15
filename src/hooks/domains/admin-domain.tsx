@@ -113,6 +113,7 @@ export interface AdminDomainContextType {
   offerSlotToWaitlisted: (entryId: string, slotId: string, slotTimeLabel: string) => void;
   acceptWaitlistOffer: (entryId: string) => void;
   declineWaitlistOffer: (entryId: string) => void;
+  deferWaitlistOffer: (entryId: string) => void;
   expireWaitlistOffers: () => void;
   revokeWaitlistOffer: (entryId: string) => void;
   updatePayrollStatus: (payrollId: string, status: PayrollStatus) => void;
@@ -517,6 +518,26 @@ export function AdminDomainProvider({
   }, []);
 
   // ---------------------------------------------------------------------------
+  // deferWaitlistOffer
+  // ---------------------------------------------------------------------------
+  const deferWaitlistOffer = useCallback((entryId: string) => {
+    setMockWaitlist(prev => prev.map(e => {
+      if (e.id !== entryId || e.status !== 'OFFERED') return e;
+      const currentDefers = e.deferredCount ?? 0;
+      if (currentDefers >= 2) return e; // max defers guard
+      return {
+        ...e,
+        status: 'WAITING' as WaitlistStatus,
+        deferredCount: currentDefers + 1,
+        lastDeferredAt: new Date().toISOString(),
+        offeredSlotId: undefined,
+        offeredSlotTime: undefined,
+        offerExpiresAt: undefined,
+      };
+    }));
+  }, []);
+
+  // ---------------------------------------------------------------------------
   // expireWaitlistOffers
   // ---------------------------------------------------------------------------
   const expireWaitlistOffers = useCallback(() => {
@@ -798,6 +819,7 @@ export function AdminDomainProvider({
       offerSlotToWaitlisted,
       acceptWaitlistOffer,
       declineWaitlistOffer,
+      deferWaitlistOffer,
       expireWaitlistOffers,
       revokeWaitlistOffer,
       updatePayrollStatus,
@@ -838,6 +860,7 @@ export function AdminDomainProvider({
       offerSlotToWaitlisted,
       acceptWaitlistOffer,
       declineWaitlistOffer,
+      deferWaitlistOffer,
       expireWaitlistOffers,
       revokeWaitlistOffer,
       updatePayrollStatus,

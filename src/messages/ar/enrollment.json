@@ -341,7 +341,10 @@
       "DECLINED": "تم الرفض",
       "EXPIRED": "منتهي الصلاحية",
       "OFFERED": "تم تقديم عرض",
-      "WAITING": "في الانتظار"
+      "WAITING": "في الانتظار",
+      "DEFERRED": "مؤجل",
+      "ENROLLED": "مسجل",
+      "WITHDRAWN": "انسحب"
     },
     "student": "الطالب",
     "title": "قائمة الانتظار النشطة",
@@ -355,6 +358,30 @@
     "declineOffer": "رفض العرض",
     "offerAccepted": "تم قبول العرض! تمت إضافة الدرس إلى جدولك.",
     "offerDeclined": "تم رفض العرض."
+  },
+  "WaitlistOffer": {
+    "offerDetails": "تفاصيل عرض الفترة",
+    "expiresIn": "ينتهي خلال",
+    "acceptOffer": "قبول العرض",
+    "declineOffer": "رفض",
+    "deferOffer": "تأجيل (الاحتفاظ بالمكان في الطابور)",
+    "deferDescription": "ستبقى في الطابور. يتم الحفاظ على موضعك.",
+    "offerExpired": "انتهت صلاحية هذا العرض.",
+    "maxDefersReached": "تم الوصول إلى الحد الأقصى للتأجيلات ({max}/{max})",
+    "offerBanner": "لديك عرض لفترة درس! راجع وأجب قبل انتهاء العرض.",
+    "reviewAndRespond": "مراجعة والرد",
+    "nextInQueue": "التالي في الطابور",
+    "deferredCount": "تم التأجيل {count} مرات",
+    "skipWarning": "هذا الطالب ليس الأول في الطابور. يرجى تقديم سبب للتخطي.",
+    "skipReason": "سبب تخطي الترتيب",
+    "skipReasonRequired": "اشرح سبب تقديم العرض لهذا الطالب خارج الترتيب...",
+    "skipReasonLabel": "سبب التخطي",
+    "selectSlot": "اختر فترة درس",
+    "noSlotsAvailable": "لا توجد فترات دروس متاحة لهذا المعلم.",
+    "sendOffer": "إرسال العرض",
+    "proposedTime": "الوقت المقترح",
+    "offerExpires": "ينتهي العرض",
+    "declineSuccess": "تمت إزالتك من قائمة الانتظار."
   },
   "PlayingSchool": {
     "wizard": {

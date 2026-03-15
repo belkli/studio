@@ -26,6 +26,63 @@ export const offerSlotToWaitlistedAction = withAuth(
   }
 );
 
+/**
+ * Offer a waitlist slot with FIFO enforcement (SEC-WAIT-09).
+ *
+ * When the target entry is NOT the first WAITING entry (by joinedAt),
+ * a non-empty skipReason is required. If skipReason is missing the action
+ * returns { success: false, code: 'SKIP_REASON_REQUIRED' }.
+ */
+const OfferWaitlistSlotSchema = z.object({
+  entryId: z.string().min(1),
+  slotId: z.string().min(1),
+  offerExpiresAt: z.string().min(1),
+  skipReason: z.string().optional(),
+});
+
+export const offerWaitlistSlotAction = withAuth(
+  OfferWaitlistSlotSchema,
+  async (data) => {
+    try {
+      const db = await getDb();
+      const entry = await db.waitlist.findById(data.entryId);
+      if (!entry) {
+        return { success: false, error: 'Waitlist entry not found.', code: 'NOT_FOUND' };
+      }
+
+      // FIFO check: find the earliest WAITING entry for the same conservatorium
+      const allEntries = await db.waitlist.findByConservatorium(entry.conservatoriumId);
+      const waitingEntries = allEntries
+        .filter(e => e.status === 'WAITING')
+        .sort((a, b) => new Date(a.joinedAt).getTime() - new Date(b.joinedAt).getTime());
+
+      const isFirstInQueue = waitingEntries.length === 0 || waitingEntries[0].id === data.entryId;
+
+      if (!isFirstInQueue) {
+        if (!data.skipReason || data.skipReason.trim().length === 0) {
+          return {
+            success: false,
+            error: 'A reason is required when skipping FIFO order.',
+            code: 'SKIP_REASON_REQUIRED',
+          };
+        }
+        // Record skipReason on the entry
+        await db.waitlist.update(data.entryId, { skipReason: data.skipReason.trim() });
+      }
+
+      await db.waitlist.update(data.entryId, {
+        status: 'OFFERED',
+        offeredSlotId: data.slotId,
+        offerExpiresAt: data.offerExpiresAt,
+        notifiedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to offer slot' };
+    }
+    return { success: true, offerExpiresAt: data.offerExpiresAt };
+  }
+);
+
 const AcceptOfferSchema = z.object({ entryId: z.string().min(1) });
 
 /**
@@ -83,6 +140,46 @@ export const declineWaitlistOfferAction = withAuth(
       await db.waitlist.update(data.entryId, { status: 'DECLINED' });
     } catch (err) {
       return { success: false, error: err instanceof Error ? err.message : 'Failed to decline offer' };
+    }
+    return { success: true, entryId: data.entryId };
+  }
+);
+
+const DeferOfferSchema = z.object({ entryId: z.string().min(1) });
+
+/** Maximum number of times a parent/student may defer a waitlist offer. */
+const MAX_DEFERS = 2;
+
+/**
+ * Defer a waitlist offer. The entry returns to WAITING status and the student
+ * keeps their queue position. Maximum of 2 defers per entry.
+ */
+export const deferWaitlistOfferAction = withAuth(
+  DeferOfferSchema,
+  async (data) => {
+    try {
+      const db = await getDb();
+      const entry = await db.waitlist.findById(data.entryId);
+      if (!entry) {
+        return { success: false, error: 'Waitlist entry not found.', code: 'NOT_FOUND' };
+      }
+      if (entry.status !== 'OFFERED') {
+        return { success: false, error: 'No active offer to defer.', code: 'NO_OFFER' };
+      }
+      const currentDefers = entry.deferredCount ?? 0;
+      if (currentDefers >= MAX_DEFERS) {
+        return { success: false, error: 'Maximum defers reached.', code: 'MAX_DEFERS_REACHED' };
+      }
+      await db.waitlist.update(data.entryId, {
+        status: 'WAITING',
+        deferredCount: currentDefers + 1,
+        lastDeferredAt: new Date().toISOString(),
+        offeredSlotId: undefined,
+        offeredSlotTime: undefined,
+        offerExpiresAt: undefined,
+      });
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to defer offer' };
     }
     return { success: true, entryId: data.entryId };
   }

@@ -8,7 +8,7 @@ import { CommsDomainProvider, useCommsDomain } from '@/hooks/domains/comms-domai
 import { InstrumentsDomainProvider, useInstrumentsDomain } from '@/hooks/domains/instruments-domain';
 import { EventsDomainProvider, useEventsDomain } from '@/hooks/domains/events-domain';
 import { AdminDomainProvider, useAdminDomain } from '@/hooks/domains/admin-domain';
-import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
+import type { User, FormSubmission, Conservatorium, Package, LessonPackage, ConservatoriumInstrument, LessonSlot, Invoice, PracticeLog, Composition, AssignedRepertoire, LessonNote, RepertoireStatus, MessageThread, ProgressReport, Announcement, Room, PayrollSummary, PracticeVideo, WaitlistEntry, FormTemplate, AuditLogEntry, SlotStatus, NotificationPreferences, AchievementType, EventProduction, EventProductionStatus, InstrumentInventory, PerformanceBooking, PerformanceBookingStatus, PerformanceAssignment, ScholarshipApplication, OpenDayEvent, OpenDayAppointment, Branch, WaitlistStatus, PayrollStatus, Alumnus, Masterclass, MakeupCredit, PlayingSchoolInvoice, DonationCause, DonationRecord, DonationCauseCategory, InstrumentRental, RentalModel, RentalCondition, StudentMasterClassAllowance, TeacherRating } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { setAuthCookie, clearAuthCookie } from '@/lib/auth-cookie';
 
@@ -108,6 +108,7 @@ interface AuthContextType {
   offerSlotToWaitlisted: (entryId: string, slotId: string, slotTimeLabel: string) => void;
   acceptWaitlistOffer: (entryId: string) => void;
   declineWaitlistOffer: (entryId: string) => void;
+  deferWaitlistOffer: (entryId: string) => void;
   expireWaitlistOffers: () => void;
   revokeWaitlistOffer: (entryId: string) => void;
   addFormTemplate: (templateData: Partial<FormTemplate>) => void;
@@ -126,8 +127,9 @@ interface AuthContextType {
   deleteInstrument: (instrumentId: string) => void;
   addPracticeVideo: (videoData: Partial<PracticeVideo>) => void;
   addVideoFeedback: (videoId: string, comment: string) => void;
-  assignMusiciansToPerformance: (bookingId: string, musicianIds: string[]) => void;
+  assignMusiciansToPerformance: (bookingId: string, assignments: Pick<PerformanceAssignment, 'userId' | 'role'>[]) => void;
   updatePerformanceBookingStatus: (bookingId: string, status: PerformanceBookingStatus) => void;
+  respondToPerformanceInvitation: (bookingId: string, userId: string, accept: boolean, declineReason?: string) => void;
   addPerformanceBooking: (bookingData: Partial<PerformanceBooking>) => void;
   addScholarshipApplication: (applicationData: Partial<ScholarshipApplication>) => void;
   updateScholarshipStatus: (applicationId: string, status: 'APPROVED' | 'REJECTED') => void;
@@ -380,6 +382,7 @@ function AuthProviderInner({
     removePerformanceFromEvent,
     assignMusiciansToPerformance,
     updatePerformanceBookingStatus,
+    respondToPerformanceInvitation,
     addPerformanceBooking,
     createMasterClass,
     publishMasterClass,
@@ -433,6 +436,7 @@ function AuthProviderInner({
     offerSlotToWaitlisted,
     acceptWaitlistOffer,
     declineWaitlistOffer,
+    deferWaitlistOffer,
     expireWaitlistOffers,
     revokeWaitlistOffer,
     updatePayrollStatus,
@@ -806,6 +810,7 @@ function AuthProviderInner({
     offerSlotToWaitlisted,
     acceptWaitlistOffer,
     declineWaitlistOffer,
+    deferWaitlistOffer,
     expireWaitlistOffers,
     revokeWaitlistOffer,
     addFormTemplate,
@@ -826,6 +831,7 @@ function AuthProviderInner({
     addVideoFeedback,
     assignMusiciansToPerformance,
     updatePerformanceBookingStatus,
+    respondToPerformanceInvitation,
     addPerformanceBooking,
     addScholarshipApplication,
     updateScholarshipStatus,
@@ -991,6 +997,7 @@ const SSR_AUTH_FALLBACK: AuthContextType = {
   offerSlotToWaitlisted: noop,
   acceptWaitlistOffer: noop,
   declineWaitlistOffer: noop,
+  deferWaitlistOffer: noop,
   expireWaitlistOffers: noop,
   revokeWaitlistOffer: noop,
   addFormTemplate: noop,
@@ -1011,6 +1018,7 @@ const SSR_AUTH_FALLBACK: AuthContextType = {
   addVideoFeedback: noop,
   assignMusiciansToPerformance: noop,
   updatePerformanceBookingStatus: noop,
+  respondToPerformanceInvitation: noop,
   addPerformanceBooking: noop,
   addScholarshipApplication: noop,
   updateScholarshipStatus: noop,

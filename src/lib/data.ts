@@ -1860,8 +1860,8 @@ export const mockPerformanceBookings: PerformanceBooking[] = [
     clientPhone: '03-9876543',
     totalQuote: 4500,
     assignedMusicians: [
-      { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר' },
-      { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'כינור' },
+      { userId: 'teacher-user-1', name: 'מרים כהן', instrument: 'פסנתר', role: 'accompanist', status: 'accepted', assignedAt: new Date().toISOString(), assignedBy: 'dev-user' },
+      { userId: 'teacher-user-2', name: 'דוד המלך', instrument: 'כינור', role: 'ensemble', status: 'pending', assignedAt: new Date().toISOString(), assignedBy: 'dev-user' },
     ],
   },
 ];

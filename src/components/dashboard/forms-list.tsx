@@ -10,10 +10,12 @@ import { useTranslations, useLocale } from "next-intl";
 
 export function FormsList({
     statusFilter,
-    searchQuery
+    searchQuery,
+    fromContext = 'forms',
 }: {
     statusFilter?: FormStatus[],
-    searchQuery?: string
+    searchQuery?: string,
+    fromContext?: 'forms' | 'approvals',
 }) {
     const t = useTranslations('FormsPage');
     const tc = useTranslations('Common.shared');
@@ -74,7 +76,7 @@ export function FormsList({
                         <TableCell className="text-start">{form.submissionDate}</TableCell>
                         <TableCell className="text-start">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
+                                <Link href={`/dashboard/forms/${form.id}?from=${fromContext}`}>{tc('view')}</Link>
                             </Button>
                         </TableCell>
                     </TableRow>

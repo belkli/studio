@@ -344,7 +344,10 @@
       "OFFERED": "Offered",
       "ACCEPTED": "Accepted",
       "DECLINED": "Declined",
-      "EXPIRED": "Expired"
+      "EXPIRED": "Expired",
+      "DEFERRED": "Deferred",
+      "ENROLLED": "Enrolled",
+      "WITHDRAWN": "Withdrawn"
     },
     "offerExpiresIn": "Expires in {time}",
     "revokeOffer": "Revoke Offer",
@@ -355,6 +358,30 @@
     "declineOffer": "Decline Offer",
     "offerAccepted": "Offer accepted! The lesson has been added to your schedule.",
     "offerDeclined": "Offer declined."
+  },
+  "WaitlistOffer": {
+    "offerDetails": "Slot Offer Details",
+    "expiresIn": "Expires in",
+    "acceptOffer": "Accept Offer",
+    "declineOffer": "Decline",
+    "deferOffer": "Defer (stay in queue)",
+    "deferDescription": "You'll stay in the queue. Your position is preserved.",
+    "offerExpired": "This offer has expired.",
+    "maxDefersReached": "Maximum defers reached ({max}/{max})",
+    "offerBanner": "You have a lesson slot offer! Review and respond before the offer expires.",
+    "reviewAndRespond": "Review and Respond",
+    "nextInQueue": "Next in queue",
+    "deferredCount": "Deferred {count}x",
+    "skipWarning": "This student is not first in the FIFO queue. Please provide a reason for skipping.",
+    "skipReason": "Reason for skipping FIFO order",
+    "skipReasonRequired": "Explain why this student is being offered a slot out of order…",
+    "skipReasonLabel": "Skip reason",
+    "selectSlot": "Select a lesson slot",
+    "noSlotsAvailable": "No available lesson slots for this teacher.",
+    "sendOffer": "Send Offer",
+    "proposedTime": "Proposed time",
+    "offerExpires": "Offer expires",
+    "declineSuccess": "You've been removed from the waitlist."
   },
   "PlayingSchool": {
     "wizard": {

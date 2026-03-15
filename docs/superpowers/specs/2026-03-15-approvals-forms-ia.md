@@ -414,13 +414,9 @@ if (!GLOBAL_ADMIN_ROLES.includes(claims.role)) {
 }
 ```
 
-### S4. Updated Migration Path (prepend security steps)
+### S4. Security Steps
 
-Insert before step 1:
-- **0a.** Refactor `withAuth()` to accept `roles` parameter (BLOCKING-SEC-01).
-- **0b.** Add form status transition authorization matrix (S2 above).
-- **0c.** Add conservatoriumId server-side override to `upsertFormSubmissionAction` (SEC-CROSS-03).
-- **0d.** Add server-side ownership check to form detail data fetching.
+These are now incorporated as Phase 1 of the Implementation Steps (section 9). No separate migration needed -- security is built in from the start.
 
 ---
 

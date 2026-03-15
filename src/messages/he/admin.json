@@ -524,7 +524,8 @@
     "ministryRepertoire": "ניהול רפרטואר",
     "groupMySchool": "בית הספר שלי",
     "mySchool": "בית הספר שלי",
-    "makeups": "השלמות"
+    "makeups": "השלמות",
+    "performanceInvitations": "הזמנות להופעות"
   },
   "Dashboard": {
     "makeups": {
@@ -620,7 +621,9 @@
         "today": "היום",
         "prevWeek": "שבוע קודם",
         "nextWeek": "שבוע הבא"
-      }
+      },
+      "performanceInvitationsBanner": "יש לך {count} הזמנה/ות להופעה — אנא ענה/י",
+      "viewInvitations": "צפה בהזמנות"
     },
     "header": {
       "notifications": "התראות",

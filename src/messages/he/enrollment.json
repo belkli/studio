@@ -341,7 +341,10 @@
       "DECLINED": "דחה הצעה",
       "EXPIRED": "פג תוקף",
       "OFFERED": "הוצע מקום",
-      "WAITING": "ממתין"
+      "WAITING": "ממתין",
+      "DEFERRED": "נדחה",
+      "ENROLLED": "נרשם",
+      "WITHDRAWN": "נסוג"
     },
     "student": "תלמיד/ה",
     "title": "רשימת ממתינים פעילה",
@@ -355,6 +358,30 @@
     "declineOffer": "דחה הצעה",
     "offerAccepted": "ההצעה אושרה! השיעור נוסף למערכת.",
     "offerDeclined": "ההצעה נדחתה."
+  },
+  "WaitlistOffer": {
+    "offerDetails": "פרטי הצעת המקום",
+    "expiresIn": "פוגת בעוד",
+    "acceptOffer": "אשר הצעה",
+    "declineOffer": "דחה",
+    "deferOffer": "דחיה (שמור מקום בתור)",
+    "deferDescription": "תישאר בתור. מיקומך שמור.",
+    "offerExpired": "הצעה זו פגה תוקף.",
+    "maxDefersReached": "הגעת למקסימום דחיות ({max}/{max})",
+    "offerBanner": "יש לך הצעה למקום שיעור! בדוק ותגיב לפני שתפוג.",
+    "reviewAndRespond": "בדוק והגיב",
+    "nextInQueue": "הבא בתור",
+    "deferredCount": "נדחה {count} פעם",
+    "skipWarning": "תלמיד זה אינו ראשון בתור. יש לספק סיבה לדילוג.",
+    "skipReason": "סיבה לדילוג על הסדר",
+    "skipReasonRequired": "הסבר מדוע תלמיד זה מקבל הצעה שלא בסדר...",
+    "skipReasonLabel": "סיבת דילוג",
+    "selectSlot": "בחר מקום שיעור",
+    "noSlotsAvailable": "אין מקומות שיעור זמינים למורה זה.",
+    "sendOffer": "שלח הצעה",
+    "proposedTime": "זמן מוצע",
+    "offerExpires": "ההצעה פוגת",
+    "declineSuccess": "הוסרת מרשימת ההמתנה."
   },
   "PlayingSchool": {
     "wizard": {

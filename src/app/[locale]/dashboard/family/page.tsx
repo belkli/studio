@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useLocale, useTranslations } from 'next-intl';
 import { Skeleton } from '@/components/ui/skeleton';
+import { WaitlistOfferBanner } from '@/components/dashboard/waitlist-offer-banner';
 
 function FamilyHubSkeleton() {
     return (
@@ -29,6 +30,7 @@ export default function FamilyPage() {
                 <h1 className="text-2xl font-bold">{t('family.title')}</h1>
                 <p className="text-muted-foreground">{t('family.description')}</p>
             </div>
+            <WaitlistOfferBanner />
             <FamilyHub />
         </div>
     );

@@ -524,7 +524,8 @@
     "ministryRepertoire": "إدارة الريبرتوار",
     "groupMySchool": "مدرستي",
     "mySchool": "مدرستي",
-    "makeups": "حصص تعويضية"
+    "makeups": "حصص تعويضية",
+    "performanceInvitations": "دعوات الأداء"
   },
   "Dashboard": {
     "makeups": {
@@ -620,7 +621,9 @@
         "today": "اليوم",
         "prevWeek": "الأسبوع السابق",
         "nextWeek": "الأسبوع التالي"
-      }
+      },
+      "performanceInvitationsBanner": "لديك {count} دعوة أداء — يرجى الرد",
+      "viewInvitations": "عرض الدعوات"
     },
     "header": {
       "notifications": "الإشعارات",

@@ -46,6 +46,7 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { isInUserApprovalQueue } from '@/lib/form-utils';
 import type { AdminSection, Notification, UserRole } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
@@ -152,6 +153,7 @@ const harmoniaNavGroups: NavGroup[] = [
       { href: '/dashboard/teacher', labelKey: 'teacherDashboard', icon: Music2, id: 'nav-dashboard-teacher' },
       { href: '/dashboard/schedule', labelKey: 'schedule', icon: CalendarDays, id: 'nav-schedule' },
       { href: '/dashboard/approvals', labelKey: 'approvals', icon: BadgeCheck, id: 'nav-approvals', section: 'approvals' },
+      { href: '/dashboard/performances/invitations', labelKey: 'performanceInvitations', icon: Music, id: 'nav-performance-invitations' },
     ],
   },
   {
@@ -326,6 +328,8 @@ type SidebarNavInnerProps = {
   logout: () => void;
   updateUser: (user: import('@/lib/types').User) => void;
   newFeaturesEnabled: boolean;
+  approvalBadgeCount: number;
+  performanceInvitationsBadgeCount: number;
 };
 
 // ——————————————————————————— Memoized Inner Component ————————————————————————
@@ -335,6 +339,8 @@ const SidebarNavInner = memo(function SidebarNavInner({
   logout,
   updateUser,
   newFeaturesEnabled,
+  approvalBadgeCount,
+  performanceInvitationsBadgeCount,
 }: SidebarNavInnerProps) {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
@@ -485,7 +491,27 @@ const SidebarNavInner = memo(function SidebarNavInner({
                         <Link href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
                           <SidebarMenuButton isActive={isActive(item.href)}>
                             <item.icon className="h-4 w-4" aria-hidden="true" />
-                            <span>{t(item.labelKey)}</span>
+                            <span className="flex items-center justify-between w-full">
+                              {t(item.labelKey)}
+                              {item.id === 'nav-approvals' && approvalBadgeCount > 0 && (
+                                <span
+                                  className="ms-2 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground"
+                                  aria-live="polite"
+                                  aria-label={`${approvalBadgeCount}`}
+                                >
+                                  {approvalBadgeCount}
+                                </span>
+                              )}
+                              {item.id === 'nav-performance-invitations' && performanceInvitationsBadgeCount > 0 && (
+                                <span
+                                  className="ms-2 inline-flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white"
+                                  aria-live="polite"
+                                  aria-label={`${performanceInvitationsBadgeCount}`}
+                                >
+                                  {performanceInvitationsBadgeCount}
+                                </span>
+                              )}
+                            </span>
                           </SidebarMenuButton>
                         </Link>
                       </SidebarMenuItem>
@@ -582,15 +608,22 @@ const SidebarNavInner = memo(function SidebarNavInner({
   if ((prev.user.notifications?.length ?? 0) !== (next.user.notifications?.length ?? 0)) return false;
   if ((prev.user.notifications?.filter(n => !n.read).length ?? 0) !== (next.user.notifications?.filter(n => !n.read).length ?? 0)) return false;
   if (prev.user.delegatedAdminPermissions?.length !== next.user.delegatedAdminPermissions?.length) return false;
+  if (prev.approvalBadgeCount !== next.approvalBadgeCount) return false;
+  if (prev.performanceInvitationsBadgeCount !== next.performanceInvitationsBadgeCount) return false;
   return true;
 });
 
 // ——————————————————————————— Outer Wrapper (thin, calls useAuth) ———————————
 
 export function SidebarNav() {
-  const { user, logout, updateUser, newFeaturesEnabled } = useAuth();
+  const { user, logout, updateUser, newFeaturesEnabled, formSubmissions, performanceBookings } = useAuth();
 
   if (!user) return null;
+
+  const approvalBadgeCount = formSubmissions.filter(f => isInUserApprovalQueue(f, user)).length;
+  const performanceInvitationsBadgeCount = user.role === 'teacher'
+    ? performanceBookings.filter(b => b.assignedMusicians?.some(m => m.userId === user.id && m.status === 'pending')).length
+    : 0;
 
   return (
     <SidebarNavInner
@@ -598,6 +631,8 @@ export function SidebarNav() {
       logout={logout}
       updateUser={updateUser}
       newFeaturesEnabled={newFeaturesEnabled}
+      approvalBadgeCount={approvalBadgeCount}
+      performanceInvitationsBadgeCount={performanceInvitationsBadgeCount}
     />
   );
 }

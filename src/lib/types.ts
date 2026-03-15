@@ -1272,7 +1272,39 @@ export type InstrumentInventory = {
   notes?: string;
 };
 
-export type PerformanceBookingStatus = 'INQUIRY_RECEIVED' | 'ADMIN_REVIEWING' | 'MUSICIANS_CONFIRMED' | 'QUOTE_SENT' | 'DEPOSIT_PAID' | 'BOOKING_CONFIRMED' | 'EVENT_COMPLETED';
+export type PerformanceBookingStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'MUSICIANS_NEEDED'
+  | 'INVITATIONS_SENT'
+  | 'QUOTE_READY'
+  | 'QUOTE_SENT'
+  | 'CONTRACTS_PENDING'
+  | 'CONFIRMED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  // Legacy statuses — kept for backward-compat with existing mock data
+  | 'INQUIRY_RECEIVED'
+  | 'ADMIN_REVIEWING'
+  | 'MUSICIANS_CONFIRMED'
+  | 'DEPOSIT_PAID'
+  | 'BOOKING_CONFIRMED'
+  | 'EVENT_COMPLETED';
+
+export type PerformanceAssignmentStatus = 'pending' | 'accepted' | 'declined' | 'opted_out';
+
+export type PerformanceAssignment = {
+  userId: string;
+  name: string;
+  instrument: string;
+  role: 'soloist' | 'ensemble' | 'accompanist' | 'conductor';
+  status: PerformanceAssignmentStatus;
+  ratePerHour?: number;
+  responseAt?: string;
+  declineReason?: string;
+  assignedAt: string;
+  assignedBy: string;
+};
 
 export type InstrumentRental = {
   id: string;
@@ -1316,11 +1348,11 @@ export type PerformanceBooking = {
   clientEmail: string;
   clientPhone: string;
   totalQuote: number;
-  assignedMusicians?: {
-    userId: string;
-    name: string;
-    instrument: string;
-  }[];
+  assignedMusicians?: PerformanceAssignment[];
+  requiredRoles?: { role: PerformanceAssignment['role']; instrument: string; count: number }[];
+  estimatedMusicianCost?: number;
+  eventDurationHours?: number;
+  adminNotes?: string;
 };
 
 export type ApplicationStatus =

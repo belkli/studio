@@ -5,6 +5,7 @@
     "approveAndForward": "الموافقة والتحويل للمدير",
     "approveAndSign": "الموافقة والتوقيع",
     "backToAll": "العودة إلى جميع النماذج",
+    "backToApprovals": "العودة إلى الموافقات",
     "clear": "مسح",
     "clearSignature": "مسح التوقيع",
     "confirmSignature": "تأكيد التوقيع",
@@ -142,7 +143,8 @@
       "all": "الكل",
       "approved": "تمت الموافقة",
       "drafts": "المسودات",
-      "pending": "قيد الانتظار"
+      "pending": "قيد الانتظار",
+      "rejected": "مرفوض"
     },
     "title": "النماذج والطلبات"
   },
@@ -200,8 +202,16 @@
     "tabs": {
       "allOpenForms": "جميع النماذج المفتوحة",
       "forYourHandling": "لمعالجتك",
+      "myQueue": "قائمة انتظاري",
+      "allOpen": "كل المفتوحة",
       "overdue": "متأخرة"
     },
+    "allCaughtUp": "تم الانتهاء من الكل!",
+    "noPendingApprovals": "لا توجد نماذج تنتظر مراجعتك الآن.",
+    "queueCount": "{count} في الانتظار",
+    "overdueTitle": "النماذج المتأخرة",
+    "overdueDesc": "النماذج التي تجاوزت حد 7 أيام.",
+    "noOverdueForms": "لا توجد نماذج متأخرة الآن.",
     "title": "الموافقات",
     "type": "النوع",
     "view": "عرض",

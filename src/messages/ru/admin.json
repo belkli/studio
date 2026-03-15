@@ -524,7 +524,8 @@
     "ministryRepertoire": "Управление репертуаром",
     "groupMySchool": "Моя школа",
     "mySchool": "Моя школа",
-    "makeups": "Отработки"
+    "makeups": "Отработки",
+    "performanceInvitations": "Приглашения на выступления"
   },
   "Dashboard": {
     "makeups": {
@@ -620,7 +621,9 @@
         "today": "Сегодня",
         "prevWeek": "Предыдущая неделя",
         "nextWeek": "Следующая неделя"
-      }
+      },
+      "performanceInvitationsBanner": "У вас {count} приглашение(я) на выступление — ответьте",
+      "viewInvitations": "Посмотреть приглашения"
     },
     "header": {
       "notifications": "Уведомления",

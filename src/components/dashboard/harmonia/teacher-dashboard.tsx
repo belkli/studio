@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare, PlusCircle, XCircle, Music } from "lucide-react";
+import { ArrowLeft, MessageSquare, PlusCircle, XCircle, Music, Bell } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { User, PracticeLog, Package, LessonSlot } from "@/lib/types";
 import { format } from "date-fns";
@@ -96,7 +96,7 @@ function StudentRosterCard({ student, practiceLogs, packages, lessons, id }: { s
 }
 
 export function TeacherDashboard() {
-    const { user, users, lessons, formSubmissions, practiceLogs, packages, events } = useAuth();
+    const { user, users, lessons, formSubmissions, practiceLogs, packages, events, performanceBookings } = useAuth();
     const [isSickLeaveModalOpen, setIsSickLeaveModalOpen] = useState(false);
     const t = useTranslations("Dashboard.Teacher");
     const locale = useLocale();
@@ -121,12 +121,35 @@ export function TeacherDashboard() {
         );
     }, [assignedStudents, events]);
 
+    // Pending performance invitations for this teacher
+    const pendingInvitations = useMemo(() => {
+        if (!user) return [];
+        return performanceBookings.filter(booking =>
+            booking.assignedMusicians?.some(m => m.userId === user.id && m.status === 'pending')
+        );
+    }, [performanceBookings, user]);
+
     if (!user) return null;
 
     const teacherLessons = lessons.filter(lesson => lesson.teacherId === user.id);
 
     return (
         <div className="space-y-8 p-8" dir={isRtl ? 'rtl' : 'ltr'}>
+            {/* Performance invitations banner */}
+            {pendingInvitations.length > 0 && (
+                <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+                    <div className="flex items-center gap-3">
+                        <Bell className="h-5 w-5 text-amber-600 shrink-0" />
+                        <p className="text-sm font-medium text-amber-800">
+                            {t('performanceInvitationsBanner', { count: pendingInvitations.length })}
+                        </p>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 border-amber-300 text-amber-800 hover:bg-amber-100" asChild>
+                        <Link href="/dashboard/performances/invitations">{t('viewInvitations')}</Link>
+                    </Button>
+                </div>
+            )}
+
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('welcomeTitle', { name: user.name.split(' ')[0] })}</h1>
