@@ -137,18 +137,47 @@ export async function requireRole(
 // ── withAuth wrapper ──────────────────────────────────────────
 
 /**
+ * Options accepted by withAuth().
+ */
+export interface WithAuthOptions {
+  /**
+   * Optional list of roles allowed to call this action.
+   * When provided, any authenticated user whose role is NOT in this list
+   * will receive a FORBIDDEN error before the action body executes.
+   *
+   * Global admin roles (site_admin, superadmin) always pass role checks
+   * in dev mode when no FIREBASE_SERVICE_ACCOUNT_KEY is configured —
+   * the dev bypass user is site_admin and should never be blocked.
+   *
+   * Backward-compatible: omitting `roles` (or passing undefined) retains
+   * the previous behaviour — any authenticated user may call the action.
+   */
+  roles?: UserRole[];
+}
+
+/**
  * Higher-order function that wraps a Server Action with:
  * 1. Authentication verification (verifyAuth)
- * 2. Zod input validation
- * 3. Structured error handling
+ * 2. Optional role enforcement (if options.roles is provided)
+ * 3. Zod input validation
+ * 4. Structured error handling
  */
 export function withAuth<Schema extends { parse(data: unknown): unknown; _input: unknown; _output: unknown }, R>(
   schema: Schema,
-  action: (input: Schema['_output']) => Promise<R>
+  action: (input: Schema['_output']) => Promise<R>,
+  options?: WithAuthOptions
 ) {
   return async (input: Schema['_input']): Promise<R> => {
     try {
-      await verifyAuth();
+      const claims = await verifyAuth();
+
+      // Role enforcement — only when roles are explicitly specified
+      if (options?.roles && options.roles.length > 0) {
+        if (!options.roles.includes(claims.role)) {
+          throw new Error('FORBIDDEN');
+        }
+      }
+
       const parsedInput = schema.parse(input);
       return await action(parsedInput);
     } catch (error: unknown) {

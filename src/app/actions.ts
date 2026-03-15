@@ -698,7 +698,8 @@ export const draftProgressReport = withAuth(
   async (input: DraftProgressReportInput): Promise<DraftProgressReportOutput> => {
     await requireRole(['teacher', 'conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await invokeDraftProgressReport(input);
-  }
+  },
+  { roles: ['teacher', 'conservatorium_admin', 'delegated_admin', 'site_admin'] }
 );
 
 /**
@@ -735,7 +736,8 @@ export const getTargetedSlotSuggestions = withAuth(
   async (input: TargetSlotsInput): Promise<TargetSlotsOutput> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await getTargetedSlots(input);
-  }
+  },
+  { roles: ['conservatorium_admin', 'delegated_admin', 'site_admin'] }
 );
 
 /**
@@ -748,7 +750,8 @@ export const generateNurtureMessage = withAuth(
   async (input: NurtureLeadInput): Promise<NurtureLeadOutput> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await nurtureLead(input);
-  }
+  },
+  { roles: ['conservatorium_admin', 'delegated_admin', 'site_admin'] }
 );
 
 /**
@@ -1133,6 +1136,7 @@ export const upsertConservatoriumAction = withAuth(
   async (payload: Conservatorium): Promise<Conservatorium> => {
     await requireRole(['site_admin', 'superadmin']);
     const db = await getDb();
+
     if (!payload?.id) {
       return await db.conservatoriums.create(payload as Partial<Conservatorium>);
     }
@@ -1141,7 +1145,8 @@ export const upsertConservatoriumAction = withAuth(
       return await db.conservatoriums.update(payload.id, payload as Partial<Conservatorium>);
     }
     return await db.conservatoriums.create(payload as Partial<Conservatorium>);
-  }
+  },
+  { roles: ['site_admin', 'superadmin'] }
 );
 
 export const resolvePlayingSchoolToken = withAuth(
@@ -1336,7 +1341,8 @@ export const generateAiEventPoster = withAuth(
   async (input: z.infer<typeof GenerateEventPosterSchema>): Promise<GenerateEventPosterOutput> => {
     await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     return await generateEventPoster(input as GenerateEventPosterInput);
-  }
+  },
+  { roles: ['conservatorium_admin', 'delegated_admin', 'site_admin'] }
 );
 
 // ── User Language Preference ──────────────────────────────────
