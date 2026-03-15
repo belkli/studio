@@ -428,7 +428,9 @@
     "description": "Important updates from the conservatorium.",
     "empty": "No recent announcements.",
     "channel_EMAIL": "Email",
-    "channel_SMS": "SMS"
+    "channel_SMS": "SMS",
+    "channel_IN_APP": "In-App",
+    "channel_PUSH": "Push"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "Dialog Assign Title",

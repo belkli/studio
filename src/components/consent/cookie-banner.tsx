@@ -1,14 +1,19 @@
 'use client';
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { BRAND_COOKIE_CONSENT_KEY } from '@/lib/brand';
 
 const COOKIE_KEY = BRAND_COOKIE_CONSENT_KEY;
 
+// Listeners for same-tab reactivity (storage event only fires cross-tab)
+const listeners = new Set<() => void>();
+function notify() { listeners.forEach((cb) => cb()); }
+
 function subscribe(cb: () => void) {
+  listeners.add(cb);
   window.addEventListener('storage', cb);
-  return () => window.removeEventListener('storage', cb);
+  return () => { listeners.delete(cb); window.removeEventListener('storage', cb); };
 }
 function getSnapshot() { return localStorage.getItem(COOKIE_KEY); }
 function getServerSnapshot() { return 'accepted'; } // always hidden on SSR
@@ -17,8 +22,8 @@ export function CookieBanner() {
   const t = useTranslations('CookieBanner');
   const consent = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const accept = () => { localStorage.setItem(COOKIE_KEY, 'accepted'); };
-  const reject = () => { localStorage.setItem(COOKIE_KEY, 'rejected'); };
+  const accept = useCallback(() => { localStorage.setItem(COOKIE_KEY, 'accepted'); notify(); }, []);
+  const reject = useCallback(() => { localStorage.setItem(COOKIE_KEY, 'rejected'); notify(); }, []);
 
   if (consent) return null;
 

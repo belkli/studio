@@ -428,7 +428,9 @@
     "description": "تحديثات مهمة من المعهد الموسيقي.",
     "empty": "لا توجد إعلانات حديثة.",
     "channel_EMAIL": "بريد إلكتروني",
-    "channel_SMS": "رسالة نصية"
+    "channel_SMS": "رسالة نصية",
+    "channel_IN_APP": "في التطبيق",
+    "channel_PUSH": "إشعار"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "تعيين موسيقيين للفعالية",

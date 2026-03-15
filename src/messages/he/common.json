@@ -428,7 +428,9 @@
     "description": "עדכונים חשובים מהקונסרבטוריון.",
     "empty": "אין הכרזות אחרונות.",
     "channel_EMAIL": "דוא\"ל",
-    "channel_SMS": "SMS"
+    "channel_SMS": "SMS",
+    "channel_IN_APP": "באפליקציה",
+    "channel_PUSH": "התראה"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "שיבוץ מוזיקאים לאירוע",

@@ -428,7 +428,9 @@
     "description": "Важные обновления от консерватории.",
     "empty": "Нет последних объявлений.",
     "channel_EMAIL": "Эл. почта",
-    "channel_SMS": "SMS"
+    "channel_SMS": "SMS",
+    "channel_IN_APP": "В приложении",
+    "channel_PUSH": "Push-уведомление"
   },
   "PerformanceBooking": {
     "dialogAssignTitle": "Распределение музыкантов по мероприятию",
