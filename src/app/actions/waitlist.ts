@@ -28,14 +28,46 @@ export const offerSlotToWaitlistedAction = withAuth(
 
 const AcceptOfferSchema = z.object({ entryId: z.string().min(1) });
 
+/**
+ * Accepts a waitlist offer using atomic compare-and-swap (BLOCKING-SEC-02).
+ *
+ * The underlying db.waitlist.acceptOffer() call guarantees that:
+ *   - Only one concurrent caller can succeed for any given entryId.
+ *   - If two requests race, the second receives CONFLICT.
+ *   - If the offer has already expired, OFFER_EXPIRED is returned.
+ *   - If the entry is not in OFFERED state (already accepted, declined, etc.),
+ *     CONFLICT is returned with a clear "slot already taken" message.
+ */
 export const acceptWaitlistOfferAction = withAuth(
   AcceptOfferSchema,
   async (data) => {
     try {
       const db = await getDb();
-      await db.waitlist.update(data.entryId, { status: 'ACCEPTED' });
+      await db.waitlist.acceptOffer(data.entryId);
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'Failed to accept offer' };
+      const message = err instanceof Error ? err.message : 'Failed to accept offer';
+      if (message === 'CONFLICT') {
+        return {
+          success: false,
+          error: 'This slot has already been taken. Please check back for the next available slot.',
+          code: 'CONFLICT',
+        };
+      }
+      if (message === 'OFFER_EXPIRED') {
+        return {
+          success: false,
+          error: 'This offer has expired. Please contact the conservatorium for further assistance.',
+          code: 'OFFER_EXPIRED',
+        };
+      }
+      if (message === 'NOT_FOUND') {
+        return {
+          success: false,
+          error: 'Waitlist entry not found.',
+          code: 'NOT_FOUND',
+        };
+      }
+      return { success: false, error: message };
     }
     return { success: true, entryId: data.entryId };
   }

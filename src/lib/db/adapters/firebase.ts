@@ -519,6 +519,36 @@ export class FirebaseAdapter implements DatabaseAdapter {
       async update(entryId: string, data: Partial<WaitlistEntry>): Promise<void> {
         await waitlistBase.update(entryId, data);
       },
+      /**
+       * Atomic compare-and-swap acceptance using Firestore transaction (BLOCKING-SEC-02).
+       */
+      async acceptOffer(entryId: string): Promise<WaitlistEntry> {
+        // Firestore requires a collection-group query to find the document by ID across
+        // all conservatoriums.  We use a collectionGroup query to locate it first, then
+        // re-read inside the transaction for atomicity.
+        const snap = await db.collectionGroup('waitlist')
+          .where('id', '==', entryId)
+          .limit(1)
+          .get();
+        if (snap.empty) {
+          throw new Error('NOT_FOUND');
+        }
+        const docRef = snap.docs[0].ref;
+
+        return db.runTransaction(async (tx) => {
+          const doc = await tx.get(docRef);
+          if (!doc.exists) throw new Error('NOT_FOUND');
+          const data = doc.data() as WaitlistEntry;
+          if (data.status !== 'OFFERED') throw new Error('CONFLICT');
+          if (data.offerExpiresAt && new Date(data.offerExpiresAt) < new Date()) {
+            tx.update(docRef, { status: 'EXPIRED' });
+            throw new Error('OFFER_EXPIRED');
+          }
+          const offerAcceptedAt = new Date().toISOString();
+          tx.update(docRef, { status: 'ACCEPTED', offerAcceptedAt });
+          return { ...data, status: 'ACCEPTED' as const, offerAcceptedAt };
+        });
+      },
     };
 
     // Achievements: Firestore sub-collection per conservatorium

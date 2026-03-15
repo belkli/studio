@@ -1092,7 +1092,15 @@ export type PayrollSummary = {
   status: PayrollStatus;
 };
 
-export type WaitlistStatus = 'WAITING' | 'OFFERED' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED';
+export type WaitlistStatus =
+  | 'WAITING'     // on queue, no offer yet
+  | 'OFFERED'     // admin sent offer, awaiting parent/student response
+  | 'ACCEPTED'    // parent accepted, pending package purchase
+  | 'ENROLLED'    // package purchased, slot confirmed — TERMINAL
+  | 'DECLINED'    // parent declined — TERMINAL (removed from queue)
+  | 'DEFERRED'    // parent deferred (stays in queue, offer retracted)
+  | 'EXPIRED'     // offer window elapsed — offer expired
+  | 'WITHDRAWN';  // parent self-removed — TERMINAL
 
 export type WaitlistEntry = {
   id: string;
@@ -1110,6 +1118,13 @@ export type WaitlistEntry = {
   offerExpiresAt?: string;
   offerAcceptedAt?: string;
   offerDeclinedAt?: string;
+  // Extended fields (greenfield)
+  deferredCount?: number;           // How many times parent deferred
+  lastDeferredAt?: string;          // ISO timestamp of last deferral
+  offerSentVia?: ('in_app' | 'email' | 'sms')[]; // Notification channels used
+  paymentDeadlineAt?: string;       // 24h after acceptance, for package purchase
+  assignedLessonSlotId?: string;    // Set when payment completes -> lesson scheduled
+  skipReason?: string;              // Admin's reason for skipping FIFO order
 };
 
 export type AuditLogEntry = {

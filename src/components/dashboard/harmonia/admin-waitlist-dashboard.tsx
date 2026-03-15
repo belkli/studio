@@ -29,8 +29,11 @@ const statusClasses: Record<WaitlistStatus, string> = {
     WAITING: 'bg-blue-100 text-blue-800',
     OFFERED: 'bg-yellow-100 text-yellow-800',
     ACCEPTED: 'bg-green-100 text-green-800',
+    ENROLLED: 'bg-green-200 text-green-900',
     DECLINED: 'bg-gray-100 text-gray-800',
+    DEFERRED: 'bg-orange-100 text-orange-800',
     EXPIRED: 'bg-red-100 text-red-800',
+    WITHDRAWN: 'bg-gray-200 text-gray-600',
 };
 
 export function AdminWaitlistDashboard() {

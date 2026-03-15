@@ -99,6 +99,21 @@ export interface WaitlistEntryRepository {
   findByConservatorium(conservatoriumId: string): Promise<WaitlistEntry[]>;
   findById(entryId: string): Promise<WaitlistEntry | null>;
   update(entryId: string, data: Partial<WaitlistEntry>): Promise<void>;
+  /**
+   * Atomic compare-and-swap acceptance (BLOCKING-SEC-02).
+   *
+   * Transitions status from OFFERED -> ACCEPTED only if:
+   *   - The entry currently has status === 'OFFERED'
+   *   - The offer has not expired (offerExpiresAt > now)
+   *
+   * Uses an optimistic-locking / mutex pattern to prevent double-booking
+   * when concurrent requests attempt to accept the same offer simultaneously.
+   *
+   * @throws Error('CONFLICT')     — entry is not in OFFERED state
+   * @throws Error('OFFER_EXPIRED') — offerExpiresAt has passed
+   * @throws Error('NOT_FOUND')    — entryId does not exist
+   */
+  acceptOffer(entryId: string): Promise<WaitlistEntry>;
 }
 
 export interface AchievementRepository {

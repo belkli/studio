@@ -323,8 +323,12 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
       },
     };
 
-    // WaitlistEntryRepository (simple array-based)
+    // WaitlistEntryRepository (array-based with atomic CAS for acceptance)
     const waitlistState = clone(seed.waitlist);
+    // Per-entry mutex map — prevents concurrent acceptOffer calls on the same entry.
+    // A simple boolean flag is sufficient for the single-process in-memory adapter;
+    // true === lock held, false/absent === free.
+    const waitlistLocks = new Map<string, boolean>();
     this.waitlist = {
       async findByConservatorium(conservatoriumId: string): Promise<WaitlistEntry[]> {
         return clone(waitlistState.filter(e => e.conservatoriumId === conservatoriumId));
@@ -337,6 +341,42 @@ export class MemoryDatabaseAdapter implements DatabaseAdapter {
         const index = waitlistState.findIndex(e => e.id === entryId);
         if (index < 0) throw new Error(`Waitlist entry not found: ${entryId}`);
         waitlistState[index] = { ...waitlistState[index], ...clone(data) };
+      },
+      /**
+       * Atomic compare-and-swap acceptance (BLOCKING-SEC-02).
+       *
+       * Only the first concurrent caller succeeds. Subsequent callers that
+       * arrive while the lock is held, or after the status has already
+       * changed away from OFFERED, receive a CONFLICT error.
+       */
+      async acceptOffer(entryId: string): Promise<WaitlistEntry> {
+        // Reject if another in-flight call already holds the lock for this entry
+        if (waitlistLocks.get(entryId)) {
+          throw new Error('CONFLICT');
+        }
+        waitlistLocks.set(entryId, true);
+        try {
+          const index = waitlistState.findIndex(e => e.id === entryId);
+          if (index < 0) {
+            throw new Error('NOT_FOUND');
+          }
+          const entry = waitlistState[index];
+          // CAS check: status must still be OFFERED
+          if (entry.status !== 'OFFERED') {
+            throw new Error('CONFLICT');
+          }
+          // Server-side expiry check
+          if (entry.offerExpiresAt && new Date(entry.offerExpiresAt) < new Date()) {
+            entry.status = 'EXPIRED';
+            throw new Error('OFFER_EXPIRED');
+          }
+          // All guards passed — atomically transition to ACCEPTED
+          entry.status = 'ACCEPTED';
+          entry.offerAcceptedAt = new Date().toISOString();
+          return clone(entry);
+        } finally {
+          waitlistLocks.delete(entryId);
+        }
       },
     };
 
