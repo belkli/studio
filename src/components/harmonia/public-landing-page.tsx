@@ -76,8 +76,8 @@ export function PublicLandingPage() {
   const router = useRouter();
   const { conservatoriums, conservatoriumInstruments, users, events } = useAuth();
   const { theme } = useBrandTheme();
-  const heroS = HERO_STYLES[theme];
-  const statsS = STATS_STYLES[theme];
+  const heroS = HERO_STYLES[theme] ?? HERO_STYLES.a;
+  const statsS = STATS_STYLES[theme] ?? STATS_STYLES.a;
 
   const [search, setSearch] = useState('');
   const [city, setCity] = useState('');
