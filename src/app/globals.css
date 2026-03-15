@@ -27,6 +27,19 @@
   --color-chart-5: hsl(var(--chart-5));
   --radius: 0.75rem;
 
+  /* Brand tokens */
+  --color-brand-gold: hsl(var(--brand-gold));
+  --color-brand-gold-light: hsl(var(--brand-gold-light));
+  --color-brand-navy: hsl(var(--brand-navy));
+  --color-brand-deep: hsl(var(--brand-deep));
+  --color-brand-indigo-cta: hsl(var(--brand-indigo-cta));
+
+  /* Font family tokens */
+  --font-heading: 'Playfair Display', serif;
+  --font-body: var(--font-plus-jakarta), 'Plus Jakarta Sans', sans-serif;
+  --font-rtl: var(--font-heebo), 'Heebo', sans-serif;
+  --font-display: 'Playfair Display', serif;
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -77,6 +90,13 @@
   --chart-4: 38 92% 50%;
   --chart-5: 0 84% 60%;
   --radius: 0.75rem;
+
+  /* Brand-specific variables */
+  --brand-gold: 43 50% 54%;
+  --brand-gold-light: 43 70% 69%;
+  --brand-navy: 210 44% 18%;
+  --brand-deep: 210 50% 11%;
+  --brand-indigo-cta: 229 52% 37%;
 }
 
 .dark {
