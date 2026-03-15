@@ -18,6 +18,7 @@ const timeSlots = Array.from({ length: 13 }, (_, i) => `${(i + 8).toString().pad
 const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
     const { users } = useAuth();
     const t = useTranslations('AdminPages.schedule');
+    const tStatuses = useTranslations('AdminPages.TodaySnapshot.lessonStatuses');
     const student = users.find(u => u.id === lesson.studentId);
     const teacher = users.find(u => u.id === lesson.teacherId);
     const isCancelled = lesson.status.startsWith('CANCELLED') || lesson.status.startsWith('NO_SHOW');
@@ -38,7 +39,8 @@ const LessonItem = ({ lesson }: { lesson: LessonSlot }) => {
                 <TooltipContent>
                     <p>{t('tooltipInstrument', { instrument: lesson.instrument, teacher: teacher?.name ?? t('unknown') })}</p>
                     <p>{t('tooltipStudent', { student: student?.name ?? t('unknown') })}</p>
-                    <p>{t('tooltipStatus', { status: lesson.status })}</p>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    <p>{t('tooltipStatus', { status: tStatuses(lesson.status as any) || lesson.status })}</p>
                     <p>{t('tooltipRoom', { room: lesson.roomId ?? t('notAssigned') })}</p>
                 </TooltipContent>
             </Tooltip>

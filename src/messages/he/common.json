@@ -399,7 +399,8 @@
     "autoTranslateSuccess": "תורגם ל-3 שפות בהצלחה",
     "autoTranslateError": "שגיאה בתרגום. נסה שוב.",
     "aiDisclaimer": "⚠️ התרגום נוצר על ידי AI ועלול להכיל שגיאות. יש לוודא לפני שליחה.",
-    "aiTranslatedBadge": "תורגם על ידי AI — ייתכנו אי-דיוקים"
+    "aiTranslatedBadge": "תורגם על ידי AI — ייתכנו אי-דיוקים",
+    "translationPreviewTitle": "תצוגה מקדימה של תרגומים"
   },
   "RecentAnnouncementsCard": {
     "title": "הכרזות אחרונות",

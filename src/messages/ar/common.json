@@ -399,7 +399,8 @@
     "autoTranslateSuccess": "تمت الترجمة إلى 3 لغات بنجاح",
     "autoTranslateError": "خطأ في الترجمة. حاول مرة أخرى.",
     "aiDisclaimer": "⚠️ الترجمة مولّدة بالذكاء الاصطناعي وقد تحتوي على أخطاء. يرجى التحقق قبل الإرسال إلى المستلمين.",
-    "aiTranslatedBadge": "مترجَم بالذكاء الاصطناعي — قد يحتوي على عدم دقة"
+    "aiTranslatedBadge": "مترجَم بالذكاء الاصطناعي — قد يحتوي على عدم دقة",
+    "translationPreviewTitle": "معاينة الترجمة"
   },
   "RecentAnnouncementsCard": {
     "title": "الإعلانات الأخيرة",

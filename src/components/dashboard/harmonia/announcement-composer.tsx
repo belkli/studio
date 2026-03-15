@@ -169,6 +169,19 @@ export function AnnouncementComposer() {
               <p className="text-xs text-muted-foreground">{t('aiDisclaimer')}</p>
             </div>
 
+            {translations && (
+              <div className="rounded-md border bg-muted/40 p-4 space-y-3">
+                <p className="text-sm font-medium">{t('translationPreviewTitle')}</p>
+                {(Object.entries(translations) as [string, { title: string; body: string }][]).map(([lang, content]) => (
+                  <div key={lang} className="space-y-1">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">{lang}</p>
+                    <p className="text-sm font-medium">{content.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{content.body}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="grid md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}

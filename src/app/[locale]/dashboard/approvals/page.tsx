@@ -125,7 +125,8 @@ const ApprovalsTable = ({
                                 <TableCell className="font-medium text-start">
                                     <Link href={`/dashboard/forms/${form.id}`} className="hover:underline">{form.studentName}</Link>
                                 </TableCell>
-                                <TableCell className="text-start">{form.formType}</TableCell>
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                <TableCell className="text-start">{t(`formTypes.${form.formType}` as any) || form.formType}</TableCell>
                                 <TableCell className="text-start">{form.conservatoriumName}</TableCell>
                                 <TableCell className="text-start">
                                     <span className="inline-flex">

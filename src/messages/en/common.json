@@ -399,7 +399,8 @@
     "autoTranslateSuccess": "Translated to 3 languages successfully",
     "autoTranslateError": "Translation error. Try again.",
     "aiDisclaimer": "⚠️ Translation is AI-generated and may contain errors. Verify before sending to recipients.",
-    "aiTranslatedBadge": "AI-translated — may contain inaccuracies"
+    "aiTranslatedBadge": "AI-translated — may contain inaccuracies",
+    "translationPreviewTitle": "Translation preview"
   },
   "RecentAnnouncementsCard": {
     "title": "Recent Announcements",
