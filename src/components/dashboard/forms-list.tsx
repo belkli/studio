@@ -6,7 +6,7 @@ import type { FormStatus } from "@/lib/types";
 import { Link } from "@/i18n/routing";
 import { StatusBadge } from "../ui/status-badge";
 import { useAuth } from "@/hooks/use-auth";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function FormsList({
     statusFilter,
@@ -17,6 +17,8 @@ export function FormsList({
 }) {
     const t = useTranslations('FormsPage');
     const tc = useTranslations('Common.shared');
+    const tApprovals = useTranslations('ApprovalsPage');
+    const locale = useLocale();
     const { user, formSubmissions } = useAuth();
     let forms = user ? formSubmissions : [];
 
@@ -50,25 +52,26 @@ export function FormsList({
     }
 
     return (
-        <Table className="w-full">
+        <Table className="w-full" dir={locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr'}>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{tc('studentName')}</TableHead>
-                    <TableHead>{tc('formType')}</TableHead>
-                    <TableHead>{tc('status')}</TableHead>
-                    <TableHead>{tc('submissionDate')}</TableHead>
+                    <TableHead className="text-start">{tc('studentName')}</TableHead>
+                    <TableHead className="text-start">{tc('formType')}</TableHead>
+                    <TableHead className="text-start">{tc('status')}</TableHead>
+                    <TableHead className="text-start">{tc('submissionDate')}</TableHead>
                     <TableHead className="text-start"><span className="sr-only">{tc('actions')}</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {forms.map((form) => (
                     <TableRow key={form.id}>
-                        <TableCell className="font-medium truncate">{form.studentName}</TableCell>
-                        <TableCell className="truncate">{form.formType}{form.grade && ` - ${tc('grade')} ${form.grade}`}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium truncate text-start">{form.studentName}</TableCell>
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        <TableCell className="truncate text-start">{tApprovals(`formTypes.${form.formType}` as any) || form.formType}{form.grade && ` - ${tc('grade')} ${form.grade}`}</TableCell>
+                        <TableCell className="text-start">
                             <StatusBadge status={form.status} />
                         </TableCell>
-                        <TableCell>{form.submissionDate}</TableCell>
+                        <TableCell className="text-start">{form.submissionDate}</TableCell>
                         <TableCell className="text-start">
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={`/dashboard/forms/${form.id}`}>{tc('view')}</Link>
