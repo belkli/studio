@@ -287,7 +287,7 @@ export default function AdminScholarshipsPage() {
                 </FormItem>
               )} />
               <FormField control={causeForm.control as any} name="targetAmountILS" render={({ field }) => (
-                <FormItem><FormLabel>{t('causeTargetAmount')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>{t('causeTargetAmount')}</FormLabel><FormControl><Input type="number" dir="ltr" min={0} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               {/* eslint-enable @typescript-eslint/no-explicit-any */}
               <div className="md:col-span-2 flex justify-end">

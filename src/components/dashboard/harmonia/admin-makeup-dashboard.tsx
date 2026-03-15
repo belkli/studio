@@ -239,6 +239,7 @@ export function AdminMakeupDashboard() {
                             <label className="text-sm font-medium">{t('extendDaysLabel')}</label>
                             <input
                                 type="number"
+                                dir="ltr"
                                 className="mt-1 block w-24 rounded border px-2 py-1 text-sm"
                                 value={extendDays}
                                 min={1}

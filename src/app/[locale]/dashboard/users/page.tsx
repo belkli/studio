@@ -245,7 +245,7 @@ export default function UsersPage() {
                 <p className="text-muted-foreground text-start">{t('manageUsers')}</p>
             </div>
 
-            <Tabs defaultValue={defaultTab}>
+            <Tabs defaultValue={defaultTab} dir={dir}>
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="pending">
                         {t('pendingApprovalCount')}
@@ -658,6 +658,7 @@ const EditUserForm = ({ user, allUsers, conservatoriumInstruments, onSubmit, onC
                                         <FormControl>
                                             <Input
                                                 type="number"
+                                                dir="ltr"
                                                 {...field}
                                                 value={Number(field.value ?? 0)}
                                                 onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
@@ -691,6 +692,7 @@ const EditUserForm = ({ user, allUsers, conservatoriumInstruments, onSubmit, onC
                                                     <FormControl>
                                                         <Input
                                                             type="number"
+                                                            dir="ltr"
                                                             {...field}
                                                             value={Number(field.value ?? 0)}
                                                             onChange={e => field.onChange(parseInt(e.target.value, 10) || 0)}
@@ -762,7 +764,7 @@ const EditUserForm = ({ user, allUsers, conservatoriumInstruments, onSubmit, onC
                                     <SelectTrigger><SelectValue placeholder={t('dayOfWeek')} /></SelectTrigger>
                                     <SelectContent>{DAY_VALUES.map((day) => <SelectItem key={day} value={String(day)}>{t(`day_${day}`)}</SelectItem>)}</SelectContent>
                                 </Select>
-                                <Input type="time" value={assignment.startTime} onChange={(e) => {
+                                <Input type="time" dir="ltr" value={assignment.startTime} onChange={(e) => {
                                     const next = [...teacherAssignments];
                                     next[index] = { ...next[index], startTime: e.target.value } as TeacherAssignment;
                                     form.setValue('teacherAssignments', next);

@@ -428,6 +428,7 @@ export default function ConservatoriumProfileEditor() {
                                     <Label>{tUi('basic.foundedYear')}</Label>
                                     <Input
                                         type="number"
+                                        dir="ltr"
                                         value={formData.foundedYear || ''}
                                         onChange={e => setFormData(prev => ({ ...prev, foundedYear: parseInt(e.target.value) }))}
                                         placeholder={tUi('basic.foundedYearPlaceholder')}
@@ -512,6 +513,7 @@ export default function ConservatoriumProfileEditor() {
                                                     <>
                                                         <Input
                                                             type="time"
+                                                            dir="ltr"
                                                             value={hoursByDay[day]?.openTime || '08:00'}
                                                             onChange={(event) => setDayTime(day, 'openTime', event.target.value)}
                                                             className="w-36"
@@ -519,6 +521,7 @@ export default function ConservatoriumProfileEditor() {
                                                         <span>-</span>
                                                         <Input
                                                             type="time"
+                                                            dir="ltr"
                                                             value={hoursByDay[day]?.closeTime || '20:00'}
                                                             onChange={(event) => setDayTime(day, 'closeTime', event.target.value)}
                                                             className="w-36"

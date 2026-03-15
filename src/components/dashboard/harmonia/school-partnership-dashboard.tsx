@@ -174,15 +174,15 @@ function CreatePartnershipDialog({ onCreated, isRtl }: { onCreated: (p: SchoolPa
                     </div>
                     <div className="space-y-2">
                         <Label>{t('municipalSubsidyPercent')}</Label>
-                        <Input type="number" value={municipalPercent} onChange={e => setMunicipalPercent(e.target.value)} max={100} min={0} />
+                        <Input type="number" dir="ltr" value={municipalPercent} onChange={e => setMunicipalPercent(e.target.value)} max={100} min={0} />
                     </div>
                     <div className="space-y-2">
                         <Label>{t('ministrySubsidyPercent')}</Label>
-                        <Input type="number" value={ministryPercent} onChange={e => setMinistryPercent(e.target.value)} max={100} min={0} />
+                        <Input type="number" dir="ltr" value={ministryPercent} onChange={e => setMinistryPercent(e.target.value)} max={100} min={0} />
                     </div>
                     <div className="space-y-2">
                         <Label>{t('parentYearlyContribution')}</Label>
-                        <Input type="number" value={parentContribution} onChange={e => setParentContribution(e.target.value)} min={0} />
+                        <Input type="number" dir="ltr" value={parentContribution} onChange={e => setParentContribution(e.target.value)} min={0} />
                     </div>
                 </div>
                 <DialogFooter className={cn(isRtl && "sm:justify-start")}>

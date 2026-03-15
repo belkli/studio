@@ -154,7 +154,7 @@ export function StudentPracticePanel() {
                         </div>
                         <div className="space-y-2">
                             <Label>{t('durationLabel')}</Label>
-                            <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} min={1} />
+                            <Input type="number" dir="ltr" value={duration} onChange={(e) => setDuration(e.target.value)} min={1} />
                         </div>
                         <div className="space-y-2">
                             <Label>{t('personalNotesLabel')}</Label>

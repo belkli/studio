@@ -359,6 +359,7 @@ export default function PackagesSettingsPage() {
                 <Label>{t('lessonCount')}</Label>
                 <Input
                   type="number"
+                  dir="ltr"
                   min={1}
                   value={form.lessonCount ?? ''}
                   onChange={(e) => setForm((f) => ({ ...f, lessonCount: e.target.value === '' ? null : Number(e.target.value) }))}
@@ -369,6 +370,7 @@ export default function PackagesSettingsPage() {
                 <Label>{t('price')} (₪)</Label>
                 <Input
                   type="number"
+                  dir="ltr"
                   min={0}
                   value={form.priceILS}
                   onChange={(e) => setForm((f) => ({ ...f, priceILS: Number(e.target.value) }))}

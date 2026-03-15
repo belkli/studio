@@ -85,9 +85,9 @@ export function PricingSettings() {
                                 <CardDescription>{t('baseRates.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="grid md:grid-cols-3 gap-4">
-                                <FormField control={form.control} name="baseRatePerLesson.30" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min30')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="baseRatePerLesson.45" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min45')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="baseRatePerLesson.60" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min60')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="baseRatePerLesson.30" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min30')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="baseRatePerLesson.45" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min45')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="baseRatePerLesson.60" render={({ field }) => (<FormItem> <FormLabel>{t('baseRates.min60')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
                             </CardContent>
                         </Card>
 
@@ -97,10 +97,10 @@ export function PricingSettings() {
                                 <CardDescription>{t('discounts.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <FormField control={form.control} name="discounts.pack5" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.pack5')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="discounts.pack10" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.pack10')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="discounts.yearly" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.yearly')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="discounts.sibling" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.sibling')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="discounts.pack5" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.pack5')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="discounts.pack10" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.pack10')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="discounts.yearly" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.yearly')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="discounts.sibling" render={({ field }) => (<FormItem> <FormLabel>{t('discounts.sibling')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
                             </CardContent>
                         </Card>
 
@@ -109,8 +109,8 @@ export function PricingSettings() {
                                 <CardTitle>{t('special.title')}</CardTitle>
                             </CardHeader>
                             <CardContent className="grid md:grid-cols-3 gap-4">
-                                <FormField control={form.control} name="trialPrice" render={({ field }) => (<FormItem> <FormLabel>{t('special.trial')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="adHocPremium" render={({ field }) => (<FormItem> <FormLabel>{t('special.adHoc')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="trialPrice" render={({ field }) => (<FormItem> <FormLabel>{t('special.trial')}</FormLabel> <InputGroup> <InputGroupText>₪</InputGroupText> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="adHocPremium" render={({ field }) => (<FormItem> <FormLabel>{t('special.adHoc')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
                             </CardContent>
                         </Card>
 
@@ -123,7 +123,7 @@ export function PricingSettings() {
                                 <CardDescription>{t('premium.description')}</CardDescription>
                             </CardHeader>
                             <CardContent className="grid md:grid-cols-3 gap-4">
-                                <FormField control={form.control} name="premiumSurcharge" render={({ field }) => (<FormItem> <FormLabel>{t('premium.surcharge')}</FormLabel> <InputGroup> <FormControl><Input type="number" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="premiumSurcharge" render={({ field }) => (<FormItem> <FormLabel>{t('premium.surcharge')}</FormLabel> <InputGroup> <FormControl><Input type="number" dir="ltr" {...field} className="rounded-s-none" /></FormControl> <InputGroupText>%</InputGroupText> </InputGroup> <FormMessage /> </FormItem>)} />
                             </CardContent>
                         </Card>
 
@@ -143,6 +143,7 @@ export function PricingSettings() {
                                                 <FormControl>
                                                     <Input
                                                         type="number"
+                                                        dir="ltr"
                                                         step="0.1"
                                                         min="0"
                                                         max="30"

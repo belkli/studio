@@ -171,7 +171,7 @@ export function ScheduleRedesign() {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <label className="text-sm text-muted-foreground px-1">{t('weekLabel')}</label>
-          <input type="date" className="h-9 rounded-md border px-3 bg-background" value={weekStartRaw} onChange={(event) => setWeekStartRaw(event.target.value)} />
+          <input type="date" dir="ltr" className="h-9 rounded-md border px-3 bg-background" value={weekStartRaw} onChange={(event) => setWeekStartRaw(event.target.value)} />
           <Button variant="outline" size="icon" onClick={isRtl ? goToPrevWeek : goToNextWeek} aria-label={t('nextWeek')}>
             <ChevronRight className="h-4 w-4" />
           </Button>

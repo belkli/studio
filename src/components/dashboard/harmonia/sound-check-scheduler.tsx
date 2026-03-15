@@ -84,6 +84,7 @@ export function SoundCheckScheduler({ event, onUpdate }: SoundCheckSchedulerProp
                                         <TableCell>
                                             <Input
                                                 type="time"
+                                                dir="ltr"
                                                 value={slot?.startTime || ''}
                                                 onChange={(e) => handleTimeChange(perf.id, e.target.value)}
                                                 className="h-8 w-24"

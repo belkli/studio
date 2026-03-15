@@ -117,7 +117,7 @@ export function PracticeLogForm() {
                 <FormItem>
                   <FormLabel>{t('dateLabel')}</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="date" dir="ltr" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

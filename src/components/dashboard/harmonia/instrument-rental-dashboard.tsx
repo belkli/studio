@@ -130,12 +130,12 @@ function RentInstrumentDialog({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('startDate')}</Label>
-              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              <Input type="date" dir="ltr" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </div>
             {rentalModel !== 'monthly' && (
               <div className="space-y-2">
                 <Label>{t('expectedReturnDate')}</Label>
-                <Input type="date" value={expectedReturnDate} onChange={(e) => setExpectedReturnDate(e.target.value)} />
+                <Input type="date" dir="ltr" value={expectedReturnDate} onChange={(e) => setExpectedReturnDate(e.target.value)} />
               </div>
             )}
           </div>
@@ -143,14 +143,14 @@ function RentInstrumentDialog({
           {rentalModel === 'deposit' && (
             <div className="space-y-2">
               <Label>{t('depositAmount')}</Label>
-              <Input type="number" value={depositAmountILS} onChange={(e) => setDepositAmountILS(Number(e.target.value))} />
+              <Input type="number" dir="ltr" value={depositAmountILS} onChange={(e) => setDepositAmountILS(Number(e.target.value))} />
             </div>
           )}
 
           {rentalModel === 'monthly' && (
             <div className="space-y-2">
               <Label>{t('monthlyFee')}</Label>
-              <Input type="number" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
+              <Input type="number" dir="ltr" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
             </div>
           )}
 
@@ -158,15 +158,15 @@ function RentInstrumentDialog({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>{t('monthlyFee')}</Label>
-                <Input type="number" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
+                <Input type="number" dir="ltr" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
               </div>
               <div className="space-y-2">
                 <Label>{t('purchasePrice')}</Label>
-                <Input type="number" value={purchasePriceILS} onChange={(e) => setPurchasePriceILS(Number(e.target.value))} />
+                <Input type="number" dir="ltr" value={purchasePriceILS} onChange={(e) => setPurchasePriceILS(Number(e.target.value))} />
               </div>
               <div className="space-y-2">
                 <Label>{t('monthsUntilPurchase')}</Label>
-                <Input type="number" min={1} value={monthsUntilPurchaseEligible} onChange={(e) => setMonthsUntilPurchaseEligible(Number(e.target.value))} />
+                <Input type="number" dir="ltr" min={1} value={monthsUntilPurchaseEligible} onChange={(e) => setMonthsUntilPurchaseEligible(Number(e.target.value))} />
               </div>
             </div>
           )}
@@ -233,7 +233,7 @@ function ReturnRentalDialog({
           </div>
           <div className="space-y-2">
             <Label>{t('customRefundOptional')}</Label>
-            <Input type="number" value={customRefund} onChange={(e) => setCustomRefund(e.target.value)} placeholder={t('leaveBlankAuto')} />
+            <Input type="number" dir="ltr" value={customRefund} onChange={(e) => setCustomRefund(e.target.value)} placeholder={t('leaveBlankAuto')} />
           </div>
         </div>
         <DialogFooter>
@@ -336,24 +336,24 @@ function InstrumentFormDialog({
           {modelsOffered.includes('deposit') && (
             <div className="space-y-2">
               <Label>{t('depositAmount')}</Label>
-              <Input type="number" value={depositAmountILS} onChange={(e) => setDepositAmountILS(Number(e.target.value))} />
+              <Input type="number" dir="ltr" value={depositAmountILS} onChange={(e) => setDepositAmountILS(Number(e.target.value))} />
             </div>
           )}
           {modelsOffered.includes('monthly') && (
             <div className="space-y-2">
               <Label>{t('monthlyFee')}</Label>
-              <Input type="number" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
+              <Input type="number" dir="ltr" value={monthlyFeeILS} onChange={(e) => setMonthlyFeeILS(Number(e.target.value))} />
             </div>
           )}
           {modelsOffered.includes('rent_to_own') && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{t('purchasePrice')}</Label>
-                <Input type="number" value={purchasePriceILS} onChange={(e) => setPurchasePriceILS(Number(e.target.value))} />
+                <Input type="number" dir="ltr" value={purchasePriceILS} onChange={(e) => setPurchasePriceILS(Number(e.target.value))} />
               </div>
               <div className="space-y-2">
                 <Label>{t('monthsUntilPurchase')}</Label>
-                <Input type="number" value={monthsUntilPurchaseEligible} onChange={(e) => setMonthsUntilPurchaseEligible(Number(e.target.value))} />
+                <Input type="number" dir="ltr" value={monthsUntilPurchaseEligible} onChange={(e) => setMonthsUntilPurchaseEligible(Number(e.target.value))} />
               </div>
             </div>
           )}

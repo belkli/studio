@@ -172,10 +172,10 @@ export function EventEditForm({ event }: { event: EventProduction }) {
                 )} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField control={form.control} name="eventDate" render={({ field }) => (
-                    <FormItem><FormLabel>{t('eventDate')}</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('eventDate')}</FormLabel><FormControl><Input type="date" dir="ltr" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="startTime" render={({ field }) => (
-                    <FormItem><FormLabel>{t('eventTime')}</FormLabel><FormControl><Input type="time" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('eventTime')}</FormLabel><FormControl><Input type="time" dir="ltr" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
                 <FormField control={form.control} name="tagsText" render={({ field }) => (
@@ -197,7 +197,7 @@ export function EventEditForm({ event }: { event: EventProduction }) {
                   <FormItem><FormLabel>{t('googleMapsUrl')}</FormLabel><FormControl><Input type="url" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="venue.capacity" render={({ field }) => (
-                  <FormItem><FormLabel>{t('capacity')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>{t('capacity')}</FormLabel><FormControl><Input type="number" dir="ltr" min={0} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="venue.isOnline" render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-md border p-3"><FormLabel>{t('isOnline')}</FormLabel><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl></FormItem>
@@ -224,10 +224,10 @@ export function EventEditForm({ event }: { event: EventProduction }) {
                           <FormItem><FormLabel>{t('tierDesc')}</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name={`ticketPrices.${index}.priceILS`} render={({ field }) => (
-                          <FormItem><FormLabel>{t('tierPrice')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t('tierPrice')}</FormLabel><FormControl><Input type="number" dir="ltr" min={0} {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name={`ticketPrices.${index}.availableCount`} render={({ field }) => (
-                          <FormItem><FormLabel>{t('tierAvailable')}</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                          <FormItem><FormLabel>{t('tierAvailable')}</FormLabel><FormControl><Input type="number" dir="ltr" min={0} {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <Button type="button" variant="ghost" size="icon" onClick={() => ticketPrices.remove(index)} aria-label={t('removeTier')}><Trash2 className="h-4 w-4" /></Button>
                       </div>

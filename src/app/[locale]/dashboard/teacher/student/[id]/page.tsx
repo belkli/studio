@@ -320,6 +320,7 @@ export default function TeacherStudentProfilePage() {
                                 <Input
                                     id="practice-goal"
                                     type="number"
+                                    dir="ltr"
                                     value={practiceGoal}
                                     onChange={(e) => setPracticeGoal(Number(e.target.value))}
                                     step={15}

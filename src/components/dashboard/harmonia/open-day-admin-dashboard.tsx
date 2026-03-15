@@ -123,8 +123,10 @@ export function OpenDayAdminDashboard() {
     setRegistrations((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   };
 
+  const dir = isRtl ? 'rtl' : 'ltr';
+
   return (
-    <Card>
+    <Card dir={dir}>
       <CardHeader>
         <CardTitle>{t('title')}</CardTitle>
         <CardDescription>{t('subtitle')}</CardDescription>
@@ -143,7 +145,7 @@ export function OpenDayAdminDashboard() {
               <div className="grid gap-3 rounded-md border p-4 md:grid-cols-5">
                 <div>
                   <Label htmlFor="open-day-session-time">{t('sessionTime')}</Label>
-                  <Input id="open-day-session-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                  <Input id="open-day-session-time" type="time" dir="ltr" value={time} onChange={(e) => setTime(e.target.value)} />
                 </div>
                 <div>
                   <Label htmlFor="open-day-session-instrument">{t('sessionInstrument')}</Label>
@@ -153,14 +155,14 @@ export function OpenDayAdminDashboard() {
                   <Label>{t('sessionTeacher')}</Label>
                   <Select value={teacherId} onValueChange={setTeacherId}>
                     <SelectTrigger><SelectValue placeholder={t('sessionTeacher')} /></SelectTrigger>
-                    <SelectContent>
+                    <SelectContent dir={dir}>
                       {teachers.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <Label htmlFor="open-day-session-capacity">{t('sessionCapacity')}</Label>
-                  <Input id="open-day-session-capacity" type="number" min={1} value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} />
+                  <Input id="open-day-session-capacity" type="number" dir="ltr" min={1} value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} />
                 </div>
                 <div className="flex items-end">
                   <Button type="button" className="w-full" onClick={addSession}>{t('addSession')}</Button>
@@ -174,7 +176,7 @@ export function OpenDayAdminDashboard() {
                 {sessionsWithDetails.map(({ session, teacher, assigned }) => (
                   <Card key={session.id}>
                     <CardContent className="flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
-                      <div className="space-y-1">
+                      <div className="space-y-1 text-start">
                         <p className="font-medium">{session.time} - {session.instrument}</p>
                         <p className="text-sm text-muted-foreground">{t('teacherLabel')}: {teacher?.name || t('unknownTeacher')}</p>
                       </div>
@@ -214,7 +216,7 @@ export function OpenDayAdminDashboard() {
                       <TableCell className="text-start">
                         <Select value={item.status} onValueChange={(value) => updateRegistration(item.id, { status: value as OpenDayRegistration['status'] })}>
                           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-                          <SelectContent>
+                          <SelectContent dir={dir}>
                             <SelectItem value="pending">{t('statuses.pending')}</SelectItem>
                             <SelectItem value="confirmed">{t('statuses.confirmed')}</SelectItem>
                             <SelectItem value="attended">{t('statuses.attended')}</SelectItem>
@@ -225,7 +227,7 @@ export function OpenDayAdminDashboard() {
                       <TableCell className="text-start">
                         <Select value={item.sessionId || 'unassigned'} onValueChange={(value) => updateRegistration(item.id, { sessionId: value === 'unassigned' ? undefined : value })}>
                           <SelectTrigger className="w-44"><SelectValue placeholder={t('selectSession')} /></SelectTrigger>
-                          <SelectContent>
+                          <SelectContent dir={dir}>
                             <SelectItem value="unassigned">{t('unassigned')}</SelectItem>
                             {sessions.map((session) => (
                               <SelectItem key={session.id} value={session.id}>{session.time} - {session.instrument}</SelectItem>

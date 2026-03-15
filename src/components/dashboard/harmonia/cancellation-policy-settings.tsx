@@ -71,7 +71,7 @@ export function CancellationPolicySettings() {
                             <FormField name="studentNoticeHoursRequired" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('noticeHoursLabel')}</FormLabel>
-                                    <Input type="number" {...field} />
+                                    <Input type="number" dir="ltr" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />
@@ -105,14 +105,14 @@ export function CancellationPolicySettings() {
                             <FormField name="makeupCreditExpiryDays" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('makeupExpiryLabel')}</FormLabel>
-                                    <Input type="number" {...field} />
+                                    <Input type="number" dir="ltr" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField name="maxMakeupsPerTerm" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('maxMakeupsLabel')}</FormLabel>
-                                    <Input type="number" {...field} />
+                                    <Input type="number" dir="ltr" {...field} />
                                     <FormMessage />
                                 </FormItem>
                             )} />

@@ -184,8 +184,8 @@ export function NotificationPreferences() {
                         {/* eslint-disable-next-line react-hooks/incompatible-library */}
                         {form.watch('quietHours.enabled') && (
                             <div className="grid grid-cols-2 gap-4">
-                                <FormField control={form.control} name="quietHours.startTime" render={({ field }) => (<FormItem> <FormLabel>{t('startTimeLabel')}</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                                <FormField control={form.control} name="quietHours.endTime" render={({ field }) => (<FormItem> <FormLabel>{t('endTimeLabel')}</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="quietHours.startTime" render={({ field }) => (<FormItem> <FormLabel>{t('startTimeLabel')}</FormLabel> <FormControl><Input type="time" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField control={form.control} name="quietHours.endTime" render={({ field }) => (<FormItem> <FormLabel>{t('endTimeLabel')}</FormLabel> <FormControl><Input type="time" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                             </div>
                         )}
                         <FormField control={form.control} name="language" render={({ field }) => (

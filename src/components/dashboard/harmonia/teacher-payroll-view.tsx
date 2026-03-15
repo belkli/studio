@@ -112,6 +112,7 @@ export function TeacherPayrollView() {
         <label className="text-sm text-muted-foreground">{t('period')}</label>
         <input
           type="month"
+          dir="ltr"
           value={period}
           onChange={(event) => setPeriod(event.target.value)}
           className="h-9 rounded-md border bg-background px-3"

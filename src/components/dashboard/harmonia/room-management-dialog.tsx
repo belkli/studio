@@ -205,7 +205,7 @@ export function RoomManagementDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>{t('capacityLabel')}</Label>
-                  <Input type="number" min={1} {...form.register('capacity')} />
+                  <Input type="number" dir="ltr" min={1} {...form.register('capacity')} />
                 </div>
 
                 <div className="space-y-3 md:col-span-2">
@@ -231,6 +231,7 @@ export function RoomManagementDialog({
 
                       <Input
                         type="number"
+                        dir="ltr"
                         min={1}
                         max={10}
                         value={form.watch(`instrumentEquipment.${index}.quantity`) || 1}

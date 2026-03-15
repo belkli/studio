@@ -113,7 +113,7 @@ export function AgeUpgradeModal({ child, open, onOpenChange }: AgeUpgradeModalPr
                         <FormControl>
                           <div className="relative">
                             <Mail className={`absolute ${isRtl ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground`} />
-                            <Input dir="ltr" className={`text-left ${isRtl ? 'pe-10' : 'ps-10'}`} placeholder="example@email.com" {...field} />
+                            <Input dir="ltr" className={`text-start ${isRtl ? 'pe-10' : 'ps-10'}`} placeholder="example@email.com" {...field} />
                           </div>
                         </FormControl>
                         <FormMessage />

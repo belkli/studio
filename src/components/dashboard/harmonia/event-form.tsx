@@ -65,8 +65,8 @@ export function EventForm() {
                         <FormField control={form.control} name="name" render={({ field }) => (<FormItem> <FormLabel>{t('nameLabel')}</FormLabel> <FormControl><Input placeholder={t('namePlaceholder')} {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                         <div className="grid md:grid-cols-3 gap-4">
                             <FormField control={form.control} name="type" render={({ field }) => (<FormItem> <FormLabel>{t('typeLabel')}</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value} dir={isRtl ? 'rtl' : 'ltr'}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="RECITAL">{t('types.RECITAL')}</SelectItem><SelectItem value="CONCERT">{t('types.CONCERT')}</SelectItem><SelectItem value="EXAM_PERFORMANCE">{t('types.EXAM_PERFORMANCE')}</SelectItem><SelectItem value="OPEN_DAY">{t('types.OPEN_DAY')}</SelectItem></SelectContent></Select> <FormMessage /> </FormItem>)} />
-                            <FormField control={form.control} name="eventDate" render={({ field }) => (<FormItem> <FormLabel>{t('dateLabel')}</FormLabel> <FormControl><Input type="date" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
-                            <FormField control={form.control} name="startTime" render={({ field }) => (<FormItem> <FormLabel>{t('timeLabel')}</FormLabel> <FormControl><Input type="time" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField control={form.control} name="eventDate" render={({ field }) => (<FormItem> <FormLabel>{t('dateLabel')}</FormLabel> <FormControl><Input type="date" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField control={form.control} name="startTime" render={({ field }) => (<FormItem> <FormLabel>{t('timeLabel')}</FormLabel> <FormControl><Input type="time" dir="ltr" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                         </div>
                         <FormField control={form.control} name="venue" render={({ field }) => (<FormItem> <FormLabel>{t('venueLabel')}</FormLabel> <FormControl><Input placeholder={t('venuePlaceholder')} {...field} /></FormControl> <FormMessage /> </FormItem>)} />
 
@@ -78,7 +78,7 @@ export function EventForm() {
                                 </FormItem>
                             )} />
                             {/* eslint-disable-next-line react-hooks/incompatible-library */}
-                            <FormField control={form.control} name="ticketPrice" render={({ field }) => (<FormItem> <FormLabel>{t('ticketPriceLabel')}</FormLabel> <InputGroup><InputGroupText>₪</InputGroupText><FormControl><Input type="number" {...field} disabled={!form.watch('isPublic')} /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
+                            <FormField control={form.control} name="ticketPrice" render={({ field }) => (<FormItem> <FormLabel>{t('ticketPriceLabel')}</FormLabel> <InputGroup><InputGroupText>₪</InputGroupText><FormControl><Input type="number" dir="ltr" {...field} disabled={!form.watch('isPublic')} /></FormControl></InputGroup> <FormMessage /> </FormItem>)} />
                         </div>
 
                     </CardContent>
