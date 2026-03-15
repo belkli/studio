@@ -1,0 +1,27 @@
+export const BRAND_NAME = 'Lyriosa'
+export const BRAND_NAME_HE = 'ליריוסה'
+export const BRAND_NAME_AR = 'ليريوسا'
+export const BRAND_NAME_RU = 'Лириоса'
+export const BRAND_DOMAIN = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lyriosa.co.il'
+export const BRAND_SUPPORT_EMAIL = 'support@lyriosa.co.il'
+export const BRAND_PRIVACY_EMAIL = 'privacy@lyriosa.co.il'
+export const BRAND_A11Y_EMAIL = 'accessibility@lyriosa.co.il'
+export const BRAND_DEV_EMAIL = 'dev@lyriosa.local'
+export const BRAND_NOREPLY_EMAIL = 'noreply@lyriosa.co.il'
+
+export const BRAND_COOKIE_NAME = 'lyriosa-user'
+export const BRAND_LOCALSTORAGE_KEY = 'lyriosa-user'
+export const BRAND_LOCALE_STORAGE_KEY = 'lyriosa_locale'
+export const BRAND_COOKIE_CONSENT_KEY = 'lyriosa_cookie_consent'
+
+export const BRAND_A11Y_PREFS_KEY = 'lyriosa.a11y.prefs.v1'
+export const BRAND_A11Y_POSITION_KEY = 'lyriosa.a11y.position.v1'
+export const BRAND_A11Y_MINIMIZED_KEY = 'lyriosa.a11y.minimized.v1'
+export const BRAND_HELP_FAB_POSITION_KEY = 'lyriosa.help.fab.position.v1'
+export const BRAND_HELP_FAB_MINIMIZED_KEY = 'lyriosa.help.fab.minimized.v1'
+export const BRAND_WALKTHROUGH_KEY = 'lyriosa-walkthrough-seen'
+
+export const BRAND_STORAGE_BUCKET = 'lyriosa-private'
+export const BRAND_PS_EMAIL_DOMAIN = '@playing-school.lyriosa.io'
+
+export const AI_ASSISTANT_NAME = 'Lyria'
