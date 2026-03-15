@@ -1,7 +1,7 @@
 // src/hooks/use-color-mode.ts
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 
 export type ColorModePreference = 'light' | 'dark' | 'system'
 
@@ -29,14 +29,21 @@ function readStoredPreference(): ColorModePreference {
 }
 
 export function useColorMode() {
-  const [preference, setPreference] = useState<ColorModePreference>(() => {
-    if (typeof window === 'undefined') return 'system'
-    return readStoredPreference()
-  })
-  const [systemDark, setSystemDark] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-  })
+  const [preference, setPreference] = useState<ColorModePreference>('system')
+  const [systemDark, setSystemDark] = useState<boolean>(false)
+
+  // Hydrate from localStorage on mount (lazy initializer doesn't re-run on client after SSR).
+  // useLayoutEffect runs synchronously before paint on the client and is skipped on the server.
+  useLayoutEffect(() => {
+    const stored = readStoredPreference()
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPreference(stored)
+    setSystemDark(dark)
+    // Only apply explicit preferences — don't touch the attribute when system,
+    // as the blocking script already set it correctly from OS preference.
+    if (stored !== 'system') applyColorMode(stored)
+  }, [])
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
