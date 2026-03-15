@@ -62,6 +62,23 @@
       height: 0;
     }
   }
+
+  --animate-hero-in: hero-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
+  --animate-scroll-bounce: scroll-bounce 1.8s ease-in-out infinite;
+
+  @keyframes hero-in {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+  @keyframes scroll-bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(5px); }
+  }
 }
 
 :root {
@@ -151,6 +168,48 @@
   --chart-3: 160 84% 39%;
   --chart-4: 210 44% 35%;
   --chart-5: 0 84% 60%;
+}
+
+.dark[data-theme="b"] {
+  --background: 210 50% 11%;
+  --foreground: 40 43% 96%;
+  --card: 210 44% 15%;
+  --card-foreground: 40 43% 96%;
+  --popover: 210 44% 15%;
+  --popover-foreground: 40 43% 96%;
+  --primary: 43 50% 54%;
+  --primary-foreground: 210 50% 11%;
+  --secondary: 210 44% 18%;
+  --secondary-foreground: 40 43% 96%;
+  --muted: 210 44% 18%;
+  --muted-foreground: 40 20% 62%;
+  --accent: 229 52% 47%;
+  --accent-foreground: 40 43% 96%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 43 15% 25%;
+  --input: 43 15% 25%;
+  --ring: 43 70% 69%;
+  --chart-1: 43 50% 54%;
+  --chart-2: 229 52% 47%;
+  --chart-3: 160 84% 39%;
+  --chart-4: 210 44% 35%;
+  --chart-5: 0 84% 60%;
+}
+
+/* Candidate B font overrides */
+[data-theme="b"] {
+  --font-heading: 'Frank Ruhl Libre', serif;
+  --font-body: var(--font-heebo), 'Heebo', sans-serif;
+  --font-display: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* RTL font override — applies in both themes */
+[dir="rtl"] body {
+  font-family: var(--font-rtl);
+}
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 {
+  font-family: var(--font-heading);
 }
 
 @layer base {
