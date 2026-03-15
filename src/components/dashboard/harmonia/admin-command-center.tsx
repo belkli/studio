@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations, useLocale } from 'next-intl';
+import { BRAND_NAME } from '@/lib/brand';
 
 
 export function AdminCommandCenter() {
@@ -42,7 +43,7 @@ export function AdminCommandCenter() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-start">{t('welcome', { name: user.name.split(' ')[0] })}</h1>
-                    <p className="text-muted-foreground text-start">{t('controlCenter', { name: user.conservatoriumName || 'Harmonia' })}</p>
+                    <p className="text-muted-foreground text-start">{t('controlCenter', { name: user.conservatoriumName || BRAND_NAME })}</p>
                 </div>
             </div>
 

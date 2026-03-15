@@ -10,6 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { isBefore, parseISO } from 'date-fns';
+import { BRAND_NAME } from '@/lib/brand';
 
 const LessonSchema = z.object({
   id: z.string(),
@@ -72,7 +73,7 @@ const prompt = ai.definePrompt({
   name: 'rescheduleConciergePrompt',
   input: { schema: RescheduleRequestInputSchema },
   output: { schema: RescheduleResponseSchema },
-  prompt: `You are a helpful and friendly AI assistant for a music conservatorium named Harmonia. Your goal is to help students reschedule or cancel lessons conversationally based on their messages.
+  prompt: `You are a helpful and friendly AI assistant for a music conservatorium named ${BRAND_NAME}. Your goal is to help students reschedule or cancel lessons conversationally based on their messages.
 
 Current Time: {{{currentTime}}}
 

@@ -1,9 +1,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
+import { BRAND_DOMAIN } from '@/lib/brand';
 
 // Strict token validation: only alphanumeric chars, hyphens, and underscores, 4–128 chars
 const TOKEN_REGEX = /^[A-Za-z0-9_-]{4,128}$/;
-const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://harmonia.co.il';
+const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? BRAND_DOMAIN;
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);

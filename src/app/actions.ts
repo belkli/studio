@@ -1,12 +1,13 @@
 // SEC-H05/QA-M01: @ts-nocheck removed — TypeScript must remain active in this security-critical file.
 'use server';
 /**
- * @fileoverview Server Actions for the Harmonia application.
+ * @fileoverview Server Actions for the Lyriosa application.
  * This file centralizes all server-side functions that can be called from client components.
  * It uses a higher-order function `withAuth` to ensure that all actions are authenticated
  * and their inputs are validated using Zod schemas, providing a secure and robust API layer.
  */
 
+import { BRAND_DOMAIN } from '@/lib/brand';
 import type { Alumnus, Announcement, Branch, Composition, Conservatorium, ConservatoriumInstrument, DonationCause, DonationRecord, EventProduction, FormSubmission, LessonPackage, LessonSlot, Masterclass, Room, ScholarshipApplication, StudentMasterClassAllowance, User } from '@/lib/types';
 import { getDb } from '@/lib/db';
 import { withAuth, requireRole, verifyAuth } from '@/lib/auth-utils';
@@ -1303,7 +1304,7 @@ export const inviteSchoolCoordinator = withAuth(
 
     return {
       success: true,
-      invitationUrl: `https://harmony.app/accept-invite/${token}`,
+      invitationUrl: `${BRAND_DOMAIN}/accept-invite/${token}`,
       message: `Invitation sent successfully to ${data.email}`,
     };
   }

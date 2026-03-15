@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Clock, Info, CheckCircle2, Phone, Mail, LogOut, Home } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
+import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 
 export default function PendingApprovalPage() {
     const { logout } = useAuth();
@@ -55,7 +56,7 @@ export default function PendingApprovalPage() {
                         <div className="flex items-center gap-3 p-4 border rounded-lg bg-card shadow-sm">
                             <Mail className="h-5 w-5 text-muted-foreground" />
                             <div>
-                                <p className="text-sm font-medium">office@harmony.org.il</p>
+                                <p className="text-sm font-medium">{BRAND_SUPPORT_EMAIL}</p>
                             </div>
                         </div>
                     </div>

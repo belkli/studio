@@ -1,4 +1,5 @@
 ﻿import { spawnSync } from 'node:child_process';
+import { BRAND_NAME } from '@/lib/brand';
 import type {
   Alumnus,
   Branch,
@@ -680,8 +681,8 @@ function mapUsers(rows: RawUser[], idMap: Map<string, string>, nameMap: Map<stri
       conservatoriumId,
       conservatoriumName:
         conservatoriumId === 'global'
-          ? 'Harmonia'
-          : nameMap.get(conservatoriumId) || row.conservatorium_name || 'Harmonia',
+          ? BRAND_NAME
+          : nameMap.get(conservatoriumId) || row.conservatorium_name || BRAND_NAME,
       idNumber: row.national_id ?? undefined,
       phone: row.phone ?? undefined,
       city: row.city ?? undefined,
@@ -1233,7 +1234,7 @@ function loadSeedFromPostgres(connectionString: string): MemorySeed {
       SELECT
         u.id::text,
         u.conservatorium_id::text,
-        COALESCE(c.name->>'he', c.name->>'en', 'Harmonia') AS conservatorium_name,
+        COALESCE(c.name->>'he', c.name->>'en', '${BRAND_NAME}') AS conservatorium_name,
         u.email,
         u.role::text,
         u.first_name,

@@ -1,3 +1,4 @@
+import { BRAND_NAME } from '@/lib/brand';
 import type {
   Alumnus,
   Branch,
@@ -364,7 +365,7 @@ function mapUsers(rows: RawUser[], conservatoriumMap: Map<string, string>): User
       email: row.email,
       role: mappedRole,
       conservatoriumId: row.conservatorium_id ?? 'global',
-      conservatoriumName: (row.conservatorium_id && conservatoriumMap.get(row.conservatorium_id)) || 'Harmonia',
+      conservatoriumName: (row.conservatorium_id && conservatoriumMap.get(row.conservatorium_id)) || BRAND_NAME,
       idNumber: row.national_id ?? undefined,
       phone: row.phone ?? undefined,
       city: row.city ?? undefined,

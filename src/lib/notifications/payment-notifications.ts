@@ -1,4 +1,5 @@
 import type { Notification } from '@/lib/types';
+import { BRAND_NAME, BRAND_NOREPLY_EMAIL } from '@/lib/brand';
 
 export interface PaymentNotificationData {
   invoiceId: string;
@@ -71,7 +72,7 @@ export function buildPaymentNotifications(data: PaymentNotificationData): Notifi
 
 export async function sendPaymentConfirmationEmail(data: PaymentNotificationData): Promise<void> {
   const apiKey = process.env.SENDGRID_API_KEY;
-  const fromEmail = process.env.SENDGRID_FROM_EMAIL ?? 'noreply@harmonia.co.il';
+  const fromEmail = process.env.SENDGRID_FROM_EMAIL ?? BRAND_NOREPLY_EMAIL;
 
   if (!apiKey) {
     console.warn('[Email] SENDGRID_API_KEY not configured — skipping payment confirmation email');
@@ -96,12 +97,12 @@ export async function sendPaymentConfirmationEmail(data: PaymentNotificationData
           transaction_id: data.transactionId,
         },
       }],
-      from: { email: fromEmail, name: 'Harmonia' },
+      from: { email: fromEmail, name: BRAND_NAME },
       template_id: process.env.SENDGRID_PAYMENT_TEMPLATE_ID ?? undefined,
       subject: `Payment Confirmation - ${data.amount} ${data.currency}`,
       content: [{
         type: 'text/plain',
-        value: `Dear ${data.payerName},\n\nYour payment of ${data.amount} ${data.currency} has been received.\nInvoice: ${data.invoiceNumber ?? 'N/A'}\n\nThank you,\nHarmonia`,
+        value: `Dear ${data.payerName},\n\nYour payment of ${data.amount} ${data.currency} has been received.\nInvoice: ${data.invoiceNumber ?? 'N/A'}\n\nThank you,\n${BRAND_NAME}`,
       }],
     }),
   });

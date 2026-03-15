@@ -5,13 +5,14 @@
  */
 
 import type { LessonSlot } from '@/lib/types';
+import { BRAND_NAME } from '@/lib/brand';
 
 /**
  * syncTeacherCalendars — Scheduled Function (every 15 minutes)
  * 
- * Two-way sync between Harmonia lesson slots and Google Calendar.
- * 
- * Outbound (Harmonia → Google Calendar):
+ * Two-way sync between Lyriosa lesson slots and Google Calendar.
+ *
+ * Outbound (Lyriosa → Google Calendar):
  * 1. Query all SCHEDULED lesson slots that have been created/modified
  *    since lastSyncAt
  * 2. For each slot:
@@ -20,7 +21,7 @@ import type { LessonSlot } from '@/lib/types';
  *    c. If slot was CANCELLED → delete Google Calendar event
  * 3. Store googleCalendarEventId on the LessonSlot document
  * 
- * Inbound (Google Calendar → Harmonia):
+ * Inbound (Google Calendar → Lyriosa):
  * 1. Fetch teacher's calendar events since lastSyncAt
  * 2. Check for external events that block lesson times
  * 3. If conflict found, create a TeacherException document
@@ -41,7 +42,7 @@ export interface SyncTeacherCalendarsSpec {
 }
 
 /**
- * Creates a Google Calendar event from a Harmonia lesson slot.
+ * Creates a Google Calendar event from a Lyriosa lesson slot.
  */
 export function lessonToCalendarEvent(
     slot: LessonSlot,
@@ -55,7 +56,7 @@ export function lessonToCalendarEvent(
     return {
         summary: `🎵 ${instrument} — ${studentName}`,
         description: [
-            `Harmonia Lesson`,
+            `${BRAND_NAME} Lesson`,
             `Student: ${studentName}`,
             `Instrument: ${instrument}`,
             roomName ? `Room: ${roomName}` : '',

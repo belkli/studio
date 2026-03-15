@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import type { Invoice } from '@/lib/types';
+import { BRAND_NAME, BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 
 export async function GET(
   _request: NextRequest,
@@ -46,7 +47,7 @@ export async function GET(
 </head>
 <body>
   <div class="header">
-    <div class="logo">Harmonia</div>
+    <div class="logo">${BRAND_NAME}</div>
     <div>
       <div class="invoice-title">חשבונית תשלום</div>
       <div class="invoice-meta">מספר: ${invoice.invoiceNumber || invoiceId}</div>
@@ -64,7 +65,7 @@ export async function GET(
     <tr class="total-row"><td>סה"כ</td><td>${amount}</td></tr>
   </table>
 
-  <p style="font-size:12px; color:#999; margin-top:40px;">מסמך זה הופק אוטומטית על ידי מערכת Harmonia. לשאלות: support@harmonia.co.il</p>
+  <p style="font-size:12px; color:#999; margin-top:40px;">מסמך זה הופק אוטומטית על ידי מערכת ${BRAND_NAME}. לשאלות: ${BRAND_SUPPORT_EMAIL}</p>
 
   <div class="no-print" style="margin-top:20px;">
     <button onclick="window.print()" style="background:#4f46e5;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:16px;">הדפס / שמור PDF</button>

@@ -1,5 +1,6 @@
 import type { User } from './types';
 import { ACHIEVEMENT_DEFINITIONS } from './types';
+import { BRAND_PS_EMAIL_DOMAIN } from '@/lib/brand';
 
 /**
  * Automatically creates a student account based on a Playing School enrollment.
@@ -23,7 +24,7 @@ export function autoCreatePlayingSchoolStudentAccount(
     return {
         id: `ps-student-${Date.now()}`,
         name: enrollmentData.studentName,
-        email: `${firstName.toLowerCase()}.${lastName.toLowerCase().replace(/\s+/g, '')}@playing-school.harmonia.io`, // Auto-generated internal email
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase().replace(/\s+/g, '')}${BRAND_PS_EMAIL_DOMAIN}`, // Auto-generated internal email
         role: 'student',
         conservatoriumId: parentUser.conservatoriumId,
         conservatoriumName: parentUser.conservatoriumName,

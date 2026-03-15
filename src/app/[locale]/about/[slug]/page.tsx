@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ConservatoriumPublicProfilePage } from '@/components/harmonia/conservatorium-public-profile-page';
 import { extractConservatoriumIdFromSlug } from '@/lib/utils/conservatorium-slug';
+import { BRAND_DOMAIN, BRAND_NAME } from '@/lib/brand';
 
 type PageParams = {
   locale: string;
@@ -40,7 +41,7 @@ async function loadConservatoriumDocById(id: number | null): Promise<Conservator
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://harmonia.co.il';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || BRAND_DOMAIN;
   const conservatoriumId = extractConservatoriumIdFromSlug(slug);
   const numericId = getNumericConservatoriumId(conservatoriumId);
   const doc = await loadConservatoriumDocById(numericId);
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const title = doc?.name_en || doc?.name || 'Conservatory Profile';
   const description =
     doc?.about ||
-    'Find full conservatory details, teachers, contact information and registration options on Harmonia.';
+    `Find full conservatory details, teachers, contact information and registration options on ${BRAND_NAME}.`;
   const canonical = `${siteUrl}/${locale}/about/${slug}`;
 
   return {

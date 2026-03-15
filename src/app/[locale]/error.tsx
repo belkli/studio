@@ -11,7 +11,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[Harmonia Error]', error);
+    console.error('[Lyriosa Error]', error);
   }, [error]);
 
   return (

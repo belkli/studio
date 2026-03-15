@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, UserPlus, ShieldCheck, ArrowRight, LayoutDashboard, Settings, Users } from "lucide-react";
+import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { toast } from "@/hooks/use-toast";
 import { useParams, useRouter } from 'next/navigation';
 
@@ -71,7 +72,7 @@ export default function AcceptInvitePage() {
                         </Button>
                     </CardContent>
                     <CardFooter className="bg-slate-50 border-t border-slate-100 p-4 flex justify-center">
-                        <p className="text-xs text-slate-400">{t('questions', { support: 'Support' })} <a href="mailto:support@harmony.app" className="text-indigo-600 hover:underline">Support</a></p>
+                        <p className="text-xs text-slate-400">{t('questions', { support: 'Support' })} <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="text-indigo-600 hover:underline">Support</a></p>
                     </CardFooter>
                 </Card>
             </div>

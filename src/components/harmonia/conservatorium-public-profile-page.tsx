@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Facebook, Globe, Instagram, Mail, MapPin, Phone, UserRound, Youtube } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { BRAND_DOMAIN } from '@/lib/brand';
 
 type PublicProfile = {
   id: string;
@@ -305,7 +306,7 @@ export function ConservatoriumPublicProfilePage({ conservatoriumId, slug }: Cons
   const seoJsonLd = useMemo(() => {
     if (!selectedCons) return null;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://harmonia.co.il';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || BRAND_DOMAIN;
     const url = siteUrl + '/' + locale + '/about/' + slug;
 
     return {

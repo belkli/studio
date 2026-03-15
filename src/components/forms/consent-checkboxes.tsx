@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * @fileoverview Reusable PDPPA consent checkboxes component for the Harmonia registration flow.
+ * @fileoverview Reusable PDPPA consent checkboxes component for the Lyriosa registration flow.
  *
  * Renders three consent checkboxes per Israeli Standard IS 5568 for accessibility:
  * - Data processing consent (mandatory) — wording adapts when isMinor=true

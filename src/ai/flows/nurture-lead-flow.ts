@@ -9,6 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { BRAND_NAME } from '@/lib/brand';
 
 export const NurtureLeadInputSchema = z.object({
   trialStudentName: z.string().describe("The name of the student who took the trial."),
@@ -32,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'nurtureLeadPrompt',
   input: { schema: NurtureLeadInputSchema },
   output: { schema: NurtureLeadOutputSchema },
-  prompt: `You are a friendly and encouraging administrative assistant at a music conservatory called "Harmonia".
+  prompt: `You are a friendly and encouraging administrative assistant at a music conservatory called "${BRAND_NAME}".
 Your task is to write a short, personalized follow-up message to a student (or their parent) who recently had a trial lesson but has not yet enrolled in a full package.
 
 The message should be warm, reference specific details from the trial, and gently encourage them to continue their musical journey. The response must be in the specified locale: {{{locale}}}.

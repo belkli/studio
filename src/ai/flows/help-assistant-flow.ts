@@ -1,5 +1,5 @@
 /**
- * @fileOverview The AI Help Assistant for Harmonia.
+ * @fileOverview The AI Help Assistant for Lyriosa.
  *
  * - askHelpAssistant - A function that processes a user's question and returns a helpful answer.
  * - HelpAssistantInput - The input type for the function.
@@ -8,6 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { BRAND_NAME, AI_ASSISTANT_NAME } from '@/lib/brand';
 
 export const HelpAssistantInputSchema = z.object({
   question: z.string(),
@@ -48,7 +49,7 @@ const prompt = ai.definePrompt({
   name: 'helpAssistantPrompt',
   input: { schema: HelpAssistantInputSchema },
   output: { schema: HelpAssistantResponseSchema },
-  prompt: `You are a friendly and knowledgeable AI assistant for "Harmonia", a music conservatorium management system. Your name is Harmony.
+  prompt: `You are a friendly and knowledgeable AI assistant for "${BRAND_NAME}", a music conservatorium management system. Your name is ${AI_ASSISTANT_NAME}.
 Your goal is to answer user questions about how to use the system. You must be polite, concise, and helpful. Always respond in the user's requested locale: {{{locale}}}.
 
 You have been provided with the user's question and some context from our help articles. Use your general knowledge of the system (based on its features like scheduling, billing, forms, practice logs) and the provided context to formulate your answer.

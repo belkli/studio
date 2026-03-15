@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { BRAND_DOMAIN } from '@/lib/brand';
 
 export default function robots(): MetadataRoute.Robots {
     return {
@@ -9,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
                 disallow: ['/dashboard/', '/admin/', '/api/'],
             },
         ],
-        sitemap: 'https://harmonia.co.il/sitemap.xml',
+        sitemap: `${BRAND_DOMAIN}/sitemap.xml`,
     };
 }

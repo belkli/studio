@@ -9,6 +9,7 @@ import { QrCode, MessageCircle, Copy, Check, ExternalLink, TrendingUp, Handshake
 import { toast } from '@/hooks/use-toast';
 import { useAdminGuard } from '@/hooks/use-admin-guard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { BRAND_DOMAIN } from '@/lib/brand';
 
 const MOCK_FUNNEL = [
   { key: 'leads', value: 450, color: 'bg-slate-200' },
@@ -37,7 +38,7 @@ export default function PlayingSchoolDistributionPage() {
   };
 
   const handleWhatsAppShare = (school: string, token: string) => {
-    const url = `https://harmony.app/register/school?token=${token}`;
+    const url = `${BRAND_DOMAIN}/register/school?token=${token}`;
     const message = encodeURIComponent(t('whatsAppMessage', { school, url }));
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
@@ -132,7 +133,7 @@ export default function PlayingSchoolDistributionPage() {
                     <TableCell>
                       <div className="inline-flex items-center gap-2 p-1 px-2 rounded-lg bg-slate-50 border border-slate-200">
                         <code className="text-xs font-mono text-indigo-600">{row.token}</code>
-                        <button onClick={() => handleCopy(`https://harmony.app/register/school?token=${row.token}`, row.token)} className="p-1 hover:bg-white rounded transition-colors text-slate-400 hover:text-indigo-600">
+                        <button onClick={() => handleCopy(`${BRAND_DOMAIN}/register/school?token=${row.token}`, row.token)} className="p-1 hover:bg-white rounded transition-colors text-slate-400 hover:text-indigo-600">
                           {copied === row.token ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                         </button>
                       </div>
