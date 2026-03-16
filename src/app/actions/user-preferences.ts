@@ -1,8 +1,11 @@
 'use server';
 
 import { z } from 'zod';
-import { requireRole } from '@/lib/auth-utils';
+import { requireRole, verifyAuth } from '@/lib/auth-utils';
 import { getDb } from '@/lib/db';
+import { cookies } from 'next/headers';
+import { BRAND_THEME_COOKIE_NAME } from '@/lib/brand';
+import type { BrandId } from '@/lib/themes/active-theme';
 
 const UpdatePreferredLanguageSchema = z.object({
   userId: z.string().min(1),
@@ -34,4 +37,37 @@ export async function updatePreferredLanguageAction(
   } catch {
     return { success: false, error: 'Failed to update language preference' };
   }
+}
+
+const UpdateBrandPreferenceSchema = z.object({
+  brand: z.enum(['indigo', 'gold']),
+});
+
+export async function updateBrandPreferenceAction(
+  input: { brand: BrandId }
+): Promise<{ success: boolean; error?: string }> {
+  const parsed = UpdateBrandPreferenceSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: 'Invalid brand value' };
+
+  const { brand } = parsed.data;
+
+  // Always set the cookie — works for unauthenticated visitors too
+  const cookieStore = await cookies();
+  cookieStore.set(BRAND_THEME_COOKIE_NAME, brand, {
+    maxAge: 60 * 60 * 24 * 365,
+    path: '/',
+    sameSite: 'lax',
+  });
+
+  // For authenticated users, also persist to their user record
+  // userId is derived from the verified session — never from client input
+  try {
+    const claims = await verifyAuth();
+    const db = await getDb();
+    await db.users.update(claims.uid, { preferredBrand: brand });
+  } catch {
+    // Not authenticated — cookie-only is fine
+  }
+
+  return { success: true };
 }
