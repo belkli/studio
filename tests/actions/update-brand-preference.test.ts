@@ -55,15 +55,12 @@ describe('updateBrandPreferenceAction — brand validation', () => {
   })
 })
 
-// ---------------------------------------------------------------------------
-// Cookie options logic
-// Mirrors the cookie options in updateBrandPreferenceAction:
-//   { maxAge: 60 * 60 * 24 * 365, path: '/', sameSite: 'lax' }
-// ---------------------------------------------------------------------------
-
-describe('updateBrandPreferenceAction — cookie options', () => {
-  it('maxAge is one year in seconds', () => {
-    const ONE_YEAR = 60 * 60 * 24 * 365
-    expect(ONE_YEAR).toBe(31536000)
+describe('updateBrandPreferenceAction — complete valid set', () => {
+  it('accepts exactly indigo and gold, rejects everything else', () => {
+    expect(validateBrandInput({ brand: 'indigo' }).success).toBe(true)
+    expect(validateBrandInput({ brand: 'gold' }).success).toBe(true)
+    expect(validateBrandInput({ brand: '' }).success).toBe(false)
+    expect(validateBrandInput({ brand: null }).success).toBe(false)
+    expect(validateBrandInput({ brand: 42 }).success).toBe(false)
   })
 })

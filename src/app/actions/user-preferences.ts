@@ -54,6 +54,8 @@ export async function updateBrandPreferenceAction(
   // Always set the cookie — works for unauthenticated visitors too
   const cookieStore = await cookies();
   cookieStore.set(BRAND_THEME_COOKIE_NAME, brand, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 365,
     path: '/',
     sameSite: 'lax',
