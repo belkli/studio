@@ -23,7 +23,9 @@
       "submissionDate": "Submission Date",
       "colorModeLightLabel": "Switch to dark mode",
       "colorModeDarkLabel": "Switch to system mode",
-      "colorModeSystemLabel": "Switch to dark mode"
+      "colorModeSystemLabel": "Switch to dark mode",
+      "brandIndigoLabel": "Switch to gold theme",
+      "brandGoldLabel": "Switch to indigo theme"
     },
     "errors": {
       "generalTitle": "Something went wrong",

@@ -23,7 +23,9 @@
       "submissionDate": "תאריך הגשה",
       "colorModeLightLabel": "עבור למצב כהה",
       "colorModeDarkLabel": "עבור להעדפת מערכת",
-      "colorModeSystemLabel": "עבור למצב כהה"
+      "colorModeSystemLabel": "עבור למצב כהה",
+      "brandIndigoLabel": "עבור לנושא זהב",
+      "brandGoldLabel": "עבור לנושא אינדיגו"
     },
     "errors": {
       "generalTitle": "משהו השתבש",

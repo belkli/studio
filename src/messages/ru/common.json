@@ -23,7 +23,9 @@
       "submissionDate": "Дата подачи",
       "colorModeLightLabel": "Переключить на тёмный режим",
       "colorModeDarkLabel": "Переключить на системные настройки",
-      "colorModeSystemLabel": "Переключить на тёмный режим"
+      "colorModeSystemLabel": "Переключить на тёмный режим",
+      "brandIndigoLabel": "Переключить на золотую тему",
+      "brandGoldLabel": "Переключить на тему индиго"
     },
     "errors": {
       "generalTitle": "Что-то пошло не так",

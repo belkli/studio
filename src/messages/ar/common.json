@@ -23,7 +23,9 @@
       "submissionDate": "تاريخ التقديم",
       "colorModeLightLabel": "التبديل إلى الوضع الداكن",
       "colorModeDarkLabel": "التبديل إلى إعدادات النظام",
-      "colorModeSystemLabel": "التبديل إلى الوضع الداكن"
+      "colorModeSystemLabel": "التبديل إلى الوضع الداكن",
+      "brandIndigoLabel": "التبديل إلى الثيم الذهبي",
+      "brandGoldLabel": "التبديل إلى الثيم النيلي"
     },
     "errors": {
       "generalTitle": "حدث خطأ ما",
