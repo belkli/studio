@@ -15,16 +15,16 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }))
 
-let mockBrand = 'indigo'
+const brandRef = { value: 'indigo' as 'indigo' | 'gold' }
 vi.mock('@/components/brand-theme-provider', () => ({
-  useBrandTheme: () => ({ brand: mockBrand }),
+  useBrandTheme: () => ({ brand: brandRef.value }),
 }))
 
 import { updateBrandPreferenceAction } from '@/app/actions/user-preferences'
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockBrand = 'indigo'
+  brandRef.value = 'indigo'
 })
 
 describe('BrandToggle', () => {
@@ -48,7 +48,7 @@ describe('BrandToggle', () => {
   })
 
   it('clicking with gold brand calls action with indigo', async () => {
-    mockBrand = 'gold'
+    brandRef.value = 'gold'
     render(<BrandToggle />)
     fireEvent.click(screen.getByRole('button'))
     await vi.waitFor(() => {

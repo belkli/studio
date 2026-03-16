@@ -57,7 +57,11 @@ export function BrandToggle({ className }: { className?: string }) {
 
   const handleClick = async () => {
     setOptimisticBrand(next)
-    await updateBrandPreferenceAction({ brand: next })
+    const result = await updateBrandPreferenceAction({ brand: next })
+    if (!result.success) {
+      setOptimisticBrand(null)
+      return
+    }
     router.refresh()
   }
 
