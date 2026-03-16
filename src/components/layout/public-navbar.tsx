@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { useBrandTheme } from '@/components/brand-theme-provider';
+import { BrandToggle } from '@/components/brand-toggle';
 
 const NAVBAR_STYLES = {
     indigo: {
@@ -84,6 +85,7 @@ export function PublicNavbar() {
 
             <div className="hidden shrink-0 items-center gap-2 md:flex">
                 <LanguageSwitcher />
+                <BrandToggle />
                 <ColorModeToggle />
                 <Button asChild variant="ghost" className={s.login}>
                     <Link href="/login">{tNav('login')}</Link>
@@ -95,6 +97,7 @@ export function PublicNavbar() {
 
             <div className="ms-auto flex items-center md:hidden">
                 <LanguageSwitcher />
+                <BrandToggle />
                 <ColorModeToggle />
                 {!mounted ? (
                     <Button variant="ghost" size="icon" disabled aria-label={tCommon('openMenu')}>

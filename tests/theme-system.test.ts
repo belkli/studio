@@ -51,8 +51,8 @@ describe('Theme V2 HTML attributes', () => {
     expect(layout).not.toContain('data-theme=')
   })
 
-  it('dashboard layout hardcodes data-brand="indigo"', () => {
-    expect(dashboardLayout).toContain('data-brand="indigo"')
+  it('dashboard layout does not hardcode data-brand (inherits from html element)', () => {
+    expect(dashboardLayout).not.toContain('data-brand="indigo"')
     expect(dashboardLayout).not.toContain('data-theme=')
   })
 

@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '../language-switcher';
+import { BrandToggle } from '@/components/brand-toggle';
 
 export function Header() {
   const t = useTranslations('Dashboard.header');
@@ -37,6 +38,7 @@ export function Header() {
         />
       </div>
       <LanguageSwitcher />
+      <BrandToggle />
       <Button variant="ghost" size="icon" className="rounded-full">
         <Bell className="h-5 w-5" />
         <span className="sr-only">{t('notifications')}</span>
