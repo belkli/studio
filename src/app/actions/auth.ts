@@ -55,7 +55,7 @@ export async function createSessionAction(
       if (uid) {
         const db = await getDb();
         const user = await db.users.findById(uid);
-        if (user?.preferredBrand) {
+        if (user?.preferredBrand === 'indigo' || user?.preferredBrand === 'gold') {
           cookieStore.set(BRAND_THEME_COOKIE_NAME, user.preferredBrand, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
