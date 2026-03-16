@@ -528,6 +528,7 @@ export type User = {
   oauthProviders?: UserOAuthProvider[];
   registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
   preferredLanguage?: 'he' | 'en' | 'ar' | 'ru';
+  preferredBrand?: 'indigo' | 'gold';
   status?: 'active' | 'graduated' | 'inactive';
   graduationYear?: number;
 };
