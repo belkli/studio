@@ -47,6 +47,13 @@ export async function createSessionAction(
     cookieStore.delete(BRAND_COOKIE_NAME);
 
     // Sync user's stored brand preference into lyriosa-brand cookie (non-fatal)
+    // Note: preferredBrand lives on the DB record (not in Firebase claims), so we need
+    // a DB lookup. The idToken was already verified by createSessionCookie() above, so
+    // we can safely decode the payload to extract the uid without re-verifying.
+    // Design: if the user has no stored preferredBrand, the existing lyriosa-brand cookie
+    // (from a prior session or from unauthenticated browsing) is preserved as-is.
+    // This means on a shared device the previous user's brand persists until the new
+    // user actively toggles it — an acceptable trade-off for a UI-only preference.
     try {
       const payload = JSON.parse(
         Buffer.from(idToken.split('.')[1], 'base64url').toString('utf-8')
