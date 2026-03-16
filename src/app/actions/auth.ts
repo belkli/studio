@@ -12,7 +12,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createSessionCookie, revokeSession, verifyAuth } from '@/lib/auth-utils';
-import { BRAND_COOKIE_NAME } from '@/lib/brand';
+import { BRAND_COOKIE_NAME, BRAND_THEME_COOKIE_NAME } from '@/lib/brand';
+import { getDb } from '@/lib/db';
 
 const SESSION_COOKIE_NAME = '__session';
 const SESSION_MAX_AGE = 14 * 24 * 60 * 60; // 14 days in seconds
@@ -44,6 +45,29 @@ export async function createSessionAction(
 
     // Clear the legacy mock cookie
     cookieStore.delete(BRAND_COOKIE_NAME);
+
+    // Sync user's stored brand preference into lyriosa-brand cookie (non-fatal)
+    try {
+      const payload = JSON.parse(
+        Buffer.from(idToken.split('.')[1], 'base64url').toString('utf-8')
+      );
+      const uid: string = payload.sub || payload.user_id || '';
+      if (uid) {
+        const db = await getDb();
+        const user = await db.users.findById(uid);
+        if (user?.preferredBrand) {
+          cookieStore.set(BRAND_THEME_COOKIE_NAME, user.preferredBrand, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 24 * 365,
+            path: '/',
+            sameSite: 'lax',
+          });
+        }
+      }
+    } catch {
+      // Non-fatal — existing brand cookie preference is preserved
+    }
 
     return { ok: true };
   } catch (error) {
