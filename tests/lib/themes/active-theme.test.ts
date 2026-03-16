@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { BRAND_THEME_COOKIE_NAME } from '@/lib/brand'
 
 // We test that getActiveBrand() reads the cookie value correctly.
 // Mock next/headers to control cookie values.
@@ -11,7 +12,7 @@ import { getActiveBrand } from '@/lib/themes/active-theme'
 
 function mockCookies(value: string | undefined) {
   vi.mocked(cookies).mockResolvedValue({
-    get: (name: string) => (name === 'lyriosa-brand' && value ? { value } : undefined),
+    get: (name: string) => (name === BRAND_THEME_COOKIE_NAME && value ? { value } : undefined),
   } as Awaited<ReturnType<typeof cookies>>)
 }
 
