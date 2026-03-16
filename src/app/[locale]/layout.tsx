@@ -95,7 +95,7 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   const dir = locale === 'he' || locale === 'ar' ? 'rtl' : 'ltr';
-  const activeBrand = getActiveBrand();
+  const activeBrand = await getActiveBrand();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const skipToMainLabel = (messages as any)?.Common?.shared?.skipToMain || 'Skip to main content';
 
