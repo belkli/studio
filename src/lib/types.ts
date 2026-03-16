@@ -1,4 +1,6 @@
 ﻿
+import type { BrandId } from '@/lib/themes/active-theme';
+
 export type I18nText = { he?: string; en?: string; ar?: string; ru?: string };
 
 export type UserRole = 'student' | 'teacher' | 'parent' | 'conservatorium_admin' | 'delegated_admin' | 'site_admin' | 'ministry_director' | 'admin' | 'superadmin' | 'school_coordinator'; // SDD-PS
@@ -528,7 +530,7 @@ export type User = {
   oauthProviders?: UserOAuthProvider[];
   registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
   preferredLanguage?: 'he' | 'en' | 'ar' | 'ru';
-  preferredBrand?: 'indigo' | 'gold';
+  preferredBrand?: BrandId;
   status?: 'active' | 'graduated' | 'inactive';
   graduationYear?: number;
 };

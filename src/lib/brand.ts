@@ -10,7 +10,7 @@ export const BRAND_DEV_EMAIL = 'dev@lyriosa.local'
 export const BRAND_NOREPLY_EMAIL = 'noreply@lyriosa.co.il'
 
 export const BRAND_COOKIE_NAME = 'lyriosa-user'
-export const BRAND_THEME_COOKIE = 'lyriosa-brand'
+export const BRAND_THEME_COOKIE_NAME = 'lyriosa-brand'
 export const BRAND_LOCALSTORAGE_KEY = 'lyriosa-user'
 export const BRAND_LOCALE_STORAGE_KEY = 'lyriosa_locale'
 export const BRAND_COOKIE_CONSENT_KEY = 'lyriosa_cookie_consent'
