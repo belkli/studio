@@ -1,5 +1,5 @@
 # SDD-P2: Persona Audit — Music Teacher
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Music Teacher (מורה למוזיקה)
 **Auditor Role:** Senior Full-Stack Architect + LMS Domain Expert
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -63,7 +63,7 @@ A teacher who gets sick on a Tuesday morning needs to be able to cancel all thei
 ### Gap 4: Two-Way Calendar Sync
 **Severity:** High (P1)
 
-Teachers in Israel routinely teach at multiple conservatoriums. Without calendar sync, they will double-book themselves constantly. The implementation requires a scheduled Cloud Function (every 15 minutes) that reads the teacher's Google Calendar API or CalDAV feed and marks conflicts in Harmonia's availability system.
+Teachers in Israel routinely teach at multiple conservatoriums. Without calendar sync, they will double-book themselves constantly. The implementation requires a scheduled Cloud Function (every 15 minutes) that reads the teacher's Google Calendar API or CalDAV feed and marks conflicts in Lyriosa's availability system.
 
 ### Gap 5: Israeli Exam Curriculum Tracker
 **Severity:** Medium (P1 for conservatoriums that prepare exam students)
@@ -339,7 +339,7 @@ async function syncSingleTeacherCalendar(teacher: TeacherProfile): Promise<void>
 
   const conservatoriumId = teacher.conservatoriumId;
 
-  // IMPORT: Fetch external events and mark as unavailable in Harmonia
+  // IMPORT: Fetch external events and mark as unavailable in Lyriosa
   const externalEvents = await calendar.events.list({
     calendarId: 'primary',
     timeMin: new Date().toISOString(),
@@ -356,7 +356,7 @@ async function syncSingleTeacherCalendar(teacher: TeacherProfile): Promise<void>
       title: e.summary ?? 'External Event',
     }));
 
-  // Detect conflicts with existing Harmonia scheduled slots
+  // Detect conflicts with existing Lyriosa scheduled slots
   const harmoniaSlots = await getTeacherScheduledSlots(teacher.id, conservatoriumId, 30);
   const conflicts = detectConflicts(harmoniaSlots, externalBusy);
 
@@ -364,10 +364,10 @@ async function syncSingleTeacherCalendar(teacher: TeacherProfile): Promise<void>
     await notifyTeacherOfCalendarConflicts(teacher, conflicts);
   }
 
-  // Mark external busy times in Harmonia availability exceptions
+  // Mark external busy times in Lyriosa availability exceptions
   await upsertExternalBusyBlocks(teacher.id, conservatoriumId, externalBusy);
 
-  // EXPORT: Push all upcoming Harmonia lessons to Google Calendar
+  // EXPORT: Push all upcoming Lyriosa lessons to Google Calendar
   const upcomingLessons = harmoniaSlots.filter(s => s.status === 'SCHEDULED');
   for (const lesson of upcomingLessons) {
     const student = await getStudent(lesson.studentId);
@@ -690,4 +690,4 @@ export function usePreLessonSummary(studentId: string, conservatoriumId: string,
 | Private Studio Notes | ❌ Not documented | ❌ Missing | P1 |
 | Progress Report AI | ✅ Documented + Coded | ⚠️ Partial (flow exists) | P1 (needs UI) |
 
-**Bottom Line:** The teacher is Harmonia's most important daily user, and they currently have nothing to use. The prototype's only teacher-facing AI feature — `draft-progress-report-flow.ts` — is a Cloud function with no UI hookup. The critical path for teacher launch is: (1) attendance marking with one-tap UI, (2) sick leave emergency flow, (3) basic practice log view (read-only from lesson dashboard), (4) structured lesson notes. Everything else (multimedia, calendar sync, exam tracker) follows in subsequent sprints. The architectural foundations are solid; the implementation simply hasn't started.
+**Bottom Line:** The teacher is Lyriosa's most important daily user, and they currently have nothing to use. The prototype's only teacher-facing AI feature — `draft-progress-report-flow.ts` — is a Cloud function with no UI hookup. The critical path for teacher launch is: (1) attendance marking with one-tap UI, (2) sick leave emergency flow, (3) basic practice log view (read-only from lesson dashboard), (4) structured lesson notes. Everything else (multimedia, calendar sync, exam tracker) follows in subsequent sprints. The architectural foundations are solid; the implementation simply hasn't started.

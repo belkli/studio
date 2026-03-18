@@ -55,6 +55,14 @@
       "password": "Пароль",
       "oauthEmailReadonly": "Адрес электронной почты предоставляется вашей учетной записью в социальной сети и не может быть изменен здесь."
     },
+    "parent": {
+      "phone2": "Дополнительный телефон",
+      "addSecondGuardian": "Добавить второго опекуна",
+      "secondGuardianName": "Имя второго опекуна",
+      "secondGuardianPhone": "Телефон второго опекуна",
+      "secondGuardianEmail": "Email второго опекуна",
+      "secondGuardianIdNumber": "Удостоверение второго опекуна"
+    },
     "musical": {
       "title": "Музыкальная информация",
       "instrument": "Инструмент",
@@ -79,7 +87,12 @@
       "experiencePlaceholder": "Опишите ваш опыт",
       "duration": "Длительность урока",
       "durationPlaceholder": "Выберите длительность урока",
-      "minutes": "{min} минут"
+      "minutes": "{min} минут",
+      "rentalIntent": "Предпочтение по аренде инструмента",
+      "rentalIntent_own": "У меня свой инструмент",
+      "rentalIntent_rent": "Арендовать в консерватории",
+      "rentalIntent_guidance": "Нужна консультация",
+      "theoryYears": "Предыдущие годы изучения теории"
     },
     "schedule": {
       "days": "Доступные дни",

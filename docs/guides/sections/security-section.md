@@ -7,7 +7,7 @@
 
 ## Security, RLS & Data Protection
 
-> This section covers every security configuration needed before Harmonia can accept real user data. It includes complete SQL for Supabase Row Level Security on every table, parent-child data isolation, auth hardening, PDPPA compliance, input validation, demo gate security, and a pre-launch checklist. Follow each subsection in order. Every item has a checkbox -- do not skip any.
+> This section covers every security configuration needed before Lyriosa can accept real user data. It includes complete SQL for Supabase Row Level Security on every table, parent-child data isolation, auth hardening, PDPPA compliance, input validation, demo gate security, and a pre-launch checklist. Follow each subsection in order. Every item has a checkbox -- do not skip any.
 >
 > **Companion docs:** `docs/architecture/06-security.md`, `docs/plans/qa/12-security-review.md`
 
@@ -30,7 +30,7 @@ Every policy below reads the caller's role and conservatorium from the Supabase 
 
 ```sql
 -- ============================================================
--- HELPER: Extract Harmonia claims from Supabase JWT
+-- HELPER: Extract Lyriosa claims from Supabase JWT
 -- ============================================================
 -- Supabase stores Custom Claims in auth.jwt()->'app_metadata'.
 -- Firebase Custom Claims are synced to app_metadata during
@@ -1405,7 +1405,7 @@ if (process.env.NODE_ENV === 'production') {
 
 ### Data Protection (PDPPA)
 
-Harmonia stores Israeli ID numbers, children's audio/video, financial data, ministry exam results, and scholarship disclosures. The Israeli Protection of Privacy Law (PDPPA 5741-1981) applies.
+Lyriosa stores Israeli ID numbers, children's audio/video, financial data, ministry exam results, and scholarship disclosures. The Israeli Protection of Privacy Law (PDPPA 5741-1981) applies.
 
 #### Consent Records -- Immutable
 

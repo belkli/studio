@@ -1,8 +1,8 @@
-# SDD-COMPARE-01: Harmonia vs. InfoCash (h5z.info-cloud.co.il) — Deep Comparative Analysis & Enhancement Roadmap
+    # SDD-COMPARE-01: Lyriosa vs. InfoCash (h5z.info-cloud.co.il) — Deep Comparative Analysis & Enhancement Roadmap
 
 **Document Type:** Software Design Document — Competitive Analysis  
 **Subject System A:** InfoCash / Aluma ("h5z.info-cloud.co.il") — Current Production Platform  
-**Subject System B:** Harmonia (studio-main) — Proposed Next-Generation Platform  
+**Subject System B:** Lyriosa (studio-main) — Proposed Next-Generation Platform  
 **Prepared By:** Technical Analysis  
 **Date:** March 2026  
 **Version:** 1.0
@@ -13,14 +13,14 @@
 
 1. [Executive Summary](#1-executive-summary)
 2. [System A — InfoCash Deep Audit](#2-system-a--infocash-deep-audit)
-3. [System B — Harmonia Feature Inventory](#3-system-b--harmonia-feature-inventory)
+3. [System B — Lyriosa Feature Inventory](#3-system-b--harmonia-feature-inventory)
 4. [Head-to-Head Comparison Matrix](#4-head-to-head-comparison-matrix)
 5. [Critical Gap Analysis](#5-critical-gap-analysis)
 6. [UX/UI Comparison](#6-uxui-comparison)
 7. [Architecture Comparison](#7-architecture-comparison)
 8. [Payments & Billing Comparison](#8-payments--billing-comparison)
 9. [Admin & Operations Comparison](#9-admin--operations-comparison)
-10. [How Harmonia Surpasses InfoCash — Technical Roadmap](#10-how-harmonia-surpasses-infocash--technical-roadmap)
+10. [How Lyriosa Surpasses InfoCash — Technical Roadmap](#10-how-harmonia-surpasses-infocash--technical-roadmap)
 11. [Risk Register](#11-risk-register)
 12. [Implementation Priority Table](#12-implementation-priority-table)
 
@@ -30,9 +30,9 @@
 
 The current platform used by Aluma Conservatoriums (InfoCash / h5z.info-cloud.co.il) represents a **first-generation SaaS registration system** — purpose-built for simple, linear, admin-driven enrollment flows. It handles the minimum viable registration process but exposes significant deficiencies in UX sophistication, automation depth, mobile experience, RTL accessibility, parent self-service capability, and AI-driven intelligence.
 
-Harmonia, as designed in the accompanying SDD suite, is architected as a **third-generation, AI-augmented, self-service platform** that treats every stakeholder (student, parent, teacher, admin) as a first-class user with their own dashboard, notifications, and automation layer.
+Lyriosa, as designed in the accompanying SDD suite, is architected as a **third-generation, AI-augmented, self-service platform** that treats every stakeholder (student, parent, teacher, admin) as a first-class user with their own dashboard, notifications, and automation layer.
 
-**Verdict:** InfoCash is adequate for a 1-conservatorium, 50-student operation managed by a dedicated secretary. Harmonia is designed to serve 1–50 conservatoriums, 10,000+ students, with minimal administrative overhead.
+**Verdict:** InfoCash is adequate for a 1-conservatorium, 50-student operation managed by a dedicated secretary. Lyriosa is designed to serve 1–50 conservatoriums, 10,000+ students, with minimal administrative overhead.
 
 ---
 
@@ -185,7 +185,7 @@ Based on UI inspection:
 
 ---
 
-## 3. System B — Harmonia Feature Inventory
+## 3. System B — Lyriosa Feature Inventory
 
 *Based on complete SDD suite in studio-main.*
 
@@ -211,11 +211,11 @@ Based on UI inspection:
 | 16 | Guidance & AI Assistant | ✅ Complete |
 | 17 | Scholarships & Donations | ✅ Complete |
 
-### 3.2 Harmonia's Enrollment Wizard — Full Specification
+### 3.2 Lyriosa's Enrollment Wizard — Full Specification
 
 **9-step wizard vs. InfoCash's 6-step:**
 
-| Step | Harmonia | InfoCash |
+| Step | Lyriosa | InfoCash |
 |------|----------|---------|
 | 1 | Who is registering? (parent/adult student) | Parent details immediately |
 | 2 | Personal details (parent + child) | Parent details |
@@ -231,71 +231,71 @@ Based on UI inspection:
 
 ## 4. Head-to-Head Comparison Matrix
 
-| Feature Domain | InfoCash | Harmonia | Winner |
+| Feature Domain | InfoCash | Lyriosa | Winner |
 |----------------|----------|----------|--------|
 | **REGISTRATION** | | | |
 | Multi-step registration wizard | ✅ | ✅ | Tie |
-| Instrument selection | ❌ | ✅ | Harmonia |
-| Musical profile capture | ❌ | ✅ | Harmonia |
-| Schedule preference input | ❌ | ✅ | Harmonia |
-| Trial lesson booking | ❌ | ✅ | Harmonia |
-| Multiple packages (trial/pack/monthly/yearly) | ❌ Monthly only | ✅ 6 types | Harmonia |
-| Sibling auto-discount | ❌ Manual | ✅ Automatic | Harmonia |
-| Save & resume incomplete form | ❌ | ✅ | Harmonia |
+| Instrument selection | ❌ | ✅ | Lyriosa |
+| Musical profile capture | ❌ | ✅ | Lyriosa |
+| Schedule preference input | ❌ | ✅ | Lyriosa |
+| Trial lesson booking | ❌ | ✅ | Lyriosa |
+| Multiple packages (trial/pack/monthly/yearly) | ❌ Monthly only | ✅ 6 types | Lyriosa |
+| Sibling auto-discount | ❌ Manual | ✅ Automatic | Lyriosa |
+| Save & resume incomplete form | ❌ | ✅ | Lyriosa |
 | **TEACHER MATCHING** | | | |
-| Teacher profiles during registration | ❌ | ✅ Photos, bio, specialization | Harmonia |
-| AI-powered teacher matching | ❌ | ✅ Genkit AI | Harmonia |
-| Filter by instrument | ❌ | ✅ | Harmonia |
-| Filter by availability | ❌ | ✅ | Harmonia |
-| Live availability calendar | ❌ | ✅ | Harmonia |
+| Teacher profiles during registration | ❌ | ✅ Photos, bio, specialization | Lyriosa |
+| AI-powered teacher matching | ❌ | ✅ Genkit AI | Lyriosa |
+| Filter by instrument | ❌ | ✅ | Lyriosa |
+| Filter by availability | ❌ | ✅ | Lyriosa |
+| Live availability calendar | ❌ | ✅ | Lyriosa |
 | **POST-ENROLLMENT PORTAL** | | | |
-| Parent dashboard | ❌ | ✅ | Harmonia |
-| View upcoming schedule | ❌ | ✅ | Harmonia |
-| View/download invoices | ❌ | ✅ | Harmonia |
-| Self-cancel a lesson | ❌ | ✅ | Harmonia |
-| Self-book a makeup lesson | ❌ | ✅ | Harmonia |
-| Practice log / LMS | ❌ | ✅ | Harmonia |
+| Parent dashboard | ❌ | ✅ | Lyriosa |
+| View upcoming schedule | ❌ | ✅ | Lyriosa |
+| View/download invoices | ❌ | ✅ | Lyriosa |
+| Self-cancel a lesson | ❌ | ✅ | Lyriosa |
+| Self-book a makeup lesson | ❌ | ✅ | Lyriosa |
+| Practice log / LMS | ❌ | ✅ | Lyriosa |
 | **PAYMENTS** | | | |
 | Credit card | ✅ | ✅ | Tie |
-| Bank transfer | ❌ | ✅ | Harmonia |
-| Bit / PayBox | ❌ | ✅ | Harmonia |
-| Apple Pay / Google Pay | ❌ | ✅ | Harmonia |
-| Installment plan flexibility | ❌ | ✅ Prorated | Harmonia |
-| Auto-invoicing (PDF) | ❌ Unknown | ✅ Auto-generated | Harmonia |
-| Failed payment auto-retry | ❌ | ✅ | Harmonia |
+| Bank transfer | ❌ | ✅ | Lyriosa |
+| Bit / PayBox | ❌ | ✅ | Lyriosa |
+| Apple Pay / Google Pay | ❌ | ✅ | Lyriosa |
+| Installment plan flexibility | ❌ | ✅ Prorated | Lyriosa |
+| Auto-invoicing (PDF) | ❌ Unknown | ✅ Auto-generated | Lyriosa |
+| Failed payment auto-retry | ❌ | ✅ | Lyriosa |
 | **COMMUNICATION** | | | |
 | Email confirmations | ✅ (assumed) | ✅ | Tie |
-| WhatsApp integration | ❌ | ✅ | Harmonia |
-| SMS reminders | ❌ Unknown | ✅ Twilio | Harmonia |
-| In-app notifications | ❌ | ✅ | Harmonia |
-| Lesson reminder automation | ❌ | ✅ | Harmonia |
+| WhatsApp integration | ❌ | ✅ | Lyriosa |
+| SMS reminders | ❌ Unknown | ✅ Twilio | Lyriosa |
+| In-app notifications | ❌ | ✅ | Lyriosa |
+| Lesson reminder automation | ❌ | ✅ | Lyriosa |
 | **ADMIN** | | | |
 | Multi-conservatorium support | ✅ (Aluma network) | ✅ | Tie |
-| Reporting / analytics | ❌ Unknown | ✅ Full dashboard | Harmonia |
-| Teacher payroll management | ❌ | ✅ | Harmonia |
-| Scholarship management | ❌ Manual | ✅ Structured flow | Harmonia |
-| Ministry form submissions | ❌ | ✅ | Harmonia |
+| Reporting / analytics | ❌ Unknown | ✅ Full dashboard | Lyriosa |
+| Teacher payroll management | ❌ | ✅ | Lyriosa |
+| Scholarship management | ❌ Manual | ✅ Structured flow | Lyriosa |
+| Ministry form submissions | ❌ | ✅ | Lyriosa |
 | **TECHNOLOGY** | | | |
-| Mobile-optimized | ⚠️ Unknown | ✅ Mobile-first | Harmonia |
+| Mobile-optimized | ⚠️ Unknown | ✅ Mobile-first | Lyriosa |
 | RTL Hebrew native | ✅ | ✅ | Tie |
-| Arabic language support | ❌ | ✅ (planned) | Harmonia |
-| Native accessibility (WCAG AA) | ❌ Widget only | ✅ Built-in | Harmonia |
-| AI agents | ❌ | ✅ | Harmonia |
-| REST API / webhooks | ❌ Unknown | ✅ | Harmonia |
-| Google Calendar sync | ❌ | ✅ Two-way | Harmonia |
-| Open source / self-hosted option | ❌ Vendor lock-in | ✅ Firebase | Harmonia |
+| Arabic language support | ❌ | ✅ (planned) | Lyriosa |
+| Native accessibility (WCAG AA) | ❌ Widget only | ✅ Built-in | Lyriosa |
+| AI agents | ❌ | ✅ | Lyriosa |
+| REST API / webhooks | ❌ Unknown | ✅ | Lyriosa |
+| Google Calendar sync | ❌ | ✅ Two-way | Lyriosa |
+| Open source / self-hosted option | ❌ Vendor lock-in | ✅ Firebase | Lyriosa |
 
-**Score: InfoCash: 8 / Harmonia: 38 (out of 46 comparable features)**
+**Score: InfoCash: 8 / Lyriosa: 38 (out of 46 comparable features)**
 
 ---
 
 ## 5. Critical Gap Analysis
 
-### 5.1 Gaps InfoCash Has That Harmonia Must Replicate
+### 5.1 Gaps InfoCash Has That Lyriosa Must Replicate
 
-These are features confirmed present in InfoCash that Harmonia's SDD must explicitly handle:
+These are features confirmed present in InfoCash that Lyriosa's SDD must explicitly handle:
 
-| Gap | InfoCash Behavior | Harmonia Status | Action Required |
+| Gap | InfoCash Behavior | Lyriosa Status | Action Required |
 |-----|------------------|-----------------|-----------------|
 | Session timer | 60-minute countdown | Not in SDD | Add session keep-alive + warning modal at 10min |
 | Token-based entry | Direct link registration (no pre-login needed) | Partial (Module 01) | Ensure `/register?token=X` works without account creation first |
@@ -303,7 +303,7 @@ These are features confirmed present in InfoCash that Harmonia's SDD must explic
 | Embedded תקנון scroll | Full regulation text shown inline | Partial (Module 08) | Ensure תקנון versioning + inline embedded view + timestamp |
 | Pele-Card integration | Specific gateway shown | Partial (Module 05) | Explicitly add Pele-Card to supported gateways list alongside Cardcom/Tranzila |
 
-### 5.2 Gaps That Represent Harmonia's Unique Value Over InfoCash
+### 5.2 Gaps That Represent Lyriosa's Unique Value Over InfoCash
 
 | Gap Category | Estimated Admin Hours Saved/Month | Revenue Impact |
 |--------------|----------------------------------|---------------|
@@ -320,7 +320,7 @@ These are features confirmed present in InfoCash that Harmonia's SDD must explic
 
 ### 6.1 Visual Design
 
-| Aspect | InfoCash | Harmonia Target |
+| Aspect | InfoCash | Lyriosa Target |
 |--------|----------|-----------------|
 | Design language | Corporate, clinical, generic | Music-inspired, warm, professional |
 | Primary color | Teal/green-grey | Blue (#3B82F6) + Green (#10B981) |
@@ -336,7 +336,7 @@ These are features confirmed present in InfoCash that Harmonia's SDD must explic
 InfoCash Architecture (flat wizard):
 Register → Parent Details → Child Details → Activity → Declaration → Payment → Done
 
-Harmonia Architecture (intelligent wizard with branches):
+Lyriosa Architecture (intelligent wizard with branches):
                     ┌─ Parent + Child flow
 Entry Point ────────┤
                     └─ Adult self-registration flow
@@ -354,7 +354,7 @@ Entry Point ────────┤
 
 **InfoCash:** Form submission errors appear to show generic validation. No evidence of real-time inline validation.
 
-**Harmonia Requirement:**
+**Lyriosa Requirement:**
 ```typescript
 // Every form field must have:
 {
@@ -383,7 +383,7 @@ Browser → Session-based SSR pages → InfoCash proprietary backend → MySQL/S
 - No webhook support for integrations
 - Single-tenant per municipality/organization (assumed)
 
-### 7.2 Harmonia Architecture
+### 7.2 Lyriosa Architecture
 
 ```
 Next.js (App Router, TypeScript)
@@ -413,7 +413,7 @@ Integrations:
 
 ### 7.3 Data Portability
 
-| Feature | InfoCash | Harmonia |
+| Feature | InfoCash | Lyriosa |
 |---------|----------|----------|
 | CSV export | Unknown | ✅ All entities |
 | JSON export | ❌ | ✅ |
@@ -427,7 +427,7 @@ Integrations:
 
 ### 8.1 Pricing Model Support
 
-| Model | InfoCash | Harmonia |
+| Model | InfoCash | Lyriosa |
 |-------|----------|----------|
 | Fixed monthly tuition | ✅ | ✅ |
 | Per-lesson (trial) | ❌ | ✅ |
@@ -442,7 +442,7 @@ Integrations:
 
 InfoCash: Screenshots show payment amounts but **no invoice PDF generation** is visible.
 
-Harmonia: Full invoice model defined:
+Lyriosa: Full invoice model defined:
 ```typescript
 Invoice {
   invoiceNumber: "CON-2026-00142";    // auto-incremented
@@ -462,7 +462,7 @@ Invoice {
 
 InfoCash: "אי כיבוד כרטיס האשראי" → ₪50 fee. No automation described.
 
-Harmonia:
+Lyriosa:
 ```
 Failed payment → Day 0: Retry
              → Day 3: Soft notification to parent
@@ -477,7 +477,7 @@ Failed payment → Day 0: Retry
 
 ### 9.1 Daily Operations
 
-| Task | InfoCash | Harmonia |
+| Task | InfoCash | Lyriosa |
 |------|----------|----------|
 | See today's lessons | Unknown | ✅ Admin dashboard |
 | Mark attendance | Unknown | ✅ Teacher mobile app |
@@ -491,7 +491,7 @@ Failed payment → Day 0: Retry
 
 InfoCash: No reporting screens visible. Likely basic accounting exports.
 
-Harmonia Module 11 defines:
+Lyriosa Module 11 defines:
 - **Enrollment funnel** (leads → active students)
 - **Revenue forecast** (monthly MRR, churn, renewals)
 - **Teacher utilization** (slots filled %, revenue per teacher)
@@ -502,7 +502,7 @@ Harmonia Module 11 defines:
 
 ---
 
-## 10. How Harmonia Surpasses InfoCash — Technical Roadmap
+## 10. How Lyriosa Surpasses InfoCash — Technical Roadmap
 
 ### Phase 1 — Parity (Must-Have Before Launch)
 *Goal: Replace InfoCash with no regression in existing functionality*

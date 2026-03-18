@@ -814,13 +814,13 @@ import { headers } from 'next/headers';
 import { getServerAuthProvider } from '@/lib/auth/provider';
 import type { UserRole } from '@/lib/types';
 
-// Re-export SessionClaims under the existing HarmoniaClaims name for backward compat
-export type { SessionClaims as HarmoniaClaims } from '@/lib/auth/provider';
+// Re-export SessionClaims under the existing LyriosaClaims name for backward compat
+export type { SessionClaims as LyriosaClaims } from '@/lib/auth/provider';
 ```
 
 Replace the `verifyAuth` function body:
 ```typescript
-export async function verifyAuth(): Promise<HarmoniaClaims> {
+export async function verifyAuth(): Promise<LyriosaClaims> {
   const provider = await getServerAuthProvider();
 
   // Try provider session cookie verification first

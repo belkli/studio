@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,8 +11,9 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Save, Star } from "lucide-react";
+import { Save, Star, Clock } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const getPricingSchema = (t: (key: string) => string) => z.object({
     baseRatePerLesson: z.object({
@@ -52,6 +53,11 @@ export function PricingSettings() {
 
     const currentConservatorium = conservatoriums.find(c => c.id === user?.conservatoriumId);
 
+    const ALL_DURATION_OPTIONS = [15, 20, 30, 45, 60, 90, 120];
+    const [allowedDurations, setAllowedDurations] = useState<string[]>(
+        () => (currentConservatorium?.allowedLessonDurations ?? [30, 45, 60]).map(String)
+    );
+
     const form = useForm<PricingFormData>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(pricingSchema) as any,
@@ -67,9 +73,13 @@ export function PricingSettings() {
 
     const onSubmit = (data: PricingFormData) => {
         if (!currentConservatorium) return;
-        updateConservatorium({ ...currentConservatorium, pricingConfig: data });
+        updateConservatorium({
+            ...currentConservatorium,
+            pricingConfig: data,
+            allowedLessonDurations: allowedDurations.map(Number).sort((a, b) => a - b),
+        });
         toast({ title: t('success') });
-        form.reset(data); // To reset the dirty state
+        form.reset(data);
     };
 
     const otherConservatoriums = conservatoriums.filter(c => c.id !== user?.conservatoriumId);
@@ -161,9 +171,33 @@ export function PricingSettings() {
                                 />
                             </CardContent>
                         </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Clock className="h-4 w-4" />
+                                    {t('durations.title')}
+                                </CardTitle>
+                                <CardDescription>{t('durations.description')}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <ToggleGroup
+                                    type="multiple"
+                                    value={allowedDurations}
+                                    onValueChange={(val) => { if (val.length > 0) setAllowedDurations(val); }}
+                                    className="flex flex-wrap gap-2"
+                                >
+                                    {ALL_DURATION_OPTIONS.map((d) => (
+                                        <ToggleGroupItem key={d} value={String(d)} variant="outline" className="min-w-[4rem]">
+                                            {t('durations.minutes', { count: d })}
+                                        </ToggleGroupItem>
+                                    ))}
+                                </ToggleGroup>
+                            </CardContent>
+                        </Card>
                     </div>
                     <div className="flex justify-end mt-6 mb-8">
-                        <Button type="submit" disabled={!form.formState.isDirty}>
+                        <Button type="submit" disabled={!form.formState.isDirty && JSON.stringify(allowedDurations.map(Number).sort((a, b) => a - b)) === JSON.stringify(currentConservatorium?.allowedLessonDurations ?? [30, 45, 60])}>
                             <Save className="me-2 h-4 w-4" />
                             {t('save')}
                         </Button>

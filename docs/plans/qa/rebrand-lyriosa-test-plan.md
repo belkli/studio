@@ -23,7 +23,7 @@
 
 ## 1. Executive Summary
 
-This plan covers QA validation for the rebrand from "Harmonia" to "Lyriosa" with a server-side A/B theme toggle (`NEXT_PUBLIC_LANDING_THEME='a'|'b'`). The rebrand touches:
+This plan covers QA validation for the rebrand from "Lyriosa" to "Lyriosa" with a server-side A/B theme toggle (`NEXT_PUBLIC_LANDING_THEME='a'|'b'`). The rebrand touches:
 
 - **User-visible brand name** across 4 locales (he, en, ar, ru) in both Latin and localized scripts
 - **Typography**: Candidate B introduces Playfair Display + Plus Jakarta Sans + Heebo (per `lyriosa-brand-mockup.html`); Candidate A retains Rubik
@@ -41,18 +41,18 @@ Internal identifiers (localStorage keys, cookie names, Supabase bucket names, de
 
 ### 2.1 Automated Grep Scan -- User-Visible Strings
 
-A CI-runnable script must scan all user-visible text for residual "Harmonia" references. The scan should cover two categories:
+A CI-runnable script must scan all user-visible text for residual "Lyriosa" references. The scan should cover two categories:
 
 **Category A: Translation files (MUST change)**
 
 | File | Occurrences | Localized form |
 |------|-------------|----------------|
-| `src/messages/en/common.json` | 9 | "Harmonia" |
-| `src/messages/en/public.json` | 7 | "Harmonia" |
-| `src/messages/en/enrollment.json` | 11 | "Harmonia" |
-| `src/messages/en/admin.json` | 2 | "Harmonia" |
-| `src/messages/en/student.json` | 1 | "Harmonia" |
-| `src/messages/en/settings.json` | 1 | "Harmonia" |
+| `src/messages/en/common.json` | 9 | "Lyriosa" |
+| `src/messages/en/public.json` | 7 | "Lyriosa" |
+| `src/messages/en/enrollment.json` | 11 | "Lyriosa" |
+| `src/messages/en/admin.json` | 2 | "Lyriosa" |
+| `src/messages/en/student.json` | 1 | "Lyriosa" |
+| `src/messages/en/settings.json` | 1 | "Lyriosa" |
 | `src/messages/he/common.json` | ~8 | "הרמוניה" / "הַרמוֹנְיָה" |
 | `src/messages/he/enrollment.json` | ~8 | "הרמוניה" |
 | `src/messages/he/public.json` | ~5 | "הרמוניה" |
@@ -60,38 +60,38 @@ A CI-runnable script must scan all user-visible text for residual "Harmonia" ref
 | `src/messages/he/billing.json` | 1 | "הרמוניה" |
 | `src/messages/he/settings.json` | 1 | "הרמוניה" |
 | `src/messages/he/student.json` | 1 | "הרמוניה" |
-| `src/messages/ar/common.json` | 5 | "هارمونيا" / "Harmonia" |
+| `src/messages/ar/common.json` | 5 | "هارمونيا" / "Lyriosa" |
 | `src/messages/ar/enrollment.json` | ~7 | "هارمونيا" |
 | `src/messages/ar/public.json` | ~6 | "هارمونيا" |
 | `src/messages/ar/admin.json` | 3 | "هارمونيا" |
-| `src/messages/ar/student.json` | 1 | "Harmonia" (mixed!) |
+| `src/messages/ar/student.json` | 1 | "Lyriosa" (mixed!) |
 | `src/messages/ar/settings.json` | 1 | "هارمونيا" |
-| `src/messages/ru/common.json` | 8 | "Harmonia" (Latin in Russian text) |
-| `src/messages/ru/enrollment.json` | 10 | "Harmonia" |
-| `src/messages/ru/public.json` | 4 | "Harmonia" |
-| `src/messages/ru/admin.json` | 1 | "Harmonia" |
-| `src/messages/ru/student.json` | 1 | "Harmonia" |
-| `src/messages/ru/settings.json` | 1 | "Harmonia" |
+| `src/messages/ru/common.json` | 8 | "Lyriosa" (Latin in Russian text) |
+| `src/messages/ru/enrollment.json` | 10 | "Lyriosa" |
+| `src/messages/ru/public.json` | 4 | "Lyriosa" |
+| `src/messages/ru/admin.json` | 1 | "Lyriosa" |
+| `src/messages/ru/student.json` | 1 | "Lyriosa" |
+| `src/messages/ru/settings.json` | 1 | "Lyriosa" |
 
-**NOTE -- Arabic inconsistency:** `src/messages/ar/student.json:471` and `src/messages/ar/common.json:954,957,1002` use Latin "Harmonia" instead of Arabic "هارمونيا". These must be unified to the new Arabic-script brand name.
+**NOTE -- Arabic inconsistency:** `src/messages/ar/student.json:471` and `src/messages/ar/common.json:954,957,1002` use Latin "Lyriosa" instead of Arabic "هارمونيا". These must be unified to the new Arabic-script brand name.
 
 **Category B: Hardcoded strings in source code (MUST change)**
 
 | File | Line | String | Context |
 |------|------|--------|---------|
-| `src/app/[locale]/page.tsx` | 6,9 | `'Harmonia'`, `'Harmonia - Music for Every Child'` | Page metadata |
+| `src/app/[locale]/page.tsx` | 6,9 | `'Lyriosa'`, `'Lyriosa - Music for Every Child'` | Page metadata |
 | `src/app/[locale]/page.tsx` | 11 | `'/images/og-harmonia.jpg'` | OG image path |
 | `src/app/[locale]/page.tsx` | 14-17 | `'https://harmonia.co.il'` | Canonical/alternate URLs |
-| `src/app/[locale]/layout.tsx` | 33 | `': 'Harmonia'` | Fallback site name |
+| `src/app/[locale]/layout.tsx` | 33 | `': 'Lyriosa'` | Fallback site name |
 | `src/app/robots.ts` | 12 | `'https://harmonia.co.il/sitemap.xml'` | Sitemap URL |
 | `src/app/sitemap.ts` | 11 | `'https://harmonia.co.il/'` | Sitemap base URL |
-| `src/lib/notifications/payment-notifications.ts` | 99 | `name: 'Harmonia'` | Email sender name |
-| `src/lib/db/adapters/supabase.ts` | 367 | `'Harmonia'` | Fallback conservatorium name |
-| `src/lib/db/adapters/postgres.ts` | 683-684, 1236 | `'Harmonia'` | Fallback conservatorium name |
-| `src/ai/flows/nurture-lead-flow.ts` | 35 | `"Harmonia"` | AI prompt |
-| `src/ai/flows/help-assistant-flow.ts` | 51 | `"Harmonia"` | AI prompt |
-| `src/components/dashboard/harmonia/admin-command-center.tsx` | 45 | `'Harmonia'` | Fallback name |
-| `src/app/api/invoice-pdf/[invoiceId]/route.ts` | 67 | `Harmonia`, `harmonia.co.il` | PDF footer |
+| `src/lib/notifications/payment-notifications.ts` | 99 | `name: 'Lyriosa'` | Email sender name |
+| `src/lib/db/adapters/supabase.ts` | 367 | `'Lyriosa'` | Fallback conservatorium name |
+| `src/lib/db/adapters/postgres.ts` | 683-684, 1236 | `'Lyriosa'` | Fallback conservatorium name |
+| `src/ai/flows/nurture-lead-flow.ts` | 35 | `"Lyriosa"` | AI prompt |
+| `src/ai/flows/help-assistant-flow.ts` | 51 | `"Lyriosa"` | AI prompt |
+| `src/components/dashboard/harmonia/admin-command-center.tsx` | 45 | `'Lyriosa'` | Fallback name |
+| `src/app/api/invoice-pdf/[invoiceId]/route.ts` | 67 | `Lyriosa`, `harmonia.co.il` | PDF footer |
 | `src/app/api/ps/qr/route.ts` | 6 | `'https://harmonia.co.il'` | QR code base URL |
 | `src/components/harmonia/conservatorium-public-profile-page.tsx` | 308 | `'https://harmonia.co.il'` | Fallback site URL |
 
@@ -133,8 +133,8 @@ For each locale, verify the new brand name is rendered correctly:
 |------|------|---------------|----------------|
 | Default page title template | `layout.tsx:39` | `%s \| {t('siteName')}` | `%s \| Lyriosa` (via translation) |
 | OG siteName | `layout.tsx:44` | `{t('siteName')}` | `Lyriosa` (via translation) |
-| Landing page title | `page.tsx:6` | `'Harmonia - Music for Every Child'` | `'Lyriosa - Music for Every Child'` |
-| Landing OG title | `page.tsx:9` | `'Harmonia'` | `'Lyriosa'` |
+| Landing page title | `page.tsx:6` | `'Lyriosa - Music for Every Child'` | `'Lyriosa - Music for Every Child'` |
+| Landing OG title | `page.tsx:9` | `'Lyriosa'` | `'Lyriosa'` |
 | OG image | `page.tsx:11` | `/images/og-harmonia.jpg` | `/images/og-lyriosa.jpg` (new asset needed) |
 | Canonical URL | `page.tsx:14` | `https://harmonia.co.il` | New domain or env var |
 | robots.txt sitemap | `robots.ts:12` | `https://harmonia.co.il/sitemap.xml` | New domain or env var |
@@ -143,12 +143,12 @@ For each locale, verify the new brand name is rendered correctly:
 
 Pages to audit for brand name in rendered text:
 
-- `/privacy` -- references "Harmonia" ~12 times across 4 locales (privacy intro, general body, sub-processors, contact directory, retention schedule)
-- `/accessibility` -- references "Harmonia" in intro text across 4 locales
-- `/register` (enrollment wizard) -- contract signing step mentions "Harmonia" ~10 times per locale (terms title, terms body, legacy checkbox, definition clauses, data processing clause)
-- `/playing-school` -- references "Harmonia Playing School" in badge and subtitle
-- `/help` -- help center title includes "Harmonia"
-- `/about` -- conservatory/teacher fallback text references "Harmonia network"
+- `/privacy` -- references "Lyriosa" ~12 times across 4 locales (privacy intro, general body, sub-processors, contact directory, retention schedule)
+- `/accessibility` -- references "Lyriosa" in intro text across 4 locales
+- `/register` (enrollment wizard) -- contract signing step mentions "Lyriosa" ~10 times per locale (terms title, terms body, legacy checkbox, definition clauses, data processing clause)
+- `/playing-school` -- references "Lyriosa Playing School" in badge and subtitle
+- `/help` -- help center title includes "Lyriosa"
+- `/about` -- conservatory/teacher fallback text references "Lyriosa network"
 
 ---
 
@@ -371,7 +371,7 @@ Both candidates must achieve minimum 4.5:1 contrast ratio for normal text and 3:
 
 | File | What breaks | Fix |
 |------|------------|-----|
-| `e2e/flows/auth.spec.ts:24` | Selector `a:has-text("Harmonia"), a:has-text("הרמוניה")` | Update to `a:has-text("Lyriosa"), a:has-text("(Hebrew brand)")` |
+| `e2e/flows/auth.spec.ts:24` | Selector `a:has-text("Lyriosa"), a:has-text("הרמוניה")` | Update to `a:has-text("Lyriosa"), a:has-text("(Hebrew brand)")` |
 | `e2e/flows/auth.spec.ts:71,92` | `'admin@harmonia.local'` | Update if dev email changes |
 | `e2e/flows/announcements.spec.ts:11` | `'admin@harmonia.dev'` | Update if dev email changes |
 | `e2e/flows/announcements.spec.ts:20` | `localStorage.setItem('harmonia-user', ...)` | Update if localStorage key changes |
@@ -384,7 +384,7 @@ Both candidates must achieve minimum 4.5:1 contrast ratio for normal text and 3:
 ### 6.2 Update Strategy
 
 **Phase 1 -- Mandatory (brand-visible):**
-1. Search-and-replace "Harmonia" / "הרמוניה" / "هارمونيا" / "Гармония" in all `src/messages/` JSON files
+1. Search-and-replace "Lyriosa" / "הרמוניה" / "هارمونيا" / "Гармония" in all `src/messages/` JSON files
 2. Update hardcoded strings in Category B source files
 3. Update `e2e/flows/auth.spec.ts:24` selector for brand text
 4. Create new OG image `/images/og-lyriosa.jpg`
@@ -398,7 +398,7 @@ Both candidates must achieve minimum 4.5:1 contrast ratio for normal text and 3:
 
 | Test | Type | Description |
 |------|------|-------------|
-| Brand name grep test | Vitest | Scan all `src/messages/**/*.json` files for residual "Harmonia"/"הרמוניה"/"هارمونيا" strings; fail if any found |
+| Brand name grep test | Vitest | Scan all `src/messages/**/*.json` files for residual "Lyriosa"/"הרמוניה"/"هارمونيا" strings; fail if any found |
 | Theme toggle unit test | Vitest | Verify theme selection logic returns correct config for `'a'`, `'b'`, `undefined`, and invalid values |
 | Theme A landing render | Vitest | Render `PublicLandingPage` with theme=a mock, verify Candidate A classes/tokens present |
 | Theme B landing render | Vitest | Render `PublicLandingPage` with theme=b mock, verify Candidate B classes/tokens present |
@@ -483,18 +483,18 @@ Run this for each theme candidate. Each item takes <30 seconds.
 
 - [ ] Register flow: `/register` -> fill details -> see contract step -> brand name correct in contract
 - [ ] Login flow: `/login` -> enter `admin@harmonia.local` -> reach dashboard
-- [ ] Dashboard: Sidebar nav loads, no "Harmonia" text visible in UI (unless part of conservatorium name)
+- [ ] Dashboard: Sidebar nav loads, no "Lyriosa" text visible in UI (unless part of conservatorium name)
 - [ ] Book lesson: `/dashboard/schedule/book` -> select teacher -> select date -> confirm
 - [ ] Billing: `/dashboard/billing` -> verify currency shows `(currency symbol)` not "ILS"
 - [ ] Settings: `/dashboard/settings` -> DSAR section visible
 - [ ] Cookie banner: Clear localStorage, reload `/` -> cookie banner appears with correct brand name
-- [ ] Playing School: `/playing-school` -> badge text shows updated brand, not "Harmonia"
+- [ ] Playing School: `/playing-school` -> badge text shows updated brand, not "Lyriosa"
 
 ### 8.2 Automated Smoke Test Extension
 
 Extend the existing `e2e/smoke.spec.ts` with:
 
-1. **Brand name assertion in public pages:** For each `PUBLIC_ROUTES` entry, assert that page body text does NOT contain the literal string "Harmonia" (catches missed renames). Exception: conservatorium names that legitimately include "Harmonia" (none currently exist).
+1. **Brand name assertion in public pages:** For each `PUBLIC_ROUTES` entry, assert that page body text does NOT contain the literal string "Lyriosa" (catches missed renames). Exception: conservatorium names that legitimately include "Lyriosa" (none currently exist).
 
 2. **Locale-specific brand name check:** For each of the 4 locale landing pages, assert the navbar brand text matches the expected localized form.
 
@@ -506,18 +506,18 @@ Extend the existing `e2e/smoke.spec.ts` with:
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Residual "Harmonia" in edge-case translation strings | High | Medium | Automated grep test in CI pipeline |
+| Residual "Lyriosa" in edge-case translation strings | High | Medium | Automated grep test in CI pipeline |
 | Arabic locale has mixed Latin/Arabic brand references | Known | Medium | Fix all Arabic translation files consistently |
 | localStorage key rename breaks active sessions | High (if renamed) | High | Use migration pattern or keep old keys |
 | Cookie consent re-prompt after key rename | Medium (if renamed) | Low | Acceptable; or keep old key |
 | Candidate B fonts fail to load for Hebrew/Arabic subsets | Medium | High | Test Heebo for Hebrew, verify Arabic coverage in Plus Jakarta Sans |
 | Candidate B color contrast fails WCAG AA | Medium | High | Run axe-core on all pages before launch |
 | OG image not updated | Low | Medium | Checklist item; CI check for file existence |
-| AI prompts still say "Harmonia" | Medium | Low | Grep-based scan covers these files |
-| Invoice PDF footer still says "Harmonia" | Medium | Medium | Hardcoded HTML string in route handler; covered in Category B scan |
+| AI prompts still say "Lyriosa" | Medium | Low | Grep-based scan covers these files |
+| Invoice PDF footer still says "Lyriosa" | Medium | Medium | Hardcoded HTML string in route handler; covered in Category B scan |
 | Supabase bucket name `harmonia-private` breaks storage | High (if renamed) | Critical | Do NOT rename bucket; or create alias |
 | Dev server crashes under parallel visual regression runs | Known | Medium | Run with `--workers=1` as documented |
-| Email sender name still says "Harmonia" | Medium | Medium | Covered in Category B; requires SendGrid config update too |
+| Email sender name still says "Lyriosa" | Medium | Medium | Covered in Category B; requires SendGrid config update too |
 
 ---
 
@@ -585,9 +585,9 @@ npx vitest run
 # TypeScript check
 npx tsc --noEmit
 
-# Grep for residual Harmonia strings (quick manual check)
+# Grep for residual Lyriosa strings (quick manual check)
 # In translation files:
-grep -r "Harmonia\|הרמוניה\|هارمونيا\|Гармония" src/messages/
+grep -r "Lyriosa\|הרמוניה\|هارمونيا\|Гармония" src/messages/
 # In source code:
-grep -rn "'Harmonia'\|\"Harmonia\"" src/ --include="*.ts" --include="*.tsx"
+grep -rn "'Lyriosa'\|\"Lyriosa\"" src/ --include="*.ts" --include="*.tsx"
 ```

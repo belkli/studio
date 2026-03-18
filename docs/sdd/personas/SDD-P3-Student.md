@@ -1,5 +1,5 @@
 # SDD-P3: Persona Audit — Student
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Music Student (תלמיד/ה)
 **Auditor Role:** Senior Full-Stack Architect + UX Product Lead
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-The student persona is Harmonia's most UX-sensitive role. A student who finds the app confusing or uninspiring will simply not use it — and the entire value proposition of self-service scheduling, practice logs, and digital forms collapses. The SDDs for student-facing features are reasonably thorough (enrollment wizard, self-service scheduling, gamified practice logs, AI Matchmaker), and the prototype mock data shows encouraging signs: `achievements`, `weeklyPracticeGoal`, `AssignedRepertoire`, and `PracticeVideo` types are all present in the type system.
+The student persona is Lyriosa's most UX-sensitive role. A student who finds the app confusing or uninspiring will simply not use it — and the entire value proposition of self-service scheduling, practice logs, and digital forms collapses. The SDDs for student-facing features are reasonably thorough (enrollment wizard, self-service scheduling, gamified practice logs, AI Matchmaker), and the prototype mock data shows encouraging signs: `achievements`, `weeklyPracticeGoal`, `AssignedRepertoire`, and `PracticeVideo` types are all present in the type system.
 
 **What Is Good:**
 - The 9-step enrollment wizard (SDD-02) is well-designed and considers both the parent-registering-child and self-registering-student flows. The AI Matchmaker integration at Step 5 is a genuine differentiator.

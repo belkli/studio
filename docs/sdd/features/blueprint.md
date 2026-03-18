@@ -1,4 +1,4 @@
-# **App Name**: Harmonia
+# **App Name**: Lyriosa
 
 ## Core Features:
 

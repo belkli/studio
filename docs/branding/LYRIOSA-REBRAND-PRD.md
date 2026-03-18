@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document defines the complete scope, strategy, and rollout plan for rebranding the platform from **Harmonia** (EN) / **הַרמוֹנְיָה** (HE) / **هارمونيا** (AR) / **Гармония** (RU) to **Lyriosa** (EN) / **ליריוסה** (HE) / **ليريوسا** (AR) / **Лириоса** (RU).
+This document defines the complete scope, strategy, and rollout plan for rebranding the platform from **Lyriosa** (EN) / **הַרמוֹנְיָה** (HE) / **هارمونيا** (AR) / **Гармония** (RU) to **Lyriosa** (EN) / **ליריוסה** (HE) / **ليريوسا** (AR) / **Лириоса** (RU).
 
 The rebrand encompasses two visual identity candidates for public-facing pages, while the dashboard will uniformly adopt Candidate A. A server-side environment variable (`NEXT_PUBLIC_LANDING_THEME='a'|'b'`) will enable A/B testing between the candidates before final rollout.
 
@@ -23,37 +23,37 @@ A snapshot branch (`harmonia-snapshot-pre-rebrand`) already preserves the pre-re
 
 Every JSON file under `src/messages/{he,en,ar,ru}/` must be audited. The following is the exhaustive list of brand-name occurrences discovered in the codebase:
 
-| Namespace | File | Keys containing "Harmonia" / "הרמוניה" / equivalents | Count |
+| Namespace | File | Keys containing "Lyriosa" / "הרמוניה" / equivalents | Count |
 |-----------|------|-------------------------------------------------------|-------|
-| `common.json` | `Metadata.siteName` | "Harmonia" / "הַרמוֹנְיָה" / "هارمونيا" / "Гармония" | 4 |
-| `common.json` | `AccessibilityPage.intro` | "Harmonia" / "הרמוניה" references | 4 |
+| `common.json` | `Metadata.siteName` | "Lyriosa" / "הַרמוֹנְיָה" / "هارمونيا" / "Гармония" | 4 |
+| `common.json` | `AccessibilityPage.intro` | "Lyriosa" / "הרמוניה" references | 4 |
 | `common.json` | `PrivacyPolicy.*` | ~8 keys across intro, generalBody, contactDescription, contactDirectoryDescription, subProcessorsBody, retentionScheduleBody, dsarEmail | 4x8=32 |
 | `common.json` | `FinancialAid.pageDesc` (HE only) | "הרמוניה" | 1 |
-| `public.json` | `HomePage.title` | "Harmonia" / "הַרמוֹנְיָה" | 4 |
-| `public.json` | `AboutPage.subtitle` | "Harmonia" / "הרמוניה" network reference | 4 |
-| `public.json` | `MusiciansForHire.heroSubtitle` | "Harmonia" reference | 4 |
-| `public.json` | `HelpCenter.title` | "Harmonia Help Center" / "מרכז העזרה של הרמוניה" | 4 |
-| `public.json` | `HelpAssistant.title` | "Harmonia AI Assistant" / "עוזר AI של הרמוניה" | 4 |
+| `public.json` | `HomePage.title` | "Lyriosa" / "הַרמוֹנְיָה" | 4 |
+| `public.json` | `AboutPage.subtitle` | "Lyriosa" / "הרמוניה" network reference | 4 |
+| `public.json` | `MusiciansForHire.heroSubtitle` | "Lyriosa" reference | 4 |
+| `public.json` | `HelpCenter.title` | "Lyriosa Help Center" / "מרכז העזרה של הרמוניה" | 4 |
+| `public.json` | `HelpAssistant.title` | "Lyriosa AI Assistant" / "עוזר AI של הרמוניה" | 4 |
 | `public.json` | `HelpAssistant.welcomeMessage` | "I'm Harmony, your AI assistant" | 4 |
-| `public.json` | `Landing.conservatoryFallback` | "Harmonia network" / "רשת הרמוניה" | 4 |
-| `public.json` | `Landing.teacherFallback` | "Harmonia network" / "רשת הרמוניה" | 4 |
-| `enrollment.json` | `Wizard.subtitle` | "join Harmonia" / "להצטרף להרמוניה" | 4 |
-| `enrollment.json` | `Contract.s1Body` | "Harmonia Platform" / "פלטפורמת הרמוניה" | 4 |
-| `enrollment.json` | `Contract.s6Body` | "Harmonia Platform" references | 4 |
+| `public.json` | `Landing.conservatoryFallback` | "Lyriosa network" / "רשת הרמוניה" | 4 |
+| `public.json` | `Landing.teacherFallback` | "Lyriosa network" / "רשת הרמוניה" | 4 |
+| `enrollment.json` | `Wizard.subtitle` | "join Lyriosa" / "להצטרף להרמוניה" | 4 |
+| `enrollment.json` | `Contract.s1Body` | "Lyriosa Platform" / "פלטפורמת הרמוניה" | 4 |
+| `enrollment.json` | `Contract.s6Body` | "Lyriosa Platform" references | 4 |
 | `enrollment.json` | `Contract.s7Body` | "privacy@harmonia.co.il" | 4 |
-| `enrollment.json` | `Contract.s8Body` | "Harmonia" references | 4 |
+| `enrollment.json` | `Contract.s8Body` | "Lyriosa" references | 4 |
 | `enrollment.json` | `Contract.s9Body` | "accessibility@harmonia.co.il" | 4 |
-| `enrollment.json` | `Contract.termsTitle` | "Harmonia Terms of Service" | 4 |
-| `enrollment.json` | `Contract.termsBody` | "Harmonia platform" | 4 |
-| `enrollment.json` | `Contract.agreeCheckboxLegacy` | "Harmonia's Terms" | 4 |
-| `enrollment.json` | `PlayingSchool.subtitle` | "Harmonia conservatories" | 4 |
-| `enrollment.json` | `PlayingSchool.heroBadge` | "Harmonia Playing School" | 4 |
-| `admin.json` | `applyForAid.metaTitle` | "Harmonia" in page title | 2+ |
-| `admin.json` | `logo` key (EN) | "Harmonia" | 1 |
+| `enrollment.json` | `Contract.termsTitle` | "Lyriosa Terms of Service" | 4 |
+| `enrollment.json` | `Contract.termsBody` | "Lyriosa platform" | 4 |
+| `enrollment.json` | `Contract.agreeCheckboxLegacy` | "Lyriosa's Terms" | 4 |
+| `enrollment.json` | `PlayingSchool.subtitle` | "Lyriosa conservatories" | 4 |
+| `enrollment.json` | `PlayingSchool.heroBadge` | "Lyriosa Playing School" | 4 |
+| `admin.json` | `applyForAid.metaTitle` | "Lyriosa" in page title | 2+ |
+| `admin.json` | `logo` key (EN) | "Lyriosa" | 1 |
 | `admin.json` | Ministry portal title (HE) | "הרמוניה" | 1 |
 | `billing.json` | `securityNotice` (HE) | "הרמוניה" | 1 |
-| `student.json` | `ScheduleAssistant.greeting` | "Harmonia's AI assistant" / "הרמוניה" (all 4 locales) | 4 |
-| `settings.json` | `standardTermsTitle` | "Standard Harmonia Terms" | 4 |
+| `student.json` | `ScheduleAssistant.greeting` | "Lyriosa's AI assistant" / "הרמוניה" (all 4 locales) | 4 |
+| `settings.json` | `standardTermsTitle` | "Standard Lyriosa Terms" | 4 |
 
 **Total translation string updates: ~120+ individual key-value pairs across 44 files**
 
@@ -61,17 +61,17 @@ Every JSON file under `src/messages/{he,en,ar,ru}/` must be audited. The followi
 
 | File | Reference | Type |
 |------|-----------|------|
-| `src/app/[locale]/layout.tsx` (line 33) | Fallback `'Harmonia'` in catch block | Metadata fallback |
+| `src/app/[locale]/layout.tsx` (line 33) | Fallback `'Lyriosa'` in catch block | Metadata fallback |
 | `src/app/[locale]/page.tsx` (lines 6-17) | `generateMetadata()`: title, OG title, OG image path, canonical URL, alternate URLs | SEO/OG |
 | `src/app/[locale]/about/[slug]/page.tsx` (line 43, 51) | `'https://harmonia.co.il'` fallback, description text | SEO |
-| `src/app/[locale]/error.tsx` (line 14) | `[Harmonia Error]` console log | Debug |
+| `src/app/[locale]/error.tsx` (line 14) | `[Lyriosa Error]` console log | Debug |
 | `src/app/[locale]/apply/matchmaker/page.tsx` (lines 9, 18) | Hardcoded Hebrew brand strings | UI text |
 | `src/app/robots.ts` (line 12) | `'https://harmonia.co.il/sitemap.xml'` | SEO |
-| `src/app/api/invoice-pdf/[invoiceId]/route.ts` (line 67) | "מערכת Harmonia" and "support@harmonia.co.il" | Invoice PDF |
+| `src/app/api/invoice-pdf/[invoiceId]/route.ts` (line 67) | "מערכת Lyriosa" and "support@harmonia.co.il" | Invoice PDF |
 | `src/app/api/ps/qr/route.ts` (line 6) | `'https://harmonia.co.il'` fallback | QR codes |
-| `src/ai/flows/help-assistant-flow.ts` (line 51) | AI system prompt: `"Harmonia"`, `"Harmony"` assistant name | AI |
+| `src/ai/flows/help-assistant-flow.ts` (line 51) | AI system prompt: `"Lyriosa"`, `"Harmony"` assistant name | AI |
 | `src/proxy.ts` (line 183) | `'dev@harmonia.local'` dev email | Dev only |
-| `src/lib/auth-utils.ts` (lines 15-16, 91) | `HarmoniaClaims` interface name, `dev@harmonia.local` | Internal API |
+| `src/lib/auth-utils.ts` (lines 15-16, 91) | `LyriosaClaims` interface name, `dev@harmonia.local` | Internal API |
 | `src/lib/auth-cookie.ts` (line 2) | `'harmonia-user'` cookie name | Auth |
 | `src/hooks/use-auth.tsx` (lines 653-702) | `'harmonia-user'` localStorage key | Auth |
 | `src/hooks/domains/users-domain.tsx` (lines 114-149) | `'harmonia-user'` localStorage key | Auth |
@@ -109,20 +109,20 @@ The following legal content must be updated to reflect the new brand name:
 
 - **Privacy Policy** -- `PrivacyPolicy` namespace in `common.json` (all 4 locales): intro, generalBody, contactDescription, contactDirectoryDescription, subProcessorsBody, retentionScheduleBody, dsarEmail
 - **Accessibility Statement** -- `AccessibilityPage` namespace in `common.json` (all 4 locales)
-- **Registration Contract** -- `Contract` namespace in `enrollment.json` (all 4 locales): 7 sections referencing "Harmonia Platform" or contact emails
+- **Registration Contract** -- `Contract` namespace in `enrollment.json` (all 4 locales): 7 sections referencing "Lyriosa Platform" or contact emails
 - **Terms of Service** -- `Contract.termsTitle`, `Contract.termsBody`, `Contract.agreeCheckboxLegacy`
 - **Cookie Banner** -- storage key only (no user-visible brand name currently)
 - **Standard Terms** -- `settings.json` `standardTermsTitle` (all 4 locales)
 
 ### 1.6 AI/Bot Identity
 
-- **AI Help Assistant** system prompt: references "Harmonia" and names the bot "Harmony"
+- **AI Help Assistant** system prompt: references "Lyriosa" and names the bot "Harmony"
   - Decision needed: rename bot to "Lyra" or similar?
 - **Schedule Rescheduling Chat** greeting: references "הרמוניה" in `student.json`
 
 ### 1.7 Error Pages
 
-- `src/app/[locale]/error.tsx` -- English-only hardcoded text ("Something went wrong"), console log `[Harmonia Error]`
+- `src/app/[locale]/error.tsx` -- English-only hardcoded text ("Something went wrong"), console log `[Lyriosa Error]`
 - No `not-found.tsx` exists (uses Next.js default)
 
 ### 1.8 Directory Structure
@@ -139,7 +139,7 @@ The entire `src/components/harmonia/` directory (33+ components) and `src/compon
 |---|------|--------|------|
 | M1 | Update `Metadata.siteName` in all 4 locale `common.json` files | S | Low |
 | M2 | Update `HomePage.title` in all 4 locale `public.json` files | S | Low |
-| M3 | Update all `Landing.*` fallback strings referencing "Harmonia network" | S | Low |
+| M3 | Update all `Landing.*` fallback strings referencing "Lyriosa network" | S | Low |
 | M4 | Update `HelpCenter.title` and `HelpAssistant.title` in all 4 locales | S | Low |
 | M5 | Update `AboutPage.subtitle` in all 4 locales | S | Low |
 | M6 | Replace logo SVG in `icons.tsx` with Lyriosa branded mark | M | Medium |
@@ -185,7 +185,7 @@ The entire `src/components/harmonia/` directory (33+ components) and `src/compon
 | C4 | Rename `harmonia_locale` localStorage key | S | Low -- no migration needed |
 | C5 | Rename `harmonia.a11y.*` and `harmonia.help.*` localStorage keys | M | Medium -- reset existing prefs |
 | C6 | Rename `harmonia-user` cookie to `lyriosa-user` | M | Medium -- session invalidation |
-| C7 | Rename `HarmoniaClaims` TypeScript interface | S | Low -- internal only |
+| C7 | Rename `LyriosaClaims` TypeScript interface | S | Low -- internal only |
 | C8 | Update `dev@harmonia.local` dev email | S | Low -- dev only |
 | C9 | New landing page hero photography/videography | XL | Low |
 | C10 | Branded email templates (welcome, lesson confirmation, etc.) | L | Medium |
@@ -415,7 +415,7 @@ Bookmarked dashboard URLs (`/dashboard/*`) will continue to work via redirect.
 
 ### 6.1 Launch Readiness Checklist
 
-- [ ] Zero instances of "Harmonia" / "הרמוניה" / equivalents visible to end users on any page
+- [ ] Zero instances of "Lyriosa" / "הרמוניה" / equivalents visible to end users on any page
 - [ ] All 4 locales render the new brand name correctly
 - [ ] OG images and meta tags show "Lyriosa" in social sharing previews
 - [ ] Favicon displays correctly across browsers

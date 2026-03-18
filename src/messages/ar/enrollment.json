@@ -55,6 +55,14 @@
       "password": "كلمة المرور",
       "oauthEmailReadonly": "يتم توفير البريد الإلكتروني من خلال حسابك الاجتماعي ولا يمكن تغييره هنا."
     },
+    "parent": {
+      "phone2": "هاتف إضافي",
+      "addSecondGuardian": "إضافة ولي أمر ثانٍ",
+      "secondGuardianName": "اسم ولي الأمر الثاني",
+      "secondGuardianPhone": "هاتف ولي الأمر الثاني",
+      "secondGuardianEmail": "بريد ولي الأمر الثاني",
+      "secondGuardianIdNumber": "رقم هوية ولي الأمر الثاني"
+    },
     "musical": {
       "title": "المعلومات الموسيقية",
       "instrument": "الآلة",
@@ -79,7 +87,12 @@
       "experiencePlaceholder": "شارك الخلفية والخبرة",
       "duration": "مدة الدرس",
       "durationPlaceholder": "اختر مدة الدرس",
-      "minutes": "{min} دقيقة"
+      "minutes": "{min} دقيقة",
+      "rentalIntent": "تفضيل استئجار آلة موسيقية",
+      "rentalIntent_own": "لدي آلتي الخاصة",
+      "rentalIntent_rent": "استئجار من المعهد",
+      "rentalIntent_guidance": "أحتاج إرشاد",
+      "theoryYears": "سنوات دراسة النظرية السابقة"
     },
     "schedule": {
       "days": "الأيام المتاحة",

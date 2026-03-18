@@ -4,7 +4,7 @@
 **Last updated:** 2026-03-14
 **Companion docs:** `docs/architecture/06-security.md`, `docs/plans/qa/12-security-review.md`
 
-> This guide covers every security configuration needed before Harmonia can accept real user data. Follow each section in order. Every item has a checkbox -- do not skip any.
+> This guide covers every security configuration needed before Lyriosa can accept real user data. Follow each section in order. Every item has a checkbox -- do not skip any.
 
 ---
 
@@ -38,7 +38,7 @@ Every policy below reads the caller's role and conservatorium from the Supabase 
 
 ```sql
 -- ============================================================
--- HELPER: Extract Harmonia claims from Supabase JWT
+-- HELPER: Extract Lyriosa claims from Supabase JWT
 -- ============================================================
 -- Supabase stores Custom Claims in auth.jwt()->'app_metadata'.
 -- Firebase Custom Claims are synced to app_metadata during
@@ -1700,7 +1700,7 @@ Client                    Server
 
 ### 4.5 Password Policies
 
-- [ ] **Step 72.** Firebase Auth enforces minimum 6 characters by default. For Harmonia (handling minors' data), configure:
+- [ ] **Step 72.** Firebase Auth enforces minimum 6 characters by default. For Lyriosa (handling minors' data), configure:
   - Minimum 8 characters (via Firebase Console or custom validation)
   - Block common passwords (client-side validation in the registration form)
 - [ ] **Step 73.** Verify that password reset emails are sent from your verified domain.
@@ -1734,7 +1734,7 @@ if (process.env.NODE_ENV === 'production') {
 
 ## 5. Data Protection (PDPPA)
 
-The Israeli Protection of Privacy Law (PDPPA 5741-1981) and its Information Security Regulations apply to Harmonia because it stores:
+The Israeli Protection of Privacy Law (PDPPA 5741-1981) and its Information Security Regulations apply to Lyriosa because it stores:
 - Israeli ID numbers (Teudat Zehut) of minors and parents
 - Children's audio/video recordings
 - Financial information (payments, invoices, scholarships)
@@ -2057,5 +2057,5 @@ This guide addresses the findings from `docs/plans/qa/12-security-review.md`:
 
 ---
 
-*Guide prepared by Security Expert agent -- Harmonia Setup Guide v1.0, 2026-03-14.*
+*Guide prepared by Security Expert agent -- Lyriosa Setup Guide v1.0, 2026-03-14.*
 *All SQL is ready to execute. Test in a staging environment before applying to production.*

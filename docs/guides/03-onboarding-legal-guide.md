@@ -5,7 +5,7 @@
 **Author:** UX & Legal Agent
 **Status:** Ready for review
 
-> This guide walks you through everything needed to onboard 85 conservatorium administrators to the Harmonia demo, from account creation to legal compliance. Every section is a checklist. Code scripts are included where applicable.
+> This guide walks you through everything needed to onboard 85 conservatorium administrators to the Lyriosa demo, from account creation to legal compliance. Every section is a checklist. Code scripts are included where applicable.
 
 ---
 
@@ -26,7 +26,7 @@
 
 There are 85 conservatorium administrators listed in `docs/data/constadmin.json`. Each needs:
 - A Supabase Auth account (email/password)
-- A Harmonia user profile with role `conservatorium_admin` and the correct `conservatoriumId`
+- A Lyriosa user profile with role `conservatorium_admin` and the correct `conservatoriumId`
 - A unique, memorable but secure password
 
 ### 1.2 Password Format
@@ -264,7 +264,7 @@ cat docs/data/admin-credentials.json | head -20
 
 The mapping is straightforward:
 
-| constadmin.json `id` | Harmonia `conservatoriumId` | Example |
+| constadmin.json `id` | Lyriosa `conservatoriumId` | Example |
 |---|---|---|
 | 1 | `cons-1` | Or Akiva |
 | 15 | `cons-15` | Hod HaSharon |
@@ -285,8 +285,8 @@ The existing `src/lib/data.ts` already creates mock conservatorium records using
 | Field | Value |
 |---|---|
 | **Subject (Hebrew)** | ברוכים הבאים להרמוניה -- גישה לסביבת הדמו |
-| **Subject (English)** | Welcome to Harmonia -- Demo Environment Access |
-| **From** | Harmonia Team <noreply@harmonia.co.il> |
+| **Subject (English)** | Welcome to Lyriosa -- Demo Environment Access |
+| **From** | Lyriosa Team <noreply@harmonia.co.il> |
 | **Reply-To** | support@harmonia.co.il |
 
 ### 2.2 HTML Email Template
@@ -563,8 +563,8 @@ async function sendEmail(cred: CredentialRecord) {
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: cred.email, name: cred.managerName }] }],
-      from: { email: 'noreply@harmonia.co.il', name: 'Harmonia' },
-      reply_to: { email: 'support@harmonia.co.il', name: 'Harmonia Support' },
+      from: { email: 'noreply@harmonia.co.il', name: 'Lyriosa' },
+      reply_to: { email: 'support@harmonia.co.il', name: 'Lyriosa Support' },
       subject: 'ברוכים הבאים להרמוניה -- גישה לסביבת הדמו',
       content: [{ type: 'text/html', value: html }],
     }),
@@ -615,7 +615,7 @@ Create a 6-page PDF presentation (use Canva, Google Slides, or Figma) to attach 
 |---------|---------|
 | **Title** | ברוכים הבאים להרמוניה |
 | **Subtitle** | פלטפורמת ניהול הקונסרבטוריון החדשה |
-| **Visual** | Harmonia logo + hero screenshot of dashboard |
+| **Visual** | Lyriosa logo + hero screenshot of dashboard |
 | **Body** | "הרמוניה היא מערכת ניהול דיגיטלית שתחליף את ניהול הקונסרבטוריון בגיליונות אלקטרוניים, WhatsApp, ודף נייר. הכל במקום אחד." |
 
 ### Page 2: How to Log In
@@ -776,9 +776,9 @@ A lightweight TOU for the demo environment (separate from the full production TO
   - Prohibited use: no real PII, no scraping, no vulnerability testing without authorization
   - No warranty: demo is provided "as is" with no SLA
   - Data loss: user accepts that data may be reset
-  - Intellectual property: all platform IP remains Harmonia's property
+  - Intellectual property: all platform IP remains Lyriosa's property
   - Confidentiality: admin agrees not to share screenshots or data with competitors
-  - Termination: Harmonia may revoke demo access at any time
+  - Termination: Lyriosa may revoke demo access at any time
 - [ ] Add TOU link to demo gate page
 - [ ] Add TOU acceptance to consent form
 
@@ -816,7 +816,7 @@ Current score from `docs/operations/LEGAL-READINESS.md`: **85/100**
 - [ ] Go to APIs & Services > Credentials
 - [ ] Click "Create Credentials" > "OAuth client ID"
 - [ ] Application type: **Web application**
-- [ ] Name: `Harmonia Web Client`
+- [ ] Name: `Lyriosa Web Client`
 - [ ] Authorized JavaScript origins:
   ```
   https://harmonia.web.app
@@ -843,7 +843,7 @@ Current score from `docs/operations/LEGAL-READINESS.md`: **85/100**
 
 - [ ] Go to APIs & Services > OAuth consent screen
 - [ ] User type: **External** (for production) or **Internal** (for Google Workspace orgs)
-- [ ] App name: `Harmonia`
+- [ ] App name: `Lyriosa`
 - [ ] User support email: `support@harmonia.co.il`
 - [ ] Developer contact email: `dev@harmonia.co.il`
 - [ ] Scopes: `email`, `profile`, `openid`
@@ -856,7 +856,7 @@ Current score from `docs/operations/LEGAL-READINESS.md`: **85/100**
 - [ ] Go to [Azure Portal](https://portal.azure.com)
 - [ ] Navigate to Azure Active Directory > App registrations
 - [ ] Click "New registration"
-  - Name: `Harmonia`
+  - Name: `Lyriosa`
   - Supported account types: "Accounts in any organizational directory and personal Microsoft accounts"
   - Redirect URI: `https://harmonia.web.app/__/auth/handler` (Web platform)
 - [ ] Copy the **Application (client) ID**
@@ -865,7 +865,7 @@ Current score from `docs/operations/LEGAL-READINESS.md`: **85/100**
 
 - [ ] In the app registration, go to Certificates & secrets
 - [ ] Click "New client secret"
-- [ ] Description: `Harmonia Firebase Auth`
+- [ ] Description: `Lyriosa Firebase Auth`
 - [ ] Expiry: 24 months (set calendar reminder to rotate)
 - [ ] Copy the **Secret Value** (shown only once)
 

@@ -1,4 +1,4 @@
-# Harmonia -- Complete Setup Guide (For Dummies)
+# Lyriosa -- Complete Setup Guide (For Dummies)
 
 > **Version:** 2.0 | **Date:** 2026-03-14
 > **Audience:** Non-technical founder / first-time deployer
@@ -74,7 +74,7 @@ This guide consolidates and references the following existing docs:
 - [ ] **Git** installed -- download from https://git-scm.com/downloads
   - Verify: `git --version` -- should show `git version 2.x.x`
 - [ ] **A GitHub account** -- if you do not have one, go to https://github.com/join and create one (free)
-- [ ] **The Harmonia repository** cloned to your computer:
+- [ ] **The Lyriosa repository** cloned to your computer:
   ```bash
   git clone https://github.com/YOUR_USERNAME/studio.git
   cd studio
@@ -110,7 +110,7 @@ Before deploying anything, confirm the app runs locally in mock mode:
   ```
 - [ ] Step 3: Wait until you see `- Local: http://localhost:9002` in the output
 - [ ] Step 4: Open http://localhost:9002 in your browser
-- [ ] Step 5: You should see the Harmonia landing page in Hebrew with a hero section
+- [ ] Step 5: You should see the Lyriosa landing page in Hebrew with a hero section
 - [ ] Step 6: Press `Ctrl+C` in the terminal to stop the server
 
 If you see an error instead, check [Appendix E: Troubleshooting](#appendix-e-troubleshooting).
@@ -124,7 +124,7 @@ If you see an error instead, check [Appendix E: Troubleshooting](#appendix-e-tro
 - [ ] Step 1: Go to https://supabase.com/dashboard
 - [ ] Step 2: Click the green **"New Project"** button
 - [ ] Step 3: Fill in the form:
-  - **Organization:** Select your default organization (or create one -- click "New Organization", name it "Harmonia")
+  - **Organization:** Select your default organization (or create one -- click "New Organization", name it "Lyriosa")
   - **Project name:** `harmonia-stage`
   - **Database Password:** Generate a strong password -- click the **"Generate a password"** button. **SAVE THIS PASSWORD** somewhere safe (a password manager or a text file). You will need it later.
   - **Region:** Select **West Europe (Ireland) eu-west-1** -- closest to Israel while staying in the EU for PDPPA compliance (see [`docs/operations/LEGAL-READINESS.md`](../operations/LEGAL-READINESS.md) Section 1 for data residency requirements)
@@ -149,13 +149,13 @@ If you see an error instead, check [Appendix E: Troubleshooting](#appendix-e-tro
 
 ### 1.3 Set Up Database Schema
 
-The Harmonia Postgres schema lives in `scripts/db/schema.sql`. You need to run it against your Supabase database.
+The Lyriosa Postgres schema lives in `scripts/db/schema.sql`. You need to run it against your Supabase database.
 
 **Option A: Via Supabase SQL Editor (recommended for beginners)**
 
 - [ ] Step 1: In your Supabase project dashboard, click **"SQL Editor"** in the left sidebar (looks like a `>_` icon)
 - [ ] Step 2: Click **"New query"** (top right)
-- [ ] Step 3: Open the file `scripts/db/schema.sql` from your local Harmonia project in a text editor
+- [ ] Step 3: Open the file `scripts/db/schema.sql` from your local Lyriosa project in a text editor
 - [ ] Step 4: Select ALL text (Ctrl+A), copy it (Ctrl+C)
 - [ ] Step 5: Paste it into the SQL Editor in Supabase (Ctrl+V)
 - [ ] Step 6: Click the green **"Run"** button (or press Ctrl+Enter)
@@ -229,7 +229,7 @@ Still on the Vercel "Configure Project" page (or go to Project Settings > Enviro
   - Expected: Green checkmark with "Ready" status
   - If build fails, check the logs and see [Appendix E](#appendix-e-troubleshooting)
 - [ ] Step 3: Click **"Visit"** to see your deployed site
-- [ ] Step 4: You should see the Harmonia landing page at `https://harmonia-stage.vercel.app` (or similar URL)
+- [ ] Step 4: You should see the Lyriosa landing page at `https://harmonia-stage.vercel.app` (or similar URL)
 
 ### 1.8 Set Up Demo Gate (Access Protection)
 
@@ -295,13 +295,13 @@ See [Appendix D: Admin Account Seed Script](#appendix-d-admin-account-seed-scrip
 - [ ] Step 4: Click **"+ CREATE CREDENTIALS"** > **"OAuth client ID"**
 - [ ] Step 5: If prompted to configure the consent screen:
   - User Type: **External**
-  - App name: `Harmonia`
+  - App name: `Lyriosa`
   - Support email: your email
   - Authorized domains: add `supabase.co`
   - Click **"Save and Continue"** through the remaining steps
 - [ ] Step 6: Back on Credentials page, click **"+ CREATE CREDENTIALS"** > **"OAuth client ID"**
   - Application type: **Web application**
-  - Name: `Harmonia Stage`
+  - Name: `Lyriosa Stage`
   - Authorized redirect URIs: Add `https://xxxx.supabase.co/auth/v1/callback` (replace xxxx with your Supabase project ref)
   - Click **"Create"**
 - [ ] Step 7: Copy the **Client ID** and **Client secret**
@@ -316,7 +316,7 @@ See [Appendix D: Admin Account Seed Script](#appendix-d-admin-account-seed-scrip
 - [ ] Step 1: Go to https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
 - [ ] Step 2: Click **"+ New registration"**
 - [ ] Step 3: Fill in:
-  - Name: `Harmonia Stage`
+  - Name: `Lyriosa Stage`
   - Supported account types: **Accounts in any organizational directory and personal Microsoft accounts**
   - Redirect URI: Web -- `https://xxxx.supabase.co/auth/v1/callback`
 - [ ] Step 4: Click **"Register"**
@@ -449,7 +449,7 @@ Vercel automatically creates preview deployments for every PR. No additional con
 - [ ] Step 2: Click **"+ Add New Monitor"**
 - [ ] Step 3: Configure:
   - Monitor Type: **HTTP(S)**
-  - Friendly Name: `Harmonia Stage`
+  - Friendly Name: `Lyriosa Stage`
   - URL: `https://harmonia-stage.vercel.app`
   - Monitoring Interval: **5 minutes**
 - [ ] Step 4: Under Alert Contacts, add your email
@@ -547,7 +547,7 @@ Vercel automatically creates preview deployments for every PR. No additional con
 
 There are 85 conservatorium administrators listed in `docs/data/constadmin.json`. Each needs:
 - A Supabase Auth account (email/password)
-- A Harmonia user profile with role `conservatorium_admin` and the correct `conservatoriumId`
+- A Lyriosa user profile with role `conservatorium_admin` and the correct `conservatoriumId`
 - A unique, memorable but secure password
 
 **Password format:** `Cons{id}-{Location3Chars}-{random4hex}`
@@ -559,7 +559,7 @@ Examples:
 
 This format is 16+ characters, contains uppercase/lowercase/digits/symbols, unique per conservatorium, and readable enough to type from an email.
 
-The mapping is: `constadmin.json` ID `N` maps to Harmonia `conservatoriumId = cons-N`. The existing `src/lib/data.ts` uses the same scheme.
+The mapping is: `constadmin.json` ID `N` maps to Lyriosa `conservatoriumId = cons-N`. The existing `src/lib/data.ts` uses the same scheme.
 
 If you ran the seed script in Phase 1.9, you already have credentials. If not, run the script now (see [Appendix D](#appendix-d-admin-account-seed-script)).
 
@@ -576,12 +576,12 @@ If you ran the seed script in Phase 1.9, you already have credentials. If not, r
 | Field | Value |
 |---|---|
 | **Subject (Hebrew)** | ברוכים הבאים להרמוניה -- גישה לסביבת הדמו |
-| **Subject (English)** | Welcome to Harmonia -- Demo Environment Access |
-| **From** | Harmonia Team `<noreply@harmonia.co.il>` |
+| **Subject (English)** | Welcome to Lyriosa -- Demo Environment Access |
+| **From** | Lyriosa Team `<noreply@harmonia.co.il>` |
 | **Reply-To** | `support@harmonia.co.il` |
 
 - [ ] Step 1: Save the HTML email template as `docs/guides/welcome-email-template.html`
-  - The template uses RTL layout (`dir="rtl" lang="he"`), Harmonia's indigo branding
+  - The template uses RTL layout (`dir="rtl" lang="he"`), Lyriosa's indigo branding
   - Placeholders: `{{ADMIN_NAME}}`, `{{ADMIN_EMAIL}}`, `{{PASSWORD}}`, `{{LOGIN_URL}}`
   - Key sections: indigo gradient header, LTR credentials box, CTA button, feature highlights, amber demo disclaimer, footer
   - See `docs/guides/03-onboarding-legal-guide.md` Section 2.2 for the full HTML template
@@ -786,7 +786,7 @@ RLS policies are now embedded in `scripts/db/schema.sql` and applied automatical
 - [ ] Step 2: Configure Google and Microsoft OAuth (same steps as 1.10, but with production redirect URLs)
 - [ ] Step 3: Set up email templates:
   - Authentication > Email Templates
-  - Customize the confirm email, reset password, and magic link templates with Harmonia branding
+  - Customize the confirm email, reset password, and magic link templates with Lyriosa branding
 
 ### 5.6 Production CI/CD
 
@@ -1094,7 +1094,7 @@ if (process.env.NODE_ENV === 'production') {
 
 ```sql
 -- ============================================================
--- Harmonia -- Row Level Security Policies for Supabase
+-- Lyriosa -- Row Level Security Policies for Supabase
 -- STAGING STARTER -- for production use 01-security-setup-guide.md
 -- Run AFTER schema.sql, seed.sql, AND helper functions
 -- ============================================================

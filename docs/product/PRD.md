@@ -1,4 +1,4 @@
-# Harmonia Platform - Product Requirements Document (PRD)
+# Lyriosa Platform - Product Requirements Document (PRD)
 
 **Version:** 1.0
 **Author:** PM Agent
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Harmonia is a multi-tenant SaaS platform that digitises Israeli music conservatorium operations. The system currently exists as a **high-fidelity functional prototype** with complete UI for all 17+ modules, 8 active Genkit AI flows, 4-locale i18n infrastructure (he/ar/en/ru), and a typed database abstraction layer supporting 5 backends. However, **zero real data persistence, authentication, payments, or notifications are functional** - the entire system runs on in-memory mock data with no security enforcement.
+Lyriosa is a multi-tenant SaaS platform that digitises Israeli music conservatorium operations. The system currently exists as a **high-fidelity functional prototype** with complete UI for all 17+ modules, 8 active Genkit AI flows, 4-locale i18n infrastructure (he/ar/en/ru), and a typed database abstraction layer supporting 5 backends. However, **zero real data persistence, authentication, payments, or notifications are functional** - the entire system runs on in-memory mock data with no security enforcement.
 
 This PRD identifies the gaps between the current prototype and a production-ready system, prioritised by severity and business impact. The findings are informed by 7 architecture documents, 5 persona audits, 5 QA reports, 60+ SDD specifications, and direct source code review.
 
@@ -83,7 +83,7 @@ This PRD identifies the gaps between the current prototype and a production-read
 
 ### 3.4 PDPPA Compliance (Israeli Privacy Law)
 
-**Current State:** Types defined for `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog` but none are wired to UI or backend. Harmonia stores Israeli ID numbers of minors, video recordings, financial data.
+**Current State:** Types defined for `ConsentRecord`, `SignatureAuditRecord`, `ComplianceLog` but none are wired to UI or backend. Lyriosa stores Israeli ID numbers of minors, video recordings, financial data.
 
 **Required:**
 - [ ] Wire `ConsentRecord` collection to registration and data-processing consent UI

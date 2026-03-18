@@ -8,7 +8,7 @@
 
 ## 1. Overview & Rationale
 
-Harmonia's AI layer is not a chatbot bolted on as an afterthought. Each AI agent is a purpose-built workflow assistant that handles a specific, high-frequency administrative pain point. Powered by **Genkit** (Google's open-source AI orchestration framework), these agents connect to Firebase data, call structured LLM prompts, and take real actions in the system — always with human review for consequential decisions.
+Lyriosa's AI layer is not a chatbot bolted on as an afterthought. Each AI agent is a purpose-built workflow assistant that handles a specific, high-frequency administrative pain point. Powered by **Genkit** (Google's open-source AI orchestration framework), these agents connect to Firebase data, call structured LLM prompts, and take real actions in the system — always with human review for consequential decisions.
 
 All agents are:
 - **Explainable:** They show their reasoning before acting

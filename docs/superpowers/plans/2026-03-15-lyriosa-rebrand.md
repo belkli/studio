@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Rebrand from Harmonia to Lyriosa with dual-candidate A/B theme toggle for public pages, dashboard locked to Candidate A.
+**Goal:** Rebrand from Lyriosa to Lyriosa with dual-candidate A/B theme toggle for public pages, dashboard locked to Candidate A.
 
 **Architecture:** Server-side `data-theme` attribute on `<html>` driven by `NEXT_PUBLIC_LANDING_THEME` env var. CSS variable cascade handles all theming. Dashboard forces `data-theme="a"`. Four Google Fonts loaded unconditionally, activated per theme via CSS variables.
 
@@ -212,7 +212,7 @@ const frankRuhlLibre = Frank_Ruhl_Libre({
 - [ ] **Step 2:** Update the fallback string in `generateMetadata`. Replace:
 
 ```ts
-            : 'Harmonia';
+            : 'Lyriosa';
 ```
 
 With:
@@ -490,52 +490,52 @@ Expected: PASS (no type errors)
 
 Each file below has specific hardcoded brand strings to replace with imports from `@/lib/brand`.
 
-- [ ] **Step 1:** `src/app/[locale]/layout.tsx` -- Already handled in Task 4 (fallback `'Harmonia'` replaced with `BRAND_NAME`). Verify it is done.
+- [ ] **Step 1:** `src/app/[locale]/layout.tsx` -- Already handled in Task 4 (fallback `'Lyriosa'` replaced with `BRAND_NAME`). Verify it is done.
 
-- [ ] **Step 2:** `src/app/[locale]/page.tsx` -- Update `generateMetadata()`. Import `BRAND_NAME` from `@/lib/brand`. Replace any hardcoded `'Harmonia'` fallback with `BRAND_NAME`. Update OG image path if referencing old image.
+- [ ] **Step 2:** `src/app/[locale]/page.tsx` -- Update `generateMetadata()`. Import `BRAND_NAME` from `@/lib/brand`. Replace any hardcoded `'Lyriosa'` fallback with `BRAND_NAME`. Update OG image path if referencing old image.
 
 - [ ] **Step 3:** `src/app/[locale]/about/[slug]/page.tsx` -- Replace:
   - `'https://harmonia.co.il'` with `BRAND_DOMAIN` (import from `@/lib/brand`)
-  - `'on Harmonia.'` with `` `on ${BRAND_NAME}.` ``
+  - `'on Lyriosa.'` with `` `on ${BRAND_NAME}.` ``
 
-- [ ] **Step 4:** `src/app/[locale]/error.tsx` -- Replace `'[Harmonia Error]'` with `` `[${BRAND_NAME} Error]` ``
+- [ ] **Step 4:** `src/app/[locale]/error.tsx` -- Replace `'[Lyriosa Error]'` with `` `[${BRAND_NAME} Error]` ``
 
 - [ ] **Step 5:** `src/app/robots.ts` -- Replace the sitemap URL domain. Import `BRAND_DOMAIN`.
 
 - [ ] **Step 6:** `src/app/sitemap.ts` -- Replace the base URL domain. Import `BRAND_DOMAIN`.
 
 - [ ] **Step 7:** `src/app/api/invoice-pdf/[invoiceId]/route.ts` -- Replace:
-  - `'Harmonia'` logo text with `BRAND_NAME`
+  - `'Lyriosa'` logo text with `BRAND_NAME`
   - `'support@harmonia.co.il'` with `BRAND_SUPPORT_EMAIL`
-  - Hebrew text `'מערכת Harmonia'` with `` `מערכת ${BRAND_NAME}` ``
+  - Hebrew text `'מערכת Lyriosa'` with `` `מערכת ${BRAND_NAME}` ``
 
 - [ ] **Step 8:** `src/app/api/ps/qr/route.ts` -- Replace `'https://harmonia.co.il'` fallback with `BRAND_DOMAIN`.
 
 - [ ] **Step 9:** `src/ai/flows/help-assistant-flow.ts` -- Replace:
-  - `"Harmonia"` with `BRAND_NAME` (use template literal in prompt)
+  - `"Lyriosa"` with `BRAND_NAME` (use template literal in prompt)
   - `"Harmony"` (AI name) with `AI_ASSISTANT_NAME` from brand.ts
-  - Comment `@fileOverview The AI Help Assistant for Harmonia.` with `Lyriosa`
+  - Comment `@fileOverview The AI Help Assistant for Lyriosa.` with `Lyriosa`
 
-- [ ] **Step 10:** `src/ai/flows/nurture-lead-flow.ts` -- Replace `"Harmonia"` with `BRAND_NAME` in the prompt string.
+- [ ] **Step 10:** `src/ai/flows/nurture-lead-flow.ts` -- Replace `"Lyriosa"` with `BRAND_NAME` in the prompt string.
 
-- [ ] **Step 11:** `src/ai/flows/reschedule-flow.ts` -- Replace `"Harmonia"` with `BRAND_NAME` in the prompt string (line 75).
+- [ ] **Step 11:** `src/ai/flows/reschedule-flow.ts` -- Replace `"Lyriosa"` with `BRAND_NAME` in the prompt string (line 75).
 
 - [ ] **Step 12:** `src/lib/notifications/payment-notifications.ts` -- Replace:
   - `'noreply@harmonia.co.il'` with `BRAND_NOREPLY_EMAIL`
-  - `'Harmonia'` sender name with `BRAND_NAME`
-  - `'Harmonia'` in email body with `BRAND_NAME`
+  - `'Lyriosa'` sender name with `BRAND_NAME`
+  - `'Lyriosa'` in email body with `BRAND_NAME`
 
-- [ ] **Step 13:** `src/lib/db/adapters/supabase.ts` -- Replace `'Harmonia'` fallback conservatorium name with `BRAND_NAME`.
+- [ ] **Step 13:** `src/lib/db/adapters/supabase.ts` -- Replace `'Lyriosa'` fallback conservatorium name with `BRAND_NAME`.
 
-- [ ] **Step 14:** `src/lib/db/adapters/postgres.ts` -- Replace all `'Harmonia'` fallback strings (3 occurrences) with `BRAND_NAME`.
+- [ ] **Step 14:** `src/lib/db/adapters/postgres.ts` -- Replace all `'Lyriosa'` fallback strings (3 occurrences) with `BRAND_NAME`.
 
-- [ ] **Step 15:** `src/components/dashboard/harmonia/admin-command-center.tsx` -- Replace `'Harmonia'` fallback with `BRAND_NAME`.
+- [ ] **Step 15:** `src/components/dashboard/harmonia/admin-command-center.tsx` -- Replace `'Lyriosa'` fallback with `BRAND_NAME`.
 
 - [ ] **Step 16:** `src/components/harmonia/conservatorium-public-profile-page.tsx` -- Replace fallback site URL with `BRAND_DOMAIN`.
 
 - [ ] **Step 17:** `src/lib/playing-school-utils.ts` -- Replace `@playing-school.harmonia.io` with `BRAND_PS_EMAIL_DOMAIN`.
 
-- [ ] **Step 18:** `src/lib/cloud-functions/calendar-sync.ts` -- Replace `'Harmonia Lesson'` with `` `${BRAND_NAME} Lesson` `` and update file comment.
+- [ ] **Step 18:** `src/lib/cloud-functions/calendar-sync.ts` -- Replace `'Lyriosa Lesson'` with `` `${BRAND_NAME} Lesson` `` and update file comment.
 
 - [ ] **Step 19:** `src/app/actions.ts` -- Replace `'https://harmony.app/accept-invite/'` with `` `${BRAND_DOMAIN}/accept-invite/` `` (line ~1306).
 
@@ -545,19 +545,19 @@ Each file below has specific hardcoded brand strings to replace with imports fro
 
 - [ ] **Step 22:** `src/app/[locale]/dashboard/admin/playing-school/distribute/page.tsx` -- Replace `'https://harmony.app/'` with `BRAND_DOMAIN`.
 
-- [ ] **Step 23:** `src/app/actions.ts`, `src/proxy.ts`, `src/lib/auth-utils.ts` -- Update comment references. Replace `Harmonia` with `Lyriosa` in JSDoc `@fileoverview` comments.
+- [ ] **Step 23:** `src/app/actions.ts`, `src/proxy.ts`, `src/lib/auth-utils.ts` -- Update comment references. Replace `Lyriosa` with `Lyriosa` in JSDoc `@fileoverview` comments.
 
 - [ ] **Step 24:** Run `npx tsc --noEmit` to verify all imports resolve.
 
 - [ ] **Step 25:** Run a grep scan to verify no remaining source-code references:
 
 ```bash
-grep -rn "Harmonia\|harmonia\.co\.il\|harmony\.app\|harmony\.org" src/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v "\.d\.ts"
+grep -rn "Lyriosa\|harmonia\.co\.il\|harmony\.app\|harmony\.org" src/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v "\.d\.ts"
 ```
 
 Expected: zero hits outside of `data.ts` (websiteOverride has external URLs -- those are real third-party sites, not our brand).
 
-- [ ] **Step 26:** Commit: `refactor(brand): replace all hardcoded Harmonia strings with brand.ts imports`
+- [ ] **Step 26:** Commit: `refactor(brand): replace all hardcoded Lyriosa strings with brand.ts imports`
 
 ---
 
@@ -609,7 +609,7 @@ export const clearAuthCookie = () => {
 
 - [ ] **Step 12:** `src/app/actions/storage.ts` -- Replace `'harmonia-private'` with `BRAND_STORAGE_BUCKET` (2 occurrences: lines ~67 and ~298).
 
-- [ ] **Step 13:** `src/lib/auth-utils.ts` -- Rename `HarmoniaClaims` interface to `LyriosaClaims`. Update all references:
+- [ ] **Step 13:** `src/lib/auth-utils.ts` -- Rename `LyriosaClaims` interface to `LyriosaClaims`. Update all references:
   - The interface declaration (line ~16)
   - `getClaimsFromRequest()` return type (line ~27)
   - `verifyAuth()` return type (line ~63)
@@ -622,7 +622,7 @@ export const clearAuthCookie = () => {
 - [ ] **Step 15:** Grep for any remaining old identifiers:
 
 ```bash
-grep -rn "harmonia-user\|harmonia_cookie\|harmonia_locale\|harmonia\.a11y\|harmonia\.help\|harmonia-walkthrough\|harmonia-private\|HarmoniaClaims\|dev@harmonia\|noreply@harmonia" src/ --include="*.ts" --include="*.tsx"
+grep -rn "harmonia-user\|harmonia_cookie\|harmonia_locale\|harmonia\.a11y\|harmonia\.help\|harmonia-walkthrough\|harmonia-private\|LyriosaClaims\|dev@harmonia\|noreply@harmonia" src/ --include="*.ts" --include="*.tsx"
 ```
 
 Expected: zero hits.
@@ -654,7 +654,7 @@ const messagesDir = join(process.cwd(), 'src', 'messages');
 // and fix AI assistant name occurrences by hand.
 const replacements = [
   // English
-  ['Harmonia', 'Lyriosa'],
+  ['Lyriosa', 'Lyriosa'],
   ['harmony.app', 'lyriosa.co.il'],
   ['harmonia.co.il', 'lyriosa.co.il'],
   // Hebrew
@@ -709,18 +709,18 @@ Review each hit. Replace only AI assistant name references with 'Lyria'. Leave m
 - [ ] **Step 3:** Verify zero residual references:
 
 ```bash
-grep -rn "Harmonia\|הרמוניה\|הַרמוֹנְיָה\|هارمونيا\|Гармония\|Harmony" src/messages/
+grep -rn "Lyriosa\|הרמוניה\|הַרמוֹנְיָה\|هارمونيا\|Гармония\|Harmony" src/messages/
 ```
 
 Expected output: zero hits. **Note:** "Harmony" may appear in non-brand contexts (e.g., music theory terms). If any hits remain, manually review each to determine if it is the AI assistant name (replace with "Lyria") or a legitimate music term (keep as-is).
 
-- [ ] **Step 4:** Fix known Arabic locale bug: verify `ar/student.json` and `ar/common.json` no longer contain Latin "Harmonia" -- should have been caught by the script replacing "Harmonia" with "Lyriosa", but double-check they now say "ليريوسا" in Arabic context.
+- [ ] **Step 4:** Fix known Arabic locale bug: verify `ar/student.json` and `ar/common.json` no longer contain Latin "Lyriosa" -- should have been caught by the script replacing "Lyriosa" with "Lyriosa", but double-check they now say "ليريوسا" in Arabic context.
 
 - [ ] **Step 5:** Also fix `ru/billing.json`, `ar/billing.json`, `en/billing.json` which reference "Harmony" (the old AI assistant name in payment security notice). These should now read "Lyria" after the script, but verify.
 
 - [ ] **Step 6:** Delete the temporary script: `rm scripts/rebrand-translations.mjs`
 
-- [ ] **Step 7:** Commit: `refactor(i18n): rebrand all 25 translation files from Harmonia to Lyriosa`
+- [ ] **Step 7:** Commit: `refactor(i18n): rebrand all 25 translation files from Lyriosa to Lyriosa`
 
 ---
 
@@ -1100,7 +1100,7 @@ import { join } from 'path';
 
 const MESSAGES_DIR = join(process.cwd(), 'src', 'messages');
 const OLD_BRAND_PATTERNS = [
-  'Harmonia',
+  'Lyriosa',
   'Harmony',   // AI assistant old name — may also appear as music theory term, review manually
   'הרמוניה',
   'הַרמוֹנְיָה',
@@ -1219,14 +1219,14 @@ All fixes follow the same pattern: replace old brand identifiers with new ones.
 | `tests/auth/callback-url-sanitization.test.ts` | `'https://harmonia.co.il.evil.com'` | `'https://lyriosa.co.il.evil.com'` |
 | `tests/auth/with-auth-roles.test.ts` | `'dev@harmonia.local'` | `'dev@lyriosa.local'` |
 | `tests/lib/auth-utils.test.ts` | `'dev@harmonia.local'` | `'dev@lyriosa.local'` |
-| `tests/lib/auth-utils.test.ts` | `HarmoniaClaims` | `LyriosaClaims` |
+| `tests/lib/auth-utils.test.ts` | `LyriosaClaims` | `LyriosaClaims` |
 | `tests/lib/playing-school-utils.test.ts` | `'@playing-school.harmonia.io'` | `'@playing-school.lyriosa.io'` |
 
 - [ ] **Step 2:** Fix Playwright files:
 
 | File | Find | Replace |
 |------|------|---------|
-| `e2e/flows/auth.spec.ts` | `a:has-text("Harmonia")` | `a:has-text("Lyriosa")` (or localized form) |
+| `e2e/flows/auth.spec.ts` | `a:has-text("Lyriosa")` | `a:has-text("Lyriosa")` (or localized form) |
 | `e2e/flows/auth.spec.ts` | `admin@harmonia.local` | `admin@lyriosa.local` |
 | `e2e/flows/announcements.spec.ts` | `admin@harmonia.dev` | `admin@lyriosa.dev` |
 | `e2e/flows/announcements.spec.ts` | `harmonia-user` | `lyriosa-user` |
@@ -1243,7 +1243,7 @@ All fixes follow the same pattern: replace old brand identifiers with new ones.
 - [ ] **Step 3:** Run a comprehensive grep to catch any remaining test references:
 
 ```bash
-grep -rn "harmonia\|Harmonia\|HarmoniaClaims" tests/ e2e/ --include="*.ts" --include="*.spec.ts"
+grep -rn "harmonia\|Lyriosa\|LyriosaClaims" tests/ e2e/ --include="*.ts" --include="*.spec.ts"
 ```
 
 Fix any remaining hits.
@@ -1288,9 +1288,9 @@ test.describe('Dashboard theme isolation', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
-    // The sidebar should not contain "Harmonia"
+    // The sidebar should not contain "Lyriosa"
     const bodyText = await page.locator('body').textContent();
-    expect(bodyText).not.toContain('Harmonia');
+    expect(bodyText).not.toContain('Lyriosa');
   });
 });
 ```
@@ -1330,9 +1330,9 @@ npx playwright test --grep @smoke --workers=1 --timeout=90000
 Expected: All ~103 smoke tests pass.
 
 - [ ] **Step 4:** If any tests fail, diagnose and fix. Common failure modes:
-  - **Selector mismatch:** Test looks for "Harmonia" text that is now "Lyriosa"
+  - **Selector mismatch:** Test looks for "Lyriosa" text that is now "Lyriosa"
   - **localStorage key changed:** Test sets old key name
-  - **Import path changed:** `HarmoniaClaims` renamed to `LyriosaClaims`
+  - **Import path changed:** `LyriosaClaims` renamed to `LyriosaClaims`
   - **Cookie name changed:** Test reads/writes old cookie name
 
 - [ ] **Step 5:** Commit any remaining fixes: `fix(tests): resolve remaining test failures after rebrand`
@@ -1352,7 +1352,7 @@ npx tsc --noEmit
 - [ ] **Step 2:** Run brand name residual scan across entire source:
 
 ```bash
-grep -rn "Harmonia\|harmonia\|Harmony" src/ --include="*.ts" --include="*.tsx" --include="*.json" --include="*.css" | grep -v "node_modules" | grep -v "\.d\.ts" | grep -v "components/harmonia/" | grep -v "dashboard/harmonia/" | grep -v "websiteOverride" | grep -v "CLAUDE.md"
+grep -rn "Lyriosa\|harmonia\|Harmony" src/ --include="*.ts" --include="*.tsx" --include="*.json" --include="*.css" | grep -v "node_modules" | grep -v "\.d\.ts" | grep -v "components/harmonia/" | grep -v "dashboard/harmonia/" | grep -v "websiteOverride" | grep -v "CLAUDE.md"
 ```
 
 Expected: zero hits in source code. The only acceptable exceptions are:
@@ -1363,7 +1363,7 @@ Expected: zero hits in source code. The only acceptable exceptions are:
 - [ ] **Step 3:** Verify with grep for old infrastructure identifiers:
 
 ```bash
-grep -rn "harmonia-user\|harmonia_cookie\|harmonia_locale\|harmonia\.a11y\|harmonia\.help\|harmonia-walkthrough\|harmonia-private\|HarmoniaClaims\|playing-school\.harmonia" src/ tests/ e2e/ --include="*.ts" --include="*.tsx"
+grep -rn "harmonia-user\|harmonia_cookie\|harmonia_locale\|harmonia\.a11y\|harmonia\.help\|harmonia-walkthrough\|harmonia-private\|LyriosaClaims\|playing-school\.harmonia" src/ tests/ e2e/ --include="*.ts" --include="*.tsx"
 ```
 
 Expected: zero hits.
@@ -1392,7 +1392,7 @@ Expected: zero hits.
 git add -A
 git commit -m "feat: complete Lyriosa rebrand with dual-candidate A/B theme system
 
-- Renamed all brand references from Harmonia to Lyriosa across 94+ files
+- Renamed all brand references from Lyriosa to Lyriosa across 94+ files
 - Implemented server-side theme toggle via NEXT_PUBLIC_LANDING_THEME env var
 - Added 4 Google Fonts (Playfair Display, Plus Jakarta Sans, Heebo, Frank Ruhl Libre)
 - Created BrandThemeProvider client context for theme-aware components

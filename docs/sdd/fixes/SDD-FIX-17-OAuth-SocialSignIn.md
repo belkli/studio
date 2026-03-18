@@ -27,7 +27,7 @@ User clicks "Sign in with Google/Microsoft"
          ↓
 OAuth provider authenticates → returns profile (email, name, photo)
          ↓
-System checks: does a Harmonia account exist for this email?
+System checks: does a Lyriosa account exist for this email?
   ├── YES → Log in directly, existing session restored
   └── NO  → "Complete your registration" wizard (pre-filled from OAuth)
               ↓
@@ -122,7 +122,7 @@ async function signInWithOAuth(
     const result = await signInWithPopup(auth, provider);
     const firebaseUser = result.user;
 
-    // Check if Harmonia user profile exists for this email
+    // Check if Lyriosa user profile exists for this email
     const harmoniaUser = await getUserByEmail(firebaseUser.email!);
 
     if (harmoniaUser) {
@@ -159,7 +159,7 @@ async function signInWithOAuth(
 }
 
 type OAuthResult =
-  | { type: 'existing'; user: HarmoniaUser }
+  | { type: 'existing'; user: LyriosaUser }
   | { type: 'new'; profile: OAuthProfile }
   | { type: 'conflict'; existingMethods: string[]; email: string };
 

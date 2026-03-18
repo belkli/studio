@@ -20,7 +20,7 @@
 Every action uses the `withAuth()` wrapper from `src/lib/auth-utils.ts`:
 
 ```typescript
-export async function verifyAuth(): Promise<HarmoniaClaims> {
+export async function verifyAuth(): Promise<LyriosaClaims> {
   // 1. Try Admin SDK verifySessionCookie() (production path)
   // 2. Fallback: read x-user-* headers from proxy (dev with proxy)
   // 3. Dev-only: synthetic site_admin (NODE_ENV !== 'production')

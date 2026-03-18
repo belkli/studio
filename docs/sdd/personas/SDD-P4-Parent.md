@@ -1,5 +1,5 @@
 # SDD-P4: Persona Audit — Parent
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Parent / Guardian (הורה / אפוטרופוס)
 **Auditor Role:** Senior Full-Stack Architect + Trust & Payments Domain Expert
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-The parent persona is Harmonia's financial backbone and primary trust relationship. Parents write the checks, sign the forms, and make the call when something goes wrong. If they don't trust the system — with their credit card details, with their child's personal data, with the conservatorium's financial transparency — they will call the secretary instead of using the app, and Harmonia's core value proposition fails.
+The parent persona is Lyriosa's financial backbone and primary trust relationship. Parents write the checks, sign the forms, and make the call when something goes wrong. If they don't trust the system — with their credit card details, with their child's personal data, with the conservatorium's financial transparency — they will call the secretary instead of using the app, and Lyriosa's core value proposition fails.
 
 The SDD covers the parent's journey reasonably well: package renewal, WhatsApp notifications, the Family Hub for progress visibility, and digital signatures for Ministry forms. However, the prototype contains a significant structural flaw that undermines all of this: **the payment system is entirely mocked**. There is no real Cardcom integration — `updateUserPaymentMethod` in `use-auth.tsx` simply stores `last4` and `expiry` in the mock user object. No token is created, no charge is made, no webhook is processed.
 

@@ -8,7 +8,7 @@
 
 ## Admin Onboarding & Legal Compliance
 
-> This section covers everything needed to onboard 85 conservatorium administrators to the Harmonia demo: account creation, welcome communications, demo environment limitations, and legal compliance. All information is derived from the PRD (production readiness: 35/100), the legal readiness assessment (85/100), the User Guide (8 personas), DEMO-ACCESS.md (Option C token gate), and the 85-record admin directory in `constadmin.json`.
+> This section covers everything needed to onboard 85 conservatorium administrators to the Lyriosa demo: account creation, welcome communications, demo environment limitations, and legal compliance. All information is derived from the PRD (production readiness: 35/100), the legal readiness assessment (85/100), the User Guide (8 personas), DEMO-ACCESS.md (Option C token gate), and the 85-record admin directory in `constadmin.json`.
 
 ### Demo Environment Context
 
@@ -50,7 +50,7 @@ Before onboarding admins, understand what the demo can and cannot do. The PRD (`
 
 There are 85 conservatorium administrators listed in `docs/data/constadmin.json`. Each needs:
 - A Supabase Auth account (email/password)
-- A Harmonia user profile with role `conservatorium_admin` and the correct `conservatoriumId`
+- A Lyriosa user profile with role `conservatorium_admin` and the correct `conservatoriumId`
 - A unique, memorable but secure password
 
 #### Password Format
@@ -74,7 +74,7 @@ This format is:
 
 #### Conservatorium ID Mapping
 
-| constadmin.json `id` | Harmonia `conservatoriumId` | Location |
+| constadmin.json `id` | Lyriosa `conservatoriumId` | Location |
 |---|---|---|
 | 1 | `cons-1` | Or Akiva |
 | 15 | `cons-15` | Hod HaSharon |
@@ -268,8 +268,8 @@ npx tsx scripts/seed-admin-accounts.ts
 | Field | Value |
 |---|---|
 | **Subject (Hebrew)** | ברוכים הבאים להרמוניה -- גישה לסביבת הדמו |
-| **Subject (English)** | Welcome to Harmonia -- Demo Environment Access |
-| **From** | Harmonia Team <noreply@harmonia.co.il> |
+| **Subject (English)** | Welcome to Lyriosa -- Demo Environment Access |
+| **From** | Lyriosa Team <noreply@harmonia.co.il> |
 | **Reply-To** | support@harmonia.co.il |
 
 #### HTML Template
@@ -418,8 +418,8 @@ async function sendEmail(cred: CredentialRecord) {
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: cred.email, name: cred.managerName }] }],
-      from: { email: 'noreply@harmonia.co.il', name: 'Harmonia' },
-      reply_to: { email: 'support@harmonia.co.il', name: 'Harmonia Support' },
+      from: { email: 'noreply@harmonia.co.il', name: 'Lyriosa' },
+      reply_to: { email: 'support@harmonia.co.il', name: 'Lyriosa Support' },
       subject: 'ברוכים הבאים להרמוניה -- גישה לסביבת הדמו',
       content: [{ type: 'text/html', value: html }],
     }),
@@ -571,9 +571,9 @@ Draft a lightweight TOU for the demo (separate from the full production TOS):
 - [ ] Prohibited use: no real PII, no scraping, no vulnerability testing without authorization
 - [ ] No warranty: demo is provided "as is" with no SLA
 - [ ] Data loss: user accepts that data may be reset
-- [ ] Intellectual property: all platform IP remains Harmonia's property
+- [ ] Intellectual property: all platform IP remains Lyriosa's property
 - [ ] Confidentiality: admin agrees not to share screenshots or data with competitors
-- [ ] Termination: Harmonia may revoke demo access at any time
+- [ ] Termination: Lyriosa may revoke demo access at any time
 - [ ] Add TOU link to demo gate page
 - [ ] Add TOU acceptance to consent form
 
@@ -597,9 +597,9 @@ Current score from `docs/operations/LEGAL-READINESS.md`: **85/100** (was 40/100 
 
 #### Conservatorium Policy Context
 
-The analysis of 13 real conservatorium bylaws (`docs/legal/conservatorium-policies-analysis.md`) found these **universal gaps** across the sector that Harmonia addresses:
+The analysis of 13 real conservatorium bylaws (`docs/legal/conservatorium-policies-analysis.md`) found these **universal gaps** across the sector that Lyriosa addresses:
 
-| Gap Found in All 13 Bylaws | Harmonia's Solution |
+| Gap Found in All 13 Bylaws | Lyriosa's Solution |
 |----------------------------|---------------------|
 | No VAT disclosure on prices | `src/lib/vat.ts` -- all prices include 17% VAT |
 | No 14-day cooling-off right disclosed | Cancellation flow in `src/app/actions/billing.ts` |
@@ -633,7 +633,7 @@ These ranges are relevant when admins configure their conservatorium pricing in 
 **Step 2 -- Create OAuth Credentials:**
 
 - [ ] APIs & Services > Credentials > Create Credentials > OAuth client ID
-- [ ] Application type: **Web application**, name: `Harmonia Web Client`
+- [ ] Application type: **Web application**, name: `Lyriosa Web Client`
 - [ ] Authorized JavaScript origins:
   ```
   https://harmonia.web.app
@@ -657,7 +657,7 @@ These ranges are relevant when admins configure their conservatorium pricing in 
 
 - [ ] APIs & Services > OAuth consent screen
 - [ ] User type: **External** (for production) or **Internal** (for Workspace)
-- [ ] App name: `Harmonia`, scopes: `email`, `profile`, `openid`
+- [ ] App name: `Lyriosa`, scopes: `email`, `profile`, `openid`
 - [ ] If External: submit for verification (2-6 weeks lead time -- apply early)
 
 #### Microsoft (Azure AD) Sign-In
@@ -665,14 +665,14 @@ These ranges are relevant when admins configure their conservatorium pricing in 
 **Step 1 -- Register App:**
 
 - [ ] Azure Portal > Azure Active Directory > App registrations > New registration
-- [ ] Name: `Harmonia`, account types: "Any directory + personal accounts"
+- [ ] Name: `Lyriosa`, account types: "Any directory + personal accounts"
 - [ ] Redirect URI: `https://harmonia.web.app/__/auth/handler` (Web)
 - [ ] Copy **Application (client) ID**
 
 **Step 2 -- Create Client Secret:**
 
 - [ ] Certificates & secrets > New client secret
-- [ ] Description: `Harmonia Firebase Auth`, expiry: 24 months
+- [ ] Description: `Lyriosa Firebase Auth`, expiry: 24 months
 - [ ] Copy **Secret Value** (shown only once)
 
 **Step 3 -- API Permissions:**

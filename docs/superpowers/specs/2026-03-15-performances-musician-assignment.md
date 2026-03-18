@@ -1356,7 +1356,7 @@ The performance booking involves three legal relationships:
 
 1. **Client <-> Conservatorium:** Service agreement (quotation + contract). The conservatorium is the contracting entity, NOT the musician.
 2. **Conservatorium <-> Musician:** Internal engagement agreement. The musician performs on behalf of the conservatorium.
-3. **Platform (Harmonia) <-> Conservatorium:** Governed by the MSA (`docs/contracts/MSA-TEMPLATE.md`).
+3. **Platform (Lyriosa) <-> Conservatorium:** Governed by the MSA (`docs/contracts/MSA-TEMPLATE.md`).
 
 **Implication for UX:** The "Send Quote" dialog sends documents from the conservatorium to the client. Musician names may appear in the quotation, but the conservatorium is the liable party.
 
@@ -1550,7 +1550,7 @@ All PM acceptance criteria (AC-9, v1 bullet) now correctly reference 18% VAT, ma
 
 ## UI/UX Pro Max Review (Main Session)
 
-**Design System Applied:** Data-Dense Dashboard · Harmonia palette · shadcn/ui
+**Design System Applied:** Data-Dense Dashboard · Lyriosa palette · shadcn/ui
 
 ### UX Quality Checklist
 

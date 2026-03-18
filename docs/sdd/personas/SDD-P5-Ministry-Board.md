@@ -1,5 +1,5 @@
 # SDD-P5: Persona Audit — Ministry of Education / Board Director
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Ministry of Education Representative / Board Director (נציג משרד החינוך / יו"ר הדירקטוריון)
 **Auditor Role:** Senior Full-Stack Architect + Israeli Regulatory Compliance Expert
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -10,12 +10,12 @@
 
 This persona has two distinct sub-roles with very different needs, and understanding the precise scope of each is critical to building the right system.
 
-**The Ministry of Education Director of Music** (מנהל/ת תחום המוזיקה, משרד החינוך) is not a system administrator of the national portal `pop.education.gov.il`. Rather, this is the individual who currently runs a private, independently-maintained website — **www.y-noam.com** — to distribute forms, guidelines, and resources to conservatoriums across Israel. That site is outdated and cumbersome. Harmonia's goal is to **replace www.y-noam.com**, not `pop.education.gov.il`. This is a far more tractable and well-defined scope: a forms distribution, collection, and approval system between the Ministry Director and the conservatoriums they oversee.
+**The Ministry of Education Director of Music** (מנהל/ת תחום המוזיקה, משרד החינוך) is not a system administrator of the national portal `pop.education.gov.il`. Rather, this is the individual who currently runs a private, independently-maintained website — **www.y-noam.com** — to distribute forms, guidelines, and resources to conservatoriums across Israel. That site is outdated and cumbersome. Lyriosa's goal is to **replace www.y-noam.com**, not `pop.education.gov.il`. This is a far more tractable and well-defined scope: a forms distribution, collection, and approval system between the Ministry Director and the conservatoriums they oversee.
 
-The Ministry Director's workflow in Harmonia:
+The Ministry Director's workflow in Lyriosa:
 1. Creates or uploads a form (e.g., composition submission, recital application, exam registration, event approval)
 2. Sends it to one or many conservatoriums
-3. Students, teachers, and admins at each conservatorium fill the form digitally, sign it, and submit it back — all within Harmonia
+3. Students, teachers, and admins at each conservatorium fill the form digitally, sign it, and submit it back — all within Lyriosa
 4. The Director reviews all submissions in a unified inbox, approves/rejects/requests changes per submission
 5. Can download any submission as a PDF, or export a batch as a ZIP for archival
 6. No longer needs to manage Excel files, printed forms, email chains, or the www.y-noam.com website
@@ -37,9 +37,9 @@ The Ministry Director's workflow in Harmonia:
 - **Archival Compliance:** Israeli law requires student records to be retained for 7 years after graduation. No archival policy engine exists.
 - **Board Director Dashboard:** A strategic view separate from the operational admin dashboard. The Board Director should not wade through daily lesson cancellations to find enrollment trend data.
 
-**Scope Clarification — What Harmonia Does NOT Replace:**
+**Scope Clarification — What Lyriosa Does NOT Replace:**
 - `pop.education.gov.il` — the national Ministry portal for official school registration, funding, and statutory reporting. This remains the authoritative government system.
-- Harmonia forms submissions that require official Ministry reference numbers may still need to be cross-filed in `pop.education.gov.il` manually by the admin — but this is an edge case, not the primary workflow.
+- Lyriosa forms submissions that require official Ministry reference numbers may still need to be cross-filed in `pop.education.gov.il` manually by the admin — but this is an edge case, not the primary workflow.
 
 ---
 
@@ -57,7 +57,7 @@ The current role taxonomy (`SITE_ADMIN`, `CONSERVATORIUM_ADMIN`, `TEACHER`, `PAR
 ### Gap 2: Forms Inbox — The www.y-noam.com Replacement
 **Severity:** Critical (P1 — this is the core deliverable for this persona)
 
-The Ministry Director currently receives forms via email, WhatsApp, and fax. Harmonia replaces this with a structured inbox at `/ministry/forms` showing all submissions across all conservatoriums with filter, search, bulk-approve, and PDF download capabilities.
+The Ministry Director currently receives forms via email, WhatsApp, and fax. Lyriosa replaces this with a structured inbox at `/ministry/forms` showing all submissions across all conservatoriums with filter, search, bulk-approve, and PDF download capabilities.
 
 ### Gap 3: Digital Signature Flow
 **Severity:** High (P1 — Ministry forms require parent/teacher signatures to be legally valid)
@@ -263,14 +263,14 @@ export async function exportFormSubmissionsAsZip(
 }
 // Admin-side equivalent: the conservatorium admin can also email the PDF of any
 // form to the Ministry Director directly from the form approval screen,
-// as an alternative to the Ministry Director pulling it from Harmonia
+// as an alternative to the Ministry Director pulling it from Lyriosa
 ```
 
 ---
 
 ### 3.5 Exam Registration Export (for Conservatorium Admin use)
 
-This export is used by the **conservatorium admin** (not the Ministry Director directly) to produce a summary list of exam registrations in a format suitable for sharing with the Ministry Director or for internal records. The Ministry Director receives these via the Harmonia inbox (Section 3.2) rather than needing to pull exports themselves.
+This export is used by the **conservatorium admin** (not the Ministry Director directly) to produce a summary list of exam registrations in a format suitable for sharing with the Ministry Director or for internal records. The Ministry Director receives these via the Lyriosa inbox (Section 3.2) rather than needing to pull exports themselves.
 
 ```typescript
 // src/lib/ministry/exam-export.ts
@@ -300,7 +300,7 @@ const MINISTRY_INSTRUMENT_NAMES: Record<string, string> = {
 ```
 
 Admin export button at `/admin/forms/exam-registrations`:
-`[ייצא לקובץ Excel]` → downloads `.xlsx` for sending to the Ministry Director by email if preferred, or the Director can pull it directly from the Harmonia inbox.
+`[ייצא לקובץ Excel]` → downloads `.xlsx` for sending to the Ministry Director by email if preferred, or the Director can pull it directly from the Lyriosa inbox.
 
 ---
 
@@ -543,4 +543,4 @@ interface ComplianceStatusCard {
 | Audit Log (Immutable) | ⚠️ Type exists | ⚠️ Mock only | P1 |
 | Ministry API Integration (pop.gov.il) | ℹ️ Out of scope | N/A — by design | N/A |
 
-**Scope note:** Harmonia does **not** replace `pop.education.gov.il`. It replaces the Ministry Director of Music's private coordination site (www.y-noam.com) with a modern, digital, multi-party forms workflow. Any submissions that additionally require registration in the national portal remain the conservatorium admin's responsibility via that portal directly.
+**Scope note:** Lyriosa does **not** replace `pop.education.gov.il`. It replaces the Ministry Director of Music's private coordination site (www.y-noam.com) with a modern, digital, multi-party forms workflow. Any submissions that additionally require registration in the national portal remain the conservatorium admin's responsibility via that portal directly.

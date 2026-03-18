@@ -1,9 +1,9 @@
-# Harmonia — Full QA Plan
+# Lyriosa — Full QA Plan
 
 > **Date:** 2026-03-14
 > **For Claude:** Use `superpowers:executing-plans` to implement this plan task-by-task.
 
-**Goal:** Achieve comprehensive test coverage for the entire Harmonia application — unit tests (Vitest), integration tests (Vitest), and end-to-end tests (Playwright). Fill every gap in the current suite, add missing interaction tests, and establish a CI-ready QA gate.
+**Goal:** Achieve comprehensive test coverage for the entire Lyriosa application — unit tests (Vitest), integration tests (Vitest), and end-to-end tests (Playwright). Fill every gap in the current suite, add missing interaction tests, and establish a CI-ready QA gate.
 
 ---
 

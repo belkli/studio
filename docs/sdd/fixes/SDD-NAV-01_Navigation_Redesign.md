@@ -18,7 +18,7 @@
 
 ## 1. Problem Statement & Goals
 
-The current Harmonia sidebar navigation renders all links as a single, unsegmented flat list. While this is simple to implement, it creates a significant usability problem as the feature set has grown. This document analyses the current state quantitatively, defines the target architecture, and provides the complete code changes required.
+The current Lyriosa sidebar navigation renders all links as a single, unsegmented flat list. While this is simple to implement, it creates a significant usability problem as the feature set has grown. This document analyses the current state quantitatively, defines the target architecture, and provides the complete code changes required.
 
 ### 1.1 Current State: Link Count per Persona
 
@@ -738,7 +738,7 @@ Dashboard • Announcements • User Management • New Registration • Approva
 
 Because the navigation is gated behind the existing newFeaturesEnabled flag, the rollout is zero-risk:
 
-1. **Phase 1 (Internal):** Enable for Harmonia team accounts and QA environment only
+1. **Phase 1 (Internal):** Enable for Lyriosa team accounts and QA environment only
 2. **Phase 2 (Pilot):** Enable for one beta conservatory (opt-in via admin settings toggle)
 3. **Phase 3 (GA):** Roll out to all conservatories with newFeaturesEnabled=true
 4. **Phase 4 (Cleanup):** Remove legacyLinks / LegacySidebarNav after 90-day deprecation window

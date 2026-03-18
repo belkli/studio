@@ -1,8 +1,8 @@
-# Harmonia Deployment Guide
+# Lyriosa Deployment Guide
 
 > Last updated: 2026-03-06
 
-This document covers everything needed to run Harmonia locally, deploy to staging/production via CI/CD, and configure all supporting services.
+This document covers everything needed to run Lyriosa locally, deploy to staging/production via CI/CD, and configure all supporting services.
 
 ---
 
@@ -294,7 +294,7 @@ npm run db:reset         # Drop + recreate + seed
 
 ## 5. Database Options
 
-Harmonia supports 5 database backends, controlled by the `DB_BACKEND` environment variable. The resolution logic lives in `src/lib/db/index.ts`:
+Lyriosa supports 5 database backends, controlled by the `DB_BACKEND` environment variable. The resolution logic lives in `src/lib/db/index.ts`:
 
 1. If `DB_BACKEND` is set explicitly, use that value.
 2. Else if `DATABASE_URL` is set, use `postgres`.

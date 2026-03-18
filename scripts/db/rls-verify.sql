@@ -1,10 +1,10 @@
 -- scripts/db/rls-verify.sql
 --
--- Standalone Row Level Security verification script for Harmonia.
+-- Standalone Row Level Security verification script for Lyriosa.
 -- Run after schema.sql + seed.sql against any Postgres / Supabase instance.
 --
 -- EXPECTED OUTCOME
---   Every table in the Harmonia schema should have rowsecurity = true.
+--   Every table in the Lyriosa schema should have rowsecurity = true.
 --   The "Tables WITHOUT RLS" query should return ZERO rows.
 --   If it returns rows, those tables are unprotected and any authenticated
 --   Postgres user can read or write any row — a critical tenant isolation
@@ -27,11 +27,11 @@
 
 \echo ''
 \echo '================================================================='
-\echo ' Harmonia RLS Verification Report'
+\echo ' Lyriosa RLS Verification Report'
 \echo '================================================================='
 \echo ''
 
--- ── 1. RLS status for every Harmonia business table ─────────────────────────
+-- ── 1. RLS status for every Lyriosa business table ─────────────────────────
 
 \echo '--- [1] RLS enablement status per table ---'
 

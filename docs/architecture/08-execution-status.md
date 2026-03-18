@@ -1,4 +1,4 @@
-# Harmonia — Master Execution Plan
+# Lyriosa — Master Execution Plan
 
 > **Version:** 1.3 (Phases 1, 2, 3, 5, 6 complete; Phase 4 blocked on external credentials)
 > **Author:** Architect
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Harmonia is a multi-tenant SaaS platform for Israeli music conservatoriums. The UI is comprehensive (35+ dashboard pages, 8 user roles, 17 modules). As of 2026-03-08, Phases 1, 2, 3, 5, and 6 are complete. The platform has real Firebase authentication, Firestore persistence, decomposed domain contexts with React Query, full UI/UX polish (landing page, accessibility, RTL, digital signatures, i18n all 4 locales), and a CI/CD pipeline. Phase 4 (Cardcom, Twilio, SendGrid activation) is blocked on external credentials from the product owner — all integration code exists and is production-ready pending configuration.
+Lyriosa is a multi-tenant SaaS platform for Israeli music conservatoriums. The UI is comprehensive (35+ dashboard pages, 8 user roles, 17 modules). As of 2026-03-08, Phases 1, 2, 3, 5, and 6 are complete. The platform has real Firebase authentication, Firestore persistence, decomposed domain contexts with React Query, full UI/UX polish (landing page, accessibility, RTL, digital signatures, i18n all 4 locales), and a CI/CD pipeline. Phase 4 (Cardcom, Twilio, SendGrid activation) is blocked on external credentials from the product owner — all integration code exists and is production-ready pending configuration.
 
 ### Critical Architecture Gaps — Original Baseline (All Addressed)
 

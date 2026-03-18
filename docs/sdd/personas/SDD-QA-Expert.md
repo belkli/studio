@@ -1,5 +1,5 @@
 # Software Design Document — QA Expert Review
-## Harmonia Music Conservatory Management Platform
+## Lyriosa Music Conservatory Management Platform
 
 **Persona:** Expert QA Engineer  
 **Review Scope:** All pages, components, hooks, actions, validation logic, and user flows  
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-The Harmonia platform is a feature-complete prototype with excellent UI coverage, strong i18n scaffolding, and well-structured Zod validation schemas. However, **19 significant issues** were found spanning critical functional defects, broken user flows, missing error recovery, and UX consistency problems. The most critical issues are: TypeScript errors silently suppressed in production builds, duplicated components causing double-firing of UI logic, and several role-routing failures that cause users to land on wrong or inaccessible pages.
+The Lyriosa platform is a feature-complete prototype with excellent UI coverage, strong i18n scaffolding, and well-structured Zod validation schemas. However, **19 significant issues** were found spanning critical functional defects, broken user flows, missing error recovery, and UX consistency problems. The most critical issues are: TypeScript errors silently suppressed in production builds, duplicated components causing double-firing of UI logic, and several role-routing failures that cause users to land on wrong or inaccessible pages.
 
 ---
 
@@ -316,7 +316,7 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-    useEffect(() => { console.error('[Harmonia Error]', error); }, [error]);
+    useEffect(() => { console.error('[Lyriosa Error]', error); }, [error]);
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center p-8">
             <AlertTriangle className="h-12 w-12 text-destructive" />
@@ -796,4 +796,4 @@ const handleDeleteInstrument = (instrument: InstrumentInventory) => {
 
 ---
 
-*Document prepared by: Expert QA Engineer Persona — Harmonia Platform Review, March 2026*
+*Document prepared by: Expert QA Engineer Persona — Lyriosa Platform Review, March 2026*

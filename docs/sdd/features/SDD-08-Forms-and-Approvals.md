@@ -8,7 +8,7 @@
 
 ## 1. Overview & Rationale
 
-This module is an enhanced evolution of the original Harmonia forms system. It maintains full backward compatibility with the recital and conference form workflows described in SDD v1.0, while adding: a structured approval dashboard, bulk ministry export, exam registration forms, and a dynamic form builder for admin-created form types.
+This module is an enhanced evolution of the original Lyriosa forms system. It maintains full backward compatibility with the recital and conference form workflows described in SDD v1.0, while adding: a structured approval dashboard, bulk ministry export, exam registration forms, and a dynamic form builder for admin-created form types.
 
 This is the feature that replaces the government portal at pop.education.gov.il — making form submission, tracking, and archiving a native part of the conservatorium's daily operations rather than a separate, painful process.
 

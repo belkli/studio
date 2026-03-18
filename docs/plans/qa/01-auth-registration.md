@@ -56,7 +56,7 @@ A critical invariant to verify in every auth test:
 - Each page returns HTTP 200
 - The login card renders with email, password fields, tabs (Email/Password | Magic Link)
 - Google and Microsoft OAuth buttons are visible
-- "Back to Home" (`← Harmonia`) link is in the top-start corner
+- "Back to Home" (`← Lyriosa`) link is in the top-start corner
 - For RTL locales (he, ar): the layout is right-to-left, the back arrow points left, tab order is reversed logically
 - For LTR locales (en, ru): standard left-to-right layout
 - No console errors about missing translation keys
@@ -364,7 +364,7 @@ A critical invariant to verify in every auth test:
 
 ### A-16 — Back to Home link
 
-**Scenario:** Verify the top-start "← Harmonia" / "Harmonia →" link navigates to home.
+**Scenario:** Verify the top-start "← Lyriosa" / "Lyriosa →" link navigates to home.
 
 **Steps:**
 1. Navigate to `/en/login`

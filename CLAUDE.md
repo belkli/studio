@@ -1,4 +1,4 @@
-# Harmonia — Claude Code Context
+# Lyriosa — Claude Code Context
 
 ## Workflow Standards
 

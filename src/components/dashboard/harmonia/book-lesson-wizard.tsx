@@ -438,7 +438,7 @@ function DealsTabContent({ studentId, hasCredits, activePackageTitle, onBook, is
 
 // ─── Main wizard ──────────────────────────────────────────────────────────────
 export function BookLessonWizard() {
-    const { user, users, lessons, addLesson, packages } = useAuth();
+    const { user, users, lessons, addLesson, packages, conservatoriums } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
     const locale = useLocale();
@@ -462,6 +462,17 @@ export function BookLessonWizard() {
 
     const t = useTranslations('LessonManagement');
     const dateLocale = useDateLocale();
+
+    const userConservatorium = conservatoriums?.find(c => c.id === user?.conservatoriumId);
+    const durationOptions = useMemo(() => {
+        const durations = userConservatorium?.allowedLessonDurations?.length
+            ? userConservatorium.allowedLessonDurations
+            : [30, 45, 60];
+        return [...durations].sort((a, b) => a - b).map(d => ({
+            value: String(d),
+            label: t('duration', { min: d }),
+        }));
+    }, [userConservatorium?.allowedLessonDurations, t]);
 
     const teachers = useMemo(() => user ? tenantUsers(users, user, 'teacher') : [], [users, user]);
 
@@ -553,7 +564,7 @@ export function BookLessonWizard() {
             teacherId: data.teacherId,
             instrument: data.instrument,
             startTime: lessonStartTime.toISOString(),
-            durationMinutes: data.durationMinutes as 30 | 45 | 60,
+            durationMinutes: data.durationMinutes,
             bookingSource: user!.role === 'parent' ? 'PARENT' : 'STUDENT_SELF',
         });
 
@@ -620,7 +631,7 @@ export function BookLessonWizard() {
             teacherId: slot.teacher.id,
             instrument: slot.instrument,
             startTime: slot.startTime.toISOString(),
-            durationMinutes: slot.durationMinutes as 30 | 45 | 60,
+            durationMinutes: slot.durationMinutes,
             bookingSource: 'STUDENT_SELF',
         });
 
@@ -725,11 +736,7 @@ export function BookLessonWizard() {
                                             <FormItem className="flex flex-col">
                                                 <FormLabel>{t('lessonDuration')}</FormLabel>
                                                 <Combobox dir={isRtl ? "rtl" : "ltr"}
-                                                    options={[
-                                                        { value: '30', label: t('duration30') },
-                                                        { value: '45', label: t('duration45') },
-                                                        { value: '60', label: t('duration60') },
-                                                    ]}
+                                                    options={durationOptions}
                                                     selectedValue={String(field.value)}
                                                     onSelectedValueChange={v => field.onChange(Number(v))}
                                                     placeholder={t('selectDurationPlaceholder')}

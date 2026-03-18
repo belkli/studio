@@ -248,7 +248,7 @@ const LessonPackageSchema = z.object({
   names: z.object({ he: z.string(), en: z.string(), ru: z.string().optional(), ar: z.string().optional() }),
   type: z.enum(['monthly', 'semester', 'annual', 'single']),
   lessonCount: z.number().int().nullable(),
-  durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+  durationMinutes: z.number().int().min(15).max(180),
   priceILS: z.number(),
   isActive: z.boolean(),
   instruments: z.array(z.string()).optional(),

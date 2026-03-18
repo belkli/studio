@@ -1,6 +1,6 @@
 # SOFTWARE DESIGN DOCUMENT
 ## Internationalization (i18n) Complete Fix
-### Harmonia Music Conservatory Platform
+### Lyriosa Music Conservatory Platform
 **Full Translation Coverage: HE · EN · AR · RU**
 
 ---
@@ -8,7 +8,7 @@
 | Attribute | Value |
 |---|---|
 | Document Type | Software Design Document (SDD) |
-| Project | Harmonia Studio — i18n Complete Fix |
+| Project | Lyriosa Studio — i18n Complete Fix |
 | Target Languages | Hebrew (he), English (en), Arabic (ar), Russian (ru) |
 | Framework | Next.js 14 · next-intl · React |
 | Scope | 154 affected files · ~1,952 hardcoded Hebrew lines |
@@ -33,7 +33,7 @@
 
 ## 1. Executive Summary
 
-The Harmonia platform was built with Hebrew as the hardcoded default language across the majority of its components. Although the internationalization infrastructure using `next-intl` is correctly configured with routing support for four locales (`he`, `en`, `ar`, `ru`) and four translation JSON files, the actual component code bypasses this infrastructure entirely. The result is that switching to English, Arabic, or Russian renders a mixed-language UI — translated navigation and shared strings alongside Hebrew-hardcoded labels, validation messages, toasts, placeholders, and business logic text.
+The Lyriosa platform was built with Hebrew as the hardcoded default language across the majority of its components. Although the internationalization infrastructure using `next-intl` is correctly configured with routing support for four locales (`he`, `en`, `ar`, `ru`) and four translation JSON files, the actual component code bypasses this infrastructure entirely. The result is that switching to English, Arabic, or Russian renders a mixed-language UI — translated navigation and shared strings alongside Hebrew-hardcoded labels, validation messages, toasts, placeholders, and business logic text.
 
 This document provides a complete, structured design specification for:
 - Migrating all hardcoded text to the next-intl translation system
@@ -317,7 +317,7 @@ These forms contain Hebrew academic year formatting logic (`תשפ"...`) and har
 
 ---
 
-### 4.5 CAT-6: Dashboard Harmonia Components (67 files)
+### 4.5 CAT-6: Dashboard Lyriosa Components (67 files)
 
 This is the largest category. All components need:
 1. `import { useTranslations } from 'next-intl';`
@@ -363,7 +363,7 @@ This is the largest category. All components need:
 
 ---
 
-### 4.6 CAT-7: Public Harmonia Components (`src/components/harmonia/`)
+### 4.6 CAT-7: Public Lyriosa Components (`src/components/harmonia/`)
 
 | Component | Hebrew Lines | Namespace |
 |---|---|---|
@@ -496,7 +496,7 @@ When adding Arabic translations, the following must be verified:
 |---|---|---|---|
 | **Phase 1** | CAT-1 (NewForm, TrialBooking namespaces) + CAT-3 (Combobox fix) — unblocks runtime errors | 🔴 CRITICAL | 0.5 day |
 | **Phase 2** | CAT-4 (Login Form) + CAT-5 (Forms Components) — user-facing auth and forms | 🔴 HIGH | 1.5 days |
-| **Phase 3** | CAT-7 (Public Harmonia components) — public-facing marketing/booking pages | 🔴 HIGH | 1 day |
+| **Phase 3** | CAT-7 (Public Lyriosa components) — public-facing marketing/booking pages | 🔴 HIGH | 1 day |
 | **Phase 4** | CAT-8 high-priority app pages (users, approvals, about, contact, ministry) | 🔴 HIGH | 1.5 days |
 | **Phase 5** | CAT-6 Part A: Lesson, Teacher, Student component groups | 🟠 MEDIUM | 2 days |
 | **Phase 6** | CAT-6 Part B: Schedule, Payments, Notifications, Events | 🟠 MEDIUM | 2 days |
@@ -689,7 +689,7 @@ Legend: `●` = New namespace needed &nbsp; `○` = Extend existing namespace
 
 ## 9. Summary
 
-The Harmonia platform has a fully functional i18n infrastructure but has not yet connected the majority of its UI components to that infrastructure. The issue is categorically a **missing migration step** — approximately 128 component and page files containing ~1,952 hardcoded Hebrew strings that bypass the `next-intl` translation system entirely.
+The Lyriosa platform has a fully functional i18n infrastructure but has not yet connected the majority of its UI components to that infrastructure. The issue is categorically a **missing migration step** — approximately 128 component and page files containing ~1,952 hardcoded Hebrew strings that bypass the `next-intl` translation system entirely.
 
 The fix is well-defined and mechanical: for each file, identify Hebrew literals, assign them to an appropriate translation namespace, replace the literal with a `t('key')` call, and supply the translated string in all four message files. The two special structural issues (missing `NewForm`/`TrialBooking` namespaces and the Hebrew-defaulted `Combobox` primitive) must be addressed first as they currently cause runtime failures.
 

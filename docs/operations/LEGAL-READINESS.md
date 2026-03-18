@@ -1,4 +1,4 @@
-# Harmonia Platform - Legal Readiness Assessment
+# Lyriosa Platform - Legal Readiness Assessment
 
 **Version:** 1.0
 **Author:** Legal Agent
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Harmonia is a multi-tenant SaaS platform serving Israeli music conservatoriums. It processes sensitive personal data including Israeli ID numbers of minors, audio/video recordings of children, financial payment information, Ministry exam results, and scholarship disclosures. This document assesses legal readiness across Israeli law compliance, required legal agreements, intellectual property considerations, technical gaps, and pre-launch obligations.
+Lyriosa is a multi-tenant SaaS platform serving Israeli music conservatoriums. It processes sensitive personal data including Israeli ID numbers of minors, audio/video recordings of children, financial payment information, Ministry exam results, and scholarship disclosures. This document assesses legal readiness across Israeli law compliance, required legal agreements, intellectual property considerations, technical gaps, and pre-launch obligations.
 
 **Overall Legal Readiness Score: ~85/100** _(was 40/100 before 2026-03-08 sprint)_
 
@@ -31,9 +31,9 @@ Harmonia is a multi-tenant SaaS platform serving Israeli music conservatoriums. 
 
 ### 1.1 Privacy Protection Law (5741-1981) + Amendment 2
 
-The **Protection of Privacy Law** (Hebrew: חוק הגנת הפרטיות, התשמ"א-1981) and its **Information Security Regulations (2017)** govern Harmonia's data handling obligations.
+The **Protection of Privacy Law** (Hebrew: חוק הגנת הפרטיות, התשמ"א-1981) and its **Information Security Regulations (2017)** govern Lyriosa's data handling obligations.
 
-#### Data Harmonia Collects
+#### Data Lyriosa Collects
 
 | Data Category | Examples | Sensitivity |
 |---------------|----------|-------------|
@@ -53,7 +53,7 @@ Under Section 8 of the Privacy Protection Law, a "database" (מאגר מידע) 
 - Is used for direct marketing purposes
 - Belongs to a public body
 
-**Harmonia qualifies on multiple criteria:** The platform will store data for potentially thousands of students across 85+ conservatoriums, includes Israeli ID numbers (sensitive by definition), financial data, and recordings of minors.
+**Lyriosa qualifies on multiple criteria:** The platform will store data for potentially thousands of students across 85+ conservatoriums, includes Israeli ID numbers (sensitive by definition), financial data, and recordings of minors.
 
 #### Action Items
 
@@ -82,7 +82,7 @@ Under Section 8 of the Privacy Protection Law, a "database" (מאגר מידע) 
 
 ### 1.2 Consumer Protection Law (5741-1981)
 
-The **Consumer Protection Law** (חוק הגנת הצרכן) applies to all transactions between Harmonia's conservatorium clients and their paying customers (parents/students).
+The **Consumer Protection Law** (חוק הגנת הצרכן) applies to all transactions between Lyriosa's conservatorium clients and their paying customers (parents/students).
 
 #### Key Obligations
 
@@ -119,11 +119,11 @@ The **Equal Rights for People with Disabilities Regulations (Accessibility of In
 - Entities receiving public funding
 - Businesses serving more than 50 people
 
-Israeli music conservatoriums receive municipal funding and serve the public, making Harmonia subject to these regulations. **Penalty: up to NIS 50,000 per complaint, with no proof of harm required** (Section 19ב of the Equal Rights for People with Disabilities Law).
+Israeli music conservatoriums receive municipal funding and serve the public, making Lyriosa subject to these regulations. **Penalty: up to NIS 50,000 per complaint, with no proof of harm required** (Section 19ב of the Equal Rights for People with Disabilities Law).
 
 #### Current Implementation
 
-Harmonia already has:
+Lyriosa already has:
 - An **accessibility statement page** at `/accessibility` (`src/app/[locale]/accessibility/page.tsx`) with measures, known limitations, per-conservatorium contact directory, and alternative access information
 - An **accessibility panel** component (`src/components/a11y/accessibility-panel.tsx`) for runtime adjustments
 - **Semantic HTML**: headings, landmark regions, aria-labels on interactive elements
@@ -180,24 +180,24 @@ Israeli law does not set a specific "digital age of consent" like GDPR's Article
 #### Israeli VAT (Value Added Tax)
 
 - Current rate: **17%**
-- All invoices issued by Harmonia on behalf of conservatoriums must comply with the **Value Added Tax Law** (חוק מס ערך מוסף, התשל"ו-1975)
+- All invoices issued by Lyriosa on behalf of conservatoriums must comply with the **Value Added Tax Law** (חוק מס ערך מוסף, התשל"ו-1975)
 - Invoices must include: business registration number, invoice number, date, VAT amount, and total including VAT
 - The `Invoice` type now includes `vatRate` and `vatAmount` fields (verified in QA Report)
 
 #### Tax Invoice Requirements (per Income Tax Regulations)
 
 - [ ] Each conservatorium must configure their own **עוסק מורשה/פטור** (VAT registration number) in the system
-- [ ] Invoices generated by Harmonia must include the conservatorium's tax details (not Harmonia's)
-- [ ] If Harmonia operates as a marketplace, determine whether Harmonia or the conservatorium is the "supplier" for VAT purposes
+- [ ] Invoices generated by Lyriosa must include the conservatorium's tax details (not Lyriosa's)
+- [ ] If Lyriosa operates as a marketplace, determine whether Lyriosa or the conservatorium is the "supplier" for VAT purposes
 - [ ] Financial records must be retained for **7 years** per Israeli tax law (aligned with `RetentionPolicy.financialRecordRetentionYears`)
 
 ---
 
 ## Part 2: Required Legal Documents
 
-### 2.1 Master Service Agreement (MSA) — Between Harmonia and Conservatoriums
+### 2.1 Master Service Agreement (MSA) — Between Lyriosa and Conservatoriums
 
-The MSA is the primary contractual relationship governing Harmonia's service to each conservatorium. A template skeleton is provided at `docs/contracts/MSA-TEMPLATE.md`.
+The MSA is the primary contractual relationship governing Lyriosa's service to each conservatorium. A template skeleton is provided at `docs/contracts/MSA-TEMPLATE.md`.
 
 **The MSA must cover:**
 
@@ -207,15 +207,15 @@ The MSA is the primary contractual relationship governing Harmonia's service to 
 | Service Level Agreement (SLA) | 99.5% monthly uptime target; scheduled maintenance windows; incident response times |
 | Data Processing Agreement (DPA) | Incorporated by reference or as an exhibit — see Section 2.4 |
 | Payment Terms | Subscription fee model (per-conservatorium), or per-student fee, or revenue share; payment schedule; late payment consequences |
-| Liability Cap | Harmonia total liability capped at 3 months of service fees paid |
+| Liability Cap | Lyriosa total liability capped at 3 months of service fees paid |
 | Indemnification | Each party indemnifies the other for breaches of their obligations |
 | Termination | 30-day written notice; data export provided within 14 days of termination; data deletion within 30 days of export confirmation |
-| IP Ownership | Conservatorium owns their student data, custom terms, and uploaded content; Harmonia owns the platform, code, and aggregated anonymized analytics |
+| IP Ownership | Conservatorium owns their student data, custom terms, and uploaded content; Lyriosa owns the platform, code, and aggregated anonymized analytics |
 | Confidentiality | Mutual NDA; surviving 3 years post-termination |
 | Governing Law | Laws of the State of Israel; exclusive jurisdiction: Tel Aviv District Court |
 | Force Majeure | Standard force majeure clause including cyber attacks, pandemic, government orders |
 
-### 2.2 Terms of Service (TOS) — Between Harmonia and End Users
+### 2.2 Terms of Service (TOS) — Between Lyriosa and End Users
 
 The TOS governs the relationship with students, parents, teachers, and other end users who access the platform.
 
@@ -225,12 +225,12 @@ The TOS governs the relationship with students, parents, teachers, and other end
 - **Acceptable Use**: No upload of copyrighted material without rights; no sharing of other users' personal data; no automated access/scraping
 - **Account Responsibility**: Users are responsible for maintaining the security of their login credentials
 - **Lesson Cancellation Policy**: Configurable per conservatorium (via `cancellationPolicySettings` — component exists at `cancellation-policy-settings.tsx`); defaults to the conservatorium's published policy
-- **Payment Terms**: Fees are set by the conservatorium; Harmonia processes payments as an agent; refund policy per Consumer Protection Law (14-day cooling-off)
+- **Payment Terms**: Fees are set by the conservatorium; Lyriosa processes payments as an agent; refund policy per Consumer Protection Law (14-day cooling-off)
 - **Content Ownership**: Practice recordings are owned by the student/parent; teacher lesson notes are owned by the teacher; uploaded sheet music must be either public domain or licensed
 - **Privacy**: By reference to the Privacy Policy
-- **Dispute Resolution**: Disputes between user and conservatorium are resolved per the conservatorium's policies; disputes between user and Harmonia are subject to Israeli law and Tel Aviv courts
-- **Limitation of Liability**: Harmonia is not liable for conservatorium decisions (e.g., student dismissal, teacher assignment)
-- **Modifications**: Harmonia may update TOS with 30 days' notice; continued use constitutes acceptance
+- **Dispute Resolution**: Disputes between user and conservatorium are resolved per the conservatorium's policies; disputes between user and Lyriosa are subject to Israeli law and Tel Aviv courts
+- **Limitation of Liability**: Lyriosa is not liable for conservatorium decisions (e.g., student dismissal, teacher assignment)
+- **Modifications**: Lyriosa may update TOS with 30 days' notice; continued use constitutes acceptance
 
 ### 2.3 Privacy Policy
 
@@ -269,7 +269,7 @@ A privacy policy page already exists at `/privacy` (`src/app/[locale]/privacy/pa
 
 ### 2.4 Data Processing Agreement (DPA)
 
-Under **Amendment 2** to the Privacy Protection Law (which entered into force in 2018), when a processor (Harmonia) handles personal data on behalf of a controller (conservatorium), a written Data Processing Agreement is required.
+Under **Amendment 2** to the Privacy Protection Law (which entered into force in 2018), when a processor (Lyriosa) handles personal data on behalf of a controller (conservatorium), a written Data Processing Agreement is required.
 
 **The DPA must specify:**
 
@@ -330,7 +330,7 @@ Students upload audio and video recordings of their practice sessions. These rec
 
 ### 3.3 Platform IP
 
-**Harmonia Platform Code:**
+**Lyriosa Platform Code:**
 - Currently proprietary and unpublished
 - Decision required before launch: open-source (which license?) vs. proprietary
 - If proprietary: ensure all developer agreements include IP assignment clauses
@@ -418,7 +418,7 @@ The product brief specifies a "standard contract + per-conservatorium revision c
 
 **Step 3: Contract Signing Step** ✅ DONE (2026-03-08 sprint)
 - Contract signing step integrated into `enrollment-wizard.tsx`
-- Displays standard Harmonia terms + conservatorium-specific addendum
+- Displays standard Lyriosa terms + conservatorium-specific addendum
 - Signature capture via `signature-capture.tsx`; audit trail persisted via `submitSignatureAction()`
 - Standard registration agreement draft: `docs/legal/standard-registration-agreement-draft.md`
 

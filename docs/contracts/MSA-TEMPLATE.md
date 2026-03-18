@@ -1,6 +1,6 @@
 # Master Service Agreement (MSA)
 
-## Between Harmonia Platform Ltd. and [CONSERVATORIUM NAME]
+## Between Lyriosa Platform Ltd. and [CONSERVATORIUM NAME]
 
 ---
 
@@ -26,9 +26,9 @@
 
 **"Data Processing Agreement" or "DPA"** means the data processing terms set forth in Exhibit B, incorporated by reference.
 
-**"Harmonia" or "Provider"** means Harmonia Platform Ltd., a company organized under the laws of the State of Israel, registration number [PLACEHOLDER].
+**"Lyriosa" or "Provider"** means Lyriosa Platform Ltd., a company organized under the laws of the State of Israel, registration number [PLACEHOLDER].
 
-**"Platform"** means the Harmonia web-based software-as-a-service platform accessible at [PLACEHOLDER URL], including all features, updates, and modifications provided during the Term.
+**"Platform"** means the Lyriosa web-based software-as-a-service platform accessible at [PLACEHOLDER URL], including all features, updates, and modifications provided during the Term.
 
 **"Service Level Agreement" or "SLA"** means the service level commitments set forth in Exhibit A.
 
@@ -42,7 +42,7 @@
 
 ### 2.1 Platform Services
 
-Harmonia provides the Customer with access to a cloud-based platform for managing conservatorium operations, including but not limited to:
+Lyriosa provides the Customer with access to a cloud-based platform for managing conservatorium operations, including but not limited to:
 
 - Student enrollment and registration management
 - Lesson scheduling, booking, and attendance tracking
@@ -64,7 +64,7 @@ The Platform is hosted on Google Cloud Platform (Firebase App Hosting) in the **
 
 ### 2.3 Support
 
-Harmonia shall provide technical support to the Customer during the following hours:
+Lyriosa shall provide technical support to the Customer during the following hours:
 
 - **Standard Support:** [PLACEHOLDER — e.g., Sunday through Thursday, 09:00-17:00 Israel Time]
 - **Emergency Support:** [PLACEHOLDER — e.g., 24/7 for Critical severity issues]
@@ -76,7 +76,7 @@ Harmonia shall provide technical support to the Customer during the following ho
 
 ### 3.1 Availability Target
 
-Harmonia commits to a monthly uptime of **99.5%**, measured as:
+Lyriosa commits to a monthly uptime of **99.5%**, measured as:
 
 ```
 Uptime % = ((Total Minutes in Month - Downtime Minutes) / Total Minutes in Month) * 100
@@ -85,7 +85,7 @@ Uptime % = ((Total Minutes in Month - Downtime Minutes) / Total Minutes in Month
 **Exclusions from Downtime:**
 - Scheduled maintenance (with at least 48 hours' prior notice, performed during off-peak hours)
 - Force Majeure events (as defined in Section 12)
-- Downtime caused by third-party services (Firebase, Cardcom, Twilio) beyond Harmonia's control
+- Downtime caused by third-party services (Firebase, Cardcom, Twilio) beyond Lyriosa's control
 - Downtime caused by the Customer's systems, network, or actions
 
 ### 3.2 Service Credits
@@ -116,9 +116,9 @@ Service credits are the Customer's sole and exclusive remedy for failure to meet
 ### 4.1 Roles
 
 - **Data Controller:** The Customer (conservatorium)
-- **Data Processor:** Harmonia Platform Ltd.
+- **Data Processor:** Lyriosa Platform Ltd.
 
-The Customer determines the purposes and means of processing personal data of its Authorized Users. Harmonia processes such data solely on behalf of and as instructed by the Customer.
+The Customer determines the purposes and means of processing personal data of its Authorized Users. Lyriosa processes such data solely on behalf of and as instructed by the Customer.
 
 ### 4.2 Data Types Processed
 
@@ -143,7 +143,7 @@ Personal data is processed solely for the following purposes:
 
 ### 4.4 Sub-Processors
 
-Harmonia engages the following sub-processors:
+Lyriosa engages the following sub-processors:
 
 | Sub-Processor | Purpose | Data Location |
 |---------------|---------|---------------|
@@ -153,11 +153,11 @@ Harmonia engages the following sub-processors:
 | SendGrid (Twilio) | Email delivery | [PLACEHOLDER — US/EU] |
 | Google AI (Gemini) | AI-assisted reports | [PLACEHOLDER — US/EU] |
 
-Harmonia shall notify the Customer at least **30 days** before engaging a new sub-processor. The Customer may object in writing within 15 days; if the objection cannot be resolved, the Customer may terminate this Agreement per Section 10.
+Lyriosa shall notify the Customer at least **30 days** before engaging a new sub-processor. The Customer may object in writing within 15 days; if the objection cannot be resolved, the Customer may terminate this Agreement per Section 10.
 
 ### 4.5 Security Measures
 
-Harmonia implements the following security measures:
+Lyriosa implements the following security measures:
 - Encryption at rest (Firestore default encryption, AES-256)
 - Encryption in transit (TLS 1.2+)
 - Role-Based Access Control (RBAC) with tenant isolation per conservatorium
@@ -170,25 +170,25 @@ Harmonia implements the following security measures:
 ### 4.6 Data Breach Notification
 
 In the event of a personal data breach:
-1. Harmonia shall notify the Customer within **24 hours** of becoming aware of the breach
+1. Lyriosa shall notify the Customer within **24 hours** of becoming aware of the breach
 2. The notification shall include: nature of the breach, categories of data affected, estimated number of individuals affected, likely consequences, measures taken to mitigate
 3. The Customer (as Controller) is responsible for notifying the Registrar of Databases within **72 hours** and affected data subjects as required by law
 
 ### 4.7 Data Return and Deletion
 
 Upon termination of this Agreement:
-1. Harmonia shall provide a complete export of all Customer Data in JSON and/or CSV format within **14 days** of the termination effective date
-2. Upon written confirmation of successful export by the Customer, Harmonia shall delete all Customer Data from its systems within **30 days**
-3. Harmonia shall provide written certification of deletion
+1. Lyriosa shall provide a complete export of all Customer Data in JSON and/or CSV format within **14 days** of the termination effective date
+2. Upon written confirmation of successful export by the Customer, Lyriosa shall delete all Customer Data from its systems within **30 days**
+3. Lyriosa shall provide written certification of deletion
 4. Exceptions: data required to be retained by law (e.g., financial records for 7 years per Israeli tax law) shall be retained in an archived, access-restricted state
 
 ### 4.8 Audit Rights
 
-The Customer may audit Harmonia's compliance with this DPA:
+The Customer may audit Lyriosa's compliance with this DPA:
 - **Frequency:** Once per calendar year
 - **Notice:** At least 30 days' written notice
 - **Scope:** Security measures, access controls, sub-processor compliance, data handling procedures
-- **Cost:** Each party bears its own costs, unless the audit reveals a material breach by Harmonia
+- **Cost:** Each party bears its own costs, unless the audit reveals a material breach by Lyriosa
 
 ---
 
@@ -196,11 +196,11 @@ The Customer may audit Harmonia's compliance with this DPA:
 
 ### 5.1 Platform IP
 
-Harmonia retains all intellectual property rights in and to the Platform, including all software, algorithms, user interface designs, documentation, and any improvements or modifications thereto. This Agreement does not transfer any IP rights from Harmonia to the Customer.
+Lyriosa retains all intellectual property rights in and to the Platform, including all software, algorithms, user interface designs, documentation, and any improvements or modifications thereto. This Agreement does not transfer any IP rights from Lyriosa to the Customer.
 
 ### 5.2 Customer Data Ownership
 
-The Customer retains all rights, title, and interest in and to Customer Data. Harmonia acquires no ownership interest in Customer Data by virtue of this Agreement.
+The Customer retains all rights, title, and interest in and to Customer Data. Lyriosa acquires no ownership interest in Customer Data by virtue of this Agreement.
 
 ### 5.3 License Grant
 
@@ -208,11 +208,11 @@ Each Party grants the other a limited, non-exclusive, non-transferable license t
 
 ### 5.4 Aggregated Analytics
 
-Harmonia may collect and use **aggregated, anonymized** data derived from the Platform usage for the purposes of improving the Platform, generating industry benchmarks, and conducting research. Such aggregated data shall not identify the Customer or any individual Authorized User.
+Lyriosa may collect and use **aggregated, anonymized** data derived from the Platform usage for the purposes of improving the Platform, generating industry benchmarks, and conducting research. Such aggregated data shall not identify the Customer or any individual Authorized User.
 
 ### 5.5 Custom Registration Terms
 
-Custom registration terms (`customRegistrationTerms`) created by the Customer are the Customer's intellectual property. Harmonia stores and displays these terms solely for the purpose of presenting them to Authorized Users during registration.
+Custom registration terms (`customRegistrationTerms`) created by the Customer are the Customer's intellectual property. Lyriosa stores and displays these terms solely for the purpose of presenting them to Authorized Users during registration.
 
 ---
 
@@ -243,7 +243,7 @@ Confidentiality obligations survive termination of this Agreement for a period o
 
 ### 7.1 Subscription Fee
 
-The Customer shall pay Harmonia a Subscription Fee as follows:
+The Customer shall pay Lyriosa a Subscription Fee as follows:
 
 **Pricing Model:** [PLACEHOLDER — Choose one or combine:]
 - [ ] **Per-Conservatorium Flat Fee:** NIS [PLACEHOLDER] per month
@@ -261,7 +261,7 @@ All prices are **inclusive of VAT** (17% as of the Effective Date). If the VAT r
 
 ### 7.3 Late Payment
 
-Late payments shall bear interest at the rate of [PLACEHOLDER — e.g., Prime + 2%] per annum, calculated from the due date until payment is received. If payment is more than [PLACEHOLDER — e.g., 60] days overdue, Harmonia may suspend access to the Platform upon [PLACEHOLDER — e.g., 14] days' written notice.
+Late payments shall bear interest at the rate of [PLACEHOLDER — e.g., Prime + 2%] per annum, calculated from the due date until payment is received. If payment is more than [PLACEHOLDER — e.g., 60] days overdue, Lyriosa may suspend access to the Platform upon [PLACEHOLDER — e.g., 14] days' written notice.
 
 ---
 
@@ -269,7 +269,7 @@ Late payments shall bear interest at the rate of [PLACEHOLDER — e.g., Prime + 
 
 ### 8.1 Liability Cap
 
-**Harmonia's total aggregate liability** under this Agreement, whether in contract, tort (including negligence), or otherwise, shall not exceed an amount equal to **the Subscription Fees paid by the Customer in the 3-month period immediately preceding the event giving rise to the claim**.
+**Lyriosa's total aggregate liability** under this Agreement, whether in contract, tort (including negligence), or otherwise, shall not exceed an amount equal to **the Subscription Fees paid by the Customer in the 3-month period immediately preceding the event giving rise to the claim**.
 
 ### 8.2 Exclusion of Consequential Damages
 
@@ -287,16 +287,16 @@ The limitations in Sections 8.1 and 8.2 shall not apply to:
 
 ## 9. Indemnification
 
-### 9.1 Harmonia Indemnification
+### 9.1 Lyriosa Indemnification
 
-Harmonia shall indemnify and hold harmless the Customer from any third-party claims arising from:
-- Harmonia's breach of the DPA or data protection obligations
+Lyriosa shall indemnify and hold harmless the Customer from any third-party claims arising from:
+- Lyriosa's breach of the DPA or data protection obligations
 - Infringement of third-party intellectual property rights by the Platform itself (excluding Customer Data)
-- Harmonia's gross negligence or wilful misconduct
+- Lyriosa's gross negligence or wilful misconduct
 
 ### 9.2 Customer Indemnification
 
-The Customer shall indemnify and hold harmless Harmonia from any third-party claims arising from:
+The Customer shall indemnify and hold harmless Lyriosa from any third-party claims arising from:
 - Customer Data that infringes third-party rights (including uploaded sheet music)
 - Customer's breach of its obligations to obtain necessary consents from Authorized Users
 - Customer's use of the Platform in violation of applicable law
@@ -327,7 +327,7 @@ Either Party may terminate this Agreement immediately upon written notice if:
 
 Upon termination:
 1. The Customer's access to the Platform shall cease on the termination effective date
-2. Harmonia shall provide Customer Data export per Section 4.7
+2. Lyriosa shall provide Customer Data export per Section 4.7
 3. All outstanding Subscription Fees through the termination effective date are immediately due
 4. Sections 5 (IP), 6 (Confidentiality), 8 (Liability), 9 (Indemnification), and 11 (Governing Law) survive termination
 
@@ -384,7 +384,7 @@ If any provision of this Agreement is found to be invalid or unenforceable, the 
 
 All notices under this Agreement shall be in writing and sent to:
 
-**Harmonia:**
+**Lyriosa:**
 [PLACEHOLDER — Address, email]
 
 **Customer:**
@@ -416,7 +416,7 @@ This Agreement is executed in the **Hebrew** language. In the event of a transla
 
 ## Signatures
 
-**Harmonia Platform Ltd.**
+**Lyriosa Platform Ltd.**
 
 | | |
 |---|---|
@@ -436,4 +436,4 @@ This Agreement is executed in the **Hebrew** language. In the event of a transla
 
 ---
 
-*This template was prepared as a starting point for legal review. It must be reviewed, modified, and approved by qualified Israeli legal counsel before use. Harmonia Platform Ltd. assumes no liability for the use of this template without proper legal review.*
+*This template was prepared as a starting point for legal review. It must be reviewed, modified, and approved by qualified Israeli legal counsel before use. Lyriosa Platform Ltd. assumes no liability for the use of this template without proper legal review.*

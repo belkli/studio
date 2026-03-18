@@ -334,9 +334,8 @@ function mapEventStatus(status: string): EventProduction['status'] {
   return 'OPEN_REGISTRATION';
 }
 
-function toDuration(value: number): 30 | 45 | 60 {
-  if (value === 30 || value === 45 || value === 60) return value;
-  return 45;
+function toDuration(value: number): number {
+  return value > 0 ? value : 45;
 }
 
 function mapConservatoriums(rows: RawConservatorium[]): Conservatorium[] {

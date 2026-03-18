@@ -1,5 +1,5 @@
 # Software Design Document — Security Expert Review
-## Harmonia Music Conservatory Management Platform
+## Lyriosa Music Conservatory Management Platform
 
 **Persona:** Expert Security Developer / Penetration Tester  
 **Review Scope:** Authentication, Authorization, Data Exposure, API Security, Client-Side Storage, Input Validation, CSP, PDPPA Compliance  
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-The Harmonia platform stores PII of minors (students under 18, including recordings, medical/financial data), operates under Israeli **PDPPA (Personal Data Protection Act)** and **Ministry of Education regulations**, and processes real payments via Cardcom. This combination makes security failures legally significant, not just operational risks.
+The Lyriosa platform stores PII of minors (students under 18, including recordings, medical/financial data), operates under Israeli **PDPPA (Personal Data Protection Act)** and **Ministry of Education regulations**, and processes real payments via Cardcom. This combination makes security failures legally significant, not just operational risks.
 
 **18 security issues** were identified. The most critical: authentication is by email alone with no password check, user roles are stored in mutable client-side `localStorage` enabling privilege escalation, several admin pages have zero authorization guards, the QR code API proxies external content with no token validation, and the `verifyAuth()` function unconditionally returns `true` — meaning all server actions are unauthenticated.
 
@@ -821,4 +821,4 @@ The platform handles PII of minors (students under 18), which triggers heightene
 
 ---
 
-*Document prepared by: Expert Security Developer/Penetration Tester Persona — Harmonia Platform Review, March 2026*
+*Document prepared by: Expert Security Developer/Penetration Tester Persona — Lyriosa Platform Review, March 2026*

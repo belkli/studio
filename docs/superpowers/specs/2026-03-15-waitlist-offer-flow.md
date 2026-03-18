@@ -373,7 +373,7 @@ The offer URL requires authentication. Unauthenticated visitors see a generic la
 
 ```
 +--------------------------------------------------+
-| Harmonia                                         |
+| Lyriosa                                         |
 |                                                  |
 |     (Lock icon, large)                           |
 |                                                  |
@@ -740,7 +740,7 @@ These are now incorporated as Phase 1 of the Implementation Steps (section 8). N
 
 ## UI/UX Pro Max Review (Main Session)
 
-**Design System Applied:** Data-Dense Dashboard · Harmonia palette · shadcn/ui
+**Design System Applied:** Data-Dense Dashboard · Lyriosa palette · shadcn/ui
 
 ### UX Quality Checklist
 

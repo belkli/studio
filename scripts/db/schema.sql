@@ -1,7 +1,7 @@
 \encoding UTF8
 
 -- ============================================================
--- Harmonia Platform - PostgreSQL Schema
+-- Lyriosa Platform - PostgreSQL Schema
 -- Run: psql -U harmonia -d harmonia_dev -f scripts/db/schema.sql
 -- ============================================================
 

@@ -65,7 +65,7 @@ const getEditUserSchema = (t: any) => z.object({
     teacherAssignments: z.array(z.object({
         teacherId: z.string(),
         instrument: z.string(),
-        lessonDurationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+        lessonDurationMinutes: z.number().int().min(15).max(180),
         dayOfWeek: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5), z.literal(6)]),
         startTime: z.string(),
     })).optional(),
@@ -750,7 +750,7 @@ const EditUserForm = ({ user, allUsers, conservatoriumInstruments, onSubmit, onC
                                 </Select>
                                 <Select dir={dir} value={String(assignment.lessonDurationMinutes)} onValueChange={(value) => {
                                     const next = [...teacherAssignments];
-                                    next[index] = { ...next[index], lessonDurationMinutes: Number(value) as 30 | 45 | 60 } as TeacherAssignment;
+                                    next[index] = { ...next[index], lessonDurationMinutes: Number(value) } as TeacherAssignment;
                                     form.setValue('teacherAssignments', next);
                                 }}>
                                     <SelectTrigger><SelectValue placeholder={t('duration')} /></SelectTrigger>

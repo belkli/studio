@@ -15,7 +15,7 @@ However, from a PM perspective reviewing all five persona SDDs in parallel, seve
 
 1. **Happy-path coverage is strong; recovery and error path coverage is thin** across most domains.
 2. **Cross-persona side-effects** (what each other persona sees after one persona acts) are covered by INT scenarios but several critical ones are missing.
-3. **Empty state and first-time user experience** is almost entirely untested — a new student, parent, or teacher who has never used Harmonia will see empty states on most pages and there are no tests for those paths.
+3. **Empty state and first-time user experience** is almost entirely untested — a new student, parent, or teacher who has never used Lyriosa will see empty states on most pages and there are no tests for those paths.
 4. **Business rule precision** — cooling-off period, VAT rate, makeup credit expiry — needs sharper assertion language. Several scenarios say "expected" without verifying the exact numeric calculation.
 5. **Three domains have structural gaps** that would block acceptance: (a) billing domain acknowledges key stubs but doesn't flag them as blockers; (b) substitute assignment has no teacher-receives-notification test; (c) legal compliance domain omits PDPPA required-disclosure tests.
 

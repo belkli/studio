@@ -3,7 +3,7 @@
 **Document Type:** Software Design Document — Legal & Technical Compliance  
 **Standard:** Israeli Standard IS 5568 (based on WCAG 2.0/2.1 Level AA)  
 **Legal Basis:** Equal Rights for Persons with Disabilities Act, 1998 (חוק שוויון זכויות לאנשים עם מוגבלות)  
-**Applies To:** Harmonia Platform — all user-facing surfaces (registration, parent portal, admin, teacher portal)  
+**Applies To:** Lyriosa Platform — all user-facing surfaces (registration, parent portal, admin, teacher portal)  
 **Prepared By:** Technical Analysis  
 **Date:** March 2026  
 **Version:** 1.0
@@ -51,7 +51,7 @@
 | Private contractor | < ₪100,000/year | **Exempt** |
 | Education providers (all types) | — | **Always covered** |
 
-**Conclusion for Harmonia:** A conservatorium network (Aluma) offering paid educational services to the public is **unambiguously obligated**. Revenue almost certainly exceeds ₪300,000/year across branches. Compliance is not optional.
+**Conclusion for Lyriosa:** A conservatorium network (Aluma) offering paid educational services to the public is **unambiguously obligated**. Revenue almost certainly exceeds ₪300,000/year across branches. Compliance is not optional.
 
 ### 1.3 Penalties for Non-Compliance
 
@@ -85,7 +85,7 @@
 
 ### 2.2 User Populations Served
 
-The Harmonia platform must support users with:
+The Lyriosa platform must support users with:
 
 | Disability Type | Assistive Technology Used | Key WCAG Success Criteria |
 |-----------------|--------------------------|--------------------------|
@@ -127,7 +127,7 @@ Every non-text element must have a text alternative:
 
 #### 1.2 — Time-Based Media
 
-If Harmonia includes video tutorials, demonstrations, or recordings:
+If Lyriosa includes video tutorials, demonstrations, or recordings:
 - Captions required for all prerecorded audio
 - Audio description for prerecorded video
 - Live captions for live events (WCAG 2.1 AA: 1.2.4)
@@ -171,14 +171,14 @@ All registration forms must use semantic HTML with proper landmark roles:
 
 **Color Contrast Requirements (WCAG 2.0 AA):**
 
-| Element Type | Minimum Contrast Ratio | Harmonia Target |
+| Element Type | Minimum Contrast Ratio | Lyriosa Target |
 |--------------|----------------------|-----------------|
 | Normal text (< 18pt) | 4.5:1 | 7:1 (AAA where possible) |
 | Large text (≥ 18pt bold or 24pt) | 3:1 | 4.5:1 |
 | UI components (borders, icons) | 3:1 | 3:1+ |
 | Error states | 4.5:1 | Must be distinguishable without color alone |
 
-**Harmonia color palette compliance check:**
+**Lyriosa color palette compliance check:**
 
 ```
 Primary blue: #3B82F6 on white (#FFFFFF)
@@ -226,7 +226,7 @@ Arrow keys  → Navigate radio groups, select dropdowns, sliders
 Escape      → Close modals, dismiss tooltips
 ```
 
-**Critical requirements for Harmonia's registration wizard:**
+**Critical requirements for Lyriosa's registration wizard:**
 
 ```tsx
 // Step navigation buttons must be keyboard accessible
@@ -557,7 +557,7 @@ At minimum one accessible contact method must be offered for users who cannot us
 
 ## 5. RTL-Specific Accessibility Requirements
 
-Harmonia is an RTL (Right-to-Left) Hebrew-first platform. RTL introduces unique accessibility considerations not fully covered by WCAG (which was written primarily for LTR languages).
+Lyriosa is an RTL (Right-to-Left) Hebrew-first platform. RTL introduces unique accessibility considerations not fully covered by WCAG (which was written primarily for LTR languages).
 
 ### 5.1 CSS Logical Properties
 
@@ -925,9 +925,9 @@ The current InfoCash platform uses an **accessibility widget** (visible as a sid
 | Legal protection | ⚠️ Courts have found widgets insufficient | ✅ Full compliance |
 | Actual user benefit | ⚠️ Overlay, not fix | ✅ Core experience |
 
-### 9.2 Harmonia's Approach
+### 9.2 Lyriosa's Approach
 
-**Harmonia must implement accessibility natively in the codebase**, not via an addon widget. Widgets may be added as supplemental visual preference tools (font size, contrast), but they cannot substitute for native accessibility.
+**Lyriosa must implement accessibility natively in the codebase**, not via an addon widget. Widgets may be added as supplemental visual preference tools (font size, contrast), but they cannot substitute for native accessibility.
 
 ### 9.3 If a Widget Is Used as Supplement
 
@@ -1093,7 +1093,7 @@ Best practices to minimize legal exposure:
 | AccessiBe | AI-powered widget | Controversial in accessibility community |
 | Tabnav (tabnav.com) | Audit + Hebrew resources | Israeli-focused |
 
-### 13.2 Recommended Stack for Harmonia
+### 13.2 Recommended Stack for Lyriosa
 
 | Category | Tool | Reason |
 |----------|------|--------|
@@ -1124,7 +1124,7 @@ npm install --save-dev eslint-plugin-jsx-a11y
 ---
 
 **Cross-References:**  
-- SDD-COMPARE-Harmonia-vs-InfoCash.md — Section 6 (UX), Section 4 (W16 weakness in InfoCash)  
+- SDD-COMPARE-Lyriosa-vs-InfoCash.md — Section 6 (UX), Section 4 (W16 weakness in InfoCash)  
 - SDD-02 (Registration Wizard) — Section 7 of this document  
 - SDD-05 (Payment) — Modal dialogs (Section 6.4)  
 - SDD-15 (i18n) — RTL + Arabic language support (Section 5)  

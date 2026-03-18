@@ -10,7 +10,7 @@
 
 A music conservatorium is, at its core, a building full of professional musicians. Yet when someone needs musicians for a wedding, a corporate event, a bar mitzvah, or a memorial ceremony, they have no easy way to find them — and the teachers have no organized channel to offer their services professionally.
 
-This module creates a **two-sided marketplace** embedded within Harmonia:
+This module creates a **two-sided marketplace** embedded within Lyriosa:
 - **Supply side:** Conservatorium teachers (and optionally students at advanced levels) opt-in with profiles, repertoire videos, and availability
 - **Demand side:** Event organizers book a curated ensemble through a professional landing page, with pricing calculated automatically and the conservatorium handling all logistics and payment
 
@@ -54,7 +54,7 @@ The microsite is a Next.js app with its own routes, completely accessible withou
 ```typescript
 {
   id: string;
-  userId: string;                      // links to Teacher in Harmonia
+  userId: string;                      // links to Teacher in Lyriosa
   conservatoriumId: string;
   
   // Public Profile
@@ -337,7 +337,7 @@ Musicians are paid via their regular payroll (Module 03):
 
 For regional or national reach:
 
-If multiple conservatoriums join the Harmonia network, the marketplace becomes a **federated catalog**:
+If multiple conservatoriums join the Lyriosa network, the marketplace becomes a **federated catalog**:
 - Event organizers see all available musicians across all participating conservatoriums
 - Booking is routed to the conservatorium of the assigned musicians
 - A small network fee applies to cross-conservatorium bookings

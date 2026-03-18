@@ -1,5 +1,5 @@
 # SDD-P7: Persona Audit — Security Architect
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Security Architect (STRIDE Threat Model + Firebase Security)
 **Auditor Role:** Formal Security Auditor, Israeli Privacy Law Expert (PDPPA / חוק הגנת הפרטיות)
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-Harmonia stores some of the most sensitive data categories in Israeli civilian life: Israeli ID numbers (ת"ז) of minors and their parents, video and audio recordings of children during lessons, credit card payment histories, Ministry exam results, and scholarship application financial disclosures. A breach would not only be commercially catastrophic — it would violate the Israeli Protection of Privacy Law (חוק הגנת הפרטיות, 5741-1981), potentially triggering regulatory sanctions and civil liability.
+Lyriosa stores some of the most sensitive data categories in Israeli civilian life: Israeli ID numbers (ת"ז) of minors and their parents, video and audio recordings of children during lessons, credit card payment histories, Ministry exam results, and scholarship application financial disclosures. A breach would not only be commercially catastrophic — it would violate the Israeli Protection of Privacy Law (חוק הגנת הפרטיות, 5741-1981), potentially triggering regulatory sanctions and civil liability.
 
 The current prototype has **no security hardening whatsoever**. The single most alarming finding:
 

@@ -11,7 +11,7 @@
 
 ## 1. Executive Summary
 
-The Harmonia platform supports four locales — Hebrew (`he`), English (`en`), Arabic (`ar`), and Russian (`ru`) — via `next-intl`. The system's UI chrome (navigation labels, button text, form labels) switches correctly when a user changes language.
+The Lyriosa platform supports four locales — Hebrew (`he`), English (`en`), Arabic (`ar`), and Russian (`ru`) — via `next-intl`. The system's UI chrome (navigation labels, button text, form labels) switches correctly when a user changes language.
 
 However, **the content of public profiles does not switch**. Every piece of user-generated text — the conservatorium's "About Us" paragraph, manager biographies, department names, teacher bios, opening hours, branch names — is entered once, assumed to be in Hebrew, and displayed in Hebrew regardless of the active locale. A Russian-speaking parent viewing the About page sees the entire conservatorium description in Hebrew. An Arabic-speaking user on the Contact page sees Hebrew content inside an Arabic-layout UI — a jarring and exclusionary experience.
 
@@ -1298,7 +1298,7 @@ All structural labels in the About/Contact page components (not UGC, but UI labe
   "clearFilters": "Clear filters",
   "noResults": "No conservatoriums found",
   "heroTitle": "Find your conservatorium",
-  "heroSubtitle": "The Harmonia conservatorium network — professional music education for all ages"
+  "heroSubtitle": "The Lyriosa conservatorium network — professional music education for all ages"
 }
 ```
 

@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-**הַרמוֹנְיָה (Harmonia)** is a modern, web-based management system designed to streamline the administrative processes for music conservatoriums in Israel. It provides a centralized platform for students, teachers, and administrators to manage the submission, review, and approval of various musical performance forms, primarily focusing on recital and conference/event participation.
+**הַרמוֹנְיָה (Lyriosa)** is a modern, web-based management system designed to streamline the administrative processes for music conservatoriums in Israel. It provides a centralized platform for students, teachers, and administrators to manage the submission, review, and approval of various musical performance forms, primarily focusing on recital and conference/event participation.
 
 The system is built with a clear user role hierarchy, a structured workflow for form approvals, and intelligent features to enhance user experience, such as a searchable composition library and automated calculations.
 

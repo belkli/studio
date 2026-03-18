@@ -1,6 +1,6 @@
-# Harmonia E2E Test Suite
+# Lyriosa E2E Test Suite
 
-End-to-end tests for the Harmonia music conservatory platform using [Playwright](https://playwright.dev).
+End-to-end tests for the Lyriosa music conservatory platform using [Playwright](https://playwright.dev).
 
 ## Prerequisites
 

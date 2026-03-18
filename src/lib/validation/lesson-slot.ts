@@ -24,7 +24,7 @@ export const LessonSlotUpsertSchema = z.object({
   studentId: z.string().min(1),
   instrument: z.string().min(1),
   startTime: z.string(), // ISO Timestamp
-  durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+  durationMinutes: z.number().int().min(15).max(180),
   recurrenceId: z.string().optional(),
   type: LessonTypeSchema,
   bookingSource: BookingSourceSchema,

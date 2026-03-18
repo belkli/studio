@@ -27,7 +27,7 @@ export type AdminSection =
 export type TeacherAssignment = {
   teacherId: string;
   instrument: string;
-  lessonDurationMinutes: 30 | 45 | 60;
+  lessonDurationMinutes: number;
   dayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   startTime: string;
 };
@@ -491,7 +491,7 @@ export type User = {
     ar?: string;
   };
   availableForNewStudents?: boolean;
-  lessonDurationsOffered?: (30 | 45 | 60)[];
+  lessonDurationsOffered?: number[];
   specialties?: TeacherSpecialty[];
   teachingLanguages?: Language[];
   spokenLanguages?: Language[];
@@ -533,6 +533,11 @@ export type User = {
   preferredBrand?: BrandId;
   status?: 'active' | 'graduated' | 'inactive';
   graduationYear?: number;
+  // --- New fields (InfoCash competitive analysis) ---
+  secondGuardian?: { name: string; phone: string; email?: string; idNumber?: string };
+  phone2?: string;
+  ensembleIds?: string[];
+  theoryStudyYears?: number;
 };
 
 export type Conservatorium = {
@@ -584,6 +589,7 @@ export type Conservatorium = {
     ar?: string;
     ru?: string;
   };
+  allowedLessonDurations?: number[];
 };
 
 export type FormStatus = 'DRAFT' | 'PENDING_TEACHER' | 'PENDING_ADMIN' | 'APPROVED' | 'REJECTED' | 'REVISION_REQUIRED' | 'FINAL_APPROVED';
@@ -830,7 +836,7 @@ export type LessonSlot = {
   studentId: string;
   instrument: string;
   startTime: string; // ISO Timestamp
-  durationMinutes: 30 | 45 | 60;
+  durationMinutes: number;
   recurrenceId?: string;
   type: LessonType;
   bookingSource: 'STUDENT_SELF' | 'PARENT' | 'TEACHER' | 'ADMIN' | 'AUTO_MAKEUP';
@@ -2099,7 +2105,7 @@ export type LessonPackage = {
   names: { he: string; en: string; ru?: string; ar?: string };
   type: LessonPackageType;
   lessonCount: number | null;
-  durationMinutes: 30 | 45 | 60;
+  durationMinutes: number;
   priceILS: number;
   isActive: boolean;
   isPremium?: boolean;          // if true, only bookable with premium-flagged teachers

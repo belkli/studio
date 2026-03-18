@@ -1,5 +1,5 @@
 # Software Design Document — Chief Architect Review
-## Harmonia Music Conservatory Management Platform
+## Lyriosa Music Conservatory Management Platform
 
 **Persona:** Expert Software Architect  
 **Review Scope:** Application architecture, state management, data access patterns, scalability, code organization, dependency structure, bundle optimization, API design  
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Harmonia is a well-designed prototype that demonstrates strong domain modeling, comprehensive feature coverage, and thoughtful UI/UX. However, it has **15 architectural concerns** that, if not addressed before production integration, will create compounding technical debt. The most critical: a monolithic React Context holds the entire application state (a pattern that physically cannot scale to real Firestore data), heavy role-specific bundles are eagerly loaded for all users, the entire mock backend lives client-side creating impossible real-time requirements, and there is no layered service abstraction between UI components and data operations.
+Lyriosa is a well-designed prototype that demonstrates strong domain modeling, comprehensive feature coverage, and thoughtful UI/UX. However, it has **15 architectural concerns** that, if not addressed before production integration, will create compounding technical debt. The most critical: a monolithic React Context holds the entire application state (a pattern that physically cannot scale to real Firestore data), heavy role-specific bundles are eagerly loaded for all users, the entire mock backend lives client-side creating impossible real-time requirements, and there is no layered service abstraction between UI components and data operations.
 
 This document provides a concrete migration path that respects the current prototype's strengths while making it production-ready.
 
@@ -487,7 +487,7 @@ export function createPublicPageMetadata(
             title: t(`metadata.${key}.title`),
             description: t(`metadata.${key}.description`),
             url: `${canonicalBase}/${locale}`,
-            siteName: 'Harmonia',
+            siteName: 'Lyriosa',
             locale: locale,
             type: 'website',
         },
@@ -870,4 +870,4 @@ src/
 
 ---
 
-*Document prepared by: Chief Architect Persona — Harmonia Platform Review, March 2026*
+*Document prepared by: Chief Architect Persona — Lyriosa Platform Review, March 2026*

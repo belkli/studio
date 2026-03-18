@@ -399,7 +399,7 @@ git commit -m "feat: append 267 teachers and 12 website URL updates to seed.sql"
 
 **Agent prompt:**
 ```
-You are a legal analyst for Harmonia, an Israeli music conservatorium SaaS platform.
+You are a legal analyst for Lyriosa, an Israeli music conservatorium SaaS platform.
 
 Read all PDF files in docs/data/new/forms/ using the Playwright browser tool to screenshot and read them.
 Also read docs/LEGAL-READINESS.md, docs/contracts/MSA-TEMPLATE.md, and src/lib/types.ts.
@@ -419,7 +419,7 @@ Produce THREE markdown documents:
    - Note any conservatorium-specific pricing that must go in customRegistrationTerms addendum
 
 3. docs/legal/standard-registration-agreement-draft.md
-   - Hebrew-language unified enrollment contract for Harmonia
+   - Hebrew-language unified enrollment contract for Lyriosa
    - Must satisfy ALL critical/high items in docs/LEGAL-READINESS.md
    - Sections: Identity & Parental Consent, Data Processing (PDPPA),
      Lesson Package & Payment Terms (incl. 14-day cooling-off),
@@ -638,7 +638,7 @@ In `/privacy` page, add:
 **Sub-task B1.8 — Enrollment wizard contract signing step**
 
 In `enrollment-wizard.tsx`, add a new step "חוזה הרשמה" between the current last step and the submission step:
-1. Display standard Harmonia terms from `legal.json` (scrollable, `max-h-96 overflow-y-auto`)
+1. Display standard Lyriosa terms from `legal.json` (scrollable, `max-h-96 overflow-y-auto`)
 2. Display conservatorium addendum from `conservatorium.customRegistrationTerms[locale]` (if present)
 3. "קראתי ואני מסכים/ה לתנאים" checkbox (must be checked to proceed)
 4. `<SignatureCapture />` component (already exists at `src/components/ui/signature-capture.tsx`)

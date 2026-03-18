@@ -1,4 +1,4 @@
-# Harmonia — SDD Master Index
+# Lyriosa — SDD Master Index
 
 **Version:** 2.0 | **Status:** Ready for Development | **Stack:** Next.js · TypeScript · Firebase · shadcn/ui · Tailwind CSS (RTL) · Genkit AI
 
@@ -28,7 +28,7 @@
 | `SDD-16-Guidance-and-AI-Assistant.md` | In-app guidance & AI assistant |
 | `SDD-17-Scholarships-and-Donations.md` | Scholarships & donations module |
 | `SDD-ACCESS-IS5568-Accessibility.md` | Accessibility compliance (IS 5568) |
-| `SDD-COMPARE-Harmonia-vs-InfoCash.md` | Competitive analysis vs. InfoCash |
+| `SDD-COMPARE-Lyriosa-vs-InfoCash.md` | Competitive analysis vs. InfoCash |
 | `SDD-PS_Playing_School_Program.md` | Playing School program design |
 | `SDD-PS2_Playing_School_360_Integration_Gaps.md` | Playing School 360 integration gaps |
 

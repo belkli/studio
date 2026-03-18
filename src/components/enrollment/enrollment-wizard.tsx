@@ -45,6 +45,7 @@ const getParentSchema = (t: any) => z.object({
   parentEmail: z.string().email(t('validation.invalidEmail')),
   parentIdNumber: z.string().min(1, t('validation.idRequired')).refine(isValidIsraeliID, t('validation.invalidID')),
   parentPhone: z.string().min(9, t('validation.invalidPhone')),
+  parentPhone2: z.string().optional(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,6 +94,16 @@ const getFormSchema = (t: any) => z.object({
 
   firstLessonDate: z.date().optional(),
   firstLessonTime: z.string().optional(),
+
+  // Second guardian
+  secondGuardianName: z.string().optional(),
+  secondGuardianPhone: z.string().optional(),
+  secondGuardianEmail: z.union([z.string().email(), z.literal('')]).optional(),
+  secondGuardianIdNumber: z.string().optional(),
+  // Instrument rental intent
+  instrumentRentalIntent: z.enum(['own', 'rent_from_conservatorium', 'need_guidance']).optional(),
+  // Theory study years
+  theoryStudyYears: z.coerce.number().min(0).max(20).optional(),
 
 }).superRefine((data, ctx) => {
   if (data.registrationType === 'parent') {
@@ -309,6 +320,7 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
   const isRtl = locale === 'he' || locale === 'ar';
   const form = useFormContext<FormData>();
   const { toast } = useToast();
+  const [showSecondGuardianAdmin, setShowSecondGuardianAdmin] = useState(false);
   const registrationType = form.watch('registrationType');
   const { user, users, conservatoriums: authConservatoriums, conservatoriumInstruments, lessonPackages } = useAuth();
   const isSiteAdmin = user?.role === 'site_admin';
@@ -457,6 +469,21 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                 <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                 <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <FormField name="parentDetails.parentPhone2" render={({ field }) => (<FormItem> <FormLabel>{t('parent.phone2')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                <div className="pt-2">
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="showSecondGuardianAdmin" checked={showSecondGuardianAdmin} onCheckedChange={(v) => setShowSecondGuardianAdmin(Boolean(v))} />
+                    <label htmlFor="showSecondGuardianAdmin" className="text-sm cursor-pointer select-none">{t('parent.addSecondGuardian')}</label>
+                  </div>
+                  {showSecondGuardianAdmin && (
+                    <div className="space-y-4 mt-4">
+                      <FormField name="secondGuardianName" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                      <FormField name="secondGuardianPhone" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianPhone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                      <FormField name="secondGuardianEmail" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianEmail')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                      <FormField name="secondGuardianIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianIdNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -537,6 +564,35 @@ const AdminEnrollmentForm = ({ onSubmit }: { onSubmit: (data: FormData) => void 
                     {availablePackages.map((p) => <SelectItem key={p.id} value={p.id}>{p.names.he} - ₪{p.priceILS}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField name="instrumentRentalIntent" control={form.control} render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>{t('musical.rentalIntent')}</FormLabel>
+                <FormControl>
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-2" dir={isRtl ? 'rtl' : 'ltr'}>
+                    <FormItem className="flex items-center justify-start gap-2 rounded-md border p-3">
+                      <FormControl><RadioGroupItem value="own" /></FormControl>
+                      <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_own')}</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center justify-start gap-2 rounded-md border p-3">
+                      <FormControl><RadioGroupItem value="rent_from_conservatorium" /></FormControl>
+                      <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_rent')}</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center justify-start gap-2 rounded-md border p-3">
+                      <FormControl><RadioGroupItem value="need_guidance" /></FormControl>
+                      <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_guidance')}</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField name="theoryStudyYears" render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('musical.theoryYears')}</FormLabel>
+                <FormControl><Input type="number" min={0} max={20} dir="ltr" className="text-start" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
@@ -721,6 +777,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
   const [teacherMatches, setTeacherMatches] = useState<MatchTeacherOutput | null>(null);
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
   const [oauthPrefill, setOauthPrefill] = useState<OAuthProfile | null>(null);
+  const [showSecondGuardian, setShowSecondGuardian] = useState(false);
   const [consentDataProcessing, setConsentDataProcessing] = useState(false);
   const [consentTerms, setConsentTerms] = useState(false);
   const [consentMarketing, setConsentMarketing] = useState(false);
@@ -1239,7 +1296,7 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
         teacherId: data.teacherId,
         instrument: data.instrument,
         startTime: lessonStartTime.toISOString(),
-        durationMinutes: data.lessonDuration as 30 | 45 | 60,
+        durationMinutes: data.lessonDuration,
         type: 'ADHOC',
         bookingSource: isAdminFlow ? 'ADMIN' : (data.registrationType === 'parent' ? 'PARENT' : 'STUDENT_SELF'),
       });
@@ -1469,6 +1526,21 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                             <FormField name="parentDetails.parentEmail" render={({ field }) => (<FormItem> <FormLabel>{t('details.email')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} readOnly={isOauthRegistration} disabled={isOauthRegistration} /></FormControl> <FormMessage /> </FormItem>)} />
                             <FormField name="parentDetails.parentIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('details.idNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
                             <FormField name="parentDetails.parentPhone" render={({ field }) => (<FormItem> <FormLabel>{t('details.phone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                            <FormField name="parentDetails.parentPhone2" render={({ field }) => (<FormItem> <FormLabel>{t('parent.phone2')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                          </div>
+                          <div className="pt-2">
+                            <div className="flex items-center gap-2">
+                              <Checkbox id="showSecondGuardian" checked={showSecondGuardian} onCheckedChange={(v) => setShowSecondGuardian(Boolean(v))} />
+                              <label htmlFor="showSecondGuardian" className="text-sm cursor-pointer select-none">{t('parent.addSecondGuardian')}</label>
+                            </div>
+                            {showSecondGuardian && (
+                              <div className="grid grid-cols-2 gap-4 mt-4">
+                                <FormField name="secondGuardianName" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianName')}</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField name="secondGuardianPhone" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianPhone')}</FormLabel> <FormControl><Input type="tel" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField name="secondGuardianEmail" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianEmail')}</FormLabel> <FormControl><Input type="email" dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                                <FormField name="secondGuardianIdNumber" render={({ field }) => (<FormItem> <FormLabel>{t('parent.secondGuardianIdNumber')}</FormLabel> <FormControl><Input dir="ltr" className="text-start" {...field} /></FormControl> <FormMessage /> </FormItem>)} />
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="space-y-4">
@@ -1526,6 +1598,35 @@ export function EnrollmentWizard({ isAdminFlow = false, teacherIdFromQuery, cons
                       </FormItem>
                     )} />
                     <FormField name="lessonDuration" render={({ field }) => (<FormItem> <FormLabel>{t('musical.duration')}</FormLabel> <Select onValueChange={(v: string) => field.onChange(Number(v))} defaultValue={String(field.value)}> <FormControl><SelectTrigger><SelectValue placeholder={t('musical.durationPlaceholder')} /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="30">{t('musical.minutes', { min: 30 })}</SelectItem> <SelectItem value="45">{t('musical.minutes', { min: 45 })}</SelectItem> <SelectItem value="60">{t('musical.minutes', { min: 60 })}</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem>)} />
+                    <FormField name="instrumentRentalIntent" control={form.control} render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>{t('musical.rentalIntent')}</FormLabel>
+                        <FormControl>
+                          <RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col gap-2" dir={isRtl ? 'rtl' : 'ltr'}>
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-3">
+                              <FormControl><RadioGroupItem value="own" /></FormControl>
+                              <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_own')}</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-3">
+                              <FormControl><RadioGroupItem value="rent_from_conservatorium" /></FormControl>
+                              <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_rent')}</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex flex-row-reverse items-center gap-3 rounded-md border p-3">
+                              <FormControl><RadioGroupItem value="need_guidance" /></FormControl>
+                              <FormLabel className="font-normal flex-1 text-start">{t('musical.rentalIntent_guidance')}</FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField name="theoryStudyYears" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('musical.theoryYears')}</FormLabel>
+                        <FormControl><Input type="number" min={0} max={20} dir="ltr" className="text-start" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
                 )}
 

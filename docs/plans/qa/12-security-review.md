@@ -773,5 +773,5 @@ The following conditions **must all be met** before security sign-off for produc
 
 ---
 
-*Review prepared by Security Architect agent — Harmonia QA Plan v1.1, 2026-03-14.*
+*Review prepared by Security Architect agent — Lyriosa QA Plan v1.1, 2026-03-14.*
 *All findings are based on static analysis of the codebase and documentation. Dynamic testing against a live environment is required to confirm remediation.*

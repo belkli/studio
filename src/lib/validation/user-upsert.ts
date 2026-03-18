@@ -68,7 +68,7 @@ export const UserUpsertSchema = z.object({
     ar: z.string().optional(),
   }).optional(),
   availableForNewStudents: z.boolean().optional(),
-  lessonDurationsOffered: z.array(z.union([z.literal(30), z.literal(45), z.literal(60)])).optional(),
+  lessonDurationsOffered: z.array(z.number().int().min(15).max(180)).optional(),
   specialties: z.array(z.enum([
     'EXAM_PREP', 'EARLY_CHILDHOOD', 'PERFORMANCE', 'JAZZ',
     'THEORY', 'SPECIAL_NEEDS', 'BEGINNER_ADULTS', 'COMPETITION', 'ENSEMBLE',

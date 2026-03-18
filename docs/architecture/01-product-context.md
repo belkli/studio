@@ -2,7 +2,7 @@
 
 ## 1. Business Goals
 
-Harmonia targets **Israeli music conservatoriums** -- institutions that today operate through phone calls, WhatsApp messages, paper forms, and Excel spreadsheets.
+Lyriosa targets **Israeli music conservatoriums** -- institutions that today operate through phone calls, WhatsApp messages, paper forms, and Excel spreadsheets.
 
 | Goal | Metric |
 |------|--------|
@@ -137,7 +137,7 @@ The `/available-now` page lists open teacher slots for public browsing:
 
 ## 6. Competitive Positioning
 
-| Feature | My Music Staff | TeacherZone | iTalki | Preply | **Harmonia** |
+| Feature | My Music Staff | TeacherZone | iTalki | Preply | **Lyriosa** |
 |---------|---------------|-------------|--------|--------|-------------|
 | Hebrew / RTL | -- | -- | -- | -- | ✅ Native |
 | Arabic support | -- | -- | -- | -- | ✅ |

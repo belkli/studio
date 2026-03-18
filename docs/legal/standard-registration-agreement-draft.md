@@ -1,5 +1,5 @@
 # הסכם הרשמה סטנדרטי — הרמוניה
-## Standard Registration Agreement — Harmonia Platform
+## Standard Registration Agreement — Lyriosa Platform
 
 **גרסה:** 1.0
 **תאריך:** 2026-03-08
@@ -12,9 +12,9 @@
 
 ## English Summary
 
-This is a Hebrew-language enrollment agreement for use by Israeli music conservatoriums operating on the Harmonia platform. It follows a "Standard + Addendum" model: the standard clauses below apply to all conservatoriums, and each conservatorium may append its own special terms in Section 11.
+This is a Hebrew-language enrollment agreement for use by Israeli music conservatoriums operating on the Lyriosa platform. It follows a "Standard + Addendum" model: the standard clauses below apply to all conservatoriums, and each conservatorium may append its own special terms in Section 11.
 
-The agreement addresses four critical legal gaps identified in Harmonia's Legal Readiness Assessment:
+The agreement addresses four critical legal gaps identified in Lyriosa's Legal Readiness Assessment:
 1. **Parental consent differentiation** for minors (under 18): Section 3
 2. **Four separate consent checkboxes** (DATA_PROCESSING, TERMS, MARKETING, VIDEO_RECORDING): Section 7
 3. **14-day cooling-off period** per Consumer Protection Law Section 14ג: Section 5.3
@@ -356,7 +356,7 @@ High-priority gaps also addressed:
 
 ## סעיף 11 — נספח מיוחד של הקונסרבטוריון
 
-> **[English summary of Section 11]:** Per-conservatorium addendum. Each conservatorium fills in this section via the `customRegistrationTerms` field in the Harmonia admin panel. It overrides or supplements the standard terms where permitted.
+> **[English summary of Section 11]:** Per-conservatorium addendum. Each conservatorium fills in this section via the `customRegistrationTerms` field in the Lyriosa admin panel. It overrides or supplements the standard terms where permitted.
 
 **שם הקונסרבטוריון:** ___________________________________
 
@@ -407,7 +407,7 @@ High-priority gaps also addressed:
 
 ## סעיף 12 — חתימה
 
-> **[English summary of Section 12]:** Signature block. Digital signature captured via Harmonia's `signature-capture.tsx` component, creating a `SignatureAuditRecord` with SHA-256 hash, timestamp, IP address, and signer identity. For minors, the parent signs as legal guardian; the student's digital signature (if over 13) is optional secondary confirmation.
+> **[English summary of Section 12]:** Signature block. Digital signature captured via Lyriosa's `signature-capture.tsx` component, creating a `SignatureAuditRecord` with SHA-256 hash, timestamp, IP address, and signer identity. For minors, the parent signs as legal guardian; the student's digital signature (if over 13) is optional secondary confirmation.
 
 **אני/אנחנו הח"מ מצהירים כי:**
 

@@ -8,7 +8,7 @@
 
 ## 1. Overview & Rationale
 
-Most conservatorium management tools handle the business of music education. Harmonia also handles the *practice* of it. This module adds a lightweight but powerful learning management layer: practice logs, repertoire assignments, teacher notes, multimedia feedback, and progress tracking. This is what separates Harmonia from a mere scheduling tool and makes it the student's musical home.
+Most conservatorium management tools handle the business of music education. Lyriosa also handles the *practice* of it. This module adds a lightweight but powerful learning management layer: practice logs, repertoire assignments, teacher notes, multimedia feedback, and progress tracking. This is what separates Lyriosa from a mere scheduling tool and makes it the student's musical home.
 
 Inspiration: TeacherZone's practice logs + Seesaw's multimedia feedback, adapted for Israeli music education.
 

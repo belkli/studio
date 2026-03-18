@@ -126,7 +126,7 @@ The Givat'ayim pricing is the highest in the corpus, likely reflecting a private
 
 ### KF-2: VAT is Universally Absent
 
-**Not a single document in the corpus discloses VAT.** All prices are stated without indicating whether they are VAT-inclusive or VAT-exclusive. This is a systematic PDPPA/consumer protection gap across the sector. For Harmonia, this means all conservatoriums currently violate Section 1.2 of the Consumer Protection Law (price display requirements).
+**Not a single document in the corpus discloses VAT.** All prices are stated without indicating whether they are VAT-inclusive or VAT-exclusive. This is a systematic PDPPA/consumer protection gap across the sector. For Lyriosa, this means all conservatoriums currently violate Section 1.2 of the Consumer Protection Law (price display requirements).
 
 ### KF-3: No 14-Day Cooling-Off Period in Any Document
 
@@ -149,7 +149,7 @@ All documents mention scholarship/discount committees but none provides explicit
 - **Minimal (Beer Sheva, Herzliya):** Checkbox on registration form with implicit consent
 - **Absent (Bat Yam, Eshkol, Arava):** No mention of photo/video consent in bylaws
 
-This is a significant PDPPA gap. The `VIDEO_RECORDING` ConsentType in Harmonia's `types.ts` addresses this correctly, but needs to be wired to the UI with separate per-purpose consent.
+This is a significant PDPPA gap. The `VIDEO_RECORDING` ConsentType in Lyriosa's `types.ts` addresses this correctly, but needs to be wired to the UI with separate per-purpose consent.
 
 ### KF-7: Parent/Guardian Identity Collection Is Inconsistent
 
@@ -158,7 +158,7 @@ This is a significant PDPPA gap. The `VIDEO_RECORDING` ConsentType in Harmonia's
 - None differentiates consent for a minor vs. an adult self-enrollee
 - The "I declare I have read and agree" language is identical for both adults and parents registering children
 
-This is the most critical legal gap for Harmonia's parental consent differentiation requirement.
+This is the most critical legal gap for Lyriosa's parental consent differentiation requirement.
 
 ### KF-8: Herzliya Bylaws Have the Strongest Data Governance
 
@@ -184,7 +184,7 @@ The `1754911083.3447.pdf` (Akadema Ashdod) has the closest structure to a comple
 - Scholarship program reference
 - Parent signature with date and ID number
 
-This document is the best template reference for Harmonia's standard registration agreement.
+This document is the best template reference for Lyriosa's standard registration agreement.
 
 ---
 

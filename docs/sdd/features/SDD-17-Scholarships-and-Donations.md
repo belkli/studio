@@ -360,7 +360,7 @@ async function reportDonationToTaxAuthority(donation: Donation): Promise<string 
 1. Conservatorium must hold a valid Section 46 approval from the Tax Authority
 2. Register on the Tax Authority digital services portal as an authorized organization
 3. Generate API credentials via the Tax Authority portal
-4. Configure credentials in Harmonia admin settings at `/admin/settings/donations`
+4. Configure credentials in Lyriosa admin settings at `/admin/settings/donations`
 
 **Important:** For Section 46 tax credit eligibility, the donor's Israeli ID number (ת"ז) is required. Donations without an ID number are accepted normally but do not receive an allocation number and cannot be used for tax credit. The donation page clearly explains this distinction without making anonymous donors feel unwelcome.
 

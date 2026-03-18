@@ -468,7 +468,7 @@ Namespace: `AnnouncementComposer`
 
 ## UI/UX Pro Max Review (Main Session)
 
-**Design System Applied:** Data-Dense Dashboard · Harmonia palette · shadcn/ui
+**Design System Applied:** Data-Dense Dashboard · Lyriosa palette · shadcn/ui
 
 ### UX Quality Checklist
 

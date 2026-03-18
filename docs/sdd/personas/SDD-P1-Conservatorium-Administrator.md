@@ -1,5 +1,5 @@
 # SDD-P1: Persona Audit — Conservatorium Administrator
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Conservatorium Administrator (מנהל/ת קונסרבטוריון)
 **Auditor Role:** Senior Full-Stack Architect + Domain Expert
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-The Harmonia SDD documentation paints an ambitious and largely coherent picture of an administrator's command center. The architectural intent is strong: a real-time dashboard, automated billing, payroll generation, room management, and AI-assisted alerts. However, after auditing the actual prototype code against the SDD specifications, a significant gap exists between *what is documented* and *what is implemented*.
+The Lyriosa SDD documentation paints an ambitious and largely coherent picture of an administrator's command center. The architectural intent is strong: a real-time dashboard, automated billing, payroll generation, room management, and AI-assisted alerts. However, after auditing the actual prototype code against the SDD specifications, a significant gap exists between *what is documented* and *what is implemented*.
 
 **What Is Good:**
 - The `LessonSlot` and `Package` data models are well-structured and cover the core scheduling lifecycle.
@@ -20,10 +20,10 @@ The Harmonia SDD documentation paints an ambitious and largely coherent picture 
 
 **What Is Lacking or Thin:**
 - **Capacity Dashboard:** The SDD references a "Command Center" at `/admin` but the prototype contains no implementation of real-time aggregations. Firestore doesn't auto-aggregate — without Cloud Functions writing to summary documents, every admin page load would trigger expensive collection-group queries across potentially thousands of documents.
-- **Payroll Data Export:** Documented in SDD-03 Section 9 but zero implementation exists in the prototype. No Cloud Function, no payroll summary writer. Note: full salary calculation (tax deductions, ביטוח לאומי, etc.) is out of scope for Phase 1 — that responsibility sits with dedicated HR/payroll software (e.g., Hilan, Merav Digital). Harmonia's role is to produce a structured export of the raw attendance and compensation data that feeds those external systems.
+- **Payroll Data Export:** Documented in SDD-03 Section 9 but zero implementation exists in the prototype. No Cloud Function, no payroll summary writer. Note: full salary calculation (tax deductions, ביטוח לאומי, etc.) is out of scope for Phase 1 — that responsibility sits with dedicated HR/payroll software (e.g., Hilan, Merav Digital). Lyriosa's role is to produce a structured export of the raw attendance and compensation data that feeds those external systems.
 - **Instrument Inventory:** Not present in any SDD module or prototype code. High-value instrument checkout (Yamaha CP88, brass, orchestral strings) is a critical operational need for most conservatoriums and is completely absent.
 - **Complex Scheduling Matrix:** The SDD covers individual lesson booking well but is silent on: room double-booking prevention with real database-level locking, ensemble/group lesson scheduling, national holiday calendars (עלה of Israel), and academic year template generation.
-- **Teacher Payroll Data Export:** The SDD defines the distinction (`employmentType: 'EMPLOYEE' | 'FREELANCE'`) but Harmonia is not intended to be a payroll system. Israeli social employment calculations (ניכוי מס במקור, ביטוח לאומי, Bituach Leumi, health tax) are handled by dedicated external software — Hilan (hilan.co.il) and Merav Digital (meravdigital.co.il) are the market-standard tools. Harmonia's responsibility is to export a clean, structured data file (CSV/Excel) containing: employee identity, lesson records with timestamps, configured hourly rate, sick leave days, and events — everything the accounting department needs to feed into their HR system. A full in-house payroll engine may be considered for a later phase.
+- **Teacher Payroll Data Export:** The SDD defines the distinction (`employmentType: 'EMPLOYEE' | 'FREELANCE'`) but Lyriosa is not intended to be a payroll system. Israeli social employment calculations (ניכוי מס במקור, ביטוח לאומי, Bituach Leumi, health tax) are handled by dedicated external software — Hilan (hilan.co.il) and Merav Digital (meravdigital.co.il) are the market-standard tools. Lyriosa's responsibility is to export a clean, structured data file (CSV/Excel) containing: employee identity, lesson records with timestamps, configured hourly rate, sick leave days, and events — everything the accounting department needs to feed into their HR system. A full in-house payroll engine may be considered for a later phase.
 - **Makeup Credit Tracking:** The SDD correctly defines makeup credits but the audit trail across the `Package`, `LessonSlot`, and `MakeupCredit` collections is ambiguous — there is no explicit `MakeupCredit` collection defined, meaning credits are implicit in the package's `usedCredits` counter, which creates reconciliation nightmares.
 
 **What Is Redundant:**
@@ -66,16 +66,16 @@ The current model implies makeup credits are tracked via `Package.usedCredits` d
 ### Gap 4: Payroll Data Export for External HR Systems
 **Severity:** Medium (P1)
 
-Harmonia is **not** a payroll system. Israeli social employment obligations (ניכוי מס במקור, ביטוח לאומי, health tax) are handled by dedicated HR/payroll platforms — the Israeli market standard tools are **Hilan** (hilan.co.il) and **Merav Digital** (meravdigital.co.il). The accounting department owns this responsibility and already uses one of these systems.
+Lyriosa is **not** a payroll system. Israeli social employment obligations (ניכוי מס במקור, ביטוח לאומי, health tax) are handled by dedicated HR/payroll platforms — the Israeli market standard tools are **Hilan** (hilan.co.il) and **Merav Digital** (meravdigital.co.il). The accounting department owns this responsibility and already uses one of these systems.
 
-What Harmonia must provide is a clean, structured **payroll data export** that the accounting department can import into their system of record without any manual rekeying. The export must contain:
+What Lyriosa must provide is a clean, structured **payroll data export** that the accounting department can import into their system of record without any manual rekeying. The export must contain:
 - Employee name, ID, and employment type (employee vs. freelance)
 - Per-lesson records: date, duration (minutes), student, hourly/per-lesson rate (as configured per teacher by the cost admin)
 - Sick leave dates and affected lesson count
 - Events attended with applicable rates
 - Gross compensation total for the period
 
-Payment transparency for teachers (viewing their own earnings breakdown) also remains in the external HR system for Phase 1. A future phase may consider integrating a full payroll module within Harmonia if there is sufficient demand.
+Payment transparency for teachers (viewing their own earnings breakdown) also remains in the external HR system for Phase 1. A future phase may consider integrating a full payroll module within Lyriosa if there is sufficient demand.
 
 ---
 
@@ -345,7 +345,7 @@ function formatSlotKey(ts: Timestamp): string {
 
 ### 3.5 Payroll Data Export for External HR Systems
 
-Harmonia produces a structured export file that the accounting department imports into their HR/payroll platform (Hilan, Merav Digital, or equivalent). No tax calculations happen inside Harmonia.
+Lyriosa produces a structured export file that the accounting department imports into their HR/payroll platform (Hilan, Merav Digital, or equivalent). No tax calculations happen inside Lyriosa.
 
 **Admin UI:** `/admin/payroll` — at the end of each month, admin reviews the draft and clicks **ייצא לגיליון** to download the export file.
 
@@ -377,7 +377,7 @@ interface TeacherCompensation {
 // src/lib/payroll/export.ts
 export interface PayrollExportRow {
   // Identity
-  employeeId: string;              // Harmonia teacher ID
+  employeeId: string;              // Lyriosa teacher ID
   employeeName: string;
   idNumber?: string;               // ת"ז — if stored; HR system needs this
   employmentType: 'EMPLOYEE' | 'FREELANCE';
@@ -496,7 +496,7 @@ export async function generatePayrollExport(
 }
 ```
 
-**The accounting department receives this file and imports it directly into Hilan or Merav Digital.** No further processing is required inside Harmonia.
+**The accounting department receives this file and imports it directly into Hilan or Merav Digital.** No further processing is required inside Lyriosa.
 
 > **Future Phase:** If demand warrants, a full in-house payroll module with Israeli tax bracket calculations, ביטוח לאומי contributions, and Hilan/Merav API integration (direct push without file export) can be added as a premium module.
 
@@ -662,4 +662,4 @@ DRAFT → UNDER_REVIEW → APPROVED → PAID → ARCHIVED
 | Multi-Branch Support | ❌ Not documented | ❌ Missing | P2 |
 | Annual Tax Reporting | ❌ Not documented | ❌ Missing | P2 |
 
-**Bottom Line:** The administrator experience is the strongest conceptually-documented area of Harmonia, but it has the widest gap between documentation and implementation. The critical path to a functional admin experience requires: (1) the real-time stats aggregation layer, (2) the makeup credit collection, (3) transactional room booking, and (4) the academic year slot generator. Without these four items, the system cannot safely operate even a small conservatorium. Full payroll calculation (tax, ביטוח לאומי) remains intentionally delegated to Hilan/Merav Digital for Phase 1; Harmonia's payroll responsibility is producing a clean data export for those systems.
+**Bottom Line:** The administrator experience is the strongest conceptually-documented area of Lyriosa, but it has the widest gap between documentation and implementation. The critical path to a functional admin experience requires: (1) the real-time stats aggregation layer, (2) the makeup credit collection, (3) transactional room booking, and (4) the academic year slot generator. Without these four items, the system cannot safely operate even a small conservatorium. Full payroll calculation (tax, ביטוח לאומי) remains intentionally delegated to Hilan/Merav Digital for Phase 1; Lyriosa's payroll responsibility is producing a clean data export for those systems.

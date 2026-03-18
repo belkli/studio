@@ -1,5 +1,5 @@
 # SDD-P6: Persona Audit — QA Expert
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Senior QA Engineer / Test Architect
 **Auditor Role:** Edge Case Hunter, Race Condition Analyst, Policy Loophole Finder
 **Version:** 1.0 | **Date:** 2026-02-25
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-A QA review of Harmonia reveals a system with well-intentioned business rules and an implementation that is currently incapable of enforcing any of them. The prototype runs entirely on in-memory mock data — meaning every "test" of the system is a simulation against fabricated state that resets on page reload. There is no test suite, no integration tests, no end-to-end tests, and no data validation layer.
+A QA review of Lyriosa reveals a system with well-intentioned business rules and an implementation that is currently incapable of enforcing any of them. The prototype runs entirely on in-memory mock data — meaning every "test" of the system is a simulation against fabricated state that resets on page reload. There is no test suite, no integration tests, no end-to-end tests, and no data validation layer.
 
 More critically, the transition from mock data to Firebase will surface a class of bugs that mock data can never catch: race conditions, concurrent booking conflicts, webhook delivery failures, eventual consistency issues, and policy enforcement gaps.
 

@@ -1495,7 +1495,7 @@
 
 **Steps:**
 1. Navigate to `/dashboard/settings/conservatorium`.
-2. Toggle the "Enable Harmonia system" switch.
+2. Toggle the "Enable Lyriosa system" switch.
 
 **Expected results:**
 - Toast appears: "features enabled/disabled".

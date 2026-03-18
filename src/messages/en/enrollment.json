@@ -55,6 +55,14 @@
       "password": "Password",
       "oauthEmailReadonly": "Email is provided by your social account and cannot be changed here."
     },
+    "parent": {
+      "phone2": "Secondary Phone",
+      "addSecondGuardian": "Add second guardian",
+      "secondGuardianName": "Second guardian name",
+      "secondGuardianPhone": "Second guardian phone",
+      "secondGuardianEmail": "Second guardian email",
+      "secondGuardianIdNumber": "Second guardian ID number"
+    },
     "musical": {
       "title": "Musical Information",
       "instrument": "Instrument",
@@ -79,7 +87,12 @@
       "experiencePlaceholder": "Share background and experience",
       "duration": "Lesson duration",
       "durationPlaceholder": "Select lesson duration",
-      "minutes": "{min} minutes"
+      "minutes": "{min} minutes",
+      "rentalIntent": "Instrument rental preference",
+      "rentalIntent_own": "I have my own instrument",
+      "rentalIntent_rent": "Rent from the conservatorium",
+      "rentalIntent_guidance": "I need guidance",
+      "theoryYears": "Prior theory study years"
     },
     "schedule": {
       "days": "Available days",

@@ -1,6 +1,6 @@
 # Full Visual Audit — Screenshot All Screens
 
-This Playwright test suite navigates every route in the Harmonia application,
+This Playwright test suite navigates every route in the Lyriosa application,
 clicks through all major tabs, and captures full-page screenshots for visual QA.
 
 ---

@@ -1,8 +1,8 @@
-# Harmonia Demo Access Strategy
+# Lyriosa Demo Access Strategy
 
 > Last updated: 2026-03-06
 
-This document describes how to give conservatorium administrators access to a live demo of Harmonia **without** making the application publicly available. The goal is to allow invited admins to explore the system with realistic data before committing to a rollout.
+This document describes how to give conservatorium administrators access to a live demo of Lyriosa **without** making the application publicly available. The goal is to allow invited admins to explore the system with realistic data before committing to a rollout.
 
 ---
 
@@ -73,7 +73,7 @@ Option C is recommended because:
    - Check if `?invite=<token>` is in the URL
    - If present, validate against `DEMO_TOKENS` env var, set a `demo-access` cookie, and continue
    - If not present, redirect to `/demo-gate` page
-4. The demo gate page shows "Harmonia Demo Access" with a token input field
+4. The demo gate page shows "Lyriosa Demo Access" with a token input field
 5. On submit, the gate validates the token via a server action, sets the cookie, and redirects to the dashboard
 6. Subsequent visits skip the gate (cookie is present and valid)
 
@@ -235,7 +235,7 @@ export default function DemoGatePage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-white">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Harmonia Demo Access</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Lyriosa Demo Access</h1>
           <p className="mt-2 text-sm text-gray-600">
             Enter the invite token you received to access the demo environment.
           </p>
@@ -274,7 +274,7 @@ export default function DemoGatePage() {
         </form>
 
         <p className="mt-6 text-center text-xs text-gray-400">
-          Contact your Harmonia representative if you need an invite token.
+          Contact your Lyriosa representative if you need an invite token.
         </p>
       </div>
     </div>
@@ -396,11 +396,11 @@ node -e "console.log(require('crypto').randomBytes(3).toString('hex'))"
 Compose personalised invite emails:
 
 ```
-Subject: Harmonia Demo Access — {Conservatorium Name}
+Subject: Lyriosa Demo Access — {Conservatorium Name}
 
 Dear {Admin Name},
 
-You're invited to explore Harmonia, the music conservatorium management platform.
+You're invited to explore Lyriosa, the music conservatorium management platform.
 
 Access the demo at:
 https://harmonia-staging.web.app?invite={token}
@@ -411,7 +411,7 @@ site administrator with full access to all features.
 If you have questions, reply to this email.
 
 Best regards,
-Harmonia Team
+Lyriosa Team
 ```
 
 ### Revoking Access

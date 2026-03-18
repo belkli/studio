@@ -12,9 +12,7 @@ export const BookingRequestSchema = z.object({
     studentId: z.string().min(1, 'Student ID is required'),
     conservatoriumId: z.string().min(1, 'Conservatorium ID is required'),
     startTime: z.string().datetime({ message: 'Invalid ISO datetime for startTime' }),
-    durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)], {
-        error: 'Duration must be 30, 45, or 60 minutes'
-    }),
+    durationMinutes: z.number().int().min(15, 'Duration must be at least 15 minutes').max(180, 'Duration must not exceed 180 minutes'),
     roomId: z.string().optional(),
     packageId: z.string().optional(),
     isVirtual: z.boolean().default(false),
@@ -31,7 +29,7 @@ export const MakeupBookingRequestSchema = z.object({
     makeupCreditId: z.string().min(1, 'Makeup credit ID is required'),
     teacherId: z.string().min(1),
     startTime: z.string().datetime(),
-    durationMinutes: z.union([z.literal(30), z.literal(45), z.literal(60)]),
+    durationMinutes: z.number().int().min(15).max(180),
     roomId: z.string().optional(),
 });
 

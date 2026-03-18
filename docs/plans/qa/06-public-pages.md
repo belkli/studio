@@ -505,7 +505,7 @@
 **Preconditions:** None.
 **Steps:**
 1. Navigate to `/en`.
-2. Assert `document.title` equals `"Harmonia - Music for Every Child"`.
+2. Assert `document.title` equals `"Lyriosa - Music for Every Child"`.
 3. Assert `meta[name="description"]` content is non-empty.
 
 **Expected results:** SEO-critical meta tags present.
@@ -1147,7 +1147,7 @@
 1. Navigate to `/try`.
 2. Assert HTTP status not 404/500.
 3. Assert trial booking widget or its first step is visible.
-4. Assert "Harmonia" logo/link in header visible.
+4. Assert "Lyriosa" logo/link in header visible.
 
 **Expected results:** Page renders trial booking flow.
 **Locales:** All 4.

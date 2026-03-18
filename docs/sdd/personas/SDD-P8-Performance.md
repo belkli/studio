@@ -1,5 +1,5 @@
 # SDD-P8: Persona Audit — Performance Specialist
-**Harmonia 360° Architecture Audit**
+**Lyriosa 360° Architecture Audit**
 **Persona:** Performance Engineer / Site Reliability Specialist
 **Auditor Role:** Firebase Optimization Expert, Media Pipeline Architect
 **Version:** 1.0 | **Date:** 2026-02-25

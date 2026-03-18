@@ -10,7 +10,7 @@
 
 ## 1. Executive Summary
 
-A full automated + manual audit of the Harmonia codebase found **1,903 hardcoded Hebrew string occurrences** across **156 source files**. The root causes fall into six distinct categories, each requiring a different fix pattern. The existing message infrastructure (`next-intl`, four locale JSON files) is sound — all top-level namespace keys already exist in all four locales — so the work is exclusively replacing hardcoded strings with `t()` calls and adding the corresponding keys to the locale files.
+A full automated + manual audit of the Lyriosa codebase found **1,903 hardcoded Hebrew string occurrences** across **156 source files**. The root causes fall into six distinct categories, each requiring a different fix pattern. The existing message infrastructure (`next-intl`, four locale JSON files) is sound — all top-level namespace keys already exist in all four locales — so the work is exclusively replacing hardcoded strings with `t()` calls and adding the corresponding keys to the locale files.
 
 ### Screenshot Evidence of Issues
 
@@ -221,7 +221,7 @@ Covers `src/app/[locale]/about/page.tsx` and its inline dialogs.
   "AboutPage": {
     "heroTitle": "Find Your Conservatory",
     "heroBadge": "{count} conservatories",
-    "heroSubtitle": "The Harmonia conservatory network — professional music education for all ages, across the country.",
+    "heroSubtitle": "The Lyriosa conservatory network — professional music education for all ages, across the country.",
     "searchPlaceholder": "Search by city, conservatory name...",
     "sortByCity": "Sort by city...",
     "locating": "Locating...",
@@ -613,7 +613,7 @@ Covers `notification-preferences.tsx`:
 {
   "AgeUpgradeModal": {
     "title": "{name} is turning 13!",
-    "desc": "You can now invite {name} to independently manage their Harmonia account.",
+    "desc": "You can now invite {name} to independently manage their Lyriosa account.",
     "benefitsDesc": "They will be able to view the schedule, log practice, and communicate with their teacher. You will continue to manage billing and payments.",
     "manageLater": "I'll manage for them for now",
     "inviteNow": "Invite Now",
@@ -637,7 +637,7 @@ Covers `notification-preferences.tsx`:
     "addException": "Add Exception",
     "student": "Student",
     "externalCalendarTitle": "External Calendar Sync",
-    "externalCalendarDesc": "Connect your Google or Apple calendar to automatically block times when you're unavailable and show Harmonia lessons in your personal calendar.",
+    "externalCalendarDesc": "Connect your Google or Apple calendar to automatically block times when you're unavailable and show Lyriosa lessons in your personal calendar.",
     "connectCalendar": "Connect Calendar",
     "saveChanges": "Save Changes",
     "savedToast": "Availability saved successfully"
@@ -804,7 +804,7 @@ Covers `app/[locale]/dashboard/ai/page.tsx`:
 ```json
 {
   "Ministry": {
-    "portalTitle": "Ministry of Education Portal – Harmonia",
+    "portalTitle": "Ministry of Education Portal – Lyriosa",
     "portalSubtitle": "Manage and approve requests, recitals, scholarships and grade exams submitted by conservatories.",
     "dashboardTitle": "Ministry of Education Dashboard",
     "dashboardSubtitle": "View and final-approve forms approved by conservatories.",

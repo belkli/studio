@@ -11,11 +11,11 @@
 
 ### What We Are Doing
 
-Rebranding the platform from **Harmonia** to **Lyriosa** across all user-visible surfaces, with two visual identity candidates for public-facing pages (A/B tested via server-side toggle), while the dashboard remains locked to Candidate A.
+Rebranding the platform from **Lyriosa** to **Lyriosa** across all user-visible surfaces, with two visual identity candidates for public-facing pages (A/B tested via server-side toggle), while the dashboard remains locked to Candidate A.
 
 | Locale | Old Brand | New Brand |
 |--------|-----------|-----------|
-| en | Harmonia | Lyriosa |
+| en | Lyriosa | Lyriosa |
 | he | הַרמוֹנְיָה | ליריוסה |
 | ar | هارمونيا | ليريوسا |
 | ru | Гармония | Лириоса |
@@ -292,7 +292,7 @@ All hardcoded brand strings in source code must import from this file instead of
 
 **Total: ~105+ individual key-value pair updates across 25 files.**
 
-**Known bug:** Arabic locale (`ar/student.json:471`, `ar/common.json:954,957,1002`) uses Latin "Harmonia" instead of Arabic script. Must be corrected to "ليريوسا" during the rename.
+**Known bug:** Arabic locale (`ar/student.json:471`, `ar/common.json:954,957,1002`) uses Latin "Lyriosa" instead of Arabic script. Must be corrected to "ليريوسا" during the rename.
 
 ### 6.3 Source Code Hardcoded Strings
 
@@ -300,16 +300,16 @@ All hardcoded brand strings in source code must import from this file instead of
 
 | File | References |
 |------|-----------|
-| `src/app/[locale]/layout.tsx` | Fallback `'Harmonia'` in catch block |
+| `src/app/[locale]/layout.tsx` | Fallback `'Lyriosa'` in catch block |
 | `src/app/[locale]/page.tsx` | `generateMetadata()`: title, OG title, OG image path, canonical URLs. **Note:** `generateMetadata()` is not locale-aware — should either be removed (deferring to `layout.tsx`) or updated to use `params.locale` |
 | `src/app/[locale]/about/[slug]/page.tsx` | Fallback URL, description text |
-| `src/app/[locale]/error.tsx` | Console log `[Harmonia Error]` |
+| `src/app/[locale]/error.tsx` | Console log `[Lyriosa Error]` |
 | `src/app/robots.ts` | Sitemap URL |
 | `src/app/sitemap.ts` | Base URL |
 | `src/app/api/invoice-pdf/[invoiceId]/route.ts` | PDF footer: brand name + email |
 | `src/app/api/ps/qr/route.ts` | QR code base URL. **Note:** Uses `NEXT_PUBLIC_APP_URL` — should be aligned with `BRAND_DOMAIN` from `brand.ts` |
-| `src/ai/flows/help-assistant-flow.ts` | AI prompt: "Harmonia", "Harmony" |
-| `src/ai/flows/nurture-lead-flow.ts` | AI prompt: "Harmonia" |
+| `src/ai/flows/help-assistant-flow.ts` | AI prompt: "Lyriosa", "Harmony" |
+| `src/ai/flows/nurture-lead-flow.ts` | AI prompt: "Lyriosa" |
 | `src/lib/notifications/payment-notifications.ts` | Email sender name |
 | `src/lib/db/adapters/supabase.ts` | Fallback conservatorium name |
 | `src/lib/db/adapters/postgres.ts` | Fallback conservatorium name |
@@ -334,7 +334,7 @@ Since there are no existing users, all infrastructure identifiers are renamed di
 | `harmonia.help.*` | `lyriosa.help.*` | `ai-help-assistant.tsx` |
 | `harmonia-walkthrough-seen` | `lyriosa-walkthrough-seen` | E2E tests only |
 | `harmonia-private` (Supabase bucket) | `lyriosa-private` | `storage.ts` |
-| `HarmoniaClaims` (TypeScript) | `LyriosaClaims` | `auth-utils.ts` |
+| `LyriosaClaims` (TypeScript) | `LyriosaClaims` | `auth-utils.ts` |
 | `dev@harmonia.local` | `dev@lyriosa.local` | `proxy.ts`, `auth-utils.ts` |
 | `admin@harmonia.dev` | `admin@lyriosa.dev` | E2E test files |
 | `noreply@harmonia.co.il` | `noreply@lyriosa.co.il` | `payment-notifications.ts` |
@@ -407,7 +407,7 @@ Replace all hardcoded brand strings with imports from `brand.ts`.
 | 4.4 | Update logo in `icons.tsx` with theme-aware component | `src/components/icons.tsx` |
 | 4.5 | Update `data.ts` mock conservatorium URLs | `src/lib/data.ts` |
 
-**Checkpoint:** Grep for "Harmonia" in source code returns zero hits outside `CLAUDE.md` / docs.
+**Checkpoint:** Grep for "Lyriosa" in source code returns zero hits outside `CLAUDE.md` / docs.
 
 ### Phase 5: Translation JSON
 
@@ -422,9 +422,9 @@ Update all 25 translation files across 4 locales.
 | 5.5 | Update `student.json` (all 4 locales) | 4 files |
 | 5.6 | Update `settings.json` (all 4 locales) | 4 files |
 | 5.7 | Update `billing.json` (he only -- other locales have no brand strings) | 1 file |
-| 5.8 | Fix Arabic locale inconsistencies (Latin "Harmonia" in Arabic text) | `ar/student.json`, `ar/common.json` |
+| 5.8 | Fix Arabic locale inconsistencies (Latin "Lyriosa" in Arabic text) | `ar/student.json`, `ar/common.json` |
 
-**Checkpoint:** `grep -r "Harmonia\|הרמוניה\|هارمونيا\|Гармония" src/messages/` returns zero hits.
+**Checkpoint:** `grep -r "Lyriosa\|הרמוניה\|هارمونيا\|Гармония" src/messages/` returns zero hits.
 
 ### Phase 6: Component Theming
 
@@ -484,7 +484,7 @@ Each cell requires: landing page renders, correct fonts load, correct colors app
 
 ### 8.2 Existing Tests That Will Break (~20 Files)
 
-> **Note:** This list covers the known cases. The Phase 7 grep checkpoint (`grep -r "harmonia\|Harmonia" tests/ e2e/`) will catch any remaining files not listed here.
+> **Note:** This list covers the known cases. The Phase 7 grep checkpoint (`grep -r "harmonia\|Lyriosa" tests/ e2e/`) will catch any remaining files not listed here.
 
 **Vitest (4 files):**
 
@@ -499,7 +499,7 @@ Each cell requires: landing page renders, correct fonts load, correct colors app
 
 | File | What Breaks | Fix |
 |------|------------|-----|
-| `e2e/flows/auth.spec.ts` | `a:has-text("Harmonia")` selector, `admin@harmonia.local` | Update brand text, email |
+| `e2e/flows/auth.spec.ts` | `a:has-text("Lyriosa")` selector, `admin@harmonia.local` | Update brand text, email |
 | `e2e/flows/announcements.spec.ts` | `admin@harmonia.dev`, `harmonia-user` localStorage | Replace identifiers |
 | `e2e/flows/consent-banner.spec.ts` | `harmonia_cookie_consent` key | Replace key |
 | `e2e/security/tenant-isolation.spec.ts` | Multiple `harmonia-user`, `dev@harmonia.local` | Replace all |
@@ -544,8 +544,8 @@ For each of the 8 theme+locale combinations:
 12. `/about` loads conservatorium list
 13. `/contact` loads
 14. `/help` shows updated help center title with "Lyria" AI name
-15. Register flow: contract step shows "Lyriosa" (not "Harmonia")
-16. Dashboard: no "Harmonia" text visible in UI
+15. Register flow: contract step shows "Lyriosa" (not "Lyriosa")
+16. Dashboard: no "Lyriosa" text visible in UI
 17. Book lesson flow: teacher select -> date -> confirm works
 18. Billing: currency shows symbol not "ILS"
 19. Settings: DSAR section visible
@@ -582,18 +582,18 @@ For each of the 8 theme+locale combinations:
 
 | # | Risk | Likelihood | Impact | Mitigation |
 |---|------|-----------|--------|------------|
-| R1 | Residual "Harmonia" in edge-case translation strings | High | Medium | Automated grep test in CI; fail build if found |
+| R1 | Residual "Lyriosa" in edge-case translation strings | High | Medium | Automated grep test in CI; fail build if found |
 | R2 | Arabic locale mixed Latin/Arabic brand references | Known | Medium | Fix all Arabic files; grep scan catches this |
 | R3 | Candidate B fonts fail for Hebrew/Arabic subsets | Medium | High | Test Heebo Hebrew, verify Arabic coverage in Plus Jakarta Sans; fallback chain in CSS |
 | R4 | Candidate B color contrast fails WCAG AA | Medium | High | Run axe-core on all pages pre-launch; known risk with muted text on light bg |
 | R5 | Font loading adds >200ms to FCP | Medium | Medium | All fonts use `display: 'swap'`; measure with Lighthouse; budget 500KB total |
 | R6 | Dashboard CSS leaks from Candidate B | Medium | High | `data-theme="a"` forced on dashboard wrapper; dedicated isolation test |
 | R7 | OG image not created/deployed | Low | Medium | Checklist item; CI check for file existence |
-| R8 | AI prompts still reference "Harmonia"/"Harmony" | Medium | Low | Covered by source code grep scan |
-| R9 | Invoice PDF still says "Harmonia" | Medium | Medium | Hardcoded string in route handler; covered in Phase 4 |
+| R8 | AI prompts still reference "Lyriosa"/"Harmony" | Medium | Low | Covered by source code grep scan |
+| R9 | Invoice PDF still says "Lyriosa" | Medium | Medium | Hardcoded string in route handler; covered in Phase 4 |
 | R10 | Supabase bucket rename fails | Low | Critical | Greenfield -- create new bucket directly, no rename needed |
 | R11 | Dev server memory crash under parallel visual regression | Known | Medium | Run with `--workers=1` as per project convention |
-| R12 | Email sender name still shows "Harmonia" | Medium | Medium | Covered in Phase 4; also requires SendGrid/email provider config update |
+| R12 | Email sender name still shows "Lyriosa" | Medium | Medium | Covered in Phase 4; also requires SendGrid/email provider config update |
 | R13 | SEO ranking drop after domain change | Medium | Medium | 301 redirects, 12-month `harmonia.co.il` redirect maintenance, Google Search Console change-of-address |
 | R14 | Invalid `NEXT_PUBLIC_LANDING_THEME` value crashes app | Low | High | `getActiveTheme()` defaults to 'a' for any non-'b' value |
 | R15 | next/font/google loads all 4 fonts on every page (performance) | Known | Low | Acceptable tradeoff for instant theme switching; fonts are cached by browser |

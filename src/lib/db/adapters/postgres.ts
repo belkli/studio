@@ -64,6 +64,10 @@ type RawUser = {
   instrument_ids: unknown;
   teacher_rating_avg: number | null;
   teacher_rating_count: number | null;
+  second_guardian: unknown;
+  phone2: string | null;
+  ensemble_ids: unknown;
+  theory_study_years: number | null;
 };
 
 type RawLesson = {
@@ -482,11 +486,8 @@ function mapEventStatus(status: string): EventProduction['status'] {
   return 'OPEN_REGISTRATION';
 }
 
-function toDuration(value: number): 30 | 45 | 60 {
-  if (value === 30 || value === 45 || value === 60) {
-    return value;
-  }
-  return 45;
+function toDuration(value: number): number {
+  return value > 0 ? value : 45;
 }
 
 function mapConservatoriums(rows: RawConservatorium[]): {
@@ -647,6 +648,10 @@ function mapConservatoriums(rows: RawConservatorium[]): {
         typeof (description as Record<string, unknown>).newFeaturesEnabled === 'boolean'
           ? ((description as Record<string, unknown>).newFeaturesEnabled as boolean)
           : true,
+      allowedLessonDurations: (() => {
+        const raw = (description as Record<string, unknown>).allowedLessonDurations;
+        return Array.isArray(raw) ? raw.filter((v): v is number => typeof v === 'number' && v > 0) : undefined;
+      })(),
       translations,
     };
 
@@ -666,7 +671,7 @@ function mapUsers(rows: RawUser[], idMap: Map<string, string>, nameMap: Map<stri
     const mappedRole = mapRole(row.role);
     const bio = parseJsonObject(row.bio_json);
     const lessonDurations = parseNumberArray(row.lesson_durations)
-      .filter((value) => value === 30 || value === 45 || value === 60) as Array<30 | 45 | 60>;
+      .filter((value) => value > 0);
     const instrumentIds = parseStringArray(row.instrument_ids);
     const displayName = row.first_name + ' ' + row.last_name;
     const conservatoriumId = row.conservatorium_id
@@ -717,6 +722,13 @@ function mapUsers(rows: RawUser[], idMap: Map<string, string>, nameMap: Map<stri
       },
       isDelegatedAdmin: row.role === 'DELEGATED_ADMIN',
       isPrimaryConservatoriumAdmin: row.role === 'CONSERVATORIUM_ADMIN',
+      secondGuardian: (() => {
+        const sg = parseJsonObject(row.second_guardian);
+        return sg.name && sg.phone ? { name: String(sg.name), phone: String(sg.phone), email: sg.email ? String(sg.email) : undefined, idNumber: sg.idNumber ? String(sg.idNumber) : undefined } : undefined;
+      })(),
+      phone2: row.phone2 ?? undefined,
+      ensembleIds: parseStringArray(row.ensemble_ids).length ? parseStringArray(row.ensemble_ids) : undefined,
+      theoryStudyYears: typeof row.theory_study_years === 'number' ? row.theory_study_years : undefined,
     };
   });
 }

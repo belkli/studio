@@ -385,7 +385,7 @@ The success screen (currently `setSubmitted(true)`) must show:
 
 ### 5.1 Problem Statement
 
-SDD-PS §6.4 mentions that "student account is auto-created when parent registers and pays," but no implementation specification exists. Without account creation, the student has no Harmonia identity, cannot appear in the teacher's attendance list, cannot receive group lesson notes, and cannot transition to the excellence track.
+SDD-PS §6.4 mentions that "student account is auto-created when parent registers and pays," but no implementation specification exists. Without account creation, the student has no Lyriosa identity, cannot appear in the teacher's attendance list, cannot receive group lesson notes, and cannot transition to the excellence track.
 
 ### 5.2 Auto-Creation Logic
 

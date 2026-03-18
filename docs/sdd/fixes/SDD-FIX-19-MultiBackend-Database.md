@@ -159,7 +159,7 @@ Each conservatorium's data is **row-level** isolated (not schema-per-tenant). A 
 
 ```sql
 -- ============================================================
--- Harmonia Platform — PostgreSQL Schema
+-- Lyriosa Platform — PostgreSQL Schema
 -- Run: psql -U harmonia -d harmonia_dev -f scripts/db/schema.sql
 -- ============================================================
 

@@ -113,8 +113,8 @@ One-off changes layered on top of the template:
 ### 3.3 Two-Way Calendar Sync
 
 - Teacher can connect Google Calendar or Apple iCal
-- **Import direction:** Events from personal calendar mark those times as unavailable in Harmonia automatically
-- **Export direction:** All confirmed Harmonia lessons appear in the personal calendar
+- **Import direction:** Events from personal calendar mark those times as unavailable in Lyriosa automatically
+- **Export direction:** All confirmed Lyriosa lessons appear in the personal calendar
 - Sync frequency: Every 15 minutes (Firebase Scheduled Functions)
 - Conflict detection: If a new booking overlaps a synced personal event, teacher receives an immediate alert
 

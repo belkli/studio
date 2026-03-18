@@ -7,7 +7,7 @@
 
 ### Environment Strategy
 
-Harmonia runs in 4 environments. The database backend, auth mode, and secrets differ per environment.
+Lyriosa runs in 4 environments. The database backend, auth mode, and secrets differ per environment.
 
 | Environment | Firebase Project | DB Backend | Auth Mode | Trigger | URL |
 |---|---|---|---|---|---|
@@ -64,7 +64,7 @@ NEXT_PUBLIC_ALLOW_BOOTSTRAP_MOCK_FALLBACK=1
 
 ### Database Backends
 
-Harmonia supports 5 database backends via the `DB_BACKEND` env var. The resolution logic in `src/lib/db/index.ts`:
+Lyriosa supports 5 database backends via the `DB_BACKEND` env var. The resolution logic in `src/lib/db/index.ts`:
 
 1. If `DB_BACKEND` is set explicitly, use that value.
 2. Else if `DATABASE_URL` is set, use `postgres`.
@@ -878,7 +878,7 @@ gh secret set VERCEL_PROJECT_ID --body "your-project-id"
 
 ### Supabase Configuration (Alternative DB + Auth)
 
-Harmonia supports Supabase as both a database backend (`DB_BACKEND=supabase`) and auth provider (`AUTH_PROVIDER=supabase`).
+Lyriosa supports Supabase as both a database backend (`DB_BACKEND=supabase`) and auth provider (`AUTH_PROVIDER=supabase`).
 
 #### CLI Setup
 

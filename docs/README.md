@@ -1,4 +1,4 @@
-# Harmonia — Documentation Index
+# Lyriosa — Documentation Index
 
 **Stack:** Next.js 16 · TypeScript · Tailwind · next-intl (he/en/ar/ru) · Firebase · shadcn/ui
 

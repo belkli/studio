@@ -55,6 +55,14 @@
       "password": "סיסמה",
       "oauthEmailReadonly": "האימייל מסופק על ידי החשבון החברתי שלך ולא ניתן לשנותו כאן."
     },
+    "parent": {
+      "phone2": "טלפון נוסף",
+      "addSecondGuardian": "הוסף אפוטרופוס/הורה נוסף",
+      "secondGuardianName": "שם אפוטרופוס נוסף",
+      "secondGuardianPhone": "טלפון אפוטרופוס נוסף",
+      "secondGuardianEmail": "דוא\"ל אפוטרופוס נוסף",
+      "secondGuardianIdNumber": "ת.ז. אפוטרופוס נוסף"
+    },
     "musical": {
       "title": "מידע מוזיקלי",
       "instrument": "כלי נגינה",
@@ -79,7 +87,12 @@
       "experiencePlaceholder": "שתף/י רקע וניסיון",
       "duration": "משך שיעור",
       "durationPlaceholder": "בחר משך שיעור",
-      "minutes": "{min} דקות"
+      "minutes": "{min} דקות",
+      "rentalIntent": "העדפת שכירת כלי נגינה",
+      "rentalIntent_own": "יש לי כלי משלי",
+      "rentalIntent_rent": "אשכור מהקונסרבטוריון",
+      "rentalIntent_guidance": "צריך/ה הכוונה",
+      "theoryYears": "שנות לימוד תאוריה קודמות"
     },
     "schedule": {
       "days": "ימים פנויים",

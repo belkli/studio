@@ -377,10 +377,10 @@ In the teacher's dashboard profile editor (`/dashboard/teacher/profile`):
 // src/app/[locale]/(public)/page.tsx
 export async function generateMetadata({ params }): Promise<Metadata> {
   return {
-    title: 'Harmonia — מוזיקה לכל ילד',
+    title: 'Lyriosa — מוזיקה לכל ילד',
     description: 'רשת קונסרבטוריונים מוזיקליים מקצועיים ברחבי ישראל.',
     openGraph: {
-      title: 'Harmonia',
+      title: 'Lyriosa',
       description: 'Professional music conservatories across Israel.',
       images: ['/images/og-harmonia.jpg'],
     },

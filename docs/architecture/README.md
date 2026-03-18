@@ -1,13 +1,13 @@
-# Harmonia -- Architecture Documentation
+# Lyriosa -- Architecture Documentation
 
 > **Last updated:** 2026-03-07
 > **Stack:** Next.js 16 | React 19 | TypeScript 5 | Firebase 12 | shadcn/ui | Tailwind CSS v4 | next-intl 4 | Genkit 1.29 | Zod 4
 
 ---
 
-## What Is Harmonia?
+## What Is Lyriosa?
 
-Harmonia is a multi-tenant SaaS platform that digitises the full operational lifecycle of Israeli music conservatoriums. It replaces phone calls, paper forms, Excel payroll sheets, and WhatsApp cancellations with a self-service, automated, and AI-assisted platform. It serves **7 primary user roles** and supports **4 languages** (Hebrew, English, Arabic, Russian) with native RTL.
+Lyriosa is a multi-tenant SaaS platform that digitises the full operational lifecycle of Israeli music conservatoriums. It replaces phone calls, paper forms, Excel payroll sheets, and WhatsApp cancellations with a self-service, automated, and AI-assisted platform. It serves **7 primary user roles** and supports **4 languages** (Hebrew, English, Arabic, Russian) with native RTL.
 
 ---
 

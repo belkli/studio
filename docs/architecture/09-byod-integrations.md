@@ -7,12 +7,12 @@
 
 ## Overview
 
-Harmonia uses a **Bring Your Own Device (BYOD)** model for third-party integrations. Each conservatorium operates its own payment terminal, email sender, and SMS account. Harmonia never holds merchant-of-record status — money flows directly to each conservatorium's bank account.
+Lyriosa uses a **Bring Your Own Device (BYOD)** model for third-party integrations. Each conservatorium operates its own payment terminal, email sender, and SMS account. Lyriosa never holds merchant-of-record status — money flows directly to each conservatorium's bank account.
 
 This document covers:
 1. Which integrations are per-tenant vs. shared
 2. Secrets architecture (Google Secret Manager — never Firestore)
-3. Runtime fallback pattern (tenant key → Harmonia shared key)
+3. Runtime fallback pattern (tenant key → Lyriosa shared key)
 4. Tiered pricing this enables
 5. Implementation plan
 
@@ -22,9 +22,9 @@ This document covers:
 
 | Service | Ownership | Reason |
 |---------|-----------|--------|
-| **Cardcom / Tranzila / Pelecard / HYP** | ✅ Always per-conservatorium | Bank of Israel regulation — money must flow to conservatorium's own merchant account. Harmonia acting as merchant of record requires a payment institution license. |
-| **SendGrid / Resend (email)** | ✅ BYOD optional | Branded outbound email from conservatorium's own domain (`info@cons-name.co.il`). Falls back to Harmonia shared key. |
-| **Twilio (SMS / WhatsApp)** | ✅ BYOD optional | Branded SMS sender ID / WhatsApp Business profile. Falls back to Harmonia shared. |
+| **Cardcom / Tranzila / Pelecard / HYP** | ✅ Always per-conservatorium | Bank of Israel regulation — money must flow to conservatorium's own merchant account. Lyriosa acting as merchant of record requires a payment institution license. |
+| **SendGrid / Resend (email)** | ✅ BYOD optional | Branded outbound email from conservatorium's own domain (`info@cons-name.co.il`). Falls back to Lyriosa shared key. |
+| **Twilio (SMS / WhatsApp)** | ✅ BYOD optional | Branded SMS sender ID / WhatsApp Business profile. Falls back to Lyriosa shared. |
 | **Google Calendar** | ✅ BYOD optional | Sync to conservatorium's own Google Workspace calendar. |
 | **Firebase Auth / Firestore** | ❌ Shared | Multi-tenant infrastructure. Per-tenant isolation via `conservatoriumId` claims, not separate projects. |
 | **Google Secret Manager** | ❌ Shared | Single GCP project, per-tenant secret naming convention (see §3). |
@@ -67,7 +67,7 @@ Examples:
 
 ### IAM Policy
 
-- **Only** the Harmonia Cloud Run service account (`harmonia-app@harmonia-production.iam.gserviceaccount.com`) has `secretmanager.versions.access` role
+- **Only** the Lyriosa Cloud Run service account (`harmonia-app@harmonia-production.iam.gserviceaccount.com`) has `secretmanager.versions.access` role
 - Conservatorium admins **cannot** read back their own secrets via the UI (write-only onboarding)
 - All access logged to Cloud Audit Logs automatically
 
@@ -126,7 +126,7 @@ export async function getTenantSecret(
 // Dispatcher (SMS example)
 const authToken =
   await getTenantSecret(conservatoriumId, 'twilio', 'auth_token')
-  ?? process.env.TWILIO_AUTH_TOKEN;  // Harmonia shared fallback
+  ?? process.env.TWILIO_AUTH_TOKEN;  // Lyriosa shared fallback
 
 // Payment (Cardcom example)
 const terminalNumber =
@@ -174,8 +174,8 @@ Priority: implement Tranzila next (second largest, many municipal conservatorium
 
 | Tier | Monthly Price | Payment | Email | SMS | White-label |
 |------|--------------|---------|-------|-----|-------------|
-| **Basic** | ₪800 | Harmonia terminal (not possible — see §1) | Harmonia sender | Harmonia number | ❌ |
-| **Standard** | ₪1,200 | Their own terminal (required) | Harmonia sender (`noreply@harmonia.co.il`) | Harmonia number | ❌ |
+| **Basic** | ₪800 | Lyriosa terminal (not possible — see §1) | Lyriosa sender | Lyriosa number | ❌ |
+| **Standard** | ₪1,200 | Their own terminal (required) | Lyriosa sender (`noreply@harmonia.co.il`) | Lyriosa number | ❌ |
 | **Professional** | ₪1,800 | Their own terminal | Their domain (`info@cons.co.il`) | Their number | Partial |
 | **Enterprise** | Negotiated | Their own terminal | Their domain | Their number | Full |
 
@@ -185,7 +185,7 @@ Priority: implement Tranzila next (second largest, many municipal conservatorium
 
 ## 7. Cost Impact
 
-### Harmonia infrastructure savings (BYOD email/SMS)
+### Lyriosa infrastructure savings (BYOD email/SMS)
 
 | Scale | Without BYOD | With BYOD | Saving |
 |-------|-------------|----------|--------|

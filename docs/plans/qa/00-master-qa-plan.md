@@ -1,4 +1,4 @@
-# Harmonia — Master QA Plan
+# Lyriosa — Master QA Plan
 
 **Version:** 1.6
 **Date:** 2026-03-14
@@ -43,7 +43,7 @@
 
 ### Scope
 
-This plan covers **all QA scenarios** for the Harmonia music education platform. It is the authoritative document for QA execution and supersedes individual domain plans where conflicts exist.
+This plan covers **all QA scenarios** for the Lyriosa music education platform. It is the authoritative document for QA execution and supersedes individual domain plans where conflicts exist.
 
 ### Scenario Counts by Domain
 
@@ -2192,7 +2192,7 @@ These gaps mean the application is **not production-safe** in its current state.
 | Gap ID | Feature | SDD Source | Gap Description | Status |
 |--------|---------|-----------|-----------------|--------|
 | GAP-S01 | DB Security Rules not deployed | SDD-06 §4, SDD-P7 | Firestore Security Rules exist as a template in `firestore.rules` but have never been deployed to the production Firebase project. Without deployed rules, all tenant isolation, RBAC enforcement, and parent-child isolation exist only in Server Actions code, not at the database layer. Any client with direct Firestore access can read/write cross-tenant data. | `[NOT-YET-DEPLOYED]` — P0 |
-| GAP-S02 | Firebase App Check not configured | SDD-06 §2.2 | Firebase App Check is listed as planned. Without it, there is no attestation that requests come from the real Harmonia app — any script can call the Firestore API directly. | `[NOT-YET-IMPLEMENTED]` — P0 |
+| GAP-S02 | Firebase App Check not configured | SDD-06 §2.2 | Firebase App Check is listed as planned. Without it, there is no attestation that requests come from the real Lyriosa app — any script can call the Firestore API directly. | `[NOT-YET-IMPLEMENTED]` — P0 |
 | GAP-S03 | `verifyAuth()` returns synthetic session unconditionally in dev | SDD-06 §2.3, SDD-P7 SEC-C03 | In dev mode (`NODE_ENV !== 'production'` AND no `FIREBASE_SERVICE_ACCOUNT_KEY`), `verifyAuth()` in `auth-utils.ts` always returns a synthetic `site_admin` session. This is correct for local dev but means ALL Server Actions are unauthenticated in that mode. The SDD documents this as intentional for dev but categorises it as P0 security risk if this code path is ever reachable in production. | `[BY-DESIGN-DEV-ONLY]` — verify production cannot reach this path |
 | GAP-S04 | Role stored in mutable localStorage | SDD-P7 SEC-C02 | The auth domain stores `role` in `localStorage`. A user can open the browser console and escalate to `site_admin` in 2 seconds. The custom claims from the Firebase session cookie are the authoritative source. localStorage should store display state only, never auth-relevant role/conservatoriumId. | `[NOT-YET-FIXED]` — P0 |
 | GAP-S05 | Playing School admin pages have zero auth guards | SDD-P7 SEC-C04 | All Playing School admin routes under `/dashboard/playing-school/admin/` have no `verifyAuth()` or `requireRole()` guard — any user who knows the URL can access them without authentication. | `[NOT-YET-FIXED]` — P0 |
@@ -2256,7 +2256,7 @@ These gaps will cause production failures under real multi-user load. QA in mock
 | GAP-P04 | Installment payments (תשלומים) | SDD-P4 §3.2 | Israeli parents expect to split annual fees into monthly instalments (1–12 payments). Cardcom supports `MaxPayments` parameter. No instalments UI or logic exists. | `[NOT-YET-IMPLEMENTED]` — P1 |
 | GAP-P05 | Cardcom webhook HMAC verification | SDD-06 §6 | `/api/cardcom-webhook` exists but HMAC body verification of the webhook payload is not implemented. Any HTTP request to this endpoint can fake a successful payment. | `[NOT-YET-IMPLEMENTED]` — P0 security |
 | GAP-P06 | Section 46 Tax API (donation reporting) | Israeli law | Israeli law mandates donation receipts be reported to the Tax Authority via the Section 46 API from January 1, 2026. No implementation exists. | `[NOT-YET-IMPLEMENTED]` — P0 legal obligation (already past deadline) |
-| GAP-P07 | Teacher payroll CSV export | SDD-FIX-12, SDD-P1 §4 | Admin must export a UTF-8 BOM CSV of teacher hours per month for external HR systems (Hilan/Merav Digital). The payroll page exists but export functionality is not implemented. Note: Harmonia is NOT a payroll/tax calculation system — CSV export only. | `[NOT-YET-IMPLEMENTED]` — P1 |
+| GAP-P07 | Teacher payroll CSV export | SDD-FIX-12, SDD-P1 §4 | Admin must export a UTF-8 BOM CSV of teacher hours per month for external HR systems (Hilan/Merav Digital). The payroll page exists but export functionality is not implemented. Note: Lyriosa is NOT a payroll/tax calculation system — CSV export only. | `[NOT-YET-IMPLEMENTED]` — P1 |
 | GAP-P08 | Teacher payroll self-view | SDD-FIX-12 §4 | Teachers must be able to view their own payroll report at `/dashboard/teacher/payroll`. No such route exists. | `[NOT-YET-IMPLEMENTED]` |
 
 ---
@@ -2268,7 +2268,7 @@ These gaps will cause production failures under real multi-user load. QA in mock
 | GAP-I01 | WhatsApp / SMS notifications — no real integration | SDD-P4 §4, SDD-P2 §3 | The notification dispatcher code exists (`src/lib/notifications/dispatcher.ts`) but has no Twilio credentials. No SMS or WhatsApp message is ever actually sent. | `[NOT-YET-INTEGRATED]` — P1 |
 | GAP-I02 | Email notifications — no real integration | SDD-09 §1 | SendGrid/Resend integration for email sending has no credentials configured. No transactional email is ever sent. | `[NOT-YET-INTEGRATED]` — P1 |
 | GAP-I03 | Google Calendar sync | SDD-P2 §5 | `calendar-sync.ts` Cloud Function spec exists in `functions/` but is not deployed. Teachers' lesson schedules are never synced to Google Calendar. | `[NOT-YET-DEPLOYED]` — P2 |
-| GAP-I04 | Google/Microsoft OAuth — buttons show "Coming Soon" | SDD-FIX-17 | Login page shows disabled OAuth buttons. Full progressive registration OAuth flow is designed (check if Harmonia user exists for OAuth email; if not, redirect to wizard with pre-filled fields; skip password step for OAuth registrations). Firebase Auth providers are built-in but not configured. | `[NOT-YET-IMPLEMENTED]` — P1 |
+| GAP-I04 | Google/Microsoft OAuth — buttons show "Coming Soon" | SDD-FIX-17 | Login page shows disabled OAuth buttons. Full progressive registration OAuth flow is designed (check if Lyriosa user exists for OAuth email; if not, redirect to wizard with pre-filled fields; skip password step for OAuth registrations). Firebase Auth providers are built-in but not configured. | `[NOT-YET-IMPLEMENTED]` — P1 |
 | GAP-I05 | Google Maps / Places API for conservatorium addresses | SDD-FIX-15 §2.4 | Conservatorium profile address field is free text. SDD specifies Google Places Autocomplete with `googlePlaceId` and `coordinates` stored. | `[NOT-YET-IMPLEMENTED]` — P2 |
 | GAP-I06 | Remote rental signature via OTP link | SDD-FIX-09 | Admin currently signs rental agreements on the admin screen — this is legally invalid. SDD specifies: admin creates rental → system sends a WhatsApp/SMS link with a signed token to the parent → parent opens `/rental-sign/[token]` on their phone, verifies via OTP, and signs digitally. The `signingToken` field exists in the type but the route, OTP flow, and mobile signature UI do not exist. | `[NOT-YET-IMPLEMENTED]` — P1 legal requirement |
 

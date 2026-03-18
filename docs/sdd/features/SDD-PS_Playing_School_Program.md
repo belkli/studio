@@ -11,7 +11,7 @@
 
 "Playing School" (Hebrew: בית ספר מנגן) is a national music-education program operating across Israel in which conservatories partner with elementary schools to deliver subsidized, in-school instrumental instruction. Students receive weekly group lessons during school hours, instrument loans, and access to school orchestras — all at a fraction of the cost of private conservatory tuition. The program is co-funded by municipalities, the Ministry of Education, and modest parental contributions collected through the school system.
 
-This SDD defines how the Playing School model is incorporated into the Harmonia platform, extending all existing personas — student, parent, teacher, conservatorium_admin, school_coordinator (new), and ministry_director — with the data structures, screens, APIs, and business-logic rules needed to manage school partnerships end-to-end.
+This SDD defines how the Playing School model is incorporated into the Lyriosa platform, extending all existing personas — student, parent, teacher, conservatorium_admin, school_coordinator (new), and ministry_director — with the data structures, screens, APIs, and business-logic rules needed to manage school partnerships end-to-end.
 
 ### Program Characteristics at a Glance
 
@@ -220,7 +220,7 @@ The Playing School enrollment follows a distinct lifecycle from regular conserva
 
 The platform must support three payment models:
 
-- **SCHOOL_FEES model:** Parent contribution collected through the school's tuition management system (external). Admin manually marks payment as received in Harmonia. No Cardcom transaction generated.
+- **SCHOOL_FEES model:** Parent contribution collected through the school's tuition management system (external). Admin manually marks payment as received in Lyriosa. No Cardcom transaction generated.
 - **MUNICIPAL_DIRECT model:** Municipality pays conservatory directly via invoice. Parent contribution is ₪0. Admin generates a municipal invoice from the system.
 - **CARDCOM model:** Parent pays online via Cardcom (same as regular enrollment). System generates standard invoice.
 
@@ -356,7 +356,7 @@ After submission: parent receives WhatsApp/email confirmation with instrument pi
 
 ### 6.4 Student (Playing School / Excellence Track)
 
-- Playing School students may not have a Harmonia account initially — account is auto-created when parent registers and pays
+- Playing School students may not have a Lyriosa account initially — account is auto-created when parent registers and pays
 - After account creation, student sees a simplified 'Playing School' dashboard — no individual billing, no makeup credits, no booking
 - Excellence track students transition to a full student account with standard access
 - Achievement system: Playing School-specific achievements (first group lesson, 3-month streak, excellence track nomination)
@@ -563,7 +563,7 @@ Core infrastructure to enable the program to function at a basic level.
 
 | # | Question | Options | Owner |
 |---|---|---|---|
-| 1 | Should Playing School students get full Harmonia student accounts on enrollment, or only on excellence track? | A) Full account (more visibility) B) Lightweight record until excellence track | Product |
+| 1 | Should Playing School students get full Lyriosa student accounts on enrollment, or only on excellence track? | A) Full account (more visibility) B) Lightweight record until excellence track | Product |
 | 2 | Should makeup credits apply when a teacher cancels a school visit? | A) Yes, same as regular B) No makeup credits (school program policy) C) Configurable | Business |
 | 3 | How should school coordinators authenticate? | A) Email/password same as other users B) Google SSO via school domain C) One-time link per term | Architecture |
 | 4 | Which payment method is default for new partnerships? | A) SCHOOL_FEES (most common currently) B) Cardcom C) Per partnership config | Business |

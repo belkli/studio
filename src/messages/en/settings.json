@@ -304,6 +304,11 @@
       "description": "Statutory VAT rate applied to tuition fees. Default: 18% (January 2025). Change only on accountant's advice.",
       "rate": "VAT Rate"
     },
+    "durations": {
+      "title": "Allowed Lesson Durations",
+      "description": "Select which lesson durations are available for booking at your conservatorium.",
+      "minutes": "{count} min"
+    },
     "save": "Save Changes",
     "comparison": {
       "title": "Branch Rate Comparison",

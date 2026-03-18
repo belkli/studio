@@ -2,7 +2,7 @@
 
 ## 1. Summary
 
-Harmonia stores Israeli ID numbers, children's audio/video recordings, credit card histories, exam results, and scholarship financial disclosures. A breach violates the **Israeli Protection of Privacy Law (PDPPA / 5741-1981)**.
+Lyriosa stores Israeli ID numbers, children's audio/video recordings, credit card histories, exam results, and scholarship financial disclosures. A breach violates the **Israeli Protection of Privacy Law (PDPPA / 5741-1981)**.
 
 **Current security status:**
 - ✅ Firebase session cookie authentication (production)
@@ -66,7 +66,7 @@ const GLOBAL_ADMIN_ROLES = ['site_admin', 'superadmin'];
 async function requireRole(
   allowedRoles: UserRole[],
   conservatoriumIdMustMatch?: string
-): Promise<HarmoniaClaims> {
+): Promise<LyriosaClaims> {
   const claims = await verifyAuth();
   if (!claims.approved) throw new Error('ACCOUNT_NOT_APPROVED');
   if (!allowedRoles.includes(claims.role)) throw new Error('FORBIDDEN');

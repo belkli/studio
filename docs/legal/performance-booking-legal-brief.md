@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-This brief defines the legal requirements for the Harmonia platform's performance booking feature, where conservatoriums book musicians (teachers who opt in to performing) for external events such as weddings, corporate events, and concerts. The document covers: quotation documents, engagement contracts, signing flow, tax treatment, cancellation terms, and data retention -- all under Israeli law.
+This brief defines the legal requirements for the Lyriosa platform's performance booking feature, where conservatoriums book musicians (teachers who opt in to performing) for external events such as weddings, corporate events, and concerts. The document covers: quotation documents, engagement contracts, signing flow, tax treatment, cancellation terms, and data retention -- all under Israeli law.
 
 **Key regulatory framework:**
 - Contract Formation: Israeli Contract Law (General Part) 5733-1973 (חוק החוזים (חלק כללי), התשל"ג-1973)
@@ -197,7 +197,7 @@ Once the client accepts the quotation (via signing or deposit payment), a bindin
 - Conservatorium may use event photos/videos for marketing ONLY with prior written consent
 
 #### Clause 11: Data Protection (הגנת מידע)
-- Client's personal data processed per Harmonia's privacy policy
+- Client's personal data processed per Lyriosa's privacy policy
 - Data retained for 7 years (tax law) then deleted
 - Client may exercise DSAR rights (Privacy Protection Law, Amendment 13)
 
@@ -497,7 +497,7 @@ The conservatorium policies analysis (`docs/legal/conservatorium-policies-analys
 - 14-day cooling-off period disclosure
 - DSAR mechanisms
 
-Harmonia's performance booking feature has the opportunity to set the standard for compliance in this sector. The platform should enforce these requirements as non-optional defaults, not configurable overrides.
+Lyriosa's performance booking feature has the opportunity to set the standard for compliance in this sector. The platform should enforce these requirements as non-optional defaults, not configurable overrides.
 
 ---
 

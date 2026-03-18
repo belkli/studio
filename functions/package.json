@@ -1,6 +1,6 @@
 {
-  "name": "harmonia-functions",
-  "description": "Firebase Cloud Functions for Harmonia platform",
+  "name": "lyriosa-functions",
+  "description": "Firebase Cloud Functions for Lyriosa platform",
   "private": true,
   "engines": {
     "node": "20"

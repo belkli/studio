@@ -155,7 +155,7 @@ export default function PackagesSettingsPage() {
       names: { he: form.nameHe, en: form.nameEn },
       type: form.type,
       lessonCount: form.lessonCount,
-      durationMinutes: Number(form.durationMinutes) as 30 | 45 | 60,
+      durationMinutes: Number(form.durationMinutes),
       priceILS: form.priceILS,
       isActive: form.isActive,
       isPremium: form.isPremium,

@@ -1,4 +1,4 @@
-# Standardized Price Model for Harmonia
+# Standardized Price Model for Lyriosa
 
 **Produced:** 2026-03-08
 **Based on:** Analysis of 13 PDF documents from Israeli conservatoriums (תשפ"ד–תשפ"ו)
@@ -8,7 +8,7 @@
 
 ## 1. Recommended Standard Price Ranges
 
-The following ranges are derived from actual pricing found in the PDF corpus. All prices are quoted **inclusive of VAT (17%)** as required by the Consumer Protection Law. The "standard" column represents a market midpoint suitable for the Harmonia default price guide.
+The following ranges are derived from actual pricing found in the PDF corpus. All prices are quoted **inclusive of VAT (17%)** as required by the Consumer Protection Law. The "standard" column represents a market midpoint suitable for the Lyriosa default price guide.
 
 ```json
 {
@@ -36,9 +36,9 @@ The following ranges are derived from actual pricing found in the PDF corpus. Al
 
 ---
 
-## 2. Recommended Harmonia Platform Defaults
+## 2. Recommended Lyriosa Platform Defaults
 
-These are the suggested defaults for Harmonia's configuration system (`conservatorium.pricingConfig`). They represent reasonable midpoints that most municipal conservatoriums can adjust up or down.
+These are the suggested defaults for Lyriosa's configuration system (`conservatorium.pricingConfig`). They represent reasonable midpoints that most municipal conservatoriums can adjust up or down.
 
 | Field | Recommended Default | Rationale |
 |-------|-------------------|-----------|
@@ -97,7 +97,7 @@ The following conservatoriums have pricing that **deviates materially from the d
 
 This is more consumer-friendly than the market norm and is closest to complying with the Consumer Protection Law's cooling-off spirit (though not explicitly named as such).
 
-**Recommendation:** This refund ladder is a good practice model. Harmonia's standard agreement should codify a similar graduated refund — see Document 3 (standard-registration-agreement-draft.md).
+**Recommendation:** This refund ladder is a good practice model. Lyriosa's standard agreement should codify a similar graduated refund — see Document 3 (standard-registration-agreement-draft.md).
 
 ### 3.4 Ashdod Akadema
 **Unique structure:** Operates as an NGO (עמותה) rather than a municipal conservatorium. This means:
@@ -105,7 +105,7 @@ This is more consumer-friendly than the market norm and is closest to complying 
 - The commitment form is more contractually explicit than typical conservatoriums
 - SMS/email consent is explicitly scoped to service-only (not advertising) — best practice
 
-**Recommendation:** For NGO-operated conservatoriums in Harmonia, add an `operatorType` field (`municipal` | `ngo` | `private`). NGO operators may need different VAT handling and DPA structure.
+**Recommendation:** For NGO-operated conservatoriums in Lyriosa, add an `operatorType` field (`municipal` | `ngo` | `private`). NGO operators may need different VAT handling and DPA structure.
 
 ### 3.5 Beer Sheva Preferred Instrument Track
 **Below-market by 30–40% for rare instruments:**
@@ -115,7 +115,7 @@ This is more consumer-friendly than the market norm and is closest to complying 
 
 This subsidy policy promotes rare instrument uptake. Municipal funding explains the lower rate.
 
-**Recommendation:** Harmonia should support a `preferredInstrumentList` configuration per conservatorium, with an associated `preferredInstrumentDiscountPct`. Beer Sheva uses 20% discount (from the standard rate) on their preferred list — this aligns with Givat'ayim's preferred instrument discount of 20%.
+**Recommendation:** Lyriosa should support a `preferredInstrumentList` configuration per conservatorium, with an associated `preferredInstrumentDiscountPct`. Beer Sheva uses 20% discount (from the standard rate) on their preferred list — this aligns with Givat'ayim's preferred instrument discount of 20%.
 
 ### 3.6 Arava Community Centre
 **Activity-based pricing (not instrument-based):**
@@ -124,13 +124,13 @@ This subsidy policy promotes rare instrument uptake. Municipal funding explains 
 - Cancelled lesson: no replacement if student is absent without notice
 - Meals programme: ₪30/meal (unique)
 
-**Recommendation:** Arava-style community centres mixing sports, arts, and music require a different `activityType` model. The Harmonia booking wizard should support non-conservatorium "community centre" mode.
+**Recommendation:** Arava-style community centres mixing sports, arts, and music require a different `activityType` model. The Lyriosa booking wizard should support non-conservatorium "community centre" mode.
 
 ---
 
 ## 4. VAT Note
 
-**CRITICAL:** All prices in all source PDFs are stated without VAT. This creates legal ambiguity — it is unclear whether these are VAT-inclusive or VAT-exclusive prices. For Harmonia's platform:
+**CRITICAL:** All prices in all source PDFs are stated without VAT. This creates legal ambiguity — it is unclear whether these are VAT-inclusive or VAT-exclusive prices. For Lyriosa's platform:
 
 1. All prices displayed to end users (parents/students) **must be VAT-inclusive** per Section 2 of the Consumer Protection Law
 2. Invoices must break out the VAT amount separately (₪ amount at 17%)
@@ -155,7 +155,7 @@ Across the corpus, three rental models appear:
 
 ---
 
-## 6. Recommended Harmonia `PackageType` Mapping
+## 6. Recommended Lyriosa `PackageType` Mapping
 
 Based on the pricing corpus, the following lesson duration types should be supported:
 
@@ -171,4 +171,4 @@ Based on the pricing corpus, the following lesson duration types should be suppo
 
 ---
 
-*This price model is derived from real market data (2023–2026) and is intended as a starting point for Harmonia's pricing configuration system. All prices should be reviewed annually against Ministry of Education subsidy guidelines and municipal funding levels.*
+*This price model is derived from real market data (2023–2026) and is intended as a starting point for Lyriosa's pricing configuration system. All prices should be reviewed annually against Ministry of Education subsidy guidelines and municipal funding levels.*

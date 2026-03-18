@@ -1,4 +1,4 @@
-# Harmonia -- End-User Guide
+# Lyriosa -- End-User Guide
 
 **Version 3.0**
 
@@ -6,9 +6,9 @@
 
 ## 1. Introduction
 
-Harmonia is a comprehensive music conservatory management platform built for Israeli music schools. It brings together lesson scheduling, practice tracking, repertoire management, billing, exams, events, and communications into a single system. The platform supports Hebrew (default, RTL), English, Arabic, and Russian.
+Lyriosa is a comprehensive music conservatory management platform built for Israeli music schools. It brings together lesson scheduling, practice tracking, repertoire management, billing, exams, events, and communications into a single system. The platform supports Hebrew (default, RTL), English, Arabic, and Russian.
 
-Harmonia serves **seven user personas**: students, parents, teachers, conservatory administrators, delegated administrators, site administrators, ministry directors, and school coordinators. Each persona has a tailored dashboard and navigation experience.
+Lyriosa serves **seven user personas**: students, parents, teachers, conservatory administrators, delegated administrators, site administrators, ministry directors, and school coordinators. Each persona has a tailored dashboard and navigation experience.
 
 ---
 
