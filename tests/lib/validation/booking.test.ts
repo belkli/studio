@@ -62,8 +62,18 @@ describe('BookingRequestSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects duration 90', () => {
+  it('accepts duration 90 (configurable durations)', () => {
     const result = BookingRequestSchema.safeParse({ ...validBooking, durationMinutes: 90 });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects duration below 15', () => {
+    const result = BookingRequestSchema.safeParse({ ...validBooking, durationMinutes: 10 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects duration above 180', () => {
+    const result = BookingRequestSchema.safeParse({ ...validBooking, durationMinutes: 200 });
     expect(result.success).toBe(false);
   });
 
@@ -123,8 +133,18 @@ describe('MakeupBookingRequestSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects invalid duration', () => {
+  it('accepts duration 120 (configurable durations)', () => {
     const result = MakeupBookingRequestSchema.safeParse({ ...validMakeup, durationMinutes: 120 });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects duration below 15', () => {
+    const result = MakeupBookingRequestSchema.safeParse({ ...validMakeup, durationMinutes: 5 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects duration above 180', () => {
+    const result = MakeupBookingRequestSchema.safeParse({ ...validMakeup, durationMinutes: 200 });
     expect(result.success).toBe(false);
   });
 });
