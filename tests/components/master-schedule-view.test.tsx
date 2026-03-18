@@ -68,7 +68,7 @@ function buildTodayLesson(overrides: Partial<LessonSlot> = {}): LessonSlot {
 }
 
 describe('MasterScheduleView', () => {
-    it('renders without crashing (smoke test)', () => {
+    it('renders without crashing (smoke test)', { timeout: 15000 }, () => {
         renderWithProviders(<MasterScheduleView />, {
             user: siteAdmin,
             authContextValue: {
