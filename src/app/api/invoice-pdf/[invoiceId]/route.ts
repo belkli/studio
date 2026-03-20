@@ -7,6 +7,10 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ invoiceId: string }> }
 ) {
+  if (process.env.LYRIOSA_INTERNAL_PDF_ENABLED === 'false') {
+    return new NextResponse('PDF generation is disabled', { status: 404 });
+  }
+
   const { invoiceId } = await params;
   const db = await getDb();
   const invoice = await db.payments.findById(invoiceId);
@@ -18,6 +22,7 @@ export async function GET(
   // Cast to access extended fields not yet on the Invoice type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const inv = invoice as Invoice & Record<string, any>;
+  const gatewayName = inv.paymentMethod ?? 'שער התשלום';
   const paidAt = invoice.paidAt
     ? new Date(invoice.paidAt).toLocaleDateString('he-IL')
     : '-';
@@ -30,7 +35,7 @@ export async function GET(
 <html dir="rtl" lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>חשבונית ${invoice.invoiceNumber || invoiceId}</title>
+  <title>אסמכתא תשלום ${invoice.invoiceNumber || invoiceId}</title>
   <style>
     body { font-family: 'Arial', sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #1a1a1a; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #4f46e5; padding-bottom: 20px; }
@@ -43,13 +48,17 @@ export async function GET(
     .total-row { font-size: 18px; font-weight: bold; background: #f0f0ff; }
     .status { display: inline-block; background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 999px; font-size: 14px; }
     @media print { body { margin: 0; } .no-print { display: none; } }
+    .disclaimer { background:#fff3cd; border:2px solid #ffc107; border-radius:6px; padding:12px 16px; margin-bottom:24px; font-size:13px; font-weight:600; color:#856404; text-align:center; }
   </style>
 </head>
 <body>
+  <div class="disclaimer">
+    מסמך פנימי בלבד — אינו מהווה חשבונית מס. החשבונית הרשמית הונפקה על-ידי ${gatewayName}.
+  </div>
   <div class="header">
     <div class="logo">${BRAND_NAME}</div>
     <div>
-      <div class="invoice-title">חשבונית תשלום</div>
+      <div class="invoice-title">אסמכתא תשלום — מסמך פנימי</div>
       <div class="invoice-meta">מספר: ${invoice.invoiceNumber || invoiceId}</div>
       <div class="invoice-meta">תאריך תשלום: ${paidAt}</div>
     </div>

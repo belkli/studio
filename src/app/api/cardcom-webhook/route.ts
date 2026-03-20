@@ -221,9 +221,13 @@ export async function POST(request: NextRequest) {
         transactionId,
         paidAt: now,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await db.payments.update(invoiceId, { pdfUrl } as any);
-      console.log(`[Cardcom Webhook] Invoice PDF URL generated: ${pdfUrl}`);
+      if (pdfUrl) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await db.payments.update(invoiceId, { pdfUrl } as any);
+        console.log(`[Cardcom Webhook] Invoice PDF URL generated: ${pdfUrl}`);
+      } else {
+        console.log(`[Cardcom Webhook] PDF generation disabled via feature flag`);
+      }
     } catch (pdfError) {
       console.error('[Cardcom Webhook] PDF generation failed:', pdfError);
       // Non-fatal: payment is already marked as PAID
