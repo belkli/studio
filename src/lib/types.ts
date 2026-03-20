@@ -919,6 +919,8 @@ export type Invoice = {
   };
   pdfUrl?: string;
   cardcomTransactionId?: string;
+  /** Invoice number assigned by the payment gateway (e.g. Cardcom invoice number for VAT receipts) */
+  gatewayInvoiceNumber?: string;
   issuedAt?: string;
   createdAt?: string;
   updatedAt?: string;

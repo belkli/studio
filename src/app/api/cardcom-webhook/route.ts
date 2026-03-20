@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     Token: _cardToken,
     TokenExpiry: _cardTokenExpiry,
     ApprovalNumber,
+    InvoiceNumber,
   } = payload;
 
   const invoiceId = ReturnValue;
@@ -146,6 +147,7 @@ export async function POST(request: NextRequest) {
       paidAmount: invoice.total,
       paymentMethod: 'CARDCOM' as const,
       cardcomTransactionId: transactionId,
+      ...(InvoiceNumber ? { gatewayInvoiceNumber: InvoiceNumber } : {}),
       installments: installmentCount > 1 ? {
         count: installmentCount,
         monthlyAmount: parseFloat(PeriodicalPaymentTotal || '0'),
