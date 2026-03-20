@@ -527,6 +527,7 @@ export type User = {
   teacherAssignments?: TeacherAssignment[];
   isPrimaryConservatoriumAdmin?: boolean;
   isPremiumTeacher?: boolean;
+  scholarshipCommittee?: boolean;   // S2: grants access to sensitive scholarship documents
   oauthProviders?: UserOAuthProvider[];
   registrationSource?: 'email' | 'google' | 'microsoft' | 'admin_created';
   preferredLanguage?: 'he' | 'en' | 'ar' | 'ru';
@@ -1391,6 +1392,25 @@ export type ScholarshipApplication = {
   rejectedAt?: string;
   paymentStatus?: ScholarshipPaymentStatus;
   paidAt?: string;
+  // S2: RBAC + Privacy fields
+  documents?: string[];             // encrypted document URLs
+  aiScore?: AIScholarshipScore;
+  aiScoredAt?: string;
+  committeeOverrideNote?: string;
+};
+
+// ── S2: AI Scholarship Scoring ────────────────────────────────────────────────
+export type AIScholarshipScore = {
+  score: number;                    // 0–100
+  urgencyLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  reasoning: string;                // 2–4 sentence explanation in Hebrew
+  recommendedAward: {
+    discountPercent: number;
+    durationMonths: number;
+    confidence: 'HIGH' | 'MEDIUM' | 'LOW';
+  };
+  flaggedForHumanReview: boolean;
+  flagReason?: string;
 };
 
 export type DonationCauseCategory = 'financial_aid' | 'excellence' | 'equipment' | 'events' | 'general';
