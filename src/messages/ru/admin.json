@@ -323,7 +323,11 @@
     "categoryExcellence": "Превосходство",
     "categoryEquipment": "Оборудование",
     "categoryEvents": "События",
-    "categoryGeneral": "Общий"
+    "categoryGeneral": "Общий",
+    "privacyNotice": "Загруженные документы доступны только членам стипендиального комитета и удаляются в течение 12 месяцев после принятия решения.",
+    "aiScore": "Оценка ИИ",
+    "documents": "Документы",
+    "notScored": "Не оценено"
   },
   "AiAgents": {
     "activated": "активирован",

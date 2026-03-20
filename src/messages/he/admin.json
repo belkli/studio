@@ -323,7 +323,11 @@
     "categoryExcellence": "מצוינות",
     "categoryEquipment": "צִיוּד",
     "categoryEvents": "אירועים",
-    "categoryGeneral": "כְּלָלִי"
+    "categoryGeneral": "כְּלָלִי",
+    "privacyNotice": "המסמכים שהועלו על ידי המועמד נגישים לחברי ועדת המלגות בלבד ומחוקים תוך 12 חודשים מקבלת ההחלטה.",
+    "aiScore": "ציון AI",
+    "documents": "מסמכים",
+    "notScored": "טרם נוקד"
   },
   "AiAgents": {
     "activated": "הופעל",

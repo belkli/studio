@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { HandCoins, Users, Banknote, Search, CheckCircle2, XCircle, Clock, Hourglass, Loader2 } from 'lucide-react';
+import { HandCoins, Users, Banknote, Search, CheckCircle2, XCircle, Clock, Hourglass, Loader2, ShieldCheck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
 import type { ApplicationStatus, DonationCauseCategory } from '@/lib/types';
@@ -43,6 +43,9 @@ export default function AdminScholarshipsPage() {
   const locale = useLocale();
   const isRtl = locale === 'he' || locale === 'ar';
   const { toast } = useToast();
+  const isCommittee = user?.scholarshipCommittee === true
+    || user?.role === 'site_admin'
+    || user?.role === 'superadmin';
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   const causeForm = useForm<CauseFormData>({
@@ -184,6 +187,15 @@ export default function AdminScholarshipsPage() {
         </Card>
       </div>
 
+      <div
+        role="note"
+        className="mb-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
+        <span>{t('privacyNotice')}</span>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>{t('scholarshipApplications')}</CardTitle>
@@ -203,6 +215,12 @@ export default function AdminScholarshipsPage() {
                   <TableHead className="text-start">{t('submissionDate')}</TableHead>
                   <TableHead className="text-start">{t('priorityScore')}</TableHead>
                   <TableHead className="text-start">{t('status')}</TableHead>
+                  {isCommittee && (
+                    <TableHead className="text-start">{t('aiScore')}</TableHead>
+                  )}
+                  {isCommittee && (
+                    <TableHead className="text-start">{t('documents')}</TableHead>
+                  )}
                   <TableHead className="text-end">{t('actions')}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -227,6 +245,26 @@ export default function AdminScholarshipsPage() {
                         </Badge>
                         {app.paymentStatus === 'PAID' && <Badge className="ms-2">{t('paidBadge')}</Badge>}
                       </TableCell>
+                      {isCommittee && (
+                        <TableCell>
+                          {app.aiScore ? (
+                            <span className="font-mono text-xs">{app.aiScore.score}/100</span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">{t('notScored')}</span>
+                          )}
+                        </TableCell>
+                      )}
+                      {isCommittee && (
+                        <TableCell>
+                          {app.documents && app.documents.length > 0 ? (
+                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                              {app.documents.length}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
+                        </TableCell>
+                      )}
                       <TableCell className="text-end">
                         <div className="flex items-center justify-end gap-2">
                           <Button size="sm" variant="outline" onClick={() => handleApprove(app.id)} disabled={!canApprove || isBusy}>

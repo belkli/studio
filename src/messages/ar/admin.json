@@ -323,7 +323,11 @@
     "categoryExcellence": "التميز",
     "categoryEquipment": "معدات",
     "categoryEvents": "الفعاليات",
-    "categoryGeneral": "عام"
+    "categoryGeneral": "عام",
+    "privacyNotice": "المستندات المرفوعة متاحة لأعضاء لجنة المنح الدراسية فقط وتُحذف في غضون 12 شهراً من اتخاذ القرار.",
+    "aiScore": "درجة الذكاء الاصطناعي",
+    "documents": "المستندات",
+    "notScored": "لم يُقيَّم"
   },
   "AiAgents": {
     "activated": "تفعيل",

@@ -323,7 +323,11 @@
     "categoryExcellence": "Excellence",
     "categoryEquipment": "Equipment",
     "categoryEvents": "Events",
-    "categoryGeneral": "General"
+    "categoryGeneral": "General",
+    "privacyNotice": "Uploaded documents are accessible to scholarship committee members only and are deleted within 12 months of the decision.",
+    "aiScore": "AI Score",
+    "documents": "Documents",
+    "notScored": "Not scored"
   },
   "AiAgents": {
     "title": "AI Agents",
