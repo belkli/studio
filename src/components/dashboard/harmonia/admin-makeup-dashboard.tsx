@@ -115,7 +115,7 @@ export function AdminMakeupDashboard() {
         const tenantLessons = user ? tenantFilter(lessons, user) : lessons;
         const studentUsers = user
             ? tenantUsers(users, user, 'student').filter(u => u.approved)
-            : users.filter(u => u.role === 'student' && u.approved);
+            : [];
         const balances: StudentMakeupBalance[] = [];
 
         studentUsers.forEach(student => {

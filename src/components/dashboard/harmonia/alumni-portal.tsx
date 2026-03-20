@@ -10,6 +10,7 @@ import { z } from 'zod';
 import type { Masterclass } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -122,7 +123,7 @@ export function AlumniPortal() {
 
   const gradCandidates = useMemo(() => {
     if (!user) return [];
-    return users.filter((item) => item.role === 'student' && item.conservatoriumId === user.conservatoriumId);
+    return tenantUsers(users, user, 'student');
   }, [user, users]);
 
   const profileForm = useForm<ProfileValues>({

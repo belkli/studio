@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { useLocale, useTranslations } from 'next-intl';
 import { userHasInstrument } from '@/lib/instrument-matching';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 
 
@@ -25,7 +26,7 @@ interface PromoteSlotDialogProps {
 }
 
 export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialogProps) {
-  const { users, conservatoriumInstruments } = useAuth();
+  const { user, users, conservatoriumInstruments } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<TargetSlotsOutput['suggestions']>([]);
@@ -38,7 +39,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
     if (open && slot) {
       const fetchSuggestions = async () => {
         setIsLoading(true);
-        const eligibleRecipients = users.filter((u) => u.role === 'student' && userHasInstrument((u.instruments || []).map((i) => i.instrument), slot.instrument, conservatoriumInstruments, u.conservatoriumId));
+        const eligibleRecipients = (user ? tenantUsers(users, user, 'student') : []).filter((u) => userHasInstrument((u.instruments || []).map((i) => i.instrument), slot.instrument, conservatoriumInstruments, u.conservatoriumId));
 
         const result = await getTargetedSlotSuggestions({
           emptySlot: {
@@ -69,7 +70,7 @@ export function PromoteSlotDialog({ slot, open, onOpenChange }: PromoteSlotDialo
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuggestions([]);
     }
-  }, [open, slot, users, conservatoriumInstruments, locale]);
+  }, [open, slot, users, user, conservatoriumInstruments, locale]);
 
   const handleSendPromotions = () => {
     toast({

@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 
 import { useAuth } from '@/hooks/use-auth';
 import type { OpenDayAppointment, User } from '@/lib/types';
+import { tenantUsers } from '@/lib/tenant-filter';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -85,7 +86,7 @@ export function OpenDayAdminDashboard() {
 
   const teachers = useMemo(() => {
     if (!user) return [] as User[];
-    return users.filter((item) => item.role === 'teacher' && item.approved && item.conservatoriumId === user.conservatoriumId);
+    return (user ? tenantUsers(users, user, 'teacher') : []).filter((item) => item.approved);
   }, [user, users]);
 
   const sessionsWithDetails = useMemo(() => {

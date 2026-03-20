@@ -109,11 +109,11 @@ export function AdminPayrollPanel() {
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
 
     const teachers = effectiveConsId
-      ? users.filter(u => u.role === 'teacher' && u.conservatoriumId === effectiveConsId)
+      ? tenantUsers(users, { conservatoriumId: effectiveConsId, role: user?.role ?? 'conservatorium_admin' }, 'teacher')
       : (user ? tenantUsers(users, user, 'teacher') : []);
 
     const scopedLessons = effectiveConsId
-      ? lessons.filter(l => l.conservatoriumId === effectiveConsId)
+      ? tenantFilter(lessons, { conservatoriumId: effectiveConsId, role: user?.role ?? 'conservatorium_admin' })
       : (user ? tenantFilter(lessons, user) : lessons);
     const byTeacher = teachers.map((teacher) => {
       const teacherLessons = scopedLessons.filter((lesson) => {

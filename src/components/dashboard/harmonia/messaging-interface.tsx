@@ -13,6 +13,7 @@ import { Send, Paperclip, MessageSquare, PenSquare, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MessageThread, User } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { tenantUsers } from '@/lib/tenant-filter';
 import { useLocale, useTranslations } from 'next-intl';
 
 export function MessagingInterface() {
@@ -33,29 +34,25 @@ export function MessagingInterface() {
   const getMessageableUsers = useMemo(() => {
     if (!user) return [] as User[];
 
-    if (user.role === 'site_admin') {
-      return users.filter((candidate) => candidate.id !== user.id);
-    }
-
-    if (user.role === 'conservatorium_admin' || user.role === 'delegated_admin') {
-      return users.filter((candidate) => candidate.id !== user.id && candidate.conservatoriumId === user.conservatoriumId);
+    if (user.role === 'site_admin' || user.role === 'conservatorium_admin' || user.role === 'delegated_admin') {
+      return tenantUsers(users, user).filter((candidate) => candidate.id !== user.id);
     }
 
     if (user.role === 'teacher') {
-      return users.filter((candidate) => candidate.id !== user.id && candidate.conservatoriumId === user.conservatoriumId);
+      return tenantUsers(users, user).filter((candidate) => candidate.id !== user.id);
     }
 
     if (user.role === 'parent') {
       const childIds = new Set(user.childIds || []);
-      return users.filter(
+      return tenantUsers(users, user).filter(
         (candidate) =>
           candidate.id !== user.id &&
-          (childIds.has(candidate.id) || (candidate.role === 'teacher' && candidate.conservatoriumId === user.conservatoriumId))
+          (childIds.has(candidate.id) || candidate.role === 'teacher')
       );
     }
 
     if (user.role === 'student') {
-      return users.filter((candidate) => candidate.role === 'teacher' && candidate.conservatoriumId === user.conservatoriumId);
+      return tenantUsers(users, user, 'teacher').filter((candidate) => candidate.id !== user.id);
     }
 
     return [] as User[];
