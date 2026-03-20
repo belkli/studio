@@ -18,7 +18,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Separator } from '@/components/ui/separator';
-import { SignatureCapture, type SignatureCaptureResult } from '@/components/forms/signature-capture';
+import { SignatureCapture, sha256, type SignatureCaptureResult } from '@/components/forms/signature-capture';
 import { submitSignatureAction } from '@/app/actions/signatures';
 import { RecitalForm } from '@/components/forms/recital-form';
 import { KenesForm } from '@/components/forms/kenes-form';
@@ -239,10 +239,13 @@ export default function FormDetailsPage() {
     const handleConfirmApproval = async (result: SignatureCaptureResult) => {
         setSignatureSubmitting(true);
         try {
+            // Compute document hash from form content for audit trail
+            const documentHash = result.documentHash ?? await sha256(JSON.stringify(form));
             const res = await submitSignatureAction({
                 formSubmissionId: form.id,
                 signatureDataUrl: result.dataUrl,
                 signatureHash: result.signatureHash,
+                documentHash,
                 newStatus: 'APPROVED',
             });
 

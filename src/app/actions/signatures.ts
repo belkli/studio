@@ -28,8 +28,8 @@ const SubmitSignatureSchema = z.object({
   signatureDataUrl: z.string().startsWith('data:image/png;base64,'),
   /** SHA-256 hex digest of signatureDataUrl (computed client-side, verified server-side) */
   signatureHash: z.string().regex(/^[a-f0-9]{64}$/),
-  /** SHA-256 hex digest of the form content at time of signing */
-  documentHash: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+  /** SHA-256 hex digest of the form content at time of signing (required for audit completeness) */
+  documentHash: z.string().regex(/^[a-f0-9]{64}$/),
   /** The new status to set on the form after signing */
   newStatus: z.enum(['APPROVED', 'FINAL_APPROVED']).default('APPROVED'),
 });
@@ -115,7 +115,7 @@ export async function submitSignatureAction(
     ipAddress: 'server-action',       // Populated by middleware when available
     userAgent: 'server-action',       // Populated by middleware when available
     signatureHash: parsed.signatureHash,
-    documentHash: parsed.documentHash ?? '',
+    documentHash: parsed.documentHash,
   };
 
   // Write audit record via admin SDK (Firestore rules: allow write: if false)

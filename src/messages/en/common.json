@@ -1192,7 +1192,8 @@
     "clear": "Clear signature",
     "cancel": "Cancel",
     "confirm": "Confirm signature",
-    "errorEmpty": "Please sign before confirming"
+    "errorEmpty": "Please sign before confirming",
+    "legalNotice": "By clicking 'Sign', you confirm that you have read the document and your signature is legally binding."
   },
   "FamilyHub": {
     "inviteChildToManage": "Invite {name} to manage their account",

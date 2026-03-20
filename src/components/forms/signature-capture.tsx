@@ -16,6 +16,8 @@ export interface SignatureCaptureResult {
   dataUrl: string;
   /** SHA-256 hex digest of the dataUrl for audit trail integrity */
   signatureHash: string;
+  /** SHA-256 hex digest of the document content, if provided via props */
+  documentHash?: string;
 }
 
 export interface SignatureCaptureProps {
@@ -39,7 +41,7 @@ export interface SignatureCaptureProps {
  * Compute SHA-256 hex digest of an arbitrary string using the Web Crypto API.
  * Works in all modern browsers and in Node 18+.
  */
-async function sha256(input: string): Promise<string> {
+export async function sha256(input: string): Promise<string> {
   const encoded = new TextEncoder().encode(input);
   const buffer = await crypto.subtle.digest('SHA-256', encoded);
   return Array.from(new Uint8Array(buffer))
@@ -54,6 +56,7 @@ async function sha256(input: string): Promise<string> {
 export function SignatureCapture({
   onConfirm,
   onCancel,
+  documentHash,
   isSubmitting = false,
   penColor = 'black',
 }: SignatureCaptureProps) {
@@ -85,8 +88,8 @@ export function SignatureCapture({
     const dataUrl = canvasRef.current!.getTrimmedCanvas().toDataURL('image/png');
     const signatureHash = await sha256(dataUrl);
 
-    await onConfirm({ dataUrl, signatureHash });
-  }, [onConfirm, t]);
+    await onConfirm({ dataUrl, signatureHash, documentHash });
+  }, [onConfirm, t, documentHash]);
 
   return (
     <Card dir={isRtl ? 'rtl' : 'ltr'}>
@@ -95,6 +98,14 @@ export function SignatureCapture({
         <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Legal notice — required before signing */}
+        <div
+          role="note"
+          className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+        >
+          {t('legalNotice')}
+        </div>
+
         {/* Canvas wrapper */}
         <div
           className="relative w-full rounded-lg border-2 border-dashed bg-background focus-within:border-primary"

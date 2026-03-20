@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Checkbox } from "@/components/ui/checkbox";
-import { Download } from "lucide-react";
+import { Download, AlertTriangle } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 
 const exportableStatuses: FormStatus[] = ['APPROVED'];
@@ -116,6 +116,15 @@ export default function MinistryExportPage() {
       <div>
         <h1 className="text-2xl font-bold">{t('pageTitle')}</h1>
         <p className="text-muted-foreground">{t('pageSubtitle')}</p>
+      </div>
+
+      <div
+        role="note"
+        className="flex items-start gap-3 rounded-lg border border-orange-200 bg-orange-50 p-4 text-sm text-orange-900 dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-200"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+        <span>{t('exportDisclaimer')}</span>
       </div>
 
       <Card>

@@ -560,6 +560,7 @@
     "approvalDate": "Approval Date",
     "view": "View",
     "noApprovedForms": "No approved forms found for export.",
+    "exportDisclaimer": "Exported data contains sensitive personal information. Handle in compliance with privacy regulations and do not share with unauthorized parties.",
     "status": "Status",
     "actions": "Actions",
     "a": "A",
