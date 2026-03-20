@@ -1,5 +1,6 @@
 'use server';
 
+import { randomInt } from 'crypto';
 import { z } from 'zod';
 import { withAuth } from '@/lib/auth-utils';
 
@@ -22,7 +23,7 @@ export const sendRentalOtpAction = withAuth(
   SendOtpSchema,
   async (data) => {
     // Generate 6-digit OTP
-    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const code = String(randomInt(100000, 1000000));
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
     otpStore.set(data.rentalToken, { code, expiresAt });
 

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { buildDefaultMemorySeed } from '@/lib/db/default-memory-seed';
 import type {
   Alumnus,
@@ -100,11 +101,8 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function createId(prefix = 'rec'): string {
-  if (typeof globalThis.crypto?.randomUUID === 'function') {
-    return globalThis.crypto.randomUUID();
-  }
-  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+function createId(_prefix = 'rec'): string {
+  return randomUUID();
 }
 
 function hasConservatoriumId(value: unknown): value is { conservatoriumId?: string | null } {

@@ -96,7 +96,7 @@ export async function submitSignatureAction(
   //     In the current MemoryDatabaseAdapter, Storage isn't available,
   //     so we store the data URL directly. When FirebaseAdapter is fully
   //     wired, replace this with a real Storage upload.
-  const auditId = `sig_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  const auditId = `sig_${crypto.randomUUID()}`;
   const signatureUrl = parsed.signatureDataUrl;
 
   // --- 6. Create immutable SignatureAuditRecord ---
