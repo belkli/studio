@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/scholarship-document-purge",
       "schedule": "0 3 1 * *"
+    },
+    {
+      "path": "/api/cron/need-score-update",
+      "schedule": "0 * * * *"
     }
   ]
 }

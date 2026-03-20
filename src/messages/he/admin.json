@@ -953,5 +953,26 @@
     "tooltipTime": "שעה",
     "tooltipStatus": "סטטוס",
     "tooltipRoom": "חדר"
+  },
+  "DonationsSettings": {
+    "title": "הגדרות תרומות",
+    "section46": "עמותה עם אישור סעיף 46",
+    "section46Number": "מספר אישור סעיף 46",
+    "section46Expiry": "תאריך פקיעת תוקף",
+    "annualTarget": "יעד תרומות שנתי (₪)",
+    "platformWeight": "התאמת דירוג (-10 עד +10)",
+    "platformWeightTooltip": "התאמה של ±10 נקודות לדירוג הצורך. דירוג גבוה יותר יציג את הקונסרבטוריון גבוה יותר ברשימת התרומות.",
+    "currentScore": "ציון צורך נוכחי",
+    "lastUpdated": "עודכן לאחרונה",
+    "never": "לא עודכן",
+    "save": "שמור הגדרות",
+    "savedSuccess": "ההגדרות נשמרו בהצלחה",
+    "stories": "סיפורי תלמידים אנונימיים",
+    "addStory": "הוסף סיפור",
+    "removeStory": "הסר",
+    "storyInstrument": "כלי נגינה",
+    "storyAgeRange": "טווח גיל",
+    "storyText": "טקסט הסיפור (עברית)",
+    "noStories": "אין סיפורי תלמידים עדיין"
   }
 }

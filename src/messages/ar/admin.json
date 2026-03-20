@@ -953,5 +953,26 @@
     "tooltipTime": "الوقت",
     "tooltipStatus": "الحالة",
     "tooltipRoom": "الغرفة"
+  },
+  "DonationsSettings": {
+    "title": "إعدادات التبرعات",
+    "section46": "جمعية مع إعفاء ضريبي (بند 46)",
+    "section46Number": "رقم الموافقة بند 46",
+    "section46Expiry": "تاريخ انتهاء الموافقة",
+    "annualTarget": "هدف التبرعات السنوي (₪)",
+    "platformWeight": "تعديل الترتيب (-10 إلى +10)",
+    "platformWeightTooltip": "يعدل درجة الحاجة بـ ±10 نقاط. درجة أعلى تعرض الكونسرفاتوار أعلى في قائمة التبرعات.",
+    "currentScore": "درجة الحاجة الحالية",
+    "lastUpdated": "آخر تحديث",
+    "never": "لم يتم التحديث",
+    "save": "حفظ الإعدادات",
+    "savedSuccess": "تم حفظ الإعدادات بنجاح",
+    "stories": "قصص طلاب مجهولة الهوية",
+    "addStory": "إضافة قصة",
+    "removeStory": "إزالة",
+    "storyInstrument": "آلة موسيقية",
+    "storyAgeRange": "الفئة العمرية",
+    "storyText": "نص القصة",
+    "noStories": "لا توجد قصص طلاب بعد"
   }
 }

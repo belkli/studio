@@ -953,5 +953,26 @@
     "tooltipTime": "Time",
     "tooltipStatus": "Status",
     "tooltipRoom": "Room"
+  },
+  "DonationsSettings": {
+    "title": "Donation Settings",
+    "section46": "Section 46 Tax-Exempt Organization",
+    "section46Number": "Section 46 Approval Number",
+    "section46Expiry": "Approval Expiry Date",
+    "annualTarget": "Annual Donation Target (₪)",
+    "platformWeight": "Ranking Adjustment (-10 to +10)",
+    "platformWeightTooltip": "Adjusts the need score by ±10 points. A higher score ranks the conservatorium higher in the donation listing.",
+    "currentScore": "Current Need Score",
+    "lastUpdated": "Last Updated",
+    "never": "Never updated",
+    "save": "Save Settings",
+    "savedSuccess": "Settings saved successfully",
+    "stories": "Anonymized Student Stories",
+    "addStory": "Add Story",
+    "removeStory": "Remove",
+    "storyInstrument": "Instrument",
+    "storyAgeRange": "Age Range",
+    "storyText": "Story Text",
+    "noStories": "No student stories yet"
   }
 }
