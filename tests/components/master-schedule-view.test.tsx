@@ -40,8 +40,9 @@ const siteAdmin: User = {
     email: 'admin@test.com',
     role: 'site_admin',
     conservatoriumId: 'cons-15',
-    isActive: true,
+    conservatoriumName: 'Test Conservatorium',
     createdAt: '2024-01-01T00:00:00.000Z',
+    approved: true,
 };
 
 // Build lessons that match today's date so they appear in the schedule view

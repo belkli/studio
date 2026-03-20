@@ -302,7 +302,7 @@ describe('Waitlist FIFO enforcement (via DB adapter)', () => {
     expect(isFirstInQueue).toBe(false); // entry-first is first
 
     // Empty skipReason should trigger SKIP_REASON_REQUIRED
-    const skipReason = '';
+    const skipReason: string = '';
     const wouldBlock = !isFirstInQueue && (!skipReason || skipReason.trim().length === 0);
     expect(wouldBlock).toBe(true);
   });

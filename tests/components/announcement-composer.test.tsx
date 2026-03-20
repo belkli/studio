@@ -23,6 +23,9 @@ const adminUser: User = {
   email: 'admin@test.com',
   role: 'conservatorium_admin',
   conservatoriumId: 'cons-1',
+  createdAt: new Date().toISOString(),
+  conservatoriumName: 'Test Conservatorium',
+  approved: true,
 };
 
 describe('AnnouncementComposer', () => {
@@ -184,6 +187,9 @@ describe('AnnouncementComposer', () => {
       email: 'student@test.com',
       role: 'student',
       conservatoriumId: 'cons-1',
+      conservatoriumName: 'Test Conservatorium',
+      createdAt: new Date().toISOString(),
+      approved: true,
     };
 
     renderWithProviders(<AnnouncementComposer />, {

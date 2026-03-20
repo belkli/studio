@@ -1,3 +1,4 @@
+import { it, describe, expect } from 'vitest';
 import type { User, ScholarshipApplication, ComplianceLog } from '@/lib/types';
 
 describe('S2 type extensions', () => {

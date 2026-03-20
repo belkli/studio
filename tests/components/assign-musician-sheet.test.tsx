@@ -53,7 +53,7 @@ function makePerformer(id: string, name: string, rate?: number): Partial<User> {
     email: `${id}@test.com`,
     role: 'teacher',
     conservatoriumId: 'cons-1',
-    instruments: [{ instrument: 'Piano', level: 'advanced' }],
+    instruments: [{ instrument: 'Piano', teacherName: 'Test Teacher', yearsOfStudy: 3 }],
     availability: [
       { dayOfWeek: 'SUN', startTime: '09:00', endTime: '17:00' },
     ],

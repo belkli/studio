@@ -38,6 +38,9 @@ const adminUser: User = {
   email: 'admin@test.com',
   role: 'conservatorium_admin',
   conservatoriumId: 'cons-1',
+  createdAt: new Date().toISOString(),
+  conservatoriumName: 'Test Conservatorium',
+  approved: true,
 };
 
 function makeAnnouncement(overrides: Partial<Announcement> = {}): Announcement {

@@ -1,3 +1,4 @@
+import { it, expect } from 'vitest';
 import type { ComplianceLog } from '@/lib/types';
 
 it('ComplianceLog accepts new action values', () => {
