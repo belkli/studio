@@ -31,10 +31,10 @@ function makeApplication(overrides: Partial<ScholarshipApplication> = {}): Schol
     instrument: 'Piano',
     conservatoriumId: 'cons-1',
     academicYear: '2025-2026',
-    status: 'PENDING',
+    status: 'SUBMITTED',
     submittedAt: '2026-01-15T00:00:00Z',
     priorityScore: 80,
-    aiScore: { score: 75, explanation: 'High need', scoredAt: '2026-01-15T00:00:00Z' },
+    aiScore: { score: 75, reasoning: 'High need', urgencyLevel: 'HIGH', recommendedAward: { discountPercent: 50, durationMonths: 12, confidence: 'HIGH' }, flaggedForHumanReview: false },
     ...overrides,
   } as ScholarshipApplication;
 }
@@ -89,8 +89,8 @@ describe('buildNeedScoreInputs', () => {
   it('pending applications increase weightedAidDemand', () => {
     const cons = makeConservatorium();
     const apps = [
-      makeApplication({ aiScore: { score: 80, explanation: '', scoredAt: '' } }),
-      makeApplication({ id: 'app-2', aiScore: { score: 60, explanation: '', scoredAt: '' } }),
+      makeApplication({ aiScore: { score: 80, reasoning: '', urgencyLevel: 'HIGH', recommendedAward: { discountPercent: 50, durationMonths: 12, confidence: 'HIGH' }, flaggedForHumanReview: false } }),
+      makeApplication({ id: 'app-2', aiScore: { score: 60, reasoning: '', urgencyLevel: 'MEDIUM', recommendedAward: { discountPercent: 30, durationMonths: 12, confidence: 'MEDIUM' }, flaggedForHumanReview: false } }),
     ];
 
     const withApps = buildNeedScoreInputs(cons, apps, NOW);
@@ -99,16 +99,16 @@ describe('buildNeedScoreInputs', () => {
     expect(withApps.weightedAidDemand).toBeGreaterThan(withoutApps.weightedAidDemand);
   });
 
-  it('only counts PENDING applications for the matching conservatorium', () => {
+  it('only counts active applications for the matching conservatorium', () => {
     const cons = makeConservatorium({ id: 'cons-1' });
     const apps = [
-      makeApplication({ conservatoriumId: 'cons-1', status: 'PENDING' }),
-      makeApplication({ id: 'app-2', conservatoriumId: 'cons-2', status: 'PENDING' }),
+      makeApplication({ conservatoriumId: 'cons-1', status: 'SUBMITTED' }),
+      makeApplication({ id: 'app-2', conservatoriumId: 'cons-2', status: 'SUBMITTED' }),
       makeApplication({ id: 'app-3', conservatoriumId: 'cons-1', status: 'APPROVED' }),
     ];
 
     const result = buildNeedScoreInputs(cons, apps, NOW);
-    // Only 1 PENDING app for cons-1 should contribute
+    // Only 1 SUBMITTED app for cons-1 should contribute
     expect(result.weightedAidDemand).toBeGreaterThan(0);
   });
 

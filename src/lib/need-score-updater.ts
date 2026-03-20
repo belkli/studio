@@ -21,9 +21,10 @@ export function buildNeedScoreInputs(
   const balance = donations?.currentFundBalance ?? 0;
   const target = donations?.annualDonationTarget ?? 1;
 
-  // Weighted aid demand: sum of (aiScore.score/100) for pending apps for this cons, normalized
+  // Weighted aid demand: sum of (aiScore.score/100) for submitted/under-review apps, normalized
   const apps = pendingApplications.filter(
-    (a) => a.conservatoriumId === conservatorium.id && a.status === 'PENDING',
+    (a) => a.conservatoriumId === conservatorium.id &&
+      (a.status === 'SUBMITTED' || a.status === 'UNDER_REVIEW' || a.status === 'DOCUMENTS_PENDING'),
   );
   const weightedDemand =
     apps.length > 0
