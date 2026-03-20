@@ -17,6 +17,9 @@ import { UserUpsertSchema } from '@/lib/validation/user-upsert';
 import { LessonSlotUpsertSchema } from '@/lib/validation/lesson-slot';
 import { ConservatoriumUpsertSchema } from '@/lib/validation/conservatorium';
 import { EventProductionUpsertSchema } from '@/lib/validation/event-production';
+import { isCommitteeMember, redactScholarshipForNonCommittee } from '@/lib/scholarship-rbac';
+import { logAccess } from '@/lib/compliance-log';
+import { checkConsentType } from '@/lib/consent-guard';
 
 type ComposerSearchResult = {
   id: string;
@@ -879,6 +882,15 @@ export const createScholarshipApplicationAction = withAuth(
   ScholarshipApplicationSchema,
   async (payload: z.infer<typeof ScholarshipApplicationSchema>) => {
     await requireRole(['student', 'parent', 'conservatorium_admin', 'delegated_admin', 'site_admin'], payload.conservatoriumId);
+    // AID-3: require SCHOLARSHIP_DATA consent before accepting submission
+    const hasConsent = await checkConsentType(payload.studentId, 'SCHOLARSHIP_DATA');
+    if (!hasConsent) {
+      return {
+        success: false as const,
+        reason: 'missing_consent' as const,
+        message: 'הסכמה לעיבוד מסמכי מלגה נדרשת לפני הגשת הבקשה.',
+      };
+    }
     const db = await getDb();
     return await db.scholarships.create(payload as Partial<ScholarshipApplication>);
   }
@@ -923,6 +935,71 @@ export const markScholarshipPaidAction = withAuth(
       paidAt: new Date().toISOString(),
     } as Partial<ScholarshipApplication>);
     return { success: true as const, scholarship: updated };
+  }
+);
+
+const GetScholarshipApplicationSchema = z.object({
+  applicationId: z.string().min(1),
+});
+
+/**
+ * Get full scholarship application including documents.
+ * Restricted to SCHOLARSHIP_COMMITTEE members and global admins.
+ * Fires SENSITIVE_DATA_ACCESS compliance log on every call.
+ */
+export const getScholarshipApplicationAction = withAuth(
+  GetScholarshipApplicationSchema,
+  async ({ applicationId }: { applicationId: string }) => {
+    const claims = await requireRole([
+      'conservatorium_admin', 'delegated_admin', 'site_admin', 'superadmin',
+    ]);
+    const db = await getDb();
+    const app = await db.scholarships.findById(applicationId);
+    if (!app) return { success: false as const, reason: 'not_found' as const };
+
+    if (claims.role !== 'site_admin' && claims.role !== 'superadmin') {
+      if (app.conservatoriumId !== claims.conservatoriumId) {
+        throw new Error('TENANT_MISMATCH');
+      }
+    }
+
+    const requestingUser = await db.users.findById(claims.uid);
+    if (!requestingUser || !isCommitteeMember(requestingUser)) {
+      throw new Error('FORBIDDEN');
+    }
+
+    await logAccess({
+      userId: claims.uid,
+      conservatoriumId: app.conservatoriumId,
+      resourceType: 'ScholarshipApplication',
+      resourceId: applicationId,
+      action: 'SENSITIVE_DATA_ACCESS',
+    });
+
+    return { success: true as const, application: app };
+  }
+);
+
+/**
+ * Get redacted scholarship summary — safe for non-committee conservatorium admins.
+ */
+export const getScholarshipSummaryAction = withAuth(
+  GetScholarshipApplicationSchema,
+  async ({ applicationId }: { applicationId: string }) => {
+    const claims = await requireRole([
+      'conservatorium_admin', 'delegated_admin', 'site_admin', 'superadmin',
+    ]);
+    const db = await getDb();
+    const app = await db.scholarships.findById(applicationId);
+    if (!app) return { success: false as const, reason: 'not_found' as const };
+
+    if (claims.role !== 'site_admin' && claims.role !== 'superadmin') {
+      if (app.conservatoriumId !== claims.conservatoriumId) {
+        throw new Error('TENANT_MISMATCH');
+      }
+    }
+
+    return { success: true as const, summary: redactScholarshipForNonCommittee(app) };
   }
 );
 
