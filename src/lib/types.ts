@@ -1968,11 +1968,12 @@ export type AIJob = {
 // SDD-P7: Compliance Log
 export type ComplianceLog = {
   id: string;
-  action: 'PII_DELETED' | 'CONSENT_GIVEN' | 'CONSENT_REVOKED' | 'DATA_EXPORTED' | 'BREACH_REPORTED' | 'SIGNATURE_CREATED';
+  action: 'PII_DELETED' | 'CONSENT_GIVEN' | 'CONSENT_REVOKED' | 'DATA_EXPORTED' | 'BREACH_REPORTED' | 'SIGNATURE_CREATED' | 'PII_READ' | 'SENSITIVE_DATA_ACCESS' | 'MARKETING_MESSAGE_SENT' | 'OTP_GENERATED';
   subjectId: string;
   reason: string;
   performedAt: string;                  // ISO Timestamp
   performedBy: string;                  // userId or 'SYSTEM'
+  conservatoriumId: string;
   retentionPolicyApplied?: number;
 };
 
