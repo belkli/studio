@@ -1,5 +1,5 @@
 'use server';
-import { withAuth } from '@/lib/auth-utils';
+import { withAuth, requireRole } from '@/lib/auth-utils';
 import { getDb } from '@/lib/db';
 import { z } from 'zod';
 
@@ -11,6 +11,7 @@ const ExtendMakeupSchema = z.object({
 export const extendMakeupWindowAction = withAuth(
   ExtendMakeupSchema,
   async (data) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     await db.makeupCredits.update(data.creditId, { expiresAt: data.newExpiresAt });
     return { success: true };

@@ -780,8 +780,12 @@ export const saveAlumnus = withAuth(
 export const deleteAlumnus = withAuth(
   DeleteAlumnusSchema,
   async (id: string) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
+    const alumnus = await db.alumni.findById(id);
+    if (alumnus?.conservatoriumId && alumnus.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
+    }
     await db.alumni.delete(id);
     return { success: true };
   }
@@ -808,8 +812,12 @@ export const createMasterClassAction = withAuth(
 export const publishMasterClassAction = withAuth(
   z.string(),
   async (masterClassId: string): Promise<Masterclass> => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
+    const mc = await db.masterClasses.findById(masterClassId);
+    if (mc?.conservatoriumId && mc.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
+    }
     return await db.masterClasses.update(masterClassId, { status: 'published' } as Partial<Masterclass>);
   }
 );
@@ -879,11 +887,14 @@ export const createScholarshipApplicationAction = withAuth(
 export const updateScholarshipStatusAction = withAuth(
   ScholarshipStatusUpdateSchema,
   async ({ applicationId, status }: z.infer<typeof ScholarshipStatusUpdateSchema>) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     const existing = await db.scholarships.findById(applicationId);
     if (!existing) {
       return { success: false as const, reason: 'not_found' as const };
+    }
+    if (existing.conservatoriumId && existing.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
     }
     const now = new Date().toISOString();
     const updated = await db.scholarships.update(applicationId, {
@@ -898,11 +909,14 @@ export const updateScholarshipStatusAction = withAuth(
 export const markScholarshipPaidAction = withAuth(
   z.string(),
   async (applicationId: string) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
     const existing = await db.scholarships.findById(applicationId);
     if (!existing) {
       return { success: false as const, reason: 'not_found' as const };
+    }
+    if (existing.conservatoriumId && existing.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
     }
     const updated = await db.scholarships.update(applicationId, {
       paymentStatus: 'PAID',
@@ -986,8 +1000,12 @@ export const updateConservatoriumInstrumentAction = withAuth(
 export const deleteConservatoriumInstrumentAction = withAuth(
   z.string(),
   async (id: string) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
+    const existing = await db.conservatoriumInstruments.findById(id);
+    if (existing?.conservatoriumId && existing.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
+    }
     await db.conservatoriumInstruments.delete(id);
     return { success: true as const };
   }
@@ -1018,8 +1036,12 @@ export const updateLessonPackageAction = withAuth(
 export const deleteLessonPackageAction = withAuth(
   z.string(),
   async (id: string) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
+    const existing = await db.lessonPackages.findById(id);
+    if (existing?.conservatoriumId && existing.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
+    }
     await db.lessonPackages.delete(id);
     return { success: true as const };
   }
@@ -1050,8 +1072,12 @@ export const updateRoomAction = withAuth(
 export const deleteRoomAction = withAuth(
   z.string(),
   async (id: string) => {
-    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
+    const claims = await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const db = await getDb();
+    const existing = await db.rooms.findById(id);
+    if (existing?.conservatoriumId && existing.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+      throw new Error('TENANT_MISMATCH');
+    }
     await db.rooms.delete(id);
     return { success: true as const };
   }

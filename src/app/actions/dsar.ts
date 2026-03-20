@@ -64,6 +64,16 @@ export const exportUserDataAction = withAuth(
   async (data) => {
     const claims = await verifyAuth();
 
+    // Users can only export their own data; admins can export for users in their conservatorium
+    if (data.userId !== claims.uid) {
+      if (!['site_admin', 'conservatorium_admin', 'delegated_admin'].includes(claims.role)) {
+        throw new Error('FORBIDDEN');
+      }
+      if (data.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+        throw new Error('TENANT_MISMATCH');
+      }
+    }
+
     const db = await getDb();
 
     // Collect PII-bearing records for this user
@@ -125,6 +135,16 @@ export const requestDataDeletionAction = withAuth(
   async (data) => {
     const claims = await verifyAuth();
 
+    // Users can only request deletion of their own data; admins can act for their conservatorium
+    if (data.userId !== claims.uid) {
+      if (!['site_admin', 'conservatorium_admin', 'delegated_admin'].includes(claims.role)) {
+        throw new Error('FORBIDDEN');
+      }
+      if (data.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+        throw new Error('TENANT_MISMATCH');
+      }
+    }
+
     // In production: enqueue a deletion job / notify DPO.
     // For now we record the request in the compliance log.
 
@@ -153,6 +173,17 @@ export const withdrawConsentAction = withAuth(
   WithdrawConsentSchema,
   async (data) => {
     const claims = await verifyAuth();
+
+    // Users can only withdraw their own consent; admins can act for their conservatorium
+    if (data.userId !== claims.uid) {
+      if (!['site_admin', 'conservatorium_admin', 'delegated_admin'].includes(claims.role)) {
+        throw new Error('FORBIDDEN');
+      }
+      if (data.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+        throw new Error('TENANT_MISMATCH');
+      }
+    }
+
     const db = await getDb();
 
     // Find active consent records of the requested type

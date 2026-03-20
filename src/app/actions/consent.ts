@@ -51,8 +51,9 @@ export async function recordConsentAction(
   }
 
   // --- 2. Authenticate & authorise ---
+  let claims;
   try {
-    await requireRole([
+    claims = await requireRole([
       'student',
       'parent',
       'teacher',
@@ -62,6 +63,11 @@ export async function recordConsentAction(
     ]);
   } catch {
     return { success: false, error: 'Unauthorized' };
+  }
+
+  // Validate that the caller belongs to the claimed conservatorium (or is a global admin)
+  if (parsed.data.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+    return { success: false, error: 'Forbidden: conservatoriumId mismatch' };
   }
 
   // --- 3. Build the ConsentRecord document ---

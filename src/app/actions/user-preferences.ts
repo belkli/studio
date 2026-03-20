@@ -19,7 +19,7 @@ export async function updatePreferredLanguageAction(
     const parsed = UpdatePreferredLanguageSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: 'Invalid input' };
 
-    await requireRole([
+    const claims = await requireRole([
       'student',
       'parent',
       'teacher',
@@ -27,6 +27,11 @@ export async function updatePreferredLanguageAction(
       'delegated_admin',
       'site_admin',
     ]);
+
+    // Users can only update their own language preference
+    if (parsed.data.userId !== claims.uid && !['site_admin', 'superadmin'].includes(claims.role)) {
+      return { success: false, error: 'Forbidden: cannot update another user\'s preferences' };
+    }
 
     const db = await getDb();
     await db.users.update(parsed.data.userId, {

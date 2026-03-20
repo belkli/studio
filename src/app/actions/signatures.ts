@@ -92,6 +92,11 @@ export async function submitSignatureAction(
     return { ok: false, error: 'FORM_NOT_FOUND' };
   }
 
+  // Tenant isolation: non-global admins can only sign forms in their conservatorium
+  if (form.conservatoriumId && form.conservatoriumId !== claims.conservatoriumId && !['site_admin', 'superadmin'].includes(claims.role)) {
+    return { ok: false, error: 'TENANT_MISMATCH' };
+  }
+
   // --- 5. Upload signature image to Firebase Storage ---
   //     In the current MemoryDatabaseAdapter, Storage isn't available,
   //     so we store the data URL directly. When FirebaseAdapter is fully

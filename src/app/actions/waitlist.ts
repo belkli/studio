@@ -1,5 +1,5 @@
 'use server';
-import { withAuth } from '@/lib/auth-utils';
+import { withAuth, requireRole } from '@/lib/auth-utils';
 import { getDb } from '@/lib/db';
 import { z } from 'zod';
 
@@ -11,6 +11,7 @@ const OfferSlotSchema = z.object({
 export const offerSlotToWaitlistedAction = withAuth(
   OfferSlotSchema,
   async (data) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     const offerExpiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
     try {
       const db = await getDb();
@@ -43,6 +44,7 @@ const OfferWaitlistSlotSchema = z.object({
 export const offerWaitlistSlotAction = withAuth(
   OfferWaitlistSlotSchema,
   async (data) => {
+    await requireRole(['conservatorium_admin', 'delegated_admin', 'site_admin']);
     try {
       const db = await getDb();
       const entry = await db.waitlist.findById(data.entryId);
