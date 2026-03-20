@@ -34,7 +34,7 @@ This work covers 50 named action items from the audit (SEC-1..5, AID-1..5, ACC-1
 - All Supabase queries in Server Actions and API routes must filter by `conservatoriumId` claimed from auth token — never from client-supplied input
 - Audit pattern: `supabase.from('teachers').select()` → must become `supabase.from('teachers').select().eq('conservatorum_id', verifiedConsId)`
 - Wire `ComplianceLog` to all PII read/write events: `logAccess(userId, resourceType, resourceId, action)`
-- All API credentials (Cardcom terminals, SMS keys, etc.) moved to **Vercel Environment Variables** (encrypted, per-environment) — never stored in Supabase DB columns. Per-tenant BYOD credentials use Supabase-encrypted columns (via `pgcrypto`). See `src/lib/secrets.ts`.
+- All API credentials (Cardcom/HYP/Sumit/Tranzila terminals, SMS keys, etc.) stored securely: **Supabase is the source of truth for all data including per-tenant credentials** — BYOD gateway credentials stored in Supabase-encrypted columns (via `pgcrypto`). Vercel Environment Variables hold only platform-level secrets (e.g., Lyriosa's own SMS provider key, Gemini API key). See `src/lib/secrets.ts`.
 - Cardcom webhook: verify HMAC signature on every incoming webhook before processing
 - Replace `Math.random()` with `crypto.randomInt()` for all OTP/token generation, including `src/app/actions/signatures.ts`
 
@@ -61,6 +61,7 @@ This work covers 50 named action items from the audit (SEC-1..5, AID-1..5, ACC-1
 - `src/app/actions/signatures.ts` — replace `Math.random()` with `crypto.randomInt()` for auditId generation
 - `src/lib/types.ts` — add new `ComplianceLog.action` union values (see DB section above)
 - Supabase RLS migration files
+- BYOD gateway credential storage: all gateway types supported — Cardcom, HYP, Sumit, Tranzila, and future gateways. `src/lib/payments/` must have a per-gateway webhook HMAC validator; S1 adds HMAC to Cardcom. HYP/Sumit/Tranzila validators should follow the same pattern (their specific webhook signature schemes to be confirmed per gateway docs).
 
 ---
 
@@ -91,10 +92,15 @@ This work covers 50 named action items from the audit (SEC-1..5, AID-1..5, ACC-1
 
 **Goal:** Ensure no Lyriosa-generated PDF can be mistaken for an official חשבונית מס.
 
+**Design note:** The official tax invoice (חשבונית מס) is delegated entirely to the payment gateway (Cardcom, HYP, Sumit, Tranzila) — each gateway issues the official receipt under the conservatorium's registration. Lyriosa's internal PDF is a **supplementary document only** (payment summary, parent-facing receipt, accounting reference). It must never be mistaken for the official invoice.
+
+The internal PDF generation feature should be **flagged for potential future disabling** via a feature flag (`LYRIOSA_INTERNAL_PDF_ENABLED`). If all conservatoria successfully use gateway-issued invoices, this feature may be retired. Keep the code but add the flag.
+
 #### Backend
 - `generate-invoice-pdf.ts`: add mandatory disclaimer banner: *"מסמך פנימי בלבד — אינו מהווה חשבונית מס. החשבונית הרשמית הונפקה על-ידי [gatewayName]."*
+- `generate-invoice-pdf.ts`: gate behind `LYRIOSA_INTERNAL_PDF_ENABLED` feature flag (default: `true` for backward compat). Add `// TODO: disable once all gateways confirmed issuing invoices` comment.
 - Store gateway's invoice number as `invoiceNumber` — never generate a Lyriosa sequential number as the primary key
-- `CreateInvoice: true` flag: **add** `CreateInvoice: true` to the Cardcom API request body in `src/lib/payments/cardcom.ts` (currently missing from `createCardcomPaymentPage` function)
+- `CreateInvoice: true` flag: **add** `CreateInvoice: true` to the Cardcom API request body in `src/lib/payments/cardcom.ts` (currently missing from `createCardcomPaymentPage` function). Equivalent flag names for HYP/Sumit/Tranzila to be confirmed per their API docs.
 
 #### No DB schema changes.
 #### No UI changes (disclaimer is PDF-embedded).
@@ -174,29 +180,65 @@ This work covers 50 named action items from the audit (SEC-1..5, AID-1..5, ACC-1
 
 **"The AI-Ranked Marketplace"** — Fair play through transparent ranked display. AI ranks conservatoria by need; donors choose; money flows direct. No central entity, no legal complexity.
 
-**Key insight from JGive research:** JGive Platinum is a Donor Advised Fund (DAF) operated by קרן עשור (ע"ר). This is the established Israeli model for multi-org giving with a single receipt. Lyriosa does not need to build this — it can integrate with JGive Platinum (or Nedarim Plus) as the settlement layer for large donors (>₪5,000) who want multi-org giving. For the majority of donors (<₪5,000, single org), direct Cardcom is used.
+**Key insight from JGive research:** JGive Platinum is a Donor Advised Fund (DAF) operated by קרן עשור (ע"ר). This is the established Israeli model for multi-org giving with a single receipt. Lyriosa does not need to build this — it can integrate with JGive Platinum (or Nedarim Plus) as the settlement layer for large donors (>₪5,000) who want multi-org giving. For the majority of donors (<₪5,000, single org), direct Cardcom/HYP/Sumit payment is used.
 
-### B.2 Versioned Rollout
+### B.2 Architectural Options Considered
 
-#### V1 — Launch (implements in Sprint S7)
+All three options are documented here for future reference. **Option C is selected for V1.**
+
+#### Option A — Donation-Dedicated "Host" Conservatorium
+One existing Section 46 conservatorium acts as a platform-wide donation gateway. Donors pay once to the host; host disburses grants to other conservatoria per the NeedScore algorithm.
+- ✓ ONE payment page, ONE receipt
+- ✗ Requires a willing Section 46 partner willing to take disbursement liability
+- ✗ Host bears legal/audit responsibility as a grant-making body
+
+#### Option B — Lyriosa Creates Its Own Amuta (NGO)
+"עמותת ליריאוסה לחינוך מוזיקלי" — separate legal entity that holds Section 46 approval and distributes per algorithm.
+- ✓ Clean long-term architecture
+- ✗ 12–18 months to receive Section 46 approval from Israeli Tax Authority
+- ✗ Ongoing governance overhead (board, annual reports, auditor)
+
+#### Option C — Selected: Direct Routing + AI-Ranked Display (V1)
+Each donor picks one conservatorium → pays directly via that conservatorium's own gateway terminal → receives one Section 46 receipt from that conservatorium. Fair play achieved through UI ranking (neediest shown first), not algorithmic routing.
+- ✓ No legal complexity, can launch immediately
+- ✓ Each conservatorium retains full legal control of their payments
+- ✓ Works with all BYOD gateways: Cardcom, HYP, Sumit, Tranzila
+- ✗ Large donations not auto-split across conservatoria (mitigated by V2 basket)
+
+#### Option D — DAF Partnership (V3 strategic path)
+Partner with an existing DAF operator (JGive Platinum / Nedarim Plus). Donor makes ONE payment to the DAF; Lyriosa provides the NeedScore-based distribution recommendation; the DAF handles Section 46 receipting and fund disbursement to conservatoria. The DAF is the legal recipient — Lyriosa is the recommendation engine.
+- ✓ Single payment + single receipt regardless of how many conservatoria receive funds
+- ✓ No new legal entity needed — leverage existing licensed DAF
+- ✓ Fully automatic cascade with no multi-charge complexity
+- ✓ Lyriosa provides only the algorithm/recommendation — DAF retains fiduciary responsibility
+- ⚠ Requires commercial partnership agreement with JGive or Nedarim Plus
+- ⚠ DAF takes a platform fee (JGive: ~3–5%)
+- This is the preferred long-term architecture if a partnership can be secured
+
+### B.3 Versioned Rollout
+
+#### V1 — Launch (implements in Sprint S7) — **Option C**
 - Conservatorium admin self-declares Section 46 status in settings (onboarding checklist item)
 - Public `/donate` page shows AI-ranked list of Section 46 conservatoria
-- Donor picks one conservatorium → single Cardcom payment → single Section 46 receipt
+- Donor picks one conservatorium → single payment via that conservatorium's own gateway (Cardcom/HYP/Sumit/Tranzila) → single Section 46 receipt from that conservatorium
 - Recurring: always goes to the same chosen conservatorium
 - No central entity required
 
-#### V2 — Multi-basket (3 months post-launch)
+#### V2 — Multi-basket (3 months post-launch) — **Option C extended**
 - Donor can add multiple conservatoria to a basket with custom amounts
-- First Cardcom payment captures card token; subsequent basket items charged against token
-- Bundled receipt email (N individual receipts assembled into one PDF)
+- First gateway payment captures card token; subsequent basket items charged against token (gateway token portability to be confirmed per gateway — each conservatorium may use a different gateway vendor, which limits token reuse across gateways)
+- Bundled receipt email (N individual receipts assembled into one convenience PDF — not a tax document itself)
 - Recurring "Follow the Need" option: each month charges against whichever conservatorium ranks #1
 
-#### V3 — DAF Integration (6-12 months, optional)
-- Integrate with JGive Platinum API or Nedarim Plus for large donors (>₪5,000)
-- Single payment → single receipt → DAF distributes per algorithm
-- Enables fully automatic cascade routing without multiple Cardcom transactions
+#### V3 — DAF Partnership (6-12 months) — **Option D**
+- Pursue commercial partnership with JGive Platinum or Nedarim Plus
+- Donor makes ONE payment to the DAF partner
+- Lyriosa provides the NeedScore-based distribution recommendation via API
+- DAF distributes funds to eligible Section 46 conservatoria per Lyriosa's recommendation
+- Single payment → single Section 46 receipt → DAF handles all disbursements
+- Lyriosa is the recommendation engine; DAF is the legal/financial entity
 
-### B.3 Need Score Algorithm
+### B.4 NeedScore Algorithm
 
 Updates hourly. Drives display ranking only — never touches money routing directly.
 
@@ -218,7 +260,7 @@ NeedScore(cons) = (
 - Score recalculated hourly by scheduled function
 - Algorithm weights published openly on `/about/donations` transparency page
 
-### B.4 AI Scholarship Scoring (Layer 1)
+### B.5 AI Scholarship Scoring (Layer 1)
 
 Student applications are scored by Gemini before human committee review.
 
@@ -240,9 +282,9 @@ Student applications are scored by Gemini before human committee review.
 | Enrollment continuity | 5% | Years enrolled |
 
 #### AI output format
-See `AIScholarshipScore` type definition in B.5.
+See `AIScholarshipScore` type definition in B.6.
 
-### B.5 Data Model Changes
+### B.6 Data Model Changes
 
 All new types live in `src/lib/types.ts` unless otherwise noted.
 
@@ -307,8 +349,7 @@ cardToken?: string;  // for basket multi-charge (V2) — note: Cardcom tokens ar
 ```
 
 #### Onboarding tracking (Part C)
-The onboarding checklist is tracked in the DB as a `Conservatorium` field (not just a static doc) — governs go-live gating:
-```typescript
+The onboarding checklist is tracked in the DB as a `Conservatorium` field (not just a static doc) — governs go-live gating:```typescript
 onboardingChecklist: {
   legalEntityType?: 'municipal_dept' | 'municipal_corp' | 'amuta' | 'private';
   section46Declared: boolean;
@@ -320,7 +361,7 @@ onboardingChecklist: {
 }
 ```
 
-### B.6 UI Changes
+### B.7 UI Changes
 
 #### Conservatorium Admin Settings — new "Donations" tab
 - Toggle: Enable donation module (requires Section 46 approval number)
@@ -347,7 +388,7 @@ onboardingChecklist: {
 
 ## Part C: Conservatorium Admin Onboarding Checklist (new)
 
-Admin setup now requires completing a structured checklist before going live. The checklist is tracked in the DB as `Conservatorium.onboardingChecklist` (see B.5) and gates the go-live toggle in the admin UI.
+Admin setup now requires completing a structured checklist before going live. The checklist is tracked in the DB as `Conservatorium.onboardingChecklist` (see B.6) and gates the go-live toggle in the admin UI.
 
 - [ ] Legal entity type (municipal department / municipal corp / independent amuta / private)
 - [ ] Section 46 approval number + expiry (if applicable)
@@ -377,8 +418,8 @@ Ongoing:   S7 V2 (Multi-basket) after V1 validation
 | Question | Decision |
 |----------|----------|
 | Algorithm weights fixed or configurable? | Hybrid: Lyriosa sets baseline, admin ±10% adjustment |
-| Receipt problem for multi-org donations? | V1: single org per payment (no problem). V2: token reuse + bundled email. V3: DAF integration |
-| Central NGO needed? | No — JGive Platinum / Nedarim Plus can serve as DAF layer for V3. V1 and V2 require no central entity |
+| Central NGO needed? | No for V1/V2. V3 uses DAF partnership (JGive Platinum / Nedarim Plus) — Lyriosa provides recommendation, DAF is the legal entity. Lyriosa never needs to create its own amuta unless no DAF partner agrees. |
+| Receipt problem for multi-org donations? | V1: single org per payment (no problem). V2: per-gateway tokens + bundled convenience PDF. V3: DAF issues one official Section 46 receipt for full donation. |
 | Should donors see AI reasoning? | No — donors see "N students are waiting for support" (count-based), not AI scores |
 | Recurring payment routing? | V1: fixed conservatorium. V2: "Follow the Need" option charges top-ranked cons each month |
 | ₪50K donation exceeding one cons's need | V1: donor picks, no overflow. V2: basket lets donor split manually. V3: DAF auto-cascades |
