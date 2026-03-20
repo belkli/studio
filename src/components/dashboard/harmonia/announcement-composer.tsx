@@ -31,6 +31,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Send, Loader2, Languages, AlertTriangle, RefreshCw, RotateCcw } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations, useLocale } from 'next-intl';
@@ -44,6 +46,7 @@ const getAnnouncementSchema = (t: any) => z.object({
   channels: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: t('errors.minOneChannel'),
   }),
+  messageType: z.enum(['SERVICE', 'MARKETING']).default('SERVICE'),
 });
 
 type AnnouncementFormData = z.infer<ReturnType<typeof getAnnouncementSchema>>;
@@ -122,6 +125,7 @@ export function AnnouncementComposer() {
       body: "",
       targetAudience: "ALL",
       channels: ["IN_APP", "EMAIL"],
+      messageType: "SERVICE",
     },
   });
 
@@ -302,6 +306,8 @@ export function AnnouncementComposer() {
   const doSubmit = (data: AnnouncementFormData) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const announcementPayload: any = { ...data };
+    // Pass messageType for Amendment 40 compliance
+    announcementPayload.messageType = data.messageType ?? 'SERVICE';
     const anyAiTranslation = TARGET_LOCALES.some(
       (l) => translationStates[l].translatedByAI
     );
@@ -633,6 +639,48 @@ export function AnnouncementComposer() {
                   )}
                 />
               </div>
+
+              {/* Amendment 40: Message type selector */}
+              <FormField
+                control={form.control}
+                name="messageType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>{t('formLabels.messageType')}</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex gap-4"
+                        dir={isRtl ? 'rtl' : 'ltr'}
+                      >
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="SERVICE" id="msg-service" />
+                          <Label htmlFor="msg-service" className="cursor-pointer font-normal">
+                            {t('messageTypes.SERVICE')}
+                          </Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="MARKETING" id="msg-marketing" />
+                          <Label htmlFor="msg-marketing" className="cursor-pointer font-normal">
+                            {t('messageTypes.MARKETING')}
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch('messageType') === 'MARKETING' && (
+                <Alert className="border-amber-400 bg-amber-50 dark:bg-amber-950/30">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <AlertDescription className="text-amber-800 dark:text-amber-300 ms-2">
+                    {t('marketingWarning')}
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
             <CardFooter className="justify-start">
               <Button type="submit">

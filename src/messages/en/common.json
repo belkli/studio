@@ -385,7 +385,8 @@
       "title": "Title",
       "body": "Message Body",
       "targetAudience": "Target Audience",
-      "channels": "Distribution Channels"
+      "channels": "Distribution Channels",
+      "messageType": "Message Type"
     },
     "placeholders": {
       "title": "e.g. Reminder about Hanukkah break",
@@ -426,7 +427,12 @@
     "retranslateAll": "Re-translate all",
     "publishHebrewOnly": "Publish in Hebrew only",
     "publishHebrewOnlyConfirm": "This announcement will only be sent in Hebrew. Continue?",
-    "aiGeneratedDisclaimer": "This translation was automatically generated and may contain inaccuracies"
+    "aiGeneratedDisclaimer": "This translation was automatically generated and may contain inaccuracies",
+    "messageTypes": {
+      "SERVICE": "Service",
+      "MARKETING": "Marketing"
+    },
+    "marketingWarning": "This message is tagged as marketing (Amendment 40). It will only be sent to users who consented to marketing communications."
   },
   "RecentAnnouncementsCard": {
     "title": "Recent Announcements",

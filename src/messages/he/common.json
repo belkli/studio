@@ -385,7 +385,8 @@
       "title": "כותרת",
       "body": "גוף ההודעה",
       "targetAudience": "קהל יעד",
-      "channels": "ערוצי הפצה"
+      "channels": "ערוצי הפצה",
+      "messageType": "סוג הודעה"
     },
     "placeholders": {
       "title": "לדוגמה: תזכורת על חופשת חנוכה",
@@ -426,7 +427,12 @@
     "retranslateAll": "תרגם שוב הכל",
     "publishHebrewOnly": "פרסם בעברית בלבד",
     "publishHebrewOnlyConfirm": "הכרזה זו תישלח בעברית בלבד. להמשיך?",
-    "aiGeneratedDisclaimer": "תרגום זה נוצר אוטומטית ועלול להכיל אי-דיוקים"
+    "aiGeneratedDisclaimer": "תרגום זה נוצר אוטומטית ועלול להכיל אי-דיוקים",
+    "messageTypes": {
+      "SERVICE": "שירות",
+      "MARKETING": "פרסומת"
+    },
+    "marketingWarning": "הודעה זו מסומנת כפרסומת (תיקון 40). תישלח רק למשתמשים שנתנו הסכמה לתקשורת שיווקית."
   },
   "RecentAnnouncementsCard": {
     "title": "הכרזות אחרונות",

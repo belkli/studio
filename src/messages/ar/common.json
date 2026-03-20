@@ -385,7 +385,8 @@
       "title": "العنوان",
       "body": "نص الرسالة",
       "targetAudience": "الجمهور المستهدف",
-      "channels": "قنوات التوزيع"
+      "channels": "قنوات التوزيع",
+      "messageType": "نوع الرسالة"
     },
     "placeholders": {
       "title": "مثال: تذكير بإجازة عيد الحانوكا",
@@ -426,7 +427,12 @@
     "retranslateAll": "إعادة ترجمة الكل",
     "publishHebrewOnly": "نشر بالعبرية فقط",
     "publishHebrewOnlyConfirm": "سيتم إرسال هذا الإعلان باللغة العبرية فقط. هل تريد المتابعة؟",
-    "aiGeneratedDisclaimer": "تمت ترجمة هذا النص آليًا وقد يحتوي على عدم دقة"
+    "aiGeneratedDisclaimer": "تمت ترجمة هذا النص آليًا وقد يحتوي على عدم دقة",
+    "messageTypes": {
+      "SERVICE": "خدمة",
+      "MARKETING": "تسويق"
+    },
+    "marketingWarning": "هذه الرسالة مصنّفة كتسويقية (تعديل 40). ستُرسل فقط إلى المستخدمين الذين وافقوا على تلقي رسائل تسويقية."
   },
   "RecentAnnouncementsCard": {
     "title": "الإعلانات الأخيرة",

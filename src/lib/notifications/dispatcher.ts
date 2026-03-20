@@ -16,6 +16,8 @@
 
 import type { Channel, NotificationType, NotificationPreferences } from '@/lib/types';
 import { getDb } from '@/lib/db';
+import { checkMarketingConsent } from '@/lib/consent-guard';
+import { logAccess } from '@/lib/compliance-log';
 
 // ── Types ────────────────────────────────────────────────────
 export interface NotificationPayload {
@@ -29,6 +31,8 @@ export interface NotificationPayload {
     channels?: Channel[];       // If specified, overrides user preferences
     priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
     data?: Record<string, string>;
+    /** Amendment 40 — classifies SMS/WhatsApp as service or marketing */
+    messageType?: 'SERVICE' | 'MARKETING';
 }
 
 export interface DispatchResult {
@@ -121,6 +125,21 @@ export function normalizeIsraeliPhone(phone: string): string {
     return cleaned;
 }
 
+// ── Amendment 40 — Sender ID & Unsubscribe ──────────────────
+
+/** Prepends sender ID and appends unsubscribe footer per Amendment 40. */
+function formatAmendment40Body(
+    body: string,
+    conservatoriumName: string,
+    isMarketing: boolean,
+): string {
+    let formatted = `ליריאוסה — ${conservatoriumName}: ${body}`;
+    if (isMarketing) {
+        formatted += '\n\nלהסרה מרשימת התפוצה השב: סור';
+    }
+    return formatted;
+}
+
 // ── Dispatcher ───────────────────────────────────────────────
 
 /**
@@ -181,8 +200,29 @@ export async function dispatchNotification(
         ?? userPreferences?.preferences[payload.type]
         ?? ['IN_APP']; // Default: in-app only
 
+    const isMarketing = payload.messageType === 'MARKETING';
+    const conservatoriumName = payload.data?.conservatoriumName ?? 'ליריאוסה';
+
+    // Amendment 40: check marketing consent once (applies to SMS + WhatsApp)
+    let marketingConsentActive = true;
+    if (isMarketing) {
+        try {
+            marketingConsentActive = await checkMarketingConsent(payload.userId);
+        } catch {
+            // If consent check fails, err on the side of caution — block marketing
+            console.warn('[Dispatcher] Marketing consent check failed, blocking send');
+            marketingConsentActive = false;
+        }
+    }
+
     for (const channel of channels) {
         try {
+            // Amendment 40: block marketing SMS/WhatsApp if no consent
+            if (isMarketing && (channel === 'SMS' || channel === 'WHATSAPP') && !marketingConsentActive) {
+                result.failed.push({ channel, error: 'Marketing consent not given or revoked' });
+                continue;
+            }
+
             switch (channel) {
                 case 'IN_APP':
                     // Create notification document in Firestore
@@ -193,8 +233,21 @@ export async function dispatchNotification(
                 case 'SMS':
                     if (userPhone) {
                         const _phone = normalizeIsraeliPhone(userPhone);
-                        // await sendSMS(_phone, body);
+                        const smsBody = formatAmendment40Body(payload.body, conservatoriumName, isMarketing);
+                        await sendSMS(_phone, smsBody);
                         result.delivered.push('SMS');
+
+                        // Amendment 40: log marketing messages
+                        if (isMarketing) {
+                            await logAccess({
+                                action: 'MARKETING_MESSAGE_SENT',
+                                resourceId: payload.userId,
+                                userId: 'system',
+                                conservatoriumId: payload.data?.conservatoriumId ?? '',
+                                resourceType: 'sms',
+                                reason: 'marketing_sms_sent',
+                            });
+                        }
                     } else {
                         result.failed.push({ channel: 'SMS', error: 'No phone number' });
                     }
@@ -203,8 +256,21 @@ export async function dispatchNotification(
                 case 'WHATSAPP':
                     if (userPhone) {
                         const _phone = normalizeIsraeliPhone(userPhone);
-                        // await sendWhatsApp(_phone, body);
+                        const waBody = formatAmendment40Body(payload.body, conservatoriumName, isMarketing);
+                        await sendWhatsApp(_phone, waBody);
                         result.delivered.push('WHATSAPP');
+
+                        // Amendment 40: log marketing messages
+                        if (isMarketing) {
+                            await logAccess({
+                                action: 'MARKETING_MESSAGE_SENT',
+                                resourceId: payload.userId,
+                                userId: 'system',
+                                conservatoriumId: payload.data?.conservatoriumId ?? '',
+                                resourceType: 'whatsapp',
+                                reason: 'marketing_whatsapp_sent',
+                            });
+                        }
                     } else {
                         result.failed.push({ channel: 'WHATSAPP', error: 'No phone number' });
                     }
