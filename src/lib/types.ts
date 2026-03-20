@@ -591,6 +591,7 @@ export type Conservatorium = {
     ru?: string;
   };
   allowedLessonDurations?: number[];
+  donations?: ConservatoriumDonations;
 };
 
 export type FormStatus = 'DRAFT' | 'PENDING_TEACHER' | 'PENDING_ADMIN' | 'APPROVED' | 'REJECTED' | 'REVISION_REQUIRED' | 'FINAL_APPROVED';
@@ -1413,6 +1414,50 @@ export type AIScholarshipScore = {
   };
   flaggedForHumanReview: boolean;
   flagReason?: string;
+};
+
+export type AnonymizedStudentStory = {
+  id: string;
+  instrument: string;
+  ageRange: string;           // e.g. "10-12" — age range not exact age (privacy)
+  storyText: { he: string; en?: string };
+  addedAt: string;            // ISO timestamp
+};
+
+export type ConservatoriumDonations = {
+  section46Enabled: boolean;
+  section46ApprovalNumber?: string;
+  section46ExpiryDate?: string;         // ISO date
+  needScore: number;                    // computed hourly, 0–100
+  needScoreUpdatedAt: string;           // ISO timestamp
+  annualDonationTarget: number;         // ILS
+  currentFundBalance: number;           // ILS
+  totalDonationsAllTime: number;        // ILS
+  totalStudentsFunded: number;          // public counter
+  platformWeightAdjustment: number;     // -10 to +10, default 0
+  featuredStudentStories: AnonymizedStudentStory[];
+};
+
+export type DonationStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'RECURRING';
+
+export type Donation = {
+  id: string;
+  conservatoriumId: string;
+  donorName: string;
+  donorEmail: string;
+  donorIdNumber?: string;           // Israeli ID for Section 46 receipt
+  anonymous: boolean;
+  amount: number;                   // ILS
+  status: DonationStatus;
+  recurringFrequency?: 'MONTHLY' | 'QUARTERLY' | 'ANNUAL';
+  routingMethod?: 'DIRECT' | 'BASKET' | 'FOLLOW_NEED' | 'DAF';
+  basketItems?: { conservatoriumId: string; amount: number }[];
+  cardToken?: string;               // for recurring — Cardcom token
+  cardcomTransactionId?: string;
+  paidAt?: string;                  // ISO timestamp
+  section46ReceiptNumber?: string;
+  createdAt: string;
+  updatedAt?: string;
 };
 
 export type DonationCauseCategory = 'financial_aid' | 'excellence' | 'equipment' | 'events' | 'general';
