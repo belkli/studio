@@ -99,6 +99,8 @@ AVAILABLE DATA:
 \`\`\`
 
 Output only the report text in Markdown format, with no other introductory text.
+
+IMPORTANT PRIVACY GUARDRAIL: Provide educational feedback only. Do not analyze behavioral patterns or make predictions about the student's future. Do not draw conclusions about the student's personal life, family, or psychological state. Focus strictly on musical progress, practice habits, and repertoire.
 `,
 });
 

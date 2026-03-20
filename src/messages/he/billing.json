@@ -162,9 +162,12 @@
     "makeups": "השלמות",
     "actions": "פעולות",
     "exportTeacher": "ייצוא נתוני מורה",
-    "hours": "שעות",
     "conservatorium": "קונסרבטוריון",
-    "allConservatoriums": "כל הקונסרבטוריונים"
+    "allConservatoriums": "כל הקונסרבטוריונים",
+    "exportConfirmTitle": "ייצוא נתוני שכר",
+    "exportConfirmDesc": "ייצוא זה מכיל מספרי תעודת זהות. השתמש בו לצורכי שכר בלבד ואל תעביר לגורמים שאינם מורשים.",
+    "exportConfirm": "המשך בייצוא",
+    "cancel": "ביטול"
   },
   "TeacherPayroll": {
     "amountCol": "סכום",

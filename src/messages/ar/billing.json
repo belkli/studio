@@ -125,7 +125,7 @@
     "exportPast": "تصدير البيانات السابقة (Hilan)",
     "grossPay": "إجمالي الراتب",
     "hilanSuccess": "تم إنشاء ملف Hilan/Merav بنجاح",
-    "hours": "الساعات",
+    "hours": "ساعات",
     "lessonDetails": "تفاصيل الدرس ({count})",
     "markAsPaid": "تحديد كمدفوع",
     "noDataExport": "لا توجد بيانات للتصدير",
@@ -162,9 +162,12 @@
     "makeups": "حصص تعويضية",
     "actions": "إجراءات",
     "exportTeacher": "تصدير بيانات المعلم",
-    "hours": "ساعات",
     "conservatorium": "معهد موسيقى",
-    "allConservatoriums": "جميع المعاهد"
+    "allConservatoriums": "جميع المعاهد",
+    "exportConfirmTitle": "تصدير بيانات الرواتب",
+    "exportConfirmDesc": "يحتوي هذا التصدير على أرقام هوية إسرائيلية. استخدمه لأغراض الرواتب فقط ولا تشاركه مع أطراف غير مصرح لها.",
+    "exportConfirm": "متابعة التصدير",
+    "cancel": "إلغاء"
   },
   "TeacherPayroll": {
     "amountCol": "المبلغ",

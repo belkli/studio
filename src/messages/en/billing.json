@@ -162,9 +162,12 @@
     "makeups": "Makeups",
     "actions": "Actions",
     "exportTeacher": "Export teacher data",
-    "hours": "Hours",
     "conservatorium": "Conservatorium",
-    "allConservatoriums": "All Conservatoriums"
+    "allConservatoriums": "All Conservatoriums",
+    "exportConfirmTitle": "Export payroll data",
+    "exportConfirmDesc": "This export contains Israeli ID numbers. Use for payroll purposes only and do not share with unauthorized parties.",
+    "exportConfirm": "Continue export",
+    "cancel": "Cancel"
   },
   "TeacherPayroll": {
     "statusDraft": "Under Review",

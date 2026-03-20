@@ -4,6 +4,16 @@ import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { Download, Loader2, RefreshCw } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
@@ -46,6 +56,8 @@ const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '"
 
 function downloadPayrollCsv(rows: TeacherMonthlyRow[], filename: string) {
   const bom = '\uFEFF';
+  // S6: Privacy disclaimer header row — required for payroll CSV exports
+  const disclaimerRow = ['"שעות עבודה בפועל בלבד — אינו כולל זמן עבודה מחוץ לשיעורים. מסמך זה מכיל מספרי תעודת זהות — לשימוש שכר בלבד."'];
   const csvRows = rows.map((row) => {
     const totalHours = row.totalMinutes / 60;
     const rate = row.ratePerHour ?? 0;
@@ -69,7 +81,7 @@ function downloadPayrollCsv(rows: TeacherMonthlyRow[], filename: string) {
 
   const csv =
     bom +
-    [HEBREW_EXPORT_HEADERS, ...csvRows]
+    [disclaimerRow, HEBREW_EXPORT_HEADERS, ...csvRows]
       .map((row) => row.map((cell) => csvEscape(cell)).join(','))
       .join('\n');
 
@@ -100,6 +112,7 @@ export function AdminPayrollPanel() {
   const [period, setPeriod] = useState<string>('2026-03');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedConsId, setSelectedConsId] = useState<string>(user?.conservatoriumId ?? '');
+  const [pendingExport, setPendingExport] = useState<{ rows: TeacherMonthlyRow[]; filename: string } | null>(null);
 
   // For site_admin: act as if we are scoped to selectedConsId; for others: own conservatorium
   const effectiveConsId = isSiteAdmin ? selectedConsId : (user?.conservatoriumId ?? '');
@@ -160,13 +173,20 @@ export function AdminPayrollPanel() {
   };
 
   const exportAllToCsv = () => {
-    downloadPayrollCsv(report.byTeacher, `payroll-${period}.csv`);
+    setPendingExport({ rows: report.byTeacher, filename: `payroll-${period}.csv` });
   };
 
   const exportTeacherCsv = (teacherId: string) => {
     const row = report.byTeacher.find((entry) => entry.teacherId === teacherId);
     if (!row) return;
-    downloadPayrollCsv([row], `payroll-${teacherId}-${period}.csv`);
+    setPendingExport({ rows: [row], filename: `payroll-${teacherId}-${period}.csv` });
+  };
+
+  const confirmExport = () => {
+    if (pendingExport) {
+      downloadPayrollCsv(pendingExport.rows, pendingExport.filename);
+    }
+    setPendingExport(null);
   };
 
   return (
@@ -270,6 +290,20 @@ export function AdminPayrollPanel() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* S6: Confirmation dialog — warns that export contains ID numbers */}
+      <AlertDialog open={!!pendingExport} onOpenChange={(open) => { if (!open) setPendingExport(null); }}>
+        <AlertDialogContent dir={isRtl ? 'rtl' : 'ltr'}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('exportConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('exportConfirmDesc')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmExport}>{t('exportConfirm')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
