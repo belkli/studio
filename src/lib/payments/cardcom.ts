@@ -12,6 +12,7 @@
  * - CARDCOM_WEBHOOK_SECRET
  */
 
+import { createHmac, timingSafeEqual } from 'crypto';
 import type { InstallmentOption } from '@/lib/types';
 
 // ── Configuration ────────────────────────────────────────────
@@ -75,6 +76,28 @@ export interface CardcomRecurringChargeRequest {
 }
 
 // ── Functions ────────────────────────────────────────────────
+
+/**
+ * Verifies a Cardcom webhook HMAC-SHA256 signature using timing-safe comparison.
+ * SEC-W01: Prevents webhook forgery — all incoming Cardcom webhooks must pass this check.
+ *
+ * @param rawBody      - The raw (unparsed) request body string
+ * @param signature    - The hex-encoded HMAC signature from the request header
+ * @param secret       - The webhook secret (CARDCOM_WEBHOOK_SECRET env var)
+ * @returns true only when the signature matches exactly
+ */
+export function verifyCardcomHmac(rawBody: string, signature: string, secret: string): boolean {
+  if (!signature || !secret) return false;
+  try {
+    const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
+    const expectedBuf = Buffer.from(expected, 'hex');
+    const receivedBuf = Buffer.from(signature, 'hex');
+    if (expectedBuf.length !== receivedBuf.length) return false;
+    return timingSafeEqual(expectedBuf, receivedBuf);
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Creates a Cardcom hosted payment page URL.
@@ -162,7 +185,7 @@ export async function chargeStoredCard(
 /**
  * Handles Cardcom webhook callback.
  * Called by Cloud Function when Cardcom sends a POST to our webhook URL.
- * 
+ *
  * Steps:
  * 1. Verify webhook signature (CARDCOM_WEBHOOK_SECRET)
  * 2. Parse payload
@@ -172,8 +195,16 @@ export async function chargeStoredCard(
  * 6. Generate invoice PDF (חשבונית מס)
  */
 export async function handleCardcomWebhook(
+    rawBody: string,
+    signatureHeader: string,
     payload: CardcomWebhookPayload
 ): Promise<{ success: boolean; error?: string }> {
+    // SEC-W01: Reject any webhook that fails HMAC verification
+    const webhookSecret = process.env.CARDCOM_WEBHOOK_SECRET ?? '';
+    if (!verifyCardcomHmac(rawBody, signatureHeader, webhookSecret)) {
+        return { success: false, error: 'Invalid webhook signature' };
+    }
+
     const { lowProfileCode: _lowProfileCode, responseCode, transactionId: _transactionId, cardToken: _cardToken } = payload;
 
     if (responseCode !== '0') {
