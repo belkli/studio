@@ -133,6 +133,7 @@ export async function createCardcomPaymentPage(
         SuccessRedirectUrl: request.successUrl,
         ErrorRedirectUrl: request.failureUrl,
         IndicatorUrl: request.webhookUrl,
+        CreateInvoice: 'true',          // ACC-4: instruct Cardcom to issue official tax invoice
         InvoiceHead: JSON.stringify({
             CustName: request.customerName,
             SendByEmail: 'true',
